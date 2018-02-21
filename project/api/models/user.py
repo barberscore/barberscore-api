@@ -14,6 +14,10 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from django.utils.functional import cached_property
+from django_fsm import transition
+from django_fsm_log.decorators import fsm_log_by
+from django_fsm_log.decorators import fsm_log_description
+from api.tasks import update_or_create_account_from_user
 
 # First-Party
 from api.managers import UserManager
@@ -249,14 +253,15 @@ class User(AbstractBaseUser):
         return False
 
     # User Transitions
-    # @fsm_log_by
-    # @transition(field=status, source='*', target=STATUS.active)
-    # def activate(self, *args, **kwargs):
-    #     self.is_active = True
-    #     return
+    @fsm_log_by
+    @fsm_log_description
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, description=None, *args, **kwargs):
+        update_or_create_account_from_user(self)
+        return
 
-    # @fsm_log_by
-    # @transition(field=status, source='*', target=STATUS.inactive)
-    # def deactivate(self, *args, **kwargs):
-    #     self.is_active = False
-    #     pass
+    @fsm_log_by
+    @fsm_log_description
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, description=None, *args, **kwargs):
+        pass

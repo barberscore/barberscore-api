@@ -616,7 +616,7 @@ class PersonManager(Manager):
             )
         # Return as objects
         persons = persons.values_list(
-            'user',
+            'id',
             'nomen',
             'email',
             'status',
@@ -635,48 +635,53 @@ class UserManager(BaseUserManager):
     def update_or_create_from_person(self, person, is_object=False):
         # mapping
         if is_object:
-            user_pk = person[0]
+            person = person[0]
             name = person[1]
             email = person[2]
             status = person[3]
         else:
-            user_pk = str(person.user.pk)
+            person = str(person.pk)
             name = person.nomen
             email = person.email
             status = person.status
 
-        # Monkey patch = all Users active
-        status = self.model.STATUS.active
-
-        # Assumes email has already been cleaned.
-        if not email:
-            raise ValidationError("Person must have email")
+        # really clean email
+        email = email.lower()
 
         defaults = {
             'name': name,
             'email': email,
-            'status': status,
         }
         try:
             user = self.get(
-                id=user_pk,
+                person=person,
             )
             created = False
         except self.model.DoesNotExist:
             user = self.create(
                 email=email,
                 name=name,
-                status=status,
+                status=self.model,
             )
-            created = True
-        if created:
             user.set_unusable_password()
-        else:
+            created = True
+        if not created:
             for key, value in defaults.items():
                 setattr(user, key, value)
-        # ACCOUNT UPDATE
-        account, created = update_or_create_account_from_user(user)
-        user.account_id = account
+
+        # Set the description
+        description = 'Intial import'
+
+        # Transition as appropriate
+        if status == self.model.STATUS.active:
+            user.activate(
+                description=description,
+            )
+        elif status == self.model.STATUS.inactive:
+            user.deactivate(
+                description=description,
+            )
+        # Finally, return the user
         user.save(using=self._db)
         return user, created
 
