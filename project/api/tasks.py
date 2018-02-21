@@ -106,7 +106,7 @@ def delete_account(account_id):
 
 
 @job
-def update_or_create_account_from_user(user):
+def update_or_create_account_from_user(user, blocked):
     # Get the auth0 client
     auth0 = get_auth0()
     # Instantiate the created variable
@@ -123,7 +123,6 @@ def update_or_create_account_from_user(user):
                 # If there's a standard error, raise it.
                 raise(e)
     # Build payload
-    blocked = False if user.status == user.STATUS.active else True
     payload = {
         "connection": "email",
         "email": user.email,
