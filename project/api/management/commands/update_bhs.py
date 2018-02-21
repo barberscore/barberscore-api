@@ -76,7 +76,7 @@ class Command(BaseCommand):
         self.stdout.write("Queued {0} members.".format(t))
 
         # Sync Roles
-        t = Role.objects.update_officers()
+        # t = Role.objects.update_officers()
         # self.stdout.write("Queued {0} officers.".format(t))
         self.stdout.write("BYPASSED chapter officers.")
 
