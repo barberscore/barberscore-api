@@ -4,7 +4,7 @@ import django_rq
 
 
 class HumanManager(Manager):
-    def update_persons(self, cursor=None, active_only=True, *args, **kwargs):
+    def update_persons(self, cursor=None, active_only=True):
         # Get base
         humans = self.all()
         # Filter if cursored
@@ -44,7 +44,7 @@ class HumanManager(Manager):
         t = humans.count()
         return t
 
-    def delete_orphans(self, *args, **kwargs):
+    def delete_orphans(self):
         # Get base
         humans = self.all()
         humans = list(humans.values_list('id', flat=True))
@@ -103,7 +103,7 @@ class StructureManager(Manager):
             )
         return structures.count()
 
-    def delete_orphans(self, *args, **kwargs):
+    def delete_orphans(self):
         # Get base
         structures = self.all()
         structures = list(structures.values_list('id', flat=True))
@@ -134,7 +134,7 @@ class RoleManager(Manager):
         # Rebuild will do the whole thing.
         if not rebuild:
             roles = roles.filter(
-                created__gt=cursor,
+                start_date__gt=cursor,
             )
         # Order and Return as objects
         roles = roles.order_by(
