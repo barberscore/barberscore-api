@@ -1057,6 +1057,10 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 @admin.register(Repertory)
 class RepertoryAdmin(admin.ModelAdmin):
+    # fsm_field = [
+    #     'status',
+    # ]
+
     fields = [
         'status',
         'group',
@@ -1087,9 +1091,9 @@ class RepertoryAdmin(admin.ModelAdmin):
         'chart',
     ]
 
-    inlines = [
-        StateLogInline,
-    ]
+    # inlines = [
+    #     StateLogInline,
+    # ]
 
     search_fields = [
         'nomen',
