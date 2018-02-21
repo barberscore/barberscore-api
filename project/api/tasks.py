@@ -143,12 +143,15 @@ def update_or_create_account_from_user(user):
         user.save()
     else:
         # Only update if there are diffs
-        dirty = any([
-            account['email'] != user.email,
-            account['user_metadata']['name'] != user.name,
-            account['app_metadata']['barberscore_id'] != str(user.id),
-            account['blocked'] != blocked,
-        ])
+        try:
+            dirty = any([
+                account['email'] != user.email,
+                account['user_metadata']['name'] != user.name,
+                account['app_metadata']['barberscore_id'] != str(user.id),
+                account['blocked'] != blocked,
+            ])
+        except KeyError:
+            dirty = True
         if dirty:
             account = auth0.users.update(user.account_id, payload)
     return account, created
