@@ -493,6 +493,7 @@ class OfficerManager(Manager):
         )
         return officer, created
 
+
 class PersonManager(Manager):
     def update_or_create_from_human(self, human, is_object=False):
         # Map between object/instance
@@ -602,9 +603,11 @@ class PersonManager(Manager):
             person.save()
         return person, created
 
-    def update_users(self, cursor=None):
+    def update_users(self, cursor=None, active_only=True):
         # Get Base
         persons = self.filter(
+            status=self.model.STATUS.active,
+            user__isnull=True,
             email__isnull=False,
         )
         if cursor:
@@ -612,18 +615,18 @@ class PersonManager(Manager):
                 modified__gt=cursor,
             )
         # Return as objects
-        # persons = persons.values_list(
-        #     'id',
-        #     'nomen',
-        #     'email',
-        #     'status',
-        # )
+        persons = persons.values_list(
+            'user',
+            'nomen',
+            'email',
+            'status',
+        )
         User = apps.get_model('api.user')
         for person in persons:
             django_rq.enqueue(
                 User.objects.update_or_create_from_person,
                 person,
-                is_object=False,
+                is_object=True,
             )
         return persons.count()
 
@@ -631,35 +634,50 @@ class PersonManager(Manager):
 class UserManager(BaseUserManager):
     def update_or_create_from_person(self, person, is_object=False):
         # mapping
-        Person = apps.get_model('api.person')
         if is_object:
-            email = person[0]
-            nomen = person[1]
-            person = Person.objects.get(id=person[2])
+            user_pk = person[0]
+            name = person[1]
+            email = person[2]
+            status = person[3]
         else:
+            user_pk = str(person.user.pk)
+            name = person.nomen
             email = person.email
-            nomen = person.nomen
-        # Should fix this
+            status = person.status
+
+        # Monkey patch = all Users active
         status = self.model.STATUS.active
+
+        # Assumes email has already been cleaned.
         if not email:
             raise ValidationError("Person must have email")
-        created = False
+
+        defaults = {
+            'name': name,
+            'email': email,
+            'status': status,
+        }
         try:
-            user = self.get(person=person)
+            user = self.get(
+                id=user_pk,
+            )
+            created = False
         except self.model.DoesNotExist:
-            created = True
-            user = self.create_user(
+            user = self.create(
                 email=email,
-                name=nomen,
+                name=name,
                 status=status,
             )
-            person.user = user
-            person.save()
-            return user, created
-        user.email = email
-        user.name = nomen
-        # Same here
-        user.status = status
+            created = True
+        if created:
+            user.set_unusable_password()
+        else:
+            for key, value in defaults.items():
+                setattr(user, key, value)
+        # ACCOUNT UPDATE
+        account, created = update_or_create_account_from_user(user)
+        user.account_id = account
+        user.save(using=self._db)
         return user, created
 
     def update_accounts(self, cursor=None):
@@ -693,7 +711,6 @@ class UserManager(BaseUserManager):
             **kwargs
         )
         user.set_unusable_password()
-        user.full_clean()
         user.save(using=self._db)
         return user
 
