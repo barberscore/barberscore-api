@@ -346,14 +346,12 @@ class Person(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return True
+        return False
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            self == request.user.person,
-        ])
+        return False
 
     # Transitions
     @fsm_log_by
