@@ -281,7 +281,7 @@ def create_drcj_report(session):
         part = 1
         while part <= 4:
             try:
-                member = entry.group.members.get(
+                member = members.get(
                     part=part,
                 )
             except Member.DoesNotExist:
@@ -306,19 +306,16 @@ def create_drcj_report(session):
             parts[part] = member_detail
             part += 1
         if entry.group.kind == entry.group.KIND.quartet:
-            persons = entry.group.members.filter(
-                status__gt=0,
-            ).values_list('person', flat=True)
+            persons = members.values_list('person', flat=True)
             cs = Group.objects.filter(
                 members__person__in=persons,
                 members__status__gt=0,
-                kind=Group.KIND.chapter,
+                kind=Group.KIND.chorus,
             ).distinct(
             ).order_by(
-                'tree_sort',
-                'nomen',
+                'parent__name',
             ).values_list(
-                'nomen',
+                'parent__name',
                 flat=True
             )
             chapters = "\n".join(cs)

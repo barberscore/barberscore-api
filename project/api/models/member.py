@@ -184,7 +184,12 @@ class Member(TimeStampedModel):
         resource_name = "member"
 
     def __str__(self):
-        return str(self.id)
+        return "; ".join([
+            self.person.full_name,
+            self.get_part_display(),
+            self.group.name,
+            self.get_status_display(),
+        ])
 
     def clean(self):
         pass
