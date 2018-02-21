@@ -376,6 +376,9 @@ class GroupInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
+    readonly = [
+        'status',
+    ]
 
 
 class MemberInline(admin.TabularInline):
@@ -396,6 +399,10 @@ class MemberInline(admin.TabularInline):
         'person__last_name',
         'person__first_name',
     )
+    readonly = [
+        'status',
+    ]
+
     show_change_link = True
     extra = 0
     classes = [
@@ -424,6 +431,9 @@ class OfficerInline(admin.TabularInline):
     ordering = [
         'person__last_name',
         'person__first_name',
+    ]
+    readonly = [
+        'status',
     ]
 
 
