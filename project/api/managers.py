@@ -655,6 +655,7 @@ class UserManager(BaseUserManager):
         defaults = {
             'name': name,
             'email': email,
+            'status': status,
         }
         try:
             user = self.get(
@@ -675,6 +676,7 @@ class UserManager(BaseUserManager):
             fields=[
                 'name',
                 'email',
+                'status',
             ],
         )
 
