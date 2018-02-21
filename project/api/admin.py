@@ -1087,9 +1087,9 @@ class RepertoryAdmin(admin.ModelAdmin):
         'chart',
     ]
 
-    # inlines = [
-    #     AppearanceInline,
-    # ]
+    inlines = [
+        StateLogInline,
+    ]
 
     search_fields = [
         'nomen',
