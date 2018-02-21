@@ -373,9 +373,9 @@ def create_admins_report(session):
             status__gt=0,
         )
         for admin in admins:
-            group = entry.group.nomen.encode('utf-8').strip()
-            person = admin.person.nomen.encode('utf-8').strip()
-            email = admin.person.email.encode('utf-8').strip()
+            group = entry.group.nomen
+            person = admin.person.nomen
+            email = admin.person.email
             cell = admin.person.cell_phone
             row = [
                 group,
