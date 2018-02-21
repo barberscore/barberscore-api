@@ -680,6 +680,7 @@ class UserManager(BaseUserManager):
         )
 
         # Update to new values
+        defaults.pop('status')
         for key, value in defaults.items():
             setattr(user, key, value)
 
