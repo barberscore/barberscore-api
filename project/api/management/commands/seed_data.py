@@ -119,7 +119,7 @@ class Command(BaseCommand):
             email=admin_person.email,
             person=admin_person,
             password='password',
-            is_staff=False,
+            is_staff=True,
             account_id='email|5a18277f7cd31262971cddfc',
         )
         scjc_user = UserFactory(
