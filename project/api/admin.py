@@ -1409,12 +1409,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': (
-                'name',
-                'status',
-                'email',
                 'person',
-                'account_id',
-                'is_staff',
             )
         }),
     )

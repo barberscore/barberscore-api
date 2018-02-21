@@ -10,10 +10,13 @@ class UserCreationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = '__all__'
+        inlines = []
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(None)
+        user.email = self.cleaned_data['person'].email.lower()
+        user.name = self.cleaned_data['person'].nomen
+        user.set_unusable_password()
         if commit:
             user.save()
         return user

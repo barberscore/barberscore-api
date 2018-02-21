@@ -127,7 +127,7 @@ def update_or_create_account_from_user(user, blocked):
         "connection": "email",
         "email": user.email,
         "email_verified": True,
-        "blocked": blocked,
+        # "blocked": blocked,
         "user_metadata": {
             "name": user.name
         },
@@ -147,7 +147,7 @@ def update_or_create_account_from_user(user, blocked):
                 account['email'] != user.email,
                 account['user_metadata']['name'] != user.name,
                 account['app_metadata']['barberscore_id'] != str(user.id),
-                account['blocked'] != blocked,
+                # account['blocked'] != blocked,
             ])
         except KeyError:
             dirty = True
