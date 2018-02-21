@@ -123,10 +123,12 @@ def update_or_create_account_from_user(user):
                 # If there's a standard error, raise it.
                 raise(e)
     # Build payload
+    blocked = False if user.status == user.STATUS.active else True
     payload = {
         "connection": "email",
         "email": user.email,
         "email_verified": True,
+        "blocked": blocked,
         "user_metadata": {
             "name": user.name
         },
@@ -135,18 +137,31 @@ def update_or_create_account_from_user(user):
         }
     }
     if created:
+        # Create with payload if new
         account = auth0.users.create(payload)
         user.account_id = account['user_id']
         user.save()
     else:
+        # Only update if there are diffs
         dirty = any([
             account['email'] != user.email,
             account['user_metadata']['name'] != user.name,
             account['app_metadata']['barberscore_id'] != str(user.id),
+            account['blocked'] != blocked,
         ])
         if dirty:
             account = auth0.users.update(user.account_id, payload)
     return account, created
+
+
+@job
+def delete_account_from_user(user):
+    if not user.account_id:
+        raise ValueError("No account attached.")
+    auth0 = get_auth0()
+    # Delete Auth0
+    response = auth0.users.delete(user.account_id)
+    return response
 
 
 @job

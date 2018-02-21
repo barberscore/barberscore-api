@@ -1352,7 +1352,7 @@ class VenueAdmin(admin.ModelAdmin):
 
 
 @admin.register(User)
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     fsm_field = [
@@ -1421,6 +1421,9 @@ class UserAdmin(BaseUserAdmin):
     search_fields = [
         'email',
         'name',
+    ]
+    inlines = [
+        StateLogInline,
     ]
     ordering = ('email',)
     filter_horizontal = ()

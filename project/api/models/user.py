@@ -257,11 +257,14 @@ class User(AbstractBaseUser):
     @fsm_log_description
     @transition(field=status, source='*', target=STATUS.active)
     def activate(self, description=None, *args, **kwargs):
-        update_or_create_account_from_user(self)
+        account, created = update_or_create_account_from_user(self)
+        self.account_id = account
         return
 
     @fsm_log_by
     @fsm_log_description
     @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, description=None, *args, **kwargs):
-        pass
+        account, created = update_or_create_account_from_user(self)
+        self.account_id = account
+        return

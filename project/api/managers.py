@@ -15,7 +15,6 @@ from django.db.models import Manager
 from django.forms.models import model_to_dict
 from django.utils.timezone import now
 from api.tasks import get_accounts
-from api.tasks import update_or_create_account_from_user
 from api.tasks import delete_account
 
 log = logging.getLogger(__name__)
@@ -201,8 +200,9 @@ class GroupManager(Manager):
                 else:
                     diff[key] = value
 
+        # Bypass if not dirty
         if not diff:
-            return group, 'Unchanged'
+            return group, None
 
         # Set the transition description
         if group.status == group.STATUS.new:
@@ -604,12 +604,13 @@ class PersonManager(Manager):
         return person, created
 
     def update_users(self, cursor=None, active_only=True):
-        # Get Base
+        # Get Base - currently only active officers persons
+        Officer = apps.get_model('api.officer')
         persons = self.filter(
+            officers__status=Officer.STATUS.active,
             status=self.model.STATUS.active,
-            user__isnull=True,
             email__isnull=False,
-        )
+        ).distinct()
         if cursor:
             persons = persons.filter(
                 modified__gt=cursor,
@@ -635,15 +636,18 @@ class UserManager(BaseUserManager):
     def update_or_create_from_person(self, person, is_object=False):
         # mapping
         if is_object:
-            person = person[0]
+            person_pk = str(person[0])
             name = person[1]
             email = person[2]
             status = person[3]
         else:
-            person = str(person.pk)
+            person_pk = str(person.pk)
             name = person.nomen
             email = person.email
             status = person.status
+
+        # Overwrite Status until front-end fixed
+        status = 10  # Person.STATUS.active
 
         # really clean email
         email = email.lower()
@@ -654,23 +658,45 @@ class UserManager(BaseUserManager):
         }
         try:
             user = self.get(
-                person=person,
+                person=person_pk,
             )
             created = False
         except self.model.DoesNotExist:
             user = self.create(
                 email=email,
                 name=name,
-                status=self.model,
             )
             user.set_unusable_password()
             created = True
-        if not created:
-            for key, value in defaults.items():
-                setattr(user, key, value)
 
-        # Set the description
-        description = 'Intial import'
+        # set prior values
+        prior = model_to_dict(
+            user,
+            fields=[
+                'name',
+                'email',
+                'status',
+            ],
+        )
+
+        # Update to new values
+        for key, value in defaults.items():
+            setattr(user, key, value)
+
+        # Build the diff from prior to new
+        diff = {}
+        for key, value in prior.items():
+            if defaults[key] != value:
+                diff[key] = value
+
+        if not diff:
+            return user, None
+
+        # Set the transition description
+        if user.status == user.STATUS.new:
+            description = "Initial import"
+        else:
+            description = json.dumps(diff)
 
         # Transition as appropriate
         if status == self.model.STATUS.active:
@@ -684,21 +710,6 @@ class UserManager(BaseUserManager):
         # Finally, return the user
         user.save(using=self._db)
         return user, created
-
-    def update_accounts(self, cursor=None):
-        # Get Base
-        users = self.filter(
-            status=self.model.STATUS.active,
-            person__officers__isnull=False,  # for time being, only sync officers
-        )
-        if cursor:
-            users = users.filter(
-                modified__gt=cursor,
-            )
-        # Return as objects
-        for user in users:
-            update_or_create_account_from_user.delay(user)
-        return users.count()
 
     def delete_orphans(self):
         accounts = get_accounts()
