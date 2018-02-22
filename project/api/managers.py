@@ -263,6 +263,13 @@ class GroupManager(Manager):
             org.save()
         return
 
+    def denormalize(self):
+        groups = self.all()
+        for group in groups:
+            group.denormalize()
+            group.save()
+        return
+
 
 class MemberManager(Manager):
     def create_from_join(self, join, is_object=False):
