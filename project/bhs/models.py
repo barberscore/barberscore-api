@@ -409,6 +409,17 @@ class Role(models.Model):
         on_delete=models.CASCADE,
     )
 
+    # created = models.DateTimeField(
+    #     db_column='created',
+    #     null=False,
+    #     editable=False,
+    # )
+    # modified = models.DateTimeField(
+    #     db_column='updated',
+    #     null=True,
+    #     editable=False,
+    # )
+
     objects = RoleManager()
 
     # Internals
@@ -451,6 +462,11 @@ class Join(models.Model):
         db_column='inactive_reason',
         editable=False,
     )
+    # created = models.DateTimeField(
+    #     db_column='created_ts',
+    #     null=False,
+    #     editable=False,
+    # )
     modified = models.DateTimeField(
         db_column='modified',
         null=True,
