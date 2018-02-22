@@ -126,7 +126,7 @@ class DistrictListFilter(admin.SimpleListFilter):
 
 class DivisionListFilter(admin.SimpleListFilter):
     title = 'division'
-    parameter_name = 'division'
+    parameter_name = 'code'
 
     def lookups(self, request, model_admin):
         divisions = Group.objects.filter(
@@ -137,7 +137,7 @@ class DivisionListFilter(admin.SimpleListFilter):
         return divisions
 
     def queryset(self, request, queryset):
-        division = request.GET.get('division')
+        division = request.GET.get('code')
         if division:
             return queryset.filter(division=division)
         return queryset
