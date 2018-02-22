@@ -76,6 +76,9 @@ class ActiveChorusInline(admin.TabularInline):
         'collapse',
     ]
     verbose_name_plural = 'Active Choruses'
+    readonly_fields = [
+        'status',
+    ]
 
     def get_queryset(self, request):
         """Alter the queryset to return no existing entries."""
@@ -107,6 +110,9 @@ class ActiveQuartetInline(admin.TabularInline):
         'collapse',
     ]
     verbose_name_plural = 'Active Quartets'
+    readonly_fields = [
+        'status',
+    ]
 
     def get_queryset(self, request):
         """Alter the queryset to return no existing entries."""
@@ -128,6 +134,7 @@ class AppearanceInline(admin.TabularInline):
     ]
     readonly_fields = [
         'competitor',
+        'status',
     ]
     ordering = (
         'num',
@@ -151,6 +158,7 @@ class AssignmentInline(admin.TabularInline):
     ]
     readonly_fields = [
         'nomen',
+        'status',
     ]
     raw_id_fields = [
         'person',
@@ -182,6 +190,7 @@ class AwardInline(admin.TabularInline):
     ]
     readonly_fields = [
         'name',
+        'status',
     ]
     extra = 0
     show_change_link = True
@@ -203,6 +212,7 @@ class ContestInline(admin.TabularInline):
     ]
     readonly_fields = [
         'primary',
+        'status',
     ]
     raw_id_fields = [
         'award',
@@ -271,6 +281,7 @@ class CompetitorInline(admin.TabularInline):
     ]
     readonly_fields = [
         'nomen',
+        'status',
         # 'seed',
     ]
     raw_id_fields = [
@@ -299,7 +310,7 @@ class EntryInline(admin.TabularInline):
     ]
     readonly_fields = [
         'nomen',
-        # 'seed',
+        'status',
     ]
     raw_id_fields = [
         'session',
@@ -376,7 +387,7 @@ class GroupInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
-    readonly = [
+    readonly_fields = [
         'status',
     ]
 
@@ -399,7 +410,7 @@ class MemberInline(admin.TabularInline):
         'person__last_name',
         'person__first_name',
     )
-    readonly = [
+    readonly_fields = [
         'status',
     ]
 
@@ -432,7 +443,7 @@ class OfficerInline(admin.TabularInline):
         'person__last_name',
         'person__first_name',
     ]
-    readonly = [
+    readonly_fields = [
         'status',
     ]
 
@@ -450,6 +461,7 @@ class PanelistInline(admin.TabularInline):
     ]
     readonly_fields = [
         'nomen',
+        'status',
     ]
     raw_id_fields = [
         'person',
@@ -484,6 +496,9 @@ class RepertoryInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
+    readonly_fields = [
+        'status',
+    ]
 
 
 class ScoreInline(admin.TabularInline):
@@ -503,6 +518,7 @@ class ScoreInline(admin.TabularInline):
         'song',
         'category',
         'panelist',
+        'status',
     ]
     ordering = (
         'num',
@@ -529,6 +545,9 @@ class SongInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
+    readonly_fields = [
+        'status',
+    ]
 
 
 class SessionInline(admin.TabularInline):
@@ -547,6 +566,9 @@ class SessionInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
+    readonly_fields = [
+        'status',
+    ]
 
 
 class RoundInline(admin.TabularInline):
@@ -564,6 +586,7 @@ class RoundInline(admin.TabularInline):
     )
     readonly_fields = [
         'nomen',
+        'status',
     ]
     show_change_link = True
     extra = 0
