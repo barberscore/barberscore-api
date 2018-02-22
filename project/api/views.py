@@ -365,7 +365,7 @@ class GroupViewSet(
         'officers',
     ).order_by(
         'nomen',
-    )
+    ).distinct()
     serializer_class = GroupSerializer
     filter_class = GroupFilter
     filter_backends = [

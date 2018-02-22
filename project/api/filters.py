@@ -365,6 +365,7 @@ class GroupFilter(FilterSet):
             ],
             'kind': [
                 'exact',
+                'gt',
                 'lt',
                 'in',
                 'lte',
