@@ -363,15 +363,16 @@ class GridSerializer(serializers.ModelSerializer):
         ]
 
 
+class GroupMemberField(ResourceRelatedField):
+    def get_queryset(self):
+        return self.exclude(
+            group__kind__lte=Group.KIND.chapter,
+        )
+
+
 class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    # members = ResourceRelatedField(
-    #     queryset=Member.objects.none()
-    #     # queryset=Member.objects.exclude(
-    #     #     group__kind__lte=Group.KIND.chapter,
-    #     # ),
-    #     # many=True,
-    # )
+    members = GroupMemberField(many=True)
 
     class Meta:
         model = Group
@@ -402,9 +403,9 @@ class GroupSerializer(serializers.ModelSerializer):
             'division',
             'chapter',
             'parent',
-            # 'children',
+            'children',
             'entries',
-            # 'members',
+            'members',
             'tree_sort',
             'repertories',
             'permissions',

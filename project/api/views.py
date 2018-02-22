@@ -360,7 +360,7 @@ class GroupViewSet(
         'parent',
     ).prefetch_related(
         'children',
-        # 'members',
+        'members',
         'entries',
         'repertories',
         'officers',
