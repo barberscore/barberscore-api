@@ -12,14 +12,11 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 # Django
-from django.apps import apps as api_apps
 from django.core.exceptions import ValidationError
 from django.db import models
 
 # First-Party
 from api.tasks import send_entry
-
-config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 
@@ -259,16 +256,26 @@ class Entry(TimeStampedModel):
         ])
 
     def can_submit_entry(self):
-        return all([
-            any([
-                self.group.status == self.group.STATUS.active,
-                self.group.status == self.group.STATUS.new,
-            ]),
+        # Instantiate list
+        checklist = []
+        # Only active groups can submit.
+        checklist.append(bool(self.group.STATUS.active))
+        # check to ensure all fields are entered
+        if self.group.kind == self.group.KIND.chorus:
+            checklist.append(
+                all([
+                    self.mos,
+                    self.directors
+                ])
+            )
+        # ensure they can't submit a private while competiting.
+        checklist.append(
             not all([
                 self.is_private,
                 self.contestants.filter(status__gt=0).count() > 0,
-            ])
-        ])
+            ]),
+        )
+        return all(checklist)
 
     # Entry Transitions
     @fsm_log_by
