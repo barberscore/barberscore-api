@@ -30,6 +30,11 @@ validate_twitter = RegexValidator(
 )
 
 
+class LowMemberManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(group__kind__gt=30)
+
+
 class GroupManager(Manager):
     def update_or_create_from_structure(self, structure, is_object=False):
         # Map between object/instance

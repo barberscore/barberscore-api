@@ -16,7 +16,7 @@ from model_utils.models import TimeStampedModel
 from django.db import models
 
 # First-Party
-from api.managers import MemberManager
+from api.managers import MemberManager, LowMemberManager
 
 log = logging.getLogger(__name__)
 
@@ -27,6 +27,7 @@ class Member(TimeStampedModel):
         default=uuid.uuid4,
         editable=False,
     )
+    lows = LowMemberManager()
 
     STATUS = Choices(
         (-10, 'inactive', 'Inactive',),
