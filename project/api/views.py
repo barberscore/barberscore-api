@@ -575,7 +575,7 @@ class RoundViewSet(
     ).prefetch_related(
         'appearances',
         'panelists',
-    ).order_by('nomen')
+    ).distinct().order_by('nomen')
     serializer_class = RoundSerializer
     filter_class = RoundFilter
     filter_backends = [
@@ -626,7 +626,7 @@ class SessionViewSet(
         'entries',
         'competitors',
         'rounds',
-    ).order_by('nomen')
+    ).distinct().order_by('nomen')
     serializer_class = SessionSerializer
     filter_class = SessionFilter
     filter_backends = [
