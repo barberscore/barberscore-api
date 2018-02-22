@@ -53,11 +53,11 @@
         },
         "bugsnag": {
             "hashes": [
-                "sha256:07e4cce9aad5a41b9c21410102cfd4bc635e93facf2162746a6cda3d61e35ba3",
-                "sha256:5f7d20fe37183030b42570c2e5206949f3bae9fbe5f4fdbbe709d963d9666c9d",
-                "sha256:7fc68389bc1fb02ab77e1a65a1b4e21fd3cce752d44ed6c418a6bdc1dc1ab89f"
+                "sha256:6833dcd417b801dbf033daa0194d9a0837719c4e6849c4430fea107ab195a189",
+                "sha256:3b05d4550540df0a12ffc66a5a5f37e1d66c05e54e6f5a80b55d118d049eec24",
+                "sha256:a779adf856b9aef8eaac24e504bd0c4be019d9bdeed509250283086148a3607b"
             ],
-            "version": "==3.4.0"
+            "version": "==3.4.1"
         },
         "certifi": {
             "hashes": [
