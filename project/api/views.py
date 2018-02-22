@@ -21,6 +21,7 @@ from rest_framework_csv.renderers import CSVRenderer
 from .backends import CoalesceFilterBackend
 # from .backends import GroupFilterBackend
 from .backends import MemberFilterBackend
+from .filters import AssignmentFilter
 from .filters import AwardFilter
 from .filters import ChartFilter
 from .filters import CompetitorFilter
@@ -124,7 +125,7 @@ class AssignmentViewSet(
     ).prefetch_related(
     ).order_by('nomen')
     serializer_class = AssignmentSerializer
-    filter_class = None
+    filter_class = AssignmentFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,

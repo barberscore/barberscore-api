@@ -9,6 +9,7 @@ from django_filters.rest_framework import OrderingFilter
 from django.contrib import admin
 
 # Local
+from .models import Assignment
 from .models import Award
 from .models import Chart
 from .models import Competitor
@@ -212,6 +213,24 @@ class SessionGroupListFilter(admin.SimpleListFilter):
         if district:
             return queryset.filter(convention__group=district)
         return queryset
+
+
+class AssignmentFilter(FilterSet):
+    class Meta:
+        model = Assignment
+        fields = {
+            'person__user': [
+                'exact',
+            ],
+            'convention__is_archived': [
+                'exact',
+            ],
+            'category': [
+                'exact',
+                'gt',
+                'lt',
+            ],
+        }
 
 
 class AwardFilter(FilterSet):
