@@ -341,9 +341,15 @@ class Command(BaseCommand):
             group=international,
             status=Officer.STATUS.active,
         )
-        chapter_president = OfficerFactory(
+        OfficerFactory(
             office=chorus_manager,
             person=admin_person,
+            group=chorus_1,
+            status=Officer.STATUS.active,
+        )
+        chapter_president = OfficerFactory(
+            office=chorus_manager,
+            person=chorus_manager_person,
             group=chorus_1,
             status=Officer.STATUS.active,
         )
