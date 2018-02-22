@@ -359,7 +359,7 @@ class GroupViewSet(
     queryset = Group.objects.select_related(
         'parent',
     ).prefetch_related(
-        'children',
+        # 'children',
         # 'members',
         'entries',
         'repertories',
