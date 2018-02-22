@@ -229,6 +229,9 @@ class Command(BaseCommand):
             international=international.code,
             district=district_alpha.code,
         )
+        # Sort tree
+        Group.objects.sort_tree()
+
         # create Venue
         venue = VenueFactory()
 
