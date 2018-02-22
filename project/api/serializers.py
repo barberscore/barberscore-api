@@ -363,16 +363,22 @@ class GridSerializer(serializers.ModelSerializer):
         ]
 
 
-class GroupMemberField(ResourceRelatedField):
-    def get_queryset(self):
-        return self.exclude(
-            group__kind__lte=Group.KIND.chapter,
-        )
+# class GroupMemberField(ResourceRelatedField):
+#     def get_queryset(self, request):
+#         print('dfd')
+#         qs = super().get_queryset(request)
+#         qs = qs.filter(
+#             status__gt=0,
+#         )
+#         return qs
 
 
 class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    members = GroupMemberField(many=True)
+    # members = ResourceRelatedField(
+    #     queryset=Member.objects.filter(status=33),
+    #     many=True
+    # )
 
     class Meta:
         model = Group
@@ -403,7 +409,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'division',
             'chapter',
             'parent',
-            # 'children',
+            'children',
             'entries',
             # 'members',
             'tree_sort',
