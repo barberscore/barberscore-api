@@ -14,7 +14,7 @@ class HumanManager(Manager):
             )
         if cursor:
             humans = humans.filter(
-                updated_ts__gt=cursor,
+                modified__gt=cursor,
             )
         # Return as objects
         humans = humans.values_list(
@@ -71,7 +71,7 @@ class StructureManager(Manager):
             )
         if cursor:
             structures = structures.filter(
-                updated_ts__gt=cursor,
+                modified__gt=cursor,
             )
         # Return as objects
         structures = structures.select_related(
@@ -182,7 +182,7 @@ class JoinManager(Manager):
         # Order and Return as objects
         joins = joins.order_by(
             'established_date',
-            'updated_ts',
+            'modified',
         ).values_list(
             'id',
             'structure__id',

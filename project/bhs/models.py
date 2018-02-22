@@ -73,12 +73,12 @@ class Human(models.Model):
         editable=False,
     )
 
-    created_ts = models.DateTimeField(
+    created = models.DateTimeField(
         db_column='created',
         null=False,
         editable=False,
     )
-    updated_ts = models.DateTimeField(
+    modified = models.DateTimeField(
         db_column='updated',
         null=True,
         editable=False,
@@ -202,11 +202,11 @@ class Structure(models.Model):
     established_date = models.DateField(
         editable=False,
     )
-    created_ts = models.DateTimeField(
+    created = models.DateTimeField(
         db_column='created',
         editable=False,
     )
-    updated_ts = models.DateTimeField(
+    modified = models.DateTimeField(
         db_column='updated',
         editable=False,
     )
@@ -287,11 +287,11 @@ class Membership(models.Model):
         editable=False,
     )
 
-    created_ts = models.DateTimeField(
+    created = models.DateTimeField(
         db_column='created',
         editable=False,
     )
-    updated_ts = models.DateTimeField(
+    modified = models.DateTimeField(
         db_column='modified',
         editable=False,
     )
@@ -339,12 +339,12 @@ class Subscription(models.Model):
     items_editable = models.BooleanField(
         editable=False,
     )
-    created_ts = models.DateTimeField(
+    created = models.DateTimeField(
         db_column='created',
         null=False,
         editable=False,
     )
-    updated_ts = models.DateTimeField(
+    modified = models.DateTimeField(
         db_column='updated',
         null=True,
         editable=False,
@@ -451,7 +451,7 @@ class Join(models.Model):
         db_column='inactive_reason',
         editable=False,
     )
-    updated_ts = models.DateTimeField(
+    modified = models.DateTimeField(
         db_column='modified',
         null=True,
         editable=False,

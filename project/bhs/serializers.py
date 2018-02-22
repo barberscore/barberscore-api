@@ -32,8 +32,8 @@ class HumanSerializer(serializers.ModelSerializer):
             'sex',
             'primary_voice_part',
             'full_name',
-            'created_ts',
-            'updated_ts',
+            'created',
+            'modified',
         )
 
 
@@ -59,7 +59,7 @@ class StructureSerializer(serializers.ModelSerializer):
             'phone',
             'email',
             'established_date',
-            'created_ts',
-            'updated_ts',
+            'created',
+            'modified',
             'parent',
         )

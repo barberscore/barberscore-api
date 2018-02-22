@@ -53,8 +53,8 @@ class HumanAdmin(ReadOnlyAdmin):
         'birth_date',
         'sex',
         'primary_voice_part',
-        'created_ts',
-        'updated_ts',
+        'created',
+        'modified',
     ]
 
     list_display = [
@@ -72,8 +72,8 @@ class HumanAdmin(ReadOnlyAdmin):
         'birth_date',
         'sex',
         'primary_voice_part',
-        'created_ts',
-        'updated_ts',
+        'created',
+        'modified',
     ]
 
     readonly_fields = [
@@ -91,8 +91,8 @@ class HumanAdmin(ReadOnlyAdmin):
         'birth_date',
         'sex',
         'primary_voice_part',
-        'created_ts',
-        'updated_ts',
+        'created',
+        'modified',
     ]
 
     list_filter = [
@@ -137,8 +137,8 @@ class StructureAdmin(ReadOnlyAdmin):
         'established_date',
         'status',
         'parent',
-        'created_ts',
-        'updated_ts',
+        'created',
+        'modified',
     ]
 
     list_display = [
@@ -154,8 +154,8 @@ class StructureAdmin(ReadOnlyAdmin):
         'established_date',
         'status',
         'parent',
-        'created_ts',
-        'updated_ts',
+        'created',
+        'modified',
     ]
 
     readonly_fields = [
@@ -174,8 +174,8 @@ class StructureAdmin(ReadOnlyAdmin):
         'established_date',
         'status',
         'parent',
-        'created_ts',
-        'updated_ts',
+        'created',
+        'modified',
     ]
 
     list_filter = [
@@ -195,7 +195,7 @@ class StructureAdmin(ReadOnlyAdmin):
     ]
 
     ordering = (
-        '-created_ts',
+        '-created',
     )
 
     INLINES = {
@@ -244,16 +244,16 @@ class MembershipAdmin(ReadOnlyAdmin):
         'structure',
         'code',
         'status',
-        'created_ts',
-        'updated_ts',
+        'created',
+        'modified',
     ]
 
     list_display = [
         'structure',
         'code',
         'status',
-        'created_ts',
-        'updated_ts',
+        'created',
+        'modified',
     ]
 
     list_select_related = [
@@ -270,8 +270,8 @@ class MembershipAdmin(ReadOnlyAdmin):
         'structure',
         'code',
         'status',
-        'created_ts',
-        'updated_ts',
+        'created',
+        'modified',
     ]
 
     inlines = [
@@ -313,8 +313,8 @@ class SubscriptionAdmin(ReadOnlyAdmin):
         'items_editable',
         'current_through',
         'status',
-        'created_ts',
-        'updated_ts',
+        'created',
+        'modified',
     ]
 
     list_display = [
@@ -322,8 +322,8 @@ class SubscriptionAdmin(ReadOnlyAdmin):
         'items_editable',
         'current_through',
         'status',
-        'created_ts',
-        'updated_ts',
+        'created',
+        'modified',
     ]
 
     readonly_fields = [
@@ -331,8 +331,8 @@ class SubscriptionAdmin(ReadOnlyAdmin):
         'items_editable',
         'current_through',
         'status',
-        'created_ts',
-        'updated_ts',
+        'created',
+        'modified',
     ]
 
     list_filter = [
@@ -414,7 +414,7 @@ class JoinAdmin(ReadOnlyAdmin):
         'established_date',
         'inactive_date',
         'inactive_reason',
-        'updated_ts',
+        'modified',
     ]
 
     list_display = [
@@ -426,7 +426,7 @@ class JoinAdmin(ReadOnlyAdmin):
         'inactive_date',
         'inactive_reason',
         'established_date',
-        'updated_ts',
+        'modified',
     ]
 
     list_select_related = [
@@ -442,7 +442,7 @@ class JoinAdmin(ReadOnlyAdmin):
         'inactive_date',
         'inactive_reason',
         'established_date',
-        'updated_ts',
+        'modified',
     ]
 
     list_display_links = [
