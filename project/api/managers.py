@@ -413,7 +413,8 @@ class MemberManager(Manager):
                 raise ValueError('Unknown status')
             person.save()
         # Transition the officer and save record if quartet
-        if group.kind == group.KIND.quartet:
+        # Ensure Officer has email.
+        if group.kind == group.KIND.quartet and person.email:
             # Transition as appropriate
             Office = apps.get_model('api.office')
             Officer = apps.get_model('api.officer')
