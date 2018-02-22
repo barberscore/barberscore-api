@@ -103,7 +103,7 @@ class OfficeListFilter(admin.SimpleListFilter):
 
 class DistrictListFilter(admin.SimpleListFilter):
     title = 'district'
-    parameter_name = 'district'
+    parameter_name = 'code'
 
     def lookups(self, request, model_admin):
         districts = Group.objects.filter(
@@ -114,11 +114,11 @@ class DistrictListFilter(admin.SimpleListFilter):
             ]
         ).order_by(
             'tree_sort',
-        ).values_list('id', 'code')
+        ).values_list('code', 'code')
         return districts
 
     def queryset(self, request, queryset):
-        district = request.GET.get('district')
+        district = request.GET.get('code')
         if district:
             return queryset.filter(district=district)
         return queryset
@@ -133,7 +133,7 @@ class DivisionListFilter(admin.SimpleListFilter):
             kind=Group.KIND.division,
         ).order_by(
             'tree_sort',
-        ).values_list('id', 'name')
+        ).values_list('code', 'name')
         return divisions
 
     def queryset(self, request, queryset):
@@ -390,6 +390,9 @@ class GroupFilter(FilterSet):
                 'lte',
             ],
             'gender': [
+                'exact',
+            ],
+            'code': [
                 'exact',
             ],
             'parent': [
