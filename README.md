@@ -6,18 +6,18 @@ This is the back-end API that powers the new scoring system for the Barbershop H
 
 This API is based on Django and the Django Rest Framework.  Here are the basics to set up your local environment.
 
-Clone the repo.
+Clone the repo (assumes `git` is being used).
 
-Install the core dependencies:
-  - Python 3.6.x
-  - PostgreSQL 10.x
-  - MySQL 5.7.x
-  - Redis 4.0.x
-  - Pipenv 9.1.x
+Install the core dependencies (all are latest versions):
+    - Python 3
+    - PostgreSQL
+    - MySQL
+    - Redis
+    - Pipenv
 
 Use `pipenv` to install python dependencies.
 ```
-pipenv install --dev
+pipenv sync --dev
 ```
 
 
@@ -46,9 +46,9 @@ WKHTMLTOPDF_PATH=/usr/local/bin/wkhtmltopdf (or your path)
 ```
 
 Next, set up your local environment:
-  - Create local database.
-  - Run `django-admin migrate`.
-  - Run `django-admin seed_data`.
-  - Go to localhost and login with `admin@barberscore.com/password`.
+    - `createdb barberscore`
+    - Run `django-admin migrate`.
+    - Run `django-admin seed_data`.
+    - Go to http://localhost:8000 and login with `admin@barberscore.com/password`.
 
 If you have any questions let us know at admin@barberscore.com!
