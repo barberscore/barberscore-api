@@ -255,9 +255,9 @@
         },
         "djangorestframework-csv": {
             "hashes": [
-                "sha256:641feb000d622cec2113005988c03c9a9ba7ec31e1f422f16b098e2a42f4cc8d"
+                "sha256:2f008b20a44f2d3c37835ea5b5ddfe19f54394f07b9cb267c616a917a7f7e27c"
             ],
-            "version": "==2.0.0"
+            "version": "==2.1.0"
         },
         "djangorestframework-jsonapi": {
             "hashes": [
@@ -846,10 +846,10 @@
         },
         "text-unidecode": {
             "hashes": [
-                "sha256:02efd86b9c0f489f858d8cead62e94d3760dab444054b258734716f7602330a3",
-                "sha256:d0afd5e8a7ac69bfb1372e1bbfa3c63c22e3db8ae1284690e96b45c4430d08d0"
+                "sha256:801e38bd550b943563660a91de8d4b6fa5df60a542be9093f7abf819f86050cc",
+                "sha256:5a1375bb2ba7968740508ae38d92e1f889a0832913cb1c447d5e2046061a396d"
             ],
-            "version": "==1.1"
+            "version": "==1.2"
         },
         "wrapt": {
             "hashes": [
