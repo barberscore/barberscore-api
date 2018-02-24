@@ -409,16 +409,16 @@ class Role(models.Model):
         on_delete=models.CASCADE,
     )
 
-    # created = models.DateTimeField(
-    #     db_column='created',
-    #     null=False,
-    #     editable=False,
-    # )
-    # modified = models.DateTimeField(
-    #     db_column='updated',
-    #     null=True,
-    #     editable=False,
-    # )
+    created = models.DateTimeField(
+        db_column='created',
+        null=False,
+        editable=False,
+    )
+    modified = models.DateTimeField(
+        db_column='updated',
+        null=True,
+        editable=False,
+    )
 
     objects = RoleManager()
 
@@ -462,11 +462,11 @@ class Join(models.Model):
         db_column='inactive_reason',
         editable=False,
     )
-    # created = models.DateTimeField(
-    #     db_column='created_ts',
-    #     null=False,
-    #     editable=False,
-    # )
+    created = models.DateTimeField(
+        db_column='created_on',
+        null=False,
+        editable=False,
+    )
     modified = models.DateTimeField(
         db_column='modified',
         null=True,
@@ -506,5 +506,5 @@ class Join(models.Model):
 
     class Meta:
         db_table = 'vwSubscriptions_Memberships'
-        verbose_name = 'SM Join'
-        verbose_name_plural = 'SM Joins'
+        verbose_name = 'Join'
+        verbose_name_plural = 'Joins'

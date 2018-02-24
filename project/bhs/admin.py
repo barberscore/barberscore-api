@@ -363,6 +363,8 @@ class RoleAdmin(ReadOnlyAdmin):
         'end_date',
         'abbv',
         'officer_roles_id',
+        'created',
+        'modified',
     ]
 
     list_display = [
@@ -372,7 +374,8 @@ class RoleAdmin(ReadOnlyAdmin):
         'start_date',
         'end_date',
         'abbv',
-        'officer_roles_id',
+        'created',
+        'modified',
     ]
 
     list_select_related = [
@@ -391,6 +394,8 @@ class RoleAdmin(ReadOnlyAdmin):
         'end_date',
         'abbv',
         'officer_roles_id',
+        'created',
+        'modified',
     ]
 
     ordering = (
@@ -414,6 +419,7 @@ class JoinAdmin(ReadOnlyAdmin):
         'established_date',
         'inactive_date',
         'inactive_reason',
+        'created',
         'modified',
     ]
 
@@ -426,6 +432,7 @@ class JoinAdmin(ReadOnlyAdmin):
         'inactive_date',
         'inactive_reason',
         'established_date',
+        'created',
         'modified',
     ]
 
@@ -442,6 +449,7 @@ class JoinAdmin(ReadOnlyAdmin):
         'inactive_date',
         'inactive_reason',
         'established_date',
+        'created',
         'modified',
     ]
 
