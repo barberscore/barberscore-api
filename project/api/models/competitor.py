@@ -166,7 +166,9 @@ class Competitor(TimeStampedModel):
 
     entry = models.OneToOneField(
         'Entry',
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     # Internals
