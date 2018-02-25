@@ -568,6 +568,12 @@ class SessionFilter(FilterSet):
         distinct=True,
     )
 
+    convention__status = NumberFilter(
+        field_name='convention__status',
+        lookup_expr='exact',
+        distinct=True,
+    )
+
     convention__assignments__kind = NumberFilter(
         field_name='convention__assignments__kind',
         lookup_expr='exact',

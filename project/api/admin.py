@@ -119,7 +119,10 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Assignment)
-class AssignmentAdmin(admin.ModelAdmin):
+class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
     save_on_top = True
     fields = [
         'status',
@@ -160,6 +163,9 @@ class AssignmentAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
+    ]
+    inlines = [
+        StateLogInline,
     ]
 
 
