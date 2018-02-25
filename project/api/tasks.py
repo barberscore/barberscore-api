@@ -226,21 +226,21 @@ def create_drcj_report(session):
     fieldnames = [
         'OA',
         'Group Name',
-        'Eepresenting',
+        'Representing',
         'Evaluation?',
         'Keep Private?',
         'BHS ID',
         'Group Status',
         'Repertory Count',
-        'Estimated MoS',
+        'Estimated MOS',
         'Members Expiring',
         'Tenor',
         'Lead',
         'Baritone',
         'Bass',
         'Director(s)',
-        'Awards',
-        'Chapters',
+        'Award(s)',
+        'Chapter(s)',
     ]
     ws.append(fieldnames)
     entries = session.entries.filter(
@@ -319,8 +319,11 @@ def create_drcj_report(session):
                 flat=True
             )
             chapters = "\n".join(cs)
-        else:
-            chapters = None
+        elif entry.group.kind == entry.group.KIND.chorus:
+            try:
+                chapters = entry.group.parent.name
+            except AttributeError:
+                chapters = None
         row = [
             oa,
             group_name,
