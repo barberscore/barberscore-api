@@ -12,12 +12,9 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 # Django
-from django.apps import apps as api_apps
 from django.contrib.postgres.fields import FloatRangeField
 from django.contrib.postgres.fields import IntegerRangeField
 from django.db import models
-
-config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 
@@ -84,7 +81,6 @@ class Award(TimeStampedModel):
         (10, 'championship', "Championship"),
         (20, 'award', "Award"),
         (30, 'qualifier', "Qualifier"),
-        (40, 'sentinel', "Sentinel"),
     )
 
     level = models.IntegerField(
