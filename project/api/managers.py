@@ -202,7 +202,10 @@ class GroupManager(Manager):
                 elif key == 'kind':
                     diff[key] = self.model.KIND[value]
                 elif key == 'mem_status':
-                    diff[key] = self.model.MEM_STATUS[value]
+                    try:
+                        diff[key] = self.model.MEM_STATUS[value]
+                    except KeyError:
+                        diff[key] = None
                 else:
                     diff[key] = value
 
