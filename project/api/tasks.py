@@ -228,7 +228,7 @@ def create_drcj_report(session):
         'Group Name',
         'Representing',
         'Evaluation?',
-        'Keep Private?',
+        'Score/Eval-Only?',
         'BHS ID',
         'Group Status',
         'Repertory Count',
