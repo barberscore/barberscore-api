@@ -16,14 +16,16 @@ Session: {{entry.session.nomen|safe}}
 
 Requested Evaluation: {{entry.is_evaluation|yesno|title}}
 
-Keep Scores Private: {{entry.is_private|yesno|title}}
+Score/Eval-Only: {{entry.is_private|yesno|title}}
 
+{% if not is_private %}
 Contests Selected:
 {% for contestant in contestants %}
     - {{contestant.contest.award.name}}
 {% empty %}
     Not competing for any awards.
 {% endfor %}
+{% endif %}
 {% if entry.group.kind == entry.group.KIND.chorus %}
 Director(s): {{entry.directors|safe|default:"(No Director Specified)"}}
 
