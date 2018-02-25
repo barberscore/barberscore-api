@@ -192,6 +192,7 @@ class GroupManager(Manager):
             else:
                 parent = self.get(mc_pk=parent)
             group.parent = parent
+            group.save()
 
         # Build the diff from prior to new
         diff = {}
