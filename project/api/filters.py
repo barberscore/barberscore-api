@@ -35,18 +35,60 @@ class MCListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ('MC', 'Yes'),
-            ('NotMC', 'No'),
+            ('Yes', 'Yes'),
+            ('No', 'No'),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == 'MC':
+        if self.value() == 'Yes':
             return queryset.filter(
                 mc_pk__isnull=False,
             )
-        if self.value() == 'NotMC':
+        if self.value() == 'No':
             return queryset.filter(
                 mc_pk__isnull=True,
+            )
+
+
+class ConventionActiveListFilter(admin.SimpleListFilter):
+    title = 'Convention Active'
+    parameter_name = 'is_active'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('Yes', 'Yes'),
+            ('No', 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'Yes':
+            return queryset.filter(
+                convention__status=Convention.STATUS.active,
+            )
+        if self.value() == 'No':
+            return queryset.filter(
+                convention__status=Convention.STATUS.inactive,
+            )
+
+
+class SessionActiveListFilter(admin.SimpleListFilter):
+    title = 'Convention Active'
+    parameter_name = 'is_active'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('Yes', 'Yes'),
+            ('No', 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'Yes':
+            return queryset.filter(
+                session__convention__status=Convention.STATUS.active,
+            )
+        if self.value() == 'No':
+            return queryset.filter(
+                session__convention__status=Convention.STATUS.inactive,
             )
 
 
