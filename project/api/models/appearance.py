@@ -13,7 +13,6 @@ from model_utils.models import TimeStampedModel
 
 # Django
 from django.db import models
-from django.utils.html import format_html
 from django.utils.timezone import now
 from django.utils.text import slugify
 
@@ -164,6 +163,11 @@ class Appearance(TimeStampedModel):
     )
 
     # Appearance Internals
+    class Meta:
+        unique_together = (
+            ('round', 'competitor',),
+        )
+
     class JSONAPIMeta:
         resource_name = "appearance"
 

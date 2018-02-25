@@ -160,6 +160,11 @@ class Member(TimeStampedModel):
         db_index=True,
     )
 
+    # Properties
+    @property
+    def is_mc(self):
+        return bool(self.mc_pk)
+
     # FKs
     group = models.ForeignKey(
         'Group',
@@ -172,11 +177,6 @@ class Member(TimeStampedModel):
         related_name='members',
         on_delete=models.CASCADE,
     )
-
-    # Properties
-    @property
-    def is_mc(self):
-        return bool(self.mc_pk)
 
     # Internals
     objects = MemberManager()

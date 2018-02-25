@@ -147,7 +147,8 @@ class DistrictListFilter(admin.SimpleListFilter):
                 Group.KIND.district,
                 Group.KIND.noncomp,
                 Group.KIND.affiliate
-            ]
+            ],
+            status=Group.STATUS.active,
         ).order_by(
             'tree_sort',
         ).values_list('code', 'code')
@@ -167,6 +168,7 @@ class DivisionListFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         divisions = Group.objects.filter(
             kind=Group.KIND.division,
+            status=Group.STATUS.active,
         ).order_by(
             'tree_sort',
         ).values_list('name', 'name')

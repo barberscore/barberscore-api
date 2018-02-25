@@ -50,11 +50,14 @@ class Grantor(TimeStampedModel):
 
     group = models.ForeignKey(
         'Group',
-        null=True,
-        blank=True,
         related_name='grantors',
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
+
+    class Meta:
+        unique_together = (
+            ('convention', 'group',),
+        )
 
     class JSONAPIMeta:
         resource_name = "grantor"

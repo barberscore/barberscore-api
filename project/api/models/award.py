@@ -253,9 +253,7 @@ class Award(TimeStampedModel):
     group = models.ForeignKey(
         'Group',
         related_name='awards',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
 
     parent = models.ForeignKey(

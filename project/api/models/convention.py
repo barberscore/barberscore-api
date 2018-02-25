@@ -130,10 +130,8 @@ class Convention(TimeStampedModel):
 
     group = models.ForeignKey(
         'Group',
-        null=True,
-        blank=True,
         related_name='conventions',
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
 
     # Internals
