@@ -692,11 +692,11 @@ class Command(BaseCommand):
         # SCJC BREAKPOINT
 
         # Contests created via signal.
-        international_midwinter_convention.publish()
+        international_midwinter_convention.activate()
         international_midwinter_convention.save()
-        district_alpha_fall_convention.publish()
+        district_alpha_fall_convention.activate()
         district_alpha_fall_convention.save()
-        district_alpha_spring_convention.publish()
+        district_alpha_spring_convention.activate()
         district_alpha_spring_convention.save()
 
         # Open sessions

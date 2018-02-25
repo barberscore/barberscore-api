@@ -40,8 +40,9 @@ class Convention(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
-        (2, 'published', 'Published',),
+        (10, 'active', 'Active',),
     )
 
     status = FSMIntegerField(
@@ -185,7 +186,7 @@ class Convention(TimeStampedModel):
         ])
 
     # Convention Transition Conditions
-    def can_publish_convention(self):
+    def can_activate_convention(self):
         if any([
             not self.open_date,
             not self.close_date,
@@ -210,9 +211,19 @@ class Convention(TimeStampedModel):
     @transition(
         field=status,
         source='*',
-        target=STATUS.published,
-        conditions=[can_publish_convention],
+        target=STATUS.active,
+        conditions=[can_activate_convention],
     )
-    def publish(self, *args, **kwargs):
+    def activate(self, *args, **kwargs):
         """Publish convention and related sessions."""
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.inactive,
+    )
+    def deactivate(self, *args, **kwargs):
+        """Archive convention and related sessions."""
         return
