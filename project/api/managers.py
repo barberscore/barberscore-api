@@ -61,7 +61,7 @@ class GroupManager(Manager):
             chorus_name = structure.chorus_name
             status = structure.status.name
             kind = structure.kind
-            start_date = structure.start_date
+            start_date = structure.established_date
             email = structure.email
             phone = structure.phone
             website = structure.website
@@ -224,6 +224,8 @@ class GroupManager(Manager):
             group.deactivate(
                 description=description,
             )
+        elif status == self.model.STATUS.aic:
+            pass
         else:
             raise ValueError('Unknown status')
 
