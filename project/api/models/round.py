@@ -329,7 +329,7 @@ class Round(TimeStampedModel):
     #             e.complete()
     #             e.save()
     #         for assignment in self.session.convention.assignments.filter(
-    #             status=Assignment.STATUS.confirmed,
+    #             status=Assignment.STATUS.active,
     #         ):
     #             round.panelists.create(
     #                 kind=assignment.kind,

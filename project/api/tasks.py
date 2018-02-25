@@ -631,7 +631,7 @@ def send_session(template, context):
     assignments = Assignment.objects.filter(
         convention=session.convention,
         category=Assignment.CATEGORY.drcj,
-        status=Assignment.STATUS.confirmed,
+        status=Assignment.STATUS.active,
     ).exclude(person__email=None)
     to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
     bcc = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
@@ -658,7 +658,7 @@ def send_session_reports(template, context):
     assignments = Assignment.objects.filter(
         convention=session.convention,
         category__lte=Assignment.CATEGORY.ca,
-        status=Assignment.STATUS.confirmed,
+        status=Assignment.STATUS.active,
     ).exclude(person__email=None)
     to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
     bcc = [

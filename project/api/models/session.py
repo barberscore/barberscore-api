@@ -421,7 +421,7 @@ class Session(TimeStampedModel):
             # )
         # set the panel
         for assignment in self.convention.assignments.filter(
-            status=self.convention.assignments.model.STATUS.confirmed,
+            status=self.convention.assignments.model.STATUS.active,
             category__gt=self.convention.assignments.model.CATEGORY.ca,
         ):
             for round in self.rounds.all():

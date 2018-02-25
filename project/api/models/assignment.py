@@ -33,9 +33,9 @@ class Assignment(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-10, 'withdrawn', 'withdrawn',),
+        (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
-        (10, 'confirmed', 'Confirmed',),
+        (10, 'active', 'Active',),
     )
 
     status = FSMIntegerField(
@@ -128,13 +128,13 @@ class Assignment(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.confirmed)
-    def confirm(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, *args, **kwargs):
         """Activate the Assignment."""
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.withdrawn)
-    def withdraw(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, *args, **kwargs):
         """Withdraw the Assignment."""
         return
