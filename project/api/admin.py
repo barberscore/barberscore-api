@@ -9,6 +9,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group as AuthGroup
 
 # Local
+from .filters import OrphanListFilter
 from .filters import MCListFilter
 from .filters import ConventionStatusListFilter
 from .filters import SessionConventionStatusListFilter
@@ -651,6 +652,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
+        OrphanListFilter,
         MCListFilter,
         'kind',
         'gender',

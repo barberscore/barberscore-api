@@ -29,6 +29,29 @@ from .models import Session
 from .models import Venue
 
 
+class OrphanListFilter(admin.SimpleListFilter):
+    title = 'orphan'
+    parameter_name = 'is_orphan'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('Yes', 'Yes'),
+            ('No', 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'Yes':
+            return queryset.filter(
+                parent__isnull=True,
+            ).exclude(
+                bhs_id=1,
+            )
+        if self.value() == 'No':
+            return queryset.filter(
+                parent__isnull=False,
+            )
+
+
 class MCListFilter(admin.SimpleListFilter):
     title = 'Member Center'
     parameter_name = 'is_mc'
