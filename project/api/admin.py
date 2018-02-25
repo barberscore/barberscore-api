@@ -373,7 +373,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = (
         'name',
         'status',
-        'is_archived',
         'group',
         'year',
         'season',
@@ -395,7 +394,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_filter = (
-        'is_archived',
         'status',
         'season',
         ConventionGroupListFilter,
@@ -445,7 +443,6 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     fields = (
         'status',
-        'is_archived',
         'session',
         'group',
         'rank',
@@ -461,7 +458,6 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_filter = [
-        'is_archived',
         'status',
         'session__kind',
         'session__convention__season',
@@ -504,7 +500,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = (
         'id',
         'status',
-        'is_archived',
         'session',
         'group',
         'representing',
@@ -526,7 +521,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_filter = [
-        'is_archived',
         'status',
         'session__kind',
         'session__convention__season',
@@ -1170,7 +1164,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         # 'name',
         'status',
-        'is_archived',
         ('session', 'kind', 'num'),
         'ors_report_new',
 
@@ -1182,7 +1175,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_filter = [
-        'is_archived',
         'status',
         'session__kind',
         'session__convention__season',
@@ -1269,7 +1261,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        'is_archived',
         'convention',
         'kind',
         'gender',
@@ -1294,7 +1285,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_filter = (
-        'is_archived',
         'status',
         'kind',
         'gender',

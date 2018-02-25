@@ -66,10 +66,6 @@ class Competitor(TimeStampedModel):
         default=STATUS.new,
     )
 
-    is_archived = models.BooleanField(
-        default=False,
-    )
-
     img = CloudinaryRenameField(
         'image',
         null=True,

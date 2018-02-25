@@ -153,7 +153,6 @@ class ConventionFactory(DjangoModelFactory):
 
 class CompetitorFactory(DjangoModelFactory):
     status = Competitor.STATUS.new
-    is_archived = False
     image = ''
     session = SubFactory('api.factories.SessionFactory')
     group = SubFactory('api.factories.GroupFactory')
@@ -164,7 +163,6 @@ class CompetitorFactory(DjangoModelFactory):
 
 class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
-    is_archived = False
     is_evaluation = True
     is_private = False
     session = SubFactory('api.factories.SessionFactory')
@@ -341,7 +339,6 @@ class ScoreFactory(DjangoModelFactory):
 
 class SessionFactory(DjangoModelFactory):
     status = Session.STATUS.new
-    is_archived = False
     kind = Session.KIND.quartet
     is_invitational = False
     num_rounds = 2

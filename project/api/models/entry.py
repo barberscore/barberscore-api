@@ -49,10 +49,6 @@ class Entry(TimeStampedModel):
         default=STATUS.new,
     )
 
-    is_archived = models.BooleanField(
-        default=False,
-    )
-
     is_evaluation = models.BooleanField(
         help_text="""
             Entry requests evaluation.""",

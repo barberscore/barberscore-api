@@ -222,7 +222,7 @@ class AssignmentFilter(FilterSet):
             'person__user': [
                 'exact',
             ],
-            'convention__is_archived': [
+            'convention__status': [
                 'exact',
             ],
             'category': [
@@ -340,9 +340,6 @@ class CompetitorFilter(FilterSet):
             'nomen': [
                 'icontains',
             ],
-            'is_archived': [
-                'exact',
-            ],
         }
 
 
@@ -352,9 +349,6 @@ class EntryFilter(FilterSet):
         fields = {
             'nomen': [
                 'icontains',
-            ],
-            'is_archived': [
-                'exact',
             ],
         }
 
@@ -573,7 +567,6 @@ class SessionFilter(FilterSet):
         fields = [
             'status',
             'status__lt',
-            'is_archived',
             'kind',
             'gender',
             'convention',

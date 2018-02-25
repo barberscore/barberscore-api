@@ -61,10 +61,6 @@ class Round(TimeStampedModel):
         default=STATUS.new,
     )
 
-    is_archived = models.BooleanField(
-        default=False,
-    )
-
     KIND = Choices(
         (1, 'finals', 'Finals'),
         (2, 'semis', 'Semi-Finals'),

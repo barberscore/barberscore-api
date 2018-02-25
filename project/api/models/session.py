@@ -97,10 +97,6 @@ class Session(TimeStampedModel):
         default=STATUS.new,
     )
 
-    is_archived = models.BooleanField(
-        default=False,
-    )
-
     KIND = Choices(
         (32, 'chorus', "Chorus"),
         (41, 'quartet', "Quartet"),

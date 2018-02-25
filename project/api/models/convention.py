@@ -51,10 +51,6 @@ class Convention(TimeStampedModel):
         default=STATUS.new,
     )
 
-    is_archived = models.BooleanField(
-        default=False,
-    )
-
     SEASON = Choices(
         (1, 'summer', 'Summer',),
         (2, 'midwinter', 'Midwinter',),
