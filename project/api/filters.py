@@ -50,46 +50,40 @@ class MCListFilter(admin.SimpleListFilter):
             )
 
 
-class ConventionActiveListFilter(admin.SimpleListFilter):
-    title = 'Convention Active'
-    parameter_name = 'is_active'
+class ConventionStatusListFilter(admin.SimpleListFilter):
+    title = 'Convention Status'
+    parameter_name = 'convention_status'
 
     def lookups(self, request, model_admin):
         return (
-            ('Yes', 'Yes'),
-            ('No', 'No'),
+            (-10, 'Inactive'),
+            (0, 'New'),
+            (10, 'Active'),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == 'Yes':
-            return queryset.filter(
-                convention__status=Convention.STATUS.active,
-            )
-        if self.value() == 'No':
-            return queryset.filter(
-                convention__status=Convention.STATUS.inactive,
-            )
+        status = self.value()
+        return queryset.filter(
+            convention__status=status,
+        )
 
 
-class SessionActiveListFilter(admin.SimpleListFilter):
-    title = 'Convention Active'
-    parameter_name = 'is_active'
+class SessionConventionStatusListFilter(admin.SimpleListFilter):
+    title = 'Convention Status'
+    parameter_name = 'convention_status'
 
     def lookups(self, request, model_admin):
         return (
-            ('Yes', 'Yes'),
-            ('No', 'No'),
+            (-10, 'Inactive'),
+            (0, 'New'),
+            (10, 'Active'),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == 'Yes':
-            return queryset.filter(
-                session__convention__status=Convention.STATUS.active,
-            )
-        if self.value() == 'No':
-            return queryset.filter(
-                session__convention__status=Convention.STATUS.inactive,
-            )
+        status = self.value()
+        return queryset.filter(
+            session__convention__status=status,
+        )
 
 
 class AccountListFilter(admin.SimpleListFilter):

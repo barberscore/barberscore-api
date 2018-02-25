@@ -10,8 +10,8 @@ from django.contrib.auth.models import Group as AuthGroup
 
 # Local
 from .filters import MCListFilter
-from .filters import ConventionActiveListFilter
-from .filters import SessionActiveListFilter
+from .filters import ConventionStatusListFilter
+from .filters import SessionConventionStatusListFilter
 from .filters import AccountListFilter
 from .filters import OfficeListFilter
 from .filters import ConventionGroupListFilter
@@ -460,7 +460,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_filter = [
-        SessionActiveListFilter,
+        SessionConventionStatusListFilter,
         'status',
         'session__kind',
         'session__convention__season',
@@ -524,7 +524,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_filter = [
-        SessionActiveListFilter,
+        SessionConventionStatusListFilter,
         'status',
         'session__kind',
         'session__convention__season',
@@ -1179,7 +1179,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_filter = [
-        SessionActiveListFilter,
+        SessionConventionStatusListFilter,
         'status',
         'session__kind',
         'session__convention__season',
@@ -1290,7 +1290,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_filter = (
-        ConventionActiveListFilter,
+        ConventionStatusListFilter,
         'status',
         'kind',
         'gender',
