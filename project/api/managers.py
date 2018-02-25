@@ -152,6 +152,7 @@ class GroupManager(Manager):
         }
         group, created = self.get_or_create(
             mc_pk=mc_pk,
+            kind=kind,
         )
 
         # set prior values
