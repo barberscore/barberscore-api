@@ -207,6 +207,8 @@ class GroupManager(Manager):
                         diff[key] = self.model.MEM_STATUS[value]
                     except KeyError:
                         diff[key] = None
+                elif key == 'start_date':
+                    diff[key] = value.strftime('%Y-%d-%m')
                 else:
                     diff[key] = value
 
