@@ -798,6 +798,7 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'established_date',
         'mem_code',
         'mem_status',
+        'created',
     ]
     list_display = [
         'status',
@@ -805,6 +806,7 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'person',
         'group',
         'part',
+        'created',
     ]
     readonly_fields = [
         'id',
@@ -840,6 +842,7 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'established_date',
         'mem_code',
         'mem_status',
+        'created',
     ]
     list_select_related = [
         'person',
