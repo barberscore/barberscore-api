@@ -208,7 +208,10 @@ class GroupManager(Manager):
                     except KeyError:
                         diff[key] = None
                 elif key == 'start_date':
-                    diff[key] = value.strftime('%Y-%d-%m')
+                    try:
+                        diff[key] = value.strftime('%Y-%d-%m')
+                    except AttributeError:
+                        diff[key] = None
                 else:
                     diff[key] = value
 
