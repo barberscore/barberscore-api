@@ -36,19 +36,25 @@ class OrphanListFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         return (
             ('Yes', 'Yes'),
-            ('No', 'No'),
         )
 
     def queryset(self, request, queryset):
         if self.value() == 'Yes':
-            return queryset.filter(
-                parent__isnull=True,
-            ).exclude(
-                bhs_id=1,
-            )
-        if self.value() == 'No':
-            return queryset.filter(
-                parent__isnull=False,
+            return queryset.Group.objects.filter(
+                kind__in=[
+                    Group.KIND.quartet,
+                    Group.KIND.chorus,
+                    Group.KIND.chapter,
+                ],
+                parent__code__in=[
+                    'EVG',
+                    'FWD',
+                    'LOL',
+                    'MAD'
+                    'NED',
+                    'SWD',
+                ],
+                status=Group.STATUS.active,
             )
 
 
