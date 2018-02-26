@@ -11,7 +11,6 @@ from model_utils.models import TimeStampedModel
 
 
 # Django
-from django.apps import apps as api_apps
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
@@ -26,8 +25,6 @@ from django_fsm_log.decorators import fsm_log_description
 from api.fields import CloudinaryRenameField
 from api.managers import PersonManager
 from api.storages import CustomMediaCloudinaryStorage
-
-bhs = api_apps.get_app_config('bhs')
 
 log = logging.getLogger(__name__)
 

@@ -388,6 +388,7 @@ class UserFactory(DjangoModelFactory):
     status = User.STATUS.active
     email = Sequence(lambda x: '{0:#}@barberscore.com'.format(x))
     password = PostGenerationMethodCall('set_password', 'password')
+    person = SubFactory('api.factories.PersonFactory')
     is_staff = False
 
     class Meta:
