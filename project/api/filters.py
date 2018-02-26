@@ -40,7 +40,7 @@ class OrphanListFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'Yes':
-            return queryset.Group.objects.filter(
+            return queryset.filter(
                 kind__in=[
                     Group.KIND.quartet,
                     Group.KIND.chorus,
@@ -54,7 +54,7 @@ class OrphanListFilter(admin.SimpleListFilter):
                     'NED',
                     'SWD',
                 ],
-                status=Group.STATUS.active,
+                # status=Group.STATUS.active,
             )
 
 
