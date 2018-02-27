@@ -11,6 +11,7 @@ from django.contrib.auth.models import Group as AuthGroup
 # Local
 from .filters import OrphanListFilter
 from .filters import MCListFilter
+from .filters import MCUserListFilter
 from .filters import ConventionStatusListFilter
 from .filters import SessionConventionStatusListFilter
 from .filters import AccountListFilter
@@ -1442,6 +1443,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         'is_staff',
         'account_id',
         'status',
+        'is_mc',
     ]
 
     # list_editable = [
@@ -1463,6 +1465,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     list_filter = (
         'status',
         'is_staff',
+        MCUserListFilter,
         AccountListFilter,
     )
 
@@ -1475,6 +1478,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
                 'email',
                 'person',
                 'account_id',
+                'is_mc',
                 'is_staff',
                 'is_group_manager',
                 'is_session_manager',
@@ -1503,10 +1507,18 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         'id',
         # 'email',
         # 'account_id',
+        'is_mc',
         'is_group_manager',
         'is_session_manager',
         'is_scoring_manager',
     ]
+
+    def is_mc(self, instance):
+        return instance.person.is_mc
+    is_mc.boolean = True
+    is_mc.short_description = 'Is Member Center'
+
+
 
 
 admin.site.unregister(AuthGroup)
