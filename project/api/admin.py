@@ -819,6 +819,7 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'established_date',
         'mem_code',
         'mem_status',
+        'created',
     ]
 
     autocomplete_fields = [

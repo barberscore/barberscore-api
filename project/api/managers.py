@@ -72,7 +72,7 @@ class GroupManager(Manager):
             code = structure.chapter_code
 
         # Transform as needed
-        name = raw_name.strip()
+        name = raw_name.strip() if raw_name else ''
         preferred_name = "{0} (NAME APPROVAL PENDING)".format(preferred_name) if preferred_name else ''
         chorus_name = chorus_name.strip() if chorus_name else ''
         kind = getattr(
@@ -221,7 +221,7 @@ class GroupManager(Manager):
 
         # Set the transition description
         if group.status == group.STATUS.new:
-            description = "Initial import"
+            description = json.dumps({'status': 'New'})
         else:
             description = json.dumps(diff)
 
@@ -350,12 +350,9 @@ class MemberManager(Manager):
 
         # Get the related fields
         Group = apps.get_model('api.group')
-        try:
-            group = Group.objects.get(
-                mc_pk=structure,
-            )
-        except Group.DoesNotExist:
-            return
+        group = Group.objects.get(
+            mc_pk=structure,
+        )
         Person = apps.get_model('api.person')
         person = Person.objects.get(
             mc_pk=person,
@@ -403,11 +400,17 @@ class MemberManager(Manager):
         member.mem_code = mem_code
         member.mem_status = mem_status
 
+        # Build the diff from prior to new
+        diff = {}
+        for key, value in prior.items():
+            if getattr(member, key, None) != value:
+                diff[key] = value
+
         # Set the transition description
         if member.status == member.STATUS.new:
-            description = "Initial import"
+            description = json.dumps({'status': 'New'})
         else:
-            description = json.dumps(prior)
+            description = json.dumps(diff)
 
         # Transition as appropriate
         if status == self.model.STATUS.active:
@@ -503,20 +506,56 @@ class OfficerManager(Manager):
         Office = apps.get_model('api.office')
         office = Office.objects.get(name=office)
 
-        # Set defaults and update
-        defaults = {
-            'status': status,
-            'start_date': start_date,
-            'end_date': end_date,
-            'mc_pk': mc_pk,
-        }
-        officer, created = self.update_or_create(
+        # get or create
+        officer, created = self.get_or_create(
             person=person,
             group=group,
             office=office,
-            defaults=defaults,
         )
-        return officer, created
+        # Skip duplicates
+        if officer.mc_pk == mc_pk:
+            return
+
+        # Instantiate prior values dictionary
+        prior = {}
+        if officer.mc_pk:
+            prior['mc_pk'] = str(officer.mc_pk)
+        if officer.start_date:
+            prior['start_date'] = officer.start_date.strftime('%Y-%m-%d')
+        if officer.end_date:
+            prior['end_date'] = officer.end_date.strftime('%Y-%m-%d')
+
+        # Update the fields
+        officer.mc_pk = mc_pk
+        officer.start_date = start_date
+        officer.end_date = end_date
+
+        # Build the diff from prior to new
+        diff = {}
+        for key, value in prior.items():
+            if getattr(officer, key, None) != value:
+                diff[key] = value
+
+        # Set the transition description
+        if officer.status == officer.STATUS.new:
+            description = json.dumps({'status': 'New'})
+        else:
+            description = json.dumps(diff)
+
+        # Transition as appropriate
+        if status == self.model.STATUS.active:
+            officer.activate(
+                description=description,
+            )
+        elif status == self.model.STATUS.inactive:
+            officer.deactivate(
+                description=description,
+            )
+        else:
+            raise ValueError('Unknown status')
+        # Finally, save the record.
+        officer.save()
+        return
 
 
 class PersonManager(Manager):
@@ -720,7 +759,7 @@ class UserManager(BaseUserManager):
 
         # Set the transition description
         if user.status == user.STATUS.new:
-            description = "Initial import"
+            description = json.dumps({'status': 'New'})
         else:
             description = json.dumps(diff)
 

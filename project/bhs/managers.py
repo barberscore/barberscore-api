@@ -120,21 +120,18 @@ class StructureManager(Manager):
 
 
 class RoleManager(Manager):
-    def update_officers(self, rebuild=False):
+    def update_officers(self, cursor=None):
         # Get the cursor
         Officer = apps.get_model('api.officer')
-        cursor = Officer.objects.filter(
-            mc_pk__isnull=False,
-        ).latest('created').created
 
         # Get base, excluding Quartets
         roles = self.exclude(
             name='Quartet Admin',
         )
-        # Rebuild will do the whole thing.
-        if not rebuild:
+        # Will rebuild without a cursor
+        if cursor:
             roles = roles.filter(
-                start_date__gt=cursor,
+                created__gt=cursor,
             )
         # Order and Return as objects
         roles = roles.order_by(
@@ -156,15 +153,12 @@ class RoleManager(Manager):
                 role,
                 is_object=True,
             )
-        return
+        return roles.count()
 
 
 class JoinManager(Manager):
-    def update_members(self, rebuild=False):
+    def update_members(self, cursor=None):
         Member = apps.get_model('api.member')
-        cursor = Member.objects.filter(
-            mc_pk__isnull=False,
-        ).latest('created').created
         # Get base
         joins = self.select_related(
             'structure',
@@ -174,10 +168,9 @@ class JoinManager(Manager):
             'membership__status',
         )
         # Rebuild will do the whole thing.
-        if not rebuild:
+        if cursor:
             joins = joins.filter(
-                # This needs to be `created`!
-                established_date__gte=cursor,
+                created__gt=cursor,
             )
         # Order and Return as objects
         joins = joins.order_by(
@@ -200,13 +193,9 @@ class JoinManager(Manager):
         # Creating/Update Persons
         Member = apps.get_model('api.member')
         for join in joins:
-            try:
-                django_rq.enqueue(
-                    Member.objects.create_from_join,
-                    join,
-                    is_object=True,
-                )
-            except Exception as e:
-                print(e)
-                continue
+            django_rq.enqueue(
+                Member.objects.create_from_join,
+                join,
+                is_object=True,
+            )
         return joins.count()
