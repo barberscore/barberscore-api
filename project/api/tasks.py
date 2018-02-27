@@ -565,8 +565,7 @@ def send_entry(template, context):
         person__email__isnull=False,
     )
     if not officers:
-        log.error("No valid officers for {0}".format(entry))
-        return
+        raise RuntimeError("No officers for {0}".format(entry.group))
     assignments = entry.session.convention.assignments.filter(
         category__lt=10,
     ).exclude(person__email=None)
@@ -588,10 +587,8 @@ def send_entry(template, context):
     try:
         result = email.send()
     except Exception as e:
-        log.error("{0} {1}".format(e, entry))
         raise(e)
     if result != 1:
-        log.error("{0}".format(entry))
         raise RuntimeError("Email unsuccessful {0}".format(entry))
     return
 
