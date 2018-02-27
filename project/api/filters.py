@@ -92,9 +92,10 @@ class ConventionStatusListFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         status = self.value()
-        return queryset.filter(
-            convention__status=status,
-        )
+        if status:
+            return queryset.filter(
+                convention__status=status,
+            )
 
 
 class SessionConventionStatusListFilter(admin.SimpleListFilter):
@@ -110,9 +111,10 @@ class SessionConventionStatusListFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         status = self.value()
-        return queryset.filter(
-            session__convention__status=status,
-        )
+        if status:
+            return queryset.filter(
+                session__convention__status=status,
+            )
 
 
 class AccountListFilter(admin.SimpleListFilter):
