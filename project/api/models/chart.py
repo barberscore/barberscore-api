@@ -16,7 +16,6 @@ from django.apps import apps as api_apps
 from django.db import models
 
 # First-Party
-from api.fields import CloudinaryRenameField
 from api.storages import CustomMediaCloudinaryStorage
 
 config = api_apps.get_app_config('api')
@@ -82,12 +81,6 @@ class Chart(TimeStampedModel):
     notes = models.TextField(
         help_text="""
             Private Notes (for internal use only).""",
-        blank=True,
-    )
-
-    img = CloudinaryRenameField(
-        'image',
-        null=True,
         blank=True,
     )
 

@@ -22,7 +22,6 @@ from django_fsm_log.decorators import fsm_log_by
 from django_fsm_log.decorators import fsm_log_description
 
 # First-Party
-from api.fields import CloudinaryRenameField
 from api.managers import PersonManager
 from api.storages import CustomMediaCloudinaryStorage
 
@@ -217,12 +216,6 @@ class Person(TimeStampedModel):
             blank=True,
             max_length=3,
         ),
-        null=True,
-        blank=True,
-    )
-
-    img = CloudinaryRenameField(
-        'image',
         null=True,
         blank=True,
     )

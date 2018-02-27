@@ -2,13 +2,11 @@
 import logging
 
 # Third-Party
-from cloudinary.uploader import upload_resource
 from django_filters.rest_framework import DjangoFilterBackend
 from django_fsm_log.models import StateLog
 from drf_fsm_transitions.viewset_mixins import \
     get_viewset_transition_action_mixin
 from dry_rest_permissions.generics import DRYPermissions
-from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.decorators import parser_classes
@@ -20,7 +18,6 @@ from rest_framework_csv.renderers import CSVRenderer
 # Local
 from .backends import CoalesceFilterBackend
 # from .backends import GroupFilterBackend
-from .backends import MemberFilterBackend
 from .filters import AssignmentFilter
 from .filters import AwardFilter
 from .filters import ChartFilter

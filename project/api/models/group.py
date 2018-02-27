@@ -19,7 +19,6 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.core.exceptions import ValidationError
 # First-Party
-from api.fields import CloudinaryRenameField
 from api.managers import GroupManager
 from api.storages import CustomMediaCloudinaryStorage
 
@@ -257,12 +256,6 @@ class Group(TimeStampedModel):
             The phone number of the resource.  Include country code.""",
         blank=True,
         max_length=25,
-    )
-
-    img = CloudinaryRenameField(
-        'image',
-        null=True,
-        blank=True,
     )
 
     image = models.ImageField(

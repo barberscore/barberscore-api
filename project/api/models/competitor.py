@@ -16,11 +16,9 @@ from ranking import Ranking
 # Django
 from django.apps import apps as api_apps
 from django.db import models
-from django.utils.html import format_html
 from django.utils.text import slugify
 
 # First-Party
-from api.fields import CloudinaryRenameField
 from api.storages import CustomMediaCloudinaryStorage
 from api.storages import CustomPDFCloudinaryStorage
 
@@ -64,12 +62,6 @@ class Competitor(TimeStampedModel):
         help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    img = CloudinaryRenameField(
-        'image',
-        null=True,
-        blank=True,
     )
 
     image = models.ImageField(
