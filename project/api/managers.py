@@ -699,6 +699,7 @@ class PersonManager(Manager):
 class UserManager(BaseUserManager):
     def update_or_create_from_person(self, person, is_object=False):
         # mapping
+        Person = apps.get_model('api.person')
         if is_object:
             person_pk = str(person[0])
             name = person[1]
@@ -721,15 +722,19 @@ class UserManager(BaseUserManager):
             'email': email,
             'status': status,
         }
+        person = Person.objects.get(
+            id=person_pk,
+        )
         try:
             user = self.get(
-                person=person_pk,
+                person=person,
             )
             created = False
         except self.model.DoesNotExist:
             user = self.create(
                 email=email,
                 name=name,
+                person=person,
             )
             user.set_unusable_password()
             created = True
