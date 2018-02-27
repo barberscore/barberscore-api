@@ -89,16 +89,6 @@ EMAIL_USE_TLS = True
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Bugsnag
-BUGSNAG = {
-    'api_key': get_env_variable("BUGSNAG_API_KEY"),
-    'notify_release_stages': [
-        'production', 'staging',
-    ],
-    'release_stage': 'production',
-}
-MIDDLEWARE = ['bugsnag.django.middleware.BugsnagMiddleware'] + MIDDLEWARE
-
 # Logging
 LOGGING = {
     'version': 1,
@@ -107,21 +97,18 @@ LOGGING = {
         'api': {
             'handlers': [
                 'console',
-                'bugsnag',
             ],
             'level': 'INFO',
         },
         'importer': {
             'handlers': [
                 'console',
-                'bugsnag',
             ],
             'level': 'INFO',
         },
         'updater': {
             'handlers': [
                 'console',
-                'bugsnag',
             ],
             'level': 'INFO',
         },
@@ -132,9 +119,10 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'stream': sys.stdout,
         },
-        'bugsnag': {
-            'level': 'ERROR',
-            'class': 'bugsnag.handlers.BugsnagHandler',
-        },
     },
 }
+
+INSTALLED_APPS += [
+    'debug_toolbar',
+    'raven.contrib.django.raven_compat',
+]

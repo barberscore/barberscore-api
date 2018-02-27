@@ -70,16 +70,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Bugsnag
-BUGSNAG = {
-    'api_key': get_env_variable("BUGSNAG_API_KEY"),
-    'notify_release_stages': [
-        'production', 'staging',
-    ],
-    'release_stage': 'staging',
-}
-MIDDLEWARE = ['bugsnag.django.middleware.BugsnagMiddleware'] + MIDDLEWARE
-
 # Logging
 LOGGING = {
     'version': 1,
@@ -88,21 +78,18 @@ LOGGING = {
         'api': {
             'handlers': [
                 'console',
-                'bugsnag',
             ],
             'level': 'INFO',
         },
         'importer': {
             'handlers': [
                 'console',
-                'bugsnag',
             ],
             'level': 'INFO',
         },
         'updater': {
             'handlers': [
                 'console',
-                'bugsnag',
             ],
             'level': 'INFO',
         },
@@ -112,10 +99,6 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
             'stream': sys.stdout,
-        },
-        'bugsnag': {
-            'level': 'ERROR',
-            'class': 'bugsnag.handlers.BugsnagHandler',
         },
     },
 }
