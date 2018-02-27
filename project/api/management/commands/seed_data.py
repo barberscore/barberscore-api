@@ -300,7 +300,7 @@ class Command(BaseCommand):
             name='Chorus Manager',
             is_group_manager=True,
         )
-        quartet_1_manager = OfficeFactory(
+        quartet_manager = OfficeFactory(
             name='Quartet Manager',
             is_group_manager=True,
         )
@@ -353,10 +353,22 @@ class Command(BaseCommand):
             group=chorus_1,
             status=Officer.STATUS.active,
         )
-        quartet_one_manager = OfficerFactory(
-            office=quartet_1_manager,
+        quartet_1_manager = OfficerFactory(
+            office=quartet_manager,
             person=admin_person,
             group=quartet_1,
+            status=Officer.STATUS.active,
+        )
+        quartet_2_manager = OfficerFactory(
+            office=quartet_manager,
+            person=quartet_lead_person,
+            group=quartet_2,
+            status=Officer.STATUS.active,
+        )
+        quartet_3_manager = OfficerFactory(
+            office=quartet_manager,
+            person=quartet_lead_person,
+            group=quartet_3,
             status=Officer.STATUS.active,
         )
         # Create Awards
@@ -566,10 +578,10 @@ class Command(BaseCommand):
             group=chorus_1,
             person=admin_person,
         )
-        member_quartet_2_admin = MemberFactory(
+        member_quartet_2_lead = MemberFactory(
             part=Member.PART.lead,
             group=quartet_2,
-            person=admin_person,
+            person=quartet_lead_person,
         )
         member_quartet_2_tenor = MemberFactory(
             part=Member.PART.tenor,
@@ -586,10 +598,10 @@ class Command(BaseCommand):
             group=quartet_2,
             person=quartet_bass_person,
         )
-        member_quartet_3_admin = MemberFactory(
+        member_quartet_3_lead = MemberFactory(
             part=Member.PART.lead,
             group=quartet_3,
-            person=admin_person,
+            person=quartet_lead_person,
         )
         member_quartet_3_tenor = MemberFactory(
             part=Member.PART.tenor,
