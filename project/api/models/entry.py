@@ -344,7 +344,7 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.new, STATUS.built, STATUS.invited],
+        source=[STATUS.new, STATUS.built, STATUS.invited, STATUS.submitted],
         target=STATUS.submitted,
         conditions=[can_submit_entry],
     )
