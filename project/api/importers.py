@@ -514,7 +514,7 @@ def import_youth(path):
                 )
             else:
                 quartet = Entity.objects.create(**defaults)
-            office = Office.objects.get(short_name='QREP')
+            office = Office.objects.get(code='QREP')
             defaults = {
                 'status': 10,
             }
@@ -764,7 +764,7 @@ def import_chorus_competitors(path):
         next(reader)
         session = Session.objects.get(
             kind=Session.KIND.chorus,
-            convention__entity__short_name='BHS',
+            convention__entity__code='BHS',
             convention__year=2017,
         )
         contest = session.contests.first()
@@ -823,7 +823,7 @@ def import_quartet_competitors(path):
         next(reader)
         session = Session.objects.get(
             kind=Session.KIND.quartet,
-            convention__entity__short_name='BHS',
+            convention__entity__code='BHS',
             convention__year=2017,
             num_rounds=3,
         )
@@ -845,7 +845,7 @@ def import_quartet_competitors(path):
             rep_id = row[2].strip()
             rep = Entity.objects.get(
                 kind=Entity.KIND.district,
-                short_name=rep_id,
+                code=rep_id,
             )
             try:
                 tenor = Person.objects.get(bhs_id=int(row[3]))
@@ -895,7 +895,7 @@ def import_aff_competitors(path):
         next(reader)
         session = Session.objects.get(
             kind=Session.KIND.quartet,
-            convention__entity__short_name='BHS',
+            convention__entity__code='BHS',
             convention__year=2017,
             num_rounds=3,
         )
@@ -917,7 +917,7 @@ def import_aff_competitors(path):
             try:
                 rep = Entity.objects.get(
                     kind=Entity.KIND.affiliate,
-                    short_name=rep_id,
+                    code=rep_id,
                 )
             except Entity.DoesNotExist as e:
                 print((e, rep_id))
@@ -973,7 +973,7 @@ def import_aff_competitors(path):
 #             except Person.DoesNotExist as e:
 #                 log.error(e)
 #                 continue
-#             bhs = Entity.objects.get(short_name='BHS')
+#             bhs = Entity.objects.get(code='BHS')
 #             try:
 #                 start_date = dateparse.parse_datetime(row[57]).date()
 #             except AttributeError:
@@ -1041,7 +1041,7 @@ def import_quartet_reps(path):
         next(reader)
         rows = [row for row in reader]
         for row in rows:
-            office = Office.objects.get(short_name='QREP')
+            office = Office.objects.get(code='QREP')
             try:
                 quartet = Entity.objects.get(bhs_id=int(row[1]))
             except Entity.DoesNotExist as e:
@@ -1069,7 +1069,7 @@ def import_db_quartets(path):
         reader = csv.reader(f, skipinitialspace=True)
         next(reader)
         rows = [row for row in reader]
-        parent = Entity.objects.get(short_name='FHT')
+        parent = Entity.objects.get(code='FHT')
         for row in rows:
             bhs_id = int(row[1])
             name = row[2].strip()
@@ -1249,7 +1249,7 @@ def import_music_catalog(path):
             else:
                 extract['arrangers'] = row[20]
             items.append(extract)
-    bhs = Entity.objects.get(short_name='BHS')
+    bhs = Entity.objects.get(code='BHS')
     for item in items:
         chart, created = Chart.objects.get_or_create(bhs_id=item['bhs_id'], entity=bhs)
     for item in items:
@@ -1352,7 +1352,7 @@ def import_judge_roster(path):
             person.save()
             try:
                 district = Entity.objects.get(
-                    short_name=row[10],
+                    code=row[10],
                     kind__in=[
                         Entity.KIND.district,
                         Entity.KIND.affiliate,
@@ -1405,7 +1405,7 @@ def import_db_offices(path):
             office['name'] = row[2]
             office['status'] = int(row[3])
             office['kind'] = int(row[4])
-            office['short_name'] = row[5]
+            office['code'] = row[5]
             office['long_name'] = row[6]
             Office.objects.create(**office)
 
@@ -1420,7 +1420,7 @@ def import_db_internationals(path):
             international['name'] = row[4]
             international['status'] = int(row[5])
             international['kind'] = int(row[7])
-            international['short_name'] = row[10]
+            international['code'] = row[10]
             international['long_name'] = row[11]
             international['start_date'] = dateparse.parse_date(row[13])
             international['location'] = row[15]
@@ -1441,13 +1441,13 @@ def import_db_districts(path):
         reader = csv.reader(f, skipinitialspace=True)
         next(reader)
         rows = [row for row in reader]
-        parent = Entity.objects.get(short_name='BHS')
+        parent = Entity.objects.get(code='BHS')
         for row in rows:
             district = {}
             district['name'] = row[4]
             district['status'] = int(row[5])
             district['kind'] = int(row[7])
-            district['short_name'] = row[10]
+            district['code'] = row[10]
             district['long_name'] = row[11]
             district['code'] = row[12]
             district['start_date'] = dateparse.parse_date(row[13])
@@ -1477,7 +1477,7 @@ def import_db_divisions(path):
             division['name'] = row[4]
             division['status'] = int(row[5])
             division['kind'] = int(row[7])
-            division['short_name'] = row[10]
+            division['code'] = row[10]
             division['long_name'] = row[11]
             division['code'] = row[12]
             division['start_date'] = dateparse.parse_date(row[13])
@@ -1495,7 +1495,7 @@ def import_db_divisions(path):
                 division['bhs_id'] = None
             parent = Entity.objects.get(
                 kind=11,
-                short_name=row[4].split()[0]
+                code=row[4].split()[0]
             )
             division['parent'] = parent
             Entity.objects.create(**division)
@@ -1874,7 +1874,7 @@ def import_db_divisions(path):
 #                 convention = Convention.objects.get(
 #                     bhs_id=int(row[3]),
 #                 )
-#                 district_name = convention.international.short_name
+#                 district_name = convention.international.code
 #                 try:
 #                     international = International.objects.get(
 #                         name="{0} {1}".format(

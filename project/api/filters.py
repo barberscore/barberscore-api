@@ -164,10 +164,6 @@ class OfficeListFilter(admin.SimpleListFilter):
     parameter_name = 'office'
 
     def lookups(self, request, model_admin):
-        # offices = Office.objects.order_by(
-        #     'short_name',
-        # ).values_list('short_name', 'short_name').distinct()
-        # return tuple(offices)
         return (
             ('SCJC', 'SCJC'),
             ('DRCJ', 'DRCJ'),
@@ -184,7 +180,7 @@ class OfficeListFilter(admin.SimpleListFilter):
         office = request.GET.get('office')
         if office:
             return queryset.filter(
-                office__short_name__startswith=office
+                office__code__startswith=office
             )
         return queryset
 
@@ -354,7 +350,7 @@ class AwardFilter(FilterSet):
             'group__kind': [
                 'exact',
             ],
-            'group__officers__office__short_name': [
+            'group__officers__office__code': [
                 'exact',
             ],
             'group__officers__person__user': [
@@ -554,7 +550,7 @@ class OfficerFilter(FilterSet):
             'nomen': [
                 'icontains',
             ],
-            'office__short_name': [
+            'office__code': [
                 'exact',
             ],
             'office__kind': [
