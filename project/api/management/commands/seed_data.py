@@ -702,7 +702,7 @@ class Command(BaseCommand):
         )
 
         # SCJC BREAKPOINT
-        return
+        # return
 
         # Contests created via signal.
         international_midwinter_convention.activate()
@@ -732,6 +732,7 @@ class Command(BaseCommand):
         district_alpha_fall_convention_chorus_session.open()
         district_alpha_fall_convention_chorus_session.save()
 
+        return
         # Add entries
         senior_entry = EntryFactory(
             session=international_midwinter_convention_quartet_session,
@@ -774,6 +775,28 @@ class Command(BaseCommand):
             session=district_alpha_fall_convention_chorus_session,
             group=chorus_1,
         )
+
+        # Build entries
+        senior_entry.build()
+        senior_entry.save()
+        senior_2_entry.build()
+        senior_2_entry.save()
+        senior_3_entry.build()
+        senior_3_entry.save()
+        quartet_entry.build()
+        quartet_entry.save()
+        quartet_2_entry.build()
+        quartet_2_entry.save()
+        quartet_3_entry.build()
+        quartet_3_entry.save()
+        spring_quartet_entry.build()
+        spring_quartet_entry.save()
+        spring_quartet_2_entry.build()
+        spring_quartet_2_entry.save()
+        spring_quartet_3_entry.build()
+        spring_quartet_3_entry.save()
+        chorus_entry.build()
+        chorus_entry.save()
 
         # Approve entries
         senior_entry.submit()
