@@ -866,7 +866,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'id',
         'name',
         'is_mc',
-        'short_name',
+        'code',
         'kind',
         'mc_pk',
         'is_convention_manager',
@@ -882,7 +882,7 @@ class OfficeAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'is_mc',
-        'short_name',
+        'code',
         'kind',
         'is_convention_manager',
         'is_session_manager',
@@ -895,7 +895,7 @@ class OfficeAdmin(admin.ModelAdmin):
     ]
     search_fields = [
         'nomen',
-        'short_name',
+        'code',
     ]
 
     readonly_fields = [
@@ -930,7 +930,7 @@ class OfficeAdmin(admin.ModelAdmin):
 @admin.register(Officer)
 class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     def office__code(self, obj):
-        return "{0}".format(obj.office.short_name)
+        return "{0}".format(obj.office.code)
 
     fsm_field = [
         'status',

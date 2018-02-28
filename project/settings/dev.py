@@ -12,13 +12,13 @@ ALLOWED_HOSTS = [
 ]
 
 # BHS Database
-BHS_DATABASE_URL = get_env_variable("BHS_DATABASE_URL")
-DATABASES['bhs_db'] = dj_database_url.parse(BHS_DATABASE_URL, conn_max_age=0)
-DATABASES['bhs_db']['OPTIONS'] = {
-    'ssl': {'ca': '/app/rds-combined-ca-bundle.pem'}}
-DATABASE_ROUTERS = [
-    'routers.BHSRouter',
-]
+# BHS_DATABASE_URL = get_env_variable("BHS_DATABASE_URL")
+# DATABASES['bhs_db'] = dj_database_url.parse(BHS_DATABASE_URL, conn_max_age=0)
+# DATABASES['bhs_db']['OPTIONS'] = {
+#     'ssl': {'ca': '/app/rds-combined-ca-bundle.pem'}}
+# DATABASE_ROUTERS = [
+#     'routers.BHSRouter',
+# ]
 
 # Debug Toolbar
 MIDDLEWARE = [

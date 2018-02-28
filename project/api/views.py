@@ -14,7 +14,6 @@ from rest_framework.parsers import FormParser
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework_csv.renderers import CSVRenderer
 # Local
 from .backends import CoalesceFilterBackend
 # from .backends import GroupFilterBackend
@@ -73,7 +72,6 @@ from .serializers import GrantorSerializer
 from .serializers import GridSerializer
 from .serializers import GroupSerializer
 from .serializers import MemberSerializer
-from .serializers import OfficeCSVSerializer
 from .serializers import OfficerSerializer
 from .serializers import OfficeSerializer
 from .serializers import PanelistSerializer
@@ -699,30 +697,3 @@ class StateLogViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
     ]
     resource_name = "statelog"
-
-
-# CSV View
-class OfficeRendererCSV(CSVRenderer):
-    header = [
-        'id',
-        'name',
-        'nomen',
-        'status',
-        'kind',
-        'short_name',
-        'long_name',
-    ]
-
-
-class OfficeViewCSV(viewsets.ReadOnlyModelViewSet):
-    queryset = Office.objects.select_related(
-    ).prefetch_related(
-    ).order_by('nomen')
-    serializer_class = OfficeCSVSerializer
-    filter_class = None
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    renderer_classes = [
-        OfficeRendererCSV,
-    ]

@@ -388,7 +388,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'kind',
             'gender',
             'is_senior',
-            'short_name',
             'code',
             'start_date',
             'end_date',
@@ -443,7 +442,7 @@ class OfficeSerializer(serializers.ModelSerializer):
             'name',
             'status',
             'kind',
-            'short_name',
+            'code',
             'is_convention_manager',
             'is_session_manager',
             'is_scoring_manager',
@@ -734,20 +733,3 @@ class StateLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = StateLog
         fields = '__all__'
-
-
-class OfficeCSVSerializer(serializers.ModelSerializer):
-
-    status = serializers.CharField(source='get_status_display')
-    kind = serializers.CharField(source='get_kind_display')
-
-    class Meta:
-        model = Office
-        fields = [
-            'id',
-            'nomen',
-            'name',
-            'status',
-            'kind',
-            'short_name',
-        ]

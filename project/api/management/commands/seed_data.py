@@ -258,7 +258,7 @@ class Command(BaseCommand):
         # Create Offices
         scjc_office = OfficeFactory(
             name='Society Chairman of C&J',
-            short_name='SCJC',
+            code='SCJC',
             is_convention_manager=True,
             is_session_manager=True,
             is_scoring_manager=True,
@@ -270,30 +270,30 @@ class Command(BaseCommand):
         )
         drcj_office = OfficeFactory(
             name='District Director C&J',
-            short_name='DRCJ',
+            code='DRCJ',
             is_convention_manager=True,
             is_session_manager=True,
             is_award_manager=True,
         )
         ca_office = OfficeFactory(
             name='Contest Administrator',
-            short_name='CA',
+            code='CA',
             is_scoring_manager=True,
             is_judge_manager=True,
         )
         mus_office = OfficeFactory(
             name='Music Judge',
-            short_name='MUS',
+            code='MUS',
             is_judge_manager=True,
         )
         per_office = OfficeFactory(
             name='Performance Judge',
-            short_name='PER',
+            code='PER',
             is_judge_manager=True,
         )
         sng_office = OfficeFactory(
             name='Singing Judge',
-            short_name='SNG',
+            code='SNG',
             is_judge_manager=True,
         )
         chorus_manager = OfficeFactory(

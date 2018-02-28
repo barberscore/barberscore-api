@@ -70,7 +70,7 @@ class Office(TimeStampedModel):
         blank=True,
     )
 
-    short_name = models.CharField(
+    code = models.CharField(
         max_length=255,
         blank=True,
     )
