@@ -1,9 +1,10 @@
 # Standard Libary
-import maya
+import datetime
 import logging
 
 # Django
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 # First-Party
 from api.models import Person
@@ -51,11 +52,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Set Cursor
         if options['days']:
-            cursor = maya.now().subtract(days=options['days'], hours=1).datetime()
+            cursor = timezone.now() - datetime.timedelta(days=options['days'], hours=1)
         elif options['hours']:
-            cursor = maya.now().subtract(hours=options['hours'], minutes=5).datetime()
+            cursor = timezone.now() - datetime.timedelta(hours=options['hours'], minutes=5)
         elif options['minutes']:
-            cursor = maya.now().subtract(minutes=options['minutes'], seconds=5).datetime()
+            cursor = timezone.now() - datetime.timedelta(minutes=options['minutes'], seconds=5)
         else:
             cursor = None
 

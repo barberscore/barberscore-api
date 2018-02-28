@@ -42,7 +42,6 @@ cloudinary = {git = "git://github.com/barberscore/pycloudinary.git"}
 "psycopg2-binary" = "*"
 django-cloudinary-storage = "*"
 django-redis = "*"
-maya = "*"
 raven = "*"
 
 
