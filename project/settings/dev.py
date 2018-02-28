@@ -7,16 +7,18 @@ from .base import *
 
 # Core
 DEBUG = True
+ALLOWED_HOSTS = [
+    'localhost',
+]
 
-# Databases
+# BHS Database
 BHS_DATABASE_URL = get_env_variable("BHS_DATABASE_URL")
 DATABASES['bhs_db'] = dj_database_url.parse(BHS_DATABASE_URL, conn_max_age=0)
-DATABASES['bhs_db']['OPTIONS'] = {'ssl': {'ca': 'rds-combined-ca-bundle.pem'}}
+DATABASES['bhs_db']['OPTIONS'] = {
+    'ssl': {'ca': '/app/rds-combined-ca-bundle.pem'}}
 DATABASE_ROUTERS = [
     'routers.BHSRouter',
 ]
-# Email
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Debug Toolbar
 MIDDLEWARE = [
@@ -31,10 +33,6 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.signals.SignalsPanel',
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
-]
-
-INTERNAL_IPS = [
-    '127.0.0.1',
 ]
 
 # Auth0
@@ -84,6 +82,9 @@ JWT_AUTH = {
     'JWT_ALGORITHM': 'RS256',
 }
 
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Redis
 RQ_QUEUES['default']['ASYNC'] = False
 RQ_QUEUES['high']['ASYNC'] = False
@@ -91,20 +92,20 @@ RQ_QUEUES['high']['ASYNC'] = False
 # Logging
 LOGGING = {
     'version': 1,
-    "disable_existing_loggers": False,
+    'disable_existing_loggers': False,
     'loggers': {
         'api': {
-            'level': 'DEBUG',
             'handlers': [
                 'console',
             ],
+            'level': 'DEBUG',
         },
         'importer': {
-            'level': 'DEBUG',
             'handlers': [
                 'console',
                 'logfile',
             ],
+            'level': 'DEBUG',
         },
         'updater': {
             'level': 'DEBUG',
