@@ -10,7 +10,6 @@ from django.db.models.signals import (
 )
 from api.signals import (
     entry_post_save,
-    session_post_save,
 )
 from api.models import (
     Entry,
@@ -49,7 +48,6 @@ from api.factories import (
 @pytest.fixture(scope='session', autouse=True)
 def disconnect_signals():
     post_save.disconnect(entry_post_save, sender=Entry)
-    post_save.disconnect(session_post_save, sender=Session)
 
 
 @pytest.fixture

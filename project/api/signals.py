@@ -38,33 +38,6 @@ def entry_post_save(sender, instance, created, raw=False, **kwargs):
     return
 
 
-@receiver(post_save, sender=Session)
-def session_post_save(sender, instance, created, raw=False, **kwargs):
-    session = instance
-    if created and not raw:
-        grantors = session.convention.grantors.all()
-        for grantor in grantors:
-            awards = grantor.group.awards.filter(
-                status=grantor.group.awards.model.STATUS.active,
-                kind=session.kind,
-                season=session.convention.season,
-            )
-            for award in awards:
-                # Could also do some logic here for more precision
-                session.contests.create(
-                    status=session.contests.model.STATUS.included,
-                    award=award,
-                )
-        for i in range(session.num_rounds):
-            num = i + 1
-            kind = session.num_rounds - i
-            session.rounds.create(
-                num=num,
-                kind=kind,
-            )
-    return
-
-
 @receiver(pre_delete, sender=User)
 def user_pre_delete(sender, instance, **kwargs):
     if instance.account_id:
