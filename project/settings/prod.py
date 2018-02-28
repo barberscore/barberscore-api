@@ -89,6 +89,9 @@ EMAIL_USE_TLS = True
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+# Algolia
+ALGOLIA['INDEX_SUFFIX'] = 'prod'
+
 # Logging
 LOGGING = {
     'version': 1,
