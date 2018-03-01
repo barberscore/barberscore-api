@@ -238,7 +238,7 @@ class Entry(TimeStampedModel):
                     person__user=request.user,
                     status__gt=0,
                 ),
-                self.status < self.STATUS.submitted,
+                self.status <= self.STATUS.submitted,
             ]),
         ])
         return result
