@@ -94,7 +94,10 @@
         },
         "CLOUDINARY_URL": "none",
         "BHS_DATABASE_URL": "none",
-        "CLOUDINARY_URL": "none"
+        "SENTRY_DSN": "none",
+        "ALGOLIASEARCH_API_KEY": "none",
+        "ALGOLIASEARCH_API_KEY_SEARCH": "none",
+        "ALGOLIASEARCH_APPLICATION_ID": "none"
       },
       "scripts": {
         "test": "pytest"
