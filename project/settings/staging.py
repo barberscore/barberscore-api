@@ -8,12 +8,23 @@ from cryptography.hazmat.backends import default_backend
 # Local
 from .base import *
 
-# Heroku
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
+# Core
 ALLOWED_HOSTS = [
     '.barberscore.com',
     '.herokuapp.com',
+]
+
+# Heroku
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+
+# BHS Database
+BHS_DATABASE_URL = get_env_variable("BHS_DATABASE_URL")
+DATABASES['bhs_db'] = dj_database_url.parse(BHS_DATABASE_URL, conn_max_age=0)
+DATABASES['bhs_db']['OPTIONS'] = {
+    'ssl': {'ca': '/app/rds-combined-ca-bundle.pem'}}
+DATABASE_ROUTERS = [
+    'routers.BHSRouter',
 ]
 
 # Auth0
@@ -105,3 +116,7 @@ LOGGING = {
         },
     },
 }
+
+INSTALLED_APPS += [
+    'raven.contrib.django.raven_compat',
+]

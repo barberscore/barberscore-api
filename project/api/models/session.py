@@ -84,6 +84,7 @@ class Session(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (2, 'built', 'Built',),
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
         (10, 'verified', 'Verified',),
@@ -277,6 +278,12 @@ class Session(TimeStampedModel):
         ])
 
     # Session Conditions
+    def can_build_session(self):
+        return all([
+            self.convention.grantors.count() > 0,
+            self.num_rounds,
+        ])
+
     def can_open_session(self):
         Contest = config.get_model('Contest')
         return all([
@@ -296,6 +303,37 @@ class Session(TimeStampedModel):
     @transition(
         field=status,
         source=STATUS.new,
+        target=STATUS.built,
+        conditions=[can_build_session],
+    )
+    def build(self, *args, **kwargs):
+        """Build session contests."""
+        grantors = self.convention.grantors.all()
+        for grantor in grantors:
+            awards = grantor.group.awards.filter(
+                status=grantor.group.awards.model.STATUS.active,
+                kind=self.kind,
+                season=self.convention.season,
+            )
+            for award in awards:
+                # Could also do some logic here for more precision
+                self.contests.create(
+                    status=self.contests.model.STATUS.included,
+                    award=award,
+                )
+        for i in range(self.num_rounds):
+            num = i + 1
+            kind = self.num_rounds - i
+            self.rounds.create(
+                num=num,
+                kind=kind,
+            )
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=STATUS.built,
         target=STATUS.opened,
         conditions=[can_open_session],
     )

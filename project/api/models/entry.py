@@ -35,6 +35,7 @@ class Entry(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (2, 'built', 'Built',),
         (5, 'invited', 'Invited',),
         (7, 'withdrawn', 'Withdrawn',),
         (10, 'submitted', 'Submitted',),
@@ -237,7 +238,7 @@ class Entry(TimeStampedModel):
                     person__user=request.user,
                     status__gt=0,
                 ),
-                self.status < self.STATUS.submitted,
+                self.status <= self.STATUS.submitted,
             ]),
         ])
         return result
@@ -254,8 +255,10 @@ class Entry(TimeStampedModel):
     def can_submit_entry(self):
         # Instantiate list
         checklist = []
+
         # Only active groups can submit.
         checklist.append(bool(self.group.STATUS.active))
+
         # check to ensure all fields are entered
         if self.group.kind == self.group.KIND.chorus:
             checklist.append(
@@ -278,6 +281,35 @@ class Entry(TimeStampedModel):
     @transition(
         field=status,
         source=[STATUS.new],
+        target=STATUS.built,
+        conditions=[],
+    )
+    def build(self, *args, **kwargs):
+        contests = self.session.contests.filter(
+            status=self.session.contests.model.STATUS.included,
+        )
+        for contest in contests:
+            # Could also do some default logic here.
+            self.contestants.create(
+                status=self.contestants.model.STATUS.excluded,
+                contest=contest,
+            )
+        has_divisions = bool(
+            self.session.convention.group.children.filter(
+                kind=self.session.convention.group.KIND.division,
+                status=self.session.convention.group.STATUS.active,
+            )
+        )
+        if has_divisions:
+            self.representing = self.group.division
+        else:
+            self.representing = self.group.district
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.new, STATUS.built],
         target=STATUS.invited,
         conditions=[can_invite_entry],
     )
@@ -312,7 +344,7 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.new, STATUS.invited],
+        source=[STATUS.new, STATUS.built, STATUS.invited, STATUS.submitted],
         target=STATUS.submitted,
         conditions=[can_submit_entry],
     )
@@ -332,7 +364,7 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.new, STATUS.submitted, STATUS.withdrawn, STATUS.scratched],
+        source=[STATUS.new, STATUS.built, STATUS.submitted, STATUS.withdrawn, STATUS.scratched],
         target=STATUS.approved,
         conditions=[],
     )

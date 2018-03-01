@@ -8,13 +8,15 @@ from cryptography.hazmat.backends import default_backend
 # Local
 from .base import *
 
-# Heroku
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
+# Core
 ALLOWED_HOSTS = [
     '.barberscore.com',
     '.herokuapp.com',
 ]
+
+# Heroku
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
 
 # BHS Database
 BHS_DATABASE_URL = get_env_variable("BHS_DATABASE_URL")
@@ -75,15 +77,10 @@ JWT_AUTH = {
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.sendgrid.net'
-# EMAIL_HOST_USER = get_env_variable("SENDGRID_USERNAME")
-# EMAIL_HOST_PASSWORD = get_env_variable("SENDGRID_PASSWORD")
 EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = get_env_variable("SENDGRID_API_KEY")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-# EMAIL_SUBJECT_PREFIX = "[Barberscore] "
-# EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-# SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
 
 # Cloudinary
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")

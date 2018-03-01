@@ -21,10 +21,11 @@
     }
   },
   "addons": [
+    "algoliasearch:free",
     "cloudinary:starter",
-    "deployhooks:http",
     "heroku-redis:hobby-dev",
-    "heroku-postgresql:hobby-dev"
+    "heroku-postgresql:hobby-dev",
+    "sentry: free"
   ],
   "env": {
     "DJANGO_SETTINGS_MODULE": {
@@ -40,6 +41,10 @@
     "SECRET_KEY": {
       "description": "Required by Django.  Auto-generated.",
       "generator": "secret",
+      "required": true
+    },
+    "BHS_DATABASE_URL": {
+      "description": "Credentials used to access the BHS Database.",
       "required": true
     },
     "AUTH0_API_ID": {
@@ -87,7 +92,12 @@
         "SECRET_KEY": {
           "generator": "secret"
         },
-        "CLOUDINARY_URL": "none"
+        "CLOUDINARY_URL": "none",
+        "BHS_DATABASE_URL": "none",
+        "SENTRY_DSN": "none",
+        "ALGOLIASEARCH_API_KEY": "none",
+        "ALGOLIASEARCH_API_KEY_SEARCH": "none",
+        "ALGOLIASEARCH_APPLICATION_ID": "none"
       },
       "scripts": {
         "test": "pytest"

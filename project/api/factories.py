@@ -194,7 +194,6 @@ class GroupFactory(DjangoModelFactory):
     name = Faker('company')
     status = Group.STATUS.active
     kind = Group.KIND.quartet
-    short_name = Faker('word')
     code = ''
     start_date = None
     end_date = None
@@ -249,7 +248,7 @@ class OfficeFactory(DjangoModelFactory):
     name = Faker('word')
     status = Office.STATUS.active
     kind = Office.KIND.international
-    short_name = Faker('word')
+    code = Faker('word')
 
     class Meta:
         model = Office
