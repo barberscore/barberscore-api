@@ -740,7 +740,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ],
         'Chorus': [
             OfficerInline,
-            # MemberInline,
+            MemberInline,
             RepertoryInline,
             EntryInline,
             CompetitorInline,
@@ -771,6 +771,11 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     def get_formsets(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
             yield inline.get_formset(request, obj)
+
+    def get_queryset(self, request):
+        return super().get_queryset(
+            request
+        ).prefetch_related('members')
 
     def is_mc(self, instance):
         return instance.is_mc
