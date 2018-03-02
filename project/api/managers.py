@@ -529,15 +529,15 @@ class OfficerManager(Manager):
         # Build the diff from prior to new
         diff = {}
 
-        if getattr(prior, 'mc_pk', None) != mc_pk:
+        if prior.get('mc_pk') != mc_pk:
             diff['mc_pk'] = getattr(prior, 'mc_pk', None)
 
         start_date_string = start_date.strftime('%Y-%m-%d') if start_date else None
-        if getattr(prior, 'start_date', None) != start_date_string:
+        if prior.get('start_date') != start_date_string:
             diff['start_date'] = start_date_string
 
         end_date_string = end_date.strftime('%Y-%m-%d') if end_date else None
-        if getattr(prior, 'end_date', None) != end_date_string:
+        if prior.get('end_date') != end_date_string:
             diff['end_date'] = end_date_string
 
         # Set the transition description
