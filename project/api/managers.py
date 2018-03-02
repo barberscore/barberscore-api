@@ -707,9 +707,6 @@ class UserManager(BaseUserManager):
             email = person.email
             status = person.status
 
-        # Overwrite Status until front-end fixed
-        status = 10  # Person.STATUS.active
-
         # really clean email
         email = email.lower()
 
