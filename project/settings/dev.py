@@ -73,7 +73,6 @@ jwt_public_key = cert.public_key()
 def jwt_get_username_from_payload_handler(payload):
     return payload.get('email')
 
-
 JWT_AUTH = {
     'JWT_AUDIENCE': AUTH0_CLIENT_ID,
     'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_username_from_payload_handler,
@@ -88,6 +87,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Redis
 RQ_QUEUES['default']['ASYNC'] = False
 RQ_QUEUES['high']['ASYNC'] = False
+
+# Algolia
+ALGOLIA['INDEX_SUFFIX'] = 'dev'
 
 # Logging
 LOGGING = {

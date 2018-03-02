@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "647d91542cb676a8c51385c2e11d9e7fbc980a3a5242b25ab2438a44c93718ff"
+            "sha256": "dae3c13da5a198ad8862bd954dae4acd4a8bc27e9da747b6abb0441fae960660"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -29,6 +29,20 @@
         ]
     },
     "default": {
+        "algoliasearch": {
+            "hashes": [
+                "sha256:eba1574beffa3685cc1568d2bcf165d0b00b43f9e85beec09a8bdd605de266d3",
+                "sha256:c70652037a0c0397ad14c0ac3126d88ac05bcfb26fb39384c0fa93890e5a3e24"
+            ],
+            "version": "==1.15.2"
+        },
+        "algoliasearch-django": {
+            "hashes": [
+                "sha256:a56ca90e7300c118ee0bed43b1df7f287a6065d09536e6642cab27ab8dd2ecfd",
+                "sha256:90c7600bcf177a52d4f2f3f273106c7dd7e2fcf5af0383bc87ed0ac6037dcb10"
+            ],
+            "version": "==1.5.5"
+        },
         "appnope": {
             "hashes": [
                 "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
@@ -521,6 +535,13 @@
                 "sha256:500be75b17a63f70072416843dc80c8821109030be824f4d14758f114978bae7"
             ],
             "version": "==1.5.3"
+        },
+        "pyopenssl": {
+            "hashes": [
+                "sha256:07a2de1a54de07448732a81e38a55df7da109b2f47f599f8bb35b0cbec69d4bd",
+                "sha256:2c10cfba46a52c0b0950118981d61e72c1e5b1aac451ca1bc77de1a679456773"
+            ],
+            "version": "==17.5.0"
         },
         "python-dateutil": {
             "hashes": [

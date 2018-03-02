@@ -81,6 +81,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+# Algolia
+ALGOLIA['INDEX_SUFFIX'] = 'staging'
+
 # Logging
 LOGGING = {
     'version': 1,

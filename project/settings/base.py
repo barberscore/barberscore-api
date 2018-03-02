@@ -170,6 +170,13 @@ CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
 
+# Algolia
+ALGOLIA = {
+    'APPLICATION_ID': get_env_variable("ALGOLIASEARCH_APPLICATION_ID"),
+    'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
+    'AUTO_INDEXING': True,
+}
+
 # Applications
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -191,6 +198,7 @@ INSTALLED_APPS = [
     'django_filters',
     'dry_rest_permissions',
     'django_rq',
+    'algoliasearch_django',
     'api',
     'bhs',
 ]
