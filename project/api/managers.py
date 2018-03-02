@@ -312,11 +312,7 @@ class MemberManager(Manager):
             mem_status = join.membership.status.name
 
         # Set variables
-        status = getattr(
-            self.model.STATUS,
-            sub_status,
-            self.model.STATUS.inactive,
-        )
+        status = self.model.STATUS.inactive if inactive_date else self.model.STATUS.active
 
         sub_status = getattr(
             self.model.SUB_STATUS,
