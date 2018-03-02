@@ -509,7 +509,7 @@ class OfficerManager(Manager):
             office=office,
         )
         # Skip duplicates
-        if officer.mc_pk == mc_pk:
+        if str(officer.mc_pk) == mc_pk:
             return
 
         # Instantiate prior values dictionary
