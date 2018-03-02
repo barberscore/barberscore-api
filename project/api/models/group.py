@@ -541,6 +541,7 @@ class Group(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.active)
     def activate(self, description=None, *args, **kwargs):
         """Activate the Group."""
+        self.denormalize()
         return
 
     @fsm_log_by
