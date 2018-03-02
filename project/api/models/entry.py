@@ -309,7 +309,9 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.new, STATUS.built],
+        source=[
+            STATUS.built,
+        ],
         target=STATUS.invited,
         conditions=[can_invite_entry],
     )
@@ -321,7 +323,10 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.invited, STATUS.submitted],
+        source=[
+            STATUS.invited,
+            STATUS.submitted,
+        ],
         target=STATUS.withdrawn,
         conditions=[],
     )
@@ -344,7 +349,11 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.new, STATUS.built, STATUS.invited, STATUS.submitted],
+        source=[
+            STATUS.built,
+            STATUS.invited,
+            STATUS.submitted
+        ],
         target=STATUS.submitted,
         conditions=[can_submit_entry],
     )
@@ -364,7 +373,13 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.new, STATUS.built, STATUS.submitted, STATUS.withdrawn, STATUS.scratched],
+        source=[
+            STATUS.built,
+            STATUS.submitted,
+            STATUS.withdrawn,
+            STATUS.scratched,
+            STATUS.approved,
+        ],
         target=STATUS.approved,
         conditions=[],
     )

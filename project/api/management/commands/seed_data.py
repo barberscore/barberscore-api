@@ -819,6 +819,8 @@ class Command(BaseCommand):
         chorus_entry.approve()
         chorus_entry.save()
 
+        return
+
         # Close sessions
         international_midwinter_convention_quartet_session.close()
         international_midwinter_convention_quartet_session.save()
