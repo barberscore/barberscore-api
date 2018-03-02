@@ -702,7 +702,6 @@ class Command(BaseCommand):
         )
 
         # SCJC BREAKPOINT
-        # return
 
         # Contests created via signal.
         international_midwinter_convention.activate()
@@ -732,7 +731,6 @@ class Command(BaseCommand):
         district_alpha_fall_convention_chorus_session.open()
         district_alpha_fall_convention_chorus_session.save()
 
-        return
         # Add entries
         senior_entry = EntryFactory(
             session=international_midwinter_convention_quartet_session,
