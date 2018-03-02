@@ -476,10 +476,10 @@ class OfficerManager(Manager):
             start_date = role[4]
             end_date = role[5]
         else:
-            mc_pk = role.id
+            mc_pk = str(role.id)
             office = role.name
-            group = role.structure
-            person = role.human
+            group = str(role.structure)
+            person = str(role.human)
             start_date = role.start_date
             end_date = role.end_date
 
@@ -528,9 +528,17 @@ class OfficerManager(Manager):
 
         # Build the diff from prior to new
         diff = {}
-        for key, value in prior.items():
-            if getattr(officer, key, None) != value:
-                diff[key] = value
+
+        if getattr(prior, 'mc_pk', None) != mc_pk:
+            diff['mc_pk'] = getattr(prior, 'mc_pk', None)
+
+        start_date_string = start_date.strftime('%Y-%m-%d') if start_date else None
+        if getattr(prior, 'start_date', None) != start_date_string:
+            diff['start_date'] = start_date_string
+
+        end_date_string = end_date.strftime('%Y-%m-%d') if end_date else None
+        if getattr(prior, 'end_date', None) != end_date_string:
+            diff['end_date'] = end_date_string
 
         # Set the transition description
         if officer.status == officer.STATUS.new:
