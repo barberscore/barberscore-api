@@ -361,7 +361,7 @@ class MemberManager(Manager):
         )
 
         # Skip duplicates
-        if member.mc_pk == mc_pk:
+        if str(member.mc_pk) == mc_pk:
             return
 
         # Instantiate prior values dictionary
@@ -398,9 +398,39 @@ class MemberManager(Manager):
 
         # Build the diff from prior to new
         diff = {}
-        for key, value in prior.items():
-            if getattr(member, key, None) != value:
-                diff[key] = value
+        if prior.get('mc_pk') != str(mc_pk):
+            diff['mc_pk'] = getattr(prior, 'mc_pk', None)
+
+        inactive_date_string = inactive_date.strftime('%Y-%m-%d') if inactive_date else None
+        if prior.get('inactive_date') != inactive_date_string:
+            diff['inactive_date'] = inactive_date_string
+
+        if prior.get('inactive_reason') != inactive_reason:
+            diff['inactive_reason'] = getattr(prior, 'inactive_reason', None)
+
+        part_string = self.model.PART[part] if part else None
+        if prior.get('part') != part_string:
+            diff['part'] = part_string
+
+        sub_status_string = self.model.PART[sub_status] if sub_status else None
+        if prior.get('sub_status') != sub_status_string:
+            diff['sub_status'] = sub_status_string
+
+        current_through_string = current_through.strftime('%Y-%m-%d') if current_through else None
+        if prior.get('current_through') != current_through_string:
+            diff['current_through'] = current_through_string
+
+        established_date_string = established_date.strftime('%Y-%m-%d') if established_date else None
+        if prior.get('established_date') != established_date_string:
+            diff['established_date'] = established_date_string
+
+        mem_code_string = self.model.PART[mem_code] if mem_code else None
+        if prior.get('mem_code') != mem_code_string:
+            diff['mem_code'] = mem_code_string
+
+        mem_status_string = self.model.PART[mem_status] if mem_status else None
+        if prior.get('mem_status') != mem_status_string:
+            diff['mem_status'] = mem_status_string
 
         # Set the transition description
         if member.status == member.STATUS.new:
