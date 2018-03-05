@@ -53,6 +53,15 @@ from api.models import Venue
 class Command(BaseCommand):
     help = "Command to sync database with BHS ."
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '-b',
+            dest='breakpoint',
+            nargs='?',
+            default=None,
+            help='Seed breakpoint',
+        )
+
     def handle(self, *args, **options):
         # Create Persons
         admin_person = PersonFactory(
@@ -701,8 +710,6 @@ class Command(BaseCommand):
             chart=chart_6,
         )
 
-        # SCJC BREAKPOINT
-
         # Contests created via signal.
         international_midwinter_convention.activate()
         international_midwinter_convention.save()
@@ -710,6 +717,9 @@ class Command(BaseCommand):
         district_alpha_fall_convention.save()
         district_alpha_spring_convention.activate()
         district_alpha_spring_convention.save()
+
+        if options['breakpoint'] == 'session':
+            return
 
         # Build sessions
         international_midwinter_convention_quartet_session.build()
@@ -818,8 +828,6 @@ class Command(BaseCommand):
         spring_quartet_3_entry.save()
         chorus_entry.approve()
         chorus_entry.save()
-
-        return
 
         # Close sessions
         international_midwinter_convention_quartet_session.close()
@@ -932,3 +940,5 @@ class Command(BaseCommand):
         international_midwinter_convention_quartet_session_round_one.save()
         district_alpha_fall_convention_quartet_session_round_one.review()
         district_alpha_fall_convention_quartet_session_round_one.save()
+
+        return
