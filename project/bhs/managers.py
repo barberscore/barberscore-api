@@ -1,4 +1,5 @@
 from django.db.models import Manager
+from django.db.models import F
 from django.apps import apps
 import django_rq
 
@@ -174,8 +175,8 @@ class JoinManager(Manager):
             )
         # Order and Return as objects
         joins = joins.order_by(
-            'established_date',
-            'modified',
+            F('inactive_date').asc(nulls_last=True),
+            'created',
         ).values_list(
             'id',
             'structure__id',
