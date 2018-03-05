@@ -287,15 +287,20 @@ class Session(TimeStampedModel):
     def can_open_session(self):
         Contest = config.get_model('Contest')
         return all([
-            self.contests.count() > 0,
-            self.contests.filter(status=Contest.STATUS.new).count() == 0,
+            self.contests.filter(status=Contest.STATUS.included),
         ])
 
     def can_close_session(self):
         Entry = config.get_model('Entry')
         return all([
             self.convention.close_date < datetime.date.today(),
-            self.entries.filter(status=Entry.STATUS.submitted).count() == 0,
+            self.entries.all(),
+            self.entries.exclude(
+                status__in=[
+                    Entry.STATUS.approved,
+                    Entry.STATUS.withdrawn,
+                ],
+            ).count() == 0,
         ])
 
     # Session Transitions
