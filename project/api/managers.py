@@ -412,7 +412,7 @@ class MemberManager(Manager):
         if prior.get('part') != part_string:
             diff['part'] = part_string
 
-        sub_status_string = self.model.PART[sub_status] if sub_status else None
+        sub_status_string = self.model.SUB_STATUS[sub_status] if sub_status else None
         if prior.get('sub_status') != sub_status_string:
             diff['sub_status'] = sub_status_string
 
@@ -424,11 +424,11 @@ class MemberManager(Manager):
         if prior.get('established_date') != established_date_string:
             diff['established_date'] = established_date_string
 
-        mem_code_string = self.model.PART[mem_code] if mem_code else None
+        mem_code_string = self.model.MEM_CODE[mem_code] if mem_code else None
         if prior.get('mem_code') != mem_code_string:
             diff['mem_code'] = mem_code_string
 
-        mem_status_string = self.model.PART[mem_status] if mem_status else None
+        mem_status_string = self.model.MEM_STATUS[mem_status] if mem_status else None
         if prior.get('mem_status') != mem_status_string:
             diff['mem_status'] = mem_status_string
 
