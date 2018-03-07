@@ -98,7 +98,7 @@
         "SECRET_KEY": {
           "generator": "secret"
         },
-        "CLOUDINARY_URL": null
+        "CLOUDINARY_URL": ""
       },
       "scripts": {
         "test": "pytest"
