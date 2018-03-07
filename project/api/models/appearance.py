@@ -2,7 +2,7 @@
 import uuid
 
 # Third-Party
-from cloudinary.models import CloudinaryField
+
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
@@ -88,12 +88,6 @@ class Appearance(TimeStampedModel):
             The actual appearance window.""",
         null=True,
         blank=True,
-    )
-
-    variance_report = CloudinaryField(
-        null=True,
-        blank=True,
-        editable=False,
     )
 
     variance_report_new = models.FileField(

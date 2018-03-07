@@ -1,8 +1,10 @@
 import cloudinary
 from cloudinary_storage.storage import RawMediaCloudinaryStorage
 from cloudinary_storage.storage import MediaCloudinaryStorage
+from django.utils.deconstruct import deconstructible
 
 
+@deconstructible
 class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
     def _upload(self, name, content):
         options = {
@@ -16,6 +18,7 @@ class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
         return cloudinary.uploader.upload(content, **options)
 
 
+@deconstructible
 class CustomExcelCloudinaryStorage(RawMediaCloudinaryStorage):
     def _upload(self, name, content):
         options = {
@@ -29,6 +32,7 @@ class CustomExcelCloudinaryStorage(RawMediaCloudinaryStorage):
         return cloudinary.uploader.upload(content, **options)
 
 
+@deconstructible
 class CustomPDFCloudinaryStorage(RawMediaCloudinaryStorage):
     def _upload(self, name, content):
         options = {
