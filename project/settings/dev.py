@@ -11,6 +11,27 @@ ALLOWED_HOSTS = [
     'localhost',
 ]
 
+# Databases
+DATABASES['bhs_db'] = dj_database_url.parse(
+    get_env_variable("BHS_DATABASE_URL"),
+    conn_max_age=600,
+)
+DATABASE_ROUTERS = [
+    'routers.BHSRouter',
+]
+
+# Redis
+RQ_QUEUES['default']['ASYNC'] = False
+RQ_QUEUES['high']['ASYNC'] = False
+
+DATABASES['bhs_db'] = dj_database_url.parse(
+    get_env_variable("BHS_DATABASE_URL"),
+    conn_max_age=600,
+)
+DATABASE_ROUTERS = [
+    'routers.BHSRouter',
+]
+
 # Debug Toolbar
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -74,10 +95,6 @@ JWT_AUTH = {
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# Redis
-RQ_QUEUES['default']['ASYNC'] = False
-RQ_QUEUES['high']['ASYNC'] = False
 
 # Algolia
 ALGOLIA = {

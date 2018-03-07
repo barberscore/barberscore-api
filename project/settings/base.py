@@ -90,14 +90,7 @@ DATABASES = {
         get_env_variable("DATABASE_URL"),
         conn_max_age=600,
     ),
-    'bhs_db': dj_database_url.parse(
-        get_env_variable("BHS_DATABASE_URL"),
-        conn_max_age=600,
-    )
 }
-DATABASE_ROUTERS = [
-    'routers.BHSRouter',
-]
 
 # Caches
 CACHES = {
@@ -128,7 +121,8 @@ RQ_QUEUES = {
 RQ_SHOW_ADMIN_LINK = True
 
 # File Management
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Staticfiles
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'

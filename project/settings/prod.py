@@ -7,6 +7,15 @@ ALLOWED_HOSTS = [
     '.herokuapp.com',
 ]
 
+# Databases
+DATABASES['bhs_db'] = dj_database_url.parse(
+    get_env_variable("BHS_DATABASE_URL"),
+    conn_max_age=600,
+)
+DATABASE_ROUTERS = [
+    'routers.BHSRouter',
+]
+
 # Heroku
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
@@ -81,6 +90,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # Cloudinary
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
