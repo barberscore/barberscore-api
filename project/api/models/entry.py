@@ -40,8 +40,6 @@ class Entry(TimeStampedModel):
         (7, 'withdrawn', 'Withdrawn',),
         (10, 'submitted', 'Submitted',),
         (20, 'approved', 'Approved',),
-        (52, 'scratched', 'Scratched',),
-        (55, 'disqualified', 'Disqualified',),
     )
 
     status = FSMIntegerField(
@@ -324,8 +322,10 @@ class Entry(TimeStampedModel):
     @transition(
         field=status,
         source=[
+            STATUS.built,
             STATUS.invited,
             STATUS.submitted,
+            STATUS.approved,
         ],
         target=STATUS.withdrawn,
         conditions=[],
@@ -377,7 +377,6 @@ class Entry(TimeStampedModel):
             STATUS.built,
             STATUS.submitted,
             STATUS.withdrawn,
-            STATUS.scratched,
             STATUS.approved,
         ],
         target=STATUS.approved,
@@ -403,27 +402,4 @@ class Entry(TimeStampedModel):
             'members': members,
         }
         send_entry.delay('entry_approve.txt', context)
-        return
-
-    @fsm_log_by
-    @transition(
-        field=status,
-        source=[STATUS.approved],
-        target=STATUS.scratched,
-        conditions=[],
-    )
-    def scratch(self, *args, **kwargs):
-        if self.session.status == self.session.STATUS.verified and self.draw:
-            remains = self.session.entries.filter(draw__gt=self.draw)
-            self.draw = None
-            self.save()
-            for entry in remains:
-                entry.draw = entry.draw - 1
-                entry.save()
-        contestants = self.contestants.filter(status__gte=0)
-        for contestant in contestants:
-            contestant.exclude()
-            contestant.save()
-        context = {'entry': self}
-        send_entry.delay('entry_scratch.txt', context)
         return
