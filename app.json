@@ -23,7 +23,7 @@
   "addons": [
     "cloudinary:starter",
     "heroku-redis:hobby-dev",
-    "heroku-postgresql:hobby-dev",
+    "heroku-postgresql:hobby-dev"
   ],
   "env": {
     "DJANGO_SETTINGS_MODULE": {
@@ -97,7 +97,7 @@
         "PYTHONPATH": "project",
         "SECRET_KEY": {
           "generator": "secret"
-        },
+        }
       },
       "scripts": {
         "test": "pytest"
