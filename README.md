@@ -68,3 +68,4 @@ Run these commands to start the app.
 ### Support
 
 If you have any questions let us know at admin@barberscore.com!
+
