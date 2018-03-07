@@ -122,6 +122,8 @@ RQ_SHOW_ADMIN_LINK = True
 
 # File Management
 # Staticfiles
+CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
@@ -166,6 +168,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     'django.contrib.admin',
     'django.contrib.humanize',
     'rest_framework',

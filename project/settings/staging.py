@@ -163,7 +163,5 @@ LOGGING = {
 
 INSTALLED_APPS += [
     'raven.contrib.django.raven_compat',
-    'cloudinary_storage',
-    'cloudinary',
     'algoliasearch_django',
 ]
