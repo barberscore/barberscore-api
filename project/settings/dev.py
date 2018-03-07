@@ -11,15 +11,6 @@ ALLOWED_HOSTS = [
     'localhost',
 ]
 
-# BHS Database
-BHS_DATABASE_URL = get_env_variable("BHS_DATABASE_URL")
-DATABASES['bhs_db'] = dj_database_url.parse(BHS_DATABASE_URL, conn_max_age=0)
-DATABASES['bhs_db']['OPTIONS'] = {
-    'ssl': {'ca': 'rds-combined-ca-bundle.pem'}}
-DATABASE_ROUTERS = [
-    'routers.BHSRouter',
-]
-
 # Debug Toolbar
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -89,7 +80,12 @@ RQ_QUEUES['default']['ASYNC'] = False
 RQ_QUEUES['high']['ASYNC'] = False
 
 # Algolia
-ALGOLIA['INDEX_SUFFIX'] = 'dev'
+ALGOLIA = {
+    'APPLICATION_ID': get_env_variable("ALGOLIASEARCH_APPLICATION_ID"),
+    'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
+    'AUTO_INDEXING': True,
+    'INDEX_SUFFIX': 'dev',
+}
 
 # Logging
 LOGGING = {
@@ -150,4 +146,5 @@ LOGGING = {
 
 INSTALLED_APPS += [
     'debug_toolbar',
+    'whitenoise.runserver_nostatic',
 ]

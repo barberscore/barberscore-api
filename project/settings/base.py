@@ -40,46 +40,6 @@ DATE_FORMAT = 'Y-m-d'
 TIME_FORMAT = 'H:i:s'
 DATETIME_FORMAT = 'Y-m-d H:i:s'
 
-# Database
-DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600),
-}
-
-# Caches
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": get_env_variable("REDIS_URL"),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {"max_connections": 40},
-        }
-    },
-}
-
-# Session Engines
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_CACHE_ALIAS = "default"
-DJANGO_REDIS_IGNORE_EXCEPTIONS = True
-DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
-
-# Redis
-RQ_QUEUES = {
-    'default': {
-        'USE_REDIS_CACHE': 'default',
-        # 'URL': get_env_variable("REDIS_URL"),
-        # 'DEFAULT_TIMEOUT': 360,
-        # 'ASYNC': True,
-    },
-    'high': {
-        'USE_REDIS_CACHE': 'default',
-        # 'URL': get_env_variable("REDIS_URL"),
-        # 'DEFAULT_TIMEOUT': 360,
-        # 'ASYNC': True,
-    },
-}
-RQ_SHOW_ADMIN_LINK = True
-
 # Authentication
 AUTH_USER_MODEL = "api.User"
 AUTHENTICATION_BACKENDS = [
@@ -93,7 +53,6 @@ LOGOUT_REDIRECT_URL = 'admin:login'
 
 # Middleware
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -125,8 +84,54 @@ TEMPLATES = [
     },
 ]
 
-# CORS
-CORS_ORIGIN_ALLOW_ALL = True
+# Database
+DATABASES = {
+    'default': dj_database_url.parse(
+        get_env_variable("DATABASE_URL"),
+        conn_max_age=600,
+    ),
+    'bhs_db': dj_database_url.parse(
+        get_env_variable("BHS_DATABASE_URL"),
+        conn_max_age=600,
+    )
+}
+DATABASE_ROUTERS = [
+    'routers.BHSRouter',
+]
+
+# Caches
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": get_env_variable("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {
+                "max_connections": 40,
+            },
+        }
+    },
+}
+
+# Sessions
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
+# RQ
+RQ_QUEUES = {
+    'default': {
+        'USE_REDIS_CACHE': 'default',
+    },
+    'high': {
+        'USE_REDIS_CACHE': 'default',
+    },
+}
+RQ_SHOW_ADMIN_LINK = True
+
+# File Management
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
 # Rest Framework (JSONAPI)
 REST_FRAMEWORK = {
@@ -160,45 +165,23 @@ JSON_API_FORMAT_TYPES = 'dasherize'
 JSON_API_PLURALIZE_TYPES = False
 APPEND_TRAILING_SLASH = False
 
-# Static Files (WhiteNoise)
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-STATIC_URL = '/static/'
-
-# Media Files (Cloudinary)
-CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-MEDIA_URL = '/media/'
-
-# Algolia
-ALGOLIA = {
-    'APPLICATION_ID': get_env_variable("ALGOLIASEARCH_APPLICATION_ID"),
-    'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
-    'AUTO_INDEXING': True,
-}
-
 # Applications
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
-    'cloudinary_storage',
-    'cloudinary',
     'django.contrib.admin',
     'django.contrib.humanize',
-    'corsheaders',
-    'django_fsm',
-    'django_fsm_log',
-    'fsm_admin',
-    'timezone_field',
     'rest_framework',
     'django_filters',
     'dry_rest_permissions',
     'django_rq',
-    'algoliasearch_django',
+    'django_fsm',
+    'django_fsm_log',
+    'fsm_admin',
+    'timezone_field',
     'api',
     'bhs',
 ]

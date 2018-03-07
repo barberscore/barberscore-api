@@ -7,13 +7,12 @@ ALLOWED_HOSTS = [
     'localhost',
 ]
 
-# Redis
-RQ_QUEUES['default']['ASYNC'] = False
-RQ_QUEUES['high']['ASYNC'] = False
+# Overwrite database settings
+DATABASES.pop('bhs_db', None)
+DATABASE_ROUTERS = []
 
-# Algolia
-ALGOLIA['INDEX_SUFFIX'] = 'test'
-ALGOLIA['AUTO_INDEXING'] = False
+# Staticfiles
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Email
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'

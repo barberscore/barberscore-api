@@ -1,6 +1,6 @@
 # Django
+import os
 from django.apps import AppConfig
-import algoliasearch_django as algoliasearch
 
 
 class ApiConfig(AppConfig):
@@ -9,9 +9,12 @@ class ApiConfig(AppConfig):
     name = 'api'
 
     def ready(self):
-        from .signals import (
-            user_pre_delete,
-        )
-        from .indexes import ChartIndex
-        Chart = self.get_model('chart')
-        algoliasearch.register(Chart, ChartIndex)
+        if os.environ['DJANGO_SETTINGS_MODULE'] != 'settings.test':
+            from .signals import (
+                user_pre_delete,
+            )
+            import algoliasearch_django as algoliasearch
+            from .indexes import ChartIndex
+            Chart = self.get_model('chart')
+            algoliasearch.register(Chart, ChartIndex)
+        return

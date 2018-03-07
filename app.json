@@ -13,23 +13,21 @@
   "formation": {
     "web": {
       "quantity": "1",
-      "size": "standard-2X"
+      "size": "hobby"
     },
     "worker": {
       "quantity": "1",
-      "size": "standard-1X"
+      "size": "hobby"
     }
   },
   "addons": [
-    "algoliasearch:free",
     "cloudinary:starter",
     "heroku-redis:hobby-dev",
     "heroku-postgresql:hobby-dev",
-    "sentry: free"
   ],
   "env": {
     "DJANGO_SETTINGS_MODULE": {
-      "description": "Configures which settings to use. (staging|dev)",
+      "description": "Configures which settings to use. [staging|dev]",
       "value": "settings.dev",
       "required": true
     },
@@ -71,13 +69,21 @@
       "description": "Auth0 Client endpoint.",
       "required": true
     },
-    "HEROKU_APP_NAME": {
-      "description": "Will be populated by Heroku in Review App.",
-      "required": false
+    "ALGOLIASEARCH_API_KEY": {
+      "description": "Algolia Private API Key.",
+      "required": true
     },
-    "HEROKU_PARENT_APP_NAME": {
-      "description": "Will be populated by Heroku in Review App.",
-      "required": false
+    "ALGOLIASEARCH_API_KEY_SEARCH": {
+      "description": "Algolia Public Search Key.",
+      "required": true
+    },
+    "ALGOLIASEARCH_APPLICATION_ID": {
+      "description": "Algolia App ID.",
+      "required": true
+    },
+    "SENTRY_DSN": {
+      "description": "Sentry DSN URL.",
+      "required": true
     }
   },
   "environments": {
@@ -92,12 +98,6 @@
         "SECRET_KEY": {
           "generator": "secret"
         },
-        "CLOUDINARY_URL": "none",
-        "BHS_DATABASE_URL": "none",
-        "SENTRY_DSN": "none",
-        "ALGOLIASEARCH_API_KEY": "none",
-        "ALGOLIASEARCH_API_KEY_SEARCH": "none",
-        "ALGOLIASEARCH_APPLICATION_ID": "none"
       },
       "scripts": {
         "test": "pytest"

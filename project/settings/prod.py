@@ -1,10 +1,3 @@
-# Standard Libary
-import sys
-
-# Third-Party
-from cryptography import x509
-from cryptography.hazmat.backends import default_backend
-
 # Local
 from .base import *
 
@@ -18,25 +11,30 @@ ALLOWED_HOSTS = [
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
 
-# BHS Database
-BHS_DATABASE_URL = get_env_variable("BHS_DATABASE_URL")
-DATABASES['bhs_db'] = dj_database_url.parse(BHS_DATABASE_URL, conn_max_age=0)
-DATABASES['bhs_db']['OPTIONS'] = {
-    'ssl': {'ca': 'rds-combined-ca-bundle.pem'}}
-DATABASE_ROUTERS = [
-    'routers.BHSRouter',
-]
+# Caches
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": get_env_variable("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 40},
+        }
+    },
+}
 
 # Auth0
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
 AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
-
 AUTH0_API_ID = get_env_variable("AUTH0_API_ID")
 AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
 AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 
 # JWT Settings
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+
 pem_data = b"""
 -----BEGIN CERTIFICATE-----
 MIIDBTCCAe2gAwIBAgIJed2q4tV5RkohMA0GCSqGSIb3DQEBCwUAMCAxHjAcBgNV
@@ -87,7 +85,17 @@ CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Algolia
-ALGOLIA['INDEX_SUFFIX'] = 'prod'
+ALGOLIA = {
+    'APPLICATION_ID': get_env_variable("ALGOLIASEARCH_APPLICATION_ID"),
+    'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
+    'AUTO_INDEXING': True,
+}
+
+# Sentry
+RAVEN_CONFIG = {
+    'environment': 'staging',
+    'dsn': get_env_variable("SENTRY_DSN")
+}
 
 # Logging
 LOGGING = {
@@ -112,16 +120,44 @@ LOGGING = {
             ],
             'level': 'INFO',
         },
+        'django.db.backends': {
+            'level': 'ERROR',
+            'handlers': [
+                'console'
+            ],
+            'propagate': False,
+        },
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': [
+                'console'
+            ],
+            'propagate': False,
+        },
+        'sentry.errors': {
+            'level': 'DEBUG',
+            'handlers': [
+                'console'
+            ],
+            'propagate': False,
+        },
     },
     'handlers': {
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
+        },
+        'sentry': {
+            'level': 'ERROR',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+            'tags': {'custom-tag': 'x'},
         },
     },
 }
 
 INSTALLED_APPS += [
     'raven.contrib.django.raven_compat',
+    'cloudinary_storage',
+    'cloudinary',
+    'algoliasearch_django',
 ]
