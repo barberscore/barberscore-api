@@ -320,9 +320,15 @@ class Command(BaseCommand):
             group=international,
             status=Officer.STATUS.active,
         )
-        drcj_alpha_officer = OfficerFactory(
+        drcj_alpha_officer_admin = OfficerFactory(
             office=drcj_office,
             person=admin_person,
+            group=district_alpha,
+            status=Officer.STATUS.active,
+        )
+        drcj_alpha_officer = OfficerFactory(
+            office=drcj_office,
+            person=drcj_person,
             group=district_alpha,
             status=Officer.STATUS.active,
         )
@@ -469,6 +475,11 @@ class Command(BaseCommand):
             category=Assignment.CATEGORY.drcj,
             convention=district_alpha_fall_convention,
             person=admin_person,
+        )
+        AssignmentFactory(
+            category=Assignment.CATEGORY.drcj,
+            convention=district_alpha_fall_convention,
+            person=drcj_person,
         )
         AssignmentFactory(
             category=Assignment.CATEGORY.ca,
