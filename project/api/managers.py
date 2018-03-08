@@ -68,7 +68,7 @@ class GroupManager(Manager):
             facebook = structure.facebook
             twitter = structure.twitter
             bhs_id = structure.bhs_id
-            parent = structure.parent
+            parent = str(structure.parent.id)
             code = structure.chapter_code
 
         # Transform as needed

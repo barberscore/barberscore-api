@@ -91,7 +91,7 @@ class StructureManager(Manager):
             'facebook',
             'twitter',
             'bhs_id',
-            'parent',
+            'parent__id',
             'chapter_code',
         )
         # Creating/Update Groups
