@@ -81,6 +81,10 @@
       "description": "Algolia App ID.",
       "required": true
     },
+    "DISABLE_COLLECTSTATIC": {
+      "description": "Sentry DSN URL.",
+      "required": true
+    },
     "SENTRY_DSN": {
       "description": "Sentry DSN URL.",
       "required": true
