@@ -860,6 +860,8 @@ class Command(BaseCommand):
         district_alpha_fall_convention_chorus_session.save()
 
         # DRCJ BREAKPOINT
+        if options['breakpoint'] == 'round':
+            return
 
         # Start First Round
         international_midwinter_convention_quartet_session_round_one = international_midwinter_convention_quartet_session.rounds.earliest()
