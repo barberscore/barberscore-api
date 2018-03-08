@@ -43,7 +43,6 @@ django-cloudinary-storage = "*"
 django-redis = "*"
 raven = "*"
 algoliasearch-django = "*"
-brotlipy = "*"
 
 
 [dev-packages]
