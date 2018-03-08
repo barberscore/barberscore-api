@@ -299,9 +299,9 @@ class MemberManager(Manager):
             mem_code = join[9]
             mem_status = join[10]
         else:
-            mc_pk = join.id
-            structure = join.structure
-            person = join.subscription.human
+            mc_pk = str(join.id)
+            structure = str(join.structure.id)
+            person = str(join.subscription.human.id)
             inactive_date = join.inactive_date
             inactive_reason = join.inactive_reason
             part = join.vocal_part
