@@ -36,7 +36,10 @@ Additional Notes/Requests:
 
 {{entry.description|safe|default:"(No additional notes/requests)"}}
 
+If you need to change your entry submission please return to Barberscore to edit
+as needed, then click the "Re-Submit" button. You can also communicate any information
+or special requests to your DRCJ by using the Additional Notes text box.
 
-NOTE: This is not SPAM. Please do not report this email as SPAM. If you are receiving this
-email for an inactive quartet, or you are no longer the administrator for your chapter, we
-can fix that. Just send your request to be removed to: customerservice@barbershop.org.
+
+NOTE: Please do not mark this email as spam or junk mail, just delete it. If you feel that you are receiving this
+email in error, we can fix that. Just send your request to be removed to: customerservice@barbershop.org.
