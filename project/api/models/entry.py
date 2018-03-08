@@ -244,6 +244,19 @@ class Entry(TimeStampedModel):
     # Methods
 
     # Entry Transition Conditions
+    def can_build_entry(self):
+        divs = [
+            'MAD',
+            'FWD',
+            'SWD',
+            'LOL',
+            'NED',
+            'SWD',
+        ]
+        return all([
+            self.group.parent.code not in divs
+        ])
+
     def can_invite_entry(self):
         return all([
             self.group.officers.filter(status__gt=0),
@@ -280,7 +293,7 @@ class Entry(TimeStampedModel):
         field=status,
         source=[STATUS.new],
         target=STATUS.built,
-        conditions=[],
+        conditions=[can_build_entry],
     )
     def build(self, *args, **kwargs):
         contests = self.session.contests.filter(
