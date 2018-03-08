@@ -253,8 +253,10 @@ class Entry(TimeStampedModel):
             'NED',
             'SWD',
         ]
+        code = getattr(self.group.parent, 'code', None)
         return all([
-            self.group.parent.code not in divs
+            code,
+            code not in divs,
         ])
 
     def can_invite_entry(self):
