@@ -90,8 +90,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # Cloudinary
-# STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
@@ -104,8 +104,9 @@ ALGOLIA = {
 
 # Sentry
 RAVEN_CONFIG = {
-    'environment': 'staging',
-    'dsn': get_env_variable("SENTRY_DSN")
+    'environment': 'production',
+    'dsn': get_env_variable("SENTRY_DSN"),
+    'release': get_env_variable("HEROKU_RELEASE_VERSION"),
 }
 
 # Logging
