@@ -128,6 +128,7 @@ class Human(models.Model):
         )
 
     class Meta:
+        managed=False
         db_table = 'vwMembers'
 
 
@@ -253,6 +254,7 @@ class Structure(models.Model):
             )
 
     class Meta:
+        managed=False
         db_table = 'vwStructures'
 
 
@@ -272,6 +274,7 @@ class Status(models.Model):
         return str(self.name)
 
     class Meta:
+        managed=False
         db_table = 'vwStatuses'
         verbose_name_plural = 'statuses'
 
@@ -319,6 +322,7 @@ class Membership(models.Model):
         )
 
     class Meta:
+        managed=False
         db_table = 'vwMemberships'
 
 
@@ -367,6 +371,7 @@ class Subscription(models.Model):
         return str(self.human)
 
     class Meta:
+        managed=False
         db_table = 'vwSubscriptions'
 
 
@@ -434,6 +439,7 @@ class Role(models.Model):
         )
 
     class Meta:
+        managed=False
         db_table = 'vwOfficers'
 
 
@@ -508,6 +514,7 @@ class Join(models.Model):
         )
 
     class Meta:
+        managed=False
         db_table = 'vwSubscriptions_Memberships'
         verbose_name = 'Join'
         verbose_name_plural = 'Joins'
