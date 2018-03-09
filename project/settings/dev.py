@@ -93,8 +93,9 @@ JWT_AUTH = {
     'JWT_ALGORITHM': 'RS256',
 }
 
-# Email
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Email (Mailhog)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_PORT = 1025
 
 # Algolia
 ALGOLIA = {
