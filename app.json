@@ -129,7 +129,6 @@
   "environments": {
     "test": {
       "addons": [
-        "cloudinary:starter",
         "heroku-postgresql:in-dyno",
         "heroku-redis:in-dyno"
       ],
@@ -157,6 +156,7 @@
         "AUTH0_CLIENT_SECRET": null,
         "AUTH0_DOMAIN": null,
         "BHS_DATABASE_URL": null,
+        "CLOUDINARY_URL": null,
         "SENTRY_DSN": null
       },
       "scripts": {
