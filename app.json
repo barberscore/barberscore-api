@@ -26,7 +26,7 @@
     "heroku-postgresql:hobby-dev"
   ],
   "env": {
-    "ENVIRO": {
+    "ENVIRONMENT": {
       "description": "Sets the environment.",
       "value": "dev",
       "required": true
@@ -133,7 +133,7 @@
         "heroku-redis:in-dyno"
       ],
       "env": {
-        "ENVIRO": "dev",
+        "ENVIRONMENT": "dev",
         "DJANGO_SETTINGS_MODULE": "sets",
         "PYTHONPATH": "project",
         "SECRET_KEY": {
@@ -144,20 +144,20 @@
         "EMAIL_PORT": 25,
         "REDIS_MAX_CONNECTIONS": 40,
         "RQ_ASYNC": false,
-        "ALGOLIASEARCH_API_KEY": null,
-        "ALGOLIASEARCH_APPLICATION_ID": null,
-        "ALGOLIASEARCH_AUTO_INDEXING": null,
-        "ALGOLIASEARCH_INDEX_SUFFIX": null,
-        "AUTH0_API_ID": null,
-        "AUTH0_API_SECRET": null,
-        "AUTH0_AUDIENCE": null,
-        "AUTH0_CERTIFICATE": null,
-        "AUTH0_CLIENT_ID": null,
-        "AUTH0_CLIENT_SECRET": null,
-        "AUTH0_DOMAIN": null,
-        "BHS_DATABASE_URL": null,
-        "CLOUDINARY_URL": null,
-        "SENTRY_DSN": null
+        "ALGOLIASEARCH_API_KEY": "foo",
+        "ALGOLIASEARCH_APPLICATION_ID": "foo",
+        "ALGOLIASEARCH_AUTO_INDEXING": false,
+        "ALGOLIASEARCH_INDEX_SUFFIX": "test",
+        "AUTH0_API_ID": "foo",
+        "AUTH0_API_SECRET": "foo",
+        "AUTH0_AUDIENCE": "foo",
+        "AUTH0_CERTIFICATE": "foo",
+        "AUTH0_CLIENT_ID": "foo",
+        "AUTH0_CLIENT_SECRET": "foo",
+        "AUTH0_DOMAIN": "foo",
+        "BHS_DATABASE_URL": "foo",
+        "CLOUDINARY_URL": "foo",
+        "SENTRY_DSN": "foo"
       },
       "scripts": {
         "test": "pytest"
