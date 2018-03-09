@@ -2,6 +2,7 @@
 from .base import *
 
 # Core
+DEBUG = False
 ALLOWED_HOSTS = [
     '.barberscore.com',
     '.herokuapp.com',
@@ -15,10 +16,6 @@ DATABASES['bhs_db'] = dj_database_url.parse(
 DATABASE_ROUTERS = [
     'routers.BHSRouter',
 ]
-
-# Heroku
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
 
 # Caches
 CACHES = {
@@ -72,7 +69,6 @@ jwt_public_key = cert.public_key()
 def jwt_get_username_from_payload_handler(payload):
     return payload.get('email')
 
-
 JWT_AUTH = {
     'JWT_AUDIENCE': AUTH0_CLIENT_ID,
     'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_username_from_payload_handler,
@@ -83,10 +79,10 @@ JWT_AUTH = {
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_PORT = 587
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = get_env_variable("SENDGRID_API_KEY")
-EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # Cloudinary
@@ -101,6 +97,10 @@ ALGOLIA = {
     'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
     'AUTO_INDEXING': True,
 }
+
+# Heroku
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
 
 # Sentry
 RAVEN_CONFIG = {

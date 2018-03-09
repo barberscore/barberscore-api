@@ -1,8 +1,4 @@
 # Local
-# Third-Party
-from cryptography import x509
-from cryptography.hazmat.backends import default_backend
-
 from .base import *
 
 # Core
@@ -20,17 +16,21 @@ DATABASE_ROUTERS = [
     'routers.BHSRouter',
 ]
 
+# Caches
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": get_env_variable("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 40},
+        }
+    },
+}
+
 # Redis
 RQ_QUEUES['default']['ASYNC'] = False
 RQ_QUEUES['high']['ASYNC'] = False
-
-DATABASES['bhs_db'] = dj_database_url.parse(
-    get_env_variable("BHS_DATABASE_URL"),
-    conn_max_age=600,
-)
-DATABASE_ROUTERS = [
-    'routers.BHSRouter',
-]
 
 # Debug Toolbar
 MIDDLEWARE = [
@@ -51,12 +51,14 @@ DEBUG_TOOLBAR_PANELS = [
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
 AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
-
 AUTH0_API_ID = get_env_variable("AUTH0_API_ID")
 AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
 AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 
 # JWT Settings
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+
 pem_data = b"""
 -----BEGIN CERTIFICATE-----
 MIIDDTCCAfWgAwIBAgIJPuLUYhcdfwcOMA0GCSqGSIb3DQEBCwUAMCQxIjAgBgNV

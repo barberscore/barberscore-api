@@ -54,7 +54,7 @@ LOGOUT_REDIRECT_URL = 'admin:login'
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -124,7 +124,8 @@ RQ_SHOW_ADMIN_LINK = True
 # Staticfiles
 CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+# STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
@@ -167,11 +168,11 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',
     'django.contrib.staticfiles',
-    'cloudinary',
     'django.contrib.admin',
     'django.contrib.humanize',
+    'cloudinary_storage',
+    'cloudinary',
     'rest_framework',
     'django_filters',
     'dry_rest_permissions',
@@ -179,7 +180,6 @@ INSTALLED_APPS = [
     'django_fsm',
     'django_fsm_log',
     'fsm_admin',
-    'timezone_field',
     'api',
     'bhs',
 ]
