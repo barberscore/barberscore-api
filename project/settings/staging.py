@@ -94,7 +94,7 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 ALGOLIA = {
     'APPLICATION_ID': get_env_variable("ALGOLIASEARCH_APPLICATION_ID"),
     'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
-    'AUTO_INDEXING': True,
+    'AUTO_INDEXING': False,
 }
 
 # Sentry
