@@ -126,8 +126,9 @@ class RoleManager(Manager):
         Officer = apps.get_model('api.officer')
 
         # Get base, excluding Quartets
-        roles = self.exclude(
-            name='Quartet Admin',
+        roles = self.select_related(
+            'structure',
+            'human',
         )
         # Will rebuild without a cursor
         if cursor:
@@ -192,7 +193,6 @@ class JoinManager(Manager):
         )
 
         # Creating/Update Persons
-        Member = apps.get_model('api.member')
         for join in joins:
             django_rq.enqueue(
                 Member.objects.create_from_join,
@@ -200,3 +200,37 @@ class JoinManager(Manager):
                 is_object=True,
             )
         return joins.count()
+
+
+class SubscriptionManager(Manager):
+    def update_persons(self, cursor=None):
+        # Get base
+        subscriptions = self.select_related(
+            'human',
+        ).filter(
+            items_editable=True,
+        )
+        # Rebuild will do the whole thing.
+        if cursor:
+            subscriptions = subscriptions.filter(
+                modified__gt=cursor,
+            )
+        # Order and Return as objects
+        subscriptions = subscriptions.order_by(
+            'modified',
+        ).values_list(
+            'id',
+            'human__id',
+            'current_through',
+            'status',
+        )
+
+        # Creating/Update Persons
+        Person = apps.get_model('api.person')
+        for subscription in subscriptions:
+            django_rq.enqueue(
+                Person.objects.update_from_subscription,
+                subscription,
+                is_object=True,
+            )
+        return subscriptions.count()

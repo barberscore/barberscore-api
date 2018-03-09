@@ -55,7 +55,7 @@ class GroupManager(Manager):
             parent = structure[13]
             code = structure[14]
         else:
-            mc_pk = structure.id
+            mc_pk = str(structure.id)
             raw_name = structure.name
             preferred_name = structure.preferred_name
             chorus_name = structure.chorus_name
@@ -362,7 +362,7 @@ class MemberManager(Manager):
 
         # Skip duplicates
         if str(member.mc_pk) == mc_pk:
-            return
+            return 'Skipped'
 
         # Instantiate prior values dictionary
         prior = {}
@@ -449,50 +449,9 @@ class MemberManager(Manager):
             )
         else:
             raise ValueError('Unknown status')
-        # Transition the person and save record if BHS group
-        if group.bhs_id == 1:
-            # Update current_through
-            person.current_through = current_through
-            # Transition as appropriate
-            if status == self.model.STATUS.active:
-                person.activate(
-                    description=description,
-                )
-            elif status == self.model.STATUS.inactive:
-                person.deactivate(
-                    description=description,
-                )
-            else:
-                raise ValueError('Unknown status')
-            person.save()
-        # Transition the officer and save record if quartet
-        # Ensure Officer has email.
-        if group.kind == group.KIND.quartet and person.email:
-            # Transition as appropriate
-            Office = apps.get_model('api.office')
-            Officer = apps.get_model('api.officer')
-            office = Office.objects.get(
-                name='Quartet Manager',
-            )
-            officer, created = Officer.objects.get_or_create(
-                person=person,
-                group=group,
-                office=office,
-            )
-            if status == self.model.STATUS.active:
-                officer.activate(
-                    description=description,
-                )
-            elif status == self.model.STATUS.inactive:
-                officer.deactivate(
-                    description=description,
-                )
-            else:
-                raise ValueError('Unknown status')
-            officer.save()
         # Finally, save the record.
         member.save()
-        return
+        return 'Updated'
 
 
 class OfficerManager(Manager):
@@ -508,8 +467,8 @@ class OfficerManager(Manager):
         else:
             mc_pk = str(role.id)
             office = role.name
-            group = str(role.structure)
-            person = str(role.human)
+            group = str(role.structure.id)
+            person = str(role.human.id)
             start_date = role.start_date
             end_date = role.end_date
 
@@ -540,7 +499,7 @@ class OfficerManager(Manager):
         )
         # Skip duplicates
         if str(officer.mc_pk) == mc_pk:
-            return
+            return 'Skipped'
 
         # Instantiate prior values dictionary
         prior = {}
@@ -560,15 +519,15 @@ class OfficerManager(Manager):
         diff = {}
 
         if prior.get('mc_pk') != mc_pk:
-            diff['mc_pk'] = getattr(prior, 'mc_pk', None)
+            diff['mc_pk'] = prior.get('mc_pk')
 
         start_date_string = start_date.strftime('%Y-%m-%d') if start_date else None
         if prior.get('start_date') != start_date_string:
-            diff['start_date'] = start_date_string
+            diff['start_date'] = prior.get('start_date')
 
         end_date_string = end_date.strftime('%Y-%m-%d') if end_date else None
         if prior.get('end_date') != end_date_string:
-            diff['end_date'] = end_date_string
+            diff['end_date'] = prior.get('end_date')
 
         # Set the transition description
         if officer.status == officer.STATUS.new:
@@ -610,7 +569,7 @@ class PersonManager(Manager):
             gender = human[11]
             part = human[12]
         else:
-            mc_pk = human.mc_pk
+            mc_pk = str(human.mc_pk)
             first_name = human.first_name
             middle_name = human.middle_name
             last_name = human.last_name
@@ -695,11 +654,67 @@ class PersonManager(Manager):
                     email=email,
                     defaults=defaults,
                 )
-        if created:
-            # Subscription overwrites, set default
-            person.status = self.model.STATUS.inactive
-            person.save()
         return person, created
+
+    def update_from_subscription(self, subscription, is_object=False):
+        # Map between object/instance
+        if is_object:
+            mc_pk = subscription[0]
+            human = subscription[1]
+            current_through = subscription[2]
+            status = subscription[3]
+        else:
+            mc_pk = str(subscription.id)
+            human = str(subscription.human.id)
+            current_through = subscription.current_through
+            status = subscription.status
+
+        status = getattr(
+            self.model.STATUS,
+            status,
+            self.model.STATUS.inactive,
+        )
+        person = self.get(
+            mc_pk=human,
+        )
+        # Instantiate prior values dictionary
+        prior = {}
+        prior['status'] = person.get_status_display()
+        prior['current_through'] = person.current_through.strftime('%Y-%m-%d') if person.current_through else None
+
+        # Update
+        person.current_through = current_through
+
+        # Build the diff from prior to new
+        diff = {}
+        if person.status != status:
+            diff['status'] = prior['status']
+        if person.current_through != current_through:
+            diff['current_through'] = prior['current_through']
+        if diff:
+            diff['mc_pk'] = mc_pk
+
+        if not diff:
+            return 'Skipped'
+
+        # Set the transition description
+        if person.status == person.STATUS.new:
+            description = json.dumps({'status': 'New'})
+        else:
+            description = json.dumps(diff)
+
+        if status == self.model.STATUS.active:
+            person.activate(
+                description=description,
+            )
+        elif status == self.model.STATUS.inactive:
+            person.deactivate(
+                description=description,
+            )
+        else:
+            raise ValueError('Unknown status')
+        person.save()
+        return 'Updated'
 
     def update_users(self, cursor=None, active_only=True):
         # Get Base - currently only active officers persons

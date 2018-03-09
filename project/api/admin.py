@@ -922,9 +922,9 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_chart_manager',
     ]
 
-    inlines = [
-        OfficerInline,
-    ]
+    # inlines = [
+    #     OfficerInline,
+    # ]
 
     def is_mc(self, instance):
         return instance.is_mc

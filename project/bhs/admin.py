@@ -404,7 +404,9 @@ class RoleAdmin(ReadOnlyAdmin):
 
     search_fields = [
         'structure__name',
-        'human__name',
+        'human__first_name',
+        'human__last_name',
+        'human__bhs_id',
     ]
 
 

@@ -3,6 +3,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 from bhs.managers import StructureManager
+from bhs.managers import SubscriptionManager
 from bhs.managers import HumanManager
 from bhs.managers import RoleManager
 from bhs.managers import JoinManager
@@ -349,6 +350,8 @@ class Subscription(models.Model):
         null=True,
         editable=False,
     )
+
+    objects = SubscriptionManager()
 
     # FKs
     human = models.ForeignKey(
