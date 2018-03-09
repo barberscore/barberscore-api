@@ -229,6 +229,7 @@ class Entry(TimeStampedModel):
                     category__lt=10,
                     kind=10,
                 ),
+                self.session.status < self.session.STATUS.started,
             ]),
             # For Groups
             all([
@@ -236,7 +237,8 @@ class Entry(TimeStampedModel):
                     person__user=request.user,
                     status__gt=0,
                 ),
-                self.status <= self.STATUS.submitted,
+                self.status < self.STATUS.approved,
+                self.session.status < self.session.STATUS.started,
             ]),
         ])
         return result
