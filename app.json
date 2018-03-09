@@ -155,7 +155,7 @@
         "AUTH0_CLIENT_ID": "test",
         "AUTH0_CLIENT_SECRET": "test",
         "AUTH0_DOMAIN": "test",
-        "BHS_DATABASE_URL": "test",
+        "BHS_DATABASE_URL": "mysql://root@localhost",
         "CLOUDINARY_URL": "test",
         "SENTRY_DSN": "test"
       },
