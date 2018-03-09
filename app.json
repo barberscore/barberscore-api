@@ -140,7 +140,7 @@
           "generator": "secret"
         },
         "DEBUG": false,
-        "EMAIL_PORT": 25,
+        "EMAIL_PORT": "25",
         "ALGOLIASEARCH_API_KEY": "foo",
         "ALGOLIASEARCH_APPLICATION_ID": "foo",
         "ALGOLIASEARCH_INDEX_SUFFIX": "test",
