@@ -284,7 +284,7 @@ class GroupManager(Manager):
 
 
 class MemberManager(Manager):
-    def create_from_join(self, join, is_object=False):
+    def update_from_join(self, join, is_object=False):
         # Map variables
         if is_object:
             mc_pk = join[0]
@@ -455,7 +455,7 @@ class MemberManager(Manager):
 
 
 class OfficerManager(Manager):
-    def update_or_create_from_role(self, role, is_object=False):
+    def update_from_role(self, role, is_object=False):
         # Map
         if is_object:
             mc_pk = role[0]
@@ -548,7 +548,7 @@ class OfficerManager(Manager):
             raise ValueError('Unknown status')
         # Finally, save the record.
         officer.save()
-        return
+        return 'Updated'
 
 
 class PersonManager(Manager):
@@ -717,7 +717,7 @@ class PersonManager(Manager):
         person.save()
         return 'Updated'
 
-    def update_users(self, cursor=None, active_only=True):
+    def update_users(self, cursor=None):
         # Get Base - currently only active officers persons
         Officer = apps.get_model('api.officer')
         persons = self.filter(

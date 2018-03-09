@@ -5,14 +5,10 @@ import django_rq
 
 
 class HumanManager(Manager):
-    def update_persons(self, cursor=None, active_only=True):
+    def update_persons(self, cursor=None):
         # Get base
         humans = self.all()
         # Filter if cursored
-        if active_only:
-            humans = humans.filter(
-                is_deceased=False,
-            )
         if cursor:
             humans = humans.filter(
                 modified__gt=cursor,
@@ -62,14 +58,10 @@ class HumanManager(Manager):
 
 
 class StructureManager(Manager):
-    def update_groups(self, cursor=None, active_only=True):
+    def update_groups(self, cursor=None):
         # Get base
         structures = self.all()
         # Filter if cursored
-        if active_only:
-            structures = structures.filter(
-                status__name='active',
-            )
         if cursor:
             structures = structures.filter(
                 modified__gt=cursor,
@@ -151,7 +143,7 @@ class RoleManager(Manager):
         Officer = apps.get_model('api.officer')
         for role in roles:
             django_rq.enqueue(
-                Officer.objects.update_or_create_from_role,
+                Officer.objects.update_from_role,
                 role,
                 is_object=True,
             )
@@ -195,7 +187,7 @@ class JoinManager(Manager):
         # Creating/Update Persons
         for join in joins:
             django_rq.enqueue(
-                Member.objects.create_from_join,
+                Member.objects.update_from_join,
                 join,
                 is_object=True,
             )
