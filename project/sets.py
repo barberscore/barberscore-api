@@ -1,6 +1,5 @@
 # Standard Libary
 import os
-import raven
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -181,10 +180,6 @@ REST_FRAMEWORK = {
 # Email
 EMAIL_BACKEND = get_env_variable("EMAIL_BACKEND")
 EMAIL_PORT = get_env_variable("EMAIL_PORT")
-EMAIL_HOST = get_env_variable("EMAIL_HOST")
-EMAIL_HOST_USER = get_env_variable("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = get_env_variable("SENDGRID_API_KEY")
-EMAIL_USE_TLS = get_env_variable("EMAIL_USE_TLS")
 
 # JSONAPI
 JSON_API_FORMAT_KEYS = 'dasherize'
@@ -402,6 +397,7 @@ elif ENVIRONMENT == 'staging':
     }
 
 elif ENVIRONMENT == 'prod':
+    SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,

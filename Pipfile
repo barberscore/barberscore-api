@@ -43,6 +43,7 @@ django-cloudinary-storage = "*"
 django-redis = "*"
 raven = "*"
 algoliasearch-django = "*"
+sendgrid-django = "*"
 
 
 [dev-packages]
