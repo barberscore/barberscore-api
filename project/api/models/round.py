@@ -335,3 +335,46 @@ class Round(TimeStampedModel):
     #         round.verify()
     #         round.save()
     #         return
+
+    # Competitor = config.get_model('Competitor')
+    # for entry in self.entries.filter(status=Entry.STATUS.approved):
+    #     # Create competitors
+    #     # Set is_ranked=True if they are competing for the primary award.
+    #     primary = self.contests.get(award__is_primary=True)
+    #     is_ranked = bool(entry.contestants.filter(
+    #         contest=primary,
+    #         status__gt=0,
+    #     ))
+    #     # Set is_multi=True if they are competiting for at least
+    #     # one multi-round award.
+    #     is_multi = bool(entry.contestants.filter(
+    #         contest__award__rounds__gt=1
+    #     ))
+
+    #     competitor = Competitor.objects.create(
+    #         session=self,
+    #         group=entry.group,
+    #         entry=entry,
+    #         draw=entry.draw,
+    #         is_ranked=is_ranked,
+    #         is_multi=is_multi,
+    #     )
+    #     competitor.start()
+    #     competitor.save()
+    #     # set the grid
+    #     # competitor.grids.create(
+    #     #     round=first_round,
+    #     #     num=entry.draw,
+    #     #     appearance=appearance,
+    #     # )
+    # # set the panel
+    # for assignment in self.convention.assignments.filter(
+    #     status=self.convention.assignments.model.STATUS.active,
+    #     category__gt=self.convention.assignments.model.CATEGORY.ca,
+    # ):
+    #     for round in self.rounds.all():
+    #         round.panelists.create(
+    #             kind=assignment.kind,
+    #             category=assignment.category,
+    #             person=assignment.person,
+    #         )
