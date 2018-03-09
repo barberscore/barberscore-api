@@ -1100,7 +1100,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'is_mc',
         'nomen',
-        'current_through',
+        # 'current_through',
         'created',
         'modified',
     ]

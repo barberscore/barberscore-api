@@ -689,7 +689,8 @@ class PersonManager(Manager):
         diff = {}
         if person.status != status:
             diff['status'] = prior['status']
-        if person.current_through != current_through:
+        current_through_string = current_through.strftime('%Y-%m-%d') if current_through else None
+        if prior.get('current_through') != current_through_string:
             diff['current_through'] = prior['current_through']
         if diff:
             diff['mc_pk'] = mc_pk

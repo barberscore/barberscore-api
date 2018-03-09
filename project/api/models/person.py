@@ -257,7 +257,7 @@ class Person(TimeStampedModel):
     current_through = models.DateField(
         null=True,
         blank=True,
-        editable=False,
+        editable=True,
     )
 
     # Properties
