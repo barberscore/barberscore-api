@@ -139,15 +139,8 @@
         "SECRET_KEY": {
           "generator": "secret"
         },
-        "DEBUG": false,
-        "EMAIL_BACKEND": "django.core.mail.backends.dummy.EmailBackend",
-        "EMAIL_PORT": 25,
-        "REDIS_MAX_CONNECTIONS": 40,
-        "RQ_ASYNC": false,
         "ALGOLIASEARCH_API_KEY": "foo",
         "ALGOLIASEARCH_APPLICATION_ID": "foo",
-        "ALGOLIASEARCH_AUTO_INDEXING": false,
-        "ALGOLIASEARCH_INDEX_SUFFIX": "test",
         "AUTH0_API_ID": "foo",
         "AUTH0_API_SECRET": "foo",
         "AUTH0_AUDIENCE": "foo",
