@@ -141,6 +141,7 @@
         },
         "ALGOLIASEARCH_API_KEY": "foo",
         "ALGOLIASEARCH_APPLICATION_ID": "foo",
+        "ALGOLIASEARCH_INDEX_SUFFIX": "test",
         "AUTH0_API_ID": "foo",
         "AUTH0_API_SECRET": "foo",
         "AUTH0_AUDIENCE": "foo",
