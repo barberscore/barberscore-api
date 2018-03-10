@@ -23,7 +23,8 @@ def get_env_variable(var_name):
     return var
 
 
-# Core
+# Common
+DEBUG = get_env_variable("DEBUG")
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 SECRET_KEY = get_env_variable("SECRET_KEY")
 DEFAULT_FROM_EMAIL = "admin@barberscore.com"
@@ -50,6 +51,11 @@ REQUIRED_FIELDS = []
 LOGIN_URL = 'admin:login'
 LOGIN_REDIRECT_URL = 'admin:index'
 LOGOUT_REDIRECT_URL = 'admin:login'
+
+# File Management
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
 # Middleware
 MIDDLEWARE = [
@@ -100,7 +106,7 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
-                "max_connections": 40,
+                "max_connections": int(get_env_variable("REDIS_MAX_CONNECTIONS")),
             },
         }
     },
@@ -113,22 +119,14 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 RQ_QUEUES = {
     'default': {
         'USE_REDIS_CACHE': 'default',
+        'ASYNC': get_env_variable("RQ_ASYNC"),
     },
     'high': {
         'USE_REDIS_CACHE': 'default',
+        'ASYNC': get_env_variable("RQ_ASYNC"),
     },
 }
 RQ_SHOW_ADMIN_LINK = True
-
-# File Management
-# Staticfiles
-CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-# STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
 
 # Rest Framework (JSONAPI)
 REST_FRAMEWORK = {
@@ -162,6 +160,7 @@ JSON_API_FORMAT_TYPES = 'dasherize'
 JSON_API_PLURALIZE_TYPES = False
 APPEND_TRAILING_SLASH = False
 
+
 # Applications
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -171,8 +170,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.humanize',
-    'cloudinary_storage',
-    'cloudinary',
     'rest_framework',
     'django_filters',
     'dry_rest_permissions',

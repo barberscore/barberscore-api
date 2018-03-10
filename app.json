@@ -134,14 +134,12 @@
         "heroku-redis:in-dyno"
       ],
       "env": {
-        "DJANGO_SETTINGS_MODULE": "settings_ci",
+        "DJANGO_SETTINGS_MODULE": "settings.base",
         "PYTHONPATH": "project",
         "SECRET_KEY": {
           "generator": "secret"
         },
         "DEBUG": false,
-        "EMAIL_PORT": "25",
-        "EMAIL_BACKEND": "django.core.mail.backends.dummy.EmailBackend",
         "REDIS_MAX_CONNECTIONS": "40",
         "RQ_ASYNC": false
       },
