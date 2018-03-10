@@ -129,11 +129,11 @@
   "environments": {
     "test": {
       "addons": [
+        "cloudinary:starter",
         "heroku-postgresql:in-dyno",
         "heroku-redis:in-dyno"
       ],
       "env": {
-        "ENVIRONMENT": "dev",
         "DJANGO_SETTINGS_MODULE": "settings_ci",
         "PYTHONPATH": "project",
         "SECRET_KEY": {
