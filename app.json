@@ -26,41 +26,6 @@
     "heroku-postgresql:hobby-dev"
   ],
   "env": {
-    "ENVIRONMENT": {
-      "description": "Sets the environment.",
-      "value": "dev",
-      "required": true
-    },
-    "DJANGO_SETTINGS_MODULE": {
-      "description": "Configures the settings.  Do not edit.",
-      "value": "sets",
-      "required": true
-    },
-    "PYTHONPATH": {
-      "description": "Configures the import path.  Do not edit.",
-      "value": "project",
-      "required": true
-    },
-    "SECRET_KEY": {
-      "description": "Required by Django.  Auto-generated.",
-      "generator": "secret",
-      "required": true
-    },
-    "DEBUG": {
-      "description": "Django Debug setting.",
-      "value": false,
-      "required": true
-    },
-    "EMAIL_BACKEND": {
-      "description": "Email backend.",
-      "value": "django.core.mail.backends.dummy.EmailBackend",
-      "required": true
-    },
-    "EMAIL_PORT": {
-      "description": "SMTP Email port.  Use 1025 for MailHog.",
-      "value": 25,
-      "required": true
-    },
     "ALGOLIASEARCH_API_KEY": {
       "description": "Algolia Private API Key.",
       "required": true
@@ -111,14 +76,34 @@
       "description": "Credentials used to access the BHS Database.",
       "required": true
     },
+    "DISABLE_COLLECTSTATIC": {
+      "description": "Configures the settings.  Do not edit.",
+      "value": true,
+      "required": true
+    },
+    "DJANGO_SETTINGS_MODULE": {
+      "description": "Configures the settings.  Do not edit.",
+      "value": "settings.dev",
+      "required": true
+    },
+    "EMAIL_BACKEND": {
+      "description": "Email backend.",
+      "value": "django.core.mail.backends.dummy.EmailBackend",
+      "required": true
+    },
+    "EMAIL_PORT": {
+      "description": "SMTP Email port.  Use 1025 for MailHog.",
+      "value": 25,
+      "required": true
+    },
     "REDIS_MAX_CONNECTIONS": {
       "description": "Maximum Redis connections.",
       "value": 40,
       "required": true
     },
-    "RQ_ASYNC": {
-      "description": "Default RQ async.",
-      "value": false,
+    "SECRET_KEY": {
+      "description": "Required by Django.  Auto-generated.",
+      "generator": "secret",
       "required": true
     },
     "SENTRY_DSN": {
@@ -134,13 +119,10 @@
       ],
       "env": {
         "DJANGO_SETTINGS_MODULE": "settings.base",
-        "PYTHONPATH": "project",
         "SECRET_KEY": {
           "generator": "secret"
         },
-        "DEBUG": false,
         "REDIS_MAX_CONNECTIONS": "40",
-        "RQ_ASYNC": false
       },
       "scripts": {
         "test": "pytest"

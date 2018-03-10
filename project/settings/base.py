@@ -24,7 +24,7 @@ def get_env_variable(var_name):
 
 
 # Common
-DEBUG = get_env_variable("DEBUG")
+DEBUG = False
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 SECRET_KEY = get_env_variable("SECRET_KEY")
 DEFAULT_FROM_EMAIL = "admin@barberscore.com"
@@ -33,6 +33,9 @@ WSGI_APPLICATION = 'wsgi.application'
 USE_I18N = False
 USE_L10N = False
 APPEND_SLASH = False
+ALLOWED_HOSTS = [
+    'localhost',
+]
 
 # Datetime
 TIME_ZONE = 'US/Pacific'
@@ -119,11 +122,11 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 RQ_QUEUES = {
     'default': {
         'USE_REDIS_CACHE': 'default',
-        'ASYNC': get_env_variable("RQ_ASYNC"),
+        'ASYNC': not DEBUG,
     },
     'high': {
         'USE_REDIS_CACHE': 'default',
-        'ASYNC': get_env_variable("RQ_ASYNC"),
+        'ASYNC': not DEBUG,
     },
 }
 RQ_SHOW_ADMIN_LINK = True

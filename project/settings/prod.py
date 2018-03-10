@@ -1,6 +1,9 @@
-from .base import *
+from .basic import *
+
+
 ALLOWED_HOSTS = [
-    'localhost',
+    '*.barberscore.com',
+    '*.herokuapp.com',
 ]
 
 

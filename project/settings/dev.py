@@ -2,10 +2,10 @@
 # Debug Toolbar
 from .basic import *
 
+DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
 ]
-
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
