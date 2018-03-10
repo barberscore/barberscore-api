@@ -18,9 +18,9 @@ from django.apps import apps
 from django.core.validators import RegexValidator
 from django.db import models
 from django.core.exceptions import ValidationError
+
 # First-Party
 from api.managers import GroupManager
-from api.storages import CustomMediaCloudinaryStorage
 
 
 log = logging.getLogger(__name__)
@@ -254,7 +254,6 @@ class Group(TimeStampedModel):
     image = models.ImageField(
         upload_to=upload_to,
         blank=True,
-        storage=CustomMediaCloudinaryStorage(),
     )
 
     description = models.TextField(

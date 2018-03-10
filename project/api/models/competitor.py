@@ -14,15 +14,8 @@ from model_utils.models import TimeStampedModel
 from ranking import Ranking
 
 # Django
-from django.apps import apps as api_apps
 from django.db import models
 from django.utils.text import slugify
-
-# First-Party
-from api.storages import CustomMediaCloudinaryStorage
-from api.storages import CustomPDFCloudinaryStorage
-
-config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 
@@ -67,7 +60,6 @@ class Competitor(TimeStampedModel):
     image = models.ImageField(
         upload_to=upload_to,
         blank=True,
-        storage=CustomMediaCloudinaryStorage(),
     )
 
     is_ranked = models.BooleanField(
@@ -140,7 +132,6 @@ class Competitor(TimeStampedModel):
         upload_to=upload_to_csa,
         blank=True,
         max_length=255,
-        storage=CustomPDFCloudinaryStorage(),
     )
 
     # FKs

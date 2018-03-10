@@ -12,13 +12,7 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 # Django
-from django.apps import apps as api_apps
 from django.db import models
-
-# First-Party
-from api.storages import CustomMediaCloudinaryStorage
-
-config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 
@@ -87,7 +81,6 @@ class Chart(TimeStampedModel):
     image = models.FileField(
         upload_to=upload_to,
         blank=True,
-        storage=CustomMediaCloudinaryStorage(),
     )
 
     # Internals

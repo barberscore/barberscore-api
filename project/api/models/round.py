@@ -17,9 +17,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps as api_apps
 from django.db import models
 from django.utils.encoding import smart_text
-from django.utils.html import format_html
 from django.utils.text import slugify
-from api.storages import CustomPDFCloudinaryStorage
 
 # First-Party
 from api.tasks import create_ors_report
@@ -84,8 +82,8 @@ class Round(TimeStampedModel):
         upload_to=upload_to_ors,
         blank=True,
         max_length=255,
-        storage=CustomPDFCloudinaryStorage(),
     )
+
     # FKs
     session = models.ForeignKey(
         'Session',

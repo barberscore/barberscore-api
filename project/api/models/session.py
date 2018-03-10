@@ -27,8 +27,6 @@ from api.tasks import create_sa_report
 from api.tasks import send_session
 from api.tasks import send_session_reports
 
-from api.storages import CustomExcelCloudinaryStorage
-from api.storages import CustomPDFCloudinaryStorage
 
 config = api_apps.get_app_config('api')
 
@@ -156,7 +154,6 @@ class Session(TimeStampedModel):
         upload_to=upload_to_bbscores,
         blank=True,
         max_length=255,
-        storage=CustomExcelCloudinaryStorage(),
     )
 
     drcj_report = CloudinaryField(
@@ -169,7 +166,6 @@ class Session(TimeStampedModel):
         upload_to=upload_to_drcj,
         blank=True,
         max_length=255,
-        storage=CustomExcelCloudinaryStorage(),
     )
 
     admins_report = CloudinaryField(
@@ -182,7 +178,6 @@ class Session(TimeStampedModel):
         upload_to=upload_to_admins,
         blank=True,
         max_length=255,
-        storage=CustomExcelCloudinaryStorage(),
     )
 
     oss_report = CloudinaryField(
@@ -195,7 +190,6 @@ class Session(TimeStampedModel):
         upload_to=upload_to_oss,
         blank=True,
         max_length=255,
-        storage=CustomPDFCloudinaryStorage(),
     )
 
     sa_report = CloudinaryField(
@@ -208,7 +202,6 @@ class Session(TimeStampedModel):
         upload_to=upload_to_sa,
         blank=True,
         max_length=255,
-        storage=CustomPDFCloudinaryStorage(),
     )
 
     # FKs

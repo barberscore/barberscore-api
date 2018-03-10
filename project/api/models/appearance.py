@@ -18,7 +18,6 @@ from django.utils.text import slugify
 
 # First-Party
 from api.tasks import create_variance_report
-from api.storages import CustomPDFCloudinaryStorage
 
 
 def upload_to_variance(instance, filename):
@@ -94,7 +93,6 @@ class Appearance(TimeStampedModel):
         upload_to=upload_to_variance,
         blank=True,
         max_length=255,
-        storage=CustomPDFCloudinaryStorage(),
     )
 
     # Privates

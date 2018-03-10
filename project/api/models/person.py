@@ -23,7 +23,6 @@ from django_fsm_log.decorators import fsm_log_description
 
 # First-Party
 from api.managers import PersonManager
-from api.storages import CustomMediaCloudinaryStorage
 
 log = logging.getLogger(__name__)
 
@@ -223,7 +222,6 @@ class Person(TimeStampedModel):
     image = models.ImageField(
         upload_to=upload_to,
         blank=True,
-        storage=CustomMediaCloudinaryStorage(),
     )
 
     description = models.TextField(
