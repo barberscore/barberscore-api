@@ -1,8 +1,10 @@
-from .base import *
+from .basic import *
+
 ALLOWED_HOSTS = [
     'localhost',
+    '*.barberscore.com',
+    '*.herokuapp.com',
 ]
-
 
 # Heroku
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
