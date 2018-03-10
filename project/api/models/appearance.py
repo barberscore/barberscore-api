@@ -89,7 +89,7 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    variance_report_new = models.FileField(
+    variance_report = models.FileField(
         upload_to=upload_to_variance,
         blank=True,
         max_length=255,
@@ -276,7 +276,7 @@ class Appearance(TimeStampedModel):
             if variance:
                 create_variance_report(self)
                 return
-        self.variance_report_new = None
+        self.variance_report = None
         self.calculate()
         return
 

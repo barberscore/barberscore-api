@@ -211,9 +211,9 @@ def create_bbscores_report(session):
             ws.append(row)
     file = save_virtual_workbook(wb)
     content = ContentFile(file)
-    session.bbscores_report_new.save('overwritten', content)
+    session.bbscores_report.save('overwritten', content)
     session.save
-    return session.bbscores_report_new.url
+    return session.bbscores_report.url
 
 
 @job
@@ -346,9 +346,9 @@ def create_drcj_report(session):
         ws.append(row)
     file = save_virtual_workbook(wb)
     content = ContentFile(file)
-    session.drcj_report_new.save('overwritten', content)
+    session.drcj_report.save('overwritten', content)
     session.save()
-    return session.drcj_report_new.url
+    return session.drcj_report.url
 
 
 @job
@@ -386,9 +386,9 @@ def create_admins_report(session):
             ws.append(row)
     file = save_virtual_workbook(wb)
     content = ContentFile(file)
-    session.admins_report_new.save('overwritten', content)
+    session.admins_report.save('overwritten', content)
     session.save()
-    return session.admins_report_new.url
+    return session.admins_report.url
 
 
 @job
@@ -421,9 +421,9 @@ def create_variance_report(appearance):
     rendered = render_to_string('variance.html', context)
     file = pydf.generate_pdf(rendered)
     content = ContentFile(file)
-    appearance.variance_report_new.save('overwritten', content)
+    appearance.variance_report.save('overwritten', content)
     appearance.save()
-    return appearance.variance_report_new.url
+    return appearance.variance_report.url
 
 
 @job
@@ -452,9 +452,9 @@ def create_ors_report(round):
     rendered = render_to_string('ors.html', context)
     file = pydf.generate_pdf(rendered)
     content = ContentFile(file)
-    round.ors_report_new.save('overwritten', content)
+    round.ors_report.save('overwritten', content)
     round.save()
-    return round.ors_report_new.url
+    return round.ors_report.url
 
 
 @job
@@ -486,9 +486,9 @@ def create_oss_report(session):
     rendered = render_to_string('oss.html', context)
     file = pydf.generate_pdf(rendered)
     content = ContentFile(file)
-    session.oss_report_new.save('overwritten', content)
+    session.oss_report.save('overwritten', content)
     session.save()
-    return session.oss_report_new.url
+    return session.oss_report.url
 
 
 @job
@@ -519,9 +519,9 @@ def create_csa_report(competitor):
     rendered = render_to_string('csa.html', context)
     file = pydf.generate_pdf(rendered)
     content = ContentFile(file)
-    competitor.csa_report_new.save('overwritten', content)
+    competitor.csa_report.save('overwritten', content)
     competitor.save()
-    return competitor.csa_report_new.url
+    return competitor.csa_report.url
 
 
 @job
@@ -545,9 +545,9 @@ def create_sa_report(session):
     rendered = render_to_string('sa.html', context)
     file = pydf.generate_pdf(rendered)
     content = ContentFile(file)
-    session.sa_report_new.save('overwritten', content)
+    session.sa_report.save('overwritten', content)
     session.save()
-    return session.sa_report_new.url
+    return session.sa_report.url
 
 
 @job

@@ -4,7 +4,6 @@ import random
 import uuid
 
 # Third-Party
-from cloudinary.models import CloudinaryField
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
@@ -72,13 +71,7 @@ class Round(TimeStampedModel):
     num = models.IntegerField(
     )
 
-    ors_report = CloudinaryField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    ors_report_new = models.FileField(
+    ors_report = models.FileField(
         upload_to=upload_to_ors,
         blank=True,
         max_length=255,

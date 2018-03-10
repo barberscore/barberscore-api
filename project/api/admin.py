@@ -84,7 +84,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'round',
         'num',
         'draw',
-        'variance_report_new',
+        'variance_report',
         ('mus_points', 'per_points', 'sng_points', 'tot_points',),
         ('mus_score', 'per_score', 'sng_score', 'tot_score',),
     ]
@@ -457,7 +457,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'group',
         'rank',
         ('is_ranked', 'is_multi',),
-        'csa_report_new',
+        'csa_report',
         ('tot_points', 'mus_points', 'per_points', 'sng_points',),
         ('tot_score', 'mus_score', 'per_score', 'sng_score',),
     )
@@ -492,7 +492,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = (
         'nomen',
-        'csa_report_new',
+        'csa_report',
     )
 
     save_on_top = True
@@ -1187,7 +1187,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'name',
         'status',
         ('session', 'kind', 'num'),
-        'ors_report_new',
+        'ors_report',
 
     ]
 
@@ -1212,7 +1212,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
-        'ors_report_new',
+        'ors_report',
         # 'session',
         # 'kind',
     ]
@@ -1291,10 +1291,10 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_invitational',
         'description',
         'notes',
-        'bbscores_report_new',
-        'drcj_report_new',
-        'admins_report_new',
-        'sa_report_new',
+        'bbscores_report',
+        'drcj_report',
+        'admins_report',
+        'sa_report',
     ]
 
     list_display = [

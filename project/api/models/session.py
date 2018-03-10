@@ -4,7 +4,6 @@ import logging
 import uuid
 
 # Third-Party
-from cloudinary.models import CloudinaryField
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
@@ -144,61 +143,31 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-    bbscores_report = CloudinaryField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    bbscores_report_new = models.FileField(
+    bbscores_report = models.FileField(
         upload_to=upload_to_bbscores,
         blank=True,
         max_length=255,
     )
 
-    drcj_report = CloudinaryField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    drcj_report_new = models.FileField(
+    drcj_report = models.FileField(
         upload_to=upload_to_drcj,
         blank=True,
         max_length=255,
     )
 
-    admins_report = CloudinaryField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    admins_report_new = models.FileField(
+    admins_report = models.FileField(
         upload_to=upload_to_admins,
         blank=True,
         max_length=255,
     )
 
-    oss_report = CloudinaryField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    oss_report_new = models.FileField(
+    oss_report = models.FileField(
         upload_to=upload_to_oss,
         blank=True,
         max_length=255,
     )
 
-    sa_report = CloudinaryField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    sa_report_new = models.FileField(
+    sa_report = models.FileField(
         upload_to=upload_to_sa,
         blank=True,
         max_length=255,

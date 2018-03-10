@@ -3,7 +3,6 @@ import logging
 import uuid
 
 # Third-Party
-from cloudinary.models import CloudinaryField
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
@@ -16,6 +15,8 @@ from ranking import Ranking
 # Django
 from django.db import models
 from django.utils.text import slugify
+
+from api.tasks import create_csa_report
 
 log = logging.getLogger(__name__)
 
@@ -122,13 +123,7 @@ class Competitor(TimeStampedModel):
         blank=True,
     )
 
-    csa_report = CloudinaryField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    csa_report_new = models.FileField(
+    csa_report = models.FileField(
         upload_to=upload_to_csa,
         blank=True,
         max_length=255,
