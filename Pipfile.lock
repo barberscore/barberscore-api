@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b7b4fc057a8b469be453ae9ce58d639d733f25f562107fc051237f34e83a6a13"
+            "sha256": "c3d086885fca546c0070e3059bbdeca576c898024a8dcea8e8702307d919d1cf"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -107,10 +107,7 @@
             "version": "==6.7"
         },
         "cloudinary": {
-            "hashes": [
-                "sha256:fd878eb8505857bcda5434eb6cf3254f50d019361e2dac5640e8d16dd90b0e3f"
-            ],
-            "version": "==1.10.0"
+            "git": "git://github.com/barberscore/pycloudinary.git"
         },
         "contextlib2": {
             "hashes": [
@@ -184,11 +181,7 @@
             "version": "==2.0.3"
         },
         "django-cloudinary-storage": {
-            "hashes": [
-                "sha256:1698fbd806635b1310294578d1b18f5dd45089e2e95a66256814211c54918b2f",
-                "sha256:cf68fa2d9fa0c517355e6e437372c91f4b5a6634c43a1a553dd9d36b0eb9e2fb"
-            ],
-            "version": "==0.2.3"
+            "git": "git://github.com/barberscore/django-cloudinary-storage.git"
         },
         "django-filter": {
             "hashes": [
@@ -359,13 +352,6 @@
             ],
             "version": "==1.0"
         },
-        "mock": {
-            "hashes": [
-                "sha256:5ce3c71c5545b472da17b72268978914d0252980348636840bd34a00b5cc96c1",
-                "sha256:b158b6df76edd239b8208d481dc46b6afd45a846b7812ff0ce58971cf5bc8bba"
-            ],
-            "version": "==2.0.0"
-        },
         "mysqlclient": {
             "hashes": [
                 "sha256:1e85e48b167e2af3bb08f273fdbd1ad6401cbe75057fa6513f97387dc7b282dc",
@@ -388,13 +374,6 @@
                 "sha256:a7bb86fe0844304869d1c08e8bd0e52be931228483025c422917411ab82d628a"
             ],
             "version": "==0.1.1"
-        },
-        "pbr": {
-            "hashes": [
-                "sha256:05f61c71aaefc02d8e37c0a3eeb9815ff526ea28b3b76324769e6158d7f95be1",
-                "sha256:60c25b7dfd054ef9bb0ae327af949dd4676aa09ac3a9471cdc871d8a9213f9ac"
-            ],
-            "version": "==3.1.1"
         },
         "pexpect": {
             "hashes": [
