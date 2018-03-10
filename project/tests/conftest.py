@@ -34,10 +34,10 @@ from api.factories import (
 )
 
 
-@pytest.fixture(scope='session')
-def django_db_modify_db_settings():
-    from django.conf import settings
-    settings.DATABASES.pop('bhs_db')
+# @pytest.fixture(scope='session')
+# def django_db_modify_db_settings():
+#     from django.conf import settings
+#     settings.DATABASES.pop('bhs_db')
 
 
 @pytest.fixture

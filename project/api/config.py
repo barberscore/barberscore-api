@@ -9,7 +9,7 @@ class ApiConfig(AppConfig):
     name = 'api'
 
     def ready(self):
-        if os.environ['DJANGO_SETTINGS_MODULE'] != 'settings.test':
+        if os.environ['DJANGO_SETTINGS_MODULE'] != 'settings_ci':
             from .signals import (
                 user_pre_delete,
             )
