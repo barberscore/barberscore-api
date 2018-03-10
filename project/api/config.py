@@ -9,13 +9,12 @@ class ApiConfig(AppConfig):
     name = 'api'
 
     def ready(self):
-        pass
-        # if os.environ['DJANGO_SETTINGS_MODULE'] != 'settings_ci':
-        #     from .signals import (
-        #         user_pre_delete,
-        #     )
-        #     import algoliasearch_django as algoliasearch
-        #     from .indexes import ChartIndex
-        #     Chart = self.get_model('chart')
-        #     algoliasearch.register(Chart, ChartIndex)
-        # return
+        if os.environ['DJANGO_SETTINGS_MODULE'] != 'settings.base':
+            from .signals import (
+                user_pre_delete,
+            )
+            import algoliasearch_django as algoliasearch
+            from .indexes import ChartIndex
+            Chart = self.get_model('chart')
+            algoliasearch.register(Chart, ChartIndex)
+        return
