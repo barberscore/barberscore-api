@@ -59,6 +59,7 @@ faker = "*"
 django-debug-toolbar = "*"
 isort = "*"
 graphviz = "*"
+django-querycount = "*"
 
 
 [requires]
