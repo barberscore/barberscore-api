@@ -122,7 +122,7 @@
         "SECRET_KEY": {
           "generator": "secret"
         },
-        "REDIS_MAX_CONNECTIONS": "40",
+        "REDIS_MAX_CONNECTIONS": "40"
       },
       "scripts": {
         "test": "pytest"
