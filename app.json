@@ -76,11 +76,6 @@
       "description": "Credentials used to access the BHS Database.",
       "required": true
     },
-    "DISABLE_COLLECTSTATIC": {
-      "description": "Configures the settings.  Do not edit.",
-      "value": true,
-      "required": true
-    },
     "DJANGO_SETTINGS_MODULE": {
       "description": "Configures the settings.  Do not edit.",
       "value": "settings.dev",
@@ -96,9 +91,14 @@
       "value": 25,
       "required": true
     },
+    "PYTHONPATH": {
+      "description": "Pythonpath.  Do not edit.",
+      "value": "project",
+      "required": true
+    },
     "REDIS_MAX_CONNECTIONS": {
       "description": "Maximum Redis connections.",
-      "value": 40,
+      "value": "40",
       "required": true
     },
     "SECRET_KEY": {
@@ -119,6 +119,7 @@
       ],
       "env": {
         "DJANGO_SETTINGS_MODULE": "settings.base",
+        "PYTHONPATH": "project",
         "SECRET_KEY": {
           "generator": "secret"
         },

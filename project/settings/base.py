@@ -180,6 +180,6 @@ INSTALLED_APPS = [
     'django_fsm',
     'django_fsm_log',
     'fsm_admin',
-    'project.api',
-    'project.bhs',
+    'api',
+    'bhs',
 ]
