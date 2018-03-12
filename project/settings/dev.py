@@ -27,6 +27,45 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
 
+def jwt_get_username_from_payload_handler(payload):
+    """Switch to email as JWT username payload."""
+    return payload.get('email')
+
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+
+pem_data = b"""
+-----BEGIN CERTIFICATE-----
+MIIDDTCCAfWgAwIBAgIJPuLUYhcdfwcOMA0GCSqGSIb3DQEBCwUAMCQxIjAgBgNV
+BAMTGWJhcmJlcnNjb3JlLWRldi5hdXRoMC5jb20wHhcNMTgwMjA5MTgyOTA2WhcN
+MzExMDE5MTgyOTA2WjAkMSIwIAYDVQQDExliYXJiZXJzY29yZS1kZXYuYXV0aDAu
+Y29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3FTGBVil9QjWlfCk
+L8G9VY4b8UEZhkRi4C9R6+3TiLLjsGe11bk4uydEoYOqnGl5QCcG1LfVDiStjrHs
+6PNdj18TTi8EBbIicCPmcCILqglEwuyexogo2u3d2R6Qwu0STu0xCbXMwrraWKaZ
+68MLLG7+Jp/znPcOMNi392qLEZKTSv8GXQzYa+/rFNhpHpqiGA3FzmvH/1jQgWpO
+1PF9kWXoKUkktlaN8hpQtVrThpQFF5IirXj/A6XhYQVEQEFwYM3kLLvXUeW1QJB3
+/T+PDdLYiShwrNRtnzo/axrPa0EpMffIEtEaFG/95fnyO+qdOunHck50s2kTYIb6
+vcEBbQIDAQABo0IwQDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSi3RnXKUbR
+62i31WJbbAzGJWw9xDAOBgNVHQ8BAf8EBAMCAoQwDQYJKoZIhvcNAQELBQADggEB
+ACU3ZIPShubA4dSo9JyJzLXnvY+N32XDiVwyF4zMNbz7Jr5tgW5CXzcDvTSH7KkW
+nzP3+qBULVY224daSfsWdwz/9ZK+5OGMkYCSpiS+1lAH4gDIctwJbn/82idqWZWN
+BKWRf27qh/dVFLAlNu69BIw5XUjMjhDN1v6ABYRb2Ht0pAesSw+A3lHJvFmdEhf2
+XcopG+t8nnohFDPAeHKzEHnHOF1YIMKkFbc0UBC3jrS/P+sX1V6sm3znQ2ZE0aBi
+a/ZlOmOZFZRUUChffFULBp3I82+NsZH6duXP5R2/c2ZxBSrtpeaeSNNerpwyr2iH
+2PpfXUn1tsVm6EGPQPgrHcA=
+-----END CERTIFICATE-----
+""".strip()
+cert = x509.load_pem_x509_certificate(pem_data, default_backend())
+jwt_public_key = cert.public_key()
+
+JWT_AUTH = {
+    'JWT_AUDIENCE': AUTH0_CLIENT_ID,
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_username_from_payload_handler,
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_PUBLIC_KEY': jwt_public_key,
+    'JWT_ALGORITHM': 'RS256',
+}
+
 RQ_QUEUES['default']['ASYNC'] = False
 RQ_QUEUES['high']['ASYNC'] = False
 
