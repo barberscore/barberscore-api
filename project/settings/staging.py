@@ -1,5 +1,5 @@
 from .basic import *
-
+import sys
 HOST_NAME = 'https://api.staging.barberscore.com'
 ALLOWED_HOSTS = [
     '*.barberscore.com',
@@ -100,6 +100,7 @@ LOGGING = {
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
         },
         'sentry': {
             'level': 'ERROR',
