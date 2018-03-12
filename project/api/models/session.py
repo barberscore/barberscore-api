@@ -18,11 +18,11 @@ from django.db import models
 from django.utils.text import slugify
 
 # First-Party
-from api.tasks import create_admins_report
-from api.tasks import create_bbscores_report
-from api.tasks import create_drcj_report
-from api.tasks import create_oss_report
-from api.tasks import create_sa_report
+# from api.tasks import create_admins_report
+# from api.tasks import create_bbscores_report
+# from api.tasks import create_drcj_report
+# from api.tasks import create_oss_report
+# from api.tasks import create_sa_report
 from api.tasks import send_session
 from api.tasks import send_session_reports
 
@@ -356,14 +356,14 @@ class Session(TimeStampedModel):
     )
     def verify(self, *args, **kwargs):
         """Make draw public."""
-        bbscores_report = create_bbscores_report(self)
-        drcj_report = create_drcj_report(self)
-        admins_report = create_admins_report(self)
+        # bbscores_report = create_bbscores_report(self)
+        # drcj_report = create_drcj_report(self)
+        # admins_report = create_admins_report(self)
         context = {
             'session': self,
-            'bbscores_report': bbscores_report,
-            'drcj_report': drcj_report,
-            'admins_report': admins_report,
+            # 'bbscores_report': bbscores_report,
+            # 'drcj_report': drcj_report,
+            # 'admins_report': admins_report,
         }
         send_session_reports.delay('session_reports.txt', context)
         # approved_entries = self.entries.filter(
@@ -405,6 +405,6 @@ class Session(TimeStampedModel):
         conditions=[],
     )
     def finish(self, *args, **kwargs):
-        create_oss_report(self)
-        create_sa_report(self)
+        # create_oss_report(self)
+        # create_sa_report(self)
         return

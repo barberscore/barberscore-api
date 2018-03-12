@@ -13,26 +13,13 @@ from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
 
 # Django
-from django.apps import apps as api_apps
+from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
 log = logging.getLogger(__name__)
-api = api_apps.get_app_config('api')
-bhs = api_apps.get_app_config('bhs')
-
-
-@job
-def copy_image(obj):
-    if not obj.img:
-        raise RuntimeError("no img")
-    resp = requests.get(obj.img.url)
-    if resp.status_code != requests.codes.ok:
-        raise RuntimeError("No bueno")
-        #  Error handling here
-    obj.image.save('overwritten', ContentFile(resp.content))
 
 
 def get_auth0():
@@ -167,8 +154,8 @@ def delete_account_from_user(user):
 
 
 @job
-def create_bbscores_report(session):
-    Entry = api.get_model('Entry')
+def create_legacy_report(session):
+    Entry = apps.get_model('api.entry')
     wb = Workbook()
     ws = wb.active
     fieldnames = [
@@ -211,16 +198,14 @@ def create_bbscores_report(session):
             ws.append(row)
     file = save_virtual_workbook(wb)
     content = ContentFile(file)
-    session.bbscores_report.save('overwritten', content)
-    session.save
-    return session.bbscores_report.url
+    return content
 
 
 @job
 def create_drcj_report(session):
-    Entry = api.get_model('Entry')
-    Group = api.get_model('Group')
-    Member = api.get_model('Member')
+    Entry = apps.get_model('api.entry')
+    Group = apps.get_model('api.group')
+    Member = apps.get_model('api.member')
     wb = Workbook()
     ws = wb.active
     fieldnames = [
@@ -346,14 +331,12 @@ def create_drcj_report(session):
         ws.append(row)
     file = save_virtual_workbook(wb)
     content = ContentFile(file)
-    session.drcj_report.save('overwritten', content)
-    session.save()
-    return session.drcj_report.url
+    return content
 
 
 @job
-def create_admins_report(session):
-    Entry = api.get_model('Entry')
+def create_contact_report(session):
+    Entry = apps.get_model('api.entry')
     wb = Workbook()
     ws = wb.active
     fieldnames = [
@@ -386,15 +369,13 @@ def create_admins_report(session):
             ws.append(row)
     file = save_virtual_workbook(wb)
     content = ContentFile(file)
-    session.admins_report.save('overwritten', content)
-    session.save()
-    return session.admins_report.url
+    return content
 
 
 @job
 def create_variance_report(appearance):
-    Score = api.get_model('Score')
-    Panelist = api.get_model('Panelist')
+    Score = apps.get_model('api.score')
+    Panelist = apps.get_model('api.panelist')
     songs = appearance.songs.order_by('num')
     scores = Score.objects.filter(
         kind=Score.KIND.official,
@@ -421,9 +402,7 @@ def create_variance_report(appearance):
     rendered = render_to_string('variance.html', context)
     file = pydf.generate_pdf(rendered)
     content = ContentFile(file)
-    appearance.variance_report.save('overwritten', content)
-    appearance.save()
-    return appearance.variance_report.url
+    return content
 
 
 @job
@@ -452,14 +431,12 @@ def create_ors_report(round):
     rendered = render_to_string('ors.html', context)
     file = pydf.generate_pdf(rendered)
     content = ContentFile(file)
-    round.ors_report.save('overwritten', content)
-    round.save()
-    return round.ors_report.url
+    return content
 
 
 @job
 def create_oss_report(session):
-    Panelist = api.get_model('Panelist')
+    Panelist = apps.get_model('api.panelist')
     competitors = session.competitors.order_by(
         'rank',
         'tot_points'
@@ -486,14 +463,12 @@ def create_oss_report(session):
     rendered = render_to_string('oss.html', context)
     file = pydf.generate_pdf(rendered)
     content = ContentFile(file)
-    session.oss_report.save('overwritten', content)
-    session.save()
-    return session.oss_report.url
+    return content
 
 
 @job
 def create_csa_report(competitor):
-    Panelist = api.get_model('Panelist')
+    Panelist = apps.get_model('api.panelist')
     panelists = Panelist.objects.filter(
         kind=Panelist.KIND.official,
         scores__song__appearance__competitor=competitor,
@@ -519,14 +494,12 @@ def create_csa_report(competitor):
     rendered = render_to_string('csa.html', context)
     file = pydf.generate_pdf(rendered)
     content = ContentFile(file)
-    competitor.csa_report.save('overwritten', content)
-    competitor.save()
-    return competitor.csa_report.url
+    return content
 
 
 @job
 def create_sa_report(session):
-    Person = api.get_model('Person')
+    Person = apps.get_model('api.person')
     persons = Person.objects.filter(
         panelists__round__session=session,
     ).distinct(
@@ -545,9 +518,7 @@ def create_sa_report(session):
     rendered = render_to_string('sa.html', context)
     file = pydf.generate_pdf(rendered)
     content = ContentFile(file)
-    session.sa_report.save('overwritten', content)
-    session.save()
-    return session.sa_report.url
+    return content
 
 
 @job
@@ -596,9 +567,9 @@ def send_entry(template, context):
 @job('high')
 def send_session(template, context):
     session = context['session']
-    Officer = api.get_model('Officer')
-    Assignment = api.get_model('Assignment')
-    Entry = api.get_model('Entry')
+    Officer = apps.get_model('api.officer')
+    Assignment = apps.get_model('api.assignment')
+    Entry = apps.get_model('api.entry')
     if session.status > session.STATUS.closed:
         # only send to approved entries
         officers = Officer.objects.filter(
@@ -651,7 +622,7 @@ def send_session(template, context):
 @job('high')
 def send_session_reports(template, context):
     session = context['session']
-    Assignment = api.get_model('Assignment')
+    Assignment = apps.get_model('api.assignment')
     assignments = Assignment.objects.filter(
         convention=session.convention,
         category__lte=Assignment.CATEGORY.ca,

@@ -1,10 +1,10 @@
 Below are the reports for the {{session|safe}}.
 
-Legacy Program Export: {{session.bbscores_report.url}}
+Legacy Program Export: https://api.barberscore.com/api/session/{{session.id}}/legacy
 
-DRCJ Report: {{session.drcj_report.url}}
+DRCJ Report: https://api.barberscore.com/api/session/{{session.id}}/drcj
 
-Group Admins Email Report: {{session.admins_report.url}}
+Group Admins Email Report: https://api.barberscore.com/api/session/{{session.id}}/contact
 
 
 The reports may change up to the start of the sesion.  To regenerate reports,

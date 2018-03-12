@@ -92,6 +92,11 @@ from .serializers import UserSerializer
 from .serializers import VenueSerializer
 from .renderers import PDFRenderer
 from .responders import PDFResponse
+from .renderers import XLSXRenderer
+from .responders import XLSXResponse
+from .tasks import create_legacy_report
+from .tasks import create_drcj_report
+from .tasks import create_contact_report
 
 
 log = logging.getLogger(__name__)
@@ -643,7 +648,46 @@ class SessionViewSet(
     ]
     resource_name = "session"
 
-    @detail_route(methods=['get'], renderer_classes=[PDFRenderer, ])
+    @detail_route(methods=['get'], renderer_classes=[XLSXRenderer])
+    def legacy(self, request, pk=None):
+        session = Session.objects.get(pk=pk)
+        xlsx = create_legacy_report(session)
+        file_name = '{0}-legacy'.format(
+            slugify(session.nomen)
+        )
+        return XLSXResponse(
+            xlsx,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+    @detail_route(methods=['get'], renderer_classes=[XLSXRenderer])
+    def drcj(self, request, pk=None):
+        session = Session.objects.get(pk=pk)
+        xlsx = create_drcj_report(session)
+        file_name = '{0}-drcj'.format(
+            slugify(session.nomen)
+        )
+        return XLSXResponse(
+            xlsx,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+    @detail_route(methods=['get'], renderer_classes=[XLSXRenderer])
+    def contact(self, request, pk=None):
+        session = Session.objects.get(pk=pk)
+        xlsx = create_contact_report(session)
+        file_name = '{0}-contact'.format(
+            slugify(session.nomen)
+        )
+        return XLSXResponse(
+            xlsx,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+    @detail_route(methods=['get'], renderer_classes=[PDFRenderer])
     def oss(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         context = {'session': session}
@@ -651,7 +695,24 @@ class SessionViewSet(
         file = pydf.generate_pdf(rendered)
         content = ContentFile(file)
         pdf = content
-        file_name = '{0}-oss_report'.format(
+        file_name = '{0}-oss'.format(
+            slugify(session.nomen)
+        )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+    @detail_route(methods=['get'], renderer_classes=[PDFRenderer])
+    def sa(self, request, pk=None):
+        session = Session.objects.get(pk=pk)
+        context = {'session': session}
+        rendered = render_to_string('sa.html', context)
+        file = pydf.generate_pdf(rendered)
+        content = ContentFile(file)
+        pdf = content
+        file_name = '{0}-sa'.format(
             slugify(session.nomen)
         )
         return PDFResponse(
