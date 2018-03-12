@@ -1,6 +1,7 @@
 from .basic import *
 
 
+HOST_NAME = 'https://api.barberscore.com'
 ALLOWED_HOSTS = [
     '*.barberscore.com',
     '*.herokuapp.com',

@@ -13,15 +13,13 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 # Django
-from django.apps import apps as api_apps
+from django.apps import apps
 from django.db import models
+from django.conf import settings
 
 # First-Party
 from api.tasks import send_session
 from api.tasks import send_session_reports
-
-
-config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 
@@ -176,13 +174,13 @@ class Session(TimeStampedModel):
         ])
 
     def can_open_session(self):
-        Contest = config.get_model('Contest')
+        Contest = apps.get_model('api.contest')
         return all([
             self.contests.filter(status=Contest.STATUS.included),
         ])
 
     def can_close_session(self):
-        Entry = config.get_model('Entry')
+        Entry = apps.get_model('api.entry')
         return all([
             self.convention.close_date < datetime.date.today(),
             self.entries.all(),
@@ -287,6 +285,7 @@ class Session(TimeStampedModel):
         """Make draw public."""
         context = {
             'session': self,
+            'host_name': settings.HOST_NAME,
         }
         send_session_reports.delay('session_reports.txt', context)
         # approved_entries = self.entries.filter(
@@ -308,15 +307,18 @@ class Session(TimeStampedModel):
         #  Create and send the reports
         context = {
             'session': self,
+            'host_name': settings.HOST_NAME,
         }
         send_session_reports.delay('session_reports.txt', context)
         # Get models for constants
-        Entry = config.get_model('Entry')
+        Entry = apps.get_model('api.entry')
         # delete orphans
         for entry in self.entries.filter(status=Entry.STATUS.new):
             entry.delete()
         # notify entrants
-        context = {'session': self}
+        context = {
+            'session': self,
+        }
         send_session.delay('session_start.txt', context)
         return
 

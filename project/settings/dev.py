@@ -2,6 +2,7 @@
 # Debug Toolbar
 from .basic import *
 
+HOST_NAME = 'http://localhost:8000'
 DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
@@ -25,6 +26,9 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
+
+RQ_QUEUES['default']['ASYNC'] = False
+RQ_QUEUES['high']['ASYNC'] = False
 
 # Logging
 LOGGING = {

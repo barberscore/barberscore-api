@@ -122,11 +122,11 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 RQ_QUEUES = {
     'default': {
         'USE_REDIS_CACHE': 'default',
-        'ASYNC': not DEBUG,
+        'ASYNC': True,
     },
     'high': {
         'USE_REDIS_CACHE': 'default',
-        'ASYNC': not DEBUG,
+        'ASYNC': True,
     },
 }
 RQ_SHOW_ADMIN_LINK = True
