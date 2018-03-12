@@ -78,7 +78,7 @@ class Chart(TimeStampedModel):
         blank=True,
     )
 
-    image = models.FileField(
+    image = models.ImageField(
         upload_to=upload_to,
         blank=True,
     )

@@ -457,7 +457,6 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'group',
         'rank',
         ('is_ranked', 'is_multi',),
-        'csa_report',
         ('tot_points', 'mus_points', 'per_points', 'sng_points',),
         ('tot_score', 'mus_score', 'per_score', 'sng_score',),
     )
@@ -492,7 +491,6 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = (
         'nomen',
-        'csa_report',
     )
 
     save_on_top = True
@@ -1187,7 +1185,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'name',
         'status',
         ('session', 'kind', 'num'),
-        'ors_report',
 
     ]
 
@@ -1212,7 +1209,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
-        'ors_report',
         # 'session',
         # 'kind',
     ]

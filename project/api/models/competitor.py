@@ -14,7 +14,6 @@ from ranking import Ranking
 
 # Django
 from django.db import models
-from django.utils.text import slugify
 
 from api.tasks import create_csa_report
 
@@ -23,13 +22,6 @@ log = logging.getLogger(__name__)
 
 def upload_to(instance, filename):
     return 'competitor/{0}'.format(instance.id)
-
-
-def upload_to_csa(instance, filename):
-    return 'competitor/{0}/{1}-csa_report.pdf'.format(
-        instance.id,
-        slugify(instance.nomen),
-    )
 
 
 class Competitor(TimeStampedModel):
@@ -121,12 +113,6 @@ class Competitor(TimeStampedModel):
     tot_score = models.FloatField(
         null=True,
         blank=True,
-    )
-
-    csa_report = models.FileField(
-        upload_to=upload_to_csa,
-        blank=True,
-        max_length=255,
     )
 
     # FKs

@@ -15,14 +15,8 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.apps import apps as api_apps
 from django.db import models
-from django.utils.text import slugify
 
 # First-Party
-# from api.tasks import create_admins_report
-# from api.tasks import create_bbscores_report
-# from api.tasks import create_drcj_report
-# from api.tasks import create_oss_report
-# from api.tasks import create_sa_report
 from api.tasks import send_session
 from api.tasks import send_session_reports
 
@@ -30,41 +24,6 @@ from api.tasks import send_session_reports
 config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
-
-
-def upload_to_bbscores(instance, filename):
-    return 'session/{0}/{1}-bbscores_report.xlsx'.format(
-        instance.id,
-        slugify(instance.nomen)
-    )
-
-
-def upload_to_drcj(instance, filename):
-    return 'session/{0}/{1}-drcj_report.xlsx'.format(
-        instance.id,
-        slugify(instance.nomen)
-    )
-
-
-def upload_to_admins(instance, filename):
-    return 'session/{0}/{1}-admins_report.xlsx'.format(
-        instance.id,
-        slugify(instance.nomen)
-    )
-
-
-def upload_to_oss(instance, filename):
-    return 'session/{0}/{1}-oss_report.pdf'.format(
-        instance.id,
-        slugify(instance.nomen)
-    )
-
-
-def upload_to_sa(instance, filename):
-    return 'session/{0}/{1}-sa_report.pdf'.format(
-        instance.id,
-        slugify(instance.nomen)
-    )
 
 
 class Session(TimeStampedModel):
@@ -141,36 +100,6 @@ class Session(TimeStampedModel):
         help_text="""
             Private Notes (for internal use only).  Will not be sent.""",
         blank=True,
-    )
-
-    bbscores_report = models.FileField(
-        upload_to=upload_to_bbscores,
-        blank=True,
-        max_length=255,
-    )
-
-    drcj_report = models.FileField(
-        upload_to=upload_to_drcj,
-        blank=True,
-        max_length=255,
-    )
-
-    admins_report = models.FileField(
-        upload_to=upload_to_admins,
-        blank=True,
-        max_length=255,
-    )
-
-    oss_report = models.FileField(
-        upload_to=upload_to_oss,
-        blank=True,
-        max_length=255,
-    )
-
-    sa_report = models.FileField(
-        upload_to=upload_to_sa,
-        blank=True,
-        max_length=255,
     )
 
     # FKs
@@ -356,14 +285,8 @@ class Session(TimeStampedModel):
     )
     def verify(self, *args, **kwargs):
         """Make draw public."""
-        # bbscores_report = create_bbscores_report(self)
-        # drcj_report = create_drcj_report(self)
-        # admins_report = create_admins_report(self)
         context = {
             'session': self,
-            # 'bbscores_report': bbscores_report,
-            # 'drcj_report': drcj_report,
-            # 'admins_report': admins_report,
         }
         send_session_reports.delay('session_reports.txt', context)
         # approved_entries = self.entries.filter(

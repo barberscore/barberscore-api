@@ -14,17 +14,9 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.db import models
 from django.utils.timezone import now
-from django.utils.text import slugify
 
 # First-Party
 from api.tasks import create_variance_report
-
-
-def upload_to_variance(instance, filename):
-    return 'appearance/{0}/{1}-variance_report.pdf'.format(
-        instance.id,
-        slugify(instance.nomen)
-    )
 
 
 class Appearance(TimeStampedModel):
@@ -87,12 +79,6 @@ class Appearance(TimeStampedModel):
             The actual appearance window.""",
         null=True,
         blank=True,
-    )
-
-    variance_report = models.FileField(
-        upload_to=upload_to_variance,
-        blank=True,
-        max_length=255,
     )
 
     # Privates
