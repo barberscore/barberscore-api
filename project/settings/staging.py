@@ -1,18 +1,44 @@
-from .basic import *
-import sys
+from .base import *
+
+# Core
 HOST_NAME = 'https://api.staging.barberscore.com'
 ALLOWED_HOSTS = [
     '.barberscore.com',
     '.herokuapp.com',
 ]
 
-# JWT Settings
+# Database
+DATABASES['bhs_db'] = dj_database_url.parse(
+    get_env_variable("BHS_DATABASE_URL"),
+    conn_max_age=600,
+)
+DATABASE_ROUTERS = [
+    'routers.BHSRouter',
+]
+
+# Algolia
+ALGOLIA = {
+    'APPLICATION_ID': get_env_variable("ALGOLIASEARCH_APPLICATION_ID"),
+    'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
+    'ALGOLIASEARCH_AUTO_INDEXING': False,
+}
+
+# Auth0
+AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
+AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
+AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
+AUTH0_API_ID = get_env_variable("AUTH0_API_ID")
+AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
+AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
+
+
 def jwt_get_username_from_payload_handler(payload):
     """Switch to email as JWT username payload."""
     return payload.get('email')
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
+
 
 pem_data = b"""
 -----BEGIN CERTIFICATE-----
@@ -46,10 +72,19 @@ JWT_AUTH = {
     'JWT_ALGORITHM': 'RS256',
 }
 
+# Cloudinary
+CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Heroku
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# SECURE_SSL_REDIRECT = True
+# Email
+EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
+
+# Sentry
+RAVEN_CONFIG = {
+    'environment': 'staging',
+    'dsn': get_env_variable("SENTRY_DSN")
+}
+
 # Logging
 LOGGING = {
     'version': 1,
@@ -99,7 +134,6 @@ LOGGING = {
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
         },
         'sentry': {
             'level': 'ERROR',
@@ -108,3 +142,10 @@ LOGGING = {
         },
     },
 }
+
+INSTALLED_APPS += [
+    'raven.contrib.django.raven_compat',
+    'cloudinary_storage',
+    'cloudinary',
+    'algoliasearch_django',
+]

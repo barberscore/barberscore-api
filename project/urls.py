@@ -2,11 +2,14 @@
 # Third-Party
 from rest_framework.documentation import include_docs_urls
 from rest_framework.schemas import get_schema_view
+from django.views.static import serve
+
 
 from django.conf import settings
 from django.urls import (
     include,
     path,
+    re_path,
 )
 from django.contrib import admin
 from django.http import (
@@ -32,5 +35,11 @@ urlpatterns = [
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns += [
+        re_path(
+            r'^media/(?P<path>.*)$',
+            serve, {
+                'document_root': settings.MEDIA_ROOT,
+            }
+        ),
         path('__debug__/', include(debug_toolbar.urls)),
     ]

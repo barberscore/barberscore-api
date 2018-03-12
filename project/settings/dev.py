@@ -1,12 +1,15 @@
 # Standard Libary
 # Debug Toolbar
-from .basic import *
+from .base import *
 
 HOST_NAME = 'http://localhost:8000'
 DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
 ]
+
+
+EMAIL_PORT = 1025
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -26,6 +29,17 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
+
+
+# Auth0 - COPIED until i can mock
+AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
+AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
+AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
+AUTH0_API_ID = get_env_variable("AUTH0_API_ID")
+AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
+AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
+
+
 
 def jwt_get_username_from_payload_handler(payload):
     """Switch to email as JWT username payload."""

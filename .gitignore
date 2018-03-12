@@ -8,8 +8,7 @@
 
 htmlcov/*
 
-project/media/*
-project/static/*
+project/mediafiles/*
 project/staticfiles/*
 api.json
 

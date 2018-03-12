@@ -25,6 +25,7 @@ def get_env_variable(var_name):
 
 # Common
 DEBUG = False
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 SECRET_KEY = get_env_variable("SECRET_KEY")
 DEFAULT_FROM_EMAIL = "admin@barberscore.com"
@@ -33,9 +34,6 @@ WSGI_APPLICATION = 'wsgi.application'
 USE_I18N = False
 USE_L10N = False
 APPEND_SLASH = False
-ALLOWED_HOSTS = [
-    'localhost',
-]
 
 # Datetime
 TIME_ZONE = 'US/Pacific'
@@ -56,7 +54,10 @@ LOGIN_REDIRECT_URL = 'admin:index'
 LOGOUT_REDIRECT_URL = 'admin:login'
 
 # File Management
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
@@ -161,7 +162,6 @@ REST_FRAMEWORK = {
 JSON_API_FORMAT_KEYS = 'dasherize'
 JSON_API_FORMAT_TYPES = 'dasherize'
 JSON_API_PLURALIZE_TYPES = False
-APPEND_TRAILING_SLASH = False
 
 
 # Applications

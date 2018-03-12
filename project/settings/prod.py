@@ -1,11 +1,35 @@
-from .basic import *
+from .base import *
 
-
+# Core
 HOST_NAME = 'https://api.barberscore.com'
 ALLOWED_HOSTS = [
     '.barberscore.com',
     '.herokuapp.com',
 ]
+
+# Database
+DATABASES['bhs_db'] = dj_database_url.parse(
+    get_env_variable("BHS_DATABASE_URL"),
+    conn_max_age=600,
+)
+DATABASE_ROUTERS = [
+    'routers.BHSRouter',
+]
+
+# Algolia
+ALGOLIA = {
+    'APPLICATION_ID': get_env_variable("ALGOLIASEARCH_APPLICATION_ID"),
+    'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
+    'ALGOLIASEARCH_AUTO_INDEXING': True,
+}
+
+# Auth0
+AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
+AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
+AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
+AUTH0_API_ID = get_env_variable("AUTH0_API_ID")
+AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
+AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 
 
 def jwt_get_username_from_payload_handler(payload):
@@ -48,7 +72,21 @@ JWT_AUTH = {
     'JWT_ALGORITHM': 'RS256',
 }
 
+# Cloudinary
+CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Email
+EMAIL_BACKEND = "sgbackend.SendGridBackend"
 SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
+
+# Sentry
+RAVEN_CONFIG = {
+    'environment': 'production',
+    'dsn': get_env_variable("SENTRY_DSN")
+}
+
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -105,3 +143,10 @@ LOGGING = {
         },
     },
 }
+
+INSTALLED_APPS += [
+    'raven.contrib.django.raven_compat',
+    'cloudinary_storage',
+    'cloudinary',
+    'algoliasearch_django',
+]
