@@ -2,8 +2,8 @@ from .basic import *
 import sys
 HOST_NAME = 'https://api.staging.barberscore.com'
 ALLOWED_HOSTS = [
-    '*.barberscore.com',
-    '*.herokuapp.com',
+    '.barberscore.com',
+    '.herokuapp.com',
 ]
 
 # JWT Settings
