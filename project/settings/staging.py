@@ -13,7 +13,7 @@ def jwt_get_username_from_payload_handler(payload):
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
-
+DEBUG = True
 
 pem_data = b"""
 -----BEGIN CERTIFICATE-----
