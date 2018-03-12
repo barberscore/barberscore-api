@@ -2,6 +2,7 @@
 import logging
 
 # Third-Party
+import pydf
 from django_filters.rest_framework import DjangoFilterBackend
 from django_fsm_log.models import StateLog
 from drf_fsm_transitions.viewset_mixins import \
@@ -14,6 +15,11 @@ from rest_framework.parsers import FormParser
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework import status
+from django.template.loader import render_to_string
+from django.core.files.base import ContentFile
+from django.utils.text import slugify
+
 # Local
 from .backends import CoalesceFilterBackend
 # from .backends import GroupFilterBackend
@@ -84,6 +90,9 @@ from .serializers import SongSerializer
 from .serializers import StateLogSerializer
 from .serializers import UserSerializer
 from .serializers import VenueSerializer
+from .renderers import PDFRenderer
+from .responders import PDFResponse
+
 
 log = logging.getLogger(__name__)
 
@@ -633,6 +642,23 @@ class SessionViewSet(
         DRYPermissions,
     ]
     resource_name = "session"
+
+    @detail_route(methods=['get'], renderer_classes=[PDFRenderer, ])
+    def oss(self, request, pk=None):
+        session = Session.objects.get(pk=pk)
+        context = {'session': session}
+        rendered = render_to_string('oss.html', context)
+        file = pydf.generate_pdf(rendered)
+        content = ContentFile(file)
+        pdf = content
+        file_name = '{0}-oss_report'.format(
+            slugify(session.nomen)
+        )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
 
 
 class SongViewSet(viewsets.ModelViewSet):
