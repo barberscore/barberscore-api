@@ -14,11 +14,9 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.db import models
 
+from api.fields import UploadPath
+
 log = logging.getLogger(__name__)
-
-
-def upload_to(instance, filename):
-    return 'chart/{0}'.format(instance.id)
 
 
 class Chart(TimeStampedModel):
@@ -79,7 +77,8 @@ class Chart(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=upload_to,
+        upload_to=UploadPath(),
+        null=True,
         blank=True,
     )
 

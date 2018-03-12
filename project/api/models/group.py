@@ -21,13 +21,10 @@ from django.core.exceptions import ValidationError
 
 # First-Party
 from api.managers import GroupManager
+from api.fields import UploadPath
 
 
 log = logging.getLogger(__name__)
-
-
-def upload_to(instance, filename):
-    return 'group/{0}'.format(instance.id)
 
 
 class Group(TimeStampedModel):
@@ -252,7 +249,8 @@ class Group(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=upload_to,
+        upload_to=UploadPath(),
+        null=True,
         blank=True,
     )
 

@@ -84,7 +84,6 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'round',
         'num',
         'draw',
-        'variance_report',
         ('mus_points', 'per_points', 'sng_points', 'tot_points',),
         ('mus_score', 'per_score', 'sng_score', 'tot_score',),
     ]
@@ -1287,10 +1286,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_invitational',
         'description',
         'notes',
-        'bbscores_report',
-        'drcj_report',
-        'admins_report',
-        'sa_report',
     ]
 
     list_display = [

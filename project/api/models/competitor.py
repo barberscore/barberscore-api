@@ -16,12 +16,9 @@ from ranking import Ranking
 from django.db import models
 
 from api.tasks import create_csa_report
+from api.fields import UploadPath
 
 log = logging.getLogger(__name__)
-
-
-def upload_to(instance, filename):
-    return 'competitor/{0}'.format(instance.id)
 
 
 class Competitor(TimeStampedModel):
@@ -51,7 +48,8 @@ class Competitor(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=upload_to,
+        upload_to=UploadPath(),
+        null=True,
         blank=True,
     )
 

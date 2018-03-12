@@ -23,12 +23,9 @@ from django_fsm_log.decorators import fsm_log_description
 
 # First-Party
 from api.managers import PersonManager
+from api.fields import UploadPath
 
 log = logging.getLogger(__name__)
-
-
-def upload_to(instance, filename):
-    return 'person/{0}'.format(instance.id)
 
 
 class Person(TimeStampedModel):
@@ -220,7 +217,8 @@ class Person(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=upload_to,
+        upload_to=UploadPath(),
+        null=True,
         blank=True,
     )
 

@@ -18,6 +18,63 @@ import django_fsm
 import model_utils.fields
 import timezone_field.fields
 import uuid
+from django.utils.text import slugify
+
+def upload_to(instance, filename):
+    return 'foo/{0}'.format(instance.id)
+
+
+
+def upload_to_bbscores(instance, filename):
+    return 'session/{0}/{1}-bbscores_report.xlsx'.format(
+        instance.id,
+        slugify(instance.nomen)
+    )
+
+
+def upload_to_drcj(instance, filename):
+    return 'session/{0}/{1}-drcj_report.xlsx'.format(
+        instance.id,
+        slugify(instance.nomen)
+    )
+
+
+def upload_to_admins(instance, filename):
+    return 'session/{0}/{1}-admins_report.xlsx'.format(
+        instance.id,
+        slugify(instance.nomen)
+    )
+
+
+def upload_to_oss(instance, filename):
+    return 'session/{0}/{1}-oss_report.pdf'.format(
+        instance.id,
+        slugify(instance.nomen)
+    )
+
+
+def upload_to_sa(instance, filename):
+    return 'session/{0}/{1}-sa_report.pdf'.format(
+        instance.id,
+        slugify(instance.nomen)
+    )
+
+def upload_to_variance(instance, filename):
+    return 'appearance/{0}/{1}-variance_report.pdf'.format(
+        instance.id,
+        slugify(instance.nomen)
+    )
+
+def upload_to_csa(instance, filename):
+    return 'competitor/{0}/{1}-csa_report.pdf'.format(
+        instance.id,
+        slugify(instance.nomen),
+    )
+def upload_to_ors(instance, filename):
+    return 'round/{0}/{1}-ors_report.pdf'.format(
+        instance.id,
+        slugify(instance.nomen),
+    )
 
 
 class Migration(migrations.Migration):
@@ -58,7 +115,7 @@ class Migration(migrations.Migration):
                 ('draw', models.IntegerField(blank=True, null=True)),
                 ('actual_start', models.DateTimeField(blank=True, help_text='\n            The actual appearance window.', null=True)),
                 ('actual_finish', models.DateTimeField(blank=True, help_text='\n            The actual appearance window.', null=True)),
-                ('variance_report', models.FileField(blank=True, max_length=255, upload_to=api.models.appearance.upload_to_variance)),
+                ('variance_report', models.FileField(blank=True, max_length=255, upload_to=upload_to_variance)),
                 ('rank', models.IntegerField(blank=True, null=True)),
                 ('mus_points', models.IntegerField(blank=True, null=True)),
                 ('per_points', models.IntegerField(blank=True, null=True)),
@@ -136,7 +193,7 @@ class Migration(migrations.Migration):
                 ('holders', models.TextField(blank=True)),
                 ('description', models.TextField(blank=True, help_text="\n            Fun or interesting facts to share about the chart (ie, 'from Disney's Lion King, first sung by Elton John'.)", max_length=1000)),
                 ('notes', models.TextField(blank=True, help_text='\n            Private Notes (for internal use only).')),
-                ('image', models.FileField(blank=True, upload_to=api.models.chart.upload_to)),
+                ('image', models.FileField(blank=True, upload_to=upload_to)),
             ],
         ),
         migrations.CreateModel(
@@ -147,7 +204,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('nomen', models.CharField(editable=False, max_length=255)),
                 ('status', django_fsm.FSMIntegerField(choices=[(-20, 'Finished'), (-10, 'Missed'), (0, 'New'), (10, 'Made'), (20, 'Started')], default=0, help_text='DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.')),
-                ('image', models.ImageField(blank=True, upload_to=api.models.competitor.upload_to)),
+                ('image', models.ImageField(blank=True, upload_to=upload_to)),
                 ('is_ranked', models.BooleanField(default=False, help_text='If the competitor will be ranked in OSS.')),
                 ('is_multi', models.BooleanField(default=False, help_text='If the competitor is contesting a multi-round award.')),
                 ('draw', models.IntegerField(blank=True, null=True)),
@@ -160,7 +217,7 @@ class Migration(migrations.Migration):
                 ('per_score', models.FloatField(blank=True, null=True)),
                 ('sng_score', models.FloatField(blank=True, null=True)),
                 ('tot_score', models.FloatField(blank=True, null=True)),
-                ('csa_report', models.FileField(blank=True, max_length=255, upload_to=api.models.competitor.upload_to_csa)),
+                ('csa_report', models.FileField(blank=True, max_length=255, upload_to=upload_to_csa)),
             ],
             options={
                 'verbose_name_plural': 'competitors',
@@ -304,7 +361,7 @@ class Migration(migrations.Migration):
                 ('twitter', models.CharField(blank=True, help_text='\n            The twitter handle (in form @twitter_handle) of the resource.', max_length=16, validators=[django.core.validators.RegexValidator(message='\n                    Must be a single Twitter handle\n                    in the form `@twitter_handle`.\n                ', regex='@([A-Za-z0-9_]+)')])),
                 ('email', models.EmailField(blank=True, help_text='\n            The contact email of the resource.', max_length=254)),
                 ('phone', models.CharField(blank=True, help_text='\n            The phone number of the resource.  Include country code.', max_length=25)),
-                ('image', models.ImageField(blank=True, upload_to=api.models.group.upload_to)),
+                ('image', models.ImageField(blank=True, upload_to=upload_to)),
                 ('description', models.TextField(blank=True, help_text='\n            A description of the group.  Max 1000 characters.', max_length=1000)),
                 ('bhs_id', models.IntegerField(blank=True, null=True)),
                 ('notes', models.TextField(blank=True, help_text='\n            Notes (for internal use only).')),
@@ -425,7 +482,7 @@ class Migration(migrations.Migration):
                 ('work_phone', models.CharField(blank=True, default='', help_text='\n            The work phone number of the resource.  Include country code.', max_length=25)),
                 ('cell_phone', models.CharField(blank=True, default='', help_text='\n            The cell phone number of the resource.  Include country code.', max_length=25)),
                 ('airports', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(blank=True, max_length=3), blank=True, null=True, size=None)),
-                ('image', models.ImageField(blank=True, upload_to=api.models.person.upload_to)),
+                ('image', models.ImageField(blank=True, upload_to=upload_to)),
                 ('description', models.TextField(blank=True, default='', help_text='\n            A bio of the person.  Max 1000 characters.', max_length=1000)),
                 ('notes', models.TextField(blank=True, default='', help_text='\n            Notes (for internal use only).')),
                 ('bhs_id', models.IntegerField(blank=True, null=True, unique=True)),
@@ -461,7 +518,7 @@ class Migration(migrations.Migration):
                 ('status', django_fsm.FSMIntegerField(choices=[(0, 'New'), (20, 'Started'), (25, 'Reviewed'), (30, 'Finished')], default=0, help_text='DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.')),
                 ('kind', models.IntegerField(choices=[(1, 'Finals'), (2, 'Semi-Finals'), (3, 'Quarter-Finals')])),
                 ('num', models.IntegerField()),
-                ('ors_report', models.FileField(blank=True, max_length=255, upload_to=api.models.round.upload_to_ors)),
+                ('ors_report', models.FileField(blank=True, max_length=255, upload_to=upload_to_ors)),
             ],
             options={
                 'get_latest_by': ['num'],
@@ -503,11 +560,11 @@ class Migration(migrations.Migration):
                 ('is_invitational', models.BooleanField(default=False, help_text='Invite-only (v. Open).')),
                 ('description', models.TextField(blank=True, help_text='\n            The Public Description.  Will be sent in all email communications.', max_length=1000)),
                 ('notes', models.TextField(blank=True, help_text='\n            Private Notes (for internal use only).  Will not be sent.')),
-                ('bbscores_report', models.FileField(blank=True, max_length=255, upload_to=api.models.session.upload_to_bbscores)),
-                ('drcj_report', models.FileField(blank=True, max_length=255, upload_to=api.models.session.upload_to_drcj)),
-                ('admins_report', models.FileField(blank=True, max_length=255, upload_to=api.models.session.upload_to_admins)),
-                ('oss_report', models.FileField(blank=True, max_length=255, upload_to=api.models.session.upload_to_oss)),
-                ('sa_report', models.FileField(blank=True, max_length=255, upload_to=api.models.session.upload_to_sa)),
+                ('bbscores_report', models.FileField(blank=True, max_length=255, upload_to=upload_to_bbscores)),
+                ('drcj_report', models.FileField(blank=True, max_length=255, upload_to=upload_to_drcj)),
+                ('admins_report', models.FileField(blank=True, max_length=255, upload_to=upload_to_admins)),
+                ('oss_report', models.FileField(blank=True, max_length=255, upload_to=upload_to_oss)),
+                ('sa_report', models.FileField(blank=True, max_length=255, upload_to=upload_to_sa)),
                 ('convention', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sessions', to='api.Convention')),
             ],
             options={
