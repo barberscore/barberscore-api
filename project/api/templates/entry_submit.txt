@@ -21,7 +21,7 @@ Score/Eval-Only: {{entry.is_private|yesno|title}}
 {% if not is_private %}
 Contests Selected:
 {% for contestant in contestants %}
-    - {{contestant.contest.award.name}}
+    - {{contestant.contest.award.name|safe}}
 {% empty %}
     Not competing for any awards.
 {% endfor %}
