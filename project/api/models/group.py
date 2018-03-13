@@ -249,7 +249,6 @@ class Group(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=UploadPath(),
         null=True,
         blank=True,
     )
