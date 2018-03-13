@@ -701,6 +701,7 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'name',
             'is_staff',
+            'account_id',
             # 'person',
             'permissions',
             'is_convention_manager',

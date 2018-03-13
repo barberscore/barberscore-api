@@ -27,6 +27,7 @@ from .models import Round
 from .models import Score
 from .models import Session
 from .models import Venue
+from .models import User
 
 
 class OrphanListFilter(admin.SimpleListFilter):
@@ -677,5 +678,15 @@ class VenueFilter(FilterSet):
         fields = {
             'nomen': [
                 'icontains',
+            ],
+        }
+
+
+class UserFilter(FilterSet):
+    class Meta:
+        model = User
+        fields = {
+            'account_id': [
+                'exact',
             ],
         }
