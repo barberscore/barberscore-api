@@ -41,6 +41,7 @@ from .filters import RoundFilter
 from .filters import ScoreFilter
 from .filters import SessionFilter
 from .filters import VenueFilter
+from .filters import UserFilter
 from .models import Appearance
 from .models import Assignment
 from .models import Award
@@ -764,7 +765,7 @@ class UserViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     ).order_by('id')
     serializer_class = UserSerializer
-    filter_class = None
+    filter_class = UserFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
