@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8044ee743a665ead0c58e48db7719263fe10ea59580ffce0c4426952ff9a40a9"
+            "sha256": "3eda9e10c33f03c31e2741fa8097314bca6b178d3ba88f083f000841f7e5dc1b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -209,7 +209,8 @@
             "version": "==2.0.3"
         },
         "django-cloudinary-storage": {
-            "git": "git://github.com/barberscore/django-cloudinary-storage.git"
+            "git": "git://github.com/barberscore/django-cloudinary-storage.git",
+            "ref": "v0.2.3.1"
         },
         "django-filter": {
             "hashes": [

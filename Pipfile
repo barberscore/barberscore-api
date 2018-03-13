@@ -38,7 +38,7 @@ django-fsm-log = {git = "git://github.com/barberscore/django-fsm-log.git"}
 gunicorn = "*"
 ipython = "*"
 cloudinary = {git = "git://github.com/barberscore/pycloudinary.git"}
-django-cloudinary-storage = {git = "git://github.com/barberscore/django-cloudinary-storage.git"}
+django-cloudinary-storage = {git = "git://github.com/barberscore/django-cloudinary-storage.git",ref = "v0.2.3.1"}
 "psycopg2-binary" = "*"
 django-redis = "*"
 raven = "*"
