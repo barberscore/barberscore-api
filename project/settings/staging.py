@@ -6,6 +6,7 @@ ALLOWED_HOSTS = [
     '.barberscore.com',
     '.herokuapp.com',
 ]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Database
 DATABASES['bhs_db'] = dj_database_url.parse(
