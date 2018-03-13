@@ -700,79 +700,79 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'tree_sort',
     ]
 
-    INLINES = {
-        'International': [
-            AwardInline,
-            OfficerInline,
-            ConventionInline,
-            StateLogInline,
-        ],
-        'District': [
-            AwardInline,
-            OfficerInline,
-            ConventionInline,
-            ActiveChapterInline,
-            ActiveQuartetInline,
-            StateLogInline,
-        ],
-        'Noncompetitive': [
-            OfficerInline,
-            GroupInline,
-            StateLogInline,
-        ],
-        'Affiliate': [
-            OfficerInline,
-            GroupInline,
-            StateLogInline,
-        ],
-        'Division': [
-            AwardInline,
-            ActiveChapterInline,
-            ActiveQuartetInline,
-            StateLogInline,
-        ],
-        'Chapter': [
-            ActiveChorusInline,
-            StateLogInline,
-        ],
-        'Chorus': [
-            OfficerInline,
-            MemberInline,
-            RepertoryInline,
-            EntryInline,
-            CompetitorInline,
-            StateLogInline,
-        ],
-        'Quartet': [
-            OfficerInline,
-            MemberInline,
-            RepertoryInline,
-            EntryInline,
-            CompetitorInline,
-            StateLogInline,
-        ],
-    }
+    # INLINES = {
+    #     'International': [
+    #         AwardInline,
+    #         OfficerInline,
+    #         ConventionInline,
+    #         StateLogInline,
+    #     ],
+    #     'District': [
+    #         AwardInline,
+    #         OfficerInline,
+    #         ConventionInline,
+    #         ActiveChapterInline,
+    #         ActiveQuartetInline,
+    #         StateLogInline,
+    #     ],
+    #     'Noncompetitive': [
+    #         OfficerInline,
+    #         GroupInline,
+    #         StateLogInline,
+    #     ],
+    #     'Affiliate': [
+    #         OfficerInline,
+    #         GroupInline,
+    #         StateLogInline,
+    #     ],
+    #     'Division': [
+    #         AwardInline,
+    #         ActiveChapterInline,
+    #         ActiveQuartetInline,
+    #         StateLogInline,
+    #     ],
+    #     'Chapter': [
+    #         ActiveChorusInline,
+    #         StateLogInline,
+    #     ],
+    #     'Chorus': [
+    #         OfficerInline,
+    #         MemberInline,
+    #         RepertoryInline,
+    #         EntryInline,
+    #         CompetitorInline,
+    #         StateLogInline,
+    #     ],
+    #     'Quartet': [
+    #         OfficerInline,
+    #         MemberInline,
+    #         RepertoryInline,
+    #         EntryInline,
+    #         CompetitorInline,
+    #         StateLogInline,
+    #     ],
+    # }
 
-    def get_inline_instances(self, request, obj=None):
-        inline_instances = []
-        try:
-            inlines = self.INLINES[obj.KIND[obj.kind]]
-        except AttributeError:
-            return inline_instances
+    # def get_inline_instances(self, request, obj=None):
+    #     inline_instances = []
+    #     try:
+    #         inlines = self.INLINES[obj.KIND[obj.kind]]
+    #     except AttributeError:
+    #         return inline_instances
 
-        for inline_class in inlines:
-            inline = inline_class(self.model, self.admin_site)
-            inline_instances.append(inline)
-        return inline_instances
+    #     for inline_class in inlines:
+    #         inline = inline_class(self.model, self.admin_site)
+    #         inline_instances.append(inline)
+    #     return inline_instances
 
-    def get_formsets(self, request, obj=None):
-        for inline in self.get_inline_instances(request, obj):
-            yield inline.get_formset(request, obj)
+    # def get_formsets(self, request, obj=None):
+    #     for inline in self.get_inline_instances(request, obj):
+    #         yield inline.get_formset(request, obj)
 
-    def get_queryset(self, request):
-        return super().get_queryset(
-            request
-        ).prefetch_related('members')
+    # def get_queryset(self, request):
+    #     return super().get_queryset(
+    #         request
+    #     ).prefetch_related('members')
 
     def is_mc(self, instance):
         return instance.is_mc
