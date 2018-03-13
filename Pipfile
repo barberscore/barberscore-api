@@ -44,6 +44,7 @@ django-redis = "*"
 raven = "*"
 algoliasearch-django = "*"
 sendgrid-django = "*"
+brotli = "*"
 
 
 [dev-packages]
