@@ -572,7 +572,7 @@ class RepertoryViewSet(
         DjangoFilterBackend,
     ]
     permission_classes = [
-        DRYPermissions,
+        # DRYPermissions,
     ]
     resource_name = "repertory"
 
