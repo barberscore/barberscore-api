@@ -252,6 +252,8 @@ class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'image',
         'description',
         'notes',
+        'created',
+        'modified',
         # 'gender',
         # 'tempo',
         # 'is_medley',
@@ -287,6 +289,8 @@ class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'nomen',
+        'created',
+        'modified',
     ]
 
     search_fields = [
