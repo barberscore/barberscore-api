@@ -89,47 +89,51 @@ class Repertory(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_read_permission(request):
-        return any([
-            request.user.is_convention_manager,
-            request.user.is_scoring_manager,
-            request.user.is_group_manager,
-            request.user.is_session_manager,
-        ])
+        return True
+        # return any([
+        #     request.user.is_convention_manager,
+        #     request.user.is_scoring_manager,
+        #     request.user.is_group_manager,
+        #     request.user.is_session_manager,
+        # ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return any([
-            self.group.officers.filter(
-                person__user=request.user,
-                status__gt=0,
-            ),
-            request.user.is_convention_manager,
-            request.user.is_scoring_manager,
-            request.user.is_session_manager,
-        ])
+        return True
+        # return any([
+        #     self.group.officers.filter(
+        #         person__user=request.user,
+        #         status__gt=0,
+        #     ),
+        #     request.user.is_convention_manager,
+        #     request.user.is_scoring_manager,
+        #     request.user.is_session_manager,
+        # ])
 
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.is_convention_manager,
-            request.user.is_scoring_manager,
-            request.user.is_group_manager,
-        ])
+        return True
+        # return any([
+        #     request.user.is_convention_manager,
+        #     request.user.is_scoring_manager,
+        #     request.user.is_group_manager,
+        # ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            self.group.officers.filter(
-                person__user=request.user,
-                status__gt=0,
-            ),
-            request.user.is_convention_manager,
-            request.user.is_scoring_manager,
-        ])
+        return True
+        # return any([
+        #     self.group.officers.filter(
+        #         person__user=request.user,
+        #         status__gt=0,
+        #     ),
+        #     request.user.is_convention_manager,
+        #     request.user.is_scoring_manager,
+        # ])
 
     # Transitions
     @fsm_log_by
