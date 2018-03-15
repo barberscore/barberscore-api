@@ -117,14 +117,7 @@ class Contestant(TimeStampedModel):
         return self.nomen if self.nomen else str(self.pk)
 
     def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.entry,
-                    self.contest,
-                ]
-            )
-        )
+        self.nomen = str(self.id)
         super().save(*args, **kwargs)
 
     # Methods
