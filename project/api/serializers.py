@@ -407,6 +407,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'children',
             'entries',
             'members',
+            'officers',
             'tree_sort',
             'repertories',
             'permissions',
