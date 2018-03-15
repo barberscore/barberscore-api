@@ -85,8 +85,6 @@ class Award(TimeStampedModel):
 
     level = models.IntegerField(
         choices=LEVEL,
-        null=True,
-        blank=True,
     )
 
     SEASON = Choices(
@@ -99,8 +97,6 @@ class Award(TimeStampedModel):
 
     season = models.IntegerField(
         choices=SEASON,
-        null=True,
-        blank=True,
     )
 
     is_primary = models.BooleanField(
@@ -254,6 +250,7 @@ class Award(TimeStampedModel):
 
     parent = models.ForeignKey(
         'self',
+        help_text="""If a qualifier, this is the award qualifying for.""",
         related_name='children',
         null=True,
         blank=True,

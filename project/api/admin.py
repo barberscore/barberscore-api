@@ -171,7 +171,10 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Award)
-class AwardAdmin(admin.ModelAdmin):
+class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
     save_on_top = True
     fields = [
         'id',
