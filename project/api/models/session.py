@@ -16,6 +16,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps
 from django.db import models
 from django.conf import settings
+from django.urls import reverse
 
 # First-Party
 from api.tasks import send_session
@@ -106,6 +107,28 @@ class Session(TimeStampedModel):
         related_name='sessions',
         on_delete=models.CASCADE,
     )
+
+    # Properties
+    @property
+    def legacy(self):
+        return reverse(
+            'session-legacy',
+            args=[str(self.id)]
+        )
+
+    @property
+    def drcj(self):
+        return reverse(
+            'session-drcj',
+            args=[str(self.id)]
+        )
+
+    @property
+    def contact(self):
+        return reverse(
+            'session-contact',
+            args=[str(self.id)]
+        )
 
     # Internals
     class JSONAPIMeta:
