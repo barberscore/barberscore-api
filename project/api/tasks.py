@@ -1,7 +1,6 @@
 # Standard Libary
 import logging
 import time
-import requests
 from django.core.files.base import ContentFile
 # Third-Party
 import pydf
@@ -54,28 +53,22 @@ def get_accounts():
         results = auth0.users.list(
             fields=[
                 'user_id',
-                'email',
-                'app_metadata',
-                'user_metadata',
             ],
             per_page=100,
             page=i,
         )
         try:
             users = results['users']
-        except KeyError:
+        except KeyError as e:
             t += 1
             if t < 4:
                 time.sleep(t ** 2)
                 continue
             else:
-                raise RuntimeError(results)
+                raise e
         for user in users:
             payload = {
                 'account_id': user['user_id'],
-                'email': user['email'],
-                'name': user['user_metadata']['name'],
-                'barberscore_id': user['app_metadata']['barberscore_id'],
             }
             output.append(payload)
         more = bool(results['users'])
