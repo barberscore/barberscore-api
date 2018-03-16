@@ -1,6 +1,6 @@
 {
   "name": "Barberscore API",
-  "description": "Scoring API for the Barbershop Harmony Society",
+  "description": "Scoring and Contest API for the Barbershop Harmony Society",
   "logo": "https://s3-us-west-1.amazonaws.com/barberscore/bhs_logo.png",
   "repository": "https://github.com/barberscore/barberscore-api",
   "stack": "heroku-16",
@@ -21,29 +21,10 @@
     }
   },
   "addons": [
-    "cloudinary:starter",
     "heroku-redis:hobby-dev",
     "heroku-postgresql:hobby-dev"
   ],
   "env": {
-    "ALGOLIASEARCH_API_KEY": {
-      "description": "Algolia Private API Key.",
-      "required": true
-    },
-    "ALGOLIASEARCH_APPLICATION_ID": {
-      "description": "Algolia App ID.",
-      "required": true
-    },
-    "ALGOLIASEARCH_AUTO_INDEXING": {
-      "description": "Algolia indexing setting.",
-      "value": false,
-      "required": true
-    },
-    "ALGOLIASEARCH_INDEX_SUFFIX": {
-      "description": "Algolia index suffix.",
-      "value": "dev",
-      "required": true
-    },
     "AUTH0_API_ID": {
       "description": "Auth0 API id.",
       "required": true
@@ -54,10 +35,6 @@
     },
     "AUTH0_API_DOMAIN": {
       "description": "Auth0 API endpoint.",
-      "required": true
-    },
-    "AUTH0_CERTIFICATE": {
-      "description": "Auth0 RS256 Public Key Certificate.",
       "required": true
     },
     "AUTH0_CLIENT_ID": {
@@ -72,10 +49,6 @@
       "description": "Auth0 Client endpoint.",
       "required": true
     },
-    "BHS_DATABASE_URL": {
-      "description": "Credentials used to access the BHS Database.",
-      "required": true
-    },
     "DJANGO_SETTINGS_MODULE": {
       "description": "Configures the settings.  Do not edit.",
       "value": "settings.dev",
@@ -84,11 +57,6 @@
     "EMAIL_BACKEND": {
       "description": "Email backend.",
       "value": "django.core.mail.backends.dummy.EmailBackend",
-      "required": true
-    },
-    "EMAIL_PORT": {
-      "description": "SMTP Email port.  Use 1025 for MailHog.",
-      "value": 25,
       "required": true
     },
     "PYTHONPATH": {
@@ -104,10 +72,6 @@
     "SECRET_KEY": {
       "description": "Required by Django.  Auto-generated.",
       "generator": "secret",
-      "required": true
-    },
-    "SENTRY_DSN": {
-      "description": "Sentry DSN URL.",
       "required": true
     }
   },
