@@ -43,7 +43,7 @@ django-cloudinary-storage = "*"
 django-redis = "*"
 raven = "*"
 algoliasearch-django = "*"
-sendgrid-django = {git = "git://github.com/barberscore/sendgrid-django.git"}
+sendgrid-django = "*"
 brotli = "*"
 
 

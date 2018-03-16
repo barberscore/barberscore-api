@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "83d7752c88d8855f85fcb2b649a1f4049615975cac3bdddf729350dd8460b39d"
+            "sha256": "b1d8504d07ff12b405d2b879cf81c41df3da6450792cb29801fef3c3d8edce5b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -590,6 +590,13 @@
             "index": "pypi",
             "version": "==2.7.0"
         },
+        "python-http-client": {
+            "hashes": [
+                "sha256:481dd0bb1ae8248e47d16e73642813006025f164e6a715f4b1e53d7ecae17675",
+                "sha256:c9571823fb6994793bec520f8dbe8dd74ccdd28072b1fae1ab9fb728728e6619"
+            ],
+            "version": "==3.0.0"
+        },
         "python-pdf": {
             "hashes": [
                 "sha256:6a3b084809469ce97be61fb39d94eafd830181aebeda6a3e166b373e23c8731a",
@@ -650,8 +657,19 @@
             "index": "pypi",
             "version": "==0.10.0"
         },
+        "sendgrid": {
+            "hashes": [
+                "sha256:9fba62068dd13922004b6a1676e21c6435709aaf7c2b978cdf1206e3d2196c60",
+                "sha256:d1af52f8cbb900bf79e28aa08102a503f5e26489c7b9f1d9750758a4b27c84d1"
+            ],
+            "version": "==3.6.5"
+        },
         "sendgrid-django": {
-            "git": "git://github.com/barberscore/sendgrid-django.git"
+            "hashes": [
+                "sha256:fef60ba37d588e5e1c4dcbb3b8b7f8c16920e3e89432de357f6abd6157c4f5f4"
+            ],
+            "index": "pypi",
+            "version": "==4.2.0"
         },
         "simplegeneric": {
             "hashes": [
