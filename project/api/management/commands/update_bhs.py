@@ -8,6 +8,7 @@ from django.utils import timezone
 
 # First-Party
 from api.models import Person
+from api.models import User
 from bhs.models import Human
 from bhs.models import Structure
 from bhs.models import Subscription
@@ -86,5 +87,7 @@ class Command(BaseCommand):
         # Sync Users
         t = Person.objects.update_users(cursor=cursor)
         self.stdout.write("Queued {0} users.".format(t))
+        t = User.objects.delete_orphans()
+        self.stdout.write("Deleted {0} user orphans.".format(t))
 
         self.stdout.write("Complete.")
