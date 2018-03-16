@@ -84,7 +84,8 @@ SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
 # Sentry
 RAVEN_CONFIG = {
     'environment': 'production',
-    'dsn': get_env_variable("SENTRY_DSN")
+    'dsn': get_env_variable("SENTRY_DSN"),
+    'release': get_env_variable("HEROKU_SLUG_DESCRIPTION"),
 }
 
 # Logging
