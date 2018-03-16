@@ -45,8 +45,8 @@ class PersonIndex(AlgoliaIndex):
         'email',
         'image',
         'bhs_id',
-        'full_name'
-        'common_name'
+        'full_name',
+        'common_name',
     ]
     settings = {
         'searchableAttributes': [
