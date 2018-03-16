@@ -17,13 +17,6 @@ DATABASE_ROUTERS = [
     'routers.BHSRouter',
 ]
 
-# Algolia
-ALGOLIA = {
-    'APPLICATION_ID': get_env_variable("ALGOLIASEARCH_APPLICATION_ID"),
-    'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
-    'ALGOLIASEARCH_AUTO_INDEXING': False,
-}
-
 # Auth0
 AUTH0_CLIENT_DOMAIN = get_env_variable("AUTH0_CLIENT_DOMAIN")
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
@@ -146,5 +139,4 @@ INSTALLED_APPS += [
     'raven.contrib.django.raven_compat',
     'cloudinary_storage',
     'cloudinary',
-    'algoliasearch_django',
 ]
