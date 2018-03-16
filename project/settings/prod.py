@@ -25,12 +25,12 @@ ALGOLIA = {
 }
 
 # Auth0
+AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
 AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
 AUTH0_API_ID = get_env_variable("AUTH0_API_ID")
 AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
-AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 
 
 def jwt_get_username_from_payload_handler(payload):
