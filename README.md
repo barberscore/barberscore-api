@@ -44,10 +44,10 @@ REDIS_URL=(your credentials here)
 
 AUTH0_CLIENT_ID=(your credentials here)
 AUTH0_CLIENT_SECRET=(your credentials here)
-AUTH0_DOMAIN=(your credentials here)
+AUTH0_CLIENT_DOMAIN=(your credentials here)
 AUTH0_API_ID=(your credentials here)
 AUTH0_API_SECRET=(your credentials here)
-AUTH0_AUDIENCE=(your credentials here)
+AUTH0_API_DOMAIN=(your credentials here)
 
 CLOUDINARY_URL=(your credentials here)
 

@@ -25,10 +25,10 @@ ALGOLIA = {
 }
 
 # Auth0
-AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
+AUTH0_API_DOMAIN = get_env_variable("AUTH0_API_DOMAIN")
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
-AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
+AUTH0_CLIENT_DOMAIN = get_env_variable("AUTH0_CLIENT_DOMAIN")
 AUTH0_API_ID = get_env_variable("AUTH0_API_ID")
 AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
 

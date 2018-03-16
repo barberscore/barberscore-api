@@ -52,7 +52,7 @@
       "description": "Auth0 API secret.",
       "required": true
     },
-    "AUTH0_AUDIENCE": {
+    "AUTH0_API_DOMAIN": {
       "description": "Auth0 API endpoint.",
       "required": true
     },
@@ -68,7 +68,7 @@
       "description": "Auth0 Client secret.",
       "required": true
     },
-    "AUTH0_DOMAIN": {
+    "AUTH0_CLIENT_DOMAIN": {
       "description": "Auth0 Client endpoint.",
       "required": true
     },
