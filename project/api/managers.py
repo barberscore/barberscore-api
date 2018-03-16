@@ -835,7 +835,7 @@ class UserManager(BaseUserManager):
         ).values_list('account_id', flat=True))
         for account in accounts:
             if account['account_id'] not in users:
-                delete_account(account['account_id'])
+                delete_account.delay(account['account_id'])
         return
 
     def create_user(self, email, **kwargs):
