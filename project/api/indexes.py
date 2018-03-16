@@ -30,6 +30,9 @@ class GroupIndex(AlgoliaIndex):
             'code',
             'bhs_id',
             'get_kind_display',
+        ],
+        'attributesForFaceting': [
+            'get_kind_display',
         ]
     }
 
