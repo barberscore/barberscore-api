@@ -362,6 +362,10 @@ class Group(TimeStampedModel):
     def is_mc(self):
         return bool(self.mc_pk)
 
+    # Methods
+    def is_active(self):
+        return bool(self.status == self.STATUS.active)
+
     # Internals
     objects = GroupManager()
 
