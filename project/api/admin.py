@@ -88,6 +88,8 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('mus_score', 'per_score', 'sng_score', 'tot_score',),
     ]
     list_display = [
+        'competitor',
+        'round',
         'num',
         'draw',
         'status',
