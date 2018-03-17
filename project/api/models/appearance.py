@@ -145,10 +145,7 @@ class Appearance(TimeStampedModel):
         resource_name = "appearance"
 
     def __str__(self):
-        return "{0} {1}".format(
-            self.round,
-            self.competitor,
-        )
+        return str(self.id)
 
     # Methods
     def calculate(self):

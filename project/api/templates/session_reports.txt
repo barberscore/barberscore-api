@@ -1,4 +1,4 @@
-Below are the reports for the {{session|safe}}.
+Below are the reports for the {{session.nomen|safe}}.
 
 Legacy Program Export: {{host_name|safe}}/api/session/{{session.id}}/legacy
 
@@ -7,8 +7,8 @@ DRCJ Report: {{host_name|safe}}/api/session/{{session.id}}/drcj
 Group Admins Email Report: {{host_name|safe}}/api/session/{{session.id}}/contact
 
 
-The reports may change up to the start of the sesion.  To regenerate reports,
-re-verify the session.  If you have any other questions ask David Mills.
+These reports are kept up to date on the server; to get the latest copy just download
+a fresh version from the website (or these links.)
 
 Thanks!
 

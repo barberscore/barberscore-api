@@ -258,7 +258,7 @@ class Award(TimeStampedModel):
         resource_name = "award"
 
     def __str__(self):
-        return self.name
+        return str(self.id)
 
     # Award Permissions
     @staticmethod

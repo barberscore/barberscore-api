@@ -375,6 +375,7 @@ class GroupViewSet(
         'repertories',
         'officers',
     ).order_by(
+        'id',
     ).distinct()
     serializer_class = GroupSerializer
     filter_class = GroupFilter
@@ -728,7 +729,7 @@ class SongViewSet(viewsets.ModelViewSet):
         'chart',
     ).prefetch_related(
         'scores',
-    ).order_by('title')
+    ).order_by('id')
     serializer_class = SongSerializer
     filter_class = None
     filter_backends = [

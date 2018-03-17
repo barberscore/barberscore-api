@@ -78,10 +78,7 @@ class Round(TimeStampedModel):
         resource_name = "round"
 
     def __str__(self):
-        return " ".join([
-            self.session,
-            self.get_kind_display(),
-        ])
+        return str(self.id)
 
     # Permissions
     @staticmethod

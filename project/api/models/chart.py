@@ -77,6 +77,13 @@ class Chart(TimeStampedModel):
         blank=True,
     )
 
+    @property
+    def nomen(self):
+        return "{0} [{1}]".format(
+            self.title,
+            self.arrangers,
+        )
+
     # Internals
     class Meta:
         unique_together = (
@@ -87,10 +94,7 @@ class Chart(TimeStampedModel):
         resource_name = "chart"
 
     def __str__(self):
-        return " ".join(filter(None, [
-            self.title,
-            "[{0}]".format(self.arrangers),
-        ]))
+        return str(self.id)
 
     # Permissions
     @staticmethod

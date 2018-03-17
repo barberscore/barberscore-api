@@ -109,10 +109,7 @@ class Contestant(TimeStampedModel):
         resource_name = "contestant"
 
     def __str__(self):
-        return "{0} {1}".format(
-            self.contest,
-            self.entry,
-        )
+        return str(self.id)
 
     # Methods
     def calculate(self, *args, **kwargs):

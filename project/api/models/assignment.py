@@ -81,11 +81,7 @@ class Assignment(TimeStampedModel):
         resource_name = "assignment"
 
     def __str__(self):
-        return " ".join(filter(None, [
-            self.person,
-            self.convention,
-            self.get_kind_display(),
-        ]))
+        return str(self.id)
 
     # Permissions
     @staticmethod

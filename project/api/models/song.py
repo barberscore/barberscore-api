@@ -122,10 +122,7 @@ class Song(TimeStampedModel):
         resource_name = "song"
 
     def __str__(self):
-        return " ".join([
-            self.appearance,
-            self.num,
-        ])
+        return str(self.id)
 
     # Methods
     def calculate(self):

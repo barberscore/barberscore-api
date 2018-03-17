@@ -116,10 +116,7 @@ class Grid(TimeStampedModel):
         resource_name = "grid"
 
     def __str__(self):
-        return "{0} {1}".format(
-            self.round,
-            self.competitor,
-        )
+        return str(self.id)
 
     # Permissions
     @staticmethod

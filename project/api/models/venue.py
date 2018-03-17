@@ -72,11 +72,7 @@ class Venue(TimeStampedModel):
 
     # Methods
     def __str__(self):
-        return "{0} - {1}, {2}".format(
-            self.name,
-            self.city,
-            self.state,
-        )
+        return str(self.id)
 
     # Internals
     class JSONAPIMeta:

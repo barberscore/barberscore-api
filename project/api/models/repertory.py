@@ -63,10 +63,7 @@ class Repertory(TimeStampedModel):
         resource_name = "repertory"
 
     def __str__(self):
-        return " ".join([
-            self.group,
-            self.chart,
-        ])
+        return str(self.id)
 
     # Permissions
     @staticmethod

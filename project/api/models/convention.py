@@ -134,7 +134,7 @@ class Convention(TimeStampedModel):
         resource_name = "convention"
 
     def __str__(self):
-        return self.name
+        return str(self.id)
 
     def clean(self):
         if self.group.kind > self.group.KIND.district:

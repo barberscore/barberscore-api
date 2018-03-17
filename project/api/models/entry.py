@@ -166,6 +166,14 @@ class Entry(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    # Properties
+    @property
+    def nomen(self):
+        return "{0} {1} Entry".format(
+            self.group.name,
+            self.session.nomen,
+        )
+
     # Internals
     class Meta:
         verbose_name_plural = 'entries'
@@ -177,10 +185,7 @@ class Entry(TimeStampedModel):
         resource_name = "entry"
 
     def __str__(self):
-        return "{0}; {1}".format(
-            self.group,
-            self.session,
-        )
+        return str(self.id)
 
     def clean(self):
         if self.is_private and self.contestants.filter(status__gt=0):
@@ -368,8 +373,7 @@ class Entry(TimeStampedModel):
     def submit(self, *args, **kwargs):
         contestants = self.contestants.filter(
             status__gt=0,
-        ).order_by(
-            )
+        ).order_by('contest__award__name')
         context = {
             'entry': self,
             'contestants': contestants,
@@ -393,8 +397,7 @@ class Entry(TimeStampedModel):
         repertories = self.group.repertories.order_by('chart__title')
         contestants = self.contestants.filter(
             status__gt=0,
-        ).order_by(
-            )
+        ).order_by('contest__award__name')
         members = self.group.members.filter(
             status__gt=0,
         ).order_by(

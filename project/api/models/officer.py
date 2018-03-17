@@ -93,11 +93,7 @@ class Officer(TimeStampedModel):
         resource_name = "officer"
 
     def __str__(self):
-        return " ".join([
-            self.group,
-            self.office,
-            self.person,
-        ])
+        return str(self.id)
 
     # Permissions
     @staticmethod

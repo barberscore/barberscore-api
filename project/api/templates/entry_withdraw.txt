@@ -1,4 +1,4 @@
-We have received notice that you will not be participating in the {{entry.session|safe}}.
+We have received notice that you will not be participating in the {{entry.session.nomen|safe}}.
 
 If anything changes please contact the DRCJ directly.  Thank you.
 

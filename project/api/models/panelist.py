@@ -88,11 +88,7 @@ class Panelist(TimeStampedModel):
         resource_name = "panelist"
 
     def __str__(self):
-        return " ".join(filter(None, [
-            self.round,
-            self.person,
-            self.get_kind_display(),
-        ]))
+        return str(self.id)
 
     # Permissions
     @staticmethod

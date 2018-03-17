@@ -371,7 +371,7 @@ class Group(TimeStampedModel):
         resource_name = "group"
 
     def __str__(self):
-        return self.name
+        return str(self.id)
 
     def clean(self):
         if self.mc_pk and self.status == self.STATUS.active:

@@ -58,10 +58,7 @@ class Grantor(TimeStampedModel):
         resource_name = "grantor"
 
     def __str__(self):
-        return " ".join([
-            self.convention,
-            self.group,
-        ])
+        return str(self.id)
 
     # Permissions
     @staticmethod

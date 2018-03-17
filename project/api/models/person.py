@@ -300,10 +300,7 @@ class Person(TimeStampedModel):
             raise ValidationError("Email must be null, not blank")
 
     def __str__(self):
-        return " ".join(filter(None, [
-            self.full_name,
-            "[{0}]".format(self.bhs_id),
-        ]))
+        return str(self.id)
 
     # Permissions
     @staticmethod

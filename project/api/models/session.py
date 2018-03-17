@@ -105,6 +105,13 @@ class Session(TimeStampedModel):
 
     # Properties
     @property
+    def nomen(self):
+        return "{0} {1} Session".format(
+            self.convention.name,
+            self.get_kind_display(),
+        )
+
+    @property
     def legacy(self):
         return reverse(
             'session-legacy',
@@ -115,7 +122,7 @@ class Session(TimeStampedModel):
     def drcj(self):
         return reverse(
             'session-drcj',
-            args=[str(self.id)]
+            args=[(self.id)]
         )
 
     @property
@@ -130,10 +137,7 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __str__(self):
-        return " ".join(filter(None, [
-            self.convention,
-            self.get_kind_display(),
-        ]))
+        return str(self.id)
 
     # Methods
 

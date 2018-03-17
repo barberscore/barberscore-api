@@ -70,10 +70,7 @@ class Contest(TimeStampedModel):
         resource_name = "contest"
 
     def __str__(self):
-        return " ".join(filter(None, [
-            self.award,
-            self.session,
-        ]))
+        return str(self.id)
 
     # Contest Permissions
     @staticmethod

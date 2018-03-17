@@ -139,10 +139,7 @@ class Competitor(TimeStampedModel):
         resource_name = "competitor"
 
     def __str__(self):
-        return "{0}; {1}".format(
-            self.group,
-            self.session,
-        )
+        return str(self.id)
 
     # Competitor Permissions
     @staticmethod

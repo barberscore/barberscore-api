@@ -197,7 +197,7 @@ class User(AbstractBaseUser):
 
     # User Internals
     def __str__(self):
-        return self.name
+        return str(self.id)
 
     def clean(self):
         pass
@@ -217,10 +217,6 @@ class User(AbstractBaseUser):
         #     raise ValidationError(
         #         {'is_active': 'Should be active.'}
         #     )
-
-    def save(self, *args, **kwargs):
-        if self.email:
-            self.email = self.email.lower()
 
     def has_perm(self, perm, obj=None):
         return self.is_staff

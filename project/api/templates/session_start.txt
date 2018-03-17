@@ -1,8 +1,8 @@
-The {{session|safe}}
+The {{session.nomen|safe}}
 is starting soon, and your entry has been finalized.  This means you will no
 longer be able to edit your entry through the Barberscore website.
 
-If you need to scratch or make other changes please contact the DRCJ directly.
+If you need to withdraw or make other changes please contact the DRCJ directly.
 
 Break a leg!
 
