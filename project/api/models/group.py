@@ -115,11 +115,6 @@ class Group(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     name = models.CharField(
         help_text="""
             The name of the resource.
@@ -376,7 +371,7 @@ class Group(TimeStampedModel):
         resource_name = "group"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
+        return self.name
 
     def clean(self):
         if self.mc_pk and self.status == self.STATUS.active:
@@ -422,10 +417,6 @@ class Group(TimeStampedModel):
                 ]:
                     raise ValidationError("Quartet must have District or Division parent.")
         return
-
-    def save(self, *args, **kwargs):
-        self.nomen = self.name
-        super().save(*args, **kwargs)
 
     # Methods
     def denormalize(self):

@@ -27,11 +27,6 @@ class Contest(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (-10, 'excluded', 'Excluded',),
         (0, 'new', 'New',),
@@ -75,14 +70,10 @@ class Contest(TimeStampedModel):
         resource_name = "contest"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
-            self.award.name,
-            self.session.nomen,
+        return " ".join(filter(None, [
+            self.award,
+            self.session,
         ]))
-        super().save(*args, **kwargs)
 
     # Contest Permissions
     @staticmethod

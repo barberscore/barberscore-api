@@ -221,7 +221,6 @@ class User(AbstractBaseUser):
     def save(self, *args, **kwargs):
         if self.email:
             self.email = self.email.lower()
-        super().save(*args, **kwargs)
 
     def has_perm(self, perm, obj=None):
         return self.is_staff

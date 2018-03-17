@@ -30,11 +30,6 @@ class Convention(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     name = models.CharField(
         max_length=255,
     )
@@ -139,17 +134,13 @@ class Convention(TimeStampedModel):
         resource_name = "convention"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
+        return self.name
 
     def clean(self):
         if self.group.kind > self.group.KIND.district:
             raise ValidationError(
                 {'group': 'Owning group must be at least district'}
             )
-
-    def save(self, *args, **kwargs):
-        self.nomen = self.name
-        super().save(*args, **kwargs)
 
     # Convention Permissions
     @staticmethod

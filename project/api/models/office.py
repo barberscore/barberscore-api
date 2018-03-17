@@ -23,11 +23,6 @@ class Office(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     name = models.CharField(
         max_length=255,
     )
@@ -120,17 +115,12 @@ class Office(TimeStampedModel):
     def is_mc(self):
         return bool(self.mc_pk)
 
-    # Office Methods
-    def save(self, *args, **kwargs):
-        self.nomen = self.name
-        super().save(*args, **kwargs)
-
     # Internals
     class JSONAPIMeta:
         resource_name = "office"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
+        return self.name
 
     # Office Permissions
     @staticmethod

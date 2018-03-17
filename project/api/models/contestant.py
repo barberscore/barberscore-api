@@ -28,11 +28,6 @@ class Contestant(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (-10, 'excluded', 'Excluded',),
         (0, 'new', 'New',),
@@ -114,11 +109,10 @@ class Contestant(TimeStampedModel):
         resource_name = "contestant"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = str(self.id)
-        super().save(*args, **kwargs)
+        return "{0} {1}".format(
+            self.contest,
+            self.entry,
+        )
 
     # Methods
     def calculate(self, *args, **kwargs):

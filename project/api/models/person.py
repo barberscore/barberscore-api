@@ -35,11 +35,6 @@ class Person(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     first_name = models.CharField(
         help_text="""
             The first name of the person.""",
@@ -300,28 +295,15 @@ class Person(TimeStampedModel):
     class JSONAPIMeta:
         resource_name = "person"
 
-    def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
     def clean(self):
         if self.email == '':
             raise ValidationError("Email must be null, not blank")
 
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x),
-                filter(
-                    None, [
-                        self.full_name,
-                        "[{0}]".format(self.bhs_id),
-                    ]
-                )
-            )
-        )
-        if self.email:
-            self.email = self.email.lower()
-        super().save(*args, **kwargs)
+    def __str__(self):
+        return " ".join(filter(None, [
+            self.full_name,
+            "[{0}]".format(self.bhs_id),
+        ]))
 
     # Permissions
     @staticmethod

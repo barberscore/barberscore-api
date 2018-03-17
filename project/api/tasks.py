@@ -343,7 +343,7 @@ def create_contact_report(session):
         status__in=[
             Entry.STATUS.approved,
         ]
-    ).order_by('group__nomen')
+    ).order_by('group__name')
     for entry in entries:
         admins = entry.group.officers.filter(
             status__gt=0,

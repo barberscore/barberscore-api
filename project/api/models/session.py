@@ -32,11 +32,6 @@ class Session(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (2, 'built', 'Built',),
@@ -135,23 +130,10 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        gender = self.gender
-        if gender == self.GENDER.male:
-            gender = None
-        else:
-            gender = self.get_gender_display()
-        self.nomen = " ".join(
-            filter(None, [
-                str(self.convention),
-                gender,
-                self.get_kind_display(),
-                'Session',
-            ])
-        )
-        super().save(*args, **kwargs)
+        return " ".join(filter(None, [
+            self.convention,
+            self.get_kind_display(),
+        ]))
 
     # Methods
 

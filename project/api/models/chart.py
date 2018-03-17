@@ -26,11 +26,6 @@ class Chart(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New'),
@@ -92,14 +87,10 @@ class Chart(TimeStampedModel):
         resource_name = "chart"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
+        return " ".join(filter(None, [
             self.title,
             "[{0}]".format(self.arrangers),
         ]))
-        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod

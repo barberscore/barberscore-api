@@ -27,11 +27,6 @@ class Assignment(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
@@ -86,15 +81,11 @@ class Assignment(TimeStampedModel):
         resource_name = "assignment"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(filter(None, [
-            "{0}".format(self.person),
-            "{0}".format(self.convention),
+        return " ".join(filter(None, [
+            self.person,
+            self.convention,
             self.get_kind_display(),
         ]))
-        super().save(*args, **kwargs)
 
     # Permissions
     @staticmethod

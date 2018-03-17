@@ -1,5 +1,4 @@
 # Third-Party
-from django_filters import CharFilter
 from django_filters import NumberFilter
 from django_filters import UUIDFilter
 from django_filters.rest_framework import FilterSet
@@ -324,9 +323,6 @@ class AwardFilter(FilterSet):
     class Meta:
         model = Award
         fields = {
-            'nomen': [
-                'icontains',
-            ],
             'kind': [
                 'exact',
             ],
@@ -374,9 +370,6 @@ class ChartFilter(FilterSet):
     class Meta:
         model = Chart
         fields = {
-            'nomen': [
-                'icontains',
-            ],
             'status': [
                 'exact',
                 'gte',
@@ -388,9 +381,6 @@ class ContestantFilter(FilterSet):
     class Meta:
         model = Contestant
         fields = {
-            'nomen': [
-                'icontains',
-            ],
         }
 
 
@@ -424,9 +414,6 @@ class CompetitorFilter(FilterSet):
     class Meta:
         model = Competitor
         fields = {
-            'nomen': [
-                'icontains',
-            ],
         }
 
 
@@ -434,9 +421,6 @@ class EntryFilter(FilterSet):
     class Meta:
         model = Entry
         fields = {
-            'nomen': [
-                'icontains',
-            ],
         }
 
 
@@ -485,9 +469,6 @@ class GroupFilter(FilterSet):
             'officers__person__user': [
                 'exact',
             ],
-            'nomen': [
-                'icontains',
-            ],
             'status': [
                 'exact',
                 'gt',
@@ -499,9 +480,6 @@ class PanelistFilter(FilterSet):
     class Meta:
         model = Panelist
         fields = {
-            'nomen': [
-                'icontains',
-            ],
         }
 
 
@@ -548,9 +526,6 @@ class OfficerFilter(FilterSet):
     class Meta:
         model = Officer
         fields = {
-            'nomen': [
-                'icontains',
-            ],
             'office__code': [
                 'exact',
             ],
@@ -564,9 +539,6 @@ class PersonFilter(FilterSet):
     class Meta:
         model = Person
         fields = {
-            'nomen': [
-                'icontains',
-            ],
             'status': [
                 'exact',
             ],
@@ -649,12 +621,6 @@ class SessionFilter(FilterSet):
         distinct=True,
     )
 
-    nomen__icontains = CharFilter(
-        field_name='status',
-        lookup_expr='icontains',
-        distinct=True,
-    )
-
     class Meta:
         model = Session
         fields = [
@@ -665,7 +631,6 @@ class SessionFilter(FilterSet):
             'convention',
             'is_invitational',
             'convention__status',
-            'nomen__icontains',
             'convention__assignments__person__user',
             'convention__assignments__kind',
             'convention__assignments__category',
@@ -676,8 +641,8 @@ class VenueFilter(FilterSet):
     class Meta:
         model = Venue
         fields = {
-            'nomen': [
-                'icontains',
+            'id': [
+                'exact',
             ],
         }
 

@@ -27,11 +27,6 @@ class Score(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'verified', 'Verified',),
@@ -166,11 +161,7 @@ class Score(TimeStampedModel):
         resource_name = "score"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = str(self.pk)
-        super().save(*args, **kwargs)
+        return str(self.pk)
 
     # Methods
     def verify(self):

@@ -26,11 +26,6 @@ class Venue(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     name = models.CharField(
         help_text="""
             The name of the resource.""",
@@ -77,15 +72,11 @@ class Venue(TimeStampedModel):
 
     # Methods
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = "{0} - {1}, {2}".format(
+        return "{0} - {1}, {2}".format(
             self.name,
             self.city,
             self.state,
         )
-        super().save(*args, **kwargs)
 
     # Internals
     class JSONAPIMeta:

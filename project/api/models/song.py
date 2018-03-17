@@ -28,11 +28,6 @@ class Song(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (10, 'verified', 'Verified',),
@@ -127,18 +122,10 @@ class Song(TimeStampedModel):
         resource_name = "song"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.appearance,
-                    self.num,
-                ]
-            )
-        )
-        super().save(*args, **kwargs)
+        return " ".join([
+            self.appearance,
+            self.num,
+        ])
 
     # Methods
     def calculate(self):

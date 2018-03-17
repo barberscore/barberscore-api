@@ -36,7 +36,6 @@ class ActiveChapterInline(admin.TabularInline):
     ]
     fk_name = 'parent'
     ordering = [
-        'nomen',
     ]
     show_change_link = True
     extra = 0
@@ -68,7 +67,6 @@ class ActiveChorusInline(admin.TabularInline):
     ]
     fk_name = 'parent'
     ordering = [
-        'nomen',
     ]
     show_change_link = True
     extra = 0
@@ -102,7 +100,6 @@ class ActiveQuartetInline(admin.TabularInline):
     ]
     fk_name = 'parent'
     ordering = [
-        'nomen',
     ]
     show_change_link = True
     extra = 0
@@ -149,7 +146,6 @@ class AppearanceInline(admin.TabularInline):
 class AssignmentInline(admin.TabularInline):
     model = Assignment
     fields = [
-        'nomen',
         'status',
         'category',
         'kind',
@@ -157,7 +153,6 @@ class AssignmentInline(admin.TabularInline):
         'convention',
     ]
     readonly_fields = [
-        'nomen',
         'status',
     ]
     raw_id_fields = [
@@ -233,13 +228,11 @@ class ContestInline(admin.TabularInline):
 class ContestantInline(admin.TabularInline):
     model = Contestant
     fields = [
-        'nomen',
         'entry',
         'contest',
         'status',
     ]
     readonly_fields = [
-        'nomen',
         'status',
     ]
     raw_id_fields = [
@@ -272,7 +265,6 @@ class ConventionInline(admin.TabularInline):
 class CompetitorInline(admin.TabularInline):
     model = Competitor
     fields = [
-        'nomen',
         'status',
         'session',
         'group',
@@ -280,7 +272,6 @@ class CompetitorInline(admin.TabularInline):
         'draw',
     ]
     readonly_fields = [
-        'nomen',
         'status',
         # 'seed',
     ]
@@ -289,7 +280,7 @@ class CompetitorInline(admin.TabularInline):
         'group',
     ]
     ordering = [
-        'group__nomen',
+        'group__name',
     ]
     show_change_link = True
     extra = 0
@@ -301,7 +292,6 @@ class CompetitorInline(admin.TabularInline):
 class EntryInline(admin.TabularInline):
     model = Entry
     fields = [
-        'nomen',
         'session',
         'group',
         'prelim',
@@ -309,7 +299,6 @@ class EntryInline(admin.TabularInline):
         'status',
     ]
     readonly_fields = [
-        'nomen',
         'status',
     ]
     raw_id_fields = [
@@ -317,7 +306,7 @@ class EntryInline(admin.TabularInline):
         'group',
     ]
     ordering = [
-        'group__nomen',
+        'group__name',
         'session__convention__year',
     ]
     show_change_link = True
@@ -380,7 +369,6 @@ class GroupInline(admin.TabularInline):
     ]
     fk_name = 'parent'
     ordering = [
-        'nomen',
     ]
     show_change_link = True
     extra = 0
@@ -451,7 +439,6 @@ class OfficerInline(admin.TabularInline):
 class PanelistInline(admin.TabularInline):
     model = Panelist
     fields = [
-        'nomen',
         'status',
         'category',
         'kind',
@@ -460,7 +447,6 @@ class PanelistInline(admin.TabularInline):
         'num',
     ]
     readonly_fields = [
-        'nomen',
         'status',
     ]
     raw_id_fields = [
@@ -574,7 +560,6 @@ class SessionInline(admin.TabularInline):
 class RoundInline(admin.TabularInline):
     model = Round
     fields = [
-        'nomen',
         'session',
         'kind',
         'status',
@@ -585,7 +570,6 @@ class RoundInline(admin.TabularInline):
         'kind',
     )
     readonly_fields = [
-        'nomen',
         'status',
     ]
     show_change_link = True

@@ -88,7 +88,6 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('mus_score', 'per_score', 'sng_score', 'tot_score',),
     ]
     list_display = [
-        'nomen',
         'num',
         'draw',
         'status',
@@ -105,15 +104,14 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
     readonly_fields = [
         'id',
-        'nomen',
     ]
     autocomplete_fields = [
         'competitor',
         'round',
     ]
-    search_fields = (
-        'nomen',
-    )
+    search_fields = [
+        'id',
+    ]
     inlines = [
         SongInline,
     ]
@@ -134,7 +132,6 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
         'status',
         'kind',
         'category',
@@ -154,7 +151,7 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'nomen',
+        'id',
     ]
 
     autocomplete_fields = [
@@ -163,7 +160,6 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     readonly_fields = [
-        'nomen',
     ]
     inlines = [
         StateLogInline,
@@ -195,7 +191,6 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
         'name',
         'group',
         'kind',
@@ -219,11 +214,10 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
-        'nomen',
     ]
 
     search_fields = [
-        'nomen',
+        'id',
     ]
 
     autocomplete_fields = [
@@ -245,7 +239,6 @@ class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     fields = [
-        'nomen',
         'status',
         'title',
         'composers',
@@ -265,7 +258,6 @@ class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
         'title',
         'arrangers',
         'composers',
@@ -273,13 +265,13 @@ class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
     ]
 
-    list_editable = [
-        'title',
-        'arrangers',
-        'composers',
-        'lyricists',
-        'status',
-    ]
+    # list_editable = [
+    #     'title',
+    #     'arrangers',
+    #     'composers',
+    #     'lyricists',
+    #     'status',
+    # ]
 
     list_filter = [
         'status',
@@ -291,18 +283,15 @@ class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     readonly_fields = [
-        'nomen',
         'created',
         'modified',
     ]
 
     search_fields = [
-        'nomen',
         'title',
     ]
 
     ordering = (
-        'nomen',
     )
 
 
@@ -316,7 +305,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = (
-        'nomen',
         'session',
     )
 
@@ -337,7 +325,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     readonly_fields = [
-        'nomen',
     ]
 
     autocomplete_fields = [
@@ -346,7 +333,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'nomen',
+        'id',
     ]
 
 
@@ -367,7 +354,6 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     readonly_fields = [
-        'nomen',
     ]
 
     autocomplete_fields = [
@@ -376,11 +362,10 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'nomen',
+        'id',
     ]
 
     ordering = (
-        'nomen',
     )
 
 
@@ -400,7 +385,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_display = (
-        'nomen',
         'group',
         'start_date',
         'end_date',
@@ -420,9 +404,9 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
     ]
 
-    search_fields = (
-        'nomen',
-    )
+    search_fields = [
+        'id',
+    ]
 
     inlines = [
         AssignmentInline,
@@ -431,7 +415,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     readonly_fields = (
-        'nomen',
     )
 
     autocomplete_fields = [
@@ -468,7 +451,6 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_display = (
-        'nomen',
         'status',
     )
 
@@ -486,9 +468,9 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # ContestantInline,
     ]
 
-    search_fields = (
-        'nomen',
-    )
+    search_fields = [
+        'id',
+    ]
 
     autocomplete_fields = [
         'session',
@@ -496,13 +478,11 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     readonly_fields = (
-        'nomen',
     )
 
     save_on_top = True
 
     ordering = (
-        'nomen',
     )
 
 
@@ -531,7 +511,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_display = (
-        'nomen',
         'status',
     )
 
@@ -549,9 +528,9 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         StateLogInline,
     ]
 
-    search_fields = (
-        'nomen',
-    )
+    search_fields = [
+        'id',
+    ]
 
     autocomplete_fields = [
         'session',
@@ -559,13 +538,11 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     readonly_fields = (
         'id',
-        'nomen',
     )
 
     save_on_top = True
 
     ordering = (
-        'nomen',
     )
 
 
@@ -578,13 +555,11 @@ class GrantorAdmin(admin.ModelAdmin):
         'convention',
     ]
     list_display = [
-        'nomen',
         'group',
         'convention',
     ]
 
     readonly_fields = [
-        'nomen',
     ]
     autocomplete_fields = [
         'group',
@@ -606,7 +581,6 @@ class GridAdmin(admin.ModelAdmin):
         'renditions',
     ]
     list_display = [
-        'nomen',
         'status',
         'onstage',
         'start',
@@ -615,7 +589,6 @@ class GridAdmin(admin.ModelAdmin):
         'status',
     )
     readonly_fields = [
-        'nomen',
     ]
     autocomplete_fields = [
         'round',
@@ -666,7 +639,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'nomen',
         'bhs_id',
     ]
 
@@ -687,7 +659,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'id',
         'is_mc',
-        'nomen',
         'international',
         'district',
         'division',
@@ -903,7 +874,6 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_chart_manager',
     ]
     search_fields = [
-        'nomen',
         'code',
     ]
 
@@ -987,7 +957,6 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         StateLogInline,
     ]
     search_fields = [
-        'nomen',
     ]
     autocomplete_fields = [
         'office',
@@ -1017,7 +986,6 @@ class PanelistAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
         'num',
         'status',
         'kind',
@@ -1038,7 +1006,7 @@ class PanelistAdmin(admin.ModelAdmin):
     ]
 
     search_fields = [
-        'nomen',
+        'id',
     ]
 
     autocomplete_fields = [
@@ -1047,7 +1015,6 @@ class PanelistAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = [
-        'nomen',
     ]
 
 
@@ -1079,7 +1046,6 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
         'is_mc',
         'email',
         'bhs_id',
@@ -1103,7 +1069,6 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'id',
         'is_mc',
-        'nomen',
         # 'current_through',
         'created',
         'modified',
@@ -1114,7 +1079,6 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = (
-        'nomen',
         'email',
     )
 
@@ -1153,7 +1117,6 @@ class RepertoryAdmin(admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
         'status',
         'group',
         'chart',
@@ -1166,7 +1129,6 @@ class RepertoryAdmin(admin.ModelAdmin):
     save_on_top = True
 
     readonly_fields = [
-        'nomen',
         # 'session',
         # 'kind',
     ]
@@ -1181,7 +1143,7 @@ class RepertoryAdmin(admin.ModelAdmin):
     # ]
 
     search_fields = [
-        'nomen',
+        'id',
     ]
 
 
@@ -1195,7 +1157,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
         'status',
     ]
 
@@ -1214,7 +1175,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
 
     readonly_fields = [
-        'nomen',
         # 'session',
         # 'kind',
     ]
@@ -1230,7 +1190,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'nomen',
+        'id',
     ]
 
 
@@ -1250,13 +1210,11 @@ class ScoreAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = [
-        'nomen',
         'song',
         'panelist',
     ]
 
     list_display = [
-        'nomen',
         # 'status',
         'points',
     ]
@@ -1296,7 +1254,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
         'status',
         'kind',
         'gender',
@@ -1323,7 +1280,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
-        'nomen',
     ]
 
     inlines = [
@@ -1346,7 +1302,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     search_fields = [
-        'nomen',
+        'id',
     ]
 
 
@@ -1364,7 +1320,6 @@ class SongAdmin(admin.ModelAdmin):
     ]
 
     list_display = (
-        'nomen',
         # 'status',
         # 'title',
         'appearance',
@@ -1375,9 +1330,9 @@ class SongAdmin(admin.ModelAdmin):
     #     'status',
     # )
 
-    search_fields = (
-        'nomen',
-    )
+    search_fields = [
+        'id',
+    ]
 
     inlines = [
         ScoreInline,
@@ -1385,7 +1340,6 @@ class SongAdmin(admin.ModelAdmin):
     save_on_top = True
 
     readonly_fields = (
-        'nomen',
     )
 
     autocomplete_fields = [
@@ -1394,7 +1348,6 @@ class SongAdmin(admin.ModelAdmin):
     ]
 
     ordering = (
-        'nomen',
         'num',
     )
 
@@ -1412,7 +1365,6 @@ class VenueAdmin(admin.ModelAdmin):
     )
 
     list_display = [
-        'nomen',
         'name',
         'city',
         'state',
@@ -1423,12 +1375,11 @@ class VenueAdmin(admin.ModelAdmin):
         'status',
     )
 
-    search_fields = (
-        'nomen',
-    )
+    search_fields = [
+        'id',
+    ]
 
     readonly_fields = [
-        'nomen',
     ]
 
 
@@ -1520,8 +1471,5 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         return instance.person.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
-
-
-
 
 admin.site.unregister(AuthGroup)

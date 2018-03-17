@@ -32,11 +32,6 @@ class Appearance(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (2, 'published', 'Published',),
@@ -150,14 +145,10 @@ class Appearance(TimeStampedModel):
         resource_name = "appearance"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = "{0} {1}".format(
+        return "{0} {1}".format(
             self.round,
-            self.competitor.group.nomen,
+            self.competitor,
         )
-        super().save(*args, **kwargs)
 
     # Methods
     def calculate(self):

@@ -28,11 +28,6 @@ class Competitor(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (-20, 'finished', 'Finished',),
         (-10, 'missed', 'Missed',),
@@ -144,17 +139,10 @@ class Competitor(TimeStampedModel):
         resource_name = "competitor"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def clean(self):
-        pass
-
-    def save(self, *args, **kwargs):
-        self.nomen = "{0}; {1}".format(
+        return "{0}; {1}".format(
             self.group,
             self.session,
         )
-        super().save(*args, **kwargs)
 
     # Competitor Permissions
     @staticmethod

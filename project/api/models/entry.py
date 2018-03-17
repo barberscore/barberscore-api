@@ -28,11 +28,6 @@ class Entry(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (2, 'built', 'Built',),
@@ -182,20 +177,16 @@ class Entry(TimeStampedModel):
         resource_name = "entry"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
+        return "{0}; {1}".format(
+            self.group,
+            self.session,
+        )
 
     def clean(self):
         if self.is_private and self.contestants.filter(status__gt=0):
             raise ValidationError(
                 {'is_private': 'You may not compete for an award and remain private.'}
             )
-
-    def save(self, *args, **kwargs):
-        self.nomen = "{0}; {1}".format(
-            self.group,
-            self.session,
-        )
-        super().save(*args, **kwargs)
 
     # Methods
 
@@ -378,8 +369,7 @@ class Entry(TimeStampedModel):
         contestants = self.contestants.filter(
             status__gt=0,
         ).order_by(
-            'nomen',
-        )
+            )
         context = {
             'entry': self,
             'contestants': contestants,
@@ -404,8 +394,7 @@ class Entry(TimeStampedModel):
         contestants = self.contestants.filter(
             status__gt=0,
         ).order_by(
-            'nomen',
-        )
+            )
         members = self.group.members.filter(
             status__gt=0,
         ).order_by(

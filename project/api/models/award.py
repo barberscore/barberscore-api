@@ -32,11 +32,6 @@ class Award(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     name = models.CharField(
         help_text="""Award Name.""",
         max_length=255,
@@ -263,11 +258,7 @@ class Award(TimeStampedModel):
         resource_name = "award"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = self.name
-        super().save(*args, **kwargs)
+        return self.name
 
     # Award Permissions
     @staticmethod

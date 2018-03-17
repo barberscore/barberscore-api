@@ -32,11 +32,6 @@ class Round(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
         (20, 'started', 'Started',),
@@ -83,18 +78,10 @@ class Round(TimeStampedModel):
         resource_name = "round"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.session,
-                    self.get_kind_display(),
-                ]
-            )
-        )
-        super().save(*args, **kwargs)
+        return " ".join([
+            self.session,
+            self.get_kind_display(),
+        ])
 
     # Permissions
     @staticmethod

@@ -26,11 +26,6 @@ class Grantor(TimeStampedModel):
         editable=False,
     )
 
-    nomen = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-
     STATUS = Choices(
         (0, 'new', 'New',),
     )
@@ -63,18 +58,10 @@ class Grantor(TimeStampedModel):
         resource_name = "grantor"
 
     def __str__(self):
-        return self.nomen if self.nomen else str(self.pk)
-
-    def save(self, *args, **kwargs):
-        self.nomen = " ".join(
-            map(
-                lambda x: smart_text(x), [
-                    self.convention,
-                    self.group,
-                ]
-            )
-        )
-        super().save(*args, **kwargs)
+        return " ".join([
+            self.convention,
+            self.group,
+        ])
 
     # Permissions
     @staticmethod

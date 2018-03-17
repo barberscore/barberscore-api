@@ -732,8 +732,7 @@ class PersonManager(Manager):
         # Return as objects
         persons = persons.values_list(
             'id',
-            'nomen',
-            'email',
+                'email',
             'status',
         )
         User = apps.get_model('api.user')
@@ -757,7 +756,7 @@ class UserManager(BaseUserManager):
             status = person[3]
         else:
             person_pk = str(person.pk)
-            name = person.nomen
+            name = person.full_name
             email = person.email
             status = person.status
 

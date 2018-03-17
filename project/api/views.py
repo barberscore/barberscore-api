@@ -112,7 +112,7 @@ class AppearanceViewSet(
         'competitor',
     ).prefetch_related(
         'songs',
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = AppearanceSerializer
     filter_class = None
     filter_backends = [
@@ -133,7 +133,7 @@ class AssignmentViewSet(
         'convention',
         'person',
     ).prefetch_related(
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = AssignmentSerializer
     filter_class = AssignmentFilter
     filter_backends = [
@@ -156,7 +156,7 @@ class AwardViewSet(
     ).prefetch_related(
         'children',
         'contests',
-    ).order_by('status', 'nomen')
+    ).order_by('status', 'name')
     serializer_class = AwardSerializer
     filter_class = AwardFilter
     filter_backends = [
@@ -177,7 +177,7 @@ class ChartViewSet(
     ).prefetch_related(
         'repertories',
         'songs',
-    ).order_by('status', 'nomen')
+    ).order_by('status', 'title')
     serializer_class = ChartSerializer
     filter_class = ChartFilter
     filter_backends = [
@@ -223,7 +223,7 @@ class ContestViewSet(
         'award',
     ).prefetch_related(
         'contestants',
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = ContestSerializer
     filter_class = None
     filter_backends = [
@@ -244,7 +244,7 @@ class ContestantViewSet(
         'entry',
         'contest',
     ).prefetch_related(
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = ContestantSerializer
     filter_class = ContestantFilter
     filter_backends = [
@@ -268,7 +268,7 @@ class ConventionViewSet(
         'sessions',
         'assignments',
         'grantors',
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = ConventionSerializer
     filter_class = ConventionFilter
     filter_backends = [
@@ -291,7 +291,7 @@ class CompetitorViewSet(
         'entry',
     ).prefetch_related(
         'appearances',
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = CompetitorSerializer
     filter_class = CompetitorFilter
     filter_backends = [
@@ -313,7 +313,7 @@ class EntryViewSet(
         'group',
     ).prefetch_related(
         'contestants',
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = EntrySerializer
     filter_class = EntryFilter
     filter_backends = [
@@ -332,7 +332,7 @@ class GridViewSet(viewsets.ModelViewSet):
         'competitor',
         'appearance',
     ).prefetch_related(
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = GridSerializer
     filter_backends = [
         CoalesceFilterBackend,
@@ -349,7 +349,7 @@ class GrantorViewSet(viewsets.ModelViewSet):
         'group',
         'convention',
     ).prefetch_related(
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = GrantorSerializer
     filter_class = GrantorFilter
     filter_backends = [
@@ -375,7 +375,6 @@ class GroupViewSet(
         'repertories',
         'officers',
     ).order_by(
-        'nomen',
     ).distinct()
     serializer_class = GroupSerializer
     filter_class = GroupFilter
@@ -457,7 +456,7 @@ class OfficeViewSet(viewsets.ModelViewSet):
     queryset = Office.objects.select_related(
     ).prefetch_related(
         'officers',
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = OfficeSerializer
     filter_class = OfficeFilter
     filter_backends = [
@@ -479,7 +478,7 @@ class OfficerViewSet(
         'person',
         'group',
     ).prefetch_related(
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = OfficerSerializer
     filter_class = OfficerFilter
     filter_backends = [
@@ -498,7 +497,7 @@ class PanelistViewSet(viewsets.ModelViewSet):
         'person',
     ).prefetch_related(
         'scores',
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = PanelistSerializer
     filter_class = PanelistFilter
     filter_backends = [
@@ -519,7 +518,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         # 'members',
         'officers',
         'panelists',
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = PersonSerializer
     filter_class = PersonFilter
     filter_backends = [
@@ -564,7 +563,7 @@ class RepertoryViewSet(
         'group',
         'chart',
     ).prefetch_related(
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = RepertorySerializer
     filter_class = None
     filter_backends = [
@@ -586,7 +585,7 @@ class RoundViewSet(
     ).prefetch_related(
         'appearances',
         'panelists',
-    ).distinct().order_by('nomen')
+    ).distinct().order_by('id')
     serializer_class = RoundSerializer
     filter_class = RoundFilter
     filter_backends = [
@@ -613,7 +612,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
         'song',
         'panelist',
     ).prefetch_related(
-    ).order_by('nomen')
+    ).order_by('id')
     serializer_class = ScoreSerializer
     filter_class = ScoreFilter
     filter_backends = [
@@ -637,7 +636,7 @@ class SessionViewSet(
         'entries',
         'competitors',
         'rounds',
-    ).distinct().order_by('nomen')
+    ).distinct().order_by('id')
     serializer_class = SessionSerializer
     filter_class = SessionFilter
     filter_backends = [
@@ -729,7 +728,7 @@ class SongViewSet(viewsets.ModelViewSet):
         'chart',
     ).prefetch_related(
         'scores',
-    ).order_by('nomen')
+    ).order_by('title')
     serializer_class = SongSerializer
     filter_class = None
     filter_backends = [
@@ -746,7 +745,7 @@ class VenueViewSet(viewsets.ModelViewSet):
     queryset = Venue.objects.select_related(
     ).prefetch_related(
         'conventions',
-    ).order_by('nomen')
+    ).order_by('name')
     serializer_class = VenueSerializer
     filter_class = VenueFilter
     filter_backends = [
