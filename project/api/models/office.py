@@ -65,8 +65,40 @@ class Office(TimeStampedModel):
         blank=True,
     )
 
-    code = models.CharField(
-        max_length=255,
+    CODE = Choices(
+        ('International', [
+            (100, 'scjc_chair', "SCJC Chair"),
+            (110, 'scjc_past', "SCJC Chair Past"),
+            (120, 'scjc_ca', "SCJC CA"),
+            (130, 'scjc_mus', "SCJC MUS"),
+            (140, 'scjc_per', "SCJC PER"),
+            (150, 'scjc_sng', "SCJC SNG"),
+            (160, 'scjc_chart', "SCJC Chart"),
+            (170, 'scjc_admin', "SCJC Admin"),
+        ]),
+        ('District', [
+            (210, 'drcj', "DRCJ"),
+            (220, 'drcj_asst', "DRCJ Assistant"),
+            (230, 'judge_ca', "JUDGE CA"),
+            (240, 'judge_mus', "JUDGE MUS"),
+            (250, 'judge_per', "JUDGE PER"),
+            (260, 'judge_sng', "JUDGE SNG"),
+        ]),
+        ('Group', [
+            (310, 'chap_pres', "CPRES"),
+            (320, 'chap_sec', "CSEC"),
+            (320, 'chap_dir', "CDIR"),
+            (340, 'chap_asst', "CASS"),
+            (350, 'chap_man', "CMAN"),
+            (410, 'quartet_admin', "QADM"),
+        ]),
+    )
+
+    code = models.IntegerField(
+        help_text="""
+            The short-form office code.""",
+        choices=CODE,
+        null=True,
         blank=True,
     )
 
@@ -116,6 +148,9 @@ class Office(TimeStampedModel):
         return bool(self.mc_pk)
 
     # Internals
+    class Meta:
+        ordering = ['code']
+
     class JSONAPIMeta:
         resource_name = "office"
 

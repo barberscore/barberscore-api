@@ -946,13 +946,10 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'is_mc',
         'person',
-        'office',
         'office__code',
         'group',
-        'start_date',
-        'end_date',
+        'is_mc',
         'status',
     ]
     readonly_fields = [
@@ -968,8 +965,8 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_filter = [
         'status',
         MCListFilter,
-        OfficeListFilter,
         'group__kind',
+        'office__code',
     ]
     inlines = [
         StateLogInline,
@@ -982,7 +979,9 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'group',
     ]
     ordering = [
-        'group__tree_sort',
+        'office__code',
+        'person__last_name',
+        'person__first_name',
     ]
 
     def is_mc(self, instance):
