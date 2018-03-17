@@ -138,6 +138,25 @@ class SessionConventionStatusListFilter(admin.SimpleListFilter):
             )
 
 
+class AppearanceConventionStatusListFilter(admin.SimpleListFilter):
+    title = 'Convention Status'
+    parameter_name = 'convention_status'
+
+    def lookups(self, request, model_admin):
+        return (
+            (-10, 'Inactive'),
+            (0, 'New'),
+            (10, 'Active'),
+        )
+
+    def queryset(self, request, queryset):
+        status = self.value()
+        if status:
+            return queryset.filter(
+                round__session__convention__status=status,
+            )
+
+
 class AccountListFilter(admin.SimpleListFilter):
     title = 'account'
     parameter_name = 'account'

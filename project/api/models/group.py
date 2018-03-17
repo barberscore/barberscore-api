@@ -356,19 +356,12 @@ class Group(TimeStampedModel):
     # Properties
     @cached_property
     def nomen(self):
-        if self.nick_name:
-            nick = "({0})".format(self.nick_name)
-        else:
-            nick = ""
         if self.bhs_id:
             suffix = "[{0}]".format(self.bhs_id)
         else:
             suffix = "[No BHS ID]"
-        full = "{0} {1} {2} {3} {4}".format(
-            self.first_name,
-            self.middle_name,
-            self.last_name,
-            nick,
+        full = "{0} {1}".format(
+            self.name,
             suffix,
         )
         return " ".join(full.split())
@@ -391,7 +384,7 @@ class Group(TimeStampedModel):
         resource_name = "group"
 
     def __str__(self):
-        return str(self.id)
+        return self.nomen
 
     def clean(self):
         if self.mc_pk and self.status == self.STATUS.active:

@@ -138,7 +138,7 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __str__(self):
-        return str(self.id)
+        return self.nomen
 
     # Methods
 

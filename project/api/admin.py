@@ -14,6 +14,7 @@ from .filters import MCListFilter
 from .filters import MCUserListFilter
 from .filters import ConventionStatusListFilter
 from .filters import SessionConventionStatusListFilter
+from .filters import AppearanceConventionStatusListFilter
 from .filters import AccountListFilter
 from .filters import OfficeListFilter
 from .filters import ConventionGroupListFilter
@@ -88,13 +89,20 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('mus_score', 'per_score', 'sng_score', 'tot_score',),
     ]
     list_display = [
-        'competitor',
-        'round',
+        '__str__',
         'num',
         'draw',
         'status',
     ]
+    list_select_related = [
+        'competitor',
+        'competitor__group',
+        'competitor__session',
+        'competitor__session__convention',
+        'round__session',
+    ]
     list_filter = [
+        AppearanceConventionStatusListFilter,
         'status',
         'round__session__kind',
         'round__session__convention__season',
@@ -104,19 +112,22 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
     ]
     save_on_top = True
-    readonly_fields = [
-        'id',
-    ]
     autocomplete_fields = [
         'competitor',
         'round',
     ]
-    search_fields = [
+    readonly_fields = [
         'id',
+    ]
+    search_fields = [
+        'competitor__group__name',
     ]
     inlines = [
         SongInline,
     ]
+    ordering = (
+        'competitor',
+    )
 
 
 @admin.register(Assignment)
@@ -387,7 +398,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_display = (
-        'group',
+        'name',
         'start_date',
         'end_date',
         'year',
@@ -513,6 +524,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_display = (
+        'nomen',
         'status',
     )
 
@@ -1048,6 +1060,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
+        'nomen',
         'is_mc',
         'email',
         'bhs_id',
@@ -1159,6 +1172,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
+        'nomen',
         'status',
     ]
 
@@ -1256,7 +1270,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'status',
+        'nomen',
         'kind',
         'gender',
         'num_rounds',
