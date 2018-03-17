@@ -17,6 +17,7 @@ from django.apps import apps
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
+from django.utils.functional import cached_property
 
 # First-Party
 from api.tasks import send_session
@@ -104,7 +105,7 @@ class Session(TimeStampedModel):
     )
 
     # Properties
-    @property
+    @cached_property
     def nomen(self):
         return "{0} {1} Session".format(
             self.convention.name,

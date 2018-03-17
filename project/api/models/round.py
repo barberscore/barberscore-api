@@ -16,6 +16,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps as api_apps
 from django.db import models
 from django.utils.encoding import smart_text
+from django.utils.functional import cached_property
 
 # First-Party
 from api.tasks import create_ors_report
@@ -116,6 +117,12 @@ class Round(TimeStampedModel):
         ])
 
     # Methods
+    @cached_property
+    def nomen(self):
+        return "{0} {1}".format(
+            self.session.nomen,
+            self.get_kind_display(),
+        )
 
     # Round Transitions
     @fsm_log_by

@@ -18,6 +18,7 @@ from django.apps import apps
 from django.core.validators import RegexValidator
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.utils.functional import cached_property
 
 # First-Party
 from api.managers import GroupManager
@@ -353,6 +354,25 @@ class Group(TimeStampedModel):
     )
 
     # Properties
+    @cached_property
+    def nomen(self):
+        if self.nick_name:
+            nick = "({0})".format(self.nick_name)
+        else:
+            nick = ""
+        if self.bhs_id:
+            suffix = "[{0}]".format(self.bhs_id)
+        else:
+            suffix = "[No BHS ID]"
+        full = "{0} {1} {2} {3} {4}".format(
+            self.first_name,
+            self.middle_name,
+            self.last_name,
+            nick,
+            suffix,
+        )
+        return " ".join(full.split())
+
     @property
     def is_mc(self):
         return bool(self.mc_pk)

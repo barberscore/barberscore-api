@@ -257,6 +257,25 @@ class Person(TimeStampedModel):
         return bool(self.mc_pk)
 
     @cached_property
+    def nomen(self):
+        if self.nick_name:
+            nick = "({0})".format(self.nick_name)
+        else:
+            nick = ""
+        if self.bhs_id:
+            suffix = "[{0}]".format(self.bhs_id)
+        else:
+            suffix = "[No BHS ID]"
+        full = "{0} {1} {2} {3} {4}".format(
+            self.first_name,
+            self.middle_name,
+            self.last_name,
+            nick,
+            suffix,
+        )
+        return " ".join(full.split())
+
+    @cached_property
     def full_name(self):
         if self.nick_name:
             nick = "({0})".format(self.nick_name)
