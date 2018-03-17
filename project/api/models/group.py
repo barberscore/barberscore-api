@@ -378,6 +378,7 @@ class Group(TimeStampedModel):
     objects = GroupManager()
 
     class Meta:
+        ordering = ['tree_sort']
         verbose_name_plural = 'groups'
 
     class JSONAPIMeta:

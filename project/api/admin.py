@@ -273,8 +273,8 @@ class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         'title',
         'arrangers',
-        'composers',
-        'lyricists',
+        # 'composers',
+        # 'lyricists',
         'status',
     ]
 
@@ -302,9 +302,12 @@ class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     search_fields = [
         'title',
+        'arrangers',
     ]
 
     ordering = (
+        'title',
+        'arrangers',
     )
 
 
@@ -643,7 +646,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_filter = [
-        'status',
         OrphanListFilter,
         MCListFilter,
         'kind',
@@ -653,19 +655,19 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
+        'name',
         'bhs_id',
+        'code',
     ]
 
     list_display = [
         'name',
-        'is_mc',
         'kind',
         'gender',
         'parent',
         'bhs_id',
+        'is_mc',
         'status',
-        'created',
-        'modified',
     ]
     list_select_related = [
         'parent',
@@ -777,31 +779,30 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
-
     fields = [
         'id',
-        'is_mc',
         'status',
-        'group',
         'person',
+        'group',
         'part',
+        'is_mc',
         'mc_pk',
+        'current_through',
+        'established_date',
         'inactive_date',
         'inactive_reason',
         'sub_status',
-        'current_through',
-        'established_date',
         'mem_code',
         'mem_status',
         'created',
+        'modified',
     ]
     list_display = [
-        'status',
-        'is_mc',
         'person',
         'group',
         'part',
-        'created',
+        'is_mc',
+        'status',
     ]
     readonly_fields = [
         'id',
@@ -815,6 +816,7 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'mem_code',
         'mem_status',
         'created',
+        'modified',
     ]
 
     autocomplete_fields = [
@@ -822,8 +824,10 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'group',
     ]
     search_fields = [
-        'person',
-        'group',
+        'person__name',
+        'group__name',
+        'person__bhs_id',
+        'group__bhs_id',
     ]
     list_filter = [
         'status',
@@ -1036,11 +1040,11 @@ class PanelistAdmin(admin.ModelAdmin):
 class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
-        ('first_name', 'middle_name', 'last_name', 'nick_name',),
         'status',
-        'is_mc',
+        ('first_name', 'middle_name', 'last_name', 'nick_name',),
         'email',
         'is_deceased',
+        'is_mc',
         'bhs_id',
         'mc_pk',
         'current_through',
@@ -1061,16 +1065,14 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = [
         'nomen',
-        'is_mc',
         'email',
-        'bhs_id',
+        'phone',
         # 'mc_pk',
-        'current_through',
+        # 'current_through',
         'part',
         'gender',
+        'is_mc',
         'status',
-        'created',
-        'modified',
     ]
 
     list_filter = [
@@ -1093,9 +1095,12 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
     ]
 
-    search_fields = (
+    search_fields = [
+        'last_name',
+        'first_name',
+        'bhs_id',
         'email',
-    )
+    ]
 
     # autocomplete_fields = [
     #     'user',
@@ -1120,32 +1125,28 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Repertory)
-class RepertoryAdmin(admin.ModelAdmin):
-    # fsm_field = [
-    #     'status',
-    # ]
+class RepertoryAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
 
     fields = [
+        'id',
         'status',
         'group',
         'chart',
     ]
 
     list_display = [
-        'status',
         'group',
         'chart',
-    ]
-
-    fsm_field = [
         'status',
     ]
 
     save_on_top = True
 
     readonly_fields = [
-        # 'session',
-        # 'kind',
+        'id',
     ]
 
     autocomplete_fields = [
@@ -1153,9 +1154,9 @@ class RepertoryAdmin(admin.ModelAdmin):
         'chart',
     ]
 
-    # inlines = [
-    #     StateLogInline,
-    # ]
+    inlines = [
+        StateLogInline,
+    ]
 
     search_fields = [
         'id',
@@ -1372,6 +1373,7 @@ class SongAdmin(admin.ModelAdmin):
 class VenueAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = (
+        'id',
         'name',
         'status',
         'city',
@@ -1384,6 +1386,7 @@ class VenueAdmin(admin.ModelAdmin):
         'name',
         'city',
         'state',
+        'airport',
         'timezone',
     ]
 
@@ -1392,10 +1395,13 @@ class VenueAdmin(admin.ModelAdmin):
     )
 
     search_fields = [
-        'id',
+        'name',
+        'city',
+        'state',
     ]
 
     readonly_fields = [
+        'id',
     ]
 
 
@@ -1407,26 +1413,15 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         'status',
     ]
     list_display = [
-        'email',
         'name',
-        'person',
-        'is_staff',
+        'email',
         'account_id',
         'status',
         'is_mc',
     ]
-
-    # list_editable = [
-    #     'account_id',
-    # ]
     list_select_related = [
         'person',
     ]
-
-    # list_display_links = [
-    #     'email',
-    #     'person',
-    # ]
 
     autocomplete_fields = [
         'person',
@@ -1453,6 +1448,8 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
                 'is_group_manager',
                 'is_session_manager',
                 'is_scoring_manager',
+                'created',
+                'modified',
             )
         }),
     )
@@ -1467,20 +1464,24 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     search_fields = [
         'email',
         'name',
+        'account_id',
     ]
     inlines = [
         StateLogInline,
     ]
-    ordering = ('email',)
+    ordering = (
+        'person__last_name',
+        'person__first_name',
+    )
     filter_horizontal = ()
     readonly_fields = [
         'id',
-        # 'email',
-        # 'account_id',
         'is_mc',
         'is_group_manager',
         'is_session_manager',
         'is_scoring_manager',
+        'created',
+        'modified',
     ]
 
     def is_mc(self, instance):

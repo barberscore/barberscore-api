@@ -319,7 +319,7 @@ class Person(TimeStampedModel):
             raise ValidationError("Email must be null, not blank")
 
     def __str__(self):
-        return str(self.id)
+        return self.nomen
 
     # Permissions
     @staticmethod

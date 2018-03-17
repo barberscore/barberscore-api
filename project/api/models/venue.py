@@ -30,6 +30,7 @@ class Venue(TimeStampedModel):
         help_text="""
             The name of the resource.""",
         max_length=255,
+        default='(TBD)',
     )
 
     STATUS = Choices(
@@ -42,11 +43,6 @@ class Venue(TimeStampedModel):
         help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    location = models.CharField(
-        max_length=255,
-        blank=True,
     )
 
     city = models.CharField(
@@ -72,7 +68,11 @@ class Venue(TimeStampedModel):
 
     # Methods
     def __str__(self):
-        return str(self.id)
+        return "{0} {1}, {2}".format(
+            self.name,
+            self.city,
+            self.state,
+        )
 
     # Internals
     class JSONAPIMeta:
