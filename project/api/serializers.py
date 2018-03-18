@@ -667,7 +667,6 @@ class VenueSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'status',
-            'location',
             'city',
             'state',
             'airport',
