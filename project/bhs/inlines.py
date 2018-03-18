@@ -45,6 +45,7 @@ class JoinInline(admin.TabularInline):
         'structure',
         # 'human',
         'vocal_part',
+        'inactive_date',
         'status',
     ]
     readonly_fields = [
@@ -54,6 +55,7 @@ class JoinInline(admin.TabularInline):
         'structure',
         # 'human',
         'vocal_part',
+        'inactive_date',
         'status',
     ]
     show_change_link = True

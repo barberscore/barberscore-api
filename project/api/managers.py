@@ -609,6 +609,7 @@ class PersonManager(Manager):
             bhs_id = human[10]
             gender = human[11]
             part = human[12]
+            is_deceased = human[13]
         else:
             mc_pk = str(human.mc_pk)
             first_name = human.first_name
@@ -623,6 +624,7 @@ class PersonManager(Manager):
             bhs_id = human.bhs_id
             gender = human.gender
             part = human.part
+            is_deceased = human.is_deceased
 
         # Same logic regardless of inbound form
         first_name = first_name.strip()
@@ -659,6 +661,7 @@ class PersonManager(Manager):
             part = getattr(self.model.PART, part.casefold(), None)
         else:
             part = None
+        is_deceased = bool(is_deceased)
         # Set default; subscriptions updates it.
         defaults = {
             'first_name': first_name,
@@ -673,6 +676,7 @@ class PersonManager(Manager):
             'bhs_id': bhs_id,
             'gender': gender,
             'part': part,
+            'is_deceased': is_deceased,
         }
         try:
             person, created = self.update_or_create(

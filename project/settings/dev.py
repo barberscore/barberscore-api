@@ -104,6 +104,13 @@ JWT_AUTH = {
 RQ_QUEUES['default']['ASYNC'] = False
 RQ_QUEUES['high']['ASYNC'] = False
 
+# Algolia
+ALGOLIA = {
+    'APPLICATION_ID': get_env_variable("ALGOLIASEARCH_APPLICATION_ID"),
+    'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
+    'ALGOLIASEARCH_AUTO_INDEXING': False,
+    'INDEX_SUFFIX': 'dev',
+}
 # Logging
 LOGGING = {
     'version': 1,
@@ -162,6 +169,7 @@ LOGGING = {
 }
 
 INSTALLED_APPS += [
+    'algoliasearch_django',
     'debug_toolbar',
     'whitenoise.runserver_nostatic',
 ]
