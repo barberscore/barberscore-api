@@ -155,7 +155,7 @@ class Office(TimeStampedModel):
         resource_name = "office"
 
     def __str__(self):
-        return str(self.id)
+        return self.name
 
     # Office Permissions
     @staticmethod

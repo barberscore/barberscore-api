@@ -14,6 +14,7 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.apps import apps as api_apps
 from django.db import models
+from django.utils.functional import cached_property
 
 config = api_apps.get_app_config('api')
 
@@ -60,6 +61,13 @@ class Contest(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    @cached_property
+    def nomen(self):
+        return "{0} {1} Entry".format(
+            self.session.nomen,
+            self.award.name,
+        )
+
     # Internals
     class Meta:
         unique_together = (
@@ -70,7 +78,7 @@ class Contest(TimeStampedModel):
         resource_name = "contest"
 
     def __str__(self):
-        return str(self.id)
+        return self.nomen
 
     # Contest Permissions
     @staticmethod

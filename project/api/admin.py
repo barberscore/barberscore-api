@@ -16,7 +16,7 @@ from .filters import ConventionStatusListFilter
 from .filters import SessionConventionStatusListFilter
 from .filters import AppearanceConventionStatusListFilter
 from .filters import AccountListFilter
-from .filters import OfficeListFilter
+# from .filters import OfficeListFilter
 from .filters import ConventionGroupListFilter
 from .filters import DistrictListFilter
 from .filters import DivisionListFilter
@@ -145,11 +145,11 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'status',
-        'kind',
-        'category',
         'person',
         'convention',
+        'kind',
+        'category',
+        'status',
     ]
 
     list_filter = (
@@ -230,11 +230,12 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'id',
+        'name',
     ]
 
     autocomplete_fields = [
         'group',
+        'parent',
     ]
 
     ordering = (
@@ -349,7 +350,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'id',
+        'award__name',
     ]
 
 
@@ -421,7 +422,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'id',
+        'name',
     ]
 
     inlines = [
@@ -892,7 +893,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_chart_manager',
     ]
     search_fields = [
-        'code',
+        'name',
     ]
 
     readonly_fields = [
@@ -1318,7 +1319,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     search_fields = [
-        'id',
+        'convention__name',
     ]
 
 

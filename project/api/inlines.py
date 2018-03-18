@@ -155,7 +155,7 @@ class AssignmentInline(admin.TabularInline):
     readonly_fields = [
         'status',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'person',
         'convention',
     ]
@@ -200,16 +200,16 @@ class ContestInline(admin.TabularInline):
 
     model = Contest
     fields = [
-        'status',
         'award',
         'primary',
         'session',
+        'status',
     ]
     readonly_fields = [
         'primary',
         'status',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'award',
     ]
     ordering = (
@@ -235,7 +235,7 @@ class ContestantInline(admin.TabularInline):
     readonly_fields = [
         'status',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'contest',
         'entry',
     ]
@@ -252,7 +252,7 @@ class ConventionInline(admin.TabularInline):
         'name',
         'group',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'group',
     ]
     show_change_link = True
@@ -275,7 +275,7 @@ class CompetitorInline(admin.TabularInline):
         'status',
         # 'seed',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'session',
         'group',
     ]
@@ -301,7 +301,7 @@ class EntryInline(admin.TabularInline):
     readonly_fields = [
         'status',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'session',
         'group',
     ]
@@ -322,7 +322,7 @@ class GrantorInline(admin.TabularInline):
         'convention',
         'group',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'convention',
         'group',
     ]
@@ -343,7 +343,7 @@ class GridInline(admin.TabularInline):
         'competitor',
         'renditions',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'round',
         'competitor',
     ]
@@ -388,7 +388,7 @@ class MemberInline(admin.TabularInline):
         'part',
         'status',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'person',
         'group',
     ]
@@ -417,7 +417,7 @@ class OfficerInline(admin.TabularInline):
         'group',
         'status',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'office',
         'person',
         'group',
@@ -449,7 +449,7 @@ class PanelistInline(admin.TabularInline):
     readonly_fields = [
         'status',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'person',
         'round',
     ]
@@ -473,7 +473,7 @@ class RepertoryInline(admin.TabularInline):
         'group',
         'status',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'chart',
         'group',
     ]
@@ -497,7 +497,7 @@ class ScoreInline(admin.TabularInline):
         'kind',
         'points',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'song',
     ]
     readonly_fields = [
@@ -544,7 +544,7 @@ class SessionInline(admin.TabularInline):
         'gender',
         'num_rounds',
     ]
-    raw_id_fields = [
+    autocomplete_fields = [
         'convention',
     ]
     show_change_link = True
