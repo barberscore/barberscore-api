@@ -9,7 +9,11 @@ class ApiConfig(AppConfig):
     name = 'api'
 
     def ready(self):
-        if os.environ['DJANGO_SETTINGS_MODULE'] == 'settings.prod':
+        allowed = any([
+            os.environ['DJANGO_SETTINGS_MODULE'] == 'settings.prod',
+            os.environ['DJANGO_SETTINGS_MODULE'] == 'settings.dev',
+        ])
+        if allowed:
             from .signals import (
                 user_pre_delete,
             )
