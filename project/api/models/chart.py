@@ -13,6 +13,7 @@ from model_utils.models import TimeStampedModel
 
 # Django
 from django.db import models
+from django.utils.functional import cached_property
 
 from api.fields import UploadPath
 
@@ -77,7 +78,7 @@ class Chart(TimeStampedModel):
         blank=True,
     )
 
-    @property
+    @cached_property
     def nomen(self):
         return "{0} [{1}]".format(
             self.title,
