@@ -28,6 +28,7 @@ class HumanManager(Manager):
             'bhs_id',
             'sex',
             'primary_voice_part',
+            'is_deceased',
         )
 
         # Creating/Update Persons
