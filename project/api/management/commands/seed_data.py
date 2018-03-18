@@ -267,7 +267,8 @@ class Command(BaseCommand):
         # Create Offices
         scjc_office = OfficeFactory(
             name='Society Chairman of C&J',
-            code='SCJC',
+            kind=Office.KIND.international,
+            code=Office.CODE.scjc_chair,
             is_convention_manager=True,
             is_session_manager=True,
             is_scoring_manager=True,
@@ -279,38 +280,47 @@ class Command(BaseCommand):
         )
         drcj_office = OfficeFactory(
             name='District Director C&J',
-            code='DRCJ',
+            kind=Office.KIND.district,
+            code=Office.CODE.drcj,
             is_convention_manager=True,
             is_session_manager=True,
             is_award_manager=True,
         )
         ca_office = OfficeFactory(
             name='Contest Administrator',
-            code='CA',
+            kind=Office.KIND.district,
+            code=Office.CODE.judge_ca,
             is_scoring_manager=True,
             is_judge_manager=True,
         )
         mus_office = OfficeFactory(
             name='Music Judge',
-            code='MUS',
+            kind=Office.KIND.district,
+            code=Office.CODE.judge_mus,
             is_judge_manager=True,
         )
         per_office = OfficeFactory(
             name='Performance Judge',
-            code='PER',
+            kind=Office.KIND.district,
+            code=Office.CODE.judge_per,
             is_judge_manager=True,
         )
         sng_office = OfficeFactory(
             name='Singing Judge',
-            code='SNG',
+            kind=Office.KIND.district,
+            code=Office.CODE.judge_sng,
             is_judge_manager=True,
         )
         chorus_manager = OfficeFactory(
             name='Chorus Manager',
+            kind=Office.KIND.chapter,
+            code=Office.CODE.chap_man,
             is_group_manager=True,
         )
         quartet_manager = OfficeFactory(
             name='Quartet Manager',
+            kind=Office.KIND.quartet,
+            code=Office.CODE.quartet_admin,
             is_group_manager=True,
         )
         # Create Core Officers

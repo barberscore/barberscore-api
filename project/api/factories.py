@@ -248,7 +248,6 @@ class OfficeFactory(DjangoModelFactory):
     name = Faker('word')
     status = Office.STATUS.active
     kind = Office.KIND.international
-    code = Faker('word')
 
     class Meta:
         model = Office
@@ -372,7 +371,6 @@ class SongFactory(DjangoModelFactory):
 class VenueFactory(DjangoModelFactory):
     name = 'Test Convention Center'
     status = Venue.STATUS.active
-    location = 'Nashville, TN'
     city = 'Nashville'
     state = 'TN'
     airport = 'NTA'
