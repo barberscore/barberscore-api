@@ -94,7 +94,7 @@ class Chart(TimeStampedModel):
         resource_name = "chart"
 
     def __str__(self):
-        return "{0} {1}".format(
+        return "{0} [{1}]".format(
             self.title,
             self.arrangers,
         )
