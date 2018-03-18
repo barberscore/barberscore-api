@@ -128,6 +128,7 @@ class ChartSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
+            'nomen',
             'status',
             'title',
             'arrangers',
@@ -151,6 +152,7 @@ class ContestSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
+            'nomen',
             'status',
             'champion',
             'session',
@@ -168,6 +170,7 @@ class ContestantSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
+            'nomen',
             'status',
             'rank',
             'mus_points',
