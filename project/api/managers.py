@@ -12,6 +12,7 @@ from django.core.validators import URLValidator
 from django.core.validators import validate_email
 from django.db import IntegrityError
 from django.db.models import Manager
+from django.db.models import F
 from django.forms.models import model_to_dict
 from django.utils.timezone import now
 from api.tasks import get_accounts
@@ -33,6 +34,29 @@ validate_twitter = RegexValidator(
 class LowMemberManager(Manager):
     def get_queryset(self):
         return super().get_queryset().filter(group__kind__gt=30)
+
+
+class AwardManager(Manager):
+    def sort_tree(self):
+        self.all().update(tree_sort=None)
+        awards = self.order_by(
+            '-status',
+            'group__tree_sort',
+            '-kind',
+            '-is_primary',
+            F('age').asc(nulls_first=True),
+            'gender',
+            'level',
+            'size',
+            'scope',
+            'name',
+        )
+        i = 0
+        for award in awards:
+            i += 1
+            award.tree_sort = i
+            award.save()
+        return
 
 
 class GroupManager(Manager):
@@ -249,7 +273,7 @@ class GroupManager(Manager):
         i = 1
         root.tree_sort = i
         root.save()
-        for child in root.children.order_by('kind', 'name'):
+        for child in root.children.order_by('kind', 'code', 'name'):
             i += 1
             child.tree_sort = i
             child.save()
@@ -280,6 +304,19 @@ class GroupManager(Manager):
         for group in groups:
             group.denormalize()
             group.save()
+        return
+
+    def update_seniors(self):
+        quartets = self.filter(
+            kind=self.model.KIND.quartet,
+            status__gt=0,
+            mc_pk__isnull=False,
+        )
+
+        for quartet in quartets:
+            is_senior = quartet.get_is_senior()
+            quartet.is_senior = is_senior
+            quartet.save()
         return
 
 

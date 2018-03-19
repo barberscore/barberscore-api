@@ -16,6 +16,8 @@ from django.contrib.postgres.fields import FloatRangeField
 from django.contrib.postgres.fields import IntegerRangeField
 from django.db import models
 
+from api.managers import AwardManager
+
 log = logging.getLogger(__name__)
 
 
@@ -74,8 +76,8 @@ class Award(TimeStampedModel):
 
     LEVEL = Choices(
         (10, 'championship', "Championship"),
-        (20, 'award', "Award"),
         (30, 'qualifier', "Qualifier"),
+        (40, 'award', "Award"),
     )
 
     level = models.IntegerField(
@@ -236,6 +238,14 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
+    # Denormalizations
+    tree_sort = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
     # FKs
     group = models.ForeignKey(
         'Group',
@@ -254,6 +264,13 @@ class Award(TimeStampedModel):
     )
 
     # Internals
+    objects = AwardManager()
+
+    class Meta:
+        ordering = [
+            'tree_sort',
+        ]
+
     class JSONAPIMeta:
         resource_name = "award"
 

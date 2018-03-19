@@ -191,6 +191,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'group',
         'kind',
+        'age',
         'gender',
         'level',
         'season',
@@ -205,8 +206,11 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = [
         'name',
+        # 'size',
+        # 'scope',
         'group',
         'kind',
+        'age',
         'gender',
         'level',
         'season',
@@ -218,8 +222,9 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_filter = [
         'status',
         'kind',
-        'gender',
         'level',
+        'age',
+        'gender',
         'season',
         'is_primary', 'is_invitational', 'is_manual',
         GroupListFilter,
@@ -239,10 +244,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     ordering = (
-        'group__tree_sort',
-        'kind',
-        'gender',
-        'level',
+        'tree_sort',
     )
 
 
