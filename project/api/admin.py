@@ -647,6 +647,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_filter = [
+        'status',
         OrphanListFilter,
         MCListFilter,
         'kind',
