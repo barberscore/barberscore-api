@@ -454,47 +454,6 @@ class MemberManager(Manager):
         return 'Updated'
 
 
-class OfficeManager(Manager):
-    def sort_tree(self):
-        self.all().update(tree_sort=None)
-        root = self.get(kind=self.model.KIND.international)
-        i = 1
-        root.tree_sort = i
-        root.save()
-        for child in root.children.order_by('kind', 'name'):
-            i += 1
-            child.tree_sort = i
-            child.save()
-            for grandchild in child.children.filter(
-                kind=self.model.KIND.division,
-            ).order_by('kind', 'name'):
-                i += 1
-                grandchild.tree_sort = i
-                grandchild.save()
-        orgs = self.filter(
-            kind__in=[
-                self.model.KIND.chapter,
-                self.model.KIND.chorus,
-                self.model.KIND.quartet,
-            ]
-        ).order_by(
-            'kind',
-            'name',
-        )
-        for org in orgs:
-            i += 1
-            org.tree_sort = i
-            org.save()
-        return
-
-    def denormalize(self):
-        groups = self.all()
-        for group in groups:
-            group.denormalize()
-            group.save()
-        return
-
-
 class OfficerManager(Manager):
     def update_from_role(self, role, is_object=False):
         # Map
