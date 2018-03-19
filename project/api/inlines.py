@@ -485,6 +485,9 @@ class RepertoryInline(admin.TabularInline):
     readonly_fields = [
         'status',
     ]
+    ordering = [
+        'chart__title',
+    ]
 
 
 class ScoreInline(admin.TabularInline):
