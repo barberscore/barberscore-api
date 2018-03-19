@@ -7,7 +7,7 @@
   "success_url": "/admin/",
   "buildpacks": [
     {
-      "url": "heroku/python"
+      "url": "https://github.com/heroku/heroku-buildpack-python.git#v123"
     }
   ],
   "formation": {
