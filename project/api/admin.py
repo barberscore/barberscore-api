@@ -1162,7 +1162,8 @@ class RepertoryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'id',
+        'group__name',
+        'chart__title',
     ]
 
 
