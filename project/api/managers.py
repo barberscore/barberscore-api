@@ -13,10 +13,13 @@ from django.core.validators import validate_email
 from django.db import IntegrityError
 from django.db.models import Manager
 from django.db.models import F
+from django.db.models import CharField
+from django.db.models import Value
 from django.forms.models import model_to_dict
 from django.utils.timezone import now
 from api.tasks import get_accounts
 from api.tasks import delete_account
+from django.db.models.functions import Concat
 
 log = logging.getLogger(__name__)
 
@@ -771,9 +774,20 @@ class PersonManager(Manager):
                 modified__gt=cursor,
             )
         # Return as objects
+        persons = persons.annotate(
+            nom=Concat(
+                'first_name', Value(' '),
+                'middle_name', Value(' '),
+                'last_name', Value(' ('),
+                'nick_name', Value(') ['),
+                'bhs_id', Value(']'),
+                output_field=CharField()
+            )
+        )
         persons = persons.values_list(
             'id',
-                'email',
+            'nom',
+            'email',
             'status',
         )
         User = apps.get_model('api.user')
