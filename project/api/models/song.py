@@ -4,8 +4,6 @@ import uuid
 
 # Third-Party
 from django_fsm import FSMIntegerField
-from django_fsm import transition
-from django_fsm_log.decorators import fsm_log_by
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
@@ -14,7 +12,6 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.apps import apps as api_apps
 from django.db import models
-from django.utils.encoding import smart_text
 
 config = api_apps.get_app_config('api')
 
@@ -246,9 +243,3 @@ class Song(TimeStampedModel):
             status__gt=0,
         ))
         return assi
-
-    # Transitions
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.announced)
-    def announce(self, *args, **kwargs):
-        return

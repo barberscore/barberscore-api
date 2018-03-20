@@ -15,7 +15,6 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.apps import apps as api_apps
 from django.db import models
-from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
 
 # First-Party

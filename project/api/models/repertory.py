@@ -14,7 +14,6 @@ from model_utils.models import TimeStampedModel
 
 # Django
 from django.db import models
-from django.utils.encoding import smart_text
 
 
 log = logging.getLogger(__name__)
