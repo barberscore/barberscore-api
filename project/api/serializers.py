@@ -112,6 +112,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'size_range',
             'scope',
             'scope_range',
+            'tree_sort',
             'group',
             'parent',
             'children',
@@ -140,6 +141,33 @@ class ChartSerializer(serializers.ModelSerializer):
             'holders',
             'repertories',
             'songs',
+            'permissions',
+        )
+
+
+class CompetitorSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Competitor
+        fields = (
+            'id',
+            'url',
+            'status',
+            'rank',
+            'mus_points',
+            'per_points',
+            'sng_points',
+            'tot_points',
+            'mus_score',
+            'per_score',
+            'sng_score',
+            'tot_score',
+            'session',
+            'group',
+            'entry',
+            'appearances',
+            'grids',
             'permissions',
         )
 
@@ -216,32 +244,6 @@ class ConventionSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         return data
-
-
-class CompetitorSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Competitor
-        fields = (
-            'id',
-            'url',
-            'status',
-            'rank',
-            'mus_points',
-            'per_points',
-            'sng_points',
-            'tot_points',
-            'mus_score',
-            'per_score',
-            'sng_score',
-            'tot_score',
-            'session',
-            'group',
-            'entry',
-            'appearances',
-            'permissions',
-        )
 
 
 class EntrySerializer(serializers.ModelSerializer):
@@ -396,12 +398,15 @@ class GroupSerializer(serializers.ModelSerializer):
             'district',
             'division',
             'chapter',
+            'tree_sort',
             'parent',
             'children',
+            'awards',
+            'competitors',
+            'conventions',
             'entries',
             'members',
             'officers',
-            'tree_sort',
             'repertories',
             'permissions',
         ]
@@ -531,7 +536,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'members',
             'officers',
             'panelists',
-            # 'user',
+            'user',
             'permissions',
         )
         read_only_fields = [
@@ -578,6 +583,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'session',
             'appearances',
             'panelists',
+            'grids',
             'permissions',
         )
 
@@ -624,10 +630,10 @@ class SessionSerializer(serializers.ModelSerializer):
             'drcj',
             'contact',
             'num_rounds',
+            'competitors',
             'convention',
             'contests',
             'entries',
-            'competitors',
             'rounds',
             'permissions',
         )
@@ -691,7 +697,7 @@ class UserSerializer(serializers.ModelSerializer):
             'name',
             'is_staff',
             'account_id',
-            # 'person',
+            'person',
             'permissions',
             'is_convention_manager',
             'is_session_manager',

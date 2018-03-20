@@ -16,7 +16,6 @@ from .filters import ConventionStatusListFilter
 from .filters import SessionConventionStatusListFilter
 from .filters import AppearanceConventionStatusListFilter
 from .filters import AccountListFilter
-# from .filters import OfficeListFilter
 from .filters import ConventionGroupListFilter
 from .filters import DistrictListFilter
 from .filters import DivisionListFilter

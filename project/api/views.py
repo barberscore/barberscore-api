@@ -23,24 +23,9 @@ from django.utils.text import slugify
 # Local
 from .backends import CoalesceFilterBackend
 # from .backends import GroupFilterBackend
-from .filters import AssignmentFilter
-from .filters import AwardFilter
-from .filters import ChartFilter
-from .filters import CompetitorFilter
-from .filters import ContestantFilter
-from .filters import ConventionFilter
-from .filters import EntryFilter
-from .filters import GrantorFilter
 from .filters import GroupFilter
-from .filters import MemberFilter
-from .filters import OfficeFilter
-from .filters import OfficerFilter
-from .filters import PanelistFilter
-from .filters import PersonFilter
 from .filters import RoundFilter
-from .filters import ScoreFilter
 from .filters import SessionFilter
-from .filters import VenueFilter
 from .filters import UserFilter
 from .models import Appearance
 from .models import Assignment
@@ -135,7 +120,6 @@ class AssignmentViewSet(
     ).prefetch_related(
     ).order_by('id')
     serializer_class = AssignmentSerializer
-    filter_class = AssignmentFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -158,7 +142,6 @@ class AwardViewSet(
         'contests',
     ).order_by('status', 'name')
     serializer_class = AwardSerializer
-    filter_class = AwardFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -179,7 +162,6 @@ class ChartViewSet(
         'songs',
     ).order_by('status', 'title')
     serializer_class = ChartSerializer
-    filter_class = ChartFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -246,7 +228,6 @@ class ContestantViewSet(
     ).prefetch_related(
     ).order_by('id')
     serializer_class = ContestantSerializer
-    filter_class = ContestantFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -270,7 +251,6 @@ class ConventionViewSet(
         'grantors',
     ).order_by('id')
     serializer_class = ConventionSerializer
-    filter_class = ConventionFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -293,7 +273,6 @@ class CompetitorViewSet(
         'appearances',
     ).order_by('id')
     serializer_class = CompetitorSerializer
-    filter_class = CompetitorFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -315,7 +294,6 @@ class EntryViewSet(
         'contestants',
     ).order_by('id')
     serializer_class = EntrySerializer
-    filter_class = EntryFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -351,7 +329,6 @@ class GrantorViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     ).order_by('id')
     serializer_class = GrantorSerializer
-    filter_class = GrantorFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -442,7 +419,6 @@ class MemberViewSet(
         'person',
     ).order_by('id')
     serializer_class = MemberSerializer
-    filter_class = MemberFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -459,7 +435,6 @@ class OfficeViewSet(viewsets.ModelViewSet):
         'officers',
     ).order_by('id')
     serializer_class = OfficeSerializer
-    filter_class = OfficeFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -481,7 +456,6 @@ class OfficerViewSet(
     ).prefetch_related(
     ).order_by('id')
     serializer_class = OfficerSerializer
-    filter_class = OfficerFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -500,7 +474,6 @@ class PanelistViewSet(viewsets.ModelViewSet):
         'scores',
     ).order_by('id')
     serializer_class = PanelistSerializer
-    filter_class = PanelistFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -521,7 +494,6 @@ class PersonViewSet(viewsets.ModelViewSet):
         'panelists',
     ).order_by('id')
     serializer_class = PersonSerializer
-    filter_class = PersonFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -615,7 +587,6 @@ class ScoreViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     ).order_by('id')
     serializer_class = ScoreSerializer
-    filter_class = ScoreFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -748,7 +719,6 @@ class VenueViewSet(viewsets.ModelViewSet):
         'conventions',
     ).order_by('name')
     serializer_class = VenueSerializer
-    filter_class = VenueFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
