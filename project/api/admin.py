@@ -274,11 +274,11 @@ class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
+        'status',
         'title',
         'arrangers',
         'composers',
         'lyricists',
-        'status',
     ]
 
     list_editable = [
