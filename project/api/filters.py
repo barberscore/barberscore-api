@@ -5,6 +5,8 @@ from django_filters.rest_framework import FilterSet
 from django.contrib import admin
 
 # Local
+from .models import Assignment
+from .models import Convention
 from .models import Group
 from .models import Round
 from .models import Session
@@ -274,6 +276,32 @@ class SessionGroupListFilter(admin.SimpleListFilter):
         if district:
             return queryset.filter(convention__group=district)
         return queryset
+
+
+class AssignmentFilter(FilterSet):
+    class Meta:
+        model = Assignment
+        fields = {
+            'person__user': [
+                'exact',
+            ],
+            'status': [
+                'exact',
+            ],
+        }
+
+
+class ConventionFilter(FilterSet):
+    class Meta:
+        model = Convention
+        fields = {
+            'assignments__person__user': [
+                'exact',
+            ],
+            'status': [
+                'exact',
+            ],
+        }
 
 
 class GroupFilter(FilterSet):

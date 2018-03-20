@@ -14,6 +14,7 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.apps import apps as api_apps
 from django.db import models
+from django.utils.functional import cached_property
 
 config = api_apps.get_app_config('api')
 
@@ -75,6 +76,13 @@ class Assignment(TimeStampedModel):
         related_name='assignments',
         on_delete=models.CASCADE,
     )
+
+    @cached_property
+    def nomen(self):
+        return "{0} {1} Entry".format(
+            self.session.nomen,
+            self.award.name,
+        )
 
     # Internals
     class JSONAPIMeta:

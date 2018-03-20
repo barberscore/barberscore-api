@@ -74,6 +74,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'category',
+            'nomen',
             'convention',
             'person',
             'permissions',

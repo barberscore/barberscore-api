@@ -345,7 +345,7 @@ class Command(BaseCommand):
         ca_officer = OfficerFactory(
             office=ca_office,
             person=admin_person,
-            group=international,
+            group=district_alpha,
             status=Officer.STATUS.active,
         )
         mus_judge = OfficerFactory(
