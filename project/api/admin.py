@@ -276,18 +276,17 @@ class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         'title',
         'arrangers',
-        # 'composers',
-        # 'lyricists',
+        'composers',
+        'lyricists',
         'status',
     ]
 
-    # list_editable = [
-    #     'title',
-    #     'arrangers',
-    #     'composers',
-    #     'lyricists',
-    #     'status',
-    # ]
+    list_editable = [
+        'title',
+        'arrangers',
+        'composers',
+        'lyricists',
+    ]
 
     list_filter = [
         'status',
