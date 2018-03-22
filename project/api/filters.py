@@ -288,6 +288,9 @@ class AssignmentFilter(FilterSet):
             'status': [
                 'exact',
             ],
+            'convention__status': [
+                'exact',
+            ],
         }
 
 

@@ -23,6 +23,7 @@ from django.utils.text import slugify
 # Local
 from .backends import CoalesceFilterBackend
 # from .backends import GroupFilterBackend
+from .filters import AssignmentFilter
 from .filters import GroupFilter
 from .filters import RoundFilter
 from .filters import SessionFilter
@@ -120,6 +121,7 @@ class AssignmentViewSet(
     ).prefetch_related(
     ).order_by('id')
     serializer_class = AssignmentSerializer
+    filter_class = AssignmentFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,

@@ -16,6 +16,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps as api_apps
 from django.core.exceptions import ValidationError
 from django.db import models
+from api.fields import UploadPath
 
 # First-Party
 config = api_apps.get_app_config('api')
@@ -102,6 +103,12 @@ class Convention(TimeStampedModel):
 
     location = models.CharField(
         max_length=255,
+        blank=True,
+    )
+
+    image = models.ImageField(
+        upload_to=UploadPath(),
+        null=True,
         blank=True,
     )
 

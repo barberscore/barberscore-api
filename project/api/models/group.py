@@ -370,6 +370,10 @@ class Group(TimeStampedModel):
     def is_mc(self):
         return bool(self.mc_pk)
 
+    @property
+    def is_org(self):
+        return self.kind <= self.KIND.chapter
+
     # Methods
     def is_active(self):
         return bool(self.status == self.STATUS.active)
