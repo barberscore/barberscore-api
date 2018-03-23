@@ -348,13 +348,14 @@ class GroupViewSet(
         'parent',
     ).prefetch_related(
         'children',
-        'members',
+        'awards',
+        'competitors',
+        'conventions',
         'entries',
-        'repertories',
+        'members',
         'officers',
-    ).order_by(
-        'id',
-    ).distinct()
+        'repertories',
+    )
     serializer_class = GroupSerializer
     filter_class = GroupFilter
     filter_backends = [
@@ -413,9 +414,7 @@ class MemberViewSet(
     get_viewset_transition_action_mixin(Member),
     viewsets.ModelViewSet
 ):
-    queryset = Member.objects.exclude(
-        group__kind__lte=30,
-    ).select_related(
+    queryset = Member.objects.select_related(
         'group',
         'person',
     ).order_by('id')
@@ -487,10 +486,10 @@ class PanelistViewSet(viewsets.ModelViewSet):
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
-        # 'user',
+        'user',
     ).prefetch_related(
         'assignments',
-        # 'members',
+        'members',
         'officers',
         'panelists',
     ).order_by('id')

@@ -368,10 +368,6 @@ class GridSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    members = ResourceRelatedField(
-        queryset=Member.lows,
-        many=True
-    )
 
     class Meta:
         model = Group

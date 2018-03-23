@@ -1,6 +1,7 @@
 # Third-Party
 from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework.renderers import BaseRenderer
+from rest_framework_json_api.renderers import JSONRenderer
 
 
 class NoHTMLFormBrowsableAPIRenderer(BrowsableAPIRenderer):
@@ -27,3 +28,12 @@ class XLSXRenderer(BaseRenderer):
 
     def render(self, data, media_type=None, renderer_context=None):
         return data
+
+
+class CustomJSONRenderer(JSONRenderer):
+    # pass
+    @classmethod
+    def extract_relationships(cls, fields, resource, resource_instance):
+        if resource_instance._meta.model_name == 'group' and resource_instance.kind <= 30:
+            fields.pop('members')
+        return super().extract_relationships(fields, resource, resource_instance)

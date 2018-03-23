@@ -34,11 +34,6 @@ validate_twitter = RegexValidator(
 )
 
 
-class LowMemberManager(Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(group__kind__gt=30)
-
-
 class AwardManager(Manager):
     def sort_tree(self):
         self.all().update(tree_sort=None)
