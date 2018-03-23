@@ -35,5 +35,8 @@ class CustomJSONRenderer(JSONRenderer):
     @classmethod
     def extract_relationships(cls, fields, resource, resource_instance):
         if resource_instance._meta.model_name == 'group' and resource_instance.kind <= 30:
-            fields.pop('members')
+            try:
+                fields.pop('members')
+            except KeyError:
+                pass
         return super().extract_relationships(fields, resource, resource_instance)
