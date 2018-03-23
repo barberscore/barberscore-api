@@ -836,6 +836,7 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_filter = [
         'status',
         MCListFilter,
+        'subscription',
         'group__kind',
         'group__status',
         'part',
