@@ -178,6 +178,14 @@ class Member(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    subscription = models.ForeignKey(
+        'Subscription',
+        related_name='members',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
     # Internals
     objects = MemberManager()
 
