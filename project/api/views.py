@@ -22,7 +22,6 @@ from django.utils.text import slugify
 
 # Local
 from .backends import CoalesceFilterBackend
-# from .backends import GroupFilterBackend
 from .filters import AssignmentFilter
 from .filters import GroupFilter
 from .filters import RoundFilter
