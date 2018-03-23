@@ -1,12 +1,9 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
 "auth0-python" = "*"
 coreapi = "*"
 cryptography = "*"
@@ -46,9 +43,7 @@ algoliasearch-django = "*"
 sendgrid-django = "*"
 brotli = "*"
 
-
 [dev-packages]
-
 pytest = "*"
 pytest-django = "*"
 pylint = "*"
@@ -62,7 +57,5 @@ isort = "*"
 graphviz = "*"
 django-querycount = "*"
 
-
 [requires]
-
 python_full_version = "3.6.4"

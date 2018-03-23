@@ -7,6 +7,9 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
 ]
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 
 EMAIL_PORT = 1025

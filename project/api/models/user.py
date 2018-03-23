@@ -197,7 +197,7 @@ class User(AbstractBaseUser):
 
     # User Internals
     def __str__(self):
-        return str(self.id)
+        return self.name
 
     def clean(self):
         pass
