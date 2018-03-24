@@ -246,7 +246,6 @@ class ConventionSerializer(serializers.ModelSerializer):
 
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    logs = serializers.SerializerMethodField()
     competitor = serializers.PrimaryKeyRelatedField(
         queryset=Competitor.objects.all(),
         required=False,
@@ -283,26 +282,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'competitor',
             'contestants',
             'permissions',
-            'logs',
         )
-
-    def get_logs(self, obj):
-        output = []
-        logs = StateLog.objects.for_(obj)
-        for log in logs:
-            transition = log.transition.title()
-            if log.by:
-                by = log.by.name
-            else:
-                by = '(Unknown)'
-            timestamp = log.timestamp
-            d = {
-                'transition': transition,
-                'by': by,
-                'timestamp': timestamp,
-            }
-            output.append(d)
-        return output
 
     def validate(self, data):
         """Check that the start is before the stop."""

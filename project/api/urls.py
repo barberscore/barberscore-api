@@ -56,5 +56,5 @@ router.register(r'session', SessionViewSet)
 router.register(r'song', SongViewSet)
 router.register(r'user', UserViewSet)
 router.register(r'venue', VenueViewSet)
-router.register(r'log', StateLogViewSet)
+router.register(r'statelog', StateLogViewSet)
 urlpatterns = router.urls

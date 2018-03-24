@@ -27,6 +27,7 @@ from .filters import GroupFilter
 from .filters import RoundFilter
 from .filters import SessionFilter
 from .filters import UserFilter
+from .filters import StateLogFilter
 from .models import Appearance
 from .models import Assignment
 from .models import Award
@@ -777,9 +778,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class StateLogViewSet(viewsets.ModelViewSet):
-    queryset = StateLog.objects.all()
+    queryset = StateLog.objects.select_related(
+        'content_type',
+        'by',
+    ).prefetch_related(
+    )
     serializer_class = StateLogSerializer
-    filter_class = None
+    filter_class = StateLogFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,

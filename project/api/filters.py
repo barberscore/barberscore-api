@@ -3,6 +3,7 @@ from django_filters.rest_framework import FilterSet
 
 # Django
 from django.contrib import admin
+from django_fsm_log.models import StateLog
 
 # Local
 from .models import Assignment
@@ -363,6 +364,16 @@ class UserFilter(FilterSet):
         model = User
         fields = {
             'account_id': [
+                'exact',
+            ],
+        }
+
+
+class StateLogFilter(FilterSet):
+    class Meta:
+        model = StateLog
+        fields = {
+            'object_id': [
                 'exact',
             ],
         }
