@@ -1,4 +1,4 @@
-We're writing to let you know that the {{session.nomen|safe}} is now accepting entries.
+We're writing to let you know that the {{session.convention.name|safe}} {{session.get_kind_display}} Session is now accepting entries.
 
 
 If you'd like to enter the contest, please visit https://www.barberscore.com/tutorials.

@@ -530,7 +530,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_display = (
-        'nomen',
         'status',
     )
 
@@ -1068,7 +1067,6 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
         'email',
         'phone',
         # 'mc_pk',
@@ -1178,7 +1176,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
         'status',
     ]
 
@@ -1276,7 +1273,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'nomen',
         'kind',
         'gender',
         'num_rounds',
@@ -1482,9 +1478,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
                 'account_id',
                 'is_mc',
                 'is_staff',
-                'is_group_manager',
-                'is_session_manager',
-                'is_scoring_manager',
                 'created',
                 'modified',
             )
@@ -1514,9 +1507,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     readonly_fields = [
         'id',
         'is_mc',
-        'is_group_manager',
-        'is_session_manager',
-        'is_scoring_manager',
         'created',
         'modified',
     ]

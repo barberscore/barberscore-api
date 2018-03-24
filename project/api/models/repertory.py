@@ -70,10 +70,10 @@ class Repertory(TimeStampedModel):
     @authenticated_users
     def has_read_permission(request):
         return any([
-            request.user.is_convention_manager,
-            request.user.is_scoring_manager,
-            request.user.is_group_manager,
-            request.user.is_session_manager,
+            request.user.person.officers.filter(office__is_convention_manager=True),
+            request.user.person.officers.filter(office__is_scoring_manager=True),
+            request.user.person.officers.filter(office__is_group_manager=True),
+            request.user.person.officers.filter(office__is_session_manager=True),
         ])
 
     @allow_staff_or_superuser
@@ -84,9 +84,9 @@ class Repertory(TimeStampedModel):
                 person__user=request.user,
                 status__gt=0,
             ),
-            request.user.is_convention_manager,
-            request.user.is_scoring_manager,
-            request.user.is_session_manager,
+            request.user.person.officers.filter(office__is_convention_manager=True),
+            request.user.person.officers.filter(office__is_scoring_manager=True),
+            request.user.person.officers.filter(office__is_session_manager=True),
         ])
 
     @staticmethod
@@ -94,9 +94,9 @@ class Repertory(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_convention_manager,
-            request.user.is_scoring_manager,
-            request.user.is_group_manager,
+            request.user.person.officers.filter(office__is_convention_manager=True),
+            request.user.person.officers.filter(office__is_scoring_manager=True),
+            request.user.person.officers.filter(office__is_group_manager=True),
         ])
 
     @allow_staff_or_superuser
@@ -107,8 +107,8 @@ class Repertory(TimeStampedModel):
                 person__user=request.user,
                 status__gt=0,
             ),
-            request.user.is_convention_manager,
-            request.user.is_scoring_manager,
+            request.user.person.officers.filter(office__is_convention_manager=True),
+            request.user.person.officers.filter(office__is_scoring_manager=True),
         ])
 
     # Transitions

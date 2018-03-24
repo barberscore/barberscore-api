@@ -1,4 +1,4 @@
-The {{session.nomen|safe}}
+The {{session.convention.name|safe}} {{session.get_kind_display}} Session
 is starting soon, and your entry has been finalized.  This means you will no
 longer be able to edit your entry through the Barberscore website.
 

@@ -91,7 +91,7 @@ class User(AbstractBaseUser):
 
     objects = UserManager()
 
-    @property
+    @cached_property
     def is_active(self):
         """Proxy status."""
         if self.status == self.STATUS.active:
@@ -99,98 +99,9 @@ class User(AbstractBaseUser):
         else:
             return False
 
-    @property
+    @cached_property
     def is_superuser(self):
         return self.is_staff
-
-    @cached_property
-    def is_convention_manager(self):
-        try:
-            is_manager = bool(self.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            ))
-        except:
-            is_manager = False
-        return is_manager
-
-    @cached_property
-    def is_session_manager(self):
-        try:
-            is_manager = bool(self.person.officers.filter(
-                office__is_session_manager=True,
-                status=self.person.officers.model.STATUS.active,
-            ))
-        except:
-            is_manager = False
-        return is_manager
-
-    @cached_property
-    def is_scoring_manager(self):
-        try:
-            is_manager = bool(self.person.officers.filter(
-                office__is_scoring_manager=True,
-                status__gt=0,
-            ))
-        except:
-            is_manager = False
-        return is_manager
-
-    @cached_property
-    def is_group_manager(self):
-        try:
-            is_manager = bool(
-                self.person.officers.filter(
-                    status__gt=0,
-                )
-            )
-        except:
-            is_manager = False
-        return is_manager
-
-    @cached_property
-    def is_person_manager(self):
-        try:
-            is_manager = bool(self.person.officers.filter(
-                office__is_person_manager=True,
-                status__gt=0,
-            ))
-        except:
-            is_manager = False
-        return is_manager
-
-    @cached_property
-    def is_award_manager(self):
-        try:
-            is_manager = bool(self.person.officers.filter(
-                office__is_award_manager=True,
-                status__gt=0,
-            ))
-        except:
-            is_manager = False
-        return is_manager
-
-    @cached_property
-    def is_judge_manager(self):
-        try:
-            is_manager = bool(self.person.officers.filter(
-                office__is_judge_manager=True,
-                status__gt=0,
-            ))
-        except:
-            is_manager = False
-        return is_manager
-
-    @cached_property
-    def is_chart_manager(self):
-        try:
-            is_manager = bool(self.person.officers.filter(
-                office__is_chart_manager=True,
-                status__gt=0,
-            ))
-        except:
-            is_manager = False
-        return is_manager
 
     class JSONAPIMeta:
         resource_name = "user"

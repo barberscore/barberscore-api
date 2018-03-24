@@ -74,7 +74,6 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'category',
-            'nomen',
             'convention',
             'person',
             'permissions',
@@ -130,7 +129,6 @@ class ChartSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'nomen',
             'status',
             'title',
             'arrangers',
@@ -181,7 +179,6 @@ class ContestSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'nomen',
             'status',
             'champion',
             'session',
@@ -199,7 +196,6 @@ class ContestantSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'nomen',
             'status',
             'rank',
             'mus_points',
@@ -262,7 +258,6 @@ class EntrySerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'nomen',
             'status',
             'is_evaluation',
             'is_private',
@@ -374,7 +369,6 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'url',
-            'nomen',
             'name',
             'status',
             'kind',
@@ -397,7 +391,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'division',
             'chapter',
             'tree_sort',
-            'is_org',
             'parent',
             'children',
             'awards',
@@ -505,7 +498,6 @@ class PersonSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'nomen',
             'first_name',
             'middle_name',
             'last_name',
@@ -575,7 +567,6 @@ class RoundSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'nomen',
             'status',
             'kind',
             'num',
@@ -618,7 +609,6 @@ class SessionSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'url',
-            'nomen',
             'status',
             'kind',
             'gender',
@@ -698,24 +688,6 @@ class UserSerializer(serializers.ModelSerializer):
             'account_id',
             'person',
             'permissions',
-            'is_convention_manager',
-            'is_session_manager',
-            'is_scoring_manager',
-            'is_group_manager',
-            'is_person_manager',
-            'is_award_manager',
-            'is_judge_manager',
-            'is_chart_manager',
-        ]
-        read_only_fields = [
-            'is_convention_manager',
-            'is_session_manager',
-            'is_scoring_manager',
-            'is_group_manager',
-            'is_person_manager',
-            'is_award_manager',
-            'is_judge_manager',
-            'is_chart_manager',
         ]
 
 

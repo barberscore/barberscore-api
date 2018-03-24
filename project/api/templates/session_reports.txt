@@ -1,4 +1,4 @@
-Below are the reports for the {{session.nomen|safe}}.
+Below are the reports for the {{session.convention.name|safe}} {{session.get_kind_display}} Session.
 
 Legacy Program Export: {{host_name|safe}}/api/session/{{session.id}}/legacy
 

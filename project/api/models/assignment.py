@@ -77,13 +77,6 @@ class Assignment(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    @cached_property
-    def nomen(self):
-        return "{0} {1} Entry".format(
-            self.session.nomen,
-            self.award.name,
-        )
-
     # Internals
     class JSONAPIMeta:
         resource_name = "assignment"
@@ -106,8 +99,8 @@ class Assignment(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_judge_manager,
-            request.user.is_convention_manager,
+            request.user.person.officers.filter(office__is_judge_manager=True),
+            request.user.person.officers.filter(office__is_convention_manager=True),
         ])
 
     @allow_staff_or_superuser

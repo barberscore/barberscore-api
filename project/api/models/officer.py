@@ -14,6 +14,7 @@ from model_utils.models import TimeStampedModel
 
 # Django
 from django.db import models
+from django.utils.functional import cached_property
 
 from api.managers import OfficerManager
 
@@ -78,7 +79,7 @@ class Officer(TimeStampedModel):
     objects = OfficerManager()
 
     # Properties
-    @property
+    @cached_property
     def is_mc(self):
         return bool(self.mc_pk)
 

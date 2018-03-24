@@ -14,7 +14,6 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.apps import apps as api_apps
 from django.db import models
-from django.utils.functional import cached_property
 
 config = api_apps.get_app_config('api')
 
@@ -99,13 +98,6 @@ class Contestant(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    @cached_property
-    def nomen(self):
-        return "{0} {1} Session".format(
-            self.entry.nomen,
-            self.contest.nomen,
-        )
-
     # Internals
     class Meta:
         unique_together = (
@@ -116,7 +108,7 @@ class Contestant(TimeStampedModel):
         resource_name = "contestant"
 
     def __str__(self):
-        return self.nomen
+        return str(self.id)
 
     # Methods
     def calculate(self, *args, **kwargs):
@@ -218,9 +210,9 @@ class Contestant(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_convention_manager,
-            request.user.is_group_manager,
-            request.user.is_session_manager,
+            request.user.person.officers.filter(office__is_convention_manager=True),
+            request.user.person.officers.filter(office__is_group_manager=True),
+            request.user.person.officers.filter(office__is_session_manager=True),
         ])
 
     @allow_staff_or_superuser

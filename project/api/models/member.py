@@ -14,6 +14,7 @@ from model_utils.models import TimeStampedModel
 
 # Django
 from django.db import models
+from django.utils.functional import cached_property
 
 # First-Party
 from api.managers import MemberManager
@@ -159,7 +160,7 @@ class Member(TimeStampedModel):
     )
 
     # Properties
-    @property
+    @cached_property
     def is_mc(self):
         return bool(self.mc_pk)
 
@@ -227,8 +228,8 @@ class Member(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_group_manager,
-            request.user.is_session_manager,
+            request.user.person.officers.filter(office__is_group_manager=True),
+            request.user.person.officers.filter(office__is_session_manager=True),
         ])
 
     @allow_staff_or_superuser
@@ -239,7 +240,7 @@ class Member(TimeStampedModel):
                 person__user=request.user,
                 status__gt=0,
             ),
-            request.user.is_session_manager,
+            request.user.person.officers.filter(office__is_session_manager=True),
         ])
 
     # Transitions

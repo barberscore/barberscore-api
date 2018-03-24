@@ -11,6 +11,7 @@ from model_utils.models import TimeStampedModel
 
 # Django
 from django.db import models
+from django.utils.functional import cached_property
 
 
 log = logging.getLogger(__name__)
@@ -143,7 +144,7 @@ class Office(TimeStampedModel):
     )
 
     # Properties
-    @property
+    @cached_property
     def is_mc(self):
         return bool(self.mc_pk)
 

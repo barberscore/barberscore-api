@@ -139,17 +139,14 @@ class Competitor(TimeStampedModel):
         resource_name = "competitor"
 
     def __str__(self):
-        return "{0} {1}".format(
-            self.session.nomen,
-            self.group.name,
-        )
+        return str(self.id)
 
     # Competitor Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
     def has_read_permission(request):
-        return request.user.is_scoring_manager
+        return request.user.person.officers.filter(office__is_scoring_manager=True)
 
     @allow_staff_or_superuser
     @authenticated_users

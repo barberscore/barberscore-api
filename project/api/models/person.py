@@ -15,7 +15,6 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
@@ -252,7 +251,7 @@ class Person(TimeStampedModel):
     )
 
     # Properties
-    @property
+    @cached_property
     def is_mc(self):
         return bool(self.mc_pk)
 

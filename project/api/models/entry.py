@@ -14,7 +14,6 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.functional import cached_property
 
 # First-Party
 from api.tasks import send_entry
@@ -168,12 +167,6 @@ class Entry(TimeStampedModel):
     )
 
     # Properties
-    @cached_property
-    def nomen(self):
-        return "{0} {1} Entry".format(
-            self.group.name,
-            self.session.nomen,
-        )
 
     # Internals
     class Meta:
@@ -211,8 +204,8 @@ class Entry(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_group_manager,
-            request.user.is_session_manager,
+            request.user.person.officers.filter(office__is_group_manager=True),
+            request.user.person.officers.filter(office__is_session_manager=True),
         ])
 
     @allow_staff_or_superuser

@@ -106,27 +106,20 @@ class Session(TimeStampedModel):
 
     # Properties
     @cached_property
-    def nomen(self):
-        return "{0} {1} Session".format(
-            self.convention.name,
-            self.get_kind_display(),
-        )
-
-    @property
     def legacy(self):
         return reverse(
             'session-legacy',
             args=[str(self.id)]
         )
 
-    @property
+    @cached_property
     def drcj(self):
         return reverse(
             'session-drcj',
             args=[(self.id)]
         )
 
-    @property
+    @cached_property
     def contact(self):
         return reverse(
             'session-contact',
@@ -138,7 +131,7 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __str__(self):
-        return self.nomen
+        return str(self.id)
 
     # Methods
 
@@ -161,8 +154,8 @@ class Session(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_convention_manager,
-            request.user.is_session_manager,
+            request.user.person.officers.filter(office__is_convention_manager=True),
+            request.user.person.officers.filter(office__is_session_manager=True),
         ])
 
     @allow_staff_or_superuser

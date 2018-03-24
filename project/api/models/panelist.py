@@ -105,7 +105,7 @@ class Panelist(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_judge_manager,
+            request.user.person.officers.filter(office__is_judge_manager=True),
         ])
 
     @allow_staff_or_superuser
@@ -113,5 +113,5 @@ class Panelist(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             True,
-            request.user.is_judge_manager,
+            request.user.person.officers.filter(office__is_judge_manager=True),
         ])

@@ -7,6 +7,7 @@ from bhs.managers import SubscriptionManager
 from bhs.managers import HumanManager
 from bhs.managers import RoleManager
 from bhs.managers import JoinManager
+from django.utils.functional import cached_property
 
 
 class Human(models.Model):
@@ -88,7 +89,7 @@ class Human(models.Model):
     objects = HumanManager()
 
     # Properties
-    @property
+    @cached_property
     def full_name(self):
         if self.first_name:
             first_name = self.first_name.strip()

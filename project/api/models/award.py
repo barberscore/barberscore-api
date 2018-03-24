@@ -291,7 +291,7 @@ class Award(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_convention_manager,
+            request.user.person.officers.filter(office__is_convention_manager=True),
         ])
 
     @allow_staff_or_superuser

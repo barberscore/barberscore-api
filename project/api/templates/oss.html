@@ -44,7 +44,7 @@
         Official Scoring Summary
       </h3>
       <h4>
-        {{session.nomen}}; {{session.convention.start_date}} - {{session.convention.end_date}}
+        {{entry.session.convention.name|safe}} {{entry.session.get_kind_display}} Session; {{session.convention.start_date}} - {{session.convention.end_date}}
       </h4>
       <h4>
         {{session.convention.name}}

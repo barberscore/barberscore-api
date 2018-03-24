@@ -1,4 +1,4 @@
-Congratulations on qualifying for the {{entry.session.nomen|safe}}!
+Congratulations on qualifying for the {{entry.session.convention.name|safe}} {{entry.session.get_kind_display}} Session!
 
 This is your formal invitation to enter the contest using Barberscore, the
 new contest manager for the Barbershop Harmony Society.

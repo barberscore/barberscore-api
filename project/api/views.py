@@ -95,6 +95,7 @@ class AppearanceViewSet(
     queryset = Appearance.objects.select_related(
         'round',
         'competitor',
+        'grid',
     ).prefetch_related(
         'songs',
     ).order_by('id')
@@ -204,6 +205,7 @@ class ContestViewSet(
     queryset = Contest.objects.select_related(
         'session',
         'award',
+        'champion',
     ).prefetch_related(
         'contestants',
     ).order_by('id')
@@ -271,6 +273,7 @@ class CompetitorViewSet(
         'group',
         'entry',
     ).prefetch_related(
+        'grids',
         'appearances',
     ).order_by('id')
     serializer_class = CompetitorSerializer
@@ -291,6 +294,7 @@ class EntryViewSet(
     queryset = Entry.objects.select_related(
         'session',
         'group',
+        'competitor',
     ).prefetch_related(
         'contestants',
     ).order_by('id')
@@ -558,6 +562,7 @@ class RoundViewSet(
     ).prefetch_related(
         'appearances',
         'panelists',
+        'grids',
     ).distinct().order_by('id')
     serializer_class = RoundSerializer
     filter_class = RoundFilter
@@ -625,7 +630,12 @@ class SessionViewSet(
         session = Session.objects.get(pk=pk)
         xlsx = create_legacy_report(session)
         file_name = '{0}-legacy'.format(
-            slugify(session.nomen)
+            slugify(
+                "{0} {1} Session".format(
+                    session.convention.name,
+                    session.get_kind_display(),
+                )
+            )
         )
         return XLSXResponse(
             xlsx,
@@ -638,7 +648,12 @@ class SessionViewSet(
         session = Session.objects.get(pk=pk)
         xlsx = create_drcj_report(session)
         file_name = '{0}-drcj'.format(
-            slugify(session.nomen)
+            slugify(
+                "{0} {1} Session".format(
+                    session.convention.name,
+                    session.get_kind_display(),
+                )
+            )
         )
         return XLSXResponse(
             xlsx,
@@ -651,7 +666,12 @@ class SessionViewSet(
         session = Session.objects.get(pk=pk)
         xlsx = create_contact_report(session)
         file_name = '{0}-contact'.format(
-            slugify(session.nomen)
+            slugify(
+                "{0} {1} Session".format(
+                    session.convention.name,
+                    session.get_kind_display(),
+                )
+            )
         )
         return XLSXResponse(
             xlsx,
@@ -668,7 +688,12 @@ class SessionViewSet(
         content = ContentFile(file)
         pdf = content
         file_name = '{0}-oss'.format(
-            slugify(session.nomen)
+            slugify(
+                "{0} {1} Session".format(
+                    session.convention.name,
+                    session.get_kind_display(),
+                )
+            )
         )
         return PDFResponse(
             pdf,
@@ -685,7 +710,12 @@ class SessionViewSet(
         content = ContentFile(file)
         pdf = content
         file_name = '{0}-sa'.format(
-            slugify(session.nomen)
+            slugify(
+                "{0} {1} Session".format(
+                    session.convention.name,
+                    session.get_kind_display(),
+                )
+            )
         )
         return PDFResponse(
             pdf,

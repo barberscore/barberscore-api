@@ -78,10 +78,7 @@ class Round(TimeStampedModel):
         resource_name = "round"
 
     def __str__(self):
-        return "{0} {1}".format(
-            self.session.nomen,
-            self.get_kind_display(),
-        )
+        return str(self.id)
 
     # Permissions
     @staticmethod
@@ -98,7 +95,7 @@ class Round(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_scoring_manager,
+            request.user.person.officers.filter(office__is_scoring_manager=True),
         ])
 
     @allow_staff_or_superuser
@@ -116,12 +113,6 @@ class Round(TimeStampedModel):
         ])
 
     # Methods
-    @cached_property
-    def nomen(self):
-        return "{0} {1}".format(
-            self.session.nomen,
-            self.get_kind_display(),
-        )
 
     # Round Transitions
     @fsm_log_by

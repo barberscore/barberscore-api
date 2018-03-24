@@ -536,7 +536,11 @@ def send_entry(template, context):
     tos = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
     ccs = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
     rendered = render_to_string(template, context)
-    subject = "[Barberscore] {0}".format(entry.nomen)
+    subject = "[Barberscore] {0} {1} {2} Session".format(
+        entry.group.name,
+        entry.session.convention.name,
+        entry.session.get_kind_display(),
+    )
     email = EmailMessage(
         subject=subject,
         body=rendered,
@@ -601,7 +605,10 @@ def send_session(template, context):
         'David Mills <proclamation56@gmail.com>',
     ])
     rendered = render_to_string(template, context)
-    subject = "[Barberscore] {0}".format(session.nomen)
+    subject = "[Barberscore] {0} {1} Session".format(
+        session.convention.name,
+        session.get_kind_display(),
+    )
     email = EmailMessage(
         subject=subject,
         body=rendered,
@@ -627,7 +634,10 @@ def send_session_reports(template, context):
         'David Mills <proclamation56@gmail.com>',
     ]
     rendered = render_to_string(template, context)
-    subject = "[Barberscore] {0} Reports".format(session.nomen)
+    subject = "[Barberscore] {0} {1} Session Reports".format(
+        session.convention.name,
+        session.get_kind_display(),
+    )
     email = EmailMessage(
         subject=subject,
         body=rendered,

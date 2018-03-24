@@ -366,13 +366,9 @@ class Group(TimeStampedModel):
         )
         return " ".join(full.split())
 
-    @property
+    @cached_property
     def is_mc(self):
         return bool(self.mc_pk)
-
-    @property
-    def is_org(self):
-        return self.kind <= self.KIND.chapter
 
     # Methods
     def is_active(self):
@@ -529,7 +525,7 @@ class Group(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_group_manager,
+            request.user.person.officers.filter(office__is_group_manager=True),
         ])
 
     @allow_staff_or_superuser
