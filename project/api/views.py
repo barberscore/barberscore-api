@@ -24,6 +24,7 @@ from django.utils.text import slugify
 from .backends import CoalesceFilterBackend
 from .filters import AssignmentFilter
 from .filters import GroupFilter
+from .filters import OfficerFilter
 from .filters import RoundFilter
 from .filters import SessionFilter
 from .filters import UserFilter
@@ -461,6 +462,7 @@ class OfficerViewSet(
     ).prefetch_related(
     ).order_by('id')
     serializer_class = OfficerSerializer
+    filter_class = OfficerFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,

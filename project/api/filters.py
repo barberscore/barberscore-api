@@ -9,6 +9,7 @@ from django_fsm_log.models import StateLog
 from .models import Assignment
 from .models import Convention
 from .models import Group
+from .models import Officer
 from .models import Round
 from .models import Session
 from .models import User
@@ -316,6 +317,22 @@ class GroupFilter(FilterSet):
                 'gt',
             ],
             'officers__person__user': [
+                'exact',
+            ],
+            'status': [
+                'exact',
+            ],
+        }
+
+
+class OfficerFilter(FilterSet):
+    class Meta:
+        model = Officer
+        fields = {
+            'person__user': [
+                'exact',
+            ],
+            'group__status': [
                 'exact',
             ],
             'status': [
