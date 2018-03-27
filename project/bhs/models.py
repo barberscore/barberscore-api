@@ -372,7 +372,7 @@ class Subscription(models.Model):
         return str(self.human)
 
     class Meta:
-        managed=False
+        managed = False
         db_table = 'vwSubscriptions'
 
 
