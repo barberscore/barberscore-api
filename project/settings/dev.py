@@ -11,6 +11,8 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
+CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 EMAIL_PORT = 1025
 
