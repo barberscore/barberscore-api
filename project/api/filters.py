@@ -303,6 +303,9 @@ class ConventionFilter(FilterSet):
             'assignments__person__user': [
                 'exact',
             ],
+            'assignments__status': [
+                'exact',
+            ],
             'status': [
                 'exact',
             ],
@@ -317,6 +320,15 @@ class GroupFilter(FilterSet):
                 'gt',
             ],
             'officers__person__user': [
+                'exact',
+            ],
+            'officers__status': [
+                'exact',
+            ],
+            'members__person__user': [
+                'exact',
+            ],
+            'members__status': [
                 'exact',
             ],
             'status': [

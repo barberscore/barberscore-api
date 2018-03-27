@@ -23,6 +23,7 @@ from django.utils.text import slugify
 # Local
 from .backends import CoalesceFilterBackend
 from .filters import AssignmentFilter
+from .filters import ConventionFilter
 from .filters import GroupFilter
 from .filters import OfficerFilter
 from .filters import RoundFilter
@@ -254,8 +255,9 @@ class ConventionViewSet(
         'sessions',
         'assignments',
         'grantors',
-    ).order_by('id')
+    ).distinct().order_by('id')
     serializer_class = ConventionSerializer
+    filter_class = ConventionFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -361,7 +363,7 @@ class GroupViewSet(
         'members',
         'officers',
         'repertories',
-    )
+    ).distinct()
     serializer_class = GroupSerializer
     filter_class = GroupFilter
     filter_backends = [
