@@ -347,7 +347,11 @@ class MemberManager(Manager):
             mem_status = join.membership.status.name
 
         # Set variables
-        status = self.model.STATUS.inactive if inactive_date else self.model.STATUS.active
+        status = getattr(
+            self.model.STATUS,
+            sub_status if sub_status else '',
+            self.model.STATUS.inactive,
+        )
 
         sub_status = getattr(
             self.model.SUB_STATUS,
@@ -394,10 +398,6 @@ class MemberManager(Manager):
             person=person,
             group=group,
         )
-
-        # Skip duplicates
-        if str(member.mc_pk) == mc_pk:
-            return 'Skipped'
 
         # Instantiate prior values dictionary
         prior = {}
@@ -466,6 +466,10 @@ class MemberManager(Manager):
         mem_status_string = self.model.MEM_STATUS[mem_status] if mem_status else None
         if prior.get('mem_status') != mem_status_string:
             diff['mem_status'] = mem_status_string
+
+        # Skip duplicates
+        if not diff:
+            return 'Skipped'
 
         # Set the transition description
         if member.status == member.STATUS.new:

@@ -162,14 +162,13 @@ class JoinManager(Manager):
             'membership',
             'membership__status',
         )
-        # Rebuild will do the whole thing.
         if cursor:
             joins = joins.filter(
-                created__gt=cursor,
+                modified__gt=cursor,
             )
         # Order and Return as objects
         joins = joins.order_by(
-            F('inactive_date').asc(nulls_last=True),
+            F('modified').asc(nulls_first=True),
             'created',
         ).values_list(
             'id',
@@ -203,7 +202,6 @@ class SubscriptionManager(Manager):
         ).filter(
             items_editable=True,
         )
-        # Rebuild will do the whole thing.
         if cursor:
             subscriptions = subscriptions.filter(
                 modified__gt=cursor,
