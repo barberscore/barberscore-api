@@ -544,7 +544,11 @@ class Group(TimeStampedModel):
     # Transitions
     @fsm_log_by
     @fsm_log_description
-    @transition(field=status, source='*', target=STATUS.active)
+    @transition(field=status, source=[
+        STATUS.active,
+        STATUS.inactive,
+        STATUS.new,
+    ], target=STATUS.active)
     def activate(self, description=None, *args, **kwargs):
         """Activate the Group."""
         self.denormalize()
@@ -552,7 +556,11 @@ class Group(TimeStampedModel):
 
     @fsm_log_by
     @fsm_log_description
-    @transition(field=status, source='*', target=STATUS.inactive)
+    @transition(field=status, source=[
+        STATUS.active,
+        # STATUS.inactive,
+        STATUS.new,
+    ], target=STATUS.inactive)
     def deactivate(self, description=None, *args, **kwargs):
         """Deactivate the Group."""
         return
