@@ -976,6 +976,8 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         StateLogInline,
     ]
     search_fields = [
+        'person__last_name',
+        'group__name',
     ]
     autocomplete_fields = [
         'office',
