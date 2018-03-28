@@ -58,6 +58,7 @@ class Member(TimeStampedModel):
         (140, 'pending_voluntary', 'Pending Voluntary',),
         (150, 'suspended', 'Suspended',),
         (160, 'suspended_membership', 'Suspended Membership',),
+        (170, 'awaiting_payment', 'Awaiting Payment',),
     )
 
     mem_status = models.IntegerField(
