@@ -149,7 +149,7 @@ class User(AbstractBaseUser):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return self == request.user
+        return True
 
     @allow_staff_or_superuser
     @authenticated_users
