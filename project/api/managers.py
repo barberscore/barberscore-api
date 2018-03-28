@@ -214,7 +214,18 @@ class GroupManager(Manager):
             else:
                 parent = self.get(mc_pk=parent)
             group.parent = parent
-            group.save()
+            # Do not transition groups in distdivs without divs
+            divs = [
+                'MAD',
+                'FWD',
+                'SWD',
+                'LOL',
+                'NED',
+                'SWD',
+            ]
+            if parent.code in divs:
+                group.save()
+                return group, created
 
         # Build the diff from prior to new
         diff = {}
