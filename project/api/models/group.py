@@ -559,7 +559,7 @@ class Group(TimeStampedModel):
     @fsm_log_description
     @transition(field=status, source=[
         STATUS.active,
-        # STATUS.inactive,
+        STATUS.inactive,
         STATUS.new,
     ], target=STATUS.inactive)
     def deactivate(self, description=None, *args, **kwargs):
