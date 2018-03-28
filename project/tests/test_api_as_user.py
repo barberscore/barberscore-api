@@ -301,4 +301,4 @@ def test_venue_endpoint_detail(user_api_client, venue):
 def test_user_endpoint_detail(user_api_client, user):
     path = reverse('user-detail', args=(str(user.id),))
     response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == status.HTTP_200_OK
