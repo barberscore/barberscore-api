@@ -400,9 +400,14 @@ class MemberManager(Manager):
             mc_pk=structure,
         )
         Person = apps.get_model('api.person')
-        person = Person.objects.get(
-            mc_pk=person,
-        )
+        try:
+            person = Person.objects.get(
+                mc_pk=person,
+            )
+        except Person.DoesNotExist:
+            Human = apps.get_model('bhs.human')
+            human = Human.objects.get(id=person)
+            person = Person.objects.update_or_create_from_human(human)
 
         # get or create
         member, created = self.get_or_create(
