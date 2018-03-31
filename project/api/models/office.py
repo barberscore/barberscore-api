@@ -84,6 +84,10 @@ class Office(TimeStampedModel):
             (240, 'judge_mus', "JUDGE MUS"),
             (250, 'judge_per', "JUDGE PER"),
             (260, 'judge_sng', "JUDGE SNG"),
+            (270, 'candidate_ca', "CANDIDATE CA"),
+            (280, 'candidate_mus', "CANDIDATE MUS"),
+            (290, 'candidate_per', "CANDIDATE PER"),
+            (295, 'candidate_sng', "CANDIDATE SNG"),
         ]),
         ('Group', [
             (310, 'chap_pres', "CPRES"),
