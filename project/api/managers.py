@@ -636,7 +636,7 @@ class PersonManager(Manager):
             cell_phone = human.cell_phone
             work_phone = human.work_phone
             bhs_id = human.bhs_id
-            gender = human.gender
+            gender = human.sex
             part = human.part
             is_deceased = human.is_deceased
 
