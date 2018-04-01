@@ -733,9 +733,16 @@ class PersonManager(Manager):
             status,
             self.model.STATUS.inactive,
         )
-        person = self.get(
-            mc_pk=human,
-        )
+
+        try:
+            person = self.get(
+                mc_pk=human,
+            )
+        except self.model.DoesNotExist:
+            Human = apps.get_model('bhs.human')
+            human = Human.objects.get(id=person)
+            person = self.update_or_create_from_human(human)
+
         # Instantiate prior values dictionary
         prior = {}
         prior['status'] = person.get_status_display()
