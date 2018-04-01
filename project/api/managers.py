@@ -741,7 +741,7 @@ class PersonManager(Manager):
         except self.model.DoesNotExist:
             Human = apps.get_model('bhs.human')
             human = Human.objects.get(id=human)
-            person = self.update_or_create_from_human(human)
+            person, created = self.update_or_create_from_human(human)
 
         # Instantiate prior values dictionary
         prior = {}
