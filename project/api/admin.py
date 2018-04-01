@@ -827,7 +827,8 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'group',
     ]
     search_fields = [
-        'person__name',
+        'person__first_name',
+        'person__last_name',
         'group__name',
         'person__bhs_id',
         'group__bhs_id',
