@@ -625,7 +625,7 @@ class PersonManager(Manager):
             part = human[12]
             is_deceased = human[13]
         else:
-            mc_pk = str(human.mc_pk)
+            mc_pk = str(human.id)
             first_name = human.first_name
             middle_name = human.middle_name
             last_name = human.last_name
