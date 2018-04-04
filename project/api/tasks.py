@@ -574,11 +574,23 @@ def send_entry(template, context):
     )
     if not officers:
         raise RuntimeError("No officers for {0}".format(entry.group))
+    ccs = []
     assignments = entry.session.convention.assignments.filter(
         category__lt=10,
     ).exclude(person__email=None)
     tos = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
     ccs = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
+    if entry.group.kind == entry.group.KIND.quartet:
+        members = entry.group.members.filter(
+            status__gt=0,
+            person__email__isnull=False,
+        ).exclude(
+            person__officers__in=officers,
+        ).distinct()
+        for member in members:
+            ccs.append(
+                "{0} <{1}>".format(member.person.common_name, member.person.email)
+            )
     rendered = render_to_string(template, context)
     subject = "[Barberscore] {0} {1} {2} Session".format(
         entry.group.name,
