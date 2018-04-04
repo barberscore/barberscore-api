@@ -17,6 +17,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from django.utils.crypto import get_random_string
 
 log = logging.getLogger(__name__)
 
@@ -116,10 +117,27 @@ def update_or_create_account_from_user(user, blocked):
         }
     }
     if created:
-        # Create with payload if new
+        # Create primary with payload if new
         account = auth0.users.create(payload)
-        user.account_id = account['user_id']
+        account_id = account['user_id']
+        user.account_id = account_id
         user.save()
+        # Now create secondary account
+        secondary_payload = {
+            "connection": "Default",
+            "email": user.email,
+            "email_verified": True,
+        }
+        secondary_account = auth0.users.create(secondary_payload)
+        secondary_id = secondary_account['user_id']
+        secondary_body = {
+            'provider': 'auth0',
+            'user_id': secondary_id,
+        }
+        auth0.users.link_user_account(
+            account_id,
+            secondary_body,
+        )
     else:
         # Only update if there are diffs
         try:
@@ -134,6 +152,32 @@ def update_or_create_account_from_user(user, blocked):
         if dirty:
             account = auth0.users.update(user.account_id, payload)
     return account, created
+
+
+@job
+def link_secondary_account_from_user(user):
+    # Get the auth0 client
+    auth0 = get_auth0()
+    # Create random initial password
+    random = get_random_string()
+    # Create the payload
+    secondary_payload = {
+        "connection": "Default",
+        "email": user.email,
+        "password": random,
+        "email_verified": True,
+    }
+    secondary_account = auth0.users.create(secondary_payload)
+    secondary_id = secondary_account['user_id']
+    secondary_body = {
+        'provider': 'auth0',
+        'user_id': secondary_id,
+    }
+    response = auth0.users.link_user_account(
+        user.account_id,
+        secondary_body,
+    )
+    return response
 
 
 @job
