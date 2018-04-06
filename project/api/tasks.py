@@ -123,9 +123,11 @@ def update_or_create_account_from_user(user, blocked):
         user.account_id = account_id
         user.save()
         # Now create secondary account
+        random = get_random_string()
         secondary_payload = {
             "connection": "Default",
             "email": user.email,
+            "password": random,
             "email_verified": True,
         }
         secondary_account = auth0.users.create(secondary_payload)
