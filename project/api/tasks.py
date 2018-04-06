@@ -605,10 +605,6 @@ def send_entry(template, context):
         from_email='Barberscore <admin@barberscore.com>',
         to=tos,
         cc=ccs,
-        bcc=[
-            'admin@barberscore.com',
-            'proclamation56@gmail.com',
-        ],
     )
     try:
         result = email.send()
@@ -658,10 +654,6 @@ def send_session(template, context):
     ).exclude(person__email=None)
     to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
     bcc = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
-    bcc.extend([
-        'Barberscore Admin <admin@barberscore.com>',
-        'David Mills <proclamation56@gmail.com>',
-    ])
     rendered = render_to_string(template, context)
     subject = "[Barberscore] {0} {1} Session".format(
         session.convention.name,
@@ -687,10 +679,6 @@ def send_session_reports(template, context):
         status=Assignment.STATUS.active,
     ).exclude(person__email=None)
     to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
-    bcc = [
-        'Barberscore Admin <admin@barberscore.com>',
-        'David Mills <proclamation56@gmail.com>',
-    ]
     rendered = render_to_string(template, context)
     subject = "[Barberscore] {0} {1} Session Reports".format(
         session.convention.name,
@@ -701,6 +689,5 @@ def send_session_reports(template, context):
         body=rendered,
         from_email='Barberscore <admin@barberscore.com>',
         to=to,
-        bcc=bcc,
     )
     return email.send()
