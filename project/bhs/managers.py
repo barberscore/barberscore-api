@@ -1,5 +1,6 @@
 from django.db.models import Manager
 from django.db.models import F
+from django.db.models import Q
 from django.apps import apps
 import django_rq
 
@@ -126,7 +127,7 @@ class RoleManager(Manager):
         # Will rebuild without a cursor
         if cursor:
             roles = roles.filter(
-                created__gt=cursor,
+                Q(created__gt=cursor) | Q(modified__gt=cursor)
             )
         # Order and Return as objects
         roles = roles.order_by(
