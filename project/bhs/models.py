@@ -453,6 +453,9 @@ class Join(models.Model):
     status = models.BooleanField(
         editable=False,
     )
+    paid = models.BooleanField(
+        editable=False,
+    )
     vocal_part = models.CharField(
         max_length=255,
         editable=False,
@@ -515,7 +518,7 @@ class Join(models.Model):
         )
 
     class Meta:
-        managed=False
+        managed = False
         db_table = 'vwSubscriptions_Memberships'
         verbose_name = 'Join'
         verbose_name_plural = 'Joins'
