@@ -344,6 +344,7 @@ class MemberManager(Manager):
             established_date = join[8]
             mem_code = join[9]
             mem_status = join[10]
+            paid = join[11]
         else:
             mc_pk = str(join.id)
             structure = str(join.structure.id)
@@ -356,6 +357,11 @@ class MemberManager(Manager):
             established_date = join.established_date
             mem_code = join.membership.code
             mem_status = join.membership.status.name
+            paid = join.paid
+
+        # Ignore rows without approval flow
+        if not paid:
+            return
 
         # Set variables
         status = getattr(

@@ -183,6 +183,7 @@ class JoinManager(Manager):
             'established_date',
             'membership__code',
             'membership__status__name',
+            'paid',
         )
 
         # Creating/Update Persons
