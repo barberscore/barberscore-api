@@ -5,11 +5,9 @@ import logging
 import pydf
 from django_filters.rest_framework import DjangoFilterBackend
 from django_fsm_log.models import StateLog
-from drf_fsm_transitions.viewset_mixins import \
-    get_viewset_transition_action_mixin
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import viewsets
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action
 from rest_framework.decorators import parser_classes
 from rest_framework.parsers import FormParser
 from rest_framework.parsers import MultiPartParser
@@ -91,10 +89,7 @@ from .tasks import create_contact_report
 log = logging.getLogger(__name__)
 
 
-class AppearanceViewSet(
-    get_viewset_transition_action_mixin(Appearance),
-    viewsets.ModelViewSet,
-):
+class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
         'round',
         'competitor',
@@ -113,11 +108,33 @@ class AppearanceViewSet(
     ]
     resource_name = "appearance"
 
+    @action(methods=['post'], detail=True)
+    def start(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.start(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
-class AssignmentViewSet(
-        get_viewset_transition_action_mixin(Assignment),
-        viewsets.ModelViewSet,
-):
+    @action(methods=['post'], detail=True)
+    def finish(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.finish(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def confirm(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.confirm(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+
+class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
         'convention',
         'person',
@@ -134,11 +151,24 @@ class AssignmentViewSet(
     ]
     resource_name = "assignment"
 
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.activate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
-class AwardViewSet(
-    get_viewset_transition_action_mixin(Award),
-    viewsets.ModelViewSet
-):
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.deactivate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
         'group',
         'parent',
@@ -156,11 +186,24 @@ class AwardViewSet(
     ]
     resource_name = "award"
 
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.activate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
-class ChartViewSet(
-    get_viewset_transition_action_mixin(Chart),
-    viewsets.ModelViewSet,
-):
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.deactivate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.select_related(
     ).prefetch_related(
         'repertories',
@@ -176,35 +219,24 @@ class ChartViewSet(
     ]
     resource_name = "chart"
 
-    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    # @parser_classes((FormParser, MultiPartParser,))
-    # def img(self, request, *args, **kwargs):
-    #     if 'file' in request.data:
-    #         obj = self.get_object()
-    #         file = request.data['file']
-    #         public_id = str(obj.id)
-    #         folder = obj._meta.model_name
-    #         obj.img = upload_resource(
-    #             file,
-    #             public_id=public_id,
-    #             folder=folder,
-    #             overwrite=True,
-    #             invalidate=True,
-    #             format='png',
-    #         )
-    #         obj.save()
-    #         return Response(
-    #             status=status.HTTP_201_CREATED,
-    #             data={'image': obj.img.url},
-    #         )
-    #     else:
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.activate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.deactivate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
 
-class ContestViewSet(
-    get_viewset_transition_action_mixin(Contest),
-    viewsets.ModelViewSet,
-):
+class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
         'session',
         'award',
@@ -223,11 +255,24 @@ class ContestViewSet(
     ]
     resource_name = "contest"
 
+    @action(methods=['post'], detail=True)
+    def include(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.include(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
-class ContestantViewSet(
-    get_viewset_transition_action_mixin(Contestant),
-    viewsets.ModelViewSet
-):
+    @action(methods=['post'], detail=True)
+    def exclude(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.exclude(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'entry',
         'contest',
@@ -243,11 +288,24 @@ class ContestantViewSet(
     ]
     resource_name = "contestant"
 
+    @action(methods=['post'], detail=True)
+    def include(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.include(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
-class ConventionViewSet(
-    get_viewset_transition_action_mixin(Convention),
-    viewsets.ModelViewSet
-):
+    @action(methods=['post'], detail=True)
+    def exclude(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.exclude(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.select_related(
         'venue',
         'group',
@@ -267,11 +325,24 @@ class ConventionViewSet(
     ]
     resource_name = "convention"
 
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.activate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
-class CompetitorViewSet(
-    get_viewset_transition_action_mixin(Competitor),
-    viewsets.ModelViewSet
-):
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.deactivate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+class CompetitorViewSet(viewsets.ModelViewSet):
     queryset = Competitor.objects.select_related(
         'session',
         'group',
@@ -290,11 +361,40 @@ class CompetitorViewSet(
     ]
     resource_name = "competitor"
 
+    @action(methods=['post'], detail=True)
+    def make(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.make(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
-class EntryViewSet(
-    get_viewset_transition_action_mixin(Entry),
-    viewsets.ModelViewSet
-):
+    @action(methods=['post'], detail=True)
+    def miss(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.miss(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def start(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.start(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def finish(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.finish(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+class EntryViewSet(viewsets.ModelViewSet):
     queryset = Entry.objects.select_related(
         'session',
         'group',
@@ -311,6 +411,46 @@ class EntryViewSet(
         DRYPermissions,
     ]
     resource_name = "entry"
+
+    @action(methods=['post'], detail=True)
+    def build(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.build(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def invite(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.invite(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def withdraw(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.withdraw(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def submit(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.submit(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def approve(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.approve(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
 
 class GridViewSet(viewsets.ModelViewSet):
@@ -348,10 +488,7 @@ class GrantorViewSet(viewsets.ModelViewSet):
     resource_name = "grantor"
 
 
-class GroupViewSet(
-    get_viewset_transition_action_mixin(Group),
-    viewsets.ModelViewSet
-):
+class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.select_related(
         'parent',
     ).prefetch_related(
@@ -375,53 +512,24 @@ class GroupViewSet(
     ]
     resource_name = "group"
 
-    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    # @parser_classes((FormParser, MultiPartParser,))
-    # def image(self, request, *args, **kwargs):
-    #     if 'file' in request.data:
-    #         obj = self.get_object()
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.activate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
-    #         upload = request.data['file']
-    #         obj.image.save(
-    #             'foo.jpg',
-    #             upload,
-    #         )
-    #         return Response(
-    #             status=status.HTTP_201_CREATED,
-    #             data={'image': obj.image.url},
-    #         )
-    #     else:
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    # @parser_classes((FormParser, MultiPartParser,))
-    # def img(self, request, *args, **kwargs):
-    #     if 'file' in request.data:
-    #         obj = self.get_object()
-    #         file = request.data['file']
-    #         public_id = str(obj.id)
-    #         folder = obj._meta.model_name
-    #         obj.img = upload_resource(
-    #             file,
-    #             public_id=public_id,
-    #             folder=folder,
-    #             overwrite=True,
-    #             invalidate=True,
-    #             format='png',
-    #         )
-    #         obj.save()
-    #         return Response(
-    #             status=status.HTTP_201_CREATED,
-    #             data={'image': obj.img.url},
-    #         )
-    #     else:
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.deactivate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
 
-class MemberViewSet(
-    get_viewset_transition_action_mixin(Member),
-    viewsets.ModelViewSet
-):
+class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.select_related(
         'group',
         'person',
@@ -435,6 +543,22 @@ class MemberViewSet(
         DRYPermissions,
     ]
     resource_name = "member"
+
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.activate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.deactivate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
 
 class OfficeViewSet(viewsets.ModelViewSet):
@@ -453,10 +577,7 @@ class OfficeViewSet(viewsets.ModelViewSet):
     resource_name = "office"
 
 
-class OfficerViewSet(
-    get_viewset_transition_action_mixin(Officer),
-    viewsets.ModelViewSet
-):
+class OfficerViewSet(viewsets.ModelViewSet):
     queryset = Officer.objects.select_related(
         'office',
         'person',
@@ -473,6 +594,22 @@ class OfficerViewSet(
         DRYPermissions,
     ]
     resource_name = "officer"
+
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.activate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.deactivate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
 
 class PanelistViewSet(viewsets.ModelViewSet):
@@ -512,35 +649,24 @@ class PersonViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "person"
 
-    # @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    # @parser_classes((FormParser, MultiPartParser,))
-    # def img(self, request, *args, **kwargs):
-    #     if 'file' in request.data:
-    #         obj = self.get_object()
-    #         file = request.data['file']
-    #         public_id = str(obj.id)
-    #         folder = obj._meta.model_name
-    #         obj.img = upload_resource(
-    #             file,
-    #             public_id=public_id,
-    #             folder=folder,
-    #             overwrite=True,
-    #             invalidate=True,
-    #             format='png',
-    #         )
-    #         obj.save()
-    #         return Response(
-    #             status=status.HTTP_201_CREATED,
-    #             data={'image': obj.img.url},
-    #         )
-    #     else:
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.activate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.deactivate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
 
-class RepertoryViewSet(
-    get_viewset_transition_action_mixin(Repertory),
-    viewsets.ModelViewSet
-):
+class RepertoryViewSet(viewsets.ModelViewSet):
     queryset = Repertory.objects.select_related(
         'group',
         'chart',
@@ -557,11 +683,24 @@ class RepertoryViewSet(
     ]
     resource_name = "repertory"
 
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.activate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
-class RoundViewSet(
-    get_viewset_transition_action_mixin(Round),
-    viewsets.ModelViewSet
-):
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.deactivate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+class RoundViewSet(viewsets.ModelViewSet):
     queryset = Round.objects.select_related(
         'session',
     ).prefetch_related(
@@ -580,13 +719,28 @@ class RoundViewSet(
     ]
     resource_name = "round"
 
-    @detail_route(methods=['POST'], permission_classes=[AllowAny])
-    @parser_classes((FormParser, MultiPartParser,))
-    def print_ann(self, request, *args, **kwargs):
-        obj = self.get_object()
+    @action(methods=['post'], detail=True)
+    def start(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.start(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
-        obj.print_ann()
-        serializer = self.get_serializer(obj)
+    @action(methods=['post'], detail=True)
+    def review(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.review(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def finish(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.finish(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
         return Response(serializer.data)
 
 
@@ -607,10 +761,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     resource_name = "score"
 
 
-class SessionViewSet(
-    get_viewset_transition_action_mixin(Session),
-    viewsets.ModelViewSet
-):
+class SessionViewSet(viewsets.ModelViewSet):
     queryset = Session.objects.select_related(
         'convention',
     ).prefetch_related(
@@ -630,7 +781,55 @@ class SessionViewSet(
     ]
     resource_name = "session"
 
-    @detail_route(methods=['get'], renderer_classes=[XLSXRenderer])
+    @action(methods=['post'], detail=True)
+    def build(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.build(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def open(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.open(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def close(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.close(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def verify(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.verify(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def start(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.start(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def finish(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.finish(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer])
     def legacy(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         xlsx = create_legacy_report(session)
@@ -648,7 +847,7 @@ class SessionViewSet(
             status=status.HTTP_200_OK
         )
 
-    @detail_route(methods=['get'], renderer_classes=[XLSXRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer])
     def drcj(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         xlsx = create_drcj_report(session)
@@ -666,7 +865,7 @@ class SessionViewSet(
             status=status.HTTP_200_OK
         )
 
-    @detail_route(methods=['get'], renderer_classes=[XLSXRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer])
     def contact(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         xlsx = create_contact_report(session)
@@ -684,7 +883,7 @@ class SessionViewSet(
             status=status.HTTP_200_OK
         )
 
-    @detail_route(methods=['get'], renderer_classes=[PDFRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
     def oss(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         context = {'session': session}
@@ -706,7 +905,7 @@ class SessionViewSet(
             status=status.HTTP_200_OK
         )
 
-    @detail_route(methods=['get'], renderer_classes=[PDFRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
     def sa(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         context = {'session': session}
@@ -779,6 +978,22 @@ class UserViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "user"
+
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.activate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.deactivate(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
 
 class StateLogViewSet(viewsets.ModelViewSet):
