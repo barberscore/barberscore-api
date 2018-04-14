@@ -3,31 +3,12 @@ import logging
 
 # Third-Party
 from django_filters.rest_framework import DjangoFilterBackend
-# from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import (
-    # status,
     viewsets,
 )
-# from rest_framework.decorators import (
-#     detail_route,
-#     parser_classes,
-# )
-# from rest_framework.parsers import (
-#     FormParser,
-#     MultiPartParser,
-# )
 from rest_framework.permissions import (
     AllowAny,
 )
-# from rest_framework.response import Response
-# from rest_framework_csv.renderers import CSVRenderer
-
-# Local
-# from .backends import (
-#     CoalesceFilterBackend,
-# )
-# from .filters import (
-# )
 from .models import (
     Human,
     Structure,
