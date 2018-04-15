@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f6d4545abd4acc90de5467e376a0be8f29664de0a1ff4639fca9a398bfc30eb4"
+            "sha256": "368ff321b7ecc3022738d152610d8d5fb308c567ef964caf60f459d5a94fd1e7"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -220,13 +220,6 @@
             "index": "pypi",
             "version": "==2.0.4"
         },
-        "django-appconf": {
-            "hashes": [
-                "sha256:6a4d9aea683b4c224d97ab8ee11ad2d29a37072c0c6c509896dd9857466fb261",
-                "sha256:ddab987d14b26731352c01ee69c090a4ebfc9141ed223bef039d79587f22acd9"
-            ],
-            "version": "==1.0.2"
-        },
         "django-cloudinary-storage": {
             "hashes": [
                 "sha256:1698fbd806635b1310294578d1b18f5dd45089e2e95a66256814211c54918b2f",
@@ -259,9 +252,7 @@
             "version": "==1.2.4"
         },
         "django-fsm-log": {
-            "editable": true,
-            "git": "https://github.com/barberscore/django-fsm-log.git",
-            "ref": "ef31252aa1ea13bd5c9a9c70b91c6f760976dc32"
+            "git": "git://github.com/barberscore/django-fsm-log.git"
         },
         "django-model-utils": {
             "hashes": [
@@ -735,13 +726,6 @@
             ],
             "version": "==1.6.3"
         },
-        "attrs": {
-            "hashes": [
-                "sha256:1c7960ccfd6a005cd9f7ba884e6316b5e430a3f1a6c37c5f87d8b43f83b54ec9",
-                "sha256:a17a9573a6f475c99b551c0e0a812707ddda1ec9653bed04c13841404ed6f450"
-            ],
-            "version": "==17.4.0"
-        },
         "autopep8": {
             "hashes": [
                 "sha256:2284d4ae2052fedb9f466c09728e30d2e231cfded5ffd7b1a20c34123fdc4ba4"
@@ -846,20 +830,6 @@
             ],
             "version": "==0.6.1"
         },
-        "more-itertools": {
-            "hashes": [
-                "sha256:0dd8f72eeab0d2c3bd489025bb2f6a1b8342f9b198f6fc37b52d15cfa4531fea",
-                "sha256:11a625025954c20145b37ff6309cd54e39ca94f72f6bb9576d1195db6fa2442e",
-                "sha256:c9ce7eccdcb901a2c75d326ea134e0886abfbea5f93e91cc95de9507c0816c44"
-            ],
-            "version": "==4.1.0"
-        },
-        "pluggy": {
-            "hashes": [
-                "sha256:7f8ae7f5bdf75671a718d2daf0a64b7885f74510bcd98b1a0bb420eb9a9d0cff"
-            ],
-            "version": "==0.6.0"
-        },
         "py": {
             "hashes": [
                 "sha256:29c9fab495d7528e80ba1e343b958684f4ace687327e6f789a94bf3d1915f881",
@@ -895,11 +865,11 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:6266f87ab64692112e5477eba395cfedda53b1933ccd29478e671e73b420c19c",
-                "sha256:fae491d1874f199537fd5872b5e1f0e74a009b979df9d53d1553fd03da1703e1"
+                "sha256:41e618f317957505ae2e81935733d8304d84170f7e21dfb15184d6fa8d7a5230",
+                "sha256:795ec29fbba70b22a593691ce8bcd4bdde2dc96e8099731f73c7d8bb3ce879bf"
             ],
             "index": "pypi",
-            "version": "==3.5.0"
+            "version": "==3.1.2"
         },
         "pytest-django": {
             "hashes": [
