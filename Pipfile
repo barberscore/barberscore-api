@@ -30,7 +30,6 @@ ranking = "*"
 requests = "*"
 rq = "*"
 whitenoise = "*"
-django-fsm-log = {git = "git://github.com/barberscore/django-fsm-log.git"}
 gunicorn = "*"
 ipython = "*"
 cloudinary = "*"
@@ -41,6 +40,7 @@ raven = "*"
 algoliasearch-django = "*"
 sendgrid-django = "*"
 brotli = "*"
+django-fsm-log = {git = "https://github.com/barberscore/django-fsm-log.git", editable = true}
 
 [dev-packages]
 pytest = "*"

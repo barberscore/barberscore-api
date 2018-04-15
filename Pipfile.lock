@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d6bf335cc580b025e1d7fc5c24f6203632a5eac9277c991f77ac639c9c2b889d"
+            "sha256": "10a653d0dfce883b2131a523631ca2eb0537d39c62881cbe8773de4e691c2871"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -220,6 +220,13 @@
             "index": "pypi",
             "version": "==2.0.4"
         },
+        "django-appconf": {
+            "hashes": [
+                "sha256:6a4d9aea683b4c224d97ab8ee11ad2d29a37072c0c6c509896dd9857466fb261",
+                "sha256:ddab987d14b26731352c01ee69c090a4ebfc9141ed223bef039d79587f22acd9"
+            ],
+            "version": "==1.0.2"
+        },
         "django-cloudinary-storage": {
             "hashes": [
                 "sha256:1698fbd806635b1310294578d1b18f5dd45089e2e95a66256814211c54918b2f",
@@ -252,7 +259,9 @@
             "version": "==1.2.4"
         },
         "django-fsm-log": {
-            "git": "git://github.com/barberscore/django-fsm-log.git"
+            "editable": true,
+            "git": "https://github.com/barberscore/django-fsm-log.git",
+            "ref": "ef31252aa1ea13bd5c9a9c70b91c6f760976dc32"
         },
         "django-model-utils": {
             "hashes": [
