@@ -40,7 +40,7 @@ raven = "*"
 algoliasearch-django = "*"
 sendgrid-django = "*"
 brotli = "*"
-django-fsm-log = {git = "https://github.com/barberscore/django-fsm-log.git", editable = true}
+django-fsm-log = {git = "https://github.com/barberscore/django-fsm-log.git", editable = false}
 
 [dev-packages]
 pytest = "*"
