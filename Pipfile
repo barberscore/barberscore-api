@@ -43,7 +43,7 @@ brotli = "*"
 django-fsm-log = {git = "git://github.com/barberscore/django-fsm-log.git"}
 
 [dev-packages]
-pytest = "==3.1.2"
+pytest = "*"
 pytest-django = "*"
 pylint = "*"
 pycodestyle = "*"
