@@ -308,8 +308,12 @@ class GroupManager(Manager):
             org.save()
         return
 
-    def denormalize(self):
-        groups = self.all()
+    def denormalize(self, cursor=None):
+        groups = self.filter(status=self.model.STATUS.active)
+        if cursor:
+            groups = groups.filter(
+                modified__gte=cursor,
+            )
         for group in groups:
             group.denormalize()
             group.save()
@@ -323,9 +327,11 @@ class GroupManager(Manager):
         )
 
         for quartet in quartets:
+            prior = quartet.is_senior
             is_senior = quartet.get_is_senior()
-            quartet.is_senior = is_senior
-            quartet.save()
+            if prior != is_senior:
+                quartet.is_senior = is_senior
+                quartet.save()
         return
 
 
