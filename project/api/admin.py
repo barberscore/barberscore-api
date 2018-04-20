@@ -482,7 +482,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        AppearanceInline,
+        # AppearanceInline,
         GridInline,
         # ContestantInline,
     ]
@@ -1206,7 +1206,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        AppearanceInline,
+        # AppearanceInline,
         PanelistInline,
         GridInline,
     ]
