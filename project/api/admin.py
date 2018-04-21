@@ -323,7 +323,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = (
-        'session',
+        'id',
     )
 
     list_filter = [
@@ -1276,6 +1276,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
+        '__str__',
         'kind',
         'gender',
         'num_rounds',
@@ -1324,6 +1325,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     search_fields = [
         'convention__name',
+        'kind',
     ]
 
 

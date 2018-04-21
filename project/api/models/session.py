@@ -131,7 +131,10 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __str__(self):
-        return str(self.id)
+        return "{0} {1}".format(
+            self.convention,
+            self.get_kind_display(),
+        )
 
     # Methods
 

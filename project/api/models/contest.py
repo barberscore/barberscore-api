@@ -70,7 +70,9 @@ class Contest(TimeStampedModel):
         resource_name = "contest"
 
     def __str__(self):
-        return str(self.id)
+        return "{0}".format(
+            self.award.name,
+        )
 
     # Contest Permissions
     @staticmethod
