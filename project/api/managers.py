@@ -540,6 +540,7 @@ class OfficerManager(Manager):
             start_date = role.start_date
             end_date = role.end_date
 
+        # Set Variables
         today = now().date()
         if end_date:
             if end_date < today:
@@ -549,13 +550,11 @@ class OfficerManager(Manager):
         else:
             status = self.model.STATUS.active
 
-        # Get group
+        # Get related fields
         Group = apps.get_model('api.group')
         group = Group.objects.get(mc_pk=group)
-        # Get person
         Person = apps.get_model('api.person')
         person = Person.objects.get(mc_pk=person)
-        # Get office
         Office = apps.get_model('api.office')
         office = Office.objects.get(name=office)
 
@@ -565,9 +564,6 @@ class OfficerManager(Manager):
             group=group,
             office=office,
         )
-        # Skip duplicates
-        if str(officer.mc_pk) == mc_pk:
-            return 'Skipped'
 
         # Instantiate prior values dictionary
         prior = {}
@@ -596,6 +592,10 @@ class OfficerManager(Manager):
         end_date_string = end_date.strftime('%Y-%m-%d') if end_date else None
         if prior.get('end_date') != end_date_string:
             diff['end_date'] = prior.get('end_date')
+
+        # Skip duplicates
+        if not diff:
+            return 'Skipped'
 
         # Set the transition description
         if officer.status == officer.STATUS.new:

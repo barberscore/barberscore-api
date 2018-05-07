@@ -119,7 +119,7 @@ class RoleManager(Manager):
         # Get the cursor
         Officer = apps.get_model('api.officer')
 
-        # Get base, excluding Quartets
+        # Get base
         roles = self.select_related(
             'structure',
             'human',
@@ -127,11 +127,11 @@ class RoleManager(Manager):
         # Will rebuild without a cursor
         if cursor:
             roles = roles.filter(
-                Q(created__gt=cursor) | Q(modified__gt=cursor)
+                modified__gt=cursor,
             )
         # Order and Return as objects
         roles = roles.order_by(
-            'created'
+            'modified'
         ).values_list(
             'id',
             'name',
