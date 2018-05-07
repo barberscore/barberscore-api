@@ -212,7 +212,8 @@ class GroupManager(Manager):
                     kind=kind,
                 )
             else:
-                parent = self.get(mc_pk=parent)
+                if parent:
+                    parent = self.get(mc_pk=parent)
             group.parent = parent
             # Do not transition groups in distdivs without divs
             divs = [
