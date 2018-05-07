@@ -614,8 +614,16 @@ class OfficerManager(Manager):
             )
         else:
             raise ValueError('Unknown status')
-        # Finally, save the record.
-        officer.save()
+        # Finally, save the record.  Break link if an overwrite to MC
+        try:
+            officer.save()
+        except IntegrityError:
+            old = self.get(
+                mc_pk=mc_pk,
+            )
+            old.mc_pk = None
+            old.save()
+            officer.save()
         return 'Updated'
 
 
