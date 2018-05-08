@@ -46,7 +46,6 @@ class Command(BaseCommand):
         else:
             cursor = None
         Group = apps.get_model('api.group')
-        cursor = timezone.now() - datetime.timedelta(days=options['days'], hours=1)
         Group.objects.denormalize(cursor=cursor)
         # Group.objects.sort_tree()
         Group.objects.update_seniors()
