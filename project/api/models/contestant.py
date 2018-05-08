@@ -234,11 +234,11 @@ class Contestant(TimeStampedModel):
 
     # Contestant Transitions
     @fsm_log_by
-    @transition(field=status, source=[STATUS.new, STATUS.excluded], target=STATUS.included)
+    @transition(field=status, source='*', target=STATUS.included)
     def include(self, *args, **kwargs):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.new, STATUS.included], target=STATUS.excluded)
+    @transition(field=status, source='*', target=STATUS.excluded)
     def exclude(self, *args, **kwargs):
         return
