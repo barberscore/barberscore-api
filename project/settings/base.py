@@ -3,10 +3,13 @@ import os
 
 # Third-Party
 import dj_database_url
+import requests
+from cryptography.x509 import load_pem_x509_certificate
+from cryptography.hazmat.backends import default_backend
 
 # Django
 from django.core.exceptions import ImproperlyConfigured
-
+from django.contrib.auth import authenticate
 
 def get_env_variable(var_name):
     """Get the environment variable or return exception."""
@@ -22,6 +25,9 @@ def get_env_variable(var_name):
         raise ImproperlyConfigured(error_msg)
     return var
 
+def jwt_get_username_from_payload_handler(payload):
+    """Switch to email as JWT username payload."""
+    return payload.get('email')
 
 # Common
 DEBUG = False
@@ -132,6 +138,41 @@ RQ_QUEUES = {
 }
 RQ_SHOW_ADMIN_LINK = True
 
+# Auth0
+AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
+AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
+AUTH0_CLIENT_DOMAIN = get_env_variable("AUTH0_CLIENT_DOMAIN")
+AUTH0_API_ID = get_env_variable("AUTH0_API_ID")
+AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
+AUTH0_API_DOMAIN = get_env_variable("AUTH0_API_DOMAIN")
+
+jwks = requests.get(
+    "https://{0}/.well-known/jwks.json".format(AUTH0_CLIENT_DOMAIN)
+).json()
+cert = "-----BEGIN CERTIFICATE-----\n{0}\n-----END CERTIFICATE-----".format(
+    jwks['keys'][0]['x5c'][0],
+)
+certificate = load_pem_x509_certificate(cert.encode('utf-8'), default_backend())
+jwt_public_key = certificate.public_key()
+
+JWT_AUTH = {
+    'JWT_AUDIENCE': AUTH0_CLIENT_ID,
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_username_from_payload_handler,
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_PUBLIC_KEY': jwt_public_key,
+    'JWT_ALGORITHM': 'RS256',
+}
+
+# Algolia
+ALGOLIA = {
+    'APPLICATION_ID': get_env_variable("ALGOLIASEARCH_APPLICATION_ID"),
+    'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
+}
+
+# Cloudinary
+CLOUDINARY_URL = get_env_variable("CLOUDINARY_URL")
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 # Rest Framework (JSONAPI)
 REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
@@ -163,7 +204,6 @@ JSON_API_FORMAT_KEYS = 'dasherize'
 JSON_API_FORMAT_TYPES = 'dasherize'
 JSON_API_PLURALIZE_TYPES = False
 
-
 # Applications
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -173,6 +213,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.humanize',
+    'algoliasearch_django',
+    'cloudinary_storage',
+    'cloudinary',
     'rest_framework',
     'django_filters',
     'dry_rest_permissions',
