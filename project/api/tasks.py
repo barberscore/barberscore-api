@@ -25,11 +25,11 @@ log = logging.getLogger(__name__)
 def get_auth0():
     auth0_api_access_token = cache.get('auth0_api_access_token')
     if not auth0_api_access_token:
-        client = GetToken(settings.AUTH0_CLIENT_DOMAIN)
+        client = GetToken(settings.AUTH0_DOMAIN)
         response = client.client_credentials(
-            settings.AUTH0_API_ID,
-            settings.AUTH0_API_SECRET,
-            settings.AUTH0_API_DOMAIN,
+            settings.AUTH0_CLIENT_ID,
+            settings.AUTH0_CLIENT_SECRET,
+            settings.AUTH0_AUDIENCE,
         )
         cache.set(
             'auth0_api_access_token',
@@ -38,7 +38,7 @@ def get_auth0():
         )
         auth0_api_access_token = response['access_token']
     auth0 = Auth0(
-        settings.AUTH0_CLIENT_DOMAIN,
+        settings.AUTH0_DOMAIN,
         auth0_api_access_token,
     )
     return auth0

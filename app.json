@@ -25,15 +25,7 @@
     "heroku-postgresql:hobby-dev"
   ],
   "env": {
-    "AUTH0_API_ID": {
-      "description": "Auth0 API id.",
-      "required": true
-    },
-    "AUTH0_API_SECRET": {
-      "description": "Auth0 API secret.",
-      "required": true
-    },
-    "AUTH0_API_DOMAIN": {
+    "AUTH0_DOMAIN": {
       "description": "Auth0 API endpoint.",
       "required": true
     },
@@ -45,8 +37,8 @@
       "description": "Auth0 Client secret.",
       "required": true
     },
-    "AUTH0_CLIENT_DOMAIN": {
-      "description": "Auth0 Client endpoint.",
+    "AUTH0_AUDIENCE": {
+      "description": "Auth0 API audience.",
       "required": true
     },
     "REDIS_MAX_CONNECTIONS": {
@@ -86,12 +78,10 @@
         "CLOUDINARY_URL": "test",
         "ALGOLIASEARCH_APPLICATION_ID": "test",
         "ALGOLIASEARCH_API_KEY": "test",
-        "AUTH0_API_ID": "test",
-        "AUTH0_API_SECRET": "test",
-        "AUTH0_API_DOMAIN": "test",
         "AUTH0_CLIENT_ID": "test",
         "AUTH0_CLIENT_SECRET": "test",
-        "AUTH0_CLIENT_DOMAIN": "test"
+        "AUTH0_DOMAIN": "test",
+        "AUTH0_AUDIENCE": "test"
       },
       "scripts": {
         "test": "pytest"

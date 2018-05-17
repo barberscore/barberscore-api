@@ -141,15 +141,13 @@ RQ_SHOW_ADMIN_LINK = True
 # Auth0
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
-AUTH0_CLIENT_DOMAIN = get_env_variable("AUTH0_CLIENT_DOMAIN")
-AUTH0_API_ID = get_env_variable("AUTH0_API_ID")
-AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
-AUTH0_API_DOMAIN = get_env_variable("AUTH0_API_DOMAIN")
+AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
+AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 
 jwt_public_key = None
-if AUTH0_CLIENT_DOMAIN != 'test':
+if AUTH0_DOMAIN != 'test':
     jwks = requests.get(
-        "https://{0}/.well-known/jwks.json".format(AUTH0_CLIENT_DOMAIN)
+        "https://{0}/.well-known/jwks.json".format(AUTH0_DOMAIN)
     ).json()
     cert = "-----BEGIN CERTIFICATE-----\n{0}\n-----END CERTIFICATE-----".format(
         jwks['keys'][0]['x5c'][0],
