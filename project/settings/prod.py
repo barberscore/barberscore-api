@@ -7,6 +7,7 @@ ALLOWED_HOSTS = [
     '.herokuapp.com',
 ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+SECURE_SSL_REDIRECT = True
 
 # Database
 DATABASES['bhs_db'] = dj_database_url.parse(
