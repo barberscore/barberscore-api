@@ -146,14 +146,16 @@ AUTH0_API_ID = get_env_variable("AUTH0_API_ID")
 AUTH0_API_SECRET = get_env_variable("AUTH0_API_SECRET")
 AUTH0_API_DOMAIN = get_env_variable("AUTH0_API_DOMAIN")
 
-jwks = requests.get(
-    "https://{0}/.well-known/jwks.json".format(AUTH0_CLIENT_DOMAIN)
-).json()
-cert = "-----BEGIN CERTIFICATE-----\n{0}\n-----END CERTIFICATE-----".format(
-    jwks['keys'][0]['x5c'][0],
-)
-certificate = load_pem_x509_certificate(cert.encode('utf-8'), default_backend())
-jwt_public_key = certificate.public_key()
+jwt_public_key = None
+if AUTH0_CLIENT_DOMAIN != 'test':
+    jwks = requests.get(
+        "https://{0}/.well-known/jwks.json".format(AUTH0_CLIENT_DOMAIN)
+    ).json()
+    cert = "-----BEGIN CERTIFICATE-----\n{0}\n-----END CERTIFICATE-----".format(
+        jwks['keys'][0]['x5c'][0],
+    )
+    certificate = load_pem_x509_certificate(cert.encode('utf-8'), default_backend())
+    jwt_public_key = certificate.public_key()
 
 JWT_AUTH = {
     'JWT_AUDIENCE': AUTH0_CLIENT_ID,
