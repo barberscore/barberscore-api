@@ -83,13 +83,13 @@
           "generator": "secret"
         },
         "REDIS_MAX_CONNECTIONS": "40",
-        "CLOUDINARY_URL": "",
-        "AUTH0_API_ID": "",
-        "AUTH0_API_SECRET": "",
-        "AUTH0_API_DOMAIN": "",
-        "AUTH0_CLIENT_ID": "",
-        "AUTH0_CLIENT_SECRET": "",
-        "AUTH0_CLIENT_DOMAIN": ""
+        "CLOUDINARY_URL": "test",
+        "AUTH0_API_ID": "test",
+        "AUTH0_API_SECRET": "test",
+        "AUTH0_API_DOMAIN": "test",
+        "AUTH0_CLIENT_ID": "test",
+        "AUTH0_CLIENT_SECRET": "test",
+        "AUTH0_CLIENT_DOMAIN": "test"
       },
       "scripts": {
         "test": "pytest"
