@@ -84,6 +84,8 @@
         },
         "REDIS_MAX_CONNECTIONS": "40",
         "CLOUDINARY_URL": "test",
+        "ALGOLIASEARCH_APPLICATION_ID": "test",
+        "ALGOLIASEARCH_API_KEY": "test",
         "AUTH0_API_ID": "test",
         "AUTH0_API_SECRET": "test",
         "AUTH0_API_DOMAIN": "test",
