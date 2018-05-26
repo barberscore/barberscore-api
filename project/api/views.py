@@ -84,6 +84,7 @@ from .responders import XLSXResponse
 from .tasks import create_legacy_report
 from .tasks import create_drcj_report
 from .tasks import create_contact_report
+from .tasks import create_roster_report
 
 
 log = logging.getLogger(__name__)
@@ -527,6 +528,23 @@ class GroupViewSet(viewsets.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
+
+    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer])
+    def roster(self, request, pk=None):
+        group = Group.objects.get(pk=pk)
+        xlsx = create_roster_report(group)
+        file_name = '{0}-roster'.format(
+            slugify(
+                "{0}".format(
+                    group.name,
+                )
+            )
+        )
+        return XLSXResponse(
+            xlsx,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
 
 
 class MemberViewSet(viewsets.ModelViewSet):

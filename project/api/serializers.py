@@ -364,6 +364,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'image',
+            'roster',
             'description',
             'bhs_id',
             'international',

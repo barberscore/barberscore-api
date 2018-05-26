@@ -19,6 +19,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.functional import cached_property
+from django.urls import reverse
 
 # First-Party
 from api.managers import GroupManager
@@ -370,6 +371,13 @@ class Group(TimeStampedModel):
     @cached_property
     def is_mc(self):
         return bool(self.mc_pk)
+
+    @cached_property
+    def roster(self):
+        return reverse(
+            'group-roster',
+            args=[str(self.id)]
+        )
 
     # Methods
     def is_active(self):

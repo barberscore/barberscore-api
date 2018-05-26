@@ -412,6 +412,41 @@ def create_contact_report(session):
 
 
 @job
+def create_roster_report(group):
+    Member = apps.get_model('api.member')
+    wb = Workbook()
+    ws = wb.active
+    fieldnames = [
+        'BHS ID',
+        'First Name',
+        'Last Name',
+        'Expiration Date',
+        'Status',
+    ]
+    ws.append(fieldnames)
+    members = group.members.filter(
+        status=Member.STATUS.active,
+    ).order_by('person__last_name', 'person__first_name')
+    for member in members:
+        bhs_id = member.person.bhs_id
+        first_name = member.person.first_name
+        last_name = member.person.last_name
+        expiration = member.person.current_through
+        status = member.person.get_status_display()
+        row = [
+            bhs_id,
+            first_name,
+            last_name,
+            expiration,
+            status,
+        ]
+        ws.append(row)
+    file = save_virtual_workbook(wb)
+    content = ContentFile(file)
+    return content
+
+
+@job
 def create_variance_report(appearance):
     Score = apps.get_model('api.score')
     Panelist = apps.get_model('api.panelist')
