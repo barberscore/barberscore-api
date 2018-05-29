@@ -925,17 +925,17 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user, created
 
-    def delete_orphans(self):
-        accounts = get_accounts()
-        users = list(self.filter(
-            account_id__isnull=False
-        ).values_list('account_id', flat=True))
-        i = 0
-        for account in accounts:
-            if account['account_id'] not in users:
-                i += 1
-                delete_account.delay(account['account_id'])
-        return i
+    # def delete_orphans(self):
+    #     accounts = get_accounts()
+    #     users = list(self.filter(
+    #         account_id__isnull=False
+    #     ).values_list('account_id', flat=True))
+    #     i = 0
+    #     for account in accounts:
+    #         if account['account_id'] not in users:
+    #             i += 1
+    #             delete_account.delay(account['account_id'])
+    #     return i
 
     def create_user(self, email, **kwargs):
         user = self.model(

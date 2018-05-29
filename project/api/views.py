@@ -26,7 +26,7 @@ from .filters import GroupFilter
 from .filters import OfficerFilter
 from .filters import RoundFilter
 from .filters import SessionFilter
-from .filters import UserFilter
+# from .filters import UserFilter
 from .filters import StateLogFilter
 from .models import Appearance
 from .models import Assignment
@@ -987,7 +987,7 @@ class UserViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     ).order_by('id')
     serializer_class = UserSerializer
-    filter_class = UserFilter
+    filter_class = None
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,

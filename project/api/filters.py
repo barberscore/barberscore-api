@@ -156,11 +156,11 @@ class AccountListFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value() == 'Yes':
             return queryset.filter(
-                account_id__isnull=False,
+                username__startswith='auth0',
             )
         if self.value() == 'No':
-            return queryset.filter(
-                account_id__isnull=True,
+            return queryset.exclude(
+                username__startswith='auth0',
             )
 
 
@@ -383,16 +383,6 @@ class SessionFilter(FilterSet):
                 'exact',
             ],
             'convention__assignments__category': [
-                'exact',
-            ],
-        }
-
-
-class UserFilter(FilterSet):
-    class Meta:
-        model = User
-        fields = {
-            'account_id': [
                 'exact',
             ],
         }

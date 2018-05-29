@@ -1453,7 +1453,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     list_display = [
         'name',
         'email',
-        'account_id',
         'status',
         'is_mc',
     ]
@@ -1480,7 +1479,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
                 'status',
                 'email',
                 'person',
-                'account_id',
                 'is_mc',
                 'is_staff',
                 'created',
@@ -1499,7 +1497,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     search_fields = [
         'email',
         'name',
-        'account_id',
     ]
     inlines = [
         StateLogInline,

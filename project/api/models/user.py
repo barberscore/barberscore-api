@@ -17,7 +17,7 @@ from django.utils.functional import cached_property
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
 from django_fsm_log.decorators import fsm_log_description
-from api.tasks import update_or_create_account_from_user
+# from api.tasks import update_or_create_account_from_user
 
 # First-Party
 from api.managers import UserManager
@@ -47,6 +47,14 @@ class User(AbstractBaseUser):
         help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    username = models.CharField(
+        max_length=100,
+        unique=True,
+        editable=True,
+        null=True,
+        blank=True,
     )
 
     name = models.CharField(
@@ -157,18 +165,18 @@ class User(AbstractBaseUser):
         return False
 
     # User Transitions
-    @fsm_log_by
-    @fsm_log_description
-    @transition(field=status, source='*', target=STATUS.active)
-    def activate(self, description=None, *args, **kwargs):
-        account, created = update_or_create_account_from_user(self, blocked=False)
-        self.account_id = account['user_id']
-        return
+    # @fsm_log_by
+    # @fsm_log_description
+    # @transition(field=status, source='*', target=STATUS.active)
+    # def activate(self, description=None, *args, **kwargs):
+    #     account, created = update_or_create_account_from_user(self, blocked=False)
+    #     self.account_id = account['user_id']
+    #     return
 
-    @fsm_log_by
-    @fsm_log_description
-    @transition(field=status, source='*', target=STATUS.inactive)
-    def deactivate(self, description=None, *args, **kwargs):
-        account, created = update_or_create_account_from_user(self, blocked=True)
-        self.account_id = account['user_id']
-        return
+    # @fsm_log_by
+    # @fsm_log_description
+    # @transition(field=status, source='*', target=STATUS.inactive)
+    # def deactivate(self, description=None, *args, **kwargs):
+    #     account, created = update_or_create_account_from_user(self, blocked=True)
+    #     self.account_id = account['user_id']
+    #     return

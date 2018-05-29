@@ -70,7 +70,7 @@ def get_accounts():
                 raise e
         for user in users:
             payload = {
-                'account_id': user['user_id'],
+                'username': user['user_id'],
             }
             output.append(payload)
         more = bool(results['users'])
@@ -80,116 +80,112 @@ def get_accounts():
 
 
 @job
-def delete_account(account_id):
+def delete_account(username):
     auth0 = get_auth0()
     # Delete Auth0
-    auth0.users.delete(account_id)
-    return account_id
+    auth0.users.delete(username)
+    return username
 
 
-@job
-def update_or_create_account_from_user(user, blocked):
-    # Get the auth0 client
-    auth0 = get_auth0()
-    # Instantiate the created variable
-    created = True
-    # Try to get existing
-    if user.account_id:
-        try:
-            # Flip the bit if you can find an account
-            account = auth0.users.get(user.account_id)
-            created = False
-        except Auth0Error as e:
-            # If you can't find the account legit then proceed
-            if not e.status_code == 404:
-                # If there's a standard error, raise it.
-                raise(e)
-    # Build payload
-    payload = {
-        "connection": "email",
-        "email": user.email,
-        "email_verified": True,
-        # "blocked": blocked,
-        "user_metadata": {
-            "name": user.name
-        },
-        "app_metadata": {
-            "barberscore_id": str(user.id),
-        }
-    }
-    if created:
-        # Create primary with payload if new
-        account = auth0.users.create(payload)
-        account_id = account['user_id']
-        user.account_id = account_id
-        user.save()
-        # Now create secondary account
-        random = get_random_string()
-        secondary_payload = {
-            "connection": "Default",
-            "email": user.email,
-            "password": random,
-            "email_verified": True,
-        }
-        secondary_account = auth0.users.create(secondary_payload)
-        secondary_id = secondary_account['user_id']
-        secondary_body = {
-            'provider': 'auth0',
-            'user_id': secondary_id,
-        }
-        auth0.users.link_user_account(
-            account_id,
-            secondary_body,
-        )
-    else:
-        # Only update if there are diffs
-        try:
-            dirty = any([
-                account['email'] != user.email,
-                account['user_metadata']['name'] != user.name,
-                account['app_metadata']['barberscore_id'] != str(user.id),
-                # account['blocked'] != blocked,
-            ])
-        except KeyError:
-            dirty = True
-        if dirty:
-            account = auth0.users.update(user.account_id, payload)
-    return account, created
+# @job
+# def update_or_create_account_from_user(user, blocked):
+#     # Get the auth0 client
+#     auth0 = get_auth0()
+#     # Instantiate the created variable
+#     created = True
+#     # Try to get existing
+#     if user.username.startswith('auth0'):
+#         try:
+#             # Flip the bit if you can find an account
+#             account = auth0.users.get(user.username)
+#             created = False
+#         except Auth0Error as e:
+#             # If you can't find the account legit then proceed
+#             if not e.status_code == 404:
+#                 # If there's a standard error, raise it.
+#                 raise(e)
+#     # Build payload
+#     payload = {
+#         "connection": "BHS",
+#         "user_id": user.,
+#         "email": user.email,
+#         "email_verified": True,
+#         "password": random,
+#         "user_metadata": {
+#             "name": user.__str__(),
+#         },
+#     }
+#     if created:
+#         # Create primary with payload if new
+#         auth0.users.create(payload)
+#         user.save()
+#         # Now create secondary account
+#         random = get_random_string()
+#         secondary_payload = {
+#             "connection": "Default",
+#             "email": user.email,
+#             "password": random,
+#             "email_verified": True,
+#         }
+#         secondary_account = auth0.users.create(secondary_payload)
+#         secondary_id = secondary_account['user_id']
+#         secondary_body = {
+#             'provider': 'auth0',
+#             'user_id': secondary_id,
+#         }
+#         auth0.users.link_user_account(
+#             account_id,
+#             secondary_body,
+#         )
+#     else:
+#         # Only update if there are diffs
+#         try:
+#             dirty = any([
+#                 account['email'] != user.email,
+#                 account['user_metadata']['name'] != user.name,
+#                 account['app_metadata']['barberscore_id'] != str(user.id),
+#                 # account['blocked'] != blocked,
+#             ])
+#         except KeyError:
+#             dirty = True
+#         if dirty:
+#             account = auth0.users.update(user.account_id, payload)
+#     return account, created
 
 
-@job
-def link_secondary_account_from_user(user):
-    # Get the auth0 client
-    auth0 = get_auth0()
-    # Create random initial password
-    random = get_random_string()
-    # Create the payload
-    secondary_payload = {
-        "connection": "Default",
-        "email": user.email,
-        "password": random,
-        "email_verified": True,
-    }
-    secondary_account = auth0.users.create(secondary_payload)
-    secondary_id = secondary_account['user_id']
-    secondary_body = {
-        'provider': 'auth0',
-        'user_id': secondary_id,
-    }
-    response = auth0.users.link_user_account(
-        user.account_id,
-        secondary_body,
-    )
-    return response
+# @job
+# def link_secondary_account_from_user(user):
+#     # Get the auth0 client
+#     auth0 = get_auth0()
+#     # Create random initial password
+#     random = get_random_string()
+#     # Create the payload
+#     secondary_payload = {
+#         "connection": "Default",
+#         "email": user.email,
+#         "password": random,
+#         "email_verified": True,
+#     }
+#     secondary_account = auth0.users.create(secondary_payload)
+#     secondary_id = secondary_account['user_id']
+#     secondary_body = {
+#         'provider': 'auth0',
+#         'user_id': secondary_id,
+#     }
+#     response = auth0.users.link_user_account(
+#         user.account_id,
+#         secondary_body,
+#     )
+#     return response
 
 
 @job
 def delete_account_from_user(user):
-    if not user.account_id:
+    if not user.username.startswith('auth0'):
         raise ValueError("No account attached.")
     auth0 = get_auth0()
     # Delete Auth0
-    response = auth0.users.delete(user.account_id)
+    response = auth0.users.delete(user.username)
     return response
 
 
