@@ -18,6 +18,7 @@ from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
+from django.core.validators import validate_email
 
 log = logging.getLogger(__name__)
 
@@ -190,6 +191,28 @@ def delete_account_from_user(user):
     # Delete Auth0
     response = auth0.users.delete(user.account_id)
     return response
+
+
+@job
+def create_account_from_human(human):
+    validate_email(human.email)
+    # Get the auth0 client
+    auth0 = get_auth0()
+    # Build payload
+    name = human.__str__()
+    random = get_random_string()
+    payload = {
+        "user_id": human.id,
+        "connection": "BHS",
+        "email": human.email,
+        "password": random,
+        "email_verified": True,
+        "user_metadata": {
+            "name": name
+        },
+    }
+    account = auth0.users.create(payload)
+    return account
 
 
 @job
@@ -726,3 +749,16 @@ def send_session_reports(template, context):
         to=to,
     )
     return email.send()
+
+
+@job
+def update_bhs_member(member):
+    Join = apps.get_model('bhs.join')
+    Member = apps.get_model('api.member')
+    joins = Join.objects.filter(
+        subscription__human__id=member.person.mc_pk,
+        structure__id=member.group.mc_pk,
+    ).order_by('modified')
+    for join in joins:
+        result = Member.objects.update_from_join(join)
+    return result

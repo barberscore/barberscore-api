@@ -342,7 +342,7 @@ class MemberManager(Manager):
         if is_object:
             mc_pk = join[0]
             structure = join[1]
-            person = join[2]
+            human = join[2]
             inactive_date = join[3]
             inactive_reason = join[4]
             part = join[5]
@@ -355,7 +355,7 @@ class MemberManager(Manager):
         else:
             mc_pk = str(join.id)
             structure = str(join.structure.id)
-            person = str(join.subscription.human.id)
+            human = str(join.subscription.human.id)
             inactive_date = join.inactive_date
             inactive_reason = join.inactive_reason
             part = join.vocal_part
@@ -415,11 +415,11 @@ class MemberManager(Manager):
         Person = apps.get_model('api.person')
         try:
             person = Person.objects.get(
-                mc_pk=person,
+                mc_pk=human,
             )
         except Person.DoesNotExist:
             Human = apps.get_model('bhs.human')
-            human = Human.objects.get(id=person)
+            human = Human.objects.get(id=human)
             person = Person.objects.update_or_create_from_human(human)
 
         # get or create
