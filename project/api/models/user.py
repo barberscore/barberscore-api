@@ -49,6 +49,14 @@ class User(AbstractBaseUser):
         default=STATUS.new,
     )
 
+    username = models.CharField(
+        max_length=100,
+        unique=True,
+        editable=True,
+        null=True,
+        blank=True,
+    )
+
     name = models.CharField(
         max_length=255,
         editable=True,
