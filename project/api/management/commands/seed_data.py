@@ -129,63 +129,54 @@ class Command(BaseCommand):
             person=admin_person,
             password='password',
             is_staff=True,
-            account_id='email|5a18277f7cd31262971cddfc',
         )
         scjc_user = UserFactory(
             id='a3be3d43-c5d3-4aec-973a-d42c00c72256',
             name='SCJC Person',
             email=scjc_person.email,
             person=scjc_person,
-            account_id='email|5a1827707cd31262971cddf8',
         )
         drcj_user = UserFactory(
             id='55ef12a3-576d-496b-a70b-c3126f62caa2',
             name='DRCJ Person',
             email=drcj_person.email,
             person=drcj_person,
-            account_id='email|5a12f3607cd31262971bca22',
         )
         ca_user = UserFactory(
             id='7cfdac82-ca9f-46dc-9c7b-c9054908cb7c',
             name='CA Person',
             email=ca_person.email,
             person=ca_person,
-            account_id='email|5a1827777cd31262971cddf9',
         )
         quartet_lead_user = UserFactory(
             id='afa2d19b-1099-4a77-bc8c-04b06a6896a0',
             name='Quartet Person',
             email=quartet_lead_person.email,
             person=quartet_lead_person,
-            account_id='email|5a12f3627cd31262971bca24',
         )
         chorus_manager_user = UserFactory(
             id='bd32c1e6-4c61-4f7f-bee5-e843d80bb9ad',
             name='Chorus Person',
             email=chorus_manager_person.email,
             person=chorus_manager_person,
-            account_id='email|5a12f3637cd31262971bca25',
         )
         music_judge_user = UserFactory(
             id='55204faf-d4c6-4b88-9bed-3721db42ccf3',
             name='Music Person',
             email=music_judge_person.email,
             person=music_judge_person,
-            account_id='email|5a2ef1717cd312629752490b',
         )
         performance_judge_user = UserFactory(
             id='8e326a1a-5bb9-4a29-98f9-c7f704870f43',
             name='Performance Person',
             email=performance_judge_person.email,
             person=performance_judge_person,
-            account_id='email|5a2ef1717cd312629752490a',
         )
         singing_judge_user = UserFactory(
             id='fb6bb161-69f0-49ff-ba51-3a4721220566',
             name='Singing Person',
             email=singing_judge_person.email,
             person=singing_judge_person,
-            account_id='email|5a2ef1707cd3126297524909',
         )
         # Create Groups
         international = GroupFactory(

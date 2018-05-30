@@ -396,3 +396,13 @@ class StateLogFilter(FilterSet):
                 'exact',
             ],
         }
+
+
+class UserFilter(FilterSet):
+    class Meta:
+        model = User
+        fields = {
+            'username': [
+                'exact',
+            ],
+        }

@@ -27,7 +27,10 @@ def get_env_variable(var_name):
 
 def jwt_get_username_from_payload_handler(payload):
     """Switch to email as JWT username payload."""
-    return payload.get('email')
+    username = payload.get('sub')
+    authenticate(remote_user=username)
+    return username
+
 
 # Common
 DEBUG = False
@@ -52,9 +55,13 @@ DATETIME_FORMAT = 'Y-m-d H:i:s'
 AUTH_USER_MODEL = "api.User"
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.RemoteUserBackend',
 ]
-USERNAME_FIELD = 'email'
-REQUIRED_FIELDS = []
+USERNAME_FIELD = 'username'
+REQUIRED_FIELDS = [
+    'email',
+    'name',
+]
 LOGIN_URL = 'admin:login'
 LOGIN_REDIRECT_URL = 'admin:index'
 LOGOUT_REDIRECT_URL = 'admin:login'
@@ -75,6 +82,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
