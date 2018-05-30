@@ -67,13 +67,13 @@ class User(AbstractBaseUser):
         editable=True,
     )
 
-    person = models.OneToOneField(
-        'Person',
-        related_name='user',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
+    # person = models.OneToOneField(
+    #     'Person',
+    #     related_name='user_new',
+    #     on_delete=models.CASCADE,
+    #     null=True,
+    #     blank=True,
+    # )
 
     account_id = models.CharField(
         max_length=100,
