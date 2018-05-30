@@ -214,6 +214,44 @@ def create_account_from_human(human):
     account = auth0.users.create(payload)
     return account
 
+@job
+def migrate_username(user):
+    client = get_auth0()
+    account = client.users.get(user.account_id)
+    identities = account['identities']
+    for identity in identities:
+        if identity['provider'] == 'auth0':
+            user.username = "auth0|{0}".format(identity['user_id'])
+            user.save()
+            return True
+    return False
+
+
+@job
+def unlink_user_account(user):
+    client = get_auth0()
+    user_id = user.username.partition('|')[2]
+    client.users.unlink_user_account(
+        user.account_id,
+        'auth0',
+        user_id,
+    )
+    return
+
+@job
+def relink_user_account(user):
+    client = get_auth0()
+    user_id = user.account_id.partition('|')[2]
+    payload = {
+        'provider': 'email',
+        'user_id': user_id,
+    }
+    client.users.link_user_account(
+        user.username,
+        payload,
+    )
+    return
+
 
 @job
 def create_legacy_report(session):
