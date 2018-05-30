@@ -73,6 +73,8 @@ class User(AbstractBaseUser):
         'Person',
         related_name='user',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     account_id = models.CharField(
