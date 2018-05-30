@@ -10,6 +10,6 @@ from .tasks import delete_account
 
 @receiver(pre_delete, sender=User)
 def user_pre_delete(sender, instance, **kwargs):
-    if instance.username.startswith('auth0'):
-        delete_account(instance.username)
+    # if instance.username.startswith('auth0'):
+        # delete_account(instance.username)
     return
