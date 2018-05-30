@@ -100,6 +100,14 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     @cached_property
+    def is_mc(self):
+        """Proxy status."""
+        if self.username.startswith('auth0'):
+            return True
+        else:
+            return False
+
+    @cached_property
     def is_active(self):
         """Proxy status."""
         if self.status == self.STATUS.active:

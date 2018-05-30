@@ -1514,7 +1514,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     ]
 
     def is_mc(self, instance):
-        return instance.person.is_mc
+        return instance.username.startswith('auth0')
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
 
