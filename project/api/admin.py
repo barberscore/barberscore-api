@@ -1475,6 +1475,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         (None, {
             'fields': (
                 'id',
+                'username',
                 'name',
                 'status',
                 'email',
