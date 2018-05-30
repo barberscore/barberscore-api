@@ -1453,17 +1453,16 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     list_display = [
         'name',
         'email',
-        'account_id',
         'status',
         'is_mc',
     ]
-    list_select_related = [
-        'person',
-    ]
+    # list_select_related = [
+    #     'person',
+    # ]
 
-    autocomplete_fields = [
-        'person',
-    ]
+    # autocomplete_fields = [
+    #     'person',
+    # ]
 
     list_filter = (
         'status',
@@ -1476,11 +1475,11 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         (None, {
             'fields': (
                 'id',
+                'username',
                 'name',
                 'status',
                 'email',
-                'person',
-                'account_id',
+                # 'person',
                 'is_mc',
                 'is_staff',
                 'created',
@@ -1488,26 +1487,25 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
             )
         }),
     )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': (
-                'person',
-            )
-        }),
-    )
+    # add_fieldsets = (
+    #     (None, {
+    #         'classes': ('wide',),
+    #         'fields': (
+    #             'person',
+    #         )
+    #     }),
+    # )
     search_fields = [
         'email',
         'name',
-        'account_id',
     ]
     inlines = [
         StateLogInline,
     ]
-    ordering = (
-        'person__last_name',
-        'person__first_name',
-    )
+    # ordering = (
+    #     'person__last_name',
+    #     'person__first_name',
+    # )
     filter_horizontal = ()
     readonly_fields = [
         'id',
@@ -1517,7 +1515,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     ]
 
     def is_mc(self, instance):
-        return instance.person.is_mc
+        return instance.username.startswith('auth0')
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
 
