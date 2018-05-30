@@ -53,8 +53,6 @@ class User(AbstractBaseUser):
         max_length=100,
         unique=True,
         editable=True,
-        null=True,
-        blank=True,
     )
 
     name = models.CharField(
