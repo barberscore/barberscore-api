@@ -99,7 +99,7 @@ def update_account(user):
             'name': name,
         }
     }
-    account = client.users.update(user.username, payload)
+    account = auth0.users.update(user.username, payload)
     return account
 
 
