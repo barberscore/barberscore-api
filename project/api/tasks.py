@@ -80,11 +80,27 @@ def get_accounts():
 
 
 @job
-def delete_account(username):
+def delete_account(user):
     auth0 = get_auth0()
     # Delete Auth0
-    auth0.users.delete(username)
+    auth0.users.delete(user.username)
     return username
+
+
+@job
+def update_account(user):
+    auth0 = get_auth0()
+    name = user.person.__str__()
+    email = user.person.email.lower()
+    payload = {
+        'email': email,
+        'email_verified': True,
+        'user_metadata': {
+            'name': name,
+        }
+    }
+    account = client.users.update(user.username, payload)
+    return account
 
 
 # @job
