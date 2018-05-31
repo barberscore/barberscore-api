@@ -55,17 +55,17 @@ class User(AbstractBaseUser):
         editable=True,
     )
 
-    name = models.CharField(
-        max_length=255,
-        editable=True,
-        blank=True,
-    )
+    # name = models.CharField(
+    #     max_length=255,
+    #     editable=True,
+    #     blank=True,
+    # )
 
-    email = models.EmailField(
-        blank=False,
-        unique=True,
-        editable=True,
-    )
+    # email = models.EmailField(
+    #     blank=False,
+    #     unique=True,
+    #     editable=True,
+    # )
 
     # person = models.OneToOneField(
     #     'Person',
@@ -75,13 +75,13 @@ class User(AbstractBaseUser):
     #     blank=True,
     # )
 
-    account_id = models.CharField(
-        max_length=100,
-        unique=True,
-        editable=True,
-        null=True,
-        blank=True,
-    )
+    # account_id = models.CharField(
+    #     max_length=100,
+    #     unique=True,
+    #     editable=True,
+    #     null=True,
+    #     blank=True,
+    # )
 
     is_staff = models.BooleanField(
         default=False,
@@ -124,7 +124,7 @@ class User(AbstractBaseUser):
 
     # User Internals
     def __str__(self):
-        return self.name
+        return self.username
 
     def clean(self):
         pass

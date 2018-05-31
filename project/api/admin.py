@@ -1451,8 +1451,9 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         'status',
     ]
     list_display = [
-        'name',
-        'email',
+        'username',
+        # 'name',
+        # 'email',
         'status',
         'is_mc',
     ]
@@ -1476,9 +1477,9 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
             'fields': (
                 'id',
                 'username',
-                'name',
+                # 'name',
                 'status',
-                'email',
+                # 'email',
                 # 'person',
                 'is_mc',
                 'is_staff',
@@ -1496,8 +1497,8 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     #     }),
     # )
     search_fields = [
-        'email',
-        'name',
+        'username',
+        # 'name',
     ]
     inlines = [
         StateLogInline,
@@ -1515,7 +1516,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     ]
 
     def is_mc(self, instance):
-        return instance.username.startswith('auth0')
+        return instance.username.startswith('auth0|')
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
 

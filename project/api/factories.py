@@ -383,10 +383,10 @@ class VenueFactory(DjangoModelFactory):
 
 
 class UserFactory(DjangoModelFactory):
-    name = Faker('name_male')
-    username = Faker('word')
+    # name = Faker('name_male')
+    username = Faker('uuid4')
     status = User.STATUS.active
-    email = Sequence(lambda x: '{0:#}@barberscore.com'.format(x))
+    # email = Sequence(lambda x: '{0:#}@barberscore.com'.format(x))
     password = PostGenerationMethodCall('set_password', 'password')
     # person = RelatedFactory('api.factories.PersonFactory')
     is_staff = False
