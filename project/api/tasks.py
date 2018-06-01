@@ -103,6 +103,55 @@ def update_account(user):
     return account
 
 
+@job
+def create_account(email, name):
+    auth0 = get_auth0()
+    email = email.lower()
+    payload = {
+        'email': email,
+        'email_verified': True,
+        'user_metadata': {
+            'name': name,
+        }
+    }
+    account = auth0.users.create(payload)
+    return account
+
+
+@job
+def create_account_from_person(person):
+    # TODO Not sure we're keeping this
+    auth0 = get_auth0()
+    email = person.email.lower()
+    name = person.__str__()
+    payload = {
+        'email': email,
+        'email_verified': True,
+        'user_metadata': {
+            'name': name,
+        }
+    }
+    account = auth0.users.create(payload)
+    return account
+
+
+@job
+def update_account_from_person(person):
+    # TODO Not sure we're keeping this
+    auth0 = get_auth0()
+    name = person.__str__()
+    email = person.email.lower()
+    payload = {
+        'email': email,
+        'email_verified': True,
+        'user_metadata': {
+            'name': name,
+        }
+    }
+    account = auth0.users.update(person.user.username, payload)
+    return account
+
+
 # @job
 # def update_or_create_account_from_user(user, blocked):
 #     # Get the auth0 client
@@ -196,16 +245,6 @@ def update_account(user):
 
 
 @job
-def delete_account_from_user(user):
-    if not user.username.startswith('auth0'):
-        raise ValueError("No account attached.")
-    auth0 = get_auth0()
-    # Delete Auth0
-    response = auth0.users.delete(user.username)
-    return response
-
-
-@job
 def create_account_from_human(human):
     validate_email(human.email)
     # Get the auth0 client
@@ -225,19 +264,6 @@ def create_account_from_human(human):
     }
     account = auth0.users.create(payload)
     return account
-
-@job
-def migrate_username(user):
-    client = get_auth0()
-    account = client.users.get(user.account_id)
-    identities = account['identities']
-    for identity in identities:
-        if identity['provider'] == 'auth0':
-            user.username = "auth0|{0}".format(identity['user_id'])
-            user.save()
-            return True
-    return False
-
 
 @job
 def unlink_user_account(user):
