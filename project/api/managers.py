@@ -18,6 +18,7 @@ from django.db.models import Value
 from django.forms.models import model_to_dict
 from django.utils.timezone import now
 from api.tasks import get_accounts
+from api.tasks import update_account
 from api.tasks import delete_account
 from django.db.models.functions import Concat
 
@@ -734,6 +735,10 @@ class PersonManager(Manager):
                     email=email,
                     defaults=defaults,
                 )
+        # Update Auth0
+        user = getattr(person, 'user', None)
+        if not created and user:
+            update_account.delay(user)
         return person, created
 
     def update_from_subscription(self, subscription, is_object=False):

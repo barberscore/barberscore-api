@@ -21,6 +21,7 @@ from django_fsm_log.decorators import fsm_log_description
 
 # First-Party
 from api.managers import UserManager
+from api.tasks import activate_user
 
 config = api_apps.get_app_config('api')
 
@@ -54,34 +55,6 @@ class User(AbstractBaseUser):
         unique=True,
         editable=True,
     )
-
-    # name = models.CharField(
-    #     max_length=255,
-    #     editable=True,
-    #     blank=True,
-    # )
-
-    # email = models.EmailField(
-    #     blank=False,
-    #     unique=True,
-    #     editable=True,
-    # )
-
-    # person = models.OneToOneField(
-    #     'Person',
-    #     related_name='user_new',
-    #     on_delete=models.CASCADE,
-    #     null=True,
-    #     blank=True,
-    # )
-
-    # account_id = models.CharField(
-    #     max_length=100,
-    #     unique=True,
-    #     editable=True,
-    #     null=True,
-    #     blank=True,
-    # )
 
     is_staff = models.BooleanField(
         default=False,
@@ -173,18 +146,16 @@ class User(AbstractBaseUser):
         return False
 
     # User Transitions
-    # @fsm_log_by
-    # @fsm_log_description
-    # @transition(field=status, source='*', target=STATUS.active)
-    # def activate(self, description=None, *args, **kwargs):
-    #     account, created = update_or_create_account_from_user(self, blocked=False)
-    #     self.account_id = account['user_id']
-    #     return
+    @fsm_log_by
+    @fsm_log_description
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, description=None, *args, **kwargs):
+        activate_user(self)
+        return
 
-    # @fsm_log_by
-    # @fsm_log_description
-    # @transition(field=status, source='*', target=STATUS.inactive)
-    # def deactivate(self, description=None, *args, **kwargs):
-    #     account, created = update_or_create_account_from_user(self, blocked=True)
-    #     self.account_id = account['user_id']
-    #     return
+    @fsm_log_by
+    @fsm_log_description
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, description=None, *args, **kwargs):
+        self.person = None
+        return

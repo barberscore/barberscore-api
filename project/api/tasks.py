@@ -80,6 +80,17 @@ def get_accounts():
 
 
 @job
+def activate_user(user):
+    Person = apps.get_model('api.person')
+    auth0 = get_auth0()
+    account = auth0.users.get(user.username)
+    person = Person.objects.get(email=account['email'])
+    user.person = person
+    user.save()
+    return user
+
+
+@job
 def delete_account(user):
     auth0 = get_auth0()
     # Delete Auth0
