@@ -28,6 +28,7 @@ class Chart(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-20, 'protected', 'Protected',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New'),
         (10, 'active', 'Active'),
@@ -130,11 +131,17 @@ class Chart(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.active)
     def activate(self, *args, **kwargs):
-        """Activate the Award."""
+        """Activate the Chart."""
         return
 
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, *args, **kwargs):
-        """Deactivate the Award."""
+        """Deactivate the Chart."""
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.protected)
+    def protect(self, *args, **kwargs):
+        """Protect the Chart."""
         return
