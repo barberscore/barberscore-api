@@ -12,7 +12,7 @@ from .tasks import delete_account
 
 @receiver(pre_delete, sender=User)
 def user_pre_delete(sender, instance, **kwargs):
-    if settings.ENV == 'prod':
+    if settings.DJANGO_SETTINGS_MODULE == 'settings.prod':
         if instance.username.startswith('auth0'):
             delete_account(instance)
     return

@@ -33,6 +33,7 @@ def jwt_get_username_from_payload_handler(payload):
 
 
 # Common
+DJANGO_SETTINGS_MODULE = get_env_variable("DJANGO_SETTINGS_MODULE")
 DEBUG = False
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
