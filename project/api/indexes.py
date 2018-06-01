@@ -12,6 +12,7 @@ class ChartIndex(AlgoliaIndex):
             'arrangers',
         ]
     }
+    should_index = 'is_searchable'
 
 
 class GroupIndex(AlgoliaIndex):

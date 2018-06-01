@@ -86,6 +86,9 @@ class Chart(TimeStampedModel):
             self.arrangers,
         )
 
+    def is_searchable(self):
+        return bool(self.status == self.STATUS.active)
+
     # Internals
     class Meta:
         unique_together = (
