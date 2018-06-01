@@ -250,14 +250,6 @@ class Person(TimeStampedModel):
         editable=True,
     )
 
-    user = models.OneToOneField(
-        'User',
-        related_name='person',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
-
     # Properties
     @cached_property
     def is_mc(self):

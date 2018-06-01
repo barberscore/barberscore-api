@@ -70,6 +70,14 @@ class User(AbstractBaseUser):
         editable=False,
     )
 
+    person = models.OneToOneField(
+        'Person',
+        related_name='user',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
     objects = UserManager()
 
     @cached_property

@@ -296,7 +296,6 @@ class PersonFactory(DjangoModelFactory):
     notes = ''
     current_through = '2018-12-31'
     bhs_id = Sequence(lambda x: '1{0:05d}'.format(x))
-    user = SubFactory('api.factories.UserFactory')
 
     class Meta:
         model = Person
@@ -383,12 +382,9 @@ class VenueFactory(DjangoModelFactory):
 
 
 class UserFactory(DjangoModelFactory):
-    # name = Faker('name_male')
     username = Faker('uuid4')
     status = User.STATUS.active
-    # email = Sequence(lambda x: '{0:#}@barberscore.com'.format(x))
     password = PostGenerationMethodCall('set_password', 'password')
-    # person = RelatedFactory('api.factories.PersonFactory')
     is_staff = False
 
     class Meta:

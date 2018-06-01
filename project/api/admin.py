@@ -1453,17 +1453,17 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     list_display = [
         'username',
         # 'name',
-        # 'email',
+        'person',
         'status',
         'is_mc',
     ]
-    # list_select_related = [
-    #     'person',
-    # ]
+    list_select_related = [
+        'person',
+    ]
 
-    # autocomplete_fields = [
-    #     'person',
-    # ]
+    autocomplete_fields = [
+        'person',
+    ]
 
     list_filter = (
         'status',
@@ -1480,7 +1480,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
                 # 'name',
                 'status',
                 # 'email',
-                # 'person',
+                'person',
                 'is_mc',
                 'is_staff',
                 'created',
@@ -1503,10 +1503,10 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     inlines = [
         StateLogInline,
     ]
-    # ordering = (
-    #     'person__last_name',
-    #     'person__first_name',
-    # )
+    ordering = (
+        'person__last_name',
+        'person__first_name',
+    )
     filter_horizontal = ()
     readonly_fields = [
         'id',
