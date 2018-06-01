@@ -809,126 +809,126 @@ class PersonManager(Manager):
         person.save()
         return 'Updated'
 
-    def update_users(self, cursor=None):
-        # Get Base - currently only active officers persons
-        Officer = apps.get_model('api.officer')
-        persons = self.filter(
-            officers__status=Officer.STATUS.active,
-            status=self.model.STATUS.active,
-            email__isnull=False,
-        ).distinct()
-        if cursor:
-            persons = persons.filter(
-                modified__gt=cursor,
-            )
-        # Return as objects
-        persons = persons.annotate(
-            nom=Concat(
-                'first_name', Value(' '),
-                'middle_name', Value(' '),
-                'last_name', Value(' ('),
-                'nick_name', Value(') ['),
-                'bhs_id', Value(']'),
-                output_field=CharField()
-            )
-        )
-        persons = persons.values_list(
-            'id',
-            'nom',
-            'email',
-            'status',
-        )
-        User = apps.get_model('api.user')
-        for person in persons:
-            django_rq.enqueue(
-                User.objects.update_or_create_from_person,
-                person,
-                is_object=True,
-            )
-        return persons.count()
+    # def update_users(self, cursor=None):
+    #     # Get Base - currently only active officers persons
+    #     Officer = apps.get_model('api.officer')
+    #     persons = self.filter(
+    #         officers__status=Officer.STATUS.active,
+    #         status=self.model.STATUS.active,
+    #         email__isnull=False,
+    #     ).distinct()
+    #     if cursor:
+    #         persons = persons.filter(
+    #             modified__gt=cursor,
+    #         )
+    #     # Return as objects
+    #     persons = persons.annotate(
+    #         nom=Concat(
+    #             'first_name', Value(' '),
+    #             'middle_name', Value(' '),
+    #             'last_name', Value(' ('),
+    #             'nick_name', Value(') ['),
+    #             'bhs_id', Value(']'),
+    #             output_field=CharField()
+    #         )
+    #     )
+    #     persons = persons.values_list(
+    #         'id',
+    #         'nom',
+    #         'email',
+    #         'status',
+    #     )
+    #     User = apps.get_model('api.user')
+    #     for person in persons:
+    #         django_rq.enqueue(
+    #             User.objects.update_or_create_from_person,
+    #             person,
+    #             is_object=True,
+    #         )
+    #     return persons.count()
 
 
 class UserManager(BaseUserManager):
-    def update_or_create_from_person(self, person, is_object=False):
-        # mapping
-        Person = apps.get_model('api.person')
-        if is_object:
-            person_pk = str(person[0])
-            name = person[1]
-            email = person[2]
-            status = person[3]
-        else:
-            person_pk = str(person.pk)
-            name = person.full_name
-            email = person.email
-            status = person.status
+    # def update_or_create_from_person(self, person, is_object=False):
+    #     # mapping
+    #     Person = apps.get_model('api.person')
+    #     if is_object:
+    #         person_pk = str(person[0])
+    #         name = person[1]
+    #         email = person[2]
+    #         status = person[3]
+    #     else:
+    #         person_pk = str(person.pk)
+    #         name = person.full_name
+    #         email = person.email
+    #         status = person.status
 
-        # really clean email
-        email = email.lower()
+    #     # really clean email
+    #     email = email.lower()
 
-        defaults = {
-            'name': name,
-            'email': email,
-            'status': status,
-        }
-        person = Person.objects.get(
-            id=person_pk,
-        )
-        try:
-            user = self.get(
-                person=person,
-            )
-            created = False
-        except self.model.DoesNotExist:
-            user = self.create(
-                email=email,
-                name=name,
-                person=person,
-            )
-            user.set_unusable_password()
-            created = True
+    #     defaults = {
+    #         'name': name,
+    #         'email': email,
+    #         'status': status,
+    #     }
+    #     person = Person.objects.get(
+    #         id=person_pk,
+    #     )
+    #     try:
+    #         user = self.get(
+    #             person=person,
+    #         )
+    #         created = False
+    #     except self.model.DoesNotExist:
+    #         user = self.create(
+    #             email=email,
+    #             name=name,
+    #             person=person,
+    #         )
+    #         user.set_unusable_password()
+    #         created = True
 
-        # set prior values
-        prior = model_to_dict(
-            user,
-            fields=[
-                'name',
-                'email',
-                'status',
-            ],
-        )
+    #     # set prior values
+    #     prior = model_to_dict(
+    #         user,
+    #         fields=[
+    #             'name',
+    #             'email',
+    #             'status',
+    #         ],
+    #     )
 
-        # Update to new values
-        user.email = email
-        user.name = name
+    #     # Update to new values
+    #     user.email = email
+    #     user.name = name
 
-        # Build the diff from prior to new
-        diff = {}
-        for key, value in prior.items():
-            if defaults[key] != value:
-                diff[key] = value
+    #     # Build the diff from prior to new
+    #     diff = {}
+    #     for key, value in prior.items():
+    #         if defaults[key] != value:
+    #             diff[key] = value
 
-        if not diff:
-            return user, None
+    #     if not diff:
+    #         return user, None
 
-        # Set the transition description
-        if user.status == user.STATUS.new:
-            description = json.dumps({'status': 'New'})
-        else:
-            description = json.dumps(diff)
+    #     # Set the transition description
+    #     if user.status == user.STATUS.new:
+    #         description = json.dumps({'status': 'New'})
+    #     else:
+    #         description = json.dumps(diff)
 
-        # Transition as appropriate
-        if status == self.model.STATUS.active:
-            user.activate(
-                description=description,
-            )
-        elif status == self.model.STATUS.inactive:
-            user.deactivate(
-                description=description,
-            )
-        # Finally, return the user
-        user.save(using=self._db)
-        return user, created
+    #     # Transition as appropriate
+    #     if status == self.model.STATUS.active:
+    #         user.activate(
+    #             description=description,
+    #         )
+    #     elif status == self.model.STATUS.inactive:
+    #         user.deactivate(
+    #             description=description,
+    #         )
+    #     # Finally, return the user
+    #     user.save(using=self._db)
+    #     return user, created
 
     # def delete_orphans(self):
     #     accounts = get_accounts()
