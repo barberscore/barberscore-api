@@ -24,6 +24,7 @@ from django.urls import reverse
 # First-Party
 from api.managers import GroupManager
 from api.fields import UploadPath
+from api.fields import LowerEmailField
 
 
 log = logging.getLogger(__name__)
@@ -232,7 +233,7 @@ class Group(TimeStampedModel):
         ],
     )
 
-    email = models.EmailField(
+    email = LowerEmailField(
         help_text="""
             The contact email of the resource.""",
         blank=True,

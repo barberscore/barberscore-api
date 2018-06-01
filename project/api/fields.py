@@ -7,7 +7,7 @@ from rest_framework_json_api import serializers
 # Django
 from django.core.exceptions import ValidationError
 from django.utils.deconstruct import deconstructible
-
+from django.db.models import EmailField
 
 @deconstructible
 class UploadPath(object):
@@ -17,6 +17,14 @@ class UploadPath(object):
             instance._meta.model_name,
             str(instance.id),
         )
+
+
+class LowerEmailField(EmailField):
+    def get_prep_value(self, value):
+        value = super().get_prep_value(value)
+        if value is not None:
+            value = value.lower()
+        return value
 
 
 class TimezoneField(serializers.Field):
