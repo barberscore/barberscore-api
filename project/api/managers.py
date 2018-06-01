@@ -937,18 +937,19 @@ class UserManager(BaseUserManager):
     #             delete_account.delay(account['account_id'])
     #     return i
 
-    def create_user(self, email, **kwargs):
+    def create_user(self, username, **kwargs):
         user = self.model(
-            email=email,
+            username=username,
             **kwargs
         )
         user.set_unusable_password()
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password, **kwargs):
+    def create_superuser(self, username, password, **kwargs):
         user = self.model(
-            email=email,
+            username=username,
+            status=self.model.STATUS.active,
             is_staff=True,
             **kwargs
         )
