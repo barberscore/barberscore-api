@@ -15,7 +15,6 @@ from .filters import MCUserListFilter
 from .filters import ConventionStatusListFilter
 from .filters import SessionConventionStatusListFilter
 from .filters import AppearanceConventionStatusListFilter
-from .filters import AccountListFilter
 from .filters import ConventionGroupListFilter
 from .filters import DistrictListFilter
 from .filters import DivisionListFilter
@@ -1469,7 +1468,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         'status',
         'is_staff',
         MCUserListFilter,
-        AccountListFilter,
     )
 
     fieldsets = (
@@ -1516,7 +1514,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     ]
 
     def is_mc(self, instance):
-        return instance.username.startswith('auth0|')
+        return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
 

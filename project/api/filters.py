@@ -143,27 +143,6 @@ class AppearanceConventionStatusListFilter(admin.SimpleListFilter):
             )
 
 
-class AccountListFilter(admin.SimpleListFilter):
-    title = 'account'
-    parameter_name = 'account'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('Yes', 'Yes'),
-            ('No', 'No'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'Yes':
-            return queryset.filter(
-                username__startswith='auth0',
-            )
-        if self.value() == 'No':
-            return queryset.exclude(
-                username__startswith='auth0',
-            )
-
-
 class DistrictListFilter(admin.SimpleListFilter):
     title = 'district'
     parameter_name = 'district'

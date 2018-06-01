@@ -83,8 +83,12 @@ class User(AbstractBaseUser):
     @cached_property
     def is_mc(self):
         """Proxy status."""
-        if self.username.startswith('auth0'):
-            return True
+        person = getattr(self, 'person')
+        if person:
+            if getattr(person, 'mc_pk'):
+                return True
+            else:
+                return False
         else:
             return False
 
