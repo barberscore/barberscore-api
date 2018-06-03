@@ -95,7 +95,7 @@ def delete_account(user):
     auth0 = get_auth0()
     # Delete Auth0
     auth0.users.delete(user.username)
-    return username
+    return
 
 
 @job
