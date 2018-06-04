@@ -10,7 +10,7 @@ from .models import User
 from .tasks import delete_account
 
 
-@receiver(pre_delete, sender=User)
+# @receiver(pre_delete, sender=User)
 def user_pre_delete(sender, instance, **kwargs):
     if settings.DJANGO_SETTINGS_MODULE == 'settings.prod':
         if instance.username.startswith('auth0|'):
@@ -18,7 +18,7 @@ def user_pre_delete(sender, instance, **kwargs):
     return
 
 
-@receiver(post_save, sender=User)
+# @receiver(post_save, sender=User)
 def user_post_save(sender, instance, created, raw=False, **kwargs):
     if settings.DJANGO_SETTINGS_MODULE == 'settings.prod':
         if instance.username.startswith('auth0|'):

@@ -14,10 +14,10 @@ class ApiConfig(AppConfig):
             os.environ['DJANGO_SETTINGS_MODULE'] == 'settings.dev',
         ])
         if allowed:
-            from .signals import (
-                user_pre_delete,
-                user_post_save,
-            )
+            # from .signals import (
+            #     user_pre_delete,
+            #     user_post_save,
+            # )
             import algoliasearch_django as algoliasearch
             from .indexes import ChartIndex
             from .indexes import PersonIndex
