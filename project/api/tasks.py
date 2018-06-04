@@ -52,13 +52,22 @@ def get_accounts():
     i = 0
     t = 0
     while more:
-        results = auth0.users.list(
-            fields=[
-                'user_id',
-            ],
-            per_page=100,
-            page=i,
-        )
+        print(i, t)
+        try:
+            results = auth0.users.list(
+                fields=[
+                    'user_id',
+                ],
+                per_page=100,
+                page=i,
+            )
+        except Auth0Error as e:
+            t += 1
+            if t <= 5:
+                time.sleep(t ** 2)
+                continue
+            else:
+                raise e
         try:
             users = results['users']
         except KeyError as e:
