@@ -63,7 +63,7 @@ def get_accounts():
             users = results['users']
         except KeyError as e:
             t += 1
-            if t < 5:
+            if t <= 5:
                 time.sleep(t ** 2)
                 continue
             else:
