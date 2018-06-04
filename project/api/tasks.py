@@ -118,9 +118,11 @@ def update_account(user):
 def create_account(email, name):
     auth0 = get_auth0()
     email = email.lower()
+    random = get_random_string()
     payload = {
         'email': email,
         'email_verified': True,
+        'password': random,
         'user_metadata': {
             'name': name,
         }
@@ -135,9 +137,11 @@ def create_account_from_person(person):
     auth0 = get_auth0()
     email = person.email.lower()
     name = person.__str__()
+    random = get_random_string()
     payload = {
         'email': email,
         'email_verified': True,
+        'password': random,
         'user_metadata': {
             'name': name,
         }
@@ -265,7 +269,7 @@ def create_account_from_human(human):
     random = get_random_string()
     payload = {
         "user_id": human.id,
-        "connection": "BHS",
+        "connection": "Default",
         "email": human.email,
         "password": random,
         "email_verified": True,
