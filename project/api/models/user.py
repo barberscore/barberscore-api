@@ -83,26 +83,16 @@ class User(AbstractBaseUser):
     @cached_property
     def is_mc(self):
         """Proxy status."""
-        person = getattr(self, 'person')
-        if person:
-            if getattr(person, 'mc_pk'):
-                return True
-            else:
-                return False
-        else:
-            return False
+        return bool(getattr(getattr(self, 'person'), 'mc_pk', None))
 
     @cached_property
     def is_active(self):
         """Proxy status."""
-        if self.status == self.STATUS.active:
-            return True
-        else:
-            return False
+        return bool(self.status >= 0)
 
     @cached_property
     def is_superuser(self):
-        return self.is_staff
+        return bool(self.is_staff)
 
     class JSONAPIMeta:
         resource_name = "user"
