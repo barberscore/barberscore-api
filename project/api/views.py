@@ -85,6 +85,7 @@ from .tasks import create_legacy_report
 from .tasks import create_drcj_report
 from .tasks import create_contact_report
 from .tasks import create_roster_report
+from .tasks import create_chart_report
 
 
 log = logging.getLogger(__name__)
@@ -235,6 +236,16 @@ class ChartViewSet(viewsets.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
+
+    @action(methods=['get'], detail=False, renderer_classes=[XLSXRenderer])
+    def report(self, request):
+        xlsx = create_chart_report()
+        file_name = 'chart-report'
+        return XLSXResponse(
+            xlsx,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
 
 
 class ContestViewSet(viewsets.ModelViewSet):

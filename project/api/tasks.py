@@ -571,6 +571,45 @@ def create_roster_report(group):
 
 
 @job
+def create_chart_report():
+    Chart = apps.get_model('api.chart')
+    wb = Workbook()
+    ws = wb.active
+    fieldnames = [
+        'PK',
+        'Title',
+        'Arrangers',
+        'Composers',
+        'Lyricists',
+        'Holders',
+        'Status',
+    ]
+    ws.append(fieldnames)
+    charts = Chart.objects.order_by('title', 'arrangers')
+    for chart in charts:
+        pk = str(chart.pk)
+        title = chart.title
+        arrangers = chart.arrangers
+        composers = chart.composers
+        lyricists = chart.lyricists
+        holders = chart.holders
+        status = chart.get_status_display()
+        row = [
+            pk,
+            title,
+            arrangers,
+            composers,
+            lyricists,
+            holders,
+            status,
+        ]
+        ws.append(row)
+    file = save_virtual_workbook(wb)
+    content = ContentFile(file)
+    return content
+
+
+@job
 def create_variance_report(appearance):
     Score = apps.get_model('api.score')
     Panelist = apps.get_model('api.panelist')
