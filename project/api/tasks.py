@@ -19,6 +19,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 from django.core.validators import validate_email
+from django.core.validators import ValidationError
 
 log = logging.getLogger(__name__)
 
@@ -52,7 +53,6 @@ def get_accounts():
     i = 0
     t = 0
     while more:
-        print(i, t)
         try:
             results = auth0.users.list(
                 fields=[
@@ -165,6 +165,10 @@ def update_account_from_person(person):
     # TODO Not sure we're keeping this
     auth0 = get_auth0()
     name = person.__str__()
+    try:
+        validate_email(person.email)
+    except ValidationError:
+        return
     email = person.email.lower()
     payload = {
         'email': email,
