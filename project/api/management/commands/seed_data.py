@@ -123,59 +123,49 @@ class Command(BaseCommand):
         )
         # Create Users
         admin_user = UserFactory(
-            id='c7fc3e26-1489-46a5-93a2-7be50a01c56c',
-            name='Admin Person',
-            email=admin_person.email,
-            person=admin_person,
+            username='auth0|5b16f0b1157859716f2c6a90',
             password='password',
+            person=admin_person,
             is_staff=True,
         )
         scjc_user = UserFactory(
-            id='a3be3d43-c5d3-4aec-973a-d42c00c72256',
-            name='SCJC Person',
-            email=scjc_person.email,
+            username='auth0|5b16f0b1157859716f2c6a91',
+            password='password',
             person=scjc_person,
         )
         drcj_user = UserFactory(
-            id='55ef12a3-576d-496b-a70b-c3126f62caa2',
-            name='DRCJ Person',
-            email=drcj_person.email,
+            username='auth0|5b16f0b1157859716f2c6a9b',
+            password='password',
             person=drcj_person,
         )
         ca_user = UserFactory(
-            id='7cfdac82-ca9f-46dc-9c7b-c9054908cb7c',
-            name='CA Person',
-            email=ca_person.email,
+            username='auth0|5b16f0b1157859716f2c6a93',
+            password='password',
             person=ca_person,
         )
         quartet_lead_user = UserFactory(
-            id='afa2d19b-1099-4a77-bc8c-04b06a6896a0',
-            name='Quartet Person',
-            email=quartet_lead_person.email,
+            username='auth0|5b16f0b1157859716f2c6a94',
+            password='password',
             person=quartet_lead_person,
         )
         chorus_manager_user = UserFactory(
-            id='bd32c1e6-4c61-4f7f-bee5-e843d80bb9ad',
-            name='Chorus Person',
-            email=chorus_manager_person.email,
+            username='auth0|5b16f0b1157859716f2c6a95',
+            password='password',
             person=chorus_manager_person,
         )
         music_judge_user = UserFactory(
-            id='55204faf-d4c6-4b88-9bed-3721db42ccf3',
-            name='Music Person',
-            email=music_judge_person.email,
+            username='auth0|5b16f0b1157859716f2c6a96',
+            password='password',
             person=music_judge_person,
         )
         performance_judge_user = UserFactory(
-            id='8e326a1a-5bb9-4a29-98f9-c7f704870f43',
-            name='Performance Person',
-            email=performance_judge_person.email,
+            username='auth0|5b16f0b1157859716f2c6a97',
+            password='password',
             person=performance_judge_person,
         )
         singing_judge_user = UserFactory(
-            id='fb6bb161-69f0-49ff-ba51-3a4721220566',
-            name='Singing Person',
-            email=singing_judge_person.email,
+            username='auth0|5b16f0b1157859716f2c6a98',
+            password='password',
             person=singing_judge_person,
         )
         # Create Groups
