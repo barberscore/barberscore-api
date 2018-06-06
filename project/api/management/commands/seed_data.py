@@ -123,13 +123,13 @@ class Command(BaseCommand):
         )
         # Create Users
         admin_user = UserFactory(
-            username='auth0|5b16f0b1157859716f2c6a90',
+            username='admin',
             password='password',
             person=admin_person,
             is_staff=True,
         )
         scjc_user = UserFactory(
-            username='auth0|5b16f0b1157859716f2c6a91',
+            username='auth0|5b180b77157859716f2ca0a4',
             password='password',
             person=scjc_person,
         )
@@ -139,32 +139,32 @@ class Command(BaseCommand):
             person=drcj_person,
         )
         ca_user = UserFactory(
-            username='auth0|5b16f0b1157859716f2c6a93',
+            username='auth0|5b180b8e55f2302168ff06cc',
             password='password',
             person=ca_person,
         )
         quartet_lead_user = UserFactory(
-            username='auth0|5b16f0b1157859716f2c6a94',
+            username='auth0|5b180b8e55f2302168ff06cd',
             password='password',
             person=quartet_lead_person,
         )
         chorus_manager_user = UserFactory(
-            username='auth0|5b16f0b1157859716f2c6a95',
+            username='auth0|5b180b8f55f2302168ff06d0',
             password='password',
             person=chorus_manager_person,
         )
         music_judge_user = UserFactory(
-            username='auth0|5b16f0b1157859716f2c6a96',
+            username='auth0|5b180b8f55f2302168ff06d2',
             password='password',
             person=music_judge_person,
         )
         performance_judge_user = UserFactory(
-            username='auth0|5b16f0b1157859716f2c6a97',
+            username='auth0|5b180b90157859716f2ca0b4',
             password='password',
             person=performance_judge_person,
         )
         singing_judge_user = UserFactory(
-            username='auth0|5b16f0b1157859716f2c6a98',
+            username='auth0|5b180b90a76b702169249b9d',
             password='password',
             person=singing_judge_person,
         )
