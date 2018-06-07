@@ -135,7 +135,7 @@ class User(AbstractBaseUser):
     @staticmethod
     @allow_staff_or_superuser
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -145,6 +145,8 @@ class User(AbstractBaseUser):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
+        if request.user == self:
+            return True
         return False
 
     # User Transitions
