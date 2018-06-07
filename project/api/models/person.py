@@ -40,6 +40,7 @@ class Person(TimeStampedModel):
             The first name of the person.""",
         max_length=255,
         blank=False,
+        default='Unknown',
     )
 
     middle_name = models.CharField(
@@ -54,6 +55,7 @@ class Person(TimeStampedModel):
             The last name of the person.""",
         max_length=255,
         blank=False,
+        default='Unknown',
     )
 
     nick_name = models.CharField(
