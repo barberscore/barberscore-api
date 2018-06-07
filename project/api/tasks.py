@@ -93,9 +93,9 @@ def activate_user(user):
     Person = apps.get_model('api.person')
     auth0 = get_auth0()
     account = auth0.users.get(user.username)
-    person = Person.objects.get(email=account['email'])
+    email = account['email'].lower()
+    person, created = Person.objects.get_or_create(email=email)
     user.person = person
-    user.save()
     return user
 
 
