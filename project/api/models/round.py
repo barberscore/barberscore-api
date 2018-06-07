@@ -34,6 +34,7 @@ class Round(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
+        (10, 'built', 'Built',),
         (20, 'started', 'Started',),
         (25, 'reviewed', 'Reviewed',),
         (30, 'finished', 'Finished',),
@@ -114,9 +115,34 @@ class Round(TimeStampedModel):
 
     # Methods
 
+    # Round Conditions
+    def can_build(self):
+        return True
+
     # Round Transitions
     @fsm_log_by
-    @transition(field=status, source=[STATUS.new], target=STATUS.started)
+    @transition(
+        field=status,
+        source=STATUS.new,
+        target=STATUS.built,
+        conditions=[can_build],
+    )
+    def build(self, *args, **kwargs):
+        # set the panel
+        for assignment in self.session.convention.assignments.filter(
+            status=self.session.convention.assignments.model.STATUS.active,
+            category__gt=self.session.convention.assignments.model.CATEGORY.ca,
+        ):
+            self.panelists.create(
+                kind=assignment.kind,
+                category=assignment.category,
+                person=assignment.person,
+            )
+        return
+
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.built], target=STATUS.started)
     def start(self, *args, **kwargs):
         panelists = self.panelists.all()
         appearances = self.appearances.all()
@@ -328,14 +354,3 @@ class Round(TimeStampedModel):
     #     #     num=entry.draw,
     #     #     appearance=appearance,
     #     # )
-    # # set the panel
-    # for assignment in self.convention.assignments.filter(
-    #     status=self.convention.assignments.model.STATUS.active,
-    #     category__gt=self.convention.assignments.model.CATEGORY.ca,
-    # ):
-    #     for round in self.rounds.all():
-    #         round.panelists.create(
-    #             kind=assignment.kind,
-    #             category=assignment.category,
-    #             person=assignment.person,
-    #         )

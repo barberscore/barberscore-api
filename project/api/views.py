@@ -749,6 +749,14 @@ class RoundViewSet(viewsets.ModelViewSet):
     resource_name = "round"
 
     @action(methods=['post'], detail=True)
+    def build(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.build(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
     def start(self, request, pk=None, **kwargs):
         object = self.get_object()
         object.start(by=self.request.user)
