@@ -311,12 +311,6 @@ class Command(BaseCommand):
             group=international,
             status=Officer.STATUS.active,
         )
-        drcj_alpha_officer_admin = OfficerFactory(
-            office=drcj_office,
-            person=admin_person,
-            group=district_alpha,
-            status=Officer.STATUS.active,
-        )
         drcj_alpha_officer = OfficerFactory(
             office=drcj_office,
             person=drcj_person,
@@ -325,7 +319,7 @@ class Command(BaseCommand):
         )
         ca_officer = OfficerFactory(
             office=ca_office,
-            person=admin_person,
+            person=ca_person,
             group=district_alpha,
             status=Officer.STATUS.active,
         )
@@ -475,7 +469,7 @@ class Command(BaseCommand):
         AssignmentFactory(
             category=Assignment.CATEGORY.ca,
             convention=district_alpha_fall_convention,
-            person=admin_person,
+            person=ca_person,
         )
         AssignmentFactory(
             category=Assignment.CATEGORY.music,
@@ -808,6 +802,21 @@ class Command(BaseCommand):
         chorus_entry.build()
         chorus_entry.save()
 
+        # Activate Contestants
+        lst = [
+            quartet_entry,
+            quartet_2_entry,
+            quartet_3_entry,
+            chorus_entry,
+        ]
+
+        for l in lst:
+            contestants = l.contestants.all()
+            for contestant in contestants:
+                contestant.include()
+                contestant.save()
+
+
         # Approve entries
         senior_entry.submit()
         senior_entry.approve()
@@ -861,7 +870,7 @@ class Command(BaseCommand):
         district_alpha_fall_convention_chorus_session.start()
         district_alpha_fall_convention_chorus_session.save()
 
-        # DRCJ BREAKPOINT
+        # CA BREAKPOINT
         if options['breakpoint'] == 'round':
             return
 
