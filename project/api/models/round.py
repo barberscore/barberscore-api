@@ -129,15 +129,47 @@ class Round(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         # set the panel
-        for assignment in self.session.convention.assignments.filter(
+        assignments = self.session.convention.assignments.filter(
             status=self.session.convention.assignments.model.STATUS.active,
             category__gt=self.session.convention.assignments.model.CATEGORY.ca,
-        ):
+        )
+        for assignment in assignments:
             self.panelists.create(
                 kind=assignment.kind,
                 category=assignment.category,
                 person=assignment.person,
             )
+        # build competitors
+        entries = self.session.entries.filter(
+            status=self.session.entries.model.STATUS.approved,
+        )
+        for entry in entries:
+            # Set is_ranked=True if they are competing for a primary award.
+            is_ranked = bool(entry.contestants.filter(
+                contest__award__is_primary=True,
+                status__gt=0,
+            ))
+            # Set is_multi=True if they are competiting for at least
+            # one multi-round award.
+            is_multi = bool(entry.contestants.filter(
+                contest__award__rounds__gt=1,
+                status__gt=0,
+            ))
+            competitor = self.session.competitors.create(
+                entry=entry,
+                group=entry.group,
+                draw=entry.draw,
+                is_ranked=is_ranked,
+                is_multi=is_multi,
+            )
+            competitor.start()
+            competitor.save()
+            # set the grid
+            # competitor.grids.create(
+            #     round=first_round,
+            #     num=entry.draw,
+            #     appearance=appearance,
+            # )
         return
 
 
@@ -323,34 +355,3 @@ class Round(TimeStampedModel):
     #         round.save()
     #         return
 
-    # Competitor = config.get_model('Competitor')
-    # for entry in self.entries.filter(status=Entry.STATUS.approved):
-    #     # Create competitors
-    #     # Set is_ranked=True if they are competing for the primary award.
-    #     primary = self.contests.get(award__is_primary=True)
-    #     is_ranked = bool(entry.contestants.filter(
-    #         contest=primary,
-    #         status__gt=0,
-    #     ))
-    #     # Set is_multi=True if they are competiting for at least
-    #     # one multi-round award.
-    #     is_multi = bool(entry.contestants.filter(
-    #         contest__award__rounds__gt=1
-    #     ))
-
-    #     competitor = Competitor.objects.create(
-    #         session=self,
-    #         group=entry.group,
-    #         entry=entry,
-    #         draw=entry.draw,
-    #         is_ranked=is_ranked,
-    #         is_multi=is_multi,
-    #     )
-    #     competitor.start()
-    #     competitor.save()
-    #     # set the grid
-    #     # competitor.grids.create(
-    #     #     round=first_round,
-    #     #     num=entry.draw,
-    #     #     appearance=appearance,
-    #     # )
