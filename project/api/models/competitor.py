@@ -230,7 +230,7 @@ class Competitor(TimeStampedModel):
 
     # Competitor Transitions
     @fsm_log_by
-    @transition(field=status, source=[STATUS.started, STATUS.missed], target=STATUS.made)
+    @transition(field=status, source=[STATUS.new, STATUS.started, STATUS.missed], target=STATUS.made)
     def make(self, *args, **kwargs):
         return
 
@@ -242,13 +242,6 @@ class Competitor(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.new, STATUS.missed, STATUS.made], target=STATUS.started)
     def start(self, *args, **kwargs):
-        next_round = self.session.rounds.filter(
-            status=0,
-        ).earliest()
-        self.appearances.create(
-            round=next_round,
-            num=self.draw,
-        )
         return
 
     @fsm_log_by

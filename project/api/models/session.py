@@ -316,11 +316,34 @@ class Session(TimeStampedModel):
             'host_name': settings.HOST_NAME,
         }
         send_session_reports.delay('session_reports.txt', context)
-        # Get models for constants
-        Entry = apps.get_model('api.entry')
         # delete orphans
-        for entry in self.entries.filter(status=Entry.STATUS.new):
-            entry.delete()
+        # for entry in self.entries.filter(status=Entry.STATUS.new):
+        #     entry.delete()
+        # Build Competitor List
+        entries = self.entries.filter(
+            status=self.entries.model.STATUS.approved,
+        )
+        for entry in entries:
+            # Set is_ranked=True if they are competing for a primary award.
+            is_ranked = bool(entry.contestants.filter(
+                contest__award__is_primary=True,
+                status__gt=0,
+            ))
+            # Set is_multi=True if they are competiting for at least
+            # one multi-round award.
+            is_multi = bool(entry.contestants.filter(
+                contest__award__rounds__gt=1,
+                status__gt=0,
+            ))
+            competitor = self.competitors.create(
+                entry=entry,
+                group=entry.group,
+                draw=entry.draw,
+                is_ranked=is_ranked,
+                is_multi=is_multi,
+            )
+            competitor.make()
+            competitor.save()
         # notify entrants
         context = {
             'session': self,

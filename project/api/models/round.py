@@ -139,37 +139,15 @@ class Round(TimeStampedModel):
                 category=assignment.category,
                 person=assignment.person,
             )
-        # build competitors
-        entries = self.session.entries.filter(
-            status=self.session.entries.model.STATUS.approved,
+        # build appearances
+        competitors = self.session.competitors.filter(
+            status__gt=0,
         )
-        for entry in entries:
-            # Set is_ranked=True if they are competing for a primary award.
-            is_ranked = bool(entry.contestants.filter(
-                contest__award__is_primary=True,
-                status__gt=0,
-            ))
-            # Set is_multi=True if they are competiting for at least
-            # one multi-round award.
-            is_multi = bool(entry.contestants.filter(
-                contest__award__rounds__gt=1,
-                status__gt=0,
-            ))
-            competitor = self.session.competitors.create(
-                entry=entry,
-                group=entry.group,
-                draw=entry.draw,
-                is_ranked=is_ranked,
-                is_multi=is_multi,
+        for competitor in competitors:
+            competitor.appearances.create(
+                num=competitor.draw,
+                round=self,
             )
-            competitor.start()
-            competitor.save()
-            # set the grid
-            # competitor.grids.create(
-            #     round=first_round,
-            #     num=entry.draw,
-            #     appearance=appearance,
-            # )
         return
 
 
@@ -323,35 +301,4 @@ class Round(TimeStampedModel):
             made.start()
             made.save()
         return
-
-    # @fsm_log_by
-    # @transition(field=status, source='*', target=STATUS.announced)
-    # def announce(self, *args, **kwargs):
-
-    #     if self.kind != self.KIND.finals:
-    #         round = self.session.rounds.create(
-    #             num=self.num + 1,
-    #             kind=self.kind - 1,
-    #         )
-    #         for appearance in self.appearances.filter(draw__gt=0):
-    #             round.appearances.create(
-    #                 entry=appearance.entry,
-    #                 num=appearance.draw,
-    #                 status=appearance.STATUS.published,
-    #             )
-    #         for appearance in self.appearances.filter(draw__lte=0):
-    #             e = appearance.entry
-    #             e.complete()
-    #             e.save()
-    #         for assignment in self.session.convention.assignments.filter(
-    #             status=Assignment.STATUS.active,
-    #         ):
-    #             round.panelists.create(
-    #                 kind=assignment.kind,
-    #                 category=assignment.category,
-    #                 person=assignment.person,
-    #             )
-    #         round.verify()
-    #         round.save()
-    #         return
 

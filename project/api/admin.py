@@ -463,6 +463,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session',
         'group',
         'rank',
+        'draw',
         ('is_ranked', 'is_multi',),
         ('tot_points', 'mus_points', 'per_points', 'sng_points',),
         ('tot_score', 'mus_score', 'per_score', 'sng_score',),
@@ -1179,6 +1180,8 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = [
         'status',
+        'session',
+        'kind',
     ]
 
     list_filter = [
@@ -1205,7 +1208,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        # AppearanceInline,
+        AppearanceInline,
         PanelistInline,
         GridInline,
     ]
