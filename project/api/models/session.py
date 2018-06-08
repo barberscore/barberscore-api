@@ -343,7 +343,14 @@ class Session(TimeStampedModel):
                 is_multi=is_multi,
             )
             competitor.make()
+            competitor.start()
             competitor.save()
+        # Build Round
+        round = self.rounds.get(
+            num=1,
+        )
+        round.build()
+        round.save()
         # notify entrants
         context = {
             'session': self,

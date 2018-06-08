@@ -374,9 +374,9 @@ class CompetitorViewSet(viewsets.ModelViewSet):
     resource_name = "competitor"
 
     @action(methods=['post'], detail=True)
-    def make(self, request, pk=None, **kwargs):
+    def start(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.make(by=self.request.user)
+        object.start(by=self.request.user)
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)

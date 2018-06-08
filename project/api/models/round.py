@@ -269,7 +269,7 @@ class Round(TimeStampedModel):
         i = 1
         for competitor in advancers:
             competitor.draw = i
-            competitor.make()
+            competitor.start()
             competitor.save()
             i += 1
 
@@ -294,11 +294,11 @@ class Round(TimeStampedModel):
         for miss in misses:
             miss.finish()
             miss.save()
-        mades = self.session.competitors.filter(
-            status=Competitor.STATUS.made,
+        starteds = self.session.competitors.filter(
+            status=Competitor.STATUS.started,
         )
-        for made in mades:
-            made.start()
-            made.save()
+        for started in starteds:
+            started.start()
+            started.save()
         return
 

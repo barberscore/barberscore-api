@@ -32,7 +32,7 @@ class Competitor(TimeStampedModel):
         (-20, 'finished', 'Finished',),
         (-10, 'missed', 'Missed',),
         (0, 'new', 'New',),
-        (10, 'made', 'Made',),
+        (10, 'started', 'Started',),
         (20, 'started', 'Started',),
     )
 
@@ -230,17 +230,17 @@ class Competitor(TimeStampedModel):
 
     # Competitor Transitions
     @fsm_log_by
-    @transition(field=status, source=[STATUS.new, STATUS.started, STATUS.missed], target=STATUS.made)
-    def make(self, *args, **kwargs):
+    @transition(field=status, source=[STATUS.new, STATUS.started, STATUS.missed], target=STATUS.started)
+    def start(self, *args, **kwargs):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.started, STATUS.made], target=STATUS.missed)
+    @transition(field=status, source=[STATUS.started, STATUS.started], target=STATUS.missed)
     def miss(self, *args, **kwargs):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.new, STATUS.missed, STATUS.made], target=STATUS.started)
+    @transition(field=status, source=[STATUS.new, STATUS.missed, STATUS.started], target=STATUS.started)
     def start(self, *args, **kwargs):
         return
 
