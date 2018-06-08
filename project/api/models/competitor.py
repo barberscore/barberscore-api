@@ -29,11 +29,9 @@ class Competitor(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-20, 'finished', 'Finished',),
-        (-10, 'missed', 'Missed',),
+        (-10, 'finished', 'Finished',),
         (0, 'new', 'New',),
         (10, 'started', 'Started',),
-        (20, 'started', 'Started',),
     )
 
     status = FSMIntegerField(
@@ -157,12 +155,16 @@ class Competitor(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return False
+        return request.user.person.officers.filter(office__is_scoring_manager=True)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return False
+        assi = bool(self.session.convention.assignments.filter(
+            person__user=request.user,
+            status__gt=0,
+        ))
+        return assi
 
     # Competitor Methods
     def calculate(self):
@@ -230,22 +232,20 @@ class Competitor(TimeStampedModel):
 
     # Competitor Transitions
     @fsm_log_by
-    @transition(field=status, source=[STATUS.new, STATUS.started, STATUS.missed], target=STATUS.started)
+    @transition(
+        field=status,
+        source=[STATUS.new, STATUS.finished],
+        target=STATUS.started,
+    )
     def start(self, *args, **kwargs):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.started, STATUS.started], target=STATUS.missed)
-    def miss(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source=[STATUS.new, STATUS.missed, STATUS.started], target=STATUS.started)
-    def start(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source=[STATUS.new, STATUS.started, STATUS.missed, STATUS.finished], target=STATUS.finished)
+    @transition(
+        field=status,
+        source=[STATUS.new, STATUS.started, STATUS.finished],
+        target=STATUS.finished,
+    )
     def finish(self, *args, **kwargs):
         create_csa_report(self)
         return

@@ -382,22 +382,6 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True)
-    def miss(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        object.miss(by=self.request.user)
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def start(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        object.start(by=self.request.user)
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
     def finish(self, request, pk=None, **kwargs):
         object = self.get_object()
         object.finish(by=self.request.user)

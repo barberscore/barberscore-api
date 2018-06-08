@@ -342,7 +342,6 @@ class Session(TimeStampedModel):
                 is_ranked=is_ranked,
                 is_multi=is_multi,
             )
-            competitor.make()
             competitor.start()
             competitor.save()
         # Build Round

@@ -192,14 +192,14 @@ class Round(TimeStampedModel):
 
         # Switch based on round
         if self.kind == self.KIND.finals:
-            # All remaining competitors are "missed" in the sense
+            # All remaining competitors are finished in the sense
             # that they didn't make the (non-existent) cut.
             competitors = self.session.competitors.filter(
                 status=Competitor.STATUS.started,
             )
-            # All remaining 'miss' the next round.
+            # All remaining are finished the next round.
             for competitor in competitors:
-                competitor.miss()
+                competitor.finish()
                 competitor.save()
             # Determine all the awards.
             for contest in self.session.contests.filter(status__gt=0):
@@ -273,13 +273,13 @@ class Round(TimeStampedModel):
             competitor.save()
             i += 1
 
-        # Set all remaining to missed..
+        # Set all remaining to finished..
         finishers = Competitor.objects.filter(
             status=Competitor.STATUS.started,
         )
         for competitor in finishers:
             competitor.draw = None
-            competitor.miss()
+            competitor.finish()
             competitor.save()
         return
 
@@ -288,17 +288,11 @@ class Round(TimeStampedModel):
     def finish(self, *args, **kwargs):
         # Switch based on rounds
         Competitor = config.get_model('Competitor')
-        misses = self.session.competitors.filter(
+        competitors = self.session.competitors.filter(
             status=Competitor.STATUS.missed,
         )
-        for miss in misses:
-            miss.finish()
-            miss.save()
-        starteds = self.session.competitors.filter(
-            status=Competitor.STATUS.started,
-        )
-        for started in starteds:
-            started.start()
-            started.save()
+        for competitor in competitors:
+            competitor.finish()
+            competitor.save()
         return
 
