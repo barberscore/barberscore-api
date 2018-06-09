@@ -157,18 +157,8 @@ class Round(TimeStampedModel):
         panelists = self.panelists.all()
         appearances = self.appearances.all()
         for appearance in appearances:
-            i = 1
-            while i <= 2:  # Number songs constant
-                song = appearance.songs.create(
-                    num=i
-                )
-                for panelist in panelists:
-                    song.scores.create(
-                        category=panelist.category,
-                        kind=panelist.kind,
-                        panelist=panelist,
-                    )
-                i += 1
+            appearance.build()
+            appearance.save()
         return
 
     @fsm_log_by

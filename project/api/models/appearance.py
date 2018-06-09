@@ -36,6 +36,7 @@ class Appearance(TimeStampedModel):
         (0, 'new', 'New',),
         (2, 'published', 'Published',),
         (5, 'verified', 'Verified',),
+        (7, 'built', 'Built',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
         (30, 'confirmed', 'Confirmed',),
@@ -233,7 +234,25 @@ class Appearance(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
-    @transition(field=status, source=[STATUS.new], target=STATUS.started)
+    @transition(field=status, source=[STATUS.new], target=STATUS.built)
+    def build(self, *args, **kwargs):
+        panelists = self.round.panelists.all()
+        i = 1
+        while i <= 2:  # Number songs constant
+            song = self.songs.create(
+                num=i
+            )
+            for panelist in panelists:
+                song.scores.create(
+                    category=panelist.category,
+                    kind=panelist.kind,
+                    panelist=panelist,
+                )
+            i += 1
+        return
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.built], target=STATUS.started)
     def start(self, *args, **kwargs):
         self.actual_start = now()
         return
