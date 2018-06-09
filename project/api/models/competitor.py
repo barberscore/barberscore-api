@@ -29,6 +29,8 @@ class Competitor(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-30, 'disqualified', 'Disqualified',),
+        (-20, 'scratched', 'Scratched',),
         (-10, 'finished', 'Finished',),
         (0, 'new', 'New',),
         (10, 'started', 'Started',),
@@ -248,4 +250,22 @@ class Competitor(TimeStampedModel):
     )
     def finish(self, *args, **kwargs):
         create_csa_report(self)
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.scratched,
+    )
+    def scratch(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.disqualified,
+    )
+    def disqualify(self, *args, **kwargs):
         return

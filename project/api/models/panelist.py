@@ -9,11 +9,9 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 # Django
-from django.apps import apps as api_apps
+from django.apps import apps
 from django.db import models
 
-
-config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 
@@ -105,13 +103,16 @@ class Panelist(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(office__is_judge_manager=True),
+            request.user.person.officers.filter(office__is_scoring_manager=True),
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
+        Assignment = apps.get_model('api.assignment')
         return any([
-            True,
-            request.user.person.officers.filter(office__is_judge_manager=True),
+            self.round.session.convention.assignments.filter(
+                category=Assignment.CATEGORY.ca,
+                kind=Assignment.KIND.official,
+            )
         ])

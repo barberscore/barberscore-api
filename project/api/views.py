@@ -389,6 +389,22 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
+    @action(methods=['post'], detail=True)
+    def disqualify(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.disqualify(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def scratch(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.scratch(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
 
 class EntryViewSet(viewsets.ModelViewSet):
     queryset = Entry.objects.select_related(
