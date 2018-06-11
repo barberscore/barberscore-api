@@ -866,6 +866,13 @@ class SessionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
+    @action(methods=['get'], detail=True)
+    def refresh(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.update_competitors()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
     @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer])
     def legacy(self, request, pk=None):
         session = Session.objects.get(pk=pk)

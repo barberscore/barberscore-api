@@ -473,6 +473,8 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'status',
         'tot_score',
+        'tot_points',
+        'is_ranked',
     )
 
     list_filter = [
