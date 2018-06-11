@@ -10,10 +10,8 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 # Django
-from django.apps import apps as api_apps
+from django.apps import apps
 from django.db import models
-
-config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 

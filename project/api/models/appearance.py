@@ -268,11 +268,11 @@ class Appearance(TimeStampedModel):
     def confirm(self, *args, **kwargs):
         for song in self.songs.all():
             song.calculate()
+            song.save()
             variance = song.check_variance()
             if variance:
                 create_variance_report(self)
                 return
-        self.variance_report = None
         self.calculate()
         return
 

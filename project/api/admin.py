@@ -90,7 +90,8 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         '__str__',
         'num',
-        'draw',
+        # 'draw',
+        'tot_score',
         'status',
     ]
     list_select_related = [
@@ -471,6 +472,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         'status',
+        'tot_score',
     )
 
     list_filter = [
@@ -1345,10 +1347,11 @@ class SongAdmin(admin.ModelAdmin):
     ]
 
     list_display = (
-        # 'status',
-        # 'title',
+        'id',
         'appearance',
         'num',
+        'tot_points',
+        'tot_score',
     )
 
     # list_filter = (

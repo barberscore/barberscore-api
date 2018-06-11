@@ -154,6 +154,8 @@ class Round(TimeStampedModel):
             )
             appearance.build()
             appearance.save()
+            competitor.draw = None
+            competitor.save()
         return
 
     @fsm_log_by
