@@ -860,7 +860,6 @@ class Command(BaseCommand):
         district_alpha_fall_convention_chorus_session.verify()
         district_alpha_fall_convention_chorus_session.save()
 
-
         # Start sessions
         international_midwinter_convention_quartet_session.start()
         international_midwinter_convention_quartet_session.save()

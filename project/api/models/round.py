@@ -139,15 +139,6 @@ class Round(TimeStampedModel):
                 category=assignment.category,
                 person=assignment.person,
             )
-        # build appearances
-        competitors = self.session.competitors.filter(
-            status__gt=0,
-        )
-        for competitor in competitors:
-            competitor.appearances.create(
-                num=competitor.draw,
-                round=self,
-            )
         return
 
 
@@ -155,8 +146,12 @@ class Round(TimeStampedModel):
     @transition(field=status, source=[STATUS.built], target=STATUS.started)
     def start(self, *args, **kwargs):
         panelists = self.panelists.all()
-        appearances = self.appearances.all()
-        for appearance in appearances:
+        competitors = self.session.competitors.all()
+        for competitor in competitors:
+            appearance = competitor.appearances.create(
+                round=self,
+                num=competitor.draw,
+            )
             appearance.build()
             appearance.save()
         return

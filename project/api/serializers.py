@@ -153,6 +153,7 @@ class CompetitorSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'status',
+            'draw',
             'rank',
             'mus_points',
             'per_points',
