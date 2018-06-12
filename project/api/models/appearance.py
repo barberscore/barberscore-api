@@ -33,6 +33,7 @@ class Appearance(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-10, 'excluded', 'Excluded',),
         (0, 'new', 'New',),
         (2, 'published', 'Published',),
         (5, 'verified', 'Verified',),
@@ -40,6 +41,7 @@ class Appearance(TimeStampedModel):
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
         (30, 'confirmed', 'Confirmed',),
+        (35, 'included', 'Included',),
         (40, 'flagged', 'Flagged',),
         (50, 'scratched', 'Scratched',),
         (60, 'cleared', 'Cleared',),
@@ -274,7 +276,20 @@ class Appearance(TimeStampedModel):
                 create_variance_report(self)
                 return
         self.calculate()
-        self.round.session.update_competitors()
+        self.competitor.calculate()
+        self.competitor.save()
+        self.competitor.ranking()
+        self.competitor.save()
+        return
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.confirmed], target=STATUS.included)
+    def include(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.confirmed], target=STATUS.excluded)
+    def exclude(self, *args, **kwargs):
         return
 
     # @fsm_log_by

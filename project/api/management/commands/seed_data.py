@@ -882,6 +882,7 @@ class Command(BaseCommand):
 
         international_midwinter_convention_quartet_session_round_one.start()
         international_midwinter_convention_quartet_session_round_one.save()
+        district_alpha_fall_convention_quartet_session_round_one.spots = 2
         district_alpha_fall_convention_quartet_session_round_one.start()
         district_alpha_fall_convention_quartet_session_round_one.save()
         district_alpha_spring_convention_quartet_session_round_one.start()
@@ -906,8 +907,8 @@ class Command(BaseCommand):
                 for score in song.scores.all():
                     score.points = s
                     score.save()
-            # appearance.confirm()
-            # appearance.save()
+            appearance.confirm()
+            appearance.save()
 
         s = 70
         for appearance in district_alpha_fall_convention_quartet_session_round_one.appearances.order_by('num'):
@@ -926,8 +927,8 @@ class Command(BaseCommand):
                 for score in song.scores.all():
                     score.points = s
                     score.save()
-            # appearance.confirm()
-            # appearance.save()
+            appearance.confirm()
+            appearance.save()
 
         s = 70
         for appearance in district_alpha_spring_convention_quartet_session_round_one.appearances.order_by('num'):
@@ -946,10 +947,10 @@ class Command(BaseCommand):
                 for score in song.scores.all():
                     score.points = s
                     score.save()
-            # appearance.confirm()
-            # appearance.save()
+            appearance.confirm()
+            appearance.save()
 
-        if options['breakpoint'] == 'finished':
+        if options['breakpoint'] == 'confirmed':
             return
 
 

@@ -314,6 +314,7 @@ class RoundFactory(DjangoModelFactory):
     status = Round.STATUS.new
     kind = Round.KIND.finals
     num = 1
+    spots = 10
     session = SubFactory('api.factories.SessionFactory')
 
     class Meta:

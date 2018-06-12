@@ -1178,7 +1178,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         # 'name',
         'status',
-        ('session', 'kind', 'num'),
+        ('session', 'kind', 'num', 'spots',),
 
     ]
 

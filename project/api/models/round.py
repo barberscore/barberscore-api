@@ -13,14 +13,12 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 # Django
-from django.apps import apps as api_apps
+from django.apps import apps
 from django.db import models
 from django.utils.functional import cached_property
 
 # First-Party
 from api.tasks import create_ors_report
-
-config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 
@@ -57,6 +55,11 @@ class Round(TimeStampedModel):
     )
 
     num = models.IntegerField(
+    )
+
+    spots = models.IntegerField(
+        null=True,
+        blank=True,
     )
 
     # FKs
@@ -128,7 +131,7 @@ class Round(TimeStampedModel):
         conditions=[can_build],
     )
     def build(self, *args, **kwargs):
-        # set the panel
+        # build the panel
         assignments = self.session.convention.assignments.filter(
             status=self.session.convention.assignments.model.STATUS.active,
             category__gt=self.session.convention.assignments.model.CATEGORY.ca,
@@ -139,13 +142,8 @@ class Round(TimeStampedModel):
                 category=assignment.category,
                 person=assignment.person,
             )
-        return
-
-
-    @fsm_log_by
-    @transition(field=status, source=[STATUS.built], target=STATUS.started)
-    def start(self, *args, **kwargs):
-        panelists = self.panelists.all()
+        # build the appearances
+        Competitor = apps.get_model('api.competitor')
         competitors = self.session.competitors.all()
         for competitor in competitors:
             appearance = competitor.appearances.create(
@@ -154,52 +152,29 @@ class Round(TimeStampedModel):
             )
             appearance.build()
             appearance.save()
-            competitor.draw = None
-            competitor.save()
+        return
+
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.built], target=STATUS.started)
+    def start(self, *args, **kwargs):
         return
 
     @fsm_log_by
     @transition(field=status, source=[STATUS.started, STATUS.reviewed], target=STATUS.reviewed)
-    def review(self, *args, **kwargs):
-        Competitor = config.get_model('Competitor')
+    def finish(self, *args, **kwargs):
         # First, calculate all denormalized scores.
-        for competitor in self.session.competitors.filter(status__gt=0):
-            for appearance in competitor.appearances.all():
-                for song in appearance.songs.all():
-                    song.calculate()
-                    song.save()
-                appearance.calculate()
-                appearance.save()
-            competitor.calculate()
-            competitor.save()
+        for appearance in self.appearances.all():
+            for song in appearance.songs.all():
+                song.calculate()
+                song.save()
+            appearance.calculate()
+            appearance.save()
+
         # Next run the competitor ranking.
         for competitor in self.session.competitors.filter(status__gt=0):
             competitor.ranking()
             competitor.save()
-
-        # Switch based on round
-        if self.kind == self.KIND.finals:
-            # All remaining competitors are finished in the sense
-            # that they didn't make the (non-existent) cut.
-            competitors = self.session.competitors.filter(
-                status=Competitor.STATUS.started,
-            )
-            # All remaining are finished the next round.
-            for competitor in competitors:
-                competitor.finish()
-                competitor.save()
-            # Determine all the awards.
-            for contest in self.session.contests.filter(status__gt=0):
-                contest.calculate()
-                contest.save()
-            create_ors_report(self)
-            return
-        elif self.kind == self.KIND.quarters:
-            spots = 20
-        elif self.kind == self.KIND.semis:
-            spots = 2
-        else:
-            raise RuntimeError("No Rounds Remaining")
 
         # Instantiate the advancing list
         advancers = []
@@ -237,7 +212,7 @@ class Round(TimeStampedModel):
         # Remove duplicates
         advancers = list(set(advancers))
         # Append up to spots available.
-        diff = spots - len(advancers)
+        diff = self.spots - len(advancers)
         if diff > 0:
             adds = self.session.competitors.filter(
                 entry__contestants__contest__award__rounds__gt=1,
@@ -250,36 +225,32 @@ class Round(TimeStampedModel):
                     advancers.append(add)
 
         # Randomize the list
-        random.shuffle(advancers)
+        # random.shuffle(advancers)
 
         # Set Draw
         i = 1
-        for competitor in advancers:
-            competitor.draw = i
-            competitor.start()
-            competitor.save()
+        appearances = self.appearances.filter(
+            competitor__in=advancers,
+        ).order_by('?')
+        for appearance in appearances:
+            appearance.draw = i
+            appearance.include()
+            appearance.save()
             i += 1
 
         # Set all remaining to finished..
-        finishers = Competitor.objects.filter(
-            status=Competitor.STATUS.started,
+        appearances = self.appearances.exclude(
+            competitor__in=advancers,
         )
-        for competitor in finishers:
-            competitor.draw = None
-            competitor.finish()
-            competitor.save()
+        for appearance in appearances:
+            appearance.exclude()
+            appearance.save()
+            i += 1
         return
 
     @fsm_log_by
     @transition(field=status, source=[STATUS.reviewed], target=STATUS.finished)
-    def finish(self, *args, **kwargs):
+    def verfiy(self, *args, **kwargs):
         # Switch based on rounds
-        Competitor = config.get_model('Competitor')
-        competitors = self.session.competitors.filter(
-            status=Competitor.STATUS.missed,
-        )
-        for competitor in competitors:
-            competitor.finish()
-            competitor.save()
         return
 

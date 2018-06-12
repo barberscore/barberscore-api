@@ -134,6 +134,22 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
+    @action(methods=['post'], detail=True)
+    def include(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.include(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def exclude(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.exclude(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
 
 
 class AssignmentViewSet(viewsets.ModelViewSet):
