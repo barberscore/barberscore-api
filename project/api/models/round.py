@@ -37,6 +37,7 @@ class Round(TimeStampedModel):
         (10, 'built', 'Built',),
         (20, 'started', 'Started',),
         (25, 'reviewed', 'Reviewed',),
+        (27, 'verified', 'Verified',),
         (30, 'finished', 'Finished',),
     )
 
@@ -186,7 +187,6 @@ class Round(TimeStampedModel):
             for contest in self.session.contests.filter(status__gt=0):
                 contest.calculate()
                 contest.save()
-            create_ors_report(self)
             return
         elif self.kind == self.KIND.quarters:
             spots = 20
@@ -213,6 +213,7 @@ class Round(TimeStampedModel):
                 # Get the top scorer
                 contestants = contest.contestants.filter(
                     status__gt=0,
+                    tot_points__gt=0,
                 ).order_by(
                     '-entry__competitor__tot_points',
                 )
@@ -243,37 +244,36 @@ class Round(TimeStampedModel):
                 if add not in advancers:
                     advancers.append(add)
 
-        # Randomize the list
-        random.shuffle(advancers)
-
-        # Set Draw
-        i = 1
-        for competitor in advancers:
-            competitor.draw = i
-            competitor.start()
-            competitor.save()
-            i += 1
-
         # Set all remaining to finished..
-        finishers = Competitor.objects.filter(
-            status=Competitor.STATUS.started,
+        advancers_id = [x.id for x in advancers]
+        finishers = self.session.competitors.filter(
+            status__gt=0,
+        ).exclude(
+            id__in=advancers_id,
         )
         for competitor in finishers:
-            competitor.draw = None
             competitor.finish()
             competitor.save()
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.reviewed], target=STATUS.finished)
-    def finish(self, *args, **kwargs):
-        # Switch based on rounds
+    @transition(field=status, source=[STATUS.reviewed], target=STATUS.verified)
+    def verify(self, *args, **kwargs):
         Competitor = config.get_model('Competitor')
         competitors = self.session.competitors.filter(
-            status=Competitor.STATUS.missed,
-        )
+            status=Competitor.STATUS.started,
+        ).order_by('?')
+        i = 1
         for competitor in competitors:
-            competitor.finish()
+            competitor.draw = i
             competitor.save()
+            i += 1
+        create_ors_report(self)
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
+        # Make public
         return
 
