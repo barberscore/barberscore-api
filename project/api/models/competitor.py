@@ -221,7 +221,6 @@ class Competitor(TimeStampedModel):
     def ranking(self):
         points = list(self.session.competitors.filter(
             is_ranked=True,
-            tot_points__isnull=False,
         ).order_by('-tot_points').values_list('tot_points', flat=True))
         print(points)
         if self.is_ranked:
@@ -238,7 +237,7 @@ class Competitor(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.new, STATUS.finished],
+        source=[STATUS.new, STATUS.started, STATUS.finished],
         target=STATUS.started,
     )
     def start(self, *args, **kwargs):

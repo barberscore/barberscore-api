@@ -789,6 +789,14 @@ class RoundViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True)
+    def verify(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.verify(by=self.request.user)
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
     def finish(self, request, pk=None, **kwargs):
         object = self.get_object()
         object.finish(by=self.request.user)
@@ -879,13 +887,6 @@ class SessionViewSet(viewsets.ModelViewSet):
         object = self.get_object()
         object.finish(by=self.request.user)
         object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['get'], detail=True)
-    def refresh(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        object.update_competitors()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
