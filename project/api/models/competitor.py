@@ -221,7 +221,9 @@ class Competitor(TimeStampedModel):
     def ranking(self):
         points = list(self.session.competitors.filter(
             is_ranked=True,
+            tot_points__isnull=False,
         ).order_by('-tot_points').values_list('tot_points', flat=True))
+        print(points)
         if self.is_ranked:
             ranked = Ranking(points, start=1)
             rank = ranked.rank(self.tot_points)

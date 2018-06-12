@@ -906,8 +906,8 @@ class Command(BaseCommand):
                 for score in song.scores.all():
                     score.points = s
                     score.save()
-            appearance.confirm()
-            appearance.save()
+            # appearance.confirm()
+            # appearance.save()
 
         s = 70
         for appearance in district_alpha_fall_convention_quartet_session_round_one.appearances.order_by('num'):
@@ -926,8 +926,8 @@ class Command(BaseCommand):
                 for score in song.scores.all():
                     score.points = s
                     score.save()
-            appearance.confirm()
-            appearance.save()
+            # appearance.confirm()
+            # appearance.save()
 
         s = 70
         for appearance in district_alpha_spring_convention_quartet_session_round_one.appearances.order_by('num'):
@@ -946,8 +946,13 @@ class Command(BaseCommand):
                 for score in song.scores.all():
                     score.points = s
                     score.save()
-            appearance.confirm()
-            appearance.save()
+            # appearance.confirm()
+            # appearance.save()
+
+        if options['breakpoint'] == 'finished':
+            return
+
+
 
         international_midwinter_convention_quartet_session_round_one.review()
         international_midwinter_convention_quartet_session_round_one.save()
