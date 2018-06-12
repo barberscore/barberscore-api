@@ -164,15 +164,9 @@ class Round(TimeStampedModel):
         Competitor = config.get_model('Competitor')
         # First, calculate all denormalized scores.
         for competitor in self.session.competitors.filter(status__gt=0):
-            for appearance in competitor.appearances.all():
-                for song in appearance.songs.all():
-                    song.calculate()
-                    song.save()
-                appearance.calculate()
-                appearance.save()
             competitor.calculate()
             competitor.save()
-        # Next run the competitor ranking.
+
         for competitor in self.session.competitors.filter(status__gt=0):
             competitor.ranking()
             competitor.save()

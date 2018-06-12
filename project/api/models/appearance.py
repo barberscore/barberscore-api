@@ -274,7 +274,6 @@ class Appearance(TimeStampedModel):
                 create_variance_report(self)
                 return
         self.calculate()
-        self.round.session.update_competitors()
         return
 
     # @fsm_log_by

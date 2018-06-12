@@ -137,18 +137,6 @@ class Session(TimeStampedModel):
         )
 
     # Methods
-    def update_competitors(self):
-        competitors = self.competitors.filter(
-            is_ranked=True,
-            tot_points__gt=0,
-            status__gt=0,
-        )
-        for competitor in competitors:
-            competitor.calculate()
-            competitor.ranking()
-            competitor.save()
-        return
-
 
     # Session Permissions
     @staticmethod
