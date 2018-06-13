@@ -804,6 +804,33 @@ class RoundViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
+    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
+    def ors(self, request, pk=None):
+        round = Round.objects.get(pk=pk)
+        competitors = round.session.competitors.order_by('-tot_points')
+        context = {
+            'round': round,
+            'competitors': competitors,
+        }
+        rendered = render_to_string('ors.html', context)
+        file = pydf.generate_pdf(rendered)
+        content = ContentFile(file)
+        pdf = content
+        file_name = '{0}-ors'.format(
+            slugify(
+                "{0} {1} {2} Session".format(
+                    round.session.convention.name,
+                    round.session.get_kind_display(),
+                    round.get_kind_display(),
+                )
+            )
+        )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
 
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(

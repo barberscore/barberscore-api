@@ -73,8 +73,8 @@
                 {% if competitor.group.chapter %}{{competitor.group.chapter.name}}{% endif %}
               </td>
               <td>
-                {% for appearance in competitor.appearances.all %}
-                  {% for song in appearance.songs.all %}
+                {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.chart.title|truncatechars:25}}<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
@@ -84,8 +84,8 @@
                 <strong>Total</strong>
               </td>
               <td class='text-right'>
-                {% for appearance in competitor.appearances.all %}
-                  {% for song in appearance.songs.all %}
+                {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
@@ -95,8 +95,8 @@
                 <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong>
               </td>
               <td class='text-right'>
-                {% for appearance in competitor.appearances.all %}
-                  {% for song in appearance.songs.all %}
+                {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
@@ -106,8 +106,8 @@
                 <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong>
               </td>
               <td class='text-right'>
-                {% for appearance in competitor.appearances.all %}
-                  {% for song in appearance.songs.all %}
+                {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
@@ -117,8 +117,8 @@
                 <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong>
               </td>
               <td class='text-right'>
-                {% for appearance in competitor.appearances.all %}
-                  {% for song in appearance.songs.all %}
+                {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}

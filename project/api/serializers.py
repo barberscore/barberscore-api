@@ -552,6 +552,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'num',
+            'ors',
             'spots',
             'session',
             'appearances',

@@ -16,6 +16,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps
 from django.db import models
 from django.utils.functional import cached_property
+from django.urls import reverse
 
 # First-Party
 from api.tasks import create_ors_report
@@ -84,6 +85,13 @@ class Round(TimeStampedModel):
 
     def __str__(self):
         return str(self.id)
+
+    @cached_property
+    def ors(self):
+        return reverse(
+            'round-ors',
+            args=[str(self.id)]
+        )
 
     # Permissions
     @staticmethod
