@@ -848,6 +848,22 @@ class PersonManager(Manager):
     #     return persons.count()
 
 
+# class RoundManager(Manager):
+#     def rank(self):
+#         appearances = self.appearances.filter(
+#             competitor__is_ranked=True,
+#         ).order_by('-competitor__tot_points')
+#         points = [x.competitor.tot_points for x in competitors]
+#         ranked = Ranking(points, start=1)
+#         for competitor in competitors:
+#             if competitor.is_ranked:
+#                 competitor.rank = ranked.rank(self.tot_points)
+#             else:
+#                 competitor.rank = None
+#             competitor.save()
+#         return
+
+
 class UserManager(BaseUserManager):
     # def update_or_create_from_person(self, person, is_object=False):
     #     # mapping

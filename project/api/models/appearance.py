@@ -278,8 +278,6 @@ class Appearance(TimeStampedModel):
         self.calculate()
         self.competitor.calculate()
         self.competitor.save()
-        self.competitor.ranking()
-        self.competitor.save()
         return
 
     @fsm_log_by

@@ -11,6 +11,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from ranking import Ranking
 
 # Django
 from django.apps import apps
@@ -137,6 +138,35 @@ class Session(TimeStampedModel):
         )
 
     # Methods
+    def calculate(self):
+        competitors = self.competitors.filter(
+            status__gt=0,
+        )
+        for competitor in competitors:
+            for appearance in competitor.appearances.all():
+                for song in appearance.songs.all():
+                    song.calculate()
+                    song.save()
+                appearance.calculate()
+                appearance.save()
+            competitor.calculate()
+            competitor.save()
+        return
+
+
+    def rank(self):
+        competitors = self.competitors.filter(
+            is_ranked=True,
+        ).order_by('-tot_points')
+        points = [x.tot_points for x in competitors]
+        ranked = Ranking(points, start=1)
+        for competitor in competitors:
+            if competitor.is_ranked:
+                competitor.rank = ranked.rank(competitor.tot_points)
+            else:
+                competitor.rank = None
+            competitor.save()
+        return
 
     # Session Permissions
     @staticmethod

@@ -162,20 +162,12 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.started, STATUS.reviewed], target=STATUS.reviewed)
+    @transition(field=status, source=[STATUS.started], target=STATUS.finished)
     def finish(self, *args, **kwargs):
         # First, calculate all denormalized scores.
-        for appearance in self.appearances.all():
-            for song in appearance.songs.all():
-                song.calculate()
-                song.save()
-            appearance.calculate()
-            appearance.save()
-
+        self.session.calculate()
         # Next run the competitor ranking.
-        for competitor in self.session.competitors.filter(status__gt=0):
-            competitor.ranking()
-            competitor.save()
+        self.session.rank()
 
         # Instantiate the advancing list
         advancers = []
@@ -227,35 +219,27 @@ class Round(TimeStampedModel):
                     advancers.append(add)
 
         # Set all remaining to finished..
-        advancers_id = [x.id for x in advancers]
-        finishers = self.session.competitors.filter(
+        appearances = self.appearances.filter(
             status__gt=0,
         ).exclude(
-            id__in=advancers_id,
+            competitor__in=advancers,
         )
-        for competitor in finishers:
-            competitor.finish()
-            competitor.save()
+        for appearance in appearances:
+            appearance.exclude()
+            appearance.save()
+        appearances = self.appearances.filter(
+            competitor__in=advancers,
+        ).order_by('?')
+        i = 1
+        for appearance in appearances:
+            appearance.draw = i
+            appearance.include()
+            appearance.save()
+            i += 1
         return
 
     @fsm_log_by
     @transition(field=status, source=[STATUS.reviewed], target=STATUS.verified)
     def verify(self, *args, **kwargs):
-        Competitor = config.get_model('Competitor')
-        competitors = self.session.competitors.filter(
-            status=Competitor.STATUS.started,
-        ).order_by('?')
-        i = 1
-        for competitor in competitors:
-            competitor.draw = i
-            competitor.save()
-            i += 1
         create_ors_report(self)
         return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.finished)
-    def finish(self, *args, **kwargs):
-        # Make public
-        return
-

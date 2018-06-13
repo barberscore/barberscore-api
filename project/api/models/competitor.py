@@ -218,19 +218,6 @@ class Competitor(TimeStampedModel):
             tot=models.Avg('songs__scores__points')
         )['tot']
 
-    def ranking(self):
-        points = list(self.session.competitors.filter(
-            is_ranked=True,
-        ).order_by('-tot_points').values_list('tot_points', flat=True))
-        print(points)
-        if self.is_ranked:
-            ranked = Ranking(points, start=1)
-            rank = ranked.rank(self.tot_points)
-            self.rank = rank
-        else:
-            self.rank = None
-        return
-
     # Competitor Transition Conditions
 
     # Competitor Transitions
