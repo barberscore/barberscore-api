@@ -152,15 +152,16 @@ class Round(TimeStampedModel):
                 person=assignment.person,
             )
         # build the appearances
-        Competitor = apps.get_model('api.competitor')
-        competitors = self.session.competitors.all()
-        for competitor in competitors:
-            appearance = competitor.appearances.create(
-                round=self,
-                num=competitor.draw,
-            )
-            appearance.build()
-            appearance.save()
+        if self.num == 1:
+            Competitor = apps.get_model('api.competitor')
+            competitors = self.session.competitors.all()
+            for competitor in competitors:
+                appearance = competitor.appearances.create(
+                    round=self,
+                    num=competitor.draw,
+                )
+                appearance.build()
+                appearance.save()
         return
 
 
@@ -247,7 +248,23 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.reviewed], target=STATUS.verified)
+    @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
-        create_ors_report(self)
+        Appearance = apps.get_model('api.appearance')
+        if self.kind == self.KIND.finals:
+            return
+        appearances = self.appearances.filter(
+            status=Appearance.STATUS.included,
+        )
+        round = self.session.rounds.get(num=self.num + 1)
+        for appearance in appearances:
+            new = round.appearances.create(
+                competitor=appearance.competitor,
+                num=appearance.draw,
+            )
+            new.build()
+            new.save()
+        round.build()
+        round.save()
         return
+
