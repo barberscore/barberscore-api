@@ -160,14 +160,16 @@ class Round(TimeStampedModel):
                     round=self,
                     num=competitor.draw,
                 )
-                appearance.build()
-                appearance.save()
         return
 
 
     @fsm_log_by
     @transition(field=status, source=[STATUS.built], target=STATUS.started)
     def start(self, *args, **kwargs):
+        appearances = self.appearances.all()
+        for appearance in appearances:
+            appearance.build()
+            appearance.save()
         return
 
     @fsm_log_by
@@ -228,22 +230,22 @@ class Round(TimeStampedModel):
                     advancers.append(add)
 
         # Set all remaining to finished..
-        appearances = self.appearances.filter(
+        advancers_id = [x.id for x in advancers]
+        competitors = self.session.competitors.filter(
             status__gt=0,
         ).exclude(
-            competitor__in=advancers,
+            id__in=advancers_id,
         )
-        for appearance in appearances:
-            appearance.exclude()
-            appearance.save()
-        appearances = self.appearances.filter(
-            competitor__in=advancers,
+        for competitor in competitors:
+            competitor.finish()
+            competitor.save()
+        competitors = self.session.competitors.filter(
+            id__in=advancers_id,
         ).order_by('?')
         i = 1
-        for appearance in appearances:
-            appearance.draw = i
-            appearance.include()
-            appearance.save()
+        for competitor in competitors:
+            competitor.draw = i
+            competitor.save()
             i += 1
         return
 
@@ -257,13 +259,6 @@ class Round(TimeStampedModel):
             status=Appearance.STATUS.included,
         )
         round = self.session.rounds.get(num=self.num + 1)
-        for appearance in appearances:
-            new = round.appearances.create(
-                competitor=appearance.competitor,
-                num=appearance.draw,
-            )
-            new.build()
-            new.save()
         round.build()
         round.save()
         return
