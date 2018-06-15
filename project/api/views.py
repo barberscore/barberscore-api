@@ -807,10 +807,18 @@ class RoundViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
     def ors(self, request, pk=None):
         round = Round.objects.get(pk=pk)
-        competitors = round.session.competitors.order_by('-tot_points')
+        competitors = round.session.competitors.filter(
+            status=Competitor.STATUS.finished,
+        ).order_by('-tot_points')
+        advancers = round.session.competitors.filter(
+            status=Competitor.STATUS.started,
+        ).order_by('draw')
+        panelists = round.panelists.all()
         context = {
             'round': round,
             'competitors': competitors,
+            'advancers': advancers,
+            'panelists': panelists,
         }
         rendered = render_to_string('ors.html', context)
         file = pydf.generate_pdf(rendered)

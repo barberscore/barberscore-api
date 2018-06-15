@@ -648,7 +648,10 @@ def create_variance_report(appearance):
 
 @job
 def create_ors_report(round):
-    competitors = round.session.competitors.order_by(
+    Competitor = apps.get_model('api.competitor')
+    competitors = round.session.competitors.filter(
+        status=Competitor.STATUS.finished,
+    ).order_by(
         'rank',
         'tot_points'
     )

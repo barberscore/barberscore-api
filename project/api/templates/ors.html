@@ -133,6 +133,14 @@
       </table>
     </section>
     <section>
+      <h4>Draw</h4>
+        <ul class='list-inline'>
+        {% for advancer in advancers %}
+          <li>{{advancer.draw}} <strong>{{advancer.group.name}}</strong></li>
+        {% endfor %}
+      </ul>
+    </section>
+    <section>
       <h4>Awards</h4>
         <ul class='list-unstyled'>
         {% for contest in contests %}
