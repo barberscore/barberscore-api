@@ -435,10 +435,20 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         appearances = competitor.appearances.order_by(
             'round__num',
         )
+        appearances = competitor.appearances.order_by(
+            'round__num',
+        )
+        songs = Song.objects.filter(
+            appearance__competitor=competitor,
+        ).order_by(
+            'appearance__round__num',
+            'num',
+        )
         context = {
             'competitor': competitor,
             'panelists': panelists,
             'appearances': appearances,
+            'songs': songs,
         }
         rendered = render_to_string('csa.html', context)
         file = pydf.generate_pdf(rendered)

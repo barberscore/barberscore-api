@@ -30,7 +30,7 @@
           font-size: 24pt;
       }
       .smallj {
-        font-size: 10px;
+        font-size: 20px;
       }
       section {
         margin-left: 20px;
@@ -104,7 +104,7 @@
                   {% endfor %}
                   <em>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</em><br>
                 {% endfor %}
-                <strong>{{entry.mus_points}} ({{entry.mus_score|floatformat:1}})</strong><br>
+                <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong><br>
               </td>
               <td class='text-right'>
                 {% for appearance in appearances %}
@@ -113,7 +113,7 @@
                   {% endfor %}
                   <em>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</em><br>
                 {% endfor %}
-                <strong>{{entry.per_points}} ({{entry.per_score|floatformat:1}})</strong><br>
+                <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong><br>
               </td>
               <td class='text-right'>
                 {% for appearance in appearances %}
@@ -122,7 +122,7 @@
                   {% endfor %}
                   <em>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</em><br>
                 {% endfor %}
-                <strong>{{entry.sng_points}} ({{entry.sng_score|floatformat:1}})</strong><br>
+                <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong><br>
               </td>
               <td class='text-right'>
                 {% for appearance in appearances %}
@@ -131,7 +131,7 @@
                   {% endfor %}
                   <em>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</em><br>
                 {% endfor %}
-                <strong>{{entry.tot_points}} ({{entry.tot_score|floatformat:1}})</strong><br>
+                <strong>{{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong><br>
               </td>
             </tr>
           </tbody>
@@ -140,36 +140,31 @@
     </section>
     <section>
       <div class='table-responsive'>
+        {% regroup panelists by person as panelist_tuple %}
         <table class='table'>
           <thead>
             <tr>
               <th>Songs</th>
-              {% for panelist in panelists %}
-                <th class='text-right'>{{panelist.person.common_name}}</th>
+              {% for item in panelist_tuple %}
+                <th class='text-right'>{{item.grouper.common_name}}</th>
               {% endfor %}
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                {% for appearance in appearances %}
-                  {% for song in appearance.songs.all %}
-                    {{song.chart.title|truncatewords_html:4}}<br>
-                  {% endfor %}
-                {% endfor %}
-              </td>
-              {% for panelist in panelists %}
-                <td class='text-right'>
-                  {% for appearance in appearances %}
-                    {% for song in appearance.songs.all %}
-                      {% for score in song.scores.all %}
-                        {% if score.panelist == panelist %}{{score.points}}<br>{% endif %}
-                      {% endfor %}
-                    {% endfor %}
-                  {% endfor %}
+            {% for song in songs %}
+              <tr>
+                <td>
+                  {{song.chart.title|truncatewords_html:4}}<br>
                 </td>
-              {% endfor %}
-            </tr>
+                {% for item in panelist_tuple %}
+                  <td class='text-right'>
+                    {% for score in song.scores.all %}
+                      {% if score.panelist.person == item.grouper %}{{score.points}}<br>{% endif %}
+                    {% endfor %}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

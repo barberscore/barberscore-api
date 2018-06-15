@@ -191,6 +191,9 @@ class Round(TimeStampedModel):
                 competitor.save()
             return
 
+        # Get spots available
+        spots = self.session.rounds.get(num=self.num + 1).spots
+
         # Instantiate the advancing list
         advancers = []
 
@@ -228,7 +231,10 @@ class Round(TimeStampedModel):
         # Remove duplicates
         advancers = list(set(advancers))
         # Append up to spots available.
-        diff = self.spots - len(advancers)
+        if spots:
+            diff = spots - len(advancers)
+        else:
+            diff = 0
         if diff > 0:
             adds = self.session.competitors.filter(
                 entry__contestants__contest__award__rounds__gt=1,

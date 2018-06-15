@@ -727,6 +727,11 @@ class Command(BaseCommand):
         district_alpha_fall_convention_chorus_session.build()
         district_alpha_fall_convention_chorus_session.save()
 
+        # Monkeypatch finals round
+        district_alpha_fall_convention_quartet_session_round_two = district_alpha_fall_convention_quartet_session.rounds.latest()
+        district_alpha_fall_convention_quartet_session_round_two.spots = 2
+        district_alpha_fall_convention_quartet_session_round_two.save()
+
         # Open sessions
         international_midwinter_convention_quartet_session.open()
         international_midwinter_convention_quartet_session.save()
@@ -882,7 +887,6 @@ class Command(BaseCommand):
 
         international_midwinter_convention_quartet_session_round_one.start()
         international_midwinter_convention_quartet_session_round_one.save()
-        district_alpha_fall_convention_quartet_session_round_one.spots = 2
         district_alpha_fall_convention_quartet_session_round_one.start()
         district_alpha_fall_convention_quartet_session_round_one.save()
         district_alpha_spring_convention_quartet_session_round_one.start()

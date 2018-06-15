@@ -239,8 +239,11 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        assi = bool(self.song.appearance.competitor.session.convention.assignments.filter(
-            person__user=request.user,
-            status__gt=0,
-        ))
-        return assi
+        conditions = all([
+            self.song.appearance.competitor.session.convention.assignments.filter(
+                person__user=request.user,
+                status__gt=0,
+            ),
+            self.song.appearance.status != self.song.appearance.STATUS.confirmed,
+        ])
+        return conditions

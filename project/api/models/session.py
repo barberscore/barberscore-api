@@ -254,9 +254,14 @@ class Session(TimeStampedModel):
         for i in range(self.num_rounds):
             num = i + 1
             kind = self.num_rounds - i
+            if kind == 1:
+                spots = 10
+            else:
+                spots = None
             self.rounds.create(
                 num=num,
                 kind=kind,
+                spots=spots,
             )
         return
 
