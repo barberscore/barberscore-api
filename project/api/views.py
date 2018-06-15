@@ -861,12 +861,16 @@ class RoundViewSet(viewsets.ModelViewSet):
         advancers = round.session.competitors.filter(
             status=Competitor.STATUS.started,
         ).order_by('draw')
+        contests = round.session.contests.filter(
+            status=Contest.STATUS.included,
+        ).order_by('award__tree_sort')
         panelists = round.panelists.all()
         context = {
             'round': round,
             'competitors': competitors,
             'advancers': advancers,
             'panelists': panelists,
+            'contests': contests,
         }
         rendered = render_to_string('ors.html', context)
         file = pydf.generate_pdf(rendered)

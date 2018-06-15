@@ -189,6 +189,12 @@ class Round(TimeStampedModel):
             for competitor in competitors:
                 competitor.finish()
                 competitor.save()
+            contests = self.session.contests.filter(
+                status__gt=0,
+            )
+            for contest in contests:
+                contest.calculate()
+                contest.save()
             return
 
         # Get spots available

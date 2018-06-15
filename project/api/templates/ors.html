@@ -132,6 +132,7 @@
         </tbody>
       </table>
     </section>
+    {% if round.kind != 1 %}
     <section>
       <h4>Draw</h4>
         <ul class='list-inline'>
@@ -140,14 +141,17 @@
         {% endfor %}
       </ul>
     </section>
-    <section>
-      <h4>Awards</h4>
-        <ul class='list-unstyled'>
-        {% for contest in contests %}
-          <li><strong>{{contest.award.name}}:</strong>&nbsp;{{contest.champion.group.name}}</li>
-        {% endfor %}
-      </ul>
-    </section>
+    {% endif %}
+    {% if round.kind == 1 %}
+      <section>
+        <h4>Awards</h4>
+          <ul class='list-unstyled'>
+          {% for contest in contests %}
+            <li><strong>{{contest.award.name}}:</strong>&nbsp;{{contest.champion.group.name}}</li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
     <section>
       <h4>Panelists</h4>
       {% regroup panelists by get_category_display as panelist_list %}

@@ -957,11 +957,41 @@ class Command(BaseCommand):
         if options['breakpoint'] == 'confirmed':
             return
 
-
-
-        international_midwinter_convention_quartet_session_round_one.review()
-        international_midwinter_convention_quartet_session_round_one.save()
-        district_alpha_fall_convention_quartet_session_round_one.review()
+        district_alpha_fall_convention_quartet_session_round_one.verify()
         district_alpha_fall_convention_quartet_session_round_one.save()
+        district_alpha_fall_convention_quartet_session_round_one.finish()
+        district_alpha_fall_convention_quartet_session_round_one.save()
+
+        # Start Second Round
+        district_alpha_fall_convention_quartet_session_round_two = district_alpha_fall_convention_quartet_session.rounds.get(num=2)
+
+        district_alpha_fall_convention_quartet_session_round_two.start()
+        district_alpha_fall_convention_quartet_session_round_two.save()
+
+        s = 75
+        for appearance in district_alpha_fall_convention_quartet_session_round_two.appearances.order_by('num'):
+            appearance.start()
+            appearance.save()
+            song_one = appearance.songs.earliest()
+            song_two = appearance.songs.latest()
+            song_one.chart = Chart.objects.get(title='Chart 1')
+            song_two.chart = Chart.objects.get(title='Chart 2')
+            song_one.save()
+            song_two.save()
+            appearance.finish()
+            appearance.save()
+            s += 5
+            for song in appearance.songs.all():
+                for score in song.scores.all():
+                    score.points = s
+                    score.save()
+            appearance.confirm()
+            appearance.save()
+
+        district_alpha_fall_convention_quartet_session_round_two.verify()
+        district_alpha_fall_convention_quartet_session_round_two.save()
+
+        district_alpha_fall_convention_quartet_session_round_two.finish()
+        district_alpha_fall_convention_quartet_session_round_two.save()
 
         return
