@@ -237,7 +237,7 @@ class Competitor(TimeStampedModel):
         target=STATUS.finished,
     )
     def finish(self, *args, **kwargs):
-        # create_csa_report(self)
+        self.draw = None
         return
 
     @fsm_log_by

@@ -152,14 +152,15 @@ class Round(TimeStampedModel):
                 person=assignment.person,
             )
         # build the appearances
-        if self.num == 1:
-            Competitor = apps.get_model('api.competitor')
-            competitors = self.session.competitors.all()
-            for competitor in competitors:
-                appearance = competitor.appearances.create(
-                    round=self,
-                    num=competitor.draw,
-                )
+        Competitor = apps.get_model('api.competitor')
+        competitors = self.session.competitors.filter(
+            status__gt=0,
+        )
+        for competitor in competitors:
+            appearance = competitor.appearances.create(
+                round=self,
+                num=competitor.draw,
+            )
         return
 
 
@@ -173,12 +174,22 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.started], target=STATUS.finished)
-    def finish(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.verified)
+    def verify(self, *args, **kwargs):
         # First, calculate all denormalized scores.
         self.session.calculate()
         # Next run the competitor ranking.
         self.session.rank()
+
+        # "Finish" everyone if finals.
+        if self.kind == self.KIND.finals:
+            competitors = self.session.competitors.filter(
+                status__gt=0,
+            )
+            for competitor in competitors:
+                competitor.finish()
+                competitor.save()
+            return
 
         # Instantiate the advancing list
         advancers = []
@@ -240,7 +251,7 @@ class Round(TimeStampedModel):
             competitor.finish()
             competitor.save()
         competitors = self.session.competitors.filter(
-            id__in=advancers_id,
+            status__gt=0,
         ).order_by('?')
         i = 1
         for competitor in competitors:
@@ -250,14 +261,10 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.verified)
-    def verify(self, *args, **kwargs):
-        Appearance = apps.get_model('api.appearance')
+    @transition(field=status, source='*', target=STATUS.finished)
+    def finish(self, *args, **kwargs):
         if self.kind == self.KIND.finals:
             return
-        appearances = self.appearances.filter(
-            status=Appearance.STATUS.included,
-        )
         round = self.session.rounds.get(num=self.num + 1)
         round.build()
         round.save()
