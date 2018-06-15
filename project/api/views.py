@@ -421,6 +421,44 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
+    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
+    def csa(self, request, pk=None):
+        competitor = Competitor.objects.get(pk=pk)
+        panelists = Panelist.objects.filter(
+            kind=Panelist.KIND.official,
+            scores__song__appearance__competitor=competitor,
+        ).distinct(
+        ).order_by(
+            'category',
+            'person__last_name',
+        )
+        appearances = competitor.appearances.order_by(
+            'round__num',
+        )
+        context = {
+            'competitor': competitor,
+            'panelists': panelists,
+            'appearances': appearances,
+        }
+        rendered = render_to_string('csa.html', context)
+        file = pydf.generate_pdf(rendered)
+        content = ContentFile(file)
+        pdf = content
+        file_name = '{0}-ors'.format(
+            slugify(
+                "{0} {1} {2} CSA".format(
+                    competitor.session.convention.name,
+                    competitor.session.get_kind_display(),
+                    competitor.group.name,
+                )
+            )
+        )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
 
 class EntryViewSet(viewsets.ModelViewSet):
     queryset = Entry.objects.select_related(

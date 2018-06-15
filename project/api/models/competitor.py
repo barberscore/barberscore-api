@@ -11,6 +11,8 @@ from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from ranking import Ranking
+from django.utils.functional import cached_property
+from django.urls import reverse
 
 # Django
 from django.db import models
@@ -128,6 +130,13 @@ class Competitor(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    @cached_property
+    def csa(self):
+        return reverse(
+            'competitor-csa',
+            args=[str(self.id)]
+        )
+
     # Internals
     class Meta:
         verbose_name_plural = 'competitors'
@@ -144,12 +153,13 @@ class Competitor(TimeStampedModel):
     # Competitor Permissions
     @staticmethod
     @allow_staff_or_superuser
-    @authenticated_users
+    # @authenticated_users
     def has_read_permission(request):
-        return request.user.person.officers.filter(office__is_scoring_manager=True)
+        return True
+        # return request.user.person.officers.filter(office__is_scoring_manager=True)
 
     @allow_staff_or_superuser
-    @authenticated_users
+    # @authenticated_users
     def has_object_read_permission(self, request):
         return True
 

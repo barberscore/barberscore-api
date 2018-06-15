@@ -155,6 +155,7 @@ class CompetitorSerializer(serializers.ModelSerializer):
             'status',
             'draw',
             'rank',
+            'csa',
             'mus_points',
             'per_points',
             'sng_points',
