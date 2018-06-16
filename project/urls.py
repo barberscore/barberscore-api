@@ -32,7 +32,7 @@ urlpatterns = [
     path('robots.txt', lambda r: HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")),
 ]
 
-if settings.DEBUG:
+if settings.DEBUG and settings.DJANGO_SETTINGS_MODULE == 'settings.dev':
     import debug_toolbar
     urlpatterns += [
         re_path(
