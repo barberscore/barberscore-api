@@ -153,13 +153,13 @@ class Competitor(TimeStampedModel):
     # Competitor Permissions
     @staticmethod
     @allow_staff_or_superuser
-    # @authenticated_users
+    @authenticated_users
     def has_read_permission(request):
-        return True
-        # return request.user.person.officers.filter(office__is_scoring_manager=True)
+        # return True
+        return request.user.person.officers.filter(office__is_scoring_manager=True)
 
     @allow_staff_or_superuser
-    # @authenticated_users
+    @authenticated_users
     def has_object_read_permission(self, request):
         return True
 
