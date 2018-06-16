@@ -35,13 +35,13 @@
       <table class='table table-condensed'>
         <thead>
           <tr>
-            <th class='col-md-1 smalltd'>Rank</th>
-            <th class='col-md-2 smalltd'>Group</th>
-            <th class='col-md-5 smalltd'>Songs</th>
-            <th class='col-md-1 text-right smalltd'>MUS</th>
-            <th class='col-md-1 text-right smalltd'>PER</th>
-            <th class='col-md-1 text-right smalltd'>SNG</th>
-            <th class='col-md-1 text-right smalltd'>Total</th>
+            <th class='col-md-1'>Rank</th>
+            <th class='col-md-2'>Group</th>
+            <th class='col-md-5'>Songs</th>
+            <th class='col-md-1 text-right'>MUS</th>
+            <th class='col-md-1 text-right'>PER</th>
+            <th class='col-md-1 text-right'>SNG</th>
+            <th class='col-md-1 text-right'>Total</th>
           </tr>
         </thead>
         <tbody>
@@ -55,7 +55,7 @@
               <td class='smalltd'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.chart.nomen|truncatechars:99}}<br>
+                    {{song.chart.nomen|truncatechars:60}}<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                     <em>{{appearance.round.get_kind_display}}</em><br>
@@ -63,7 +63,7 @@
                 {% endfor %}
                 <strong>Total</strong>
               </td>
-              <td class='text-right smalltd'>
+              <td class='text-right smallertd'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
