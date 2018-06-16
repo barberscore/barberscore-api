@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style type="text/css">
       /* setup the page */
       @page {
@@ -56,8 +56,8 @@
         <thead>
           <tr>
             <th class='col-md-1'>Rank</th>
-            <th class='col-md-3'>Group</th>
-            <th class='col-md-4'>Songs</th>
+            <th class='col-md-2'>Group</th>
+            <th class='col-md-5'>Songs</th>
             <th class='col-md-1 text-right'>MUS</th>
             <th class='col-md-1 text-right'>PER</th>
             <th class='col-md-1 text-right'>SNG</th>
@@ -75,7 +75,7 @@
               <td>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.chart.title|truncatechars:25}}<br>
+                    {{song.chart.nomen|truncatechars:99}}<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                     <em>{{appearance.round.get_kind_display}}</em><br>
@@ -153,18 +153,17 @@
       </section>
     {% endif %}
     <section>
-      <h4>Panelists</h4>
-      {% regroup panelists by get_category_display as panelist_list %}
+      <h4>Officials</h4>
+      {% regroup assignments by get_category_display as assignment_tuple %}
         <ul class='list-unstyled'>
-        {% for category in panelist_list %}
-          <li class='smallj'><strong>{{category.grouper}}:</strong>
-            {% for panelist in category.list %}
-              {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
+        {% for item in assignment_tuple %}
+          <li class='smallj'><strong>{{item.grouper}}:</strong>
+            {% for assignment in item.list %}
+              {{assignment.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
             {% endfor %}
           </li>
         {% endfor %}
       </ul>
     </section>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </body>
 </html>

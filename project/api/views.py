@@ -864,6 +864,13 @@ class RoundViewSet(viewsets.ModelViewSet):
         contests = round.session.contests.filter(
             status=Contest.STATUS.included,
         ).order_by('award__tree_sort')
+        assignments = round.session.convention.assignments.filter(
+            status__gt=0,
+            kind=Assignment.KIND.official,
+        ).order_by(
+            'category',
+            'person__last_name',
+        )
         panelists = round.panelists.all()
         context = {
             'round': round,
@@ -871,6 +878,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             'advancers': advancers,
             'panelists': panelists,
             'contests': contests,
+            'assignments': assignments,
         }
         rendered = render_to_string('ors.html', context)
         file = pydf.generate_pdf(rendered)
