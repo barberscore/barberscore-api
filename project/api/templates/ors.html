@@ -13,6 +13,9 @@
       .smalltd {
         font-size: 12pt;
       }
+      .smallertd {
+        font-size: 10pt;
+      }
       /* layout */
     </style>
   </head>
@@ -71,7 +74,7 @@
                 {% endfor %}
                 <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong>
               </td>
-              <td class='text-right smalltd'>
+              <td class='text-right smallertd'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
@@ -82,7 +85,7 @@
                 {% endfor %}
                 <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong>
               </td>
-              <td class='text-right smalltd'>
+              <td class='text-right smallertd'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
@@ -93,7 +96,7 @@
                 {% endfor %}
                 <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong>
               </td>
-              <td class='text-right smalltd'>
+              <td class='text-right smallertd'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
