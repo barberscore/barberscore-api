@@ -35,7 +35,6 @@ class Round(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
         (20, 'started', 'Started',),
-        (25, 'reviewed', 'Reviewed',),
         (27, 'verified', 'Verified',),
         (30, 'finished', 'Finished',),
     )
@@ -177,7 +176,7 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.verified)
+    @transition(field=status, source=[STATUS.started], target=STATUS.verified)
     def verify(self, *args, **kwargs):
         # First, calculate all denormalized scores.
         self.session.calculate()
@@ -276,7 +275,7 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.finished)
+    @transition(field=status, source=[STATUS.verified], target=STATUS.finished)
     def finish(self, *args, **kwargs):
         if self.kind == self.KIND.finals:
             return
