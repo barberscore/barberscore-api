@@ -41,13 +41,6 @@ class Contest(TimeStampedModel):
 
     # Private
     champion = models.ForeignKey(
-        'Entry',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    champ = models.ForeignKey(
         'Group',
         null=True,
         blank=True,
