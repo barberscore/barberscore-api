@@ -492,7 +492,8 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'id',
+        'session__convention__name',
+        'group__name',
     ]
 
     autocomplete_fields = [
@@ -1218,7 +1219,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'id',
+        'session__convention__name',
     ]
 
 

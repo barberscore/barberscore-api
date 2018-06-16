@@ -84,7 +84,10 @@ class Round(TimeStampedModel):
         resource_name = "round"
 
     def __str__(self):
-        return str(self.id)
+        return "{0} {1}".format(
+            self.session.convention.name,
+            self.get_kind_display(),
+        )
 
     @cached_property
     def ors(self):
