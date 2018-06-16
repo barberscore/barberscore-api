@@ -47,6 +47,13 @@ class Contest(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    champ = models.ForeignKey(
+        'Group',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -119,7 +126,7 @@ class Contest(TimeStampedModel):
             '-entry__competitor__per_points',
         )
         if contestants:
-            champion = contestants.first().entry
+            champion = contestants.first().entry.group
         else:
             champion = None
         self.champion = champion
