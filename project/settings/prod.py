@@ -1,6 +1,7 @@
 from .base import *
 
 # Core
+DEBUG = True
 HOST_NAME = 'https://api.barberscore.com'
 ALLOWED_HOSTS = [
     '.barberscore.com',
