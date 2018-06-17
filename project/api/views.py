@@ -268,7 +268,7 @@ class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
         'session',
         'award',
-        'champion',
+        'group',
     ).prefetch_related(
         'contestants',
     ).order_by('id')

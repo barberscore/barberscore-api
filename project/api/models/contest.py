@@ -40,10 +40,11 @@ class Contest(TimeStampedModel):
     )
 
     # Private
-    champion = models.ForeignKey(
+    group = models.ForeignKey(
         'Group',
         null=True,
         blank=True,
+        related_name='contests',
         on_delete=models.SET_NULL,
     )
 
@@ -111,7 +112,7 @@ class Contest(TimeStampedModel):
     # Methods
     def calculate(self, *args, **kwargs):
         if self.award.level == self.award.LEVEL.qualifier:
-            champion = None
+            group = None
         contestants = self.contestants.filter(
             status__gt=0,
         ).order_by(
@@ -121,10 +122,10 @@ class Contest(TimeStampedModel):
             '-entry__competitor__per_points',
         )
         if contestants:
-            champion = contestants.first().entry.group
+            group = contestants.first().entry.group
         else:
-            champion = None
-        self.champion = champion
+            group = None
+        self.group = group
         return
 
     # Transitions

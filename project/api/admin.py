@@ -316,14 +316,18 @@ class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
 @admin.register(Contest)
 class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
+        'id',
         'status',
         'award',
         'session',
-        'champion',
+        'group',
     ]
 
     list_display = (
         'id',
+        'award',
+        'session',
+        'group',
     )
 
     list_filter = [
@@ -343,11 +347,13 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     readonly_fields = [
+        'id',
     ]
 
     autocomplete_fields = [
         'award',
         'session',
+        'group',
     ]
 
     search_fields = [
