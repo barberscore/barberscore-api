@@ -980,7 +980,7 @@ class Command(BaseCommand):
             song_two.save()
             appearance.finish()
             appearance.save()
-            s += 5
+            s += 3
             for song in appearance.songs.all():
                 for score in song.scores.all():
                     score.points = s
