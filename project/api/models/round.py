@@ -70,6 +70,13 @@ class Round(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    @cached_property
+    def announcements(self):
+        return reverse(
+            'round-announcements',
+            args=[str(self.id)]
+        )
+
     # Internals
     class Meta:
         unique_together = (

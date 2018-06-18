@@ -853,6 +853,41 @@ class RoundViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
+    def announcements(self, request, pk=None):
+        round = Round.objects.get(pk=pk)
+        advancers = round.session.competitors.filter(
+            status=Competitor.STATUS.started,
+        ).order_by('draw')
+        contests = round.session.contests.filter(
+            status=Contest.STATUS.included,
+            award__rounds=round.num,
+        ).order_by('award__tree_sort')
+        context = {
+            'round': round,
+            'advancers': advancers,
+            'contests': contests,
+        }
+        rendered = render_to_string('announcements.html', context)
+        file = pydf.generate_pdf(rendered)
+        content = ContentFile(file)
+        pdf = content
+        file_name = '{0}-announcements'.format(
+            slugify(
+                "{0} {1} {2} Announcements".format(
+                    round.session.convention.name,
+                    round.session.get_kind_display(),
+                    round.get_kind_display(),
+                )
+            )
+        )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
         'song',
@@ -1019,7 +1054,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         file = pydf.generate_pdf(rendered)
         content = ContentFile(file)
         pdf = content
-        file_name = '{0}-ors'.format(
+        file_name = '{0}-oss'.format(
             slugify(
                 "{0} {1} Session".format(
                     session.convention.name,

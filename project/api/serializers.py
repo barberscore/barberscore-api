@@ -554,6 +554,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'kind',
             'num',
             'spots',
+            'announcements',
             'session',
             'appearances',
             'panelists',

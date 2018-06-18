@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style type="text/css">
+      /* setup the page */
+        @page {
+          margin: 30px;
+          background: #ffffff;
+          size: US-Folio;
+        }
+        .smalltd {
+            font-size: 10pt;
+        }
+        .smallertd {
+            font-size: 10pt;
+        }
+        .head_rank {
+            width: 1%;
+        }
+        .head_group {
+            width: 10%;
+        }
+        .head_songs {
+            width: 20%;
+        }
+        .min-head {
+            width: 5%;
+        }
+        .pbi_avoid {
+            page-break-inside: avoid !important;
+        }
+
+      /* layout */
+    </style>
+  </head>
+  <body>
+    <section>
+      <h3>
+        Announcements
+      </h3>
+      <h4>
+        {{round.session.convention.name}} {{round.session.get_kind_display}} {{round.get_kind_display}}; {{round.session.convention.start_date}} - {{round.session.convention.end_date}}
+      </h4>
+      <h4>
+        {{round.session.convention.venue.name}}
+      </h4>
+    </section>
+    <section>
+        <h2>Evaluations</h2>
+    </section>
+    <section>
+        <h2>Administration</h2>
+    </section>
+    <section>
+        <h2>Awards</h2>
+        <ul class='list-unstyled'>
+            {% for contest in contests %}
+                <li>{{contest.award.name}}: {{contest.group.name}}</li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section>
+        <h2>Draw</h2>
+        <ul class='list-unstyled'>
+            {% for advancer in advancers %}
+                <li>{{advancer.draw}}: {{advancer.group.name}}</li>
+            {% endfor %}
+        </ul>
+    </section>
+  </body>
+</html>
