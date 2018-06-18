@@ -140,6 +140,13 @@ class Session(TimeStampedModel):
             args=[str(self.id)]
         )
 
+    @cached_property
+    def sa(self):
+        return reverse(
+            'session-sa',
+            args=[str(self.id)]
+        )
+
     # Internals
     class JSONAPIMeta:
         resource_name = "session"

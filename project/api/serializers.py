@@ -605,6 +605,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'drcj',
             'contact',
             'oss',
+            'sa',
             'num_rounds',
             'competitors',
             'convention',

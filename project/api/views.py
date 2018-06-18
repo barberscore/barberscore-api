@@ -1072,9 +1072,30 @@ class SessionViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
     def sa(self, request, pk=None):
         session = Session.objects.get(pk=pk)
-        context = {'session': session}
+        panelists = Panelist.objects.filter(
+            kind=Panelist.KIND.official,
+            scores__song__appearance__round__session=session,
+        ).distinct(
+        ).order_by(
+            'category',
+            'person__last_name',
+        )
+        competitors = session.competitors.filter(
+            status=Competitor.STATUS.finished,
+        ).order_by(
+            '-tot_points',
+        )
+        context = {
+            'session': session,
+            'panelists': panelists,
+            'competitors': competitors,
+        }
         rendered = render_to_string('sa.html', context)
-        file = pydf.generate_pdf(rendered)
+        file = pydf.generate_pdf(
+            rendered,
+            page_size='Letter',
+            orientation='Landscape',
+        )
         content = ContentFile(file)
         pdf = content
         file_name = '{0}-sa'.format(

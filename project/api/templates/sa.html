@@ -3,144 +3,85 @@
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style type="text/css">
-      @page {
-          margin: 30px;
-          background: #ffffff;
-      }
-      @font-face {
-        font-size: 12pt;
-        font-style: normal;
-      }
-      h3 {
-        font-size: 80pt;
-      }
-      h4 {
-        font-size: 60pt;
-      }
-      p {
-        font-size: 36pt;
-      }
-      th {
-          font-size: 24pt;
-      }
-      td {
-          font-size: 24pt;
-      }
-      li {
-          font-size: 24pt;
-      }
-      .smallj {
-        font-size: 10px;
-      }
-      section {
-        margin-left: 20px;
-        margin-right: 20px;
-        margin-top: 40px;
-        margin-bottom: 40px;
-      }
-      #breakit { page-break-before: always }
+        .smalltd {
+            font-size: 10pt;
+        }
+        .smallertd {
+            font-size: 10pt;
+        }
+        .head_rank {
+            width: 1%;
+        }
+        .head_group {
+            width: 10%;
+        }
+        .head_songs {
+            width: 20%;
+        }
+        .min-head {
+            width: 5%;
+        }
+        .pbi_avoid {
+            page-break-inside: avoid !important;
+        }
     </style>
   </head>
   <body>
     <section>
       <img class='pull-right' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
-      <h4>
+      <h3>
         Scoring Analysis
+      </h3>
+      <h4>
+        {{session.convention.name}} {{session.get_kind_display}} {{get_kind_display}}; {{session.convention.start_date}} - {{session.convention.end_date}}
       </h4>
-      <div>
-        <p>
-          {{entry.session.convention.name|safe}} {{entry.session.get_kind_display}} Session
-        </p>
-        <p>
-          {{session.convention.start_date}} - {{session.convention.end_date}}
-        </p>
-      </div>
+      <h4>
+        {{session.convention.venue.name}}
+      </h4>
     </section>
     <section>
-      <table class='table'>
-        <thead>
-          <tr>
-            <th>Competitor</th>
-            <th>Songs</th>
-            <th>MUS</th>
-            <th>PER</th>
-            <th>SNG</th>
-            <th>TOT</th>
-            {% for person in persons %}
-              <th>{{person.initials}}</th>
-            {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for competitor in competitors %}
+      <div class='table-responsive'>
+        {% regroup panelists by person as panelist_tuple %}
+        <table class='table'>
+          <thead>
             <tr>
-              <td>
-                {{competitor.group.name}}
-              </td>
-              <td>
-                {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                  {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.chart.title}}<br>
-                  {% endfor %}
-                  Subtotal {{appearance.round.get_kind_display}}<br>
-                {% endfor %}
-                Total<br>
-              </td>
-              <td>
-                {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                  {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.mus_points}}<br>
-                  {% endfor %}
-                  {{appearance.mus_points}}<br>
-                {% endfor %}
-                {{competitor.mus_points}}<br>
-              </td>
-              <td>
-                {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                  {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.per_points}}<br>
-                  {% endfor %}
-                  {{appearance.per_points}}<br>
-                {% endfor %}
-                {{competitor.per_points}}<br>
-              </td>
-              <td>
-                {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                  {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.sng_points}}<br>
-                  {% endfor %}
-                  {{appearance.sng_points}}<br>
-                {% endfor %}
-                {{competitor.sng_points}}<br>
-              </td>
-              <td>
-                {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                  {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.tot_points}}<br>
-                  {% endfor %}
-                  {{appearance.tot_points}}<br>
-                {% endfor %}
-                {{competitor.tot_points}}<br>
-              </td>
-              {% for person in persons %}
+              <th>Competitors</th>
+              <th>Songs</th>
+              {% for item in panelist_tuple %}
+                <th class='text-right'>{{item.grouper.initials}}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for competitor in competitors %}
+              <tr>
+                <td>
+                  {{competitor.group.name}}
+                </td>
                 <td>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
-                      {% for score in song.scores.all %}
-                        {%if score.panelist.person == person %}
-                          {{score.points}}<br>
-                        {% endif %}
-                      {% endfor %}
+                        {{song.chart.title|truncatewords_html:4}}<br>                    
                     {% endfor %}
                   {% endfor %}
                 </td>
-              {% endfor %}
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+                {% for item in panelist_tuple %}
+                  <td class='text-right'>
+                    {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                      {% for song in appearance.songs.all|dictsort:'num' %}
+                        {% for score in song.scores.all %}
+                          {% if score.panelist.person == item.grouper %}{{score.points}}<br>{% endif %}
+                        {% endfor %}
+                      {% endfor %}
+                    {% endfor %}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </section>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </body>
 </html>
 
