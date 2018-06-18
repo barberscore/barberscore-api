@@ -88,13 +88,6 @@ class Round(TimeStampedModel):
             self.get_kind_display(),
         )
 
-    @cached_property
-    def ors(self):
-        return reverse(
-            'round-ors',
-            args=[str(self.id)]
-        )
-
     # Permissions
     @staticmethod
     @allow_staff_or_superuser

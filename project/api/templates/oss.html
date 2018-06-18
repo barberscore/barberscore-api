@@ -1,41 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style type="text/css">
       /* setup the page */
-      @page {
+        @page {
           margin: 30px;
           background: #ffffff;
           size: US-Folio;
-      }
+        }
+        .smalltd {
+            font-size: 10pt;
+        }
+        .smallertd {
+            font-size: 10pt;
+        }
+        .head_rank {
+            width: 1%;
+        }
+        .head_group {
+            width: 10%;
+        }
+        .head_songs {
+            width: 20%;
+        }
+        .min-head {
+            width: 5%;
+        }
+        .pbi_avoid {
+            page-break-inside: avoid !important;
+        }
+
       /* layout */
-      @font-face {
-        font-size: 12pt;
-      }
-      #breakit { page-break-before: always }
-      .black { color: black }
-      html h3 {
-          font-size: 48pt;
-      }
-      html h4 {
-          font-size: 36pt;
-      }
-      html th {
-          font-size: 24pt;
-      }
-      html td {
-          font-size: 24pt;
-      }
-      html ul li {
-          font-size: 18pt;
-      }
-      .totals {
-        font-weight: 300;
-      }
-      .shortp {
-        line-height: 10px;
-      }
     </style>
   </head>
   <body>
@@ -44,37 +40,37 @@
         Official Scoring Summary
       </h3>
       <h4>
-        {{entry.session.convention.name|safe}} {{entry.session.get_kind_display}} Session; {{session.convention.start_date}} - {{session.convention.end_date}}
+        {{session.convention.name}} {{session.get_kind_display}} {{get_kind_display}}; {{session.convention.start_date}} - {{session.convention.end_date}}
       </h4>
       <h4>
-        {{session.convention.name}}
+        {{session.convention.venue.name}}
       </h4>
     </section>
     <section>
-      <table class='table'>
+      <table class='table table-condensed'>
         <thead>
           <tr>
-            <th class='col-md-1'>Rank</th>
-            <th class='col-md-3'>Group</th>
-            <th class='col-md-4'>Songs</th>
-            <th class='col-md-1 text-right'>MUS</th>
-            <th class='col-md-1 text-right'>PER</th>
-            <th class='col-md-1 text-right'>SNG</th>
-            <th class='col-md-1 text-right'>Total</th>
+            <th class='head_rank'>Rank</th>
+            <th class='head_group'>Group</th>
+            <th class='head_songs'>Songs</th>
+            <th class='text-right min-head'>MUS</th>
+            <th class='text-right min-head'>PER</th>
+            <th class='text-right min-head'>SNG</th>
+            <th class='text-right min-head'>Total</th>
           </tr>
         </thead>
         <tbody>
           {% for competitor in competitors %}
-            <tr>
-              <td>{{competitor.rank}}</td>
-              <td>
+            <tr class='pbi_avoid'>
+              <td class='smalltd'>{{competitor.rank}}</td>
+              <td class='smalltd'>
                 <strong>{{competitor.group.name}}</strong> ({{competitor.entry.representing}})<br>
                 {% if competitor.group.chapter %}{{competitor.group.chapter.name}}{% endif %}
               </td>
-              <td>
-                {% for appearance in competitor.appearances.all %}
-                  {% for song in appearance.songs.all %}
-                    {{song.chart.title|truncatechars:25}}<br>
+              <td class='smalltd'>
+                {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
+                    {{song.chart.nomen|truncatechars:60}}<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
                     <em>{{appearance.round.get_kind_display}}</em><br>
@@ -82,9 +78,9 @@
                 {% endfor %}
                 <strong>Total</strong>
               </td>
-              <td class='text-right'>
-                {% for appearance in competitor.appearances.all %}
-                  {% for song in appearance.songs.all %}
+              <td class='text-right smallertd'>
+                {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
@@ -93,9 +89,9 @@
                 {% endfor %}
                 <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong>
               </td>
-              <td class='text-right'>
-                {% for appearance in competitor.appearances.all %}
-                  {% for song in appearance.songs.all %}
+              <td class='text-right smallertd'>
+                {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
@@ -104,9 +100,9 @@
                 {% endfor %}
                 <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong>
               </td>
-              <td class='text-right'>
-                {% for appearance in competitor.appearances.all %}
-                  {% for song in appearance.songs.all %}
+              <td class='text-right smallertd'>
+                {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
@@ -115,9 +111,9 @@
                 {% endfor %}
                 <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong>
               </td>
-              <td class='text-right'>
-                {% for appearance in competitor.appearances.all %}
-                  {% for song in appearance.songs.all %}
+              <td class='text-right smallertd'>
+                {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
@@ -132,26 +128,49 @@
       </table>
     </section>
     <section>
-      <h4>Awards</h4>
-        <ul class='list-unstyled'>
-        {% for contest in contests %}
-          <li><strong>{{contest.award.name}}:</strong>&nbsp;{{contest.group.name}}</li>
-        {% endfor %}
-      </ul>
+        <h4>
+            Footnotes
+        </h4>
+        <p>
+            {%if session.footnotes %}{{session.footnotes}}{% else %}(No footnotes.){% endif %}
+        </p>
     </section>
-    <section>
-      <h4>Panelists</h4>
-      {% regroup panelists by get_category_display as panelist_list %}
-        <ul class='list-unstyled'>
-        {% for category in panelist_list %}
-          <li class='smallj'><strong>{{category.grouper}}:</strong>
-            {% for panelist in category.list %}
-              {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
+    <div class='pull-right'>
+      <section>
+        <h4>Officials</h4>
+        {% regroup panelists by get_category_display as panelist_tuple %}
+          <ul class='list-unstyled'>
+          {% for item in panelist_tuple %}
+            <li><strong>{{item.grouper}}:</strong>
+              {% for panelist in item.list %}
+                {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
+              {% endfor %}
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    </div>
+    <div>
+      {% if advancers %}
+        <section>
+          <h4>Draw</h4>
+            <ul class='list-inline'>
+            {% for advancer in advancers %}
+              <li>{{advancer.draw}} <strong>{{advancer.group.name}}</strong></li>
             {% endfor %}
-          </li>
-        {% endfor %}
-      </ul>
-    </section>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+          </ul>
+        </section>
+      {% endif %}
+      {% if contests %}
+        <section>
+          <h4>Awards</h4>
+            <ul class='list-unstyled'>
+            {% for contest in contests %}
+              <li><strong>{{contest.award.name}}:</strong>&nbsp;{{contest.group.name}}</li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+    </div>
   </body>
 </html>

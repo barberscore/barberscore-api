@@ -1284,6 +1284,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'num_rounds',
         'is_invitational',
+        'footnotes',
         'description',
         'notes',
     ]

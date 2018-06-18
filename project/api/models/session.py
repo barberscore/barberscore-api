@@ -98,6 +98,12 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    footnotes = models.TextField(
+        help_text="""
+            Freeform text field; will print on OSS.""",
+        blank=True,
+    )
+
     # FKs
     convention = models.ForeignKey(
         'Convention',
@@ -124,6 +130,13 @@ class Session(TimeStampedModel):
     def contact(self):
         return reverse(
             'session-contact',
+            args=[str(self.id)]
+        )
+
+    @cached_property
+    def oss(self):
+        return reverse(
+            'session-oss',
             args=[str(self.id)]
         )
 
@@ -189,6 +202,7 @@ class Session(TimeStampedModel):
         return any([
             request.user.person.officers.filter(office__is_convention_manager=True),
             request.user.person.officers.filter(office__is_session_manager=True),
+            request.user.person.officers.filter(office__is_scoring_manager=True),
         ])
 
     @allow_staff_or_superuser

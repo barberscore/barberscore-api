@@ -852,53 +852,6 @@ class RoundViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
-    def ors(self, request, pk=None):
-        round = Round.objects.get(pk=pk)
-        competitors = round.session.competitors.filter(
-            status=Competitor.STATUS.finished,
-        ).order_by('-tot_points')
-        advancers = round.session.competitors.filter(
-            status=Competitor.STATUS.started,
-        ).order_by('draw')
-        contests = round.session.contests.filter(
-            status=Contest.STATUS.included,
-        ).order_by('award__tree_sort')
-        assignments = round.session.convention.assignments.filter(
-            status__gt=0,
-            kind=Assignment.KIND.official,
-        ).order_by(
-            'category',
-            'person__last_name',
-        )
-        panelists = round.panelists.all()
-        context = {
-            'round': round,
-            'competitors': competitors,
-            'advancers': advancers,
-            'panelists': panelists,
-            'contests': contests,
-            'assignments': assignments,
-        }
-        rendered = render_to_string('ors.html', context)
-        file = pydf.generate_pdf(rendered)
-        content = ContentFile(file)
-        pdf = content
-        file_name = '{0}-ors'.format(
-            slugify(
-                "{0} {1} {2} Session".format(
-                    round.session.convention.name,
-                    round.session.get_kind_display(),
-                    round.get_kind_display(),
-                )
-            )
-        )
-        return PDFResponse(
-            pdf,
-            file_name=file_name,
-            status=status.HTTP_200_OK
-        )
-
 
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
@@ -1042,12 +995,31 @@ class SessionViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
     def oss(self, request, pk=None):
         session = Session.objects.get(pk=pk)
-        context = {'session': session}
+        competitors = session.competitors.filter(
+            status=Competitor.STATUS.finished,
+        ).order_by('-tot_points')
+        advancers = session.competitors.filter(
+            status=Competitor.STATUS.started,
+        ).order_by('draw')
+        contests = session.contests.filter(
+            status=Contest.STATUS.included,
+        ).order_by('award__tree_sort')
+        panelists = Panelist.objects.filter(
+            round__session=session,
+            kind=Panelist.KIND.official,
+        ).distinct('person')
+        context = {
+            'session': session,
+            'competitors': competitors,
+            'advancers': advancers,
+            'panelists': panelists,
+            'contests': contests,
+        }
         rendered = render_to_string('oss.html', context)
         file = pydf.generate_pdf(rendered)
         content = ContentFile(file)
         pdf = content
-        file_name = '{0}-oss'.format(
+        file_name = '{0}-ors'.format(
             slugify(
                 "{0} {1} Session".format(
                     session.convention.name,
@@ -1060,6 +1032,7 @@ class SessionViewSet(viewsets.ModelViewSet):
             file_name=file_name,
             status=status.HTTP_200_OK
         )
+
 
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
     def sa(self, request, pk=None):
