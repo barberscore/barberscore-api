@@ -63,7 +63,7 @@
         <tbody>
           {% for competitor in competitors %}
             <tr class='pbi_avoid'>
-              <td class='smalltd'>{{competitor.rank}}</td>
+              <td class='smalltd'>{{competitor.tot_rank}}</td>
               <td class='smalltd'>
                 <strong>{{competitor.group.name}}</strong> ({{competitor.entry.representing}})<br>
                 {% if competitor.group.chapter %}{{competitor.group.chapter.name}}{% endif %}
@@ -73,7 +73,7 @@
                   {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.chart.nomen|truncatechars:60}}<br>
                   {% endfor %}
-                  <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
+                  <!-- {% if competitor.session.num_rounds > 1 and competitor.tot_rank < 21 %}
                     <em>{{appearance.round.get_kind_display}}</em><br>
                   {% endif %} -->
                 {% endfor %}
@@ -84,7 +84,7 @@
                   {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                   {% endfor %}
-                  <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
+                  <!-- {% if competitor.session.num_rounds > 1 and competitor.tot_rank < 21 %}
                     <em>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</em><br>
                   {% endif %} -->
                 {% endfor %}
@@ -95,7 +95,7 @@
                   {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                   {% endfor %}
-                  <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
+                  <!-- {% if competitor.session.num_rounds > 1 and competitor.tot_rank < 21 %}
                   <em>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</em><br>
                   {% endif %} -->
                 {% endfor %}
@@ -106,7 +106,7 @@
                   {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                   {% endfor %}
-                  <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
+                  <!-- {% if competitor.session.num_rounds > 1 and competitor.tot_rank < 21 %}
                   <em>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</em><br>
                   {% endif %} -->
                 {% endfor %}
@@ -117,7 +117,7 @@
                   {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
                   {% endfor %}
-                  <!-- {% if competitor.session.num_rounds > 1 and competitor.rank < 21 %}
+                  <!-- {% if competitor.session.num_rounds > 1 and competitor.tot_rank < 21 %}
                     <em>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</em><br>
                   {% endif %} -->
                 {% endfor %}

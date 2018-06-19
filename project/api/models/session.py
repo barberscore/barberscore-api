@@ -181,10 +181,31 @@ class Session(TimeStampedModel):
         points = [x.tot_points for x in competitors]
         ranked = Ranking(points, start=1)
         for competitor in competitors:
-            if competitor.is_ranked:
-                competitor.rank = ranked.rank(competitor.tot_points)
-            else:
-                competitor.rank = None
+            competitor.tot_rank = ranked.rank(competitor.tot_points)
+            competitor.save()
+        competitors = self.competitors.filter(
+            is_ranked=True,
+        ).order_by('-mus_points')
+        points = [x.mus_points for x in competitors]
+        ranked = Ranking(points, start=1)
+        for competitor in competitors:
+            competitor.mus_rank = ranked.rank(competitor.mus_points)
+            competitor.save()
+        competitors = self.competitors.filter(
+            is_ranked=True,
+        ).order_by('-per_points')
+        points = [x.per_points for x in competitors]
+        ranked = Ranking(points, start=1)
+        for competitor in competitors:
+            competitor.per_rank = ranked.rank(competitor.per_points)
+            competitor.save()
+        competitors = self.competitors.filter(
+            is_ranked=True,
+        ).order_by('-sng_points')
+        points = [x.sng_points for x in competitors]
+        ranked = Ranking(points, start=1)
+        for competitor in competitors:
+            competitor.sng_rank = ranked.rank(competitor.sng_points)
             competitor.save()
         return
 

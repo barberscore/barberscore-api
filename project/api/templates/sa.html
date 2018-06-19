@@ -66,10 +66,10 @@
             <tr>
               <td>
                 {{competitor.group.name}}<br>
-                <strong>{{competitor.rank}}</strong> {{competitor.tot_points}} ({{competitor.tot_score}})<br>
+                <strong>{{competitor.tot_rank}}</strong> {{competitor.tot_points}} ({{competitor.tot_score}})<br>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% if appearance.tot_points != competitor.tot_points %}
-                    <strong>{{appearance.rank}}</strong> {{appearance.tot_points}} ({{appearance.tot_score}})<br>
+                    <strong>{{appearance.tot_rank}}</strong> {{appearance.tot_points}} ({{appearance.tot_score}})<br>
                   {% endif %}
                 {% endfor %}
               </td>
@@ -83,7 +83,7 @@
               <td class='text-right'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                      <strong>{{song.rank}}</strong> {{song.tot_points}} ({{song.tot_score}})<br>
+                      <strong>{{song.tot_rank}}</strong> {{song.tot_points}} ({{song.tot_score}})<br>
                   {% endfor %}
                 {% endfor %}
               </td>

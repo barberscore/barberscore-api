@@ -10,6 +10,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from ranking import Ranking
 
 # Django
 from django.db import models
@@ -125,6 +126,26 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    mus_rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    per_rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    tot_rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     # Appearance FKs
     round = models.ForeignKey(
         'Round',
@@ -202,6 +223,43 @@ class Appearance(TimeStampedModel):
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
+
+
+
+    def rank(self):
+        songs = self.songs.filter(
+            appearance__competitor__is_ranked=True,
+        ).order_by('-tot_points')
+        points = [x.tot_points for x in songs]
+        ranked = Ranking(points, start=1)
+        for song in songs:
+            song.tot_rank = ranked.rank(song.tot_points)
+            song.save()
+        songs = self.songs.filter(
+            appearance__competitor__is_ranked=True,
+        ).order_by('-mus_points')
+        points = [x.mus_points for x in songs]
+        ranked = Ranking(points, start=1)
+        for song in songs:
+            song.mus_rank = ranked.rank(song.mus_points)
+            song.save()
+        songs = self.songs.filter(
+            appearance__competitor__is_ranked=True,
+        ).order_by('-per_points')
+        points = [x.per_points for x in songs]
+        ranked = Ranking(points, start=1)
+        for song in songs:
+            song.per_rank = ranked.rank(song.per_points)
+            song.save()
+        songs = self.songs.filter(
+            appearance__competitor__is_ranked=True,
+        ).order_by('-sng_points')
+        points = [x.sng_points for x in songs]
+        ranked = Ranking(points, start=1)
+        for song in songs:
+            song.sng_rank = ranked.rank(song.sng_points)
+            song.save()
+        return
 
     # Appearance Permissions
     @staticmethod

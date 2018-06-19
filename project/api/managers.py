@@ -857,9 +857,9 @@ class PersonManager(Manager):
 #         ranked = Ranking(points, start=1)
 #         for competitor in competitors:
 #             if competitor.is_ranked:
-#                 competitor.rank = ranked.rank(self.tot_points)
+#                 competitor.tot_rank = ranked.rank(self.tot_points)
 #             else:
-#                 competitor.rank = None
+#                 competitor.tot_rank = None
 #             competitor.save()
 #         return
 

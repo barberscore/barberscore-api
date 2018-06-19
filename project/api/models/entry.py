@@ -153,6 +153,26 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
+    mus_rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    per_rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    sng_rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    tot_rank = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',

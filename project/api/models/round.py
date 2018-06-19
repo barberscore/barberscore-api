@@ -104,24 +104,32 @@ class Round(TimeStampedModel):
         points = [x.tot_points for x in appearances]
         ranked = Ranking(points, start=1)
         for appearance in appearances:
-            if appearance.competitor.is_ranked:
-                appearance.rank = ranked.rank(appearance.tot_points)
-            else:
-                appearance.rank = None
+            appearance.tot_rank = ranked.rank(appearance.tot_points)
             appearance.save()
-        Song = apps.get_model('api.song')
-        songs = Song.objects.filter(
-            appearance__round=self,
-            appearance__competitor__is_ranked=True,
-        ).order_by('-tot_points')
-        points = [x.tot_points for x in songs]
+        appearances = self.appearances.filter(
+            competitor__is_ranked=True,
+        ).order_by('-mus_points')
+        points = [x.mus_points for x in appearances]
         ranked = Ranking(points, start=1)
-        for song in songs:
-            if song.appearance.competitor.is_ranked:
-                song.rank = ranked.rank(song.tot_points)
-            else:
-                song.rank = None
-            song.save()
+        for appearance in appearances:
+            appearance.mus_rank = ranked.rank(appearance.mus_points)
+            appearance.save()
+        appearances = self.appearances.filter(
+            competitor__is_ranked=True,
+        ).order_by('-per_points')
+        points = [x.per_points for x in appearances]
+        ranked = Ranking(points, start=1)
+        for appearance in appearances:
+            appearance.per_rank = ranked.rank(appearance.per_points)
+            appearance.save()
+        appearances = self.appearances.filter(
+            competitor__is_ranked=True,
+        ).order_by('-sng_points')
+        points = [x.sng_points for x in appearances]
+        ranked = Ranking(points, start=1)
+        for appearance in appearances:
+            appearance.sng_rank = ranked.rank(appearance.sng_points)
+            appearance.save()
         return
 
     # Permissions
@@ -209,7 +217,11 @@ class Round(TimeStampedModel):
     def verify(self, *args, **kwargs):
         # First, calculate all denormalized scores.
         self.session.calculate()
-        # Next run the competitor ranking.
+        # Recursively run rankings.
+        for round in self.session.rounds.all():
+            for appearance in round.appearances.all():
+                appearance.rank()
+            round.rank()
         self.session.rank()
 
         # "Finish" everyone if finals.
