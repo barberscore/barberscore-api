@@ -257,8 +257,6 @@ class Round(TimeStampedModel):
         self.session.calculate()
         # Recursively run rankings.
         for round in self.session.rounds.all():
-            for appearance in round.appearances.all():
-                appearance.rank()
             round.rank()
         self.session.rank()
 
