@@ -16,7 +16,7 @@ def test_api_endpoint(admin_api_client, django_assert_num_queries):
 
 
 def test_appearance_endpoint_list(admin_api_client, appearance, django_assert_num_queries):
-    with django_assert_num_queries(7):
+    with django_assert_num_queries(3):
         path = reverse('appearance-list')
         response = admin_api_client.get(path)
         assert response.status_code == status.HTTP_200_OK
@@ -186,7 +186,7 @@ def test_user_endpoint_list(admin_api_client, user, django_assert_num_queries):
 # Detail Views
 
 def test_appearance_endpoint_detail(admin_api_client, appearance, django_assert_num_queries):
-    with django_assert_num_queries(6):
+    with django_assert_num_queries(2):
         path = reverse('appearance-detail', args=(str(appearance.id),))
         response = admin_api_client.get(path)
         assert response.status_code == status.HTTP_200_OK
