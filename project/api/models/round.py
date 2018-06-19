@@ -11,6 +11,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from ranking import Ranking
 
 # Django
 from django.apps import apps
@@ -94,6 +95,34 @@ class Round(TimeStampedModel):
             self.session.convention.name,
             self.get_kind_display(),
         )
+
+    # Methods
+    def rank(self):
+        appearances = self.appearances.filter(
+            competitor__is_ranked=True,
+        ).order_by('-tot_points')
+        points = [x.tot_points for x in appearances]
+        ranked = Ranking(points, start=1)
+        for appearance in appearances:
+            if appearance.competitor.is_ranked:
+                appearance.rank = ranked.rank(appearance.tot_points)
+            else:
+                appearance.rank = None
+            appearance.save()
+        Song = apps.get_model('api.song')
+        songs = Song.objects.filter(
+            appearance__round=self,
+            appearance__competitor__is_ranked=True,
+        ).order_by('-tot_points')
+        points = [x.tot_points for x in songs]
+        ranked = Ranking(points, start=1)
+        for song in songs:
+            if song.appearance.competitor.is_ranked:
+                song.rank = ranked.rank(song.tot_points)
+            else:
+                song.rank = None
+            song.save()
+        return
 
     # Permissions
     @staticmethod

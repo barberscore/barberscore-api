@@ -1075,6 +1075,8 @@ class SessionViewSet(viewsets.ModelViewSet):
         panelists = Panelist.objects.filter(
             kind=Panelist.KIND.official,
             scores__song__appearance__round__session=session,
+        ).select_related(
+            'person',
         ).distinct(
         ).order_by(
             'category',
@@ -1082,6 +1084,14 @@ class SessionViewSet(viewsets.ModelViewSet):
         )
         competitors = session.competitors.filter(
             status=Competitor.STATUS.finished,
+        ).select_related(
+            'group',
+        ).prefetch_related(
+            'appearances',
+            'appearances__songs',
+            'appearances__songs__scores',
+            'appearances__songs__scores__panelist',
+            'appearances__songs__scores__panelist__person',
         ).order_by(
             '-tot_points',
         )
