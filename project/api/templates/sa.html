@@ -16,16 +16,16 @@
             width: 60px;
         }
         .head_group {
-            width: 100px;
+            width: 150px;
         }
         .head_songs {
-            width: 20%;
+            width: 200px;
         }
         .mor-head {
             width: 75px;
         }
         .min-head {
-            width: 20px;
+            width: 5px;
         }
         .pbi_avoid {
             page-break-inside: avoid !important;
@@ -76,7 +76,7 @@
               <td>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                      {{song.chart.title|truncatewords_html:4}}<br>
+                      {{song.chart.title|truncatewords_html:6}}<br>
                   {% endfor %}
                 {% endfor %}
               </td>
