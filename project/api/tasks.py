@@ -643,7 +643,14 @@ def create_variance_report(appearance):
     rendered = render_to_string('variance.html', context)
     file = pydf.generate_pdf(rendered)
     content = ContentFile(file)
-    return content
+    appearance.variance_report.save(
+        "{0}-variance-report".format(
+            appearance.id,
+        ),
+        content,
+    )
+    appearance.save()
+    return
 
 
 @job

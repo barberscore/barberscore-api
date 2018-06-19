@@ -146,6 +146,11 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    variance_report = models.FileField(
+        null=True,
+        blank=True,
+    )
+
     # Appearance FKs
     round = models.ForeignKey(
         'Round',
@@ -288,15 +293,19 @@ class Appearance(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.finished, STATUS.confirmed], target=STATUS.confirmed)
-    def confirm(self, *args, **kwargs):
+    @transition(field=status, source='*', target=STATUS.verified)
+    def verify(self, *args, **kwargs):
         for song in self.songs.all():
             song.calculate()
             song.save()
             variance = song.check_variance()
             if variance:
                 create_variance_report(self)
-                return
+        return
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.finished, STATUS.confirmed], target=STATUS.confirmed)
+    def confirm(self, *args, **kwargs):
         self.calculate()
         self.competitor.calculate()
         self.competitor.save()
