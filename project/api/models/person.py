@@ -306,8 +306,8 @@ class Person(TimeStampedModel):
     @cached_property
     def initials(self):
         return "{0}{1}".format(
-            self.last_name[0].upper(),
             self.first_name[0].upper(),
+            self.last_name[0].upper(),
         )
 
     # Internals

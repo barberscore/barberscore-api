@@ -3,42 +3,6 @@
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style type="text/css">
-      @page {
-          margin: 30px;
-          background: #ffffff;
-      }
-      @font-face {
-        font-size: 12pt;
-        font-style: normal;
-      }
-      h3 {
-        font-size: 80pt;
-      }
-      h4 {
-        font-size: 60pt;
-      }
-      p {
-        font-size: 36pt;
-      }
-      th {
-          font-size: 24pt;
-      }
-      td {
-          font-size: 24pt;
-      }
-      li {
-          font-size: 24pt;
-      }
-      .smallj {
-        font-size: 20px;
-      }
-      section {
-        margin-left: 20px;
-        margin-right: 20px;
-        margin-top: 40px;
-        margin-bottom: 40px;
-      }
-      #breakit { page-break-before: always }
     </style>
   </head>
   <body>
@@ -90,7 +54,7 @@
             <tr>
               <td>
                 {% for appearance in appearances %}
-                  {% for song in appearance.songs.all %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.chart.title|truncatewords_html:10}}<br>
                   {% endfor %}
                   <em>{{appearance.round.get_kind_display}}</em><br>
@@ -99,7 +63,7 @@
               </td>
               <td class='text-right'>
                 {% for appearance in appearances %}
-                  {% for song in appearance.songs.all %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                   {% endfor %}
                   <em>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</em><br>
@@ -108,7 +72,7 @@
               </td>
               <td class='text-right'>
                 {% for appearance in appearances %}
-                  {% for song in appearance.songs.all %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                   {% endfor %}
                   <em>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</em><br>
@@ -117,7 +81,7 @@
               </td>
               <td class='text-right'>
                 {% for appearance in appearances %}
-                  {% for song in appearance.songs.all %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                   {% endfor %}
                   <em>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</em><br>
@@ -126,7 +90,7 @@
               </td>
               <td class='text-right'>
                 {% for appearance in appearances %}
-                  {% for song in appearance.songs.all %}
+                  {% for song in appearance.songs.all|dictsort:'num' %}
                     {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
                   {% endfor %}
                   <em>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</em><br>
@@ -146,7 +110,7 @@
             <tr>
               <th>Songs</th>
               {% for item in panelist_tuple %}
-                <th class='text-right'>{{item.grouper.common_name}}</th>
+                <th class='text-right'>{{item.grouper.initials}}</th>
               {% endfor %}
             </tr>
           </thead>
@@ -182,17 +146,43 @@
     <section>
       {% regroup panelists by get_category_display as panelist_list %}
       <table class='table'>
-        {% for category in panelist_list %}
-        <tbody>
-            <div>
-            <tr>
-            <td class='smallj'><strong>{{category.grouper}}</strong></td>
-            {% for panelist in category.list %}
-              <td class='smallj'>{{panelist.person.common_name}}</td>
-            {% endfor %}
+        <thead>
+          <tr>
+            <th>Music</th>
+            <th>Performance</th>
+            <th>Singing</th>
           </tr>
-          </div>
-        {% endfor %}
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              {% for item in panelist_list %}
+                {% if item.grouper == 'Music' %}
+                    {% for panelist in item.list %}
+                      {{panelist.person.common_name}}<br>
+                    {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </td>
+            <td>
+              {% for item in panelist_list %}
+                {% if item.grouper == 'Performance' %}
+                    {% for panelist in item.list %}
+                      {{panelist.person.common_name}}<br>
+                    {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </td>
+            <td>
+              {% for item in panelist_list %}
+                {% if item.grouper == 'Singing' %}
+                    {% for panelist in item.list %}
+                      {{panelist.person.common_name}}<br>
+                    {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </td>
+          </tr>
         </tbody>
       </table>
     </section>

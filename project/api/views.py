@@ -428,15 +428,15 @@ class CompetitorViewSet(viewsets.ModelViewSet):
             kind=Panelist.KIND.official,
             scores__song__appearance__competitor=competitor,
         ).distinct(
+            'category',
+            'person',
         ).order_by(
             'category',
+            'person',
             'person__last_name',
         )
         appearances = competitor.appearances.order_by(
-            'round__num',
-        )
-        appearances = competitor.appearances.order_by(
-            'round__num',
+            'num',
         )
         songs = Song.objects.filter(
             appearance__competitor=competitor,
@@ -444,11 +444,16 @@ class CompetitorViewSet(viewsets.ModelViewSet):
             'appearance__round__num',
             'num',
         )
+        members = competitor.group.members.filter(
+            status=Member.STATUS.active,
+        ).order_by('part')
         context = {
             'competitor': competitor,
             'panelists': panelists,
             'appearances': appearances,
             'songs': songs,
+            'members': members,
+
         }
         rendered = render_to_string('csa.html', context)
         file = pydf.generate_pdf(rendered)
