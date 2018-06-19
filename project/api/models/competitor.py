@@ -280,6 +280,8 @@ class Competitor(TimeStampedModel):
         target=STATUS.scratched,
     )
     def scratch(self, *args, **kwargs):
+        appearances = self.appearances.all()
+        appearances.delete()
         return
 
     @fsm_log_by
