@@ -1423,7 +1423,10 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
 
 @admin.register(Venue)
-class VenueAdmin(admin.ModelAdmin):
+class VenueAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
     save_on_top = True
     fields = (
         'id',
