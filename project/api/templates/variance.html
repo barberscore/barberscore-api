@@ -3,21 +3,22 @@
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style type="text/css">
+      .enter-height {
+        padding: 40px;
+        line-height: 40px;
+      }
     </style>
   </head>
   <body>
     <section>
-      <h1>
-        Variance Report
-      </h1>
-      <h1>
-        {{appearance.competitor.group.name}}
-      </h1>
       <h3>
-        OA: {{appearance.num}}, {{appearance.round}}
+        Variance Report
       </h3>
+      <h4>
+        {{appearance.competitor.group.name}}
+        OA: {{appearance.num}}, {{appearance.round}}
+      </h4>
     </section>
-    <br><br><br>
       <ul class='list-unstyled'>
         {% for song in songs %}
           <li><strong>Song #{{song.num}}:</strong>&nbsp;{{song.chart.title}}&nbsp;&nbsp;<strong>Average:</strong> {{song.tot_score|floatformat:1}}</li>
@@ -25,7 +26,7 @@
       </ul>
     <br><br><br>
     <section>
-      <table class='table'>
+      <table class='table table-condensed'>
         <thead>
           <tr>
             <th class='col-md-2'>
@@ -33,6 +34,9 @@
             </th>
             <th class='col-md-3'>
               Panelist
+            </th>
+            <th class='col-md-1'>
+              Song
             </th>
             <th class='col-md-1'>
               Num
@@ -57,13 +61,16 @@
                 {% if score.song.num == 1 %}{{score.panelist.person.common_name}}{% endif %}
               </td>
               <td>
+                {{score.song.chart.title|truncatewords_html:6}}
+              </td>
+              <td>
                 {{score.song.num}}
               </td>
               <td class='points'>
                 {{score.points}}
               </td>
               <td>
-                <input>
+                <input class='enter-height'>
               </td>
             </tr>
           {% endfor %}

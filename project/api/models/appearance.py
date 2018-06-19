@@ -304,7 +304,7 @@ class Appearance(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.finished, STATUS.confirmed], target=STATUS.confirmed)
+    @transition(field=status, source=[STATUS.finished, STATUS.verified, STATUS.confirmed], target=STATUS.confirmed)
     def confirm(self, *args, **kwargs):
         self.calculate()
         self.competitor.calculate()

@@ -641,7 +641,7 @@ def create_variance_report(appearance):
         'panelists': panelists,
     }
     rendered = render_to_string('variance.html', context)
-    file = pydf.generate_pdf(rendered)
+    file = pydf.generate_pdf(rendered, enable_smart_shrinking=True)
     content = ContentFile(file)
     appearance.variance_report.save(
         "{0}-variance-report".format(
