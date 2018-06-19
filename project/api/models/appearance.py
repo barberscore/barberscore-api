@@ -225,42 +225,6 @@ class Appearance(TimeStampedModel):
         )['tot']
 
 
-
-    def rank(self):
-        songs = self.songs.filter(
-            appearance__competitor__is_ranked=True,
-        ).order_by('-tot_points')
-        points = [x.tot_points for x in songs]
-        ranked = Ranking(points, start=1)
-        for song in songs:
-            song.tot_rank = ranked.rank(song.tot_points)
-            song.save()
-        songs = self.songs.filter(
-            appearance__competitor__is_ranked=True,
-        ).order_by('-mus_points')
-        points = [x.mus_points for x in songs]
-        ranked = Ranking(points, start=1)
-        for song in songs:
-            song.mus_rank = ranked.rank(song.mus_points)
-            song.save()
-        songs = self.songs.filter(
-            appearance__competitor__is_ranked=True,
-        ).order_by('-per_points')
-        points = [x.per_points for x in songs]
-        ranked = Ranking(points, start=1)
-        for song in songs:
-            song.per_rank = ranked.rank(song.per_points)
-            song.save()
-        songs = self.songs.filter(
-            appearance__competitor__is_ranked=True,
-        ).order_by('-sng_points')
-        points = [x.sng_points for x in songs]
-        ranked = Ranking(points, start=1)
-        for song in songs:
-            song.sng_rank = ranked.rank(song.sng_points)
-            song.save()
-        return
-
     # Appearance Permissions
     @staticmethod
     @allow_staff_or_superuser

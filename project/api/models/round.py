@@ -130,6 +130,44 @@ class Round(TimeStampedModel):
         for appearance in appearances:
             appearance.sng_rank = ranked.rank(appearance.sng_points)
             appearance.save()
+        # Songs ranked relative to Round
+        Song = apps.get_model('api.song')
+        songs = Song.objects.filter(
+            appearance__round=self,
+            appearance__competitor__is_ranked=True,
+        ).order_by('-tot_points')
+        points = [x.tot_points for x in songs]
+        ranked = Ranking(points, start=1)
+        for song in songs:
+            song.tot_rank = ranked.rank(song.tot_points)
+            song.save()
+        songs = Song.objects.filter(
+            appearance__round=self,
+            appearance__competitor__is_ranked=True,
+        ).order_by('-mus_points')
+        points = [x.mus_points for x in songs]
+        ranked = Ranking(points, start=1)
+        for song in songs:
+            song.mus_rank = ranked.rank(song.mus_points)
+            song.save()
+        songs = Song.objects.filter(
+            appearance__round=self,
+            appearance__competitor__is_ranked=True,
+        ).order_by('-per_points')
+        points = [x.per_points for x in songs]
+        ranked = Ranking(points, start=1)
+        for song in songs:
+            song.per_rank = ranked.rank(song.per_points)
+            song.save()
+        songs = Song.objects.filter(
+            appearance__round=self,
+            appearance__competitor__is_ranked=True,
+        ).order_by('-sng_points')
+        points = [x.sng_points for x in songs]
+        ranked = Ranking(points, start=1)
+        for song in songs:
+            song.sng_rank = ranked.rank(song.sng_points)
+            song.save()
         return
 
     # Permissions
