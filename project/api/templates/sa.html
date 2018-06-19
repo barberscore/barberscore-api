@@ -63,7 +63,7 @@
         </thead>
         <tbody>
           {% for competitor in competitors %}
-            <tr>
+            <tr class='pbi_avoid'>
               <td>
                 {{competitor.group.name}}<br>
                 <strong>{{competitor.tot_rank}}</strong> {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
