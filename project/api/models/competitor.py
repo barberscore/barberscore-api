@@ -280,6 +280,19 @@ class Competitor(TimeStampedModel):
         target=STATUS.scratched,
     )
     def scratch(self, *args, **kwargs):
+        self.draw = None
+        self.tot_rank = None
+        self.mus_rank = None
+        self.per_rank = None
+        self.sng_rank = None
+        self.tot_points = None
+        self.mus_points = None
+        self.per_points = None
+        self.sng_points = None
+        self.tot_score = None
+        self.mus_score = None
+        self.per_score = None
+        self.sng_score = None
         appearances = self.appearances.all()
         appearances.delete()
         return
