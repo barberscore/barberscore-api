@@ -57,15 +57,16 @@
         <tbody>
           {% for competitor in competitors %}
             <tr class='pbi_avoid'>
-              <td class='smalltd'>{{competitor.tot_rank}}</td>
+              <td class='smalltd'>{{competitor.tot_rank|default_if_none:"N/A"}}</td>
               <td class='smalltd'>
-                <strong>{{competitor.group.name}}</strong> ({{competitor.entry.representing}})<br>
+                <strong>{{competitor.group.name}}</strong><br>
+                {{competitor.entry.representing}}<br>
                 {% if competitor.group.chapter %}{{competitor.group.chapter.name}}{% endif %}
               </td>
               <td class='smalltd'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.chart.nomen|truncatechars:60}}<br>
+                    {{song.chart.nomen|truncatechars:55|default:"(Song title not provided)"}}<br>
                   {% endfor %}
                   <!-- {% if competitor.session.num_rounds > 1 and competitor.tot_rank < 21 %}
                     <em>{{appearance.round.get_kind_display}}</em><br>

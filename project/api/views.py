@@ -1037,17 +1037,26 @@ class SessionViewSet(viewsets.ModelViewSet):
         session = Session.objects.get(pk=pk)
         competitors = session.competitors.filter(
             status=Competitor.STATUS.finished,
-        ).order_by('-tot_points')
+        ).order_by(
+            '-is_ranked',
+            'tot_rank',
+            '-tot_points',
+        )
         advancers = session.competitors.filter(
             status=Competitor.STATUS.started,
         ).order_by('draw')
+        current = session.rounds.filter(
+            status__gt=0
+        ).order_by('num').last().num
         contests = session.contests.filter(
             status=Contest.STATUS.included,
+            award__rounds__lte=current,
+            award__level=Award.LEVEL.championship,
         ).order_by('award__tree_sort')
         panelists = Panelist.objects.filter(
             round__session=session,
             kind=Panelist.KIND.official,
-        ).distinct('person')
+        ).distinct('category', 'person__last_name', 'person__first_name',).order_by('category', 'person__last_name', 'person__first_name',)
         context = {
             'session': session,
             'competitors': competitors,
