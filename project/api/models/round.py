@@ -269,7 +269,6 @@ class Round(TimeStampedModel):
         for contest in contests:
             contest.calculate()
             contest.save()
-        return
 
         # "Finish" everyone if finals.
         if self.kind == self.KIND.finals:
