@@ -1185,6 +1185,7 @@ class RepertoryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         # 'name',
+        'id',
         'status',
         ('session', 'kind', 'num', 'spots',),
 
@@ -1211,6 +1212,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
 
     readonly_fields = [
+        'id',
         # 'session',
         # 'kind',
     ]

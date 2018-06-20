@@ -251,8 +251,9 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.started], target=STATUS.verified)
+    @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
+        Competitor = apps.get_model('api.competitor')
         # First, calculate all denormalized scores.
         self.session.calculate()
         # Recursively run rankings.
@@ -279,68 +280,65 @@ class Round(TimeStampedModel):
         # Get spots available
         spots = self.session.rounds.get(num=self.num + 1).spots
 
-        # Instantiate the advancing list
-        advancers = []
+        # get primary contest
+        contest = self.session.contests.get(award__is_primary=True)
+        if contest.award.level == contest.award.LEVEL.qualifier:
+            # Uses absolute cutoff.
+            automatics = Competitor.objects.filter(
+                status__gt=0,
+                entry__contestants__contest=contest,
+                tot_score__gte=contest.award.advance,
+            )
+        elif contest.award.level == contest.award.LEVEL.championship:
+            # Get the top scorer
+            top = Competitor.objects.filter(
+                status__gt=0,
+                entry__contestants__contest=contest,
+            ).order_by(
+                '-tot_points',
+            ).first()
+            # Derive the approve threshold from that top score.
+            # 4.0 points a constant, from SCJC David Mills
+            advance = top.tot_score - 4.0
+            automatics = Competitor.objects.filter(
+                status__gt=0,
+                entry__contestants__contest=contest,
+                tot_score__gte=advance,
+            )
 
-        for contest in self.session.contests.filter(award__rounds__gt=1):
-            # Qualifiers have an absolute score cutoff
-            if contest.award.level == contest.award.LEVEL.qualifier:
-                # Uses absolute cutoff.
-                contestants = contest.contestants.filter(
-                    status__gt=0,
-                    entry__competitor__tot_score__gte=contest.award.advance,
-                )
-                for contestant in contestants:
-                    advancers.append(contestant.entry.competitor)
-            # Championships are relative.
-            elif contest.award.level == contest.award.LEVEL.championship:
-                # Get the top scorer
-                contestants = contest.contestants.filter(
-                    status__gt=0,
-                    tot_points__gt=0,
-                ).order_by(
-                    '-entry__competitor__tot_points',
-                )
-                if contestants:
-                    top = contestants.first()
-                else:
-                    continue
-                # Derive the approve threshold from that top score.
-                approve = top.entry.competitor.tot_score - 4.0
-                contestants = contest.contestants.filter(
-                    status__gt=0,
-                    tot_score__gte=approve,
-                )
-                for contestant in contestants:
-                    advancers.append(contestant.competitor)
-        # Remove duplicates
-        advancers = list(set(advancers))
+        # list comprehension since we're slicing queryset
+        advancers = [x.id for x in automatics]
         # Append up to spots available.
         if spots:
             diff = spots - len(advancers)
         else:
             diff = 0
         if diff > 0:
+            excludes = advancers
             adds = self.session.competitors.filter(
-                entry__contestants__contest__award__rounds__gt=1,
+                status__gt=0,
+                is_multi=True,
+            ).exclude(
+                id__in=excludes,
             ).distinct(
             ).order_by(
                 '-tot_points',
             )[:diff]
-            for add in adds:
-                if add not in advancers:
-                    advancers.append(add)
+
+        # Append to advancers list
+        for a in adds:
+            advancers.append(a.id)
 
         # Set all remaining to finished..
-        advancers_id = [x.id for x in advancers]
         competitors = self.session.competitors.filter(
             status__gt=0,
         ).exclude(
-            id__in=advancers_id,
+            id__in=advancers,
         )
         for competitor in competitors:
             competitor.finish()
             competitor.save()
+        # Get advancers and draw
         competitors = self.session.competitors.filter(
             status__gt=0,
         ).order_by('?')
