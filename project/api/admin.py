@@ -397,6 +397,7 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
 @admin.register(Convention)
 class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = (
+        'id',
         'name',
         'status',
         'group',
@@ -441,6 +442,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     readonly_fields = (
+        'id',
     )
 
     autocomplete_fields = [
