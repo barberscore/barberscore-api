@@ -874,7 +874,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         ).order_by('draw')
         contests = round.session.contests.filter(
             status=Contest.STATUS.included,
-            award__rounds=round.num,
+            award__rounds__lte=round.num,
             award__level=Award.LEVEL.championship,
         ).order_by('award__tree_sort')
         context = {
@@ -1046,6 +1046,14 @@ class SessionViewSet(viewsets.ModelViewSet):
         session = Session.objects.get(pk=pk)
         competitors = session.competitors.filter(
             status=Competitor.STATUS.finished,
+        ).select_related(
+            'group',
+        ).prefetch_related(
+            'appearances',
+            'appearances__songs',
+            'appearances__songs__scores',
+            'appearances__songs__scores__panelist',
+            'appearances__songs__scores__panelist__person',
         ).order_by(
             '-is_ranked',
             'tot_rank',
@@ -1053,7 +1061,17 @@ class SessionViewSet(viewsets.ModelViewSet):
         )
         advancers = session.competitors.filter(
             status=Competitor.STATUS.started,
-        ).order_by('draw')
+        ).select_related(
+            'group',
+        ).prefetch_related(
+            'appearances',
+            'appearances__songs',
+            'appearances__songs__scores',
+            'appearances__songs__scores__panelist',
+            'appearances__songs__scores__panelist__person',
+        ).order_by(
+            'draw',
+        )
         current = session.rounds.filter(
             status__gt=0
         ).order_by('num').last().num
@@ -1061,11 +1079,21 @@ class SessionViewSet(viewsets.ModelViewSet):
             status=Contest.STATUS.included,
             award__rounds__lte=current,
             award__level=Award.LEVEL.championship,
+        ).select_related(
+            'award',
         ).order_by('award__tree_sort')
         panelists = Panelist.objects.filter(
-            round__session=session,
             kind=Panelist.KIND.official,
-        ).distinct('category', 'person__last_name', 'person__first_name',).order_by('category', 'person__last_name', 'person__first_name',)
+            round__session=session,
+        ).distinct(
+            'category',
+            'person__last_name',
+            'person__first_name',
+        ).order_by(
+            'category',
+            'person__last_name',
+            'person__first_name',
+        )
         context = {
             'session': session,
             'competitors': competitors,

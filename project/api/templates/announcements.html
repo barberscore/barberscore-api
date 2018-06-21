@@ -60,13 +60,15 @@
             {% endfor %}
         </ul>
     </section>
-    <section>
-        <h2>Draw</h2>
-        <ul class='list-unstyled'>
-            {% for advancer in advancers %}
-                <li>{{advancer.draw}}: {{advancer.group.name}}</li>
-            {% endfor %}
-        </ul>
-    </section>
+    {% if advancers %}
+      <section>
+          <h2>Draw</h2>
+          <ul class='list-unstyled'>
+              {% for advancer in advancers %}
+                  <li>{{advancer.draw}}: {{advancer.group.name}}</li>
+              {% endfor %}
+          </ul>
+      </section>
+    {% endif %}
   </body>
 </html>

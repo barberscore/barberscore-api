@@ -3,34 +3,41 @@
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style type="text/css">
-        .smalltd {
-            font-size: 10pt;
-        }
-        .smallertd {
-            font-size: 10pt;
-        }
-        .head_rank {
-            width: 1%;
-        }
-        .head_group {
-            width: 10%;
-        }
-        .head_songs {
-            width: 20%;
-        }
-        .min-head {
-            width: 5%;
-        }
-        .pbi_avoid {
-            page-break-inside: avoid !important;
-        }
-
-      /* layout */
+      .smalltd {
+          font-size: 10pt;
+      }
+      .smallertd {
+          font-size: 10pt;
+      }
+      .head_rank {
+          width: 1%;
+      }
+      .head_rounds {
+          width: 60px;
+      }
+      .head_group {
+          width: 120px;
+      }
+      .head_songs {
+          width: 200px;
+      }
+      .mor-head {
+          width: 75px;
+      }
+      .min-head {
+          width: 20px;
+      }
+      .small_logo {
+          height: 50px;
+      }
+      .pbi_avoid {
+          page-break-inside: avoid !important;
+      }
     </style>
   </head>
   <body>
     <section>
-      <img class='pull-right' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
+      <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
       <h3>
         Official Scoring Summary
       </h3>
@@ -45,7 +52,6 @@
       <table class='table table-condensed'>
         <thead>
           <tr>
-            <th class='head_rank'>Rank</th>
             <th class='head_group'>Group</th>
             <th class='head_songs'>Songs</th>
             <th class='text-right min-head'>MUS</th>
@@ -57,95 +63,82 @@
         <tbody>
           {% for competitor in competitors %}
             <tr class='pbi_avoid'>
-              <td class='smalltd'>{{competitor.tot_rank|default_if_none:"N/A"}}</td>
-              <td class='smalltd'>
-                <strong>{{competitor.group.name}}</strong><br>
-                {{competitor.entry.representing}}<br>
-                {% if competitor.group.chapter %}{{competitor.group.chapter.name}}{% endif %}
+              <td>
+                <strong>{{competitor.tot_rank}} {{competitor.group.name}}</strong> ({{competitor.entry.representing}})<br>
+                {% if competitor.group.get_kind_display == 'Chorus' %}
+                  {{competitor.group.parent.name|truncatechars_html:"20"}}
+                {% endif %}
+                {% if competitor.group.get_kind_display != 'Chorus' %}
+                  {{competitor.tot_rank}}
+                {% endif %}
+                {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
+                {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% if appearance.tot_points != competitor.tot_points %}
+                    {{appearance.tot_rank}} {{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})<br>
+                  {% endif %}
+                {% endfor %}
               </td>
-              <td class='smalltd'>
+              <td>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.chart.nomen|truncatechars:55|default:"(Song title not provided)"}}<br>
+                      {{song.chart.nomen|truncatechars_html:50|default:"(Song not provided)"}}<br>
                   {% endfor %}
-                  <!-- {% if competitor.session.num_rounds > 1 and competitor.tot_rank < 21 %}
-                    <em>{{appearance.round.get_kind_display}}</em><br>
-                  {% endif %} -->
                 {% endfor %}
-                <strong>Total</strong>
               </td>
-              <td class='text-right smallertd'>
+              <td class='text-right'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
+                      <!-- <strong>{{song.mus_rank}}</strong> --> {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                   {% endfor %}
-                  <!-- {% if competitor.session.num_rounds > 1 and competitor.tot_rank < 21 %}
-                    <em>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</em><br>
-                  {% endif %} -->
                 {% endfor %}
-                <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong>
               </td>
-              <td class='text-right smallertd'>
+              <td class='text-right'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
+                      <!-- <strong>{{song.per_rank}}</strong> --> {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                   {% endfor %}
-                  <!-- {% if competitor.session.num_rounds > 1 and competitor.tot_rank < 21 %}
-                  <em>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</em><br>
-                  {% endif %} -->
                 {% endfor %}
-                <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong>
               </td>
-              <td class='text-right smallertd'>
+              <td class='text-right'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
+                      <!-- <strong>{{song.sng_rank}}</strong> --> {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                   {% endfor %}
-                  <!-- {% if competitor.session.num_rounds > 1 and competitor.tot_rank < 21 %}
-                  <em>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</em><br>
-                  {% endif %} -->
                 {% endfor %}
-                <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong>
               </td>
-              <td class='text-right smallertd'>
+              <td class='text-right'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
+                      <!-- <strong>{{song.tot_rank}}</strong> --> {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
                   {% endfor %}
-                  <!-- {% if competitor.session.num_rounds > 1 and competitor.tot_rank < 21 %}
-                    <em>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</em><br>
-                  {% endif %} -->
                 {% endfor %}
-                <strong>{{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong>
               </td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
     </section>
-    <section>
-        <h4>
-            Footnotes
-        </h4>
-        <p>
-            {%if session.footnotes %}{{session.footnotes}}{% else %}(No footnotes.){% endif %}
-        </p>
-    </section>
-    <div class='pull-right'>
+    {%if session.footnotes %}
       <section>
-        <h4>Officials</h4>
-        {% regroup panelists by get_category_display as panelist_tuple %}
-          <ul class='list-unstyled'>
-          {% for item in panelist_tuple %}
-            <li><strong>{{item.grouper}}:</strong>
-              {% for panelist in item.list %}
-                {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
-              {% endfor %}
-            </li>
-          {% endfor %}
-        </ul>
-      </section>
-    </div>
+        <h4>Footnotes</h4>
+        <p>
+          {{session.footnotes}}
+        </p>
+    {% endif %}
+    </section>
+    <section class='pull-right'>
+      <h4>Officials</h4>
+      {% regroup panelists by get_category_display as panelist_tuple %}
+        <ul class='list-unstyled'>
+        {% for item in panelist_tuple %}
+          <li><strong>{{item.grouper}}:</strong>
+            {% for panelist in item.list %}
+              {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
+            {% endfor %}
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
     <div>
       {% if advancers %}
         <section>
@@ -162,7 +155,7 @@
           <h4>Awards</h4>
             <ul class='list-unstyled'>
             {% for contest in contests %}
-              <li><strong>{{contest.award.name}}:</strong>&nbsp;{{contest.group.name}}</li>
+              <li><strong>{{contest.award.name}}:</strong>&nbsp;{{contest.group.name|default:"(Not awarded.)"}}</li>
             {% endfor %}
           </ul>
         </section>
