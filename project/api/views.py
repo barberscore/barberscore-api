@@ -445,14 +445,23 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         )
         appearances = competitor.appearances.order_by(
             'num',
+        ).prefetch_related(
+            'songs',
         )
-        songs = Song.objects.filter(
+        songs = Song.objects.select_related(
+            'chart',
+        ).filter(
             appearance__competitor=competitor,
+        ).prefetch_related(
+            'scores',
+            'scores__panelist__person',
         ).order_by(
             'appearance__round__num',
             'num',
         )
-        members = competitor.group.members.filter(
+        members = competitor.group.members.select_related(
+            'person',
+        ).filter(
             status=Member.STATUS.active,
         ).order_by('part')
         context = {
