@@ -3,23 +3,21 @@
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style type="text/css">
+      .small_logo {
+          height: 50px;
+      }
     </style>
   </head>
   <body>
-    <section>
-      <img class='pull-right' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
-      <h4>
-        Competitor Scoring Analysis
-      </h4>
-      <div>
-        <p>
-          {{competitor.session.convention.name}}
-        </p>
-        <p>
-          {{competitor.session.convention.start_date}} - {{competitor.session.convention.end_date}}
-        </p>
-      </div>
-    </section>
+      <section>
+        <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
+        <h3>
+          Competitor Scoring Analysis {{competitor.session.convention.name}} {{competitor.session.get_kind_display}}
+        </h3>
+        <h4>
+          {{competitor.session.convention.venue.name}} {{competitor.session.convention.venue.city}}, {{competitor.session.convention.venue.state}}; {{competitor.session.convention.start_date|date:"F j, Y"}} - {{competitor.session.convention.end_date|date:"F j, Y"}}
+        </h4>
+      </section>
     <section>
       <h3>
         {{competitor.group.name}}
@@ -31,11 +29,15 @@
         <p>
           <small>Representing: {{competitor.entry.representing}}</small>
         </p>
-        <ul class='list-inline'>
-          {% for member in members %}
-            <li>{{member.person.common_name}}</li>
-          {% endfor %}
-        </ul>
+        {% if competitor.group.get_kind_display == 'Chorus' %}
+          <h4>Director(s): {{competitor.entry.directors}}</h4>
+        {% else %}
+          <ul class='list-inline'>
+            {% for member in members %}
+              <li>{{member.person.common_name}}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
       </div>
     </section>
     <section>

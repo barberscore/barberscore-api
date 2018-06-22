@@ -43,9 +43,6 @@
         <h4>
           {{session.convention.venue.name}} {{session.convention.venue.city}}, {{session.convention.venue.state}}; {{session.convention.start_date|date:"F j, Y"}} - {{session.convention.end_date|date:"F j, Y"}}
         </h4>
-        <h4>
-
-        </h4>
       </section>
       <section>
         <table class='table table-condensed'>
@@ -65,12 +62,12 @@
                 <td>
                   <strong>{{competitor.tot_rank}} {{competitor.group.name}}</strong> ({{competitor.entry.representing}})<br>
                   {% if competitor.group.get_kind_display == 'Chorus' %}
-                    {{competitor.group.parent.name|truncatechars_html:"20"}}
+                    {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})
+                    {{competitor.group.parent.name|truncatechars_html:"30"}}<br>
                   {% endif %}
                   {% if competitor.group.get_kind_display != 'Chorus' %}
-                    {{competitor.tot_rank}}
+                    {{competitor.tot_rank}} {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
                   {% endif %}
-                  {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
                     {% if appearance.tot_points != competitor.tot_points %}
                       {{appearance.tot_rank}} {{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})<br>

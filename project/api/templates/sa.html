@@ -41,18 +41,15 @@
     </style>
   </head>
   <body>
-    <section>
-      <img class='pull-right' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
-      <h3>
-        Scoring Analysis
-      </h3>
-      <h4>
-        {{session.convention.name}} {{session.get_kind_display}} {{get_kind_display}}; {{session.convention.start_date}} - {{session.convention.end_date}}
-      </h4>
-      <h4>
-        {{session.convention.venue.name}}
-      </h4>
-    </section>
+      <section>
+        <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
+        <h3>
+          Scoring Analysis {{session.convention.name}} {{session.get_kind_display}} {{get_kind_display}}
+        </h3>
+        <h4>
+          {{session.convention.venue.name}} {{session.convention.venue.city}}, {{session.convention.venue.state}}; {{session.convention.start_date|date:"F j, Y"}} - {{session.convention.end_date|date:"F j, Y"}}
+        </h4>
+      </section>
     <section>
       {% regroup panelists by person as panelist_tuple %}
       <table class='table table-condensed'>
@@ -131,6 +128,19 @@
           {% endfor %}
         </tbody>
       </table>
+    </section>
+    <section>
+      <h4>Officials</h4>
+      {% regroup panelists by get_category_display as panelist_tuple %}
+        <ul class='list-unstyled'>
+        {% for item in panelist_tuple %}
+          <li><strong>{{item.grouper}}:</strong>
+            {% for panelist in item.list %}
+              {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
+            {% endfor %}
+          </li>
+        {% endfor %}
+      </ul>
     </section>
   </body>
 </html>
