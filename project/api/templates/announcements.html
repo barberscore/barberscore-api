@@ -52,14 +52,16 @@
     <section>
         <h2>Administration</h2>
     </section>
-    <section>
-        <h2>Awards</h2>
-        <ul class='list-unstyled'>
-            {% for contest in contests %}
-                <li>{{contest.award.name}}: {{contest.group.name}}</li>
-            {% endfor %}
-        </ul>
-    </section>
+    {% if contests %}
+      <section>
+          <h2>Awards</h2>
+          <ul class='list-unstyled'>
+              {% for contest in contests %}
+                  <li>{{contest.award.name}}: {{contest.group.name}}</li>
+              {% endfor %}
+          </ul>
+      </section>
+    {% endif %}
     {% if advancers %}
       <section>
           <h2>Draw</h2>
