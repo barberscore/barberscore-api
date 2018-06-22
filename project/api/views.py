@@ -884,12 +884,25 @@ class RoundViewSet(viewsets.ModelViewSet):
         contests = round.session.contests.filter(
             status=Contest.STATUS.included,
             award__rounds__lte=round.num,
-            award__level=Award.LEVEL.championship,
+            award__level__in=[
+                Award.LEVEL.championship,
+                Award.LEVEL.award,
+            ],
         ).order_by('award__tree_sort')
+        competitors = round.session.competitors.filter(
+            status=Competitor.STATUS.finished,
+        ).select_related(
+            'group',
+        ).order_by(
+            '-is_ranked',
+            'tot_rank',
+            '-tot_points',
+        )[:5]
         context = {
             'round': round,
             'advancers': advancers,
             'contests': contests,
+            'competitors': competitors,
         }
         rendered = render_to_string('announcements.html', context)
         file = pydf.generate_pdf(rendered)
@@ -1087,7 +1100,10 @@ class SessionViewSet(viewsets.ModelViewSet):
         contests = session.contests.filter(
             status=Contest.STATUS.included,
             award__rounds__lte=current,
-            award__level=Award.LEVEL.championship,
+            award__level__in=[
+                Award.LEVEL.championship,
+                Award.LEVEL.award,
+            ],
         ).select_related(
             'award',
         ).order_by('award__tree_sort')
@@ -1111,7 +1127,11 @@ class SessionViewSet(viewsets.ModelViewSet):
             'contests': contests,
         }
         rendered = render_to_string('oss.html', context)
-        file = pydf.generate_pdf(rendered)
+        file = pydf.generate_pdf(
+            rendered,
+            page_size='Letter',
+            orientation='Portrait',
+        )
         content = ContentFile(file)
         pdf = content
         file_name = '{0}-oss'.format(

@@ -60,6 +60,11 @@
                   <li>{{contest.award.name}}: {{contest.group.name}}</li>
               {% endfor %}
           </ul>
+          <ul class='list-unstyled'>
+              {% for competitor in competitors %}
+                  <li>{{competitor.tot_rank}} {{competitor.tot_points}} {{competitor.tot_score|floatformat:1}}: {{competitor.group.name}}</li>
+              {% endfor %}
+          </ul>
       </section>
     {% endif %}
     {% if advancers %}
