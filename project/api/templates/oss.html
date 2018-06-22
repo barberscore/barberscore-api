@@ -35,13 +35,13 @@
       <section>
         <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
         <h3>
-          Official Scoring Summary
+          Official Scoring Summary {{session.convention.name}} {{session.get_kind_display}} {{get_kind_display}}
         </h3>
         <h4>
-          {{session.convention.name}} {{session.get_kind_display}} {{get_kind_display}}; {{session.convention.start_date}} - {{session.convention.end_date}}
+          {{session.convention.venue.name}} {{session.convention.venue.city}}, {{session.convention.venue.state}}; {{session.convention.start_date|date:"F j, Y"}} - {{session.convention.end_date|date:"F j, Y"}}
         </h4>
         <h4>
-          {{session.convention.venue.name}}
+
         </h4>
       </section>
       <section>

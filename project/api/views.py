@@ -1082,7 +1082,7 @@ class SessionViewSet(viewsets.ModelViewSet):
             'draw',
         )
         current = session.rounds.filter(
-            status__gt=0
+            status=Round.STATUS.finished,
         ).order_by('num').last().num
         contests = session.contests.filter(
             status=Contest.STATUS.included,
