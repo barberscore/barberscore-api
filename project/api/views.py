@@ -1156,7 +1156,7 @@ class SessionViewSet(viewsets.ModelViewSet):
             kind__in=[
                 Panelist.KIND.official,
                 Panelist.KIND.practice,
-            ]
+            ],
             scores__song__appearance__round__session=session,
         ).select_related(
             'person',
