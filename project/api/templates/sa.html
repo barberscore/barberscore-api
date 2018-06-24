@@ -118,7 +118,13 @@
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {% for score in song.scores.all %}
-                        {% if score.panelist.person == item.grouper %}{{score.points}}<br>{% endif %}
+                        {% if score.panelist.person == item.grouper %}
+                          {% if score.is_flagged %}
+                            <em>{{score.points}}</em><br>
+                          {{else}}
+                            {{score.points}}<br>
+                          {% endif %}
+                        {% endif %}
                       {% endfor %}
                     {% endfor %}
                   {% endfor %}
