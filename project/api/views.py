@@ -1153,7 +1153,10 @@ class SessionViewSet(viewsets.ModelViewSet):
     def sa(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         panelists = Panelist.objects.filter(
-            kind=Panelist.KIND.official,
+            kind__in=[
+                Panelist.KIND.official,
+                Panelist.KIND.practice,
+            ]
             scores__song__appearance__round__session=session,
         ).select_related(
             'person',
