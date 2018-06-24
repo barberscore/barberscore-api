@@ -64,6 +64,11 @@ class Round(TimeStampedModel):
         blank=True,
     )
 
+    date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',

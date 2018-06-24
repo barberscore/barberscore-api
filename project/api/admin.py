@@ -1190,7 +1190,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'status',
         ('session', 'kind', 'num', 'spots',),
-
+        'date',
     ]
 
     list_display = [
