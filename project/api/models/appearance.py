@@ -34,20 +34,11 @@ class Appearance(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-10, 'excluded', 'Excluded',),
         (0, 'new', 'New',),
-        (2, 'published', 'Published',),
-        (5, 'verified', 'Verified',),
         (7, 'built', 'Built',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
-        (30, 'confirmed', 'Confirmed',),
-        (35, 'included', 'Included',),
-        (40, 'flagged', 'Flagged',),
-        (50, 'scratched', 'Scratched',),
-        (60, 'cleared', 'Cleared',),
-        (90, 'announced', 'Announced',),
-        (95, 'archived', 'Archived',),
+        (30, 'verified', 'Verified',),
     )
 
     status = FSMIntegerField(
@@ -166,6 +157,10 @@ class Appearance(TimeStampedModel):
 
     # Appearance Internals
     class Meta:
+        ordering = [
+            'round__kind',
+            'num',
+        ]
         unique_together = (
             ('round', 'competitor',),
         )
@@ -301,27 +296,7 @@ class Appearance(TimeStampedModel):
             variance = song.check_variance()
             if variance:
                 create_variance_report(self)
-        return
-
-    @fsm_log_by
-    @transition(field=status, source=[STATUS.finished, STATUS.verified, STATUS.confirmed], target=STATUS.confirmed)
-    def confirm(self, *args, **kwargs):
         self.calculate()
         self.competitor.calculate()
         self.competitor.save()
         return
-
-    @fsm_log_by
-    @transition(field=status, source=[STATUS.confirmed], target=STATUS.included)
-    def include(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source=[STATUS.confirmed], target=STATUS.excluded)
-    def exclude(self, *args, **kwargs):
-        return
-
-    # @fsm_log_by
-    # @transition(field=status, source=[STATUS.], target=STATUS.announced)
-    # def announce(self, *args, **kwargs):
-    #     return

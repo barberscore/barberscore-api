@@ -1030,6 +1030,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             'appearances__songs__scores__panelist',
             'appearances__songs__scores__panelist__person',
         ).order_by(
+            '-is_ranked',
             '-tot_points',
         )
         context = {
@@ -1313,6 +1314,7 @@ class SessionViewSet(viewsets.ModelViewSet):
             'appearances__songs__scores__panelist',
             'appearances__songs__scores__panelist__person',
         ).order_by(
+            '-is_ranked',
             '-tot_points',
         )
         context = {
