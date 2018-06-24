@@ -41,7 +41,7 @@
           Official Scoring Summary {{session.convention.name}} {{session.get_kind_display}} {{get_kind_display}}
         </h3>
         <h4>
-          {{session.convention.venue.name}} {{session.convention.venue.city}}, {{session.convention.venue.state}}; {{session.convention.start_date|date:"F j, Y"}} - {{session.convention.end_date|date:"F j, Y"}}
+          {{session.convention.venue.name}} {{session.convention.venue.city}}, {{session.convention.venue.state}}; {{round.date|date:"F j, Y"}} - {{session.convention.end_date|date:"F j, Y"}}
         </h4>
       </section>
       <section>
@@ -114,46 +114,46 @@
           </tbody>
         </table>
       </section>
+      {% if advancers %}
+        <section>
+          <h4>Draw</h4>
+          <ul class='list-inline'>
+            {% for advancer in advancers %}
+              <li>{{advancer.draw}} <strong>{{advancer.group.name}}</strong></li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+      {% if contests %}
+        <section>
+          <h4>Awards</h4>
+          <ul class='list-unstyled'>
+            {% for contest in contests %}
+              <li><strong>{{contest.award.name}}:</strong>&nbsp;{{contest.group.name|default:"(Not awarded.)"}}</li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
       {%if session.footnotes %}
         <section>
           <h4>Footnotes</h4>
           <p>
             {{session.footnotes}}
           </p>
+        </section>
       {% endif %}
-      </section>
       <section class='row'>
-        <div class='col-lg-3'>
-          <h4>Officials</h4>
-          {% regroup panelists by get_category_display as panelist_tuple %}
-            <ul class='list-unstyled'>
-            {% for item in panelist_tuple %}
-              <li><strong>{{item.grouper}}:</strong>
-                {% for panelist in item.list %}
-                  {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
-                {% endfor %}
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
-        <div class='col-lg-3 col-lg-offset-3'>
-          {% if advancers %}
-              <h4>Draw</h4>
-                <ul class='list-inline'>
-                {% for advancer in advancers %}
-                  <li>{{advancer.draw}} <strong>{{advancer.group.name}}</strong></li>
-                {% endfor %}
-              </ul>
-          {% endif %}
-          {% if contests %}
-              <h4>Awards</h4>
-                <ul class='list-unstyled'>
-                {% for contest in contests %}
-                  <li><strong>{{contest.award.name}}:</strong>&nbsp;{{contest.group.name|default:"(Not awarded.)"}}</li>
-                {% endfor %}
-              </ul>
-          {% endif %}
-        </div>
+        <h4>Officials</h4>
+        {% regroup panelists by get_category_display as panelist_tuple %}
+          <ul class='list-unstyled'>
+          {% for item in panelist_tuple %}
+            <li><strong>{{item.grouper}}:</strong>
+              {% for panelist in item.list %}
+                {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
+              {% endfor %}
+            </li>
+          {% endfor %}
+        </ul>
       </section>
     </div>
   </body>
