@@ -197,6 +197,8 @@ class Song(TimeStampedModel):
         mus_avg = mus_scores.aggregate(avg=models.Avg('points'))['avg']
         for score in mus_scores:
             if abs(score.points - mus_avg) > 5:
+                score.is_flagged = True
+                score.save()
                 return True
         per_scores = self.scores.filter(
             kind=self.scores.model.KIND.official,
@@ -205,6 +207,8 @@ class Song(TimeStampedModel):
         per_avg = per_scores.aggregate(avg=models.Avg('points'))['avg']
         for score in per_scores:
             if abs(score.points - per_avg) > 5:
+                score.is_flagged = True
+                score.save()
                 return True
         sng_scores = self.scores.filter(
             kind=self.scores.model.KIND.official,
@@ -213,21 +217,27 @@ class Song(TimeStampedModel):
         sng_avg = sng_scores.aggregate(avg=models.Avg('points'))['avg']
         for score in sng_scores:
             if abs(score.points - sng_avg) > 5:
+                score.is_flagged = True
+                score.save()
                 return True
 
         ordered_asc = self.scores.filter(
             kind=self.scores.model.KIND.official,
         ).order_by('points')
-        ultimate = ordered_asc[0].points
-        penultimate = ordered_asc[1].points
-        if penultimate - ultimate > 5:
+        ultimate = ordered_asc[0]
+        penultimate = ordered_asc[1]
+        if penultimate.points - ultimate.points > 5:
+            ultimate.is_flagged = True
+            ultimate.save()
             return True
         ordered_dsc = self.scores.filter(
             kind=self.scores.model.KIND.official,
         ).order_by('-points')
-        ultimate = ordered_dsc[0].points
-        penultimate = ordered_dsc[1].points
-        if ultimate - penultimate > 5:
+        ultimate = ordered_dsc[0]
+        penultimate = ordered_dsc[1]
+        if ultimate.points - penultimate.points > 5:
+            ultimate.is_flagged = True
+            ultimate.save()
             return True
         return False
 
