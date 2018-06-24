@@ -35,6 +35,9 @@
         .min-head {
             width: 5px;
         }
+        .small_logo {
+            height: 50px;
+        }
         .pbi_avoid {
             page-break-inside: avoid !important;
         }
@@ -121,7 +124,7 @@
                         {% if score.panelist.person == item.grouper %}
                           {% if score.is_flagged %}
                             <em>{{score.points}}</em><br>
-                          {{else}}
+                          {% else %}
                             {{score.points}}<br>
                           {% endif %}
                         {% endif %}

@@ -69,6 +69,11 @@ class Round(TimeStampedModel):
         blank=True,
     )
 
+    footnotes = models.TextField(
+        help_text="""
+            Freeform text field; will print on OSS.""",
+        blank=True,
+    )
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -80,6 +85,20 @@ class Round(TimeStampedModel):
     def announcements(self):
         return reverse(
             'round-announcements',
+            args=[str(self.id)]
+        )
+
+    @cached_property
+    def oss(self):
+        return reverse(
+            'round-oss',
+            args=[str(self.id)]
+        )
+
+    @cached_property
+    def sa(self):
+        return reverse(
+            'round-sa',
             args=[str(self.id)]
         )
 
