@@ -67,7 +67,11 @@
                 {{score.song.num}}
               </td>
               <td class='points'>
-                {{score.points}}
+                {% if score.is_flagged %}
+                  <strong>{{score.points}}</strong>
+                {% else %}
+                  {{score.points}}
+                {% endif %}
               </td>
               <td>
                 <input class='enter-height'>

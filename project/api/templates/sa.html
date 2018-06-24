@@ -129,7 +129,7 @@
                       {% for score in song.scores.all %}
                         {% if score.panelist.person == item.grouper %}
                           {% if score.is_flagged %}
-                            <em>{{score.points}}</em><br>
+                            <strong>{{score.points}}</strong><br>
                           {% else %}
                             {{score.points}}<br>
                           {% endif %}
