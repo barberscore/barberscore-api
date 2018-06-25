@@ -285,6 +285,5 @@ class Song(TimeStampedModel):
                 person__user=request.user,
                 status__gt=0,
             ),
-            self.appearance.status != self.appearance.STATUS.confirmed,
         ])
         return conditions

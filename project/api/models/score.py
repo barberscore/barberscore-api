@@ -244,6 +244,5 @@ class Score(TimeStampedModel):
                 person__user=request.user,
                 status__gt=0,
             ),
-            self.song.appearance.status != self.song.appearance.STATUS.confirmed,
         ])
         return conditions
