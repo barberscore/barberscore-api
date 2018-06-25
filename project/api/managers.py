@@ -39,16 +39,16 @@ class AwardManager(Manager):
     def sort_tree(self):
         self.all().update(tree_sort=None)
         awards = self.order_by(
-            '-status',
-            'group__tree_sort',
-            '-kind',
-            '-is_primary',
-            F('age').asc(nulls_first=True),
-            'gender',
-            'level',
-            'size',
-            'scope',
-            'name',
+            '-status',  # Actives first
+            'group__tree_sort',  # Basic BHS Hierarchy
+            '-kind', # Quartet, Chorus
+            '-is_primary',  # Primary awards first
+            F('age').asc(nulls_first=True), # Null, Senior, Youth
+            'gender', #Male, mixed
+            'level', #Championship, qualifier
+            'size', # Plateau v1
+            'scope', # plateau
+            'name', # alpha
         )
         i = 0
         for award in awards:
