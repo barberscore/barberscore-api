@@ -10,6 +10,7 @@ from .models import Assignment
 from .models import Convention
 from .models import Group
 from .models import Officer
+from .models import Score
 from .models import Round
 from .models import Session
 from .models import User
@@ -337,6 +338,19 @@ class RoundFilter(FilterSet):
         model = Round
         fields = {
             'session__convention__assignments__person__user': [
+                'exact',
+            ],
+        }
+
+
+class ScoreFilter(FilterSet):
+    class Meta:
+        model = Score
+        fields = {
+            'panelist': [
+                'exact',
+            ],
+            'song__appearance': [
                 'exact',
             ],
         }

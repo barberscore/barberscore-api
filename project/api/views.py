@@ -24,6 +24,7 @@ from .filters import AssignmentFilter
 from .filters import ConventionFilter
 from .filters import GroupFilter
 from .filters import OfficerFilter
+from .filters import ScoreFilter
 from .filters import RoundFilter
 from .filters import SessionFilter
 from .filters import UserFilter
@@ -1069,6 +1070,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     ).order_by('id')
     serializer_class = ScoreSerializer
+    filter_class = ScoreFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
