@@ -137,6 +137,11 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    all_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     variance_report = models.FileField(
         null=True,
         blank=True,
@@ -223,6 +228,9 @@ class Appearance(TimeStampedModel):
         ).aggregate(
             tot=models.Avg('scores__points')
         )['tot']
+        self.all_points = self.songs.aggregate(
+            tot=models.Sum('scores__points')
+        )['tot']
 
 
     # Appearance Permissions
@@ -296,6 +304,8 @@ class Appearance(TimeStampedModel):
             variance = song.check_variance()
             if variance:
                 create_variance_report(self)
+            else:
+                self.variance_report = None
         self.calculate()
         self.competitor.calculate()
         self.competitor.save()

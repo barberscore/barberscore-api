@@ -59,6 +59,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'per_rank',
             'sng_rank',
             'tot_rank',
+            'all_points',
             'variance_report',
             'round',
             'competitor',
