@@ -41,6 +41,7 @@ raven = "*"
 requests = "*"
 rq = "*"
 whitenoise = "*"
+maya = "*"
 
 [dev-packages]
 "autopep8" = "*"
