@@ -7,6 +7,7 @@ from fsm_admin.mixins import FSMTransitionMixin
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group as AuthGroup
+from django.utils import timezone
 
 # Local
 from .filters import OrphanListFilter
@@ -610,6 +611,7 @@ class GridAdmin(admin.ModelAdmin):
         'num',
         'onstage',
         'start',
+        'venue',
         'round',
         'renditions',
     ]
@@ -626,12 +628,18 @@ class GridAdmin(admin.ModelAdmin):
     ]
     autocomplete_fields = [
         'round',
+        'venue',
     ]
     ordering = [
         'round',
         'period',
         'num',
     ]
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        obj = self.get_object(request, object_id)
+        timezone.activate(obj.venue.timezone)
+        return super().change_view(request, object_id, form_url, extra_context)
 
 
 @admin.register(Group)

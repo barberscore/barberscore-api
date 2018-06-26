@@ -554,6 +554,7 @@ class EntryViewSet(viewsets.ModelViewSet):
 class GridViewSet(viewsets.ModelViewSet):
     queryset = Grid.objects.select_related(
         'round',
+        'venue',
         'appearance',
     ).prefetch_related(
     ).order_by('id')
@@ -1368,6 +1369,7 @@ class VenueViewSet(viewsets.ModelViewSet):
     queryset = Venue.objects.select_related(
     ).prefetch_related(
         'conventions',
+        'grids',
     ).order_by('name')
     serializer_class = VenueSerializer
     filter_backends = [

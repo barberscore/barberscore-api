@@ -79,6 +79,8 @@ class Grid(TimeStampedModel):
     )
 
     onstage = models.DateTimeField(
+        help_text="""
+            The scheduled stage time in the Local time of the Venue.""",
         null=True,
         blank=True,
     )
@@ -104,6 +106,14 @@ class Grid(TimeStampedModel):
         'Round',
         related_name='grids',
         on_delete=models.CASCADE,
+    )
+
+    venue = models.ForeignKey(
+        'Venue',
+        related_name='grids',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     appearance = models.OneToOneField(

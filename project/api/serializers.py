@@ -345,6 +345,7 @@ class GridSerializer(serializers.ModelSerializer):
             'onstage',
             'start',
             'renditions',
+            'venue',
             'round',
             'appearance',
             'permissions',

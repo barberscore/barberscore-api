@@ -170,7 +170,7 @@ def test_song_endpoint_list(admin_api_client, song, django_assert_num_queries):
 
 
 def test_venue_endpoint_list(admin_api_client, venue, django_assert_num_queries):
-    with django_assert_num_queries(3):
+    with django_assert_num_queries(4):
         path = reverse('venue-list')
         response = admin_api_client.get(path)
         assert response.status_code == status.HTTP_200_OK
@@ -340,7 +340,7 @@ def test_song_endpoint_detail(admin_api_client, song, django_assert_num_queries)
 
 
 def test_venue_endpoint_detail(admin_api_client, venue, django_assert_num_queries):
-    with django_assert_num_queries(2):
+    with django_assert_num_queries(3):
         path = reverse('venue-detail', args=(str(venue.id),))
         response = admin_api_client.get(path)
         assert response.status_code == status.HTTP_200_OK

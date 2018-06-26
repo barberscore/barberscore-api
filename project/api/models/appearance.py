@@ -268,6 +268,13 @@ class Appearance(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.new], target=STATUS.built)
     def build(self, *args, **kwargs):
+        Grid = apps.get_model('api.grid')
+        grid = Grid.objects.get(
+            round=self.round,
+            num=self.num,
+        )
+        grid.appearance = self
+        grid.save()
         panelists = self.round.panelists.all()
         i = 1
         while i <= 2:  # Number songs constant

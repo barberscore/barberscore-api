@@ -115,8 +115,9 @@ class Round(TimeStampedModel):
         resource_name = "round"
 
     def __str__(self):
-        return "{0} {1}".format(
+        return "{0} {1} {2}".format(
             self.session.convention.name,
+            self.session.get_kind_display(),
             self.get_kind_display(),
         )
 
@@ -254,6 +255,7 @@ class Round(TimeStampedModel):
             )
         # build the appearances
         Competitor = apps.get_model('api.competitor')
+        Grid = apps.get_model('api.grid')
         competitors = self.session.competitors.filter(
             status__gt=0,
         )
