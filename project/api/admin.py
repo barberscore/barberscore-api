@@ -638,7 +638,10 @@ class GridAdmin(admin.ModelAdmin):
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         obj = self.get_object(request, object_id)
-        timezone.activate(obj.venue.timezone)
+        try:
+            timezone.activate(obj.venue.timezone)
+        except AttributeError:
+            pass
         return super().change_view(request, object_id, form_url, extra_context)
 
 
