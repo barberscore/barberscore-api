@@ -1247,6 +1247,16 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session__convention__name',
     ]
 
+    def get_formsets_with_inlines(self, request, obj=None):
+        for inline in self.get_inline_instances(request, obj):
+            # hide MyInline in the add view
+            if isinstance(inline, GridInline):
+                try:
+                    timezone.activate(obj.session.convention.venue.timezone)
+                except AttributeError:
+                    pass
+            yield inline.get_formset(request, obj), inline
+
 
 @admin.register(Score)
 class ScoreAdmin(admin.ModelAdmin):
