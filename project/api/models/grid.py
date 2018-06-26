@@ -36,6 +36,18 @@ class Grid(TimeStampedModel):
         default=STATUS.new,
     )
 
+    PERIOD = Choices(
+        (1, 'one', 'One',),
+        (2, 'two', 'Two',),
+        (3, 'three', 'Three',),
+    )
+
+    period = models.IntegerField(
+        null=True,
+        blank=True,
+        choices=PERIOD,
+    )
+
     num = models.IntegerField(
         null=True,
         blank=True,
@@ -94,12 +106,6 @@ class Grid(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    competitor = models.ForeignKey(
-        'Competitor',
-        related_name='grids',
-        on_delete=models.CASCADE,
-    )
-
     appearance = models.OneToOneField(
         'Appearance',
         null=True,
@@ -107,10 +113,10 @@ class Grid(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    class Meta:
-        unique_together = (
-            ('round', 'competitor',),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('round', 'period', 'num',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "grid"

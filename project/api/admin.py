@@ -496,7 +496,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         # AppearanceInline,
-        GridInline,
+        # GridInline,
         # ContestantInline,
     ]
 
@@ -606,11 +606,11 @@ class GridAdmin(admin.ModelAdmin):
     fields = [
         # 'name',
         'status',
+        'period',
         'num',
         'onstage',
         'start',
         'round',
-        'competitor',
         'renditions',
     ]
     list_display = [
@@ -620,14 +620,16 @@ class GridAdmin(admin.ModelAdmin):
     ]
     list_filter = (
         'status',
+        'period',
     )
     readonly_fields = [
     ]
     autocomplete_fields = [
         'round',
-        'competitor',
     ]
     ordering = [
+        'round',
+        'period',
         'num',
     ]
 

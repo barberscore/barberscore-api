@@ -336,20 +336,20 @@ class GrantorInline(admin.TabularInline):
 class GridInline(admin.TabularInline):
     model = Grid
     fields = [
+        'period',
         'num',
         'onstage',
         'start',
         'round',
-        'competitor',
         'renditions',
     ]
     autocomplete_fields = [
         'round',
-        'competitor',
     ]
     show_change_link = True
     extra = 0
     ordering = [
+        'period',
         'num',
     ]
     classes = [

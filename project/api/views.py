@@ -385,7 +385,6 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         'group',
         'entry',
     ).prefetch_related(
-        'grids',
         'appearances',
     ).order_by('id')
     serializer_class = CompetitorSerializer
@@ -555,7 +554,6 @@ class EntryViewSet(viewsets.ModelViewSet):
 class GridViewSet(viewsets.ModelViewSet):
     queryset = Grid.objects.select_related(
         'round',
-        'competitor',
         'appearance',
     ).prefetch_related(
     ).order_by('id')

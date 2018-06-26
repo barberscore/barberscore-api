@@ -179,7 +179,6 @@ class CompetitorSerializer(serializers.ModelSerializer):
             'group',
             'entry',
             'appearances',
-            'grids',
             'permissions',
         )
 
@@ -336,6 +335,7 @@ class GridSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'status',
+            'period',
             'num',
             'location',
             'photo',
@@ -347,7 +347,6 @@ class GridSerializer(serializers.ModelSerializer):
             'renditions',
             'round',
             'appearance',
-            'competitor',
             'permissions',
         ]
 
