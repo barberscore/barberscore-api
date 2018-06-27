@@ -243,15 +243,18 @@ class Round(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         # build the panel
+        i = 0
         assignments = self.session.convention.assignments.filter(
             status=self.session.convention.assignments.model.STATUS.active,
             category__gte=self.session.convention.assignments.model.CATEGORY.ca,
         )
         for assignment in assignments:
+            i += 1
             self.panelists.create(
                 kind=assignment.kind,
                 category=assignment.category,
                 person=assignment.person,
+                num=i,
             )
         # build the appearances
         Competitor = apps.get_model('api.competitor')

@@ -39,6 +39,11 @@ class Contest(TimeStampedModel):
         default=STATUS.new,
     )
 
+    num = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
     # Private
     group = models.ForeignKey(
         'Group',

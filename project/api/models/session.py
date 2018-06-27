@@ -280,18 +280,21 @@ class Session(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         """Build session contests."""
-        grantors = self.convention.grantors.all()
+        grantors = self.convention.grantors.order_by('group__tree_sort')
+        i = 0
         for grantor in grantors:
             awards = grantor.group.awards.filter(
                 status=grantor.group.awards.model.STATUS.active,
                 kind=self.kind,
                 season=self.convention.season,
-            )
+            ).order_by('tree_sort')
             for award in awards:
+                i += 1
                 # Could also do some logic here for more precision
                 self.contests.create(
                     status=self.contests.model.STATUS.included,
                     award=award,
+                    num=i,
                 )
         for i in range(self.num_rounds):
             num = i + 1
