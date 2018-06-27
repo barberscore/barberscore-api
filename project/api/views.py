@@ -967,6 +967,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         ).order_by('award__tree_sort')
         panelists = round.panelists.filter(
             kind=Panelist.KIND.official,
+            category__gte=Panelist.CATEGORY.ca,
         ).order_by(
             'category',
             'person__last_name',

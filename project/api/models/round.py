@@ -245,7 +245,7 @@ class Round(TimeStampedModel):
         # build the panel
         assignments = self.session.convention.assignments.filter(
             status=self.session.convention.assignments.model.STATUS.active,
-            category__gt=self.session.convention.assignments.model.CATEGORY.ca,
+            category__gte=self.session.convention.assignments.model.CATEGORY.ca,
         )
         for assignment in assignments:
             self.panelists.create(
