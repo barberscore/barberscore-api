@@ -62,56 +62,52 @@
                 <td>
                   <strong>{{competitor.tot_rank}} {{competitor.group.name}}</strong> ({{competitor.entry.representing}})<br>
                   {% if competitor.group.get_kind_display == 'Chorus' %}
+                    {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})
                     {{competitor.group.parent.name|truncatechars_html:"30"}}<br>
                   {% endif %}
-                  ({% for contestant in competitor.entry.contestants.all %}
-                    {{contestant.contest.num}},
-                  {% endfor %})
+                  {% if competitor.group.get_kind_display != 'Chorus' %}
+                    {{competitor.tot_rank}} {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
+                  {% endif %}
+                  {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                    {% if appearance.tot_points != competitor.tot_points %}
+                      {{appearance.tot_rank}} {{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})<br>
+                    {% endif %}
+                  {% endfor %}
                 </td>
                 <td>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.chart.nomen|truncatechars_html:75|default:"(Song not provided)"}}<br>
                     {% endfor %}
-                    <em>{{appearance.round.get_kind_display}}</em><br>
                   {% endfor %}
-                  <strong>Total</strong>
                 </td>
                 <td class='text-right'>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         <!-- <strong>{{song.mus_rank}}</strong> --> {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                     {% endfor %}
-                    <em>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</em><br>
                   {% endfor %}
-                  <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong><br>
                 </td>
                 <td class='text-right'>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         <!-- <strong>{{song.per_rank}}</strong> --> {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                     {% endfor %}
-                    <em>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</em><br>
                   {% endfor %}
-                  <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong><br>
                 </td>
                 <td class='text-right'>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         <!-- <strong>{{song.sng_rank}}</strong> --> {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                     {% endfor %}
-                    <em>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</em><br>
                   {% endfor %}
-                  <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong><br>
                 </td>
                 <td class='text-right'>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         <!-- <strong>{{song.tot_rank}}</strong> --> {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
                     {% endfor %}
-                    <em>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</em><br>
                   {% endfor %}
-                  <strong>{{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong><br>
                 </td>
               </tr>
             {% endfor %}
