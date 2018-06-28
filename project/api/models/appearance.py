@@ -163,7 +163,7 @@ class Appearance(TimeStampedModel):
     # Appearance Internals
     class Meta:
         ordering = [
-            'round__kind',
+            'round__num',
             'num',
         ]
         unique_together = (

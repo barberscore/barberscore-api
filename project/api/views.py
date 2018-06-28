@@ -957,11 +957,11 @@ class RoundViewSet(viewsets.ModelViewSet):
         )
         contests = round.session.contests.filter(
             status=Contest.STATUS.included,
-            award__rounds__lte=round.num,
-            award__level__in=[
-                Award.LEVEL.championship,
-                Award.LEVEL.award,
-            ],
+            # award__rounds__lte=round.num,
+            # award__level__in=[
+            #     Award.LEVEL.championship,
+            #     Award.LEVEL.award,
+            # ],
         ).select_related(
             'award',
         ).order_by('award__tree_sort')
