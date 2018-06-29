@@ -925,15 +925,24 @@ class RoundViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
     def oss(self, request, pk=None):
-        round = Round.objects.get(pk=pk)
+        round = Round.objects.select_related(
+            'session',
+            'session__convention',
+            'session__convention__venue',
+        ).get(pk=pk)
         competitors = round.session.competitors.filter(
             status=Competitor.STATUS.finished,
             appearances__round=round,
         ).select_related(
             'group',
+            'entry',
         ).prefetch_related(
+            'entry__contestants',
+            'entry__contestants__contest',
             'appearances',
+            'appearances__round',
             'appearances__songs',
+            'appearances__songs__chart',
             'appearances__songs__scores',
             'appearances__songs__scores__panelist',
             'appearances__songs__scores__panelist__person',
@@ -964,8 +973,11 @@ class RoundViewSet(viewsets.ModelViewSet):
             # ],
         ).select_related(
             'award',
+            'group',
         ).order_by('award__tree_sort')
-        panelists = round.panelists.filter(
+        panelists = round.panelists.select_related(
+            'person',
+        ).filter(
             kind=Panelist.KIND.official,
             category__gte=Panelist.CATEGORY.ca,
         ).order_by(
