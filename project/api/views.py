@@ -897,6 +897,10 @@ class RoundViewSet(viewsets.ModelViewSet):
             '-is_ranked',
             'tot_rank',
             '-tot_points',
+            '-sng_points',
+            '-mus_points',
+            '-per_points',
+            'group__name',
         )[:5]
         context = {
             'round': round,
@@ -950,6 +954,10 @@ class RoundViewSet(viewsets.ModelViewSet):
             '-is_ranked',
             'tot_rank',
             '-tot_points',
+            '-sng_points',
+            '-mus_points',
+            '-per_points',
+            'group__name',
         )
         advancers = round.session.competitors.filter(
             status=Competitor.STATUS.started,
@@ -966,6 +974,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         )
         contests = round.session.contests.filter(
             status=Contest.STATUS.included,
+            contestants__isnull=False,
             # award__rounds__lte=round.num,
             # award__level__in=[
             #     Award.LEVEL.championship,
@@ -974,6 +983,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         ).select_related(
             'award',
             'group',
+        ).distinct(
         ).order_by('award__tree_sort')
         panelists = round.panelists.select_related(
             'person',
@@ -1046,7 +1056,12 @@ class RoundViewSet(viewsets.ModelViewSet):
             'appearances__songs__scores__panelist__person',
         ).order_by(
             '-is_ranked',
+            'tot_rank',
             '-tot_points',
+            '-sng_points',
+            '-mus_points',
+            '-per_points',
+            'group__name',
         )
         context = {
             'round': round,
@@ -1234,6 +1249,10 @@ class SessionViewSet(viewsets.ModelViewSet):
             '-is_ranked',
             'tot_rank',
             '-tot_points',
+            '-sng_points',
+            '-mus_points',
+            '-per_points',
+            'group__name',
         )
         advancers = session.competitors.filter(
             status=Competitor.STATUS.started,
@@ -1331,7 +1350,12 @@ class SessionViewSet(viewsets.ModelViewSet):
             'appearances__songs__scores__panelist__person',
         ).order_by(
             '-is_ranked',
+            'tot_rank',
             '-tot_points',
+            '-sng_points',
+            '-mus_points',
+            '-per_points',
+            'group__name',
         )
         context = {
             'session': session,

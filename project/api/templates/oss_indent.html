@@ -87,7 +87,7 @@
                   {% for appearance in competitor.appearances.all %}
                     &nbsp;&nbsp;&nbsp;&nbsp;{{appearance.round.get_kind_display}}<span class='smaller-font'>&nbsp;(Rank: {{appearance.tot_rank}}, OA: {{appearance.num}})</em></span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:75|default:"(Song not provided)"}}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:75|default:"(Song not included in contestant repertory)"}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>

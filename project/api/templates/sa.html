@@ -90,7 +90,7 @@
               <td>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                      {{song.chart.title|truncatewords_html:6|default:"(Song not provided)"}}<br>
+                      {{song.chart.title|truncatewords_html:6|default:"(Song not included in contestant repertory)"}}<br>
                   {% endfor %}
                 {% endfor %}
               </td>

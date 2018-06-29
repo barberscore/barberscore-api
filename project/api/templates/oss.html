@@ -99,7 +99,7 @@
                   {% for appearance in competitor.appearances.all %}
                     {% if is_multi %}<span class='bolder'>&nbsp;&nbsp;&nbsp;&nbsp;{{appearance.round.get_kind_display}}<span class='smaller-font'>&nbsp;(Rank: {{appearance.tot_rank}}, OA: {{appearance.num}})</em></span><br></span>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:75|default:"(Song not provided)"}}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:75|default:"(Song not included in contestant repertory)"}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
@@ -210,9 +210,13 @@
             <ul class='list-unstyled'>
               {% for contest in contests %}
                 {% if contest.award.get_level_display == 'Qualifier' %}
-                  <li><strong>{{contest.num}} {{contest.award.name}}</strong>&nbsp;{{contest.group.name|default:""}}</li>
+                  <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;{{contest.group.name|default:""}}</li>
                 {% else %}
-                  <li><strong>{{contest.num}} {{contest.award.name}}:</strong>&nbsp;{{contest.group.name|default:"(Not yet awarded.)"}}</li>
+                  {% if round.num >= contest.award.rounds %}
+                    <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;{{contest.group.name|default:"(No recipient.)"}}</li>
+                  {% else %}
+                    <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;{{contest.group.name|default:"(Not yet awarded.)"}}</li>
+                  {% endif %}
                 {% endif %}
               {% endfor %}
             </ul>
