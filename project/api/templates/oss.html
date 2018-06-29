@@ -74,9 +74,11 @@
                 <td>
                   <strong>{{competitor.tot_rank}} {{competitor.group.name}}</strong><br>
                   <div class='smaller-font'>
-                    {{competitor.entry.representing}}<br>
                     {% if competitor.group.get_kind_display == 'Chorus' %}
-                      {{competitor.group.parent.name|truncatechars_html:"30"}}<br>
+                      {{competitor.group.parent.name|truncatechars_html:"30"}} ({{competitor.entry.representing}})<br>
+                      Director(s): {{competitor.entry.directors}}<br>
+                    {% else %}
+                      {{competitor.entry.representing}}<br>
                     {% endif %}
                     {% for contestant in competitor.entry.contestants.all %}
                       {% if forloop.first %}
@@ -93,7 +95,7 @@
                   </div>
                 </td>
                 <td>
-                  <strong>Total</strong>{% if competitor.group.get_kind_display == 'Chorus' %}&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.all.0.num}}, CNT: {{competitor.mos}})</span>{% endif %}<br>
+                  <strong>Total</strong>{% if competitor.group.get_kind_display == 'Chorus' %}&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.all.0.num}}, OnStage: {{competitor.mos|default:'N/A'}})</span>{% endif %}<br>
                   {% for appearance in competitor.appearances.all %}
                     {% if is_multi %}<span class='bolder'>&nbsp;&nbsp;&nbsp;&nbsp;{{appearance.round.get_kind_display}}<span class='smaller-font'>&nbsp;(Rank: {{appearance.tot_rank}}, OA: {{appearance.num}})</em></span><br></span>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
