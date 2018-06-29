@@ -995,7 +995,9 @@ class RoundViewSet(viewsets.ModelViewSet):
             'person__last_name',
             'person__first_name',
         )
-        is_multi = bool(round.session.rounds.count() > 1)
+        is_multi = all([
+            round.session.rounds.count() > 1,
+        ])
         context = {
             'round': round,
             'competitors': competitors,
@@ -1007,7 +1009,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         rendered = render_to_string('oss.html', context)
         file = pydf.generate_pdf(
             rendered,
-            page_size='Letter',
+            page_size='Legal',
             orientation='Portrait',
         )
         content = ContentFile(file)
