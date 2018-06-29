@@ -10,9 +10,6 @@
       table tr {
         white-space:nowrap;
       }
-      strong {
-        font-weight: 800;
-      }
       .smalltd {
           font-size: 10pt;
       }
@@ -25,10 +22,6 @@
       .head_rounds {
           width: 60px;
       }
-      .bolder {
-        font-weight: 600;
-      }
-
       .min-head {
           width: 20px;
       }
@@ -53,15 +46,11 @@
         </h4>
       </section>
       <section>
-        <table class='table table-condensed table-striped'>
+        <table class='table table-condensed'>
           <thead>
             <tr>
               <th class='col-md-3'>Group</th>
               <th class='col-md-5'>Songs</th>
-              <th class='text-right col-md-1'>MUS</th>
-              <th class='text-right col-md-1'>PER</th>
-              <th class='text-right col-md-1'>SNG</th>
-              <th class='text-right col-md-1'>Total</th>
               <th class='text-right col-md-1'>MUS</th>
               <th class='text-right col-md-1'>PER</th>
               <th class='text-right col-md-1'>SNG</th>
@@ -77,6 +66,7 @@
                     {{competitor.entry.representing}}<br>
                     {% if competitor.group.get_kind_display == 'Chorus' %}
                       {{competitor.group.parent.name|truncatechars_html:"30"}}<br>
+                      Participants-on-Stage: {{competitor.mos}}<br>
                     {% endif %}
                     {% for contestant in competitor.entry.contestants.all %}
                       {% if forloop.first %}
@@ -93,85 +83,49 @@
                   </div>
                 </td>
                 <td>
-                  <strong>Total</strong>{% if competitor.group.get_kind_display == 'Chorus' %}&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.all.0.num}}, CNT: {{competitor.mos}})</span>{% endif %}<br>
                   {% for appearance in competitor.appearances.all %}
-                    {% if is_multi %}<span class='bolder'>&nbsp;&nbsp;&nbsp;&nbsp;{{appearance.round.get_kind_display}}<span class='smaller-font'>&nbsp;(Rank: {{appearance.tot_rank}}, OA: {{appearance.num}})</em></span><br></span>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:75|default:"(Song not provided)"}}<br>
+                        {{song.chart.nomen|truncatechars_html:75|default:"(Song not provided)"}}<br>
                     {% endfor %}
+                    &nbsp;&nbsp;&nbsp;&nbsp;<em>{{appearance.round.get_kind_display}}<span class='smaller-font'>&nbsp;(Rank: {{appearance.tot_rank}}, OA: {{appearance.num}})</span></em><br>
                   {% endfor %}
+                  <strong>Total</strong>
                 </td>
                 <td class='text-right'>
-                  <strong>{{competitor.mus_points}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    {% if is_multi %}<span class='bolder'>{{appearance.mus_points}}<br></span>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
-                        {{song.mus_points}}<br>
+                        <!-- <strong>{{song.mus_rank}}</strong> --> {{song.mus_points}} <span class='smaller-font'>({{song.mus_score|floatformat:1}})</span><br>
                     {% endfor %}
+                    <em>{{appearance.mus_points}} <span class='smaller-font'>({{appearance.mus_score|floatformat:1}})</em></span><br>
                   {% endfor %}
+                  <strong>{{competitor.mus_points}} <span class='smaller-font'>({{competitor.mus_score|floatformat:1}})</strong></span><br>
                 </td>
                 <td class='text-right'>
-                  <strong>{{competitor.per_points}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    {% if is_multi %}<span class='bolder'>{{appearance.per_points}}<br></span>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
-                        {{song.per_points}}<br>
+                        <!-- <strong>{{song.per_rank}}</strong> --> {{song.per_points}} <span class='smaller-font'>({{song.per_score|floatformat:1}})</span></span><br>
                     {% endfor %}
+                    <em>{{appearance.per_points}} <span class='smaller-font'>({{appearance.per_score|floatformat:1}})</em></span><br>
                   {% endfor %}
+                  <strong>{{competitor.per_points}} <span class='smaller-font'>({{competitor.per_score|floatformat:1}})</strong></span><br>
                 </td>
                 <td class='text-right'>
-                  <strong>{{competitor.sng_points}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    {% if is_multi %}<span class='bolder'>{{appearance.sng_points}}<br></span>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
-                        {{song.sng_points}}<br>
+                        <!-- <strong>{{song.sng_rank}}</strong> --> {{song.sng_points}} <span class='smaller-font'>({{song.sng_score|floatformat:1}})</span><br>
                     {% endfor %}
+                    <em>{{appearance.sng_points}} <span class='smaller-font'>({{appearance.sng_score|floatformat:1}})</em></span><br>
                   {% endfor %}
+                  <strong>{{competitor.sng_points}} <span class='smaller-font'>({{competitor.sng_score|floatformat:1}})</strong></span><br>
                 </td>
                 <td class='text-right'>
-                  <strong>{{competitor.tot_points}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    {% if is_multi %}<span class='bolder'>{{appearance.tot_points}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
-                        {{song.tot_points}}<br>
+                        <!-- <strong>{{song.tot_rank}}</strong> --> {{song.tot_points}} <span class='smaller-font'>({{song.tot_score|floatformat:1}})</span><br>
                     {% endfor %}
+                    <em>{{appearance.tot_points}} <span class='smaller-font'>({{appearance.tot_score|floatformat:1}})</em></span><br>
                   {% endfor %}
-                </td>
-                <td class='text-right'>
-                  <strong>{{competitor.mus_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    {% if is_multi %}<span class='bolder'>{{appearance.mus_score|floatformat:1}}</span><br>{% endif %}
-                    {% for song in appearance.songs.all|dictsort:'num' %}
-                        {{song.mus_score|floatformat:1}}<br>
-                    {% endfor %}
-                  {% endfor %}
-                </td>
-                <td class='text-right'>
-                  <strong>{{competitor.per_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    {% if is_multi %}<span class='bolder'>{{appearance.per_score|floatformat:1}}</span><br>{% endif %}
-                    {% for song in appearance.songs.all|dictsort:'num' %}
-                        {{song.per_score|floatformat:1}}<br>
-                    {% endfor %}
-                  {% endfor %}
-                </td>
-                <td class='text-right'>
-                  <strong>{{competitor.sng_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    {% if is_multi %}<span class='bolder'>{{appearance.sng_score|floatformat:1}}</span><br>{% endif %}
-                    {% for song in appearance.songs.all|dictsort:'num' %}
-                        {{song.sng_score|floatformat:1}}<br>
-                    {% endfor %}
-                  {% endfor %}
-                </td>
-                <td class='text-right'>
-                  <strong>{{competitor.tot_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    {% if is_multi %}<span class='bolder'>{{appearance.tot_score|floatformat:1}}</span><br>{% endif %}
-                    {% for song in appearance.songs.all|dictsort:'num' %}
-                        {{song.tot_score|floatformat:1}}<br>
-                    {% endfor %}
-                  {% endfor %}
+                  <strong>{{competitor.tot_points}} <span class='smaller-font'>({{competitor.tot_score|floatformat:1}})</strong></span><br>
                 </td>
               </tr>
             {% endfor %}
