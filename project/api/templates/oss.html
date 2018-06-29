@@ -60,10 +60,10 @@
             <tr>
               <th class='col-md-3'>Group</th>
               <th class='col-md-5'>Songs</th>
-              <th class='text-right col-md-1'>MUS</th>
+              <!-- <th class='text-right col-md-1'>MUS</th>
               <th class='text-right col-md-1'>PER</th>
               <th class='text-right col-md-1'>SNG</th>
-              <th class='text-right col-md-1'>Total</th>
+              <th class='text-right col-md-1'>Total</th> -->
               <th class='text-right col-md-1'>MUS</th>
               <th class='text-right col-md-1'>PER</th>
               <th class='text-right col-md-1'>SNG</th>
@@ -109,7 +109,7 @@
                       {% endfor %}
                     {% else %}
                       {% if competitor.group.get_kind_display == 'Chorus' %}
-                        <strong>Total</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.mos|default:'N/A'}})</span><br>
+                        <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.mos|default:'N/A'}})</span><br>
                       {% else %}
                         <strong>Total</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
                       {% endif %}
@@ -118,11 +118,11 @@
                       {% endfor %}
                     {% endif %}
                   {% else %}
-                    <strong>Total</strong>
+                    <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong><br>
                     {% for appearance in competitor.appearances.all %}
-                      <span class='bolder'>{{appearance.round.get_kind_display}}<span class='smaller-font'>&nbsp;(Rank: {{appearance.tot_rank}}, OA: {{appearance.num}})</em></span><br></span>
+                      &nbsp;&nbsp;<span class='bolder'>{{appearance.round.get_kind_display}}:&nbsp;{{appearance.tot_points}} Points<span class='smaller-font'>&nbsp;(Rank: {{appearance.tot_rank}}, OA: {{appearance.num}})</em></span><br></span>
                       {% for song in appearance.songs.all|dictsort:'num' %}
-                        {{song.chart.nomen|truncatechars_html:75|default:"(Song not included in contestant repertory)"}}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:75|default:"(Song not included in contestant repertory)"}}<br>
                       {% endfor %}
                     {% endfor %}
 
@@ -135,7 +135,7 @@
 
                   {% endif %}
                 </td>
-                <td class='text-right'>
+                <!-- <td class='text-right'>
                   <strong>{{competitor.mus_points}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
                     {% if round.num != 1 %}<span class='bolder'>{{appearance.mus_points}}<br></span>{% endif %}
@@ -170,7 +170,7 @@
                         {{song.tot_points}}<br>
                     {% endfor %}
                   {% endfor %}
-                </td>
+                </td> -->
                 <td class='text-right'>
                   <strong>{{competitor.mus_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
