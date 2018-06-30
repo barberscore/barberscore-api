@@ -65,8 +65,8 @@
         <table class='table table-condensed table-striped'>
           <thead>
             <tr>
-              <th class='col-md-3'>Group</th>
-              <th class='col-md-5'>Songs</th>
+              <th class='col-md-4'>Group</th>
+              <th class='col-md-4'>Songs</th>
               <th class='text-right col-md-1'>MUS</th>
               <th class='text-right col-md-1'>PER</th>
               <th class='text-right col-md-1'>SNG</th>
@@ -101,7 +101,7 @@
                     <br>
                     {% if round.num != 1 %}
                       {% for appearance in competitor.appearances.all %}
-                        {{appearance.round.get_kind_display}} Rank: {{appearance.tot_rank}}<br>
+                        {{appearance.round.get_kind_display}} (Rank: {{appearance.tot_rank}}, OA: {{appearance.num}}, Points: {{appearance.tot_points}})</span><br>
                       {% endfor %}
                     {% endif %}
                   </div>
@@ -130,7 +130,7 @@
                   {% else %}
                     <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'></span><br>
                     {% for appearance in competitor.appearances.all %}
-                      <span class='bolder'>{{appearance.round.get_kind_display}}&nbsp;</span><span class='smaller-font'>(OA: {{appearance.num}}, Points: {{appearance.tot_points}})</span><br>
+                      <span class='bolder'>{{appearance.round.get_kind_display}}&nbsp;</span><br>
                       {% for song in appearance.songs.all|dictsort:'num' %}
                         &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:100|default:"(Song not included in contestant repertory)"}}<br>
                       {% endfor %}
