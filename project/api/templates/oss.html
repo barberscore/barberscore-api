@@ -115,7 +115,7 @@
                         <strong>Total</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
                       {% endif %}
                       {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
-                        {{song.chart.nomen|truncatechars_html:75|default:"(Song not included in contestant repertory)"}}<br>
+                        {{song.chart.nomen|truncatechars_html:100|default:"(Song not included in contestant repertory)"}}<br>
                       {% endfor %}
                     {% else %}
                       {% if competitor.group.get_kind_display == 'Chorus' %}
