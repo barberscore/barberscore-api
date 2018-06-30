@@ -24,7 +24,7 @@
           font-size: 10pt;
       }
       .smaller-font {
-          font-size: 6pt;
+          font-size: 8pt;
       }
       .head_rank {
           width: 1%;
@@ -97,6 +97,13 @@
                       )
                       {% endif %}
                     {% endfor %}
+                    <br>
+                    <br>
+                    {% if round.num != 1 %}
+                      {% for appearance in competitor.appearances.all %}
+                        {{appearance.round.get_kind_display}} Rank: {{appearance.tot_rank}}<br>
+                      {% endfor %}
+                    {% endif %}
                   </div>
                 </td>
                 <td>
@@ -121,9 +128,11 @@
                       {% endfor %}
                     {% endif %}
                   {% else %}
+                    <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'></span><br>
                     {% for appearance in competitor.appearances.all %}
+                      <span class='bolder'>{{appearance.round.get_kind_display}}&nbsp;</span><span class='smaller-font'>(OA: {{appearance.num}}, Points: {{appearance.tot_points}})</span><br>
                       {% for song in appearance.songs.all|dictsort:'num' %}
-                        &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:75|default:"(Song not included in contestant repertory)"}}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:100|default:"(Song not included in contestant repertory)"}}<br>
                       {% endfor %}
                     {% endfor %}
                   {% endif %}
@@ -131,6 +140,7 @@
                 <td class='text-right'>
                   <strong>{{competitor.mus_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                    <span class='bolder'>{{ appearance.mus_score|floatformat:1}}</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.mus_score|floatformat:1}}<br>
                     {% endfor %}
@@ -139,6 +149,7 @@
                 <td class='text-right'>
                   <strong>{{competitor.per_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                    <span class='bolder'>{{ appearance.per_score|floatformat:1}}</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.per_score|floatformat:1}}<br>
                     {% endfor %}
@@ -147,6 +158,7 @@
                 <td class='text-right'>
                   <strong>{{competitor.sng_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                    <span class='bolder'>{{ appearance.sng_score|floatformat:1}}</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.sng_score|floatformat:1}}<br>
                     {% endfor %}
@@ -155,6 +167,7 @@
                 <td class='text-right'>
                   <strong>{{competitor.tot_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                    <span class='bolder'>{{ appearance.tot_score|floatformat:1}}</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.tot_score|floatformat:1}}<br>
                     {% endfor %}
