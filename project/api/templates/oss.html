@@ -24,7 +24,7 @@
           font-size: 10pt;
       }
       .smaller-font {
-          font-size: 8pt;
+          font-size: 6pt;
       }
       .head_rank {
           width: 1%;
@@ -81,7 +81,7 @@
                   <div class='smaller-font'>
                     {% if competitor.group.get_kind_display == 'Chorus' %}
                       {{competitor.group.parent.name|truncatechars_html:"30"}} ({{competitor.entry.representing|default:"(Unknown)"}})<br>
-                      Director(s): {{competitor.entry.directors}}<br>
+                      Director(s): {{competitor.entry.directors|default:"(No Director Specified)"}}<br>
                     {% else %}
                       {{competitor.entry.representing|default:"(Unknown)"}}<br>
                     {% endif %}
