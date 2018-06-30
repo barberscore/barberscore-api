@@ -64,6 +64,9 @@
               <th class='text-right col-md-1'>PER</th>
               <th class='text-right col-md-1'>SNG</th>
               <th class='text-right col-md-1'>Total</th> -->
+              {% for round in round.session.rounds.all %}
+                <th class='text-right col-md-1'>{{round.get_kind_display|slice:'1'}}</th>
+              {% endfor %}
               <th class='text-right col-md-1'>MUS</th>
               <th class='text-right col-md-1'>PER</th>
               <th class='text-right col-md-1'>SNG</th>
@@ -118,9 +121,9 @@
                       {% endfor %}
                     {% endif %}
                   {% else %}
-                    <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong><br>
+                    <!-- <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong><br> -->
                     {% for appearance in competitor.appearances.all %}
-                      &nbsp;&nbsp;<span class='bolder'>{{appearance.round.get_kind_display}}:&nbsp;{{appearance.tot_points}} Points<span class='smaller-font'>&nbsp;(Rank: {{appearance.tot_rank}}, OA: {{appearance.num}})</em></span><br></span>
+                      <!-- &nbsp;&nbsp;<span class='bolder'>{{appearance.round.get_kind_display}}:&nbsp;{{appearance.tot_points}} Points<span class='smaller-font'>&nbsp;(Rank: {{appearance.tot_rank}}, OA: {{appearance.num}})</em></span><br></span> -->
                       {% for song in appearance.songs.all|dictsort:'num' %}
                         &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:75|default:"(Song not included in contestant repertory)"}}<br>
                       {% endfor %}
@@ -135,6 +138,15 @@
 
                   {% endif %}
                 </td>
+                {% for round in round.session.rounds.all %}
+                  <td>
+                    {% for appearance in competitor.appearances.all %}
+                      {% if appearance.round.num == round.num %}
+                        {{appearance.tot_points}}
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                {% endfor %}
                 <!-- <td class='text-right'>
                   <strong>{{competitor.mus_points}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
@@ -174,7 +186,7 @@
                 <td class='text-right'>
                   <strong>{{competitor.mus_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    {% if round.num != 1 %}<span class='bolder'>{{appearance.mus_score|floatformat:1}}</span><br>{% endif %}
+                    <!-- {% if round.num != 1 %}<span class='bolder'>{{appearance.mus_score|floatformat:1}}</span><br>{% endif %} -->
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.mus_score|floatformat:1}}<br>
                     {% endfor %}
@@ -183,7 +195,7 @@
                 <td class='text-right'>
                   <strong>{{competitor.per_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    {% if round.num != 1 %}<span class='bolder'>{{appearance.per_score|floatformat:1}}</span><br>{% endif %}
+                    <!-- {% if round.num != 1 %}<span class='bolder'>{{appearance.per_score|floatformat:1}}</span><br>{% endif %} -->
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.per_score|floatformat:1}}<br>
                     {% endfor %}
@@ -192,7 +204,7 @@
                 <td class='text-right'>
                   <strong>{{competitor.sng_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    {% if round.num != 1 %}<span class='bolder'>{{appearance.sng_score|floatformat:1}}</span><br>{% endif %}
+                    <!-- {% if round.num != 1 %}<span class='bolder'>{{appearance.sng_score|floatformat:1}}</span><br>{% endif %} -->
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.sng_score|floatformat:1}}<br>
                     {% endfor %}
@@ -201,7 +213,7 @@
                 <td class='text-right'>
                   <strong>{{competitor.tot_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    {% if round.num != 1 %}<span class='bolder'>{{appearance.tot_score|floatformat:1}}</span><br>{% endif %}
+                    <!-- {% if round.num != 1 %}<span class='bolder'>{{appearance.tot_score|floatformat:1}}</span><br>{% endif %} -->
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.tot_score|floatformat:1}}<br>
                     {% endfor %}
