@@ -268,16 +268,22 @@ class Song(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_read_permission(request):
-        return request.user.person.officers.filter(office__is_scoring_manager=True)
+        return True
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        assi = bool(self.appearance.competitor.session.convention.assignments.filter(
-            person__user=request.user,
-            status__gt=0,
-        ))
-        return assi
+        checklist = any([
+            self.appearance.competitor.session.convention.assignments.filter(
+                person__user=request.user,
+                status__gt=0,
+            ),
+            self.appearance.competitor.group.members.filter(
+                person__user=request.user,
+                status__gt=0,
+            ),
+        ])
+        return checklist
 
     @staticmethod
     @allow_staff_or_superuser
