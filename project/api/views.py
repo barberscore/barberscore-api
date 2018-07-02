@@ -937,6 +937,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         competitors = round.session.competitors.filter(
             status=Competitor.STATUS.finished,
             appearances__round=round,
+            entry__is_private=False,
         ).select_related(
             'group',
             'entry',
@@ -957,6 +958,16 @@ class RoundViewSet(viewsets.ModelViewSet):
             '-sng_points',
             '-mus_points',
             '-per_points',
+            'group__name',
+        )
+        privates = round.session.competitors.filter(
+            status=Competitor.STATUS.finished,
+            appearances__round=round,
+            entry__is_private=True,
+        ).select_related(
+            'group',
+            'entry',
+        ).order_by(
             'group__name',
         )
         advancers = round.session.competitors.filter(
@@ -1001,6 +1012,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         context = {
             'round': round,
             'competitors': competitors,
+            'privates': privates,
             'advancers': advancers,
             'panelists': panelists,
             'contests': contests,

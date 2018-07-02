@@ -140,7 +140,7 @@
                 <td class='text-right'>
                   <strong>{{competitor.mus_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    <span class='bolder'>{{ appearance.mus_score|floatformat:1}}</span><br>
+                    {% if round.num != 1 %}<span class='bolder'>{{ appearance.mus_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.mus_score|floatformat:1}}<br>
                     {% endfor %}
@@ -149,7 +149,7 @@
                 <td class='text-right'>
                   <strong>{{competitor.per_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    <span class='bolder'>{{ appearance.per_score|floatformat:1}}</span><br>
+                    {% if round.num != 1 %}<span class='bolder'>{{ appearance.per_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.per_score|floatformat:1}}<br>
                     {% endfor %}
@@ -158,7 +158,7 @@
                 <td class='text-right'>
                   <strong>{{competitor.sng_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    <span class='bolder'>{{ appearance.sng_score|floatformat:1}}</span><br>
+                    {% if round.num != 1 %}<span class='bolder'>{{ appearance.sng_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.sng_score|floatformat:1}}<br>
                     {% endfor %}
@@ -167,7 +167,7 @@
                 <td class='text-right'>
                   <strong>{{competitor.tot_score|floatformat:1}}</strong><br>
                   {% for appearance in competitor.appearances.all|dictsort:'num' %}
-                    <span class='bolder'>{{ appearance.tot_score|floatformat:1}}</span><br>
+                    {% if round.num != 1 %}<span class='bolder'>{{ appearance.tot_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.tot_score|floatformat:1}}<br>
                     {% endfor %}
@@ -176,6 +176,20 @@
               </tr>
             {% endfor %}
           </tbody>
+          {% if privates %}
+            <tfoot>
+              <tr>
+                <td colspan=6>
+                  <ul class='list-inline'>
+                    <li>The following groups sang for Evaluation-Only:</li>
+                    {% for private in privates %}
+                      <li>{{private.group.name}}</li>
+                    {% endfor %}
+                  </ul>
+                </td>
+              </tr>
+            </tfoot>
+          {% endif %}
         </table>
       </section>
       <div class='row'>
