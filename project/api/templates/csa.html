@@ -9,15 +9,16 @@
     </style>
   </head>
   <body>
-      <section>
-        <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
-        <h3>
-          Competitor Scoring Analysis {{competitor.session.convention.name}} {{competitor.session.get_kind_display}}
-        </h3>
-        <h4>
-          {{competitor.session.convention.venue.name}} {{competitor.session.convention.venue.city}}, {{competitor.session.convention.venue.state}}; {{competitor.session.convention.start_date|date:"F j, Y"}} - {{competitor.session.convention.end_date|date:"F j, Y"}}
-        </h4>
-      </section>
+    <section>
+      <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
+      <h3>
+        Competitor Scoring Analysis<br>
+        {{competitor.session.convention.name}}
+      </h3>
+      <h4>
+        {{competitor.session.convention.venue.city|default:"(Unknown City)"}}, {{competitor.session.convention.venue.state|default:"(Unknown State)"}}; {{competitor.session.convention.start_date|date:"F j, Y"}} - {{competitor.session.convention.end_date|date:"F j, Y"}}
+      </h4>
+    </section>
     <section>
       <h3>
         {{competitor.group.name}}

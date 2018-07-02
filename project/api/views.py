@@ -444,7 +444,7 @@ class CompetitorViewSet(viewsets.ModelViewSet):
             'person__last_name',
         )
         appearances = competitor.appearances.order_by(
-            'num',
+            '-num',
         ).prefetch_related(
             'songs',
         )
