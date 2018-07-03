@@ -15,6 +15,7 @@ from ranking import Ranking
 # Django
 from django.db import models
 from django.utils.timezone import now
+from django.apps import apps
 
 # First-Party
 from api.tasks import create_variance_report
