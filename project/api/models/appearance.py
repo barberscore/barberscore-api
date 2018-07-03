@@ -276,13 +276,16 @@ class Appearance(TimeStampedModel):
     @transition(field=status, source=[STATUS.new], target=STATUS.built)
     def build(self, *args, **kwargs):
         Grid = apps.get_model('api.grid')
+        Panelist = apps.get_model('api.panelist')
         grid = Grid.objects.get(
             round=self.round,
             num=self.num,
         )
         grid.appearance = self
         grid.save()
-        panelists = self.round.panelists.all()
+        panelists = self.round.panelists.filter(
+            category__gt=Panelist.CATEGORY.ca,
+        )
         i = 1
         while i <= 2:  # Number songs constant
             song = self.songs.create(

@@ -628,6 +628,7 @@ def create_variance_report(appearance):
     )
     panelists = Panelist.objects.filter(
         kind=Panelist.KIND.official,
+        category__gt=Panelist.CATEGORY.ca,
         scores__song__appearance=appearance,
     ).order_by(
         'category',
