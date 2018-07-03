@@ -623,7 +623,7 @@ def create_variance_report(appearance):
         song__in=songs,
     ).order_by(
         'category',
-        'panelist',
+        'panelist__person__last_name',
         'song__num',
     )
     panelists = Panelist.objects.filter(
