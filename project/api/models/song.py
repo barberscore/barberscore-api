@@ -198,12 +198,13 @@ class Song(TimeStampedModel):
             kind=self.scores.model.KIND.official,
         ).aggregate(avg=models.Avg('points'))['avg']
         for score in mus_scores:
-            score.is_flagged = False
             if abs(score.points - mus_avg) > 5:
                 score.is_flagged = True
-                score.save()
                 if score.kind == score.KIND.official:
                     is_variance = True
+            else:
+                score.is_flagged = False
+            score.save()
         per_scores = self.scores.filter(
             category=self.scores.model.CATEGORY.performance,
         )
@@ -211,12 +212,13 @@ class Song(TimeStampedModel):
             kind=self.scores.model.KIND.official,
         ).aggregate(avg=models.Avg('points'))['avg']
         for score in per_scores:
-            score.is_flagged = False
             if abs(score.points - per_avg) > 5:
                 score.is_flagged = True
-                score.save()
                 if score.kind == score.KIND.official:
                     is_variance = True
+            else:
+                score.is_flagged = False
+            score.save()
         sng_scores = self.scores.filter(
             category=self.scores.model.CATEGORY.singing,
         )
@@ -224,23 +226,25 @@ class Song(TimeStampedModel):
             kind=self.scores.model.KIND.official,
         ).aggregate(avg=models.Avg('points'))['avg']
         for score in sng_scores:
-            score.is_flagged = False
             if abs(score.points - sng_avg) > 5:
                 score.is_flagged = True
-                score.save()
                 if score.kind == score.KIND.official:
                     is_variance = True
+            else:
+                score.is_flagged = False
+            score.save()
 
         ordered_asc = self.scores.filter(
             kind=self.scores.model.KIND.official,
         ).order_by('points')
         ultimate = ordered_asc[0]
         penultimate = ordered_asc[1]
-        ultimate.is_flagged = False
         if penultimate.points - ultimate.points > 5:
             ultimate.is_flagged = True
-            ultimate.save()
             is_variance = True
+        else:
+            ultimate.is_flagged = False
+        ultimate.save()
         practice_scores = self.scores.filter(
             kind=self.scores.model.KIND.practice,
             points__lte=ultimate.points,
@@ -251,11 +255,12 @@ class Song(TimeStampedModel):
         ).order_by('-points')
         ultimate = ordered_dsc[0]
         penultimate = ordered_dsc[1]
-        ultimate.is_flagged = False
         if ultimate.points - penultimate.points > 5:
             ultimate.is_flagged = True
-            ultimate.save()
             is_variance = True
+        else:
+            ultimate.is_flagged = False
+        ultimate.save()
         practice_scores = self.scores.filter(
             kind=self.scores.model.KIND.practice,
             points__gte=ultimate.points,

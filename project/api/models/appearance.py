@@ -312,14 +312,17 @@ class Appearance(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
+        switch = False
         for song in self.songs.all():
             song.calculate()
             song.save()
             variance = song.check_variance()
             if variance:
-                create_variance_report(self)
-            else:
-                self.variance_report = None
+                switch = True
+        if switch:
+            create_variance_report(self)
+        else:
+            self.variance_report = None
         self.calculate()
         self.competitor.calculate()
         self.competitor.save()
