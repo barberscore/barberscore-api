@@ -20,7 +20,6 @@ from django.utils.functional import cached_property
 from django.urls import reverse
 
 # First-Party
-from api.tasks import create_ors_report
 
 log = logging.getLogger(__name__)
 

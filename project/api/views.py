@@ -88,6 +88,8 @@ from .tasks import create_contact_report
 from .tasks import create_roster_report
 from .tasks import create_chart_report
 from .tasks import create_csa_report
+from .tasks import create_oss_report
+from .tasks import create_sa_report
 
 
 log = logging.getLogger(__name__)
@@ -892,98 +894,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             'session__convention',
             'session__convention__venue',
         ).get(pk=pk)
-        competitors = round.session.competitors.filter(
-            status=Competitor.STATUS.finished,
-            appearances__round=round,
-            entry__is_private=False,
-        ).select_related(
-            'group',
-            'entry',
-        ).prefetch_related(
-            'entry__contestants',
-            'entry__contestants__contest',
-            'appearances',
-            'appearances__round',
-            'appearances__songs',
-            'appearances__songs__chart',
-            'appearances__songs__scores',
-            'appearances__songs__scores__panelist',
-            'appearances__songs__scores__panelist__person',
-        ).order_by(
-            '-is_ranked',
-            'tot_rank',
-            '-tot_points',
-            '-sng_points',
-            '-mus_points',
-            '-per_points',
-            'group__name',
-        )
-        privates = round.session.competitors.filter(
-            status=Competitor.STATUS.finished,
-            appearances__round=round,
-            entry__is_private=True,
-        ).select_related(
-            'group',
-            'entry',
-        ).order_by(
-            'group__name',
-        )
-        advancers = round.session.competitors.filter(
-            status=Competitor.STATUS.started,
-        ).select_related(
-            'group',
-        ).prefetch_related(
-            'appearances',
-            'appearances__songs',
-            'appearances__songs__scores',
-            'appearances__songs__scores__panelist',
-            'appearances__songs__scores__panelist__person',
-        ).order_by(
-            'draw',
-        )
-        contests = round.session.contests.filter(
-            status=Contest.STATUS.included,
-            contestants__isnull=False,
-            # award__rounds__lte=round.num,
-            # award__level__in=[
-            #     Award.LEVEL.championship,
-            #     Award.LEVEL.award,
-            # ],
-        ).select_related(
-            'award',
-            'group',
-        ).distinct(
-        ).order_by('award__tree_sort')
-        panelists = round.panelists.select_related(
-            'person',
-        ).filter(
-            kind=Panelist.KIND.official,
-            category__gte=Panelist.CATEGORY.ca,
-        ).order_by(
-            'category',
-            'person__last_name',
-            'person__first_name',
-        )
-        is_multi = all([
-            round.session.rounds.count() > 1,
-        ])
-        context = {
-            'round': round,
-            'competitors': competitors,
-            'privates': privates,
-            'advancers': advancers,
-            'panelists': panelists,
-            'contests': contests,
-            'is_multi': is_multi,
-        }
-        rendered = render_to_string('oss.html', context)
-        file = pydf.generate_pdf(
-            rendered,
-            page_size='Legal',
-            orientation='Portrait',
-        )
-        content = ContentFile(file)
-        pdf = content
+        pdf = create_oss_report(round)
         file_name = '{0}-oss'.format(
             slugify(
                 "{0} {1} {2} Round".format(
@@ -1002,52 +913,12 @@ class RoundViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
     def sa(self, request, pk=None):
-        round = Round.objects.get(pk=pk)
-        panelists = Panelist.objects.filter(
-            kind__in=[
-                Panelist.KIND.official,
-                Panelist.KIND.practice,
-            ],
-            scores__song__appearance__round=round,
-        ).select_related(
-            'person',
-        ).distinct(
-        ).order_by(
-            'category',
-            'person__last_name',
-        )
-        competitors = round.session.competitors.filter(
-            status=Competitor.STATUS.finished,
-        ).select_related(
-            'group',
-        ).prefetch_related(
-            'appearances',
-            'appearances__songs',
-            'appearances__songs__scores',
-            'appearances__songs__scores__panelist',
-            'appearances__songs__scores__panelist__person',
-        ).order_by(
-            '-is_ranked',
-            'tot_rank',
-            '-tot_points',
-            '-sng_points',
-            '-mus_points',
-            '-per_points',
-            'group__name',
-        )
-        context = {
-            'round': round,
-            'panelists': panelists,
-            'competitors': competitors,
-        }
-        rendered = render_to_string('sa.html', context)
-        file = pydf.generate_pdf(
-            rendered,
-            page_size='Letter',
-            orientation='Landscape',
-        )
-        content = ContentFile(file)
-        pdf = content
+        round = Round.objects.select_related(
+            'session',
+            'session__convention',
+            'session__convention__venue',
+        ).get(pk=pk)
+        pdf = create_sa_report(round)
         file_name = '{0}-sa'.format(
             slugify(
                 "{0} {1} {2} Round".format(

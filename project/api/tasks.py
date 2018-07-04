@@ -655,65 +655,95 @@ def create_variance_report(appearance):
 
 
 @job
-def create_ors_report(round):
+def create_oss_report(round):
     Competitor = apps.get_model('api.competitor')
+    Contest = apps.get_model('api.contest')
+    Panelist = apps.get_model('api.panelist')
     competitors = round.session.competitors.filter(
         status=Competitor.STATUS.finished,
+        appearances__round=round,
+        entry__is_private=False,
+    ).select_related(
+        'group',
+        'entry',
+    ).prefetch_related(
+        'entry__contestants',
+        'entry__contestants__contest',
+        'appearances',
+        'appearances__round',
+        'appearances__songs',
+        'appearances__songs__chart',
+        'appearances__songs__scores',
+        'appearances__songs__scores__panelist',
+        'appearances__songs__scores__panelist__person',
     ).order_by(
-        'rank',
-        'tot_points'
+        '-is_ranked',
+        'tot_rank',
+        '-tot_points',
+        '-sng_points',
+        '-mus_points',
+        '-per_points',
+        'group__name',
     )
-    panelists = round.panelists.filter(
-        kind=round.panelists.model.KIND.official,
+    privates = round.session.competitors.filter(
+        status=Competitor.STATUS.finished,
+        appearances__round=round,
+        entry__is_private=True,
+    ).select_related(
+        'group',
+        'entry',
     ).order_by(
-        'category',
+        'group__name',
+    )
+    advancers = round.session.competitors.filter(
+        status=Competitor.STATUS.started,
+    ).select_related(
+        'group',
+    ).prefetch_related(
+        'appearances',
+        'appearances__songs',
+        'appearances__songs__scores',
+        'appearances__songs__scores__panelist',
+        'appearances__songs__scores__panelist__person',
+    ).order_by(
+        'draw',
     )
     contests = round.session.contests.filter(
-        status__gt=0,
+        status=Contest.STATUS.included,
+        contestants__isnull=False,
+    ).select_related(
+        'award',
+        'group',
+    ).distinct(
+    ).order_by('award__tree_sort')
+    panelists = round.panelists.select_related(
+        'person',
+    ).filter(
+        kind=Panelist.KIND.official,
+        category__gte=Panelist.CATEGORY.ca,
     ).order_by(
-        '-award__is_primary',
-        'award__name',
+        'category',
+        'person__last_name',
+        'person__first_name',
     )
+    is_multi = all([
+        round.session.rounds.count() > 1,
+    ])
     context = {
         'round': round,
         'competitors': competitors,
+        'privates': privates,
+        'advancers': advancers,
         'panelists': panelists,
         'contests': contests,
-    }
-    rendered = render_to_string('ors.html', context)
-    file = pydf.generate_pdf(rendered)
-    content = ContentFile(file)
-    return content
-
-
-@job
-def create_oss_report(session):
-    Panelist = apps.get_model('api.panelist')
-    competitors = session.competitors.order_by(
-        'rank',
-        'tot_points'
-    )
-    rounds = session.rounds.all()
-    panelists = Panelist.objects.filter(
-        kind=Panelist.KIND.official,
-        round__in=rounds,
-    ).order_by(
-        'category',
-    )
-    contests = session.contests.filter(
-        status__gt=0,
-    ).order_by(
-        '-award__is_primary',
-        'award__name',
-    )
-    context = {
-        'session': session,
-        'competitors': competitors,
-        'panelists': panelists,
-        'contests': contests,
+        'is_multi': is_multi,
     }
     rendered = render_to_string('oss.html', context)
-    file = pydf.generate_pdf(rendered)
+    file = pydf.generate_pdf(
+        rendered,
+        page_size='Legal',
+        orientation='Portrait',
+    )
     content = ContentFile(file)
     return content
 
@@ -765,25 +795,52 @@ def create_csa_report(competitor):
 
 
 @job
-def create_sa_report(session):
-    Person = apps.get_model('api.person')
-    persons = Person.objects.filter(
-        panelists__round__session=session,
+def create_sa_report(round):
+    Panelist = apps.get_model('api.panelist')
+    Competitor = apps.get_model('api.competitor')
+    panelists = Panelist.objects.filter(
+        kind__in=[
+            Panelist.KIND.official,
+            Panelist.KIND.practice,
+        ],
+        scores__song__appearance__round=round,
+    ).select_related(
+        'person',
     ).distinct(
     ).order_by(
-        'panelists__category',
-        'panelists__kind',
-        'last_name',
-        'first_name',
+        'category',
+        'person__last_name',
     )
-    competitors = session.competitors.order_by('rank')
+    competitors = round.session.competitors.filter(
+        status=Competitor.STATUS.finished,
+    ).select_related(
+        'group',
+    ).prefetch_related(
+        'appearances',
+        'appearances__songs',
+        'appearances__songs__scores',
+        'appearances__songs__scores__panelist',
+        'appearances__songs__scores__panelist__person',
+    ).order_by(
+        '-is_ranked',
+        'tot_rank',
+        '-tot_points',
+        '-sng_points',
+        '-mus_points',
+        '-per_points',
+        'group__name',
+    )
     context = {
-        'session': session,
-        'persons': persons,
+        'round': round,
+        'panelists': panelists,
         'competitors': competitors,
     }
     rendered = render_to_string('sa.html', context)
-    file = pydf.generate_pdf(rendered)
+    file = pydf.generate_pdf(
+        rendered,
+        page_size='Letter',
+        orientation='Landscape',
+    )
     content = ContentFile(file)
     return content
 
