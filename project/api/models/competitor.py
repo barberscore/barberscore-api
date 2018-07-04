@@ -136,6 +136,11 @@ class Competitor(TimeStampedModel):
         blank=True,
     )
 
+    csa_report = models.FileField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',

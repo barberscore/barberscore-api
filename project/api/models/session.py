@@ -104,6 +104,16 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    oss_report = models.FileField(
+        null=True,
+        blank=True,
+    )
+
+    sa_report = models.FileField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     convention = models.ForeignKey(
         'Convention',
