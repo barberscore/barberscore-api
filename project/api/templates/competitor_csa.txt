@@ -1,0 +1,14 @@
+IMPORTANT NOTE:  This is an *UNOFFICIAL* quick view of your scores we're
+providing as a courtesy and Beta test of the new scoring software.  It may
+contain errors or omissions and is not designed as a replacement for your
+official CSA.
+
+Group: {{competitor.group.name}}
+Rank: {{competitor.tot_rank}}
+Total Points:  {{competitor.tot_points}}
+
+Your full *UNOFFICIAL* CSA is also now available to your Quartet Admin though the
+Barberscore website.  Just click on the "Competitors" tab in the Group Manager.
+
+
+Thanks!

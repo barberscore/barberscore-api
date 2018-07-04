@@ -829,6 +829,52 @@ def send_entry(template, context):
 
 
 @job('high')
+def send_csa(context):
+    competitor = context['competitor']
+    officers = competitor.group.officers.filter(
+        status__gt=0,
+        person__email__isnull=False,
+    )
+    if not officers:
+        raise RuntimeError("No officers for {0}".format(competitor.group))
+    tos = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
+    ccs = ["David Mills <proclamation56@gmail.com>"]
+    if competitor.group.kind == competitor.group.KIND.quartet:
+        members = competitor.group.members.filter(
+            status__gt=0,
+            person__email__isnull=False,
+        ).exclude(
+            person__officers__in=officers,
+        ).distinct()
+        for member in members:
+            ccs.append(
+                "{0} <{1}>".format(member.person.common_name, member.person.email)
+            )
+    rendered = render_to_string('competitor_csa.txt', context)
+    html_rendered = render_to_string('csa.html', context)
+    subject = "[Barberscore] {0} {1} {2} Session CSA".format(
+        competitor.group.name,
+        competitor.session.convention.name,
+        competitor.session.get_kind_display(),
+    )
+    email = EmailMessage(
+        subject=subject,
+        body=rendered,
+        from_email='Barberscore <admin@barberscore.com>',
+        to=tos,
+        cc=ccs,
+        # html_message=html_rendered,
+    )
+    try:
+        result = email.send()
+    except Exception as e:
+        raise(e)
+    if result != 1:
+        raise RuntimeError("Email unsuccessful {0}".format(entry))
+    return
+
+
+@job('high')
 def send_session(template, context):
     session = context['session']
     Officer = apps.get_model('api.officer')
