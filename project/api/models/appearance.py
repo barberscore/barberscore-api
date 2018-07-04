@@ -243,9 +243,6 @@ class Appearance(TimeStampedModel):
             request.user.person.officers.filter(
                 office__is_scoring_manager=True,
             ),
-            request.user.person.officers.filter(
-                office__is_scoring_manager=True,
-            ),
         ])
         return checklist
 
