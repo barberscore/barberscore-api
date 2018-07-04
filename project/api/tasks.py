@@ -721,27 +721,42 @@ def create_oss_report(session):
 @job
 def create_csa_report(competitor):
     Panelist = apps.get_model('api.panelist')
+    Member = apps.get_model('api.member')
+    Song = apps.get_model('api.song')
     panelists = Panelist.objects.filter(
         kind=Panelist.KIND.official,
         scores__song__appearance__competitor=competitor,
-    ).distinct(
     ).order_by(
         'category',
         'person__last_name',
-    )
+    ).distinct()
     appearances = competitor.appearances.order_by(
-        'round__num',
+        '-num',
+    ).prefetch_related(
+        'songs',
     )
-    # contests = session.contests.filter(
-    #     status__gt=0,
-    # ).order_by(
-    #     '-award__is_primary',
-    #     'award__name',
-    # )
+    songs = Song.objects.select_related(
+        'chart',
+    ).filter(
+        appearance__competitor=competitor,
+    ).prefetch_related(
+        'scores',
+        'scores__panelist__person',
+    ).order_by(
+        'appearance__round__num',
+        'num',
+    )
+    members = competitor.group.members.select_related(
+        'person',
+    ).filter(
+        status=Member.STATUS.active,
+    ).order_by('part')
     context = {
         'competitor': competitor,
         'panelists': panelists,
         'appearances': appearances,
+        'songs': songs,
+        'members': members,
     }
     rendered = render_to_string('csa.html', context)
     file = pydf.generate_pdf(rendered)

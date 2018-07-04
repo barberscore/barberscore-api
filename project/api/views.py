@@ -87,6 +87,7 @@ from .tasks import create_drcj_report
 from .tasks import create_contact_report
 from .tasks import create_roster_report
 from .tasks import create_chart_report
+from .tasks import create_csa_report
 
 
 log = logging.getLogger(__name__)
@@ -432,49 +433,10 @@ class CompetitorViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
     def csa(self, request, pk=None):
         competitor = Competitor.objects.get(pk=pk)
-        panelists = Panelist.objects.filter(
-            kind=Panelist.KIND.official,
-            scores__song__appearance__competitor=competitor,
-        ).order_by(
-            'category',
-            'person__last_name',
-        ).distinct()
-        appearances = competitor.appearances.order_by(
-            '-num',
-        ).prefetch_related(
-            'songs',
-        )
-        songs = Song.objects.select_related(
-            'chart',
-        ).filter(
-            appearance__competitor=competitor,
-        ).prefetch_related(
-            'scores',
-            'scores__panelist__person',
-        ).order_by(
-            'appearance__round__num',
-            'num',
-        )
-        members = competitor.group.members.select_related(
-            'person',
-        ).filter(
-            status=Member.STATUS.active,
-        ).order_by('part')
-        context = {
-            'competitor': competitor,
-            'panelists': panelists,
-            'appearances': appearances,
-            'songs': songs,
-            'members': members,
-
-        }
-        rendered = render_to_string('csa.html', context)
-        file = pydf.generate_pdf(rendered)
-        content = ContentFile(file)
-        pdf = content
-        file_name = '{0}-ors'.format(
+        pdf = create_csa_report(competitor)
+        file_name = '{0}-csa'.format(
             slugify(
-                "{0} {1} {2} CSA".format(
+                "{0} {1} {2}".format(
                     competitor.session.convention.name,
                     competitor.session.get_kind_display(),
                     competitor.group.name,
