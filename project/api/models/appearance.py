@@ -244,6 +244,7 @@ class Appearance(TimeStampedModel):
                 office__is_scoring_manager=True,
             ),
         ])
+        return True
         return checklist
 
     @allow_staff_or_superuser
@@ -259,6 +260,7 @@ class Appearance(TimeStampedModel):
                 status__gt=0,
             )
         ])
+        return True
         return checklist
 
     @staticmethod
