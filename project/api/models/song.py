@@ -234,6 +234,8 @@ class Song(TimeStampedModel):
                 score.is_flagged = False
             score.save()
 
+        if is_variance:
+            return True
         ordered_asc = self.scores.filter(
             kind=self.scores.model.KIND.official,
         ).order_by('points')
