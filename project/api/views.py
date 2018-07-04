@@ -435,14 +435,10 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         panelists = Panelist.objects.filter(
             kind=Panelist.KIND.official,
             scores__song__appearance__competitor=competitor,
-        ).distinct(
-            'category',
-            'person',
         ).order_by(
             'category',
-            'person',
             'person__last_name',
-        )
+        ).distinct()
         appearances = competitor.appearances.order_by(
             '-num',
         ).prefetch_related(

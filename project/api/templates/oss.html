@@ -10,15 +10,12 @@
         font-size: 10pt;
         font-weight: 300;
       }
-      table tr {
-        white-space:nowrap;
-      }
       strong {
         font-weight: 700;
       }
       .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
           padding: 2px;
-          line-height: 1.5;
+          line-height: 1.3;
       }
       .smalltd {
           font-size: 10pt;
@@ -89,7 +86,7 @@
                       {% if forloop.first %}
                         Contesting: (
                       {% endif %}
-                      {{contestant.contest.num}}
+                      {%if contestant.status == 10 %}{{contestant.contest.num}}{% endif %}
                       {% if not forloop.last %}
                       ,
                       {% endif %}
@@ -112,7 +109,7 @@
                       {% if competitor.group.get_kind_display == 'Chorus' %}
                         <strong>Total</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.mos|default:'N/A'}})</span><br>
                       {% else %}
-                        <strong>Total</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
+                        <strong>Total Points: {{competitor.tot_points}}</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
                       {% endif %}
                       {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
                         {{song.chart.nomen|truncatechars_html:100|default:"(Song not included in contestant repertory)"}}<br>
