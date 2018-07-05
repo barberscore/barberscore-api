@@ -81,6 +81,10 @@ class Round(TimeStampedModel):
         null=True,
         blank=True,
     )
+    sa_report = models.FileField(
+        null=True,
+        blank=True,
+    )
 
     # FKs
     session = models.ForeignKey(
