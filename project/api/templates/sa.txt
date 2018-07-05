@@ -1,0 +1,7 @@
+IMPORTANT NOTE:  This is an *UNOFFICIAL* notice of the Scoring Analysis for the
+{{round.session}}.  It's not guaranteed to accurate; it's just part of the
+beta testing of Barberscore.  Thanks.
+
+SA PDF: {{round.sa_report.url}}
+
+Thanks.

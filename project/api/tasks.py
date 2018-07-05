@@ -946,6 +946,37 @@ def send_csa(context):
 
 
 @job('high')
+def send_sa(context):
+    round = context['round']
+    panelists = round.panelists.filter(
+        person__email__isnull=False,
+    )
+    if not panelists:
+        raise RuntimeError("No officers")
+    ccs = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email) for panelist in panelists]
+    tos = ["David Mills <proclamation56@gmail.com>"]
+    rendered = render_to_string('sa.txt', context)
+    subject = "[Barberscore] {0} {1} Round SA".format(
+        round.session.convention.name,
+        round.session.get_kind_display(),
+    )
+    email = EmailMessage(
+        subject=subject,
+        body=rendered,
+        from_email='Barberscore <admin@barberscore.com>',
+        to=tos,
+        cc=ccs,
+    )
+    try:
+        result = email.send()
+    except Exception as e:
+        raise(e)
+    if result != 1:
+        raise RuntimeError("Email unsuccessful {0}".format(entry))
+    return
+
+
+@job('high')
 def send_session(template, context):
     session = context['session']
     Officer = apps.get_model('api.officer')
