@@ -903,6 +903,7 @@ def send_entry(template, context):
 @job('high')
 def send_csa(context):
     competitor = context['competitor']
+    round = context['round']
     officers = competitor.group.officers.filter(
         status__gt=0,
         person__email__isnull=False,

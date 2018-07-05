@@ -24,4 +24,5 @@ Total  :   {{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}}%)  
 
 
 CSA PDF: {{competitor.csa_report.url}}
+OSS PDF: {{round.oss_report.url}}
 

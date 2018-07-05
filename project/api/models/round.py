@@ -20,6 +20,7 @@ from django.utils.functional import cached_property
 from django.urls import reverse
 
 # First-Party
+from api.tasks import send_csa
 
 log = logging.getLogger(__name__)
 
@@ -388,10 +389,35 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.verified], target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        if self.kind == self.KIND.finals:
-            return
-        round = self.session.rounds.get(num=self.num + 1)
-        round.build()
-        round.save()
+        Competitor = apps.get_model('api.competitor')
+        if self.kind != self.KIND.finals:
+            next_round = self.session.rounds.get(num=self.num + 1)
+            next_round.build()
+            next_round.save()
+        content = create_oss_report(self)
+        self.oss_report.save(
+            "{0}-oss".format(
+                self.id,
+            ),
+            content,
+        )
+        self.save()
+        cs = self.session.competitors(
+            status=Competitor.STATUS.finished,
+        )
+        for c in cs:
+            content = create_csa_report(c)
+            c.csa_report.save(
+                "{0}-csa".format(
+                    c.id,
+                ),
+                content,
+            )
+            c.save()
+        for c in cs:
+            context = {
+                'competitor': c,
+                'round': self,
+            }
+            send_csa.delay(context)
         return
-
