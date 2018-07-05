@@ -21,6 +21,8 @@ from django.urls import reverse
 
 # First-Party
 from api.tasks import send_csa
+from api.tasks import create_oss_report
+from api.tasks import create_csa_report
 
 log = logging.getLogger(__name__)
 
@@ -74,6 +76,12 @@ class Round(TimeStampedModel):
             Freeform text field; will print on OSS.""",
         blank=True,
     )
+
+    oss_report = models.FileField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -402,7 +410,7 @@ class Round(TimeStampedModel):
             content,
         )
         self.save()
-        cs = self.session.competitors(
+        cs = self.session.competitors.filter(
             status=Competitor.STATUS.finished,
         )
         for c in cs:
