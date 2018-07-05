@@ -413,19 +413,9 @@ class Round(TimeStampedModel):
             ),
             content,
         )
-        self.save()
         cs = self.session.competitors.filter(
             status=Competitor.STATUS.finished,
         )
-        for c in cs:
-            content = create_csa_report(c)
-            c.csa_report.save(
-                "{0}-csa".format(
-                    c.id,
-                ),
-                content,
-            )
-            c.save()
         for c in cs:
             context = {
                 'competitor': c,

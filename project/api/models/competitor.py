@@ -297,6 +297,13 @@ class Competitor(TimeStampedModel):
         target=STATUS.finished,
     )
     def finish(self, *args, **kwargs):
+        content = create_csa_report(c)
+        self.csa_report.save(
+            "{0}-csa".format(
+                self.id,
+            ),
+            content,
+        )
         self.draw = None
         return
 
