@@ -1,0 +1,27 @@
+IMPORTANT NOTE:  This is an *UNOFFICIAL* quick view of your scores we're
+providing as a Beta test of the new scoring software.  It may contain errors
+or omissions and is not designed as a replacement for your official CSA.
+
+Group: {{competitor.group.name}}
+Rank: {{competitor.tot_rank}}
+
+{% for appearance in competitor.appearances.all|dictsort:'num' %}
+{{ appearance.round.get_kind_display }}
+{% for song in appearance.songs.all|dictsort:'num' %}
+  Song {{forloop.counter}}: {{song.chart.title|safe}}
+{% endfor %}
+{% endfor %}
+
+
+           MUS            PER            SNG             TOT
+{% for appearance in competitor.appearances.all|dictsort:'num' %}
+{% for song in appearance.songs.all|dictsort:'num' %}
+Song  {{forloop.counter}}:   {{song.mus_points}} ({{song.mus_score|floatformat:1}}%)    {{song.per_points}} ({{song.per_score|floatformat:1}}%)    {{song.sng_points}} ({{song.sng_score|floatformat:1}}%)    {{song.tot_points}} ({{song.tot_score|floatformat:1}}%)
+{% endfor %}
+Round {{ appearance.round.get_kind_display|slice:"1" }}:   {{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}}%)    {{appearance.per_points}} ({{appearance.per_score|floatformat:1}}%)    {{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}}%)    {{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}}%)
+{% endfor %}
+Total  :   {{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}}%)    {{competitor.per_points}} ({{competitor.per_score|floatformat:1}}%)    {{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}}%)    {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}}%)
+
+
+CSA PDF: {{competitor.csa_report.url}}
+

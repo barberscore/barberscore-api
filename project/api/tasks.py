@@ -922,8 +922,7 @@ def send_csa(context):
             ccs.append(
                 "{0} <{1}>".format(member.person.common_name, member.person.email)
             )
-    rendered = render_to_string('competitor_csa.txt', context)
-    html_rendered = render_to_string('csa.html', context)
+    rendered = render_to_string('csa.txt', context)
     subject = "[Barberscore] {0} {1} {2} Session CSA".format(
         competitor.group.name,
         competitor.session.convention.name,
@@ -935,7 +934,6 @@ def send_csa(context):
         from_email='Barberscore <admin@barberscore.com>',
         to=tos,
         cc=ccs,
-        # html_message=html_rendered,
     )
     try:
         result = email.send()
