@@ -415,6 +415,8 @@ class Round(TimeStampedModel):
         )
         cs = self.session.competitors.filter(
             status=Competitor.STATUS.finished,
+            tot_rank__lte=20,
+            tot_rank__gt=10,
         )
         for c in cs:
             context = {

@@ -58,7 +58,7 @@
               <td>
                 {% for appearance in appearances %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                    {{song.chart.title|truncatewords_html:10}}<br>
+                    {{song.chart.title|truncatewords_html:10|safe}}<br>
                   {% endfor %}
                   <em>{{appearance.round.get_kind_display}}</em><br>
                 {% endfor %}
@@ -121,7 +121,7 @@
             {% for song in songs %}
               <tr>
                 <td>
-                  {{song.chart.title|truncatewords_html:4}}<br>
+                  {{song.chart.title|truncatewords_html:4|safe}}<br>
                 </td>
                 {% for item in panelist_tuple %}
                   <td class='text-right'>

@@ -756,10 +756,12 @@ def create_csa_report(competitor):
     panelists = Panelist.objects.filter(
         kind=Panelist.KIND.official,
         scores__song__appearance__competitor=competitor,
+        round__num=1,
+    ).distinct(
     ).order_by(
         'category',
         'person__last_name',
-    ).distinct()
+    )
     appearances = competitor.appearances.order_by(
         '-num',
     ).prefetch_related(
