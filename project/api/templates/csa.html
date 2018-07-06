@@ -39,22 +39,26 @@
         </h5>
       </section>
       <section>
-        <img class='group_image img-thumbnail' src="{{competitor.image.url}}">
-
+        {%if competitor.image %}
+          <img class='group_image img-thumbnail' src="{{competitor.image.url}}">
+        {% else %}
+          <img class='group_image img-thumbnail' src="https://barberscore-api.herokuapp.com/static/api/no_image_available.jpg">
+        {% endif %}
         <h3>
-          <strong>{{competitor.group.name}}</strong>
+          <strong>{{competitor.group.name}}</strong><br>
+          {{competitor.group.parent.name}}
         </h3>
         <h3>
-          Rank: {{competitor.tot_rank|default_if_none:"(Rank Not Yet Available)"}}<br>
-          Points:  {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})
+          Rank:  {{competitor.tot_rank|default_if_none:"(Rank Not Yet Available)"}}<br>
+          Points:  {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
+          {% if competitor.tot_rank == 1 %}Awards:  International Chorus Champion{% endif %}
         </h3>
         <div>
-          <p>
-            Representing: {{competitor.entry.representing}}
-          </p>
+
           {% if competitor.group.get_kind_display == 'Chorus' %}
             <h4>Director(s): {{competitor.entry.directors}}</h4>
             <h4>Participants-on-Stage: {{competitor.appearances.first.mos}}</h4>
+            <h4>Representing: {{competitor.entry.representing}}</h4>
           {% else %}
             <ul class='list-inline'>
               {% for member in members %}
