@@ -72,6 +72,11 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    mos = models.IntegerField(
+        help_text='Actual Participants-on-Stage',
+        null=True,
+        blank=True,
+    )
     # Privates
     rank = models.IntegerField(
         null=True,

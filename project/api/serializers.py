@@ -46,6 +46,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'draw',
             'actual_start',
             'actual_finish',
+            'mos',
             'rank',
             'mus_points',
             'per_points',

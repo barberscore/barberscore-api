@@ -85,6 +85,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'round',
         'num',
         'draw',
+        'mos',
         ('mus_points', 'per_points', 'sng_points', 'tot_points',),
         ('mus_score', 'per_score', 'sng_score', 'tot_score',),
         'variance_report',
