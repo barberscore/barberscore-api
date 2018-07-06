@@ -20,7 +20,7 @@ from django.http import (
 schema_view = get_schema_view(
     title='Barberscore API',
 )
-
+from api.views import oss
 urlpatterns = [
     path('', lambda r: HttpResponseRedirect('admin/')),
     path('admin/', admin.site.urls),
@@ -28,6 +28,7 @@ urlpatterns = [
     path('rq/', include('django_rq.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('schema/', schema_view),
+    path('oss/', oss),
     path('docs/', include_docs_urls(title='Documentation', description='API Documentation')),
     path('robots.txt', lambda r: HttpResponse("User-agent: *\nDisallow: /", content_type="text/plain")),
 ]

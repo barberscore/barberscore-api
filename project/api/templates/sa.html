@@ -97,28 +97,28 @@
               <td class='text-right'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                      <strong>{{song.tot_rank|default:"N/A"}}</strong> {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
+                      {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
                   {% endfor %}
                 {% endfor %}
               </td>
               <td class='text-right'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                      <strong>{{song.mus_rank|default:"N/A"}}</strong> {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
+                      {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                   {% endfor %}
                 {% endfor %}
               </td>
               <td class='text-right'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                      <strong>{{song.per_rank|default:"N/A"}}</strong> {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
+                      {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                   {% endfor %}
                 {% endfor %}
               </td>
               <td class='text-right'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                      <strong>{{song.sng_rank|default:"N/A"}}</strong> {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
+                      {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                   {% endfor %}
                 {% endfor %}
               </td>

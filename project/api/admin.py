@@ -90,7 +90,9 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'variance_report',
     ]
     list_display = [
-        '__str__',
+        'status',
+        'competitor',
+        'round',
         'num',
         # 'draw',
         'tot_score',
@@ -123,6 +125,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     search_fields = [
         'competitor__group__name',
+        'round__session__convention__name',
     ]
     inlines = [
         SongInline,
@@ -473,6 +476,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'session',
         'group',
+        'entry',
         'rank',
         'draw',
         'csa_report',
@@ -483,6 +487,8 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         'status',
+        'group',
+        'session',
         'tot_score',
         'tot_points',
         'is_ranked',
@@ -510,6 +516,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     autocomplete_fields = [
         'session',
         'group',
+        'entry'
     ]
 
     readonly_fields = (
@@ -547,6 +554,8 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         'status',
+        'session',
+        'group',
     )
 
     list_filter = [
@@ -565,6 +574,8 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     search_fields = [
         'id',
+        'session__convention__name',
+        'group__name',
     ]
 
     autocomplete_fields = [
@@ -614,6 +625,7 @@ class GridAdmin(admin.ModelAdmin):
         'start',
         'venue',
         'round',
+        'appearance',
         'renditions',
     ]
     list_display = [
@@ -623,6 +635,7 @@ class GridAdmin(admin.ModelAdmin):
     ]
     list_filter = (
         'status',
+        'onstage',
         'period',
     )
     readonly_fields = [
@@ -630,6 +643,7 @@ class GridAdmin(admin.ModelAdmin):
     autocomplete_fields = [
         'round',
         'venue',
+        'appearance',
     ]
     ordering = [
         'round',

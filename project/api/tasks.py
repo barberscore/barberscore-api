@@ -743,6 +743,8 @@ def create_oss_report(round):
         rendered,
         page_size='Legal',
         orientation='Portrait',
+        margin_top='5mm',
+        margin_bottom='5mm',
     )
     content = ContentFile(file)
     return content

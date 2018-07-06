@@ -1310,3 +1310,96 @@ class StateLogViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
     ]
     resource_name = "statelog"
+
+
+from django.shortcuts import render
+
+def oss(request):
+    round = Round.objects.get(id='a27dd06a-0a71-4b9b-ad30-10510f6f7434')
+    # Competitor = apps.get_model('api.competitor')
+    # Contest = apps.get_model('api.contest')
+    # Panelist = apps.get_model('api.panelist')
+    competitors = round.session.competitors.filter(
+        status=Competitor.STATUS.finished,
+        appearances__round=round,
+        entry__is_private=False,
+    ).select_related(
+        'group',
+        'entry',
+    ).prefetch_related(
+        'entry__contestants',
+        'entry__contestants__contest',
+        'appearances',
+        'appearances__round',
+        'appearances__songs',
+        'appearances__songs__chart',
+        'appearances__songs__scores',
+        'appearances__songs__scores__panelist',
+        'appearances__songs__scores__panelist__person',
+    ).order_by(
+        '-is_ranked',
+        'tot_rank',
+        '-tot_points',
+        '-sng_points',
+        '-mus_points',
+        '-per_points',
+        'group__name',
+    )
+    privates = round.session.competitors.filter(
+        status=Competitor.STATUS.finished,
+        appearances__round=round,
+        entry__is_private=True,
+    ).select_related(
+        'group',
+        'entry',
+    ).order_by(
+        'group__name',
+    )
+    advancers = round.session.competitors.filter(
+        status=Competitor.STATUS.started,
+    ).select_related(
+        'group',
+    ).prefetch_related(
+        'appearances',
+        'appearances__songs',
+        'appearances__songs__scores',
+        'appearances__songs__scores__panelist',
+        'appearances__songs__scores__panelist__person',
+    ).order_by(
+        'draw',
+    )
+    contests = round.session.contests.filter(
+        status=Contest.STATUS.included,
+        contestants__isnull=False,
+    ).select_related(
+        'award',
+        'group',
+    ).distinct(
+    ).order_by('award__tree_sort')
+    panelists = round.panelists.select_related(
+        'person',
+    ).filter(
+        kind=Panelist.KIND.official,
+        category__gte=Panelist.CATEGORY.ca,
+    ).order_by(
+        'category',
+        'person__last_name',
+        'person__first_name',
+    )
+    is_multi = all([
+        round.session.rounds.count() > 1,
+    ])
+    context = {
+        'round': round,
+        'competitors': competitors,
+        'privates': privates,
+        'advancers': advancers,
+        'panelists': panelists,
+        'contests': contests,
+        'is_multi': is_multi,
+    }
+    return render(
+        request,
+        'oss.html',
+        context,
+    )
