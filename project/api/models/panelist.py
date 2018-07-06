@@ -11,6 +11,7 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.apps import apps
 from django.db import models
+from django.utils.functional import cached_property
 
 
 log = logging.getLogger(__name__)
@@ -75,6 +76,19 @@ class Panelist(TimeStampedModel):
         related_name='panelists',
         on_delete=models.CASCADE,
     )
+
+    @cached_property
+    def row_class(self):
+        if self.category == self.CATEGORY.music:
+            row_class = 'warning'
+        elif self.category == self.CATEGORY.performance:
+            row_class = 'success'
+        elif self.category == self.CATEGORY.singing:
+            row_class = 'info'
+        else:
+            row_class = None
+        return row_class
+
 
     # Internals
     class Meta:

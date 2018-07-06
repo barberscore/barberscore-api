@@ -50,10 +50,11 @@
         </h3>
         <div>
           <p>
-            <small>Representing: {{competitor.entry.representing}}</small>
+            Representing: {{competitor.entry.representing}}
           </p>
           {% if competitor.group.get_kind_display == 'Chorus' %}
             <h4>Director(s): {{competitor.entry.directors}}</h4>
+            <h4>Participants-on-Stage: {{competitor.appearances.first.mos}}</h4>
           {% else %}
             <ul class='list-inline'>
               {% for member in members %}
@@ -146,11 +147,13 @@
                     {{song.chart.title|truncatewords_html:4|safe}}<br>
                   </td>
                   {% for item in panelist_tuple %}
-                    <td class='text-right'>
-                      {% for score in song.scores.all %}
-                        {% if score.panelist.person == item.grouper %}{{score.points}}<br>{% endif %}
-                      {% endfor %}
-                    </td>
+                    {% for score in song.scores.all %}
+                      {% if score.panelist.person == item.grouper %}
+                        <td class='text-right {{score.panelist.row_class}}'>
+                          {{score.points}}<br>
+                        </td>
+                      {% endif %}
+                    {% endfor %}
                   {% endfor %}
                 </tr>
               {% endfor %}
