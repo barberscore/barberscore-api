@@ -187,7 +187,7 @@ class Competitor(TimeStampedModel):
     # Competitor Permissions
     @staticmethod
     @allow_staff_or_superuser
-    @authenticated_users
+    # @authenticated_users
     def has_read_permission(request):
         # checklist = any([
         #     request.user.person.officers.filter(
@@ -198,7 +198,7 @@ class Competitor(TimeStampedModel):
         return checklist
 
     @allow_staff_or_superuser
-    @authenticated_users
+    # @authenticated_users
     def has_object_read_permission(self, request):
         checklist = any([
             self.session.convention.assignments.filter(
