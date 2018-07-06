@@ -626,14 +626,12 @@ def create_variance_report(appearance):
         'panelist__person__last_name',
         'song__num',
     )
-    panelists = Panelist.objects.filter(
+    panelists = appearance.round.panelists.filter(
         kind=Panelist.KIND.official,
         category__gt=Panelist.CATEGORY.ca,
-        scores__song__appearance=appearance,
     ).order_by(
         'category',
         'person__last_name',
-        'scores__song__num',
     )
     context = {
         'appearance': appearance,
@@ -641,8 +639,8 @@ def create_variance_report(appearance):
         'scores': scores,
         'panelists': panelists,
     }
-    rendered = render_to_string('variance.html', context)
-    file = pydf.generate_pdf(rendered, enable_smart_shrinking=True)
+    rendered = render_to_string('variance_copy.html', context)
+    file = pydf.generate_pdf(rendered, enable_smart_shrinking=False)
     content = ContentFile(file)
     appearance.variance_report.save(
         "{0}-variance-report".format(
