@@ -1,6 +1,4 @@
-IMPORTANT NOTE:  This is an *UNOFFICIAL* quick view of your scores we're
-providing as a Beta test of the new scoring software.  It may contain errors
-or omissions and is not designed as a replacement for your official CSA.
+Competitor Scoring Analysis
 
 Group: {{competitor.group.name}}
 Rank: {{competitor.tot_rank}}
