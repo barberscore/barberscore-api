@@ -25,15 +25,15 @@
         Variance Report
       </h4>
       <h2>
-        {{appearance.competitor.group.name}}
+        <strong>{{appearance.competitor.group.name}}</strong>
       </h2>
       <h4>
-        OA: {{appearance.num}}, {{appearance.round}}
+        <strong>OA: {{appearance.num}}</strong>, {{appearance.round}}
       </h4>
     </section>
       <ul class='list-unstyled'>
         {% for song in songs %}
-          <li class='panelist'><strong>Song #{{song.num}}:</strong>&nbsp;{{song.chart.title}}&nbsp;&nbsp;<strong>Average:</strong> {{song.tot_score|floatformat:1}}</li>
+          <li class='panelist'>Song #{{song.num}}:&nbsp;{{song.chart.title}}&nbsp;&nbsp;Average: {{song.tot_score|floatformat:1}}</li>
         {% endfor %}
       </ul>
     <section>
