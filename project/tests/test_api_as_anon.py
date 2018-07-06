@@ -41,7 +41,7 @@ def test_chart_endpoint_list(anon_api_client, chart):
 def test_competitor_endpoint_list(anon_api_client, competitor):
     path = reverse('competitor-list')
     response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.status_code == status.HTTP_200_OK
 
 
 def test_contest_endpoint_list(anon_api_client, contest):
@@ -187,7 +187,7 @@ def test_chart_endpoint_detail(anon_api_client, chart):
 def test_competitor_endpoint_detail(anon_api_client, competitor):
     path = reverse('competitor-detail', args=(str(competitor.id),))
     response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.status_code == status.HTTP_200_OK
 
 
 def test_contest_endpoint_detail(anon_api_client, contest):
