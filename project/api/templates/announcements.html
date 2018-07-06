@@ -4,33 +4,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style type="text/css">
       /* setup the page */
-        @page {
-          margin: 30px;
-          background: #ffffff;
-          size: US-Letter;
-        }
-        .smalltd {
-            font-size: 10pt;
-        }
-        .smallertd {
-            font-size: 10pt;
-        }
-        .head_rank {
-            width: 1%;
-        }
-        .head_group {
-            width: 10%;
-        }
-        .head_songs {
-            width: 20%;
-        }
-        .min-head {
-            width: 5%;
-        }
-        .pbi_avoid {
-            page-break-inside: avoid !important;
-        }
-
+      body {
+        font-size: 14pt;
+      }
       /* layout */
     </style>
   </head>
@@ -63,15 +39,29 @@
     </section>
     {% if contests %}
       <section>
-          <h2>Awards</h2>
-          <ul class='list-unstyled'>
+          <h2>Awards</h2><br><br>
+          <!-- <ul class='list-unstyled'>
               {% for contest in contests %}
                   <li>{{contest.award.name}}: {{contest.group.name}}</li>
               {% endfor %}
-          </ul>
+          </ul> -->
           <ul class='list-unstyled'>
               {% for competitor in competitors %}
-                  <li>{{competitor.tot_rank}} {{competitor.tot_points}} {{competitor.tot_score|floatformat:1}}: {{competitor.group.name}}</li>
+                  <li>
+                    With a score of {{competitor.tot_points}}, a {{competitor.tot_score|floatformat:1}}<br>
+                    {% if competitor.tot_rank == 1 %}
+                      the 2018 1st place gold medalist champion<br>
+                    {% elif competitor.tot_rank ==  2 %}
+                      the 2018 2nd place silver medalist chorus<br>
+                    {% elif competitor.tot_rank ==  3 %}
+                      the 2018 3rd place bronze medalist chorus<br>
+                    {% elif competitor.tot_rank ==  4 %}
+                      the 2018 4th place bronze medalist chorus<br>
+                    {% elif competitor.tot_rank ==  5 %}
+                      the 2018 5th place bronze medalist chorus<br>
+                    {% endif %}
+                    => {{competitor.group.name}}
+                  </li><br>
               {% endfor %}
           </ul>
       </section>

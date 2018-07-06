@@ -851,17 +851,12 @@ class RoundViewSet(viewsets.ModelViewSet):
         ).order_by('award__tree_sort')
         competitors = round.session.competitors.filter(
             status=Competitor.STATUS.finished,
+            tot_rank__lte=5,
         ).select_related(
             'group',
         ).order_by(
-            '-is_ranked',
-            'tot_rank',
-            '-tot_points',
-            '-sng_points',
-            '-mus_points',
-            '-per_points',
-            'group__name',
-        )[:5]
+            '-tot_rank',
+        )
         context = {
             'round': round,
             'advancers': advancers,
