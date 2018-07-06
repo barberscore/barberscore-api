@@ -5,7 +5,7 @@
     <style type="text/css">
       body {
         font-family: 'Encode Sans Condensed', sans-serif;
-        font-size: 9pt;
+        font-size: 12pt;
         font-weight: 300;
       }
       .small_logo {
@@ -17,8 +17,8 @@
           padding-bottom: 10px;
       }
       section {
-          padding-top: 20px;
-          padding-bottom: 20px;
+          padding-top: 10px;
+          padding-bottom: 10px;
       }
     </style>
   </head>
@@ -48,11 +48,17 @@
           <strong>{{competitor.group.name}}</strong><br>
           {{competitor.group.parent.name}}
         </h3>
+        <div class='well'>
         <h3>
           Rank:  {{competitor.tot_rank|default_if_none:"(Rank Not Yet Available)"}}<br>
           Points:  {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
           {% if competitor.tot_rank == 1 %}Awards:  International Chorus Champion{% endif %}
+          {% if competitor.tot_rank == 2 %}Second Place Silver Medalist Chorus{% endif %}
+          {% if competitor.tot_rank == 3 %}Third Place Bronze Medalist Chorus{% endif %}
+          {% if competitor.tot_rank == 4 %}Fourth Place Bronze Medalist Chorus{% endif %}
+          {% if competitor.tot_rank == 5 %}Fifth Place Bronze Medalist Chorus{% endif %}
         </h3>
+        </div>
         <div>
 
           {% if competitor.group.get_kind_display == 'Chorus' %}
