@@ -780,7 +780,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             OfficerInline,
             # MemberInline,
             RepertoryInline,
-            EntryInline,
+            # EntryInline,
             CompetitorInline,
             StateLogInline,
         ],
