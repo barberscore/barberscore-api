@@ -2,6 +2,7 @@
 <html>
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:100,200,300,400,500,600,700,800,900" rel="stylesheet">
     <style type="text/css">
       body {
         font-family: 'Encode Sans Condensed', sans-serif;
@@ -11,10 +12,19 @@
       .small_logo {
           height: 100px;
       }
+      .picture_logo {
+          weight: 200px;
+      }
+      .well {
+        width: 500px;
+      }
       .group_image {
           height: 200px;
           padding-top: 10px;
           padding-bottom: 10px;
+      }
+      .bolder {
+        font-weight: 700;
       }
       section {
           padding-top: 10px;
@@ -39,39 +49,27 @@
         </h5>
       </section>
       <section>
-        {%if competitor.image %}
-          <img class='group_image img-thumbnail' src="{{competitor.image.url}}">
-        {% else %}
-          <img class='group_image img-thumbnail' src="https://barberscore-api.herokuapp.com/static/api/no_image_available.jpg">
-        {% endif %}
-        <h3>
-          <strong>{{competitor.group.name}}</strong><br>
-          {{competitor.group.parent.name}}
-        </h3>
-        <div class='well'>
-        <h3>
-          Rank:  {{competitor.tot_rank|default_if_none:"(Rank Not Yet Available)"}}<br>
-          Points:  {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
-          {% if competitor.tot_rank == 1 %}Awards:  International Chorus Champion{% endif %}
-          {% if competitor.tot_rank == 2 %}Second Place Silver Medalist Chorus{% endif %}
-          {% if competitor.tot_rank == 3 %}Third Place Bronze Medalist Chorus{% endif %}
-          {% if competitor.tot_rank == 4 %}Fourth Place Bronze Medalist Chorus{% endif %}
-          {% if competitor.tot_rank == 5 %}Fifth Place Bronze Medalist Chorus{% endif %}
-        </h3>
-        </div>
-        <div>
-
-          {% if competitor.group.get_kind_display == 'Chorus' %}
-            <h4>Director(s): {{competitor.entry.directors}}</h4>
-            <h4>Participants-on-Stage: {{competitor.appearances.first.mos}}</h4>
-            <h4>Representing: {{competitor.entry.representing}}</h4>
+        <div class='row'>
+          <div class='pull-right'>
+          {%if competitor.group.image %}
+            <img class='group_image img-thumbnail' src="{{competitor.group.image.url}}">
           {% else %}
-            <ul class='list-inline'>
-              {% for member in members %}
-                <li>{{member.person.common_name}}</li>
-              {% endfor %}
-            </ul>
+            <img class='group_image img-thumbnail' src="https://barberscore-api.herokuapp.com/static/api/no_image_available.jpg">
           {% endif %}
+          </div>
+          <div class='well'>
+            <h3><strong>{{competitor.group.name}}</strong></h3><br>
+            Rank:  {{competitor.tot_rank|default_if_none:"(Rank Not Yet Available)"}}<br>
+            Points:  {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
+            {% if competitor.tot_rank == 1 %}Awards:  International Quartet Champion<br>{% endif %}
+            {% if competitor.tot_rank == 2 %}Second Place Silver Medalist Quartet<br>{% endif %}
+            {% if competitor.tot_rank == 3 %}Third Place Bronze Medalist Quartet<br>{% endif %}
+            {% if competitor.tot_rank == 4 %}Fourth Place Bronze Medalist Quartet<br>{% endif %}
+            {% if competitor.tot_rank == 5 %}Fifth Place Bronze Medalist Quartet<br>{% endif %}
+            {% for member in members %}
+              {{member.person.common_name}}&nbsp;&nbsp;
+            {% endfor %}
+        </div>
         </div>
       </section>
       <section>
@@ -89,49 +87,49 @@
             <tbody>
               <tr>
                 <td>
-                  {% for appearance in appearances %}
+                  <strong>Total</strong><br>
+                  {% for appearance in appearances.all|dictsortreversed:'round_num'  %}
+                    <span class='bolder'>{{appearance.round.get_kind_display}}</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {{song.chart.title|truncatewords_html:10|safe}}<br>
                     {% endfor %}
-                    <em>{{appearance.round.get_kind_display}}</em><br>
                   {% endfor %}
-                  <strong>Total</strong>
                 </td>
                 <td class='text-right'>
-                  {% for appearance in appearances %}
+                  <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong><br>
+                  {% for appearance in appearances.all|dictsortreversed:'round_num' %}
+                    <span class='bolder'>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                     {% endfor %}
-                    <em>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</em><br>
                   {% endfor %}
-                  <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong><br>
                 </td>
                 <td class='text-right'>
-                  {% for appearance in appearances %}
+                  <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong><br>
+                  {% for appearance in appearances.all|dictsortreversed:'round_num' %}
+                    <span class='bolder'>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                     {% endfor %}
-                    <em>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</em><br>
                   {% endfor %}
-                  <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong><br>
                 </td>
                 <td class='text-right'>
-                  {% for appearance in appearances %}
+                  <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong><br>
+                  {% for appearance in appearances.all|dictsortreversed:'round_num'  %}
+                    <span class='bolder'>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                     {% endfor %}
-                    <em>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</em><br>
                   {% endfor %}
-                  <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong><br>
                 </td>
                 <td class='text-right'>
-                  {% for appearance in appearances %}
+                  <strong>{{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong><br>
+                  {% for appearance in appearances.all|dictsortreversed:'round_num'  %}
+                    <span class='bolder'>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
                     {% endfor %}
-                    <em>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</em><br>
                   {% endfor %}
-                  <strong>{{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong><br>
                 </td>
               </tr>
             </tbody>

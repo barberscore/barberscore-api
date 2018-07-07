@@ -11,6 +11,7 @@ from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from ranking import Ranking
+from django.utils.functional import cached_property
 
 # Django
 from django.db import models
@@ -165,6 +166,10 @@ class Appearance(TimeStampedModel):
         related_name='appearances',
         on_delete=models.CASCADE,
     )
+
+    @cached_property
+    def round_num(self):
+        return self.round.num
 
     # Appearance Internals
     class Meta:

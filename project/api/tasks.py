@@ -775,7 +775,7 @@ def create_csa_report(competitor):
         'scores',
         'scores__panelist__person',
     ).order_by(
-        'appearance__round__num',
+        '-appearance__round__num',
         'num',
     )
     members = competitor.group.members.select_related(
