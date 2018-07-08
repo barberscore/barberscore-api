@@ -709,6 +709,7 @@ def create_oss_report(round):
     contests = round.session.contests.filter(
         status=Contest.STATUS.included,
         contestants__isnull=False,
+        num=1,
     ).select_related(
         'award',
         'group',

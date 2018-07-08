@@ -3,15 +3,16 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Encode+Sans:100,200,300,400,500,600,700,800,900" rel="stylesheet">
     <style type="text/css">
       body {
-        font-family: 'Encode Sans Condensed', sans-serif;
+        font-family: 'Encode Sans', sans-serif;
         font-size: 9pt;
         font-weight: 300;
       }
-      strong {
-        font-weight: 700;
+
+      .spac {
+        /*padding-top: 1px;*/
       }
       h5 {
         margin: 2px;
@@ -19,8 +20,12 @@
       .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td
       {
           padding: 1px;
-          line-height: 1.3;
+          line-height: 1.2;
       }
+/*      .table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
+         background-color: #D3D3D3;
+      }
+*/
       .table {
         margin: 10px;
       }
@@ -29,7 +34,7 @@
           font-size: 10pt;
       }
       .smaller-font {
-          font-size: 8pt;
+          font-size: 9pt;
       }
       .head_rank {
           width: 1%;
@@ -83,15 +88,15 @@
             {% for competitor in competitors %}
               <tr class='pbi_avoid'>
                 <td>
-                  <strong>{{competitor.tot_rank}} {{competitor.group.name}}</strong><br>
+                  <h4><strong>{{competitor.tot_rank}} {{competitor.group.name}}</strong></h4>
                   <div class='smaller-font'>
-                    {% if competitor.group.get_kind_display == 'Chorus' %}
+                    <!-- {% if competitor.group.get_kind_display == 'Chorus' %}
                       {{competitor.group.parent.name|truncatechars_html:"50"}} ({{competitor.entry.representing|default:"(Unknown)"}})<br>
                       Director(s): {{competitor.entry.directors|default:"(No Director Specified)"}}<br>
                     {% else %}
                       {{competitor.entry.representing|default:"(Unknown)"}}<br>
                     {% endif %}
-                    <!-- {% for contestant in competitor.entry.contestants.all %}
+                    {% for contestant in competitor.entry.contestants.all %}
                       {% if forloop.first %}
                         Contesting: (
                       {% endif %}
@@ -103,9 +108,11 @@
                       )
                       {% endif %}
                     {% endfor %} -->
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Representing: {{competitor.entry.representing|default:"(Unknown)"}}<br>
                     {% if round.num != 1 %}
                       {% for appearance in competitor.appearances.all %}
-                        {{appearance.round.get_kind_display}} Rank: {{appearance.tot_rank}}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{{appearance.round.get_kind_display}} Rank: {{appearance.tot_rank}}<br>
                       {% endfor %}
                     {% endif %}
                   </div>
@@ -133,48 +140,58 @@
                     {% endif %}
                   {% else %}
                     <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'></span><br>
-                    {% for appearance in competitor.appearances.all %}
+                    {% for appearance in competitor.appearances.all|dictsortreversed:'round_num' %}
+                    <div class='spac'>
                       <span class='bolder'>{{appearance.round.get_kind_display}}&nbsp;</span><span class='smaller-font'>(OA: {{appearance.num}}, Points: {{appearance.tot_points}})</span><br>
                       {% for song in appearance.songs.all|dictsort:'num' %}
                         &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:100|default:"(Song not included in contestant repertory)"}}<br>
                       {% endfor %}
+                    </div>
                     {% endfor %}
                   {% endif %}
                 </td>
                 <td class='text-right'>
                   <strong>{{competitor.mus_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for appearance in competitor.appearances.all|dictsortreversed:'round_num' %}
+                    <div class='spac'>
                     {% if round.num != 1 %}<span class='bolder'>{{ appearance.mus_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.mus_score|floatformat:1}}<br>
                     {% endfor %}
+                  </div>
                   {% endfor %}
                 </td>
                 <td class='text-right'>
                   <strong>{{competitor.per_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for appearance in competitor.appearances.all|dictsortreversed:'round_num' %}
+                    <div class='spac'>
                     {% if round.num != 1 %}<span class='bolder'>{{ appearance.per_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.per_score|floatformat:1}}<br>
                     {% endfor %}
+                  </div>
                   {% endfor %}
                 </td>
                 <td class='text-right'>
                   <strong>{{competitor.sng_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for appearance in competitor.appearances.all|dictsortreversed:'round_num' %}
+                    <div class='spac'>
                     {% if round.num != 1 %}<span class='bolder'>{{ appearance.sng_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.sng_score|floatformat:1}}<br>
                     {% endfor %}
+                    </div>
                   {% endfor %}
                 </td>
                 <td class='text-right'>
                   <strong>{{competitor.tot_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {% for appearance in competitor.appearances.all|dictsortreversed:'round_num' %}
+                    <div class='spac'>
                     {% if round.num != 1 %}<span class='bolder'>{{ appearance.tot_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.tot_score|floatformat:1}}<br>
                     {% endfor %}
+                    </div>
                   {% endfor %}
                 </td>
               </tr>
