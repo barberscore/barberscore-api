@@ -67,7 +67,7 @@
             {% if competitor.tot_rank == 4 %}Fourth Place Bronze Medalist Quartet<br>{% endif %}
             {% if competitor.tot_rank == 5 %}Fifth Place Bronze Medalist Quartet<br>{% endif %}
             {% for member in members %}
-              {{member.person.common_name}}&nbsp;&nbsp;
+              {{member.person.common_name|safe}}&nbsp;&nbsp;
             {% endfor %}
         </div>
         </div>
