@@ -61,7 +61,7 @@
             <h3><strong>{{competitor.group.name}}</strong></h3><br>
             Rank:  {{competitor.tot_rank|default_if_none:"(Rank Not Yet Available)"}}<br>
             Points:  {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
-            {% if competitor.tot_rank == 1 %}Awards:  International Quartet Champion<br>{% endif %}
+            {% if competitor.tot_rank == 1 %}International Quartet Champion<br>{% endif %}
             {% if competitor.tot_rank == 2 %}Second Place Silver Medalist Quartet<br>{% endif %}
             {% if competitor.tot_rank == 3 %}Third Place Bronze Medalist Quartet<br>{% endif %}
             {% if competitor.tot_rank == 4 %}Fourth Place Bronze Medalist Quartet<br>{% endif %}
