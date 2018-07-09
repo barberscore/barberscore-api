@@ -1331,6 +1331,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'convention',
         'kind',
         'gender',
+        'oss_report',
         'num_rounds',
         'is_invitational',
         'footnotes',

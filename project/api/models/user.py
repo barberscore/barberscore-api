@@ -99,7 +99,8 @@ class User(AbstractBaseUser):
 
     # User Internals
     def __str__(self):
-        return self.username
+        results = getattr(self.person, 'common_name', self.username)
+        return results
 
     def clean(self):
         pass
