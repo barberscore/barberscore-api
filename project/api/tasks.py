@@ -20,6 +20,7 @@ from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 from django.core.validators import validate_email
 from django.core.validators import ValidationError
+from django.utils.text import slugify
 
 log = logging.getLogger(__name__)
 
@@ -806,10 +807,14 @@ def create_csa_report(competitor):
 def save_csa_report(competitor):
     content = create_csa_report(competitor)
     results = competitor.csa_report.save(
-        'name',
+        slugify(
+            '{0} csa'.format(
+                competitor,
+            )
+        ),
         content=content,
     )
-    return results
+    return
 
 
 @job
