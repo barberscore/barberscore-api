@@ -1260,6 +1260,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         AppearanceInline,
         PanelistInline,
         GridInline,
+        StateLogInline,
     ]
 
     search_fields = [
