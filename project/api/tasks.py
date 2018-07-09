@@ -653,7 +653,7 @@ def create_variance_report(appearance):
 
 
 @job
-def create_oss_report(round, full=False):
+def create_oss_report(round, full=True):
     Competitor = apps.get_model('api.competitor')
     Contest = apps.get_model('api.contest')
     Panelist = apps.get_model('api.panelist')
@@ -715,7 +715,6 @@ def create_oss_report(round, full=False):
     contests = round.session.contests.filter(
         status=Contest.STATUS.included,
         contestants__isnull=False,
-        num=1,
     ).select_related(
         'award',
         'group',
@@ -801,6 +800,16 @@ def create_csa_report(competitor):
     file = pydf.generate_pdf(rendered)
     content = ContentFile(file)
     return content
+
+
+@job
+def save_csa_report(competitor):
+    content = create_csa_report(competitor)
+    results = competitor.csa_report.save(
+        'name',
+        content=content,
+    )
+    return results
 
 
 @job
