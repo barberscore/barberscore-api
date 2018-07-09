@@ -653,13 +653,12 @@ def create_variance_report(appearance):
 
 
 @job
-def create_oss_report(round):
+def create_oss_report(round, full=False):
     Competitor = apps.get_model('api.competitor')
     Contest = apps.get_model('api.contest')
     Panelist = apps.get_model('api.panelist')
     competitors = round.session.competitors.filter(
         status=Competitor.STATUS.finished,
-        appearances__round=round,
         entry__is_private=False,
     ).select_related(
         'group',
@@ -683,9 +682,12 @@ def create_oss_report(round):
         '-per_points',
         'group__name',
     )
+    if not full:
+        competitors = competitors.filter(
+            appearances__round=round,
+        )
     privates = round.session.competitors.filter(
         status=Competitor.STATUS.finished,
-        appearances__round=round,
         entry__is_private=True,
     ).select_related(
         'group',
@@ -693,6 +695,10 @@ def create_oss_report(round):
     ).order_by(
         'group__name',
     )
+    if not full:
+        privates = privates.filter(
+            appearances__round=round,
+        )
     advancers = round.session.competitors.filter(
         status=Competitor.STATUS.started,
     ).select_related(
