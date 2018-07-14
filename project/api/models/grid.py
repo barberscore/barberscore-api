@@ -123,11 +123,6 @@ class Grid(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    # class Meta:
-    #     unique_together = (
-    #         ('round', 'period', 'num',),
-    #     )
-
     class JSONAPIMeta:
         resource_name = "grid"
 
