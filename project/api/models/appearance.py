@@ -294,7 +294,7 @@ class Appearance(TimeStampedModel):
     def build(self, *args, **kwargs):
         Grid = apps.get_model('api.grid')
         Panelist = apps.get_model('api.panelist')
-        grid = Grid.objects.get(
+        grid, created = Grid.objects.get_or_create(
             round=self.round,
             num=self.num,
         )
