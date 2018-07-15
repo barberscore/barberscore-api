@@ -300,6 +300,7 @@ class Round(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.verified)
     def verify(self, *args, **kwargs):
         Competitor = apps.get_model('api.competitor')
+        Contestant = apps.get_model('api.contestant')
         # First, calculate all denormalized scores.
         self.session.calculate()
         # Recursively run rankings.
@@ -336,13 +337,17 @@ class Round(TimeStampedModel):
             automatics = Competitor.objects.filter(
                 status__gt=0,
                 entry__contestants__contest=contest,
+                entry__contestants__status=Contestant.STATUS.included,
                 tot_score__gte=contest.award.advance,
+            ).distinct(
             )
         elif contest.award.level == contest.award.LEVEL.championship:
             # Get the top scorer
             top = Competitor.objects.filter(
                 status__gt=0,
                 entry__contestants__contest=contest,
+                entry__contestants__status=Contestant.STATUS.included,
+            ).distinct(
             ).order_by(
                 '-tot_points',
             ).first()
@@ -352,7 +357,9 @@ class Round(TimeStampedModel):
             automatics = Competitor.objects.filter(
                 status__gt=0,
                 entry__contestants__contest=contest,
+                entry__contestants__status=Contestant.STATUS.included,
                 tot_score__gte=advance,
+            ).distinct(
             )
 
         # list comprehension since we're slicing queryset
