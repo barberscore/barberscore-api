@@ -363,6 +363,7 @@ class Round(TimeStampedModel):
         else:
             diff = 0
         if diff > 0:
+            # Append to advancers list if there is room to do so
             excludes = advancers
             adds = self.session.competitors.filter(
                 status__gt=0,
@@ -373,10 +374,8 @@ class Round(TimeStampedModel):
             ).order_by(
                 '-tot_points',
             )[:diff]
-
-        # Append to advancers list
-        for a in adds:
-            advancers.append(a.id)
+            for a in adds:
+                advancers.append(a.id)
 
         # Set all remaining to finished..
         competitors = self.session.competitors.filter(
