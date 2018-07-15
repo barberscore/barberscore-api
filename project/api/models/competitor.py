@@ -1,4 +1,4 @@
-# Standard Libary
+Standard Libary
 import logging
 import uuid
 
@@ -297,13 +297,7 @@ class Competitor(TimeStampedModel):
         target=STATUS.finished,
     )
     def finish(self, *args, **kwargs):
-        content = create_csa_report(self)
-        self.csa_report.save(
-            "{0}-csa".format(
-                self.id,
-            ),
-            content,
-        )
+        save_csa_report.delay(self)
         self.draw = None
         return
 

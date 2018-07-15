@@ -806,7 +806,7 @@ def create_csa_report(competitor):
 @job
 def save_csa_report(competitor):
     content = create_csa_report(competitor)
-    results = competitor.csa_report.save(
+    competitor.csa_report.save(
         slugify(
             '{0} csa'.format(
                 competitor,
