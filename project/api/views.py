@@ -889,7 +889,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             'session__convention',
             'session__convention__venue',
         ).get(pk=pk)
-        pdf = create_oss_report(round)
+        pdf = create_oss_report(round, full=False)
         file_name = '{0}-oss'.format(
             slugify(
                 "{0} {1} {2} Round".format(

@@ -412,7 +412,7 @@ class Round(TimeStampedModel):
             next_round = self.session.rounds.get(num=self.num + 1)
             next_round.build()
             next_round.save()
-        content = create_oss_report(self)
+        content = create_oss_report(self, full=False)
         self.oss_report.save(
             "{0}-oss".format(
                 self.id,
