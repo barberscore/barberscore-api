@@ -238,12 +238,24 @@
             <ul class='list-unstyled'>
               {% for contest in contests %}
                 {% if contest.award.get_level_display == 'Qualifier' %}
-                  <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;{{contest.group.name|default:""}}</li>
+                  {% if round.num >= contest.award.rounds %}
+                    <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;
+                      {% if contest.qualifiers %}
+                        {% for qualifier in contest.qualifiers %}
+                          {{qualifier}},&nbsp;
+                        {% endfor %}
+                      {% else %}
+                       (Qualifiers Undetermined)
+                      {% endif %}
+                    </li>
+                  {% else %}
+                    <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;(Not Yet Awarded)</li>
+                  {% endif %}
                 {% else %}
                   {% if round.num >= contest.award.rounds %}
                     <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;{{contest.group.name|default:"(No Recipient)"}}</li>
                   {% else %}
-                    <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;{{contest.group.name|default:"(Not Yet Awarded)"}}</li>
+                    <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;(Not Yet Awarded)</li>
                   {% endif %}
                 {% endif %}
               {% endfor %}

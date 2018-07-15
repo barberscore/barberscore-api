@@ -721,14 +721,25 @@ def create_oss_report(round, full=True):
         'group',
     ).distinct(
     ).order_by('award__tree_sort')
+    # MonkeyPatch qualifiers
     for contest in contests:
         if contest.award.level == contest.award.LEVEL.qualifier:
             threshold = contest.award.threshold
-            qualifiers = contest.contestants.filter(
-                status__gt=0,
-                entry__competitor__tot_score__gte=contest.award.threshold,
-            )
-            contest.qualifiers = qualifiers
+            if threshold:
+                qualifiers = contest.contestants.filter(
+                    status__gt=0,
+                    entry__competitor__tot_score__gte=threshold,
+                ).order_by(
+                    'entry__group__name',
+                ).values_list(
+                    'entry__group__name',
+                    flat=True,
+                )
+                contest.qualifiers = qualifiers
+            else:
+                contest.qualifiers = None
+        else:
+            contest.qualifiers = None
     panelists = round.panelists.select_related(
         'person',
     ).filter(
