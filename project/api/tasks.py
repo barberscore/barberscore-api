@@ -721,6 +721,14 @@ def create_oss_report(round, full=True):
         'group',
     ).distinct(
     ).order_by('award__tree_sort')
+    for contest in contests:
+        if contest.award.level == contest.award.LEVEL.qualifier:
+            threshold = contest.award.threshold
+            qualifiers = contest.contestants.filter(
+                status__gt=0,
+                entry__competitor__tot_score__gte=contest.award.threshold,
+            )
+            contest.qualifiers = qualifiers
     panelists = round.panelists.select_related(
         'person',
     ).filter(
