@@ -809,7 +809,7 @@ def save_csa_report(competitor):
     competitor.csa_report.save(
         slugify(
             '{0} csa'.format(
-                competitor,
+                competitor.group.name,
             )
         ),
         content=content,
