@@ -83,7 +83,7 @@
             {% for competitor in competitors %}
               <tr class='pbi_avoid'>
                 <td>
-                  <h4><strong>{{competitor.tot_rank}} {{competitor.group.name}}</strong></h4>
+                  <h4><strong>{{competitor.tot_rank|default:""}} {{competitor.group.name}}</strong></h4>
                   <div class='smaller-font'>
                     <!-- {% if competitor.group.get_kind_display == 'Chorus' %}
                       {{competitor.group.parent.name|truncatechars_html:"50"}} ({{competitor.entry.representing|default:"(Unknown)"}})<br>
