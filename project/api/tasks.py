@@ -658,6 +658,7 @@ def create_oss_report(round, full=True):
     Competitor = apps.get_model('api.competitor')
     Contest = apps.get_model('api.contest')
     Panelist = apps.get_model('api.panelist')
+    Contestant = apps.get_model('api.contestant')
     competitors = round.session.competitors.filter(
         status=Competitor.STATUS.finished,
         entry__is_private=False,
@@ -687,6 +688,15 @@ def create_oss_report(round, full=True):
         competitors = competitors.filter(
             appearances__round=round,
         )
+    # Monkey-patch contesting
+    for competitor in competitors:
+        contestants = competitor.entry.contestants.filter(
+            status=Contestant.STATUS.included,
+        ).order_by('contest__num').values_list('contest__num', flat=True)
+        if contestants:
+            competitor.contestants = contestants
+        else:
+            competitor.contestants = None
     privates = round.session.competitors.filter(
         status=Competitor.STATUS.finished,
         entry__is_private=True,

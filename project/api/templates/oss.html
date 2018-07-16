@@ -85,25 +85,25 @@
                 <td>
                   <h4><strong>{{competitor.tot_rank|default:""}} {{competitor.group.name}}</strong></h4>
                   <div class='smaller-font'>
-                    <!-- {% if competitor.group.get_kind_display == 'Chorus' %}
+                    {% if competitor.group.get_kind_display == 'Chorus' %}
                       {{competitor.group.parent.name|truncatechars_html:"50"}} ({{competitor.entry.representing|default:"(Unknown)"}})<br>
                       Director(s): {{competitor.entry.directors|default:"(No Director Specified)"}}<br>
                     {% else %}
-                      {{competitor.entry.representing|default:"(Unknown)"}}<br>
+                      {{competitor.entry.representing|default:"(Unknown)"}}&nbsp;
                     {% endif %}
-                    {% for contestant in competitor.entry.contestants.all %}
+                    {% for contestant in competitor.contestants %}
                       {% if forloop.first %}
                         Contesting: (
                       {% endif %}
-                      {%if contestant.status == 10 %}{{contestant.contest.num}}{% endif %}
+                      {{contestant}}
                       {% if not forloop.last %}
                       ,
                       {% endif %}
                       {% if forloop.last %}
                       )
                       {% endif %}
-                    {% endfor %} -->
-                    &nbsp;&nbsp;&nbsp;&nbsp;Representing: {{competitor.entry.representing|default:"(Unknown)"}}<br>
+                    {% endfor %}
+                    <br>
                     {% if round.num != 1 %}
                       {% if competitor.tot_rank <= 20 %}
                       {% for appearance in competitor.appearances.all %}
@@ -238,7 +238,7 @@
             <ul class='list-unstyled'>
               {% for contest in contests %}
                 {% if contest.award.get_level_display == 'Qualifier' %}
-                  {% if round.num >= contest.award.rounds %}
+                  {% if round.num == contest.award.rounds %}
                     <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;
                       {% if contest.qualifiers %}
                         {% for qualifier in contest.qualifiers %}
@@ -252,7 +252,7 @@
                     <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;(Not Yet Awarded)</li>
                   {% endif %}
                 {% else %}
-                  {% if round.num >= contest.award.rounds %}
+                  {% if round.num == contest.award.rounds %}
                     <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;{{contest.group.name|default:"(No Recipient)"}}</li>
                   {% else %}
                     <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;(Not Yet Awarded)</li>

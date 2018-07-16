@@ -301,6 +301,18 @@ class Round(TimeStampedModel):
     def verify(self, *args, **kwargs):
         Competitor = apps.get_model('api.competitor')
         Contestant = apps.get_model('api.contestant')
+        # If re-verifying, simply re-draw
+        if self.status == self.STATUS.verified:
+            competitors = self.session.competitors.filter(
+                status__gt=0,
+            ).order_by('?')
+            i = 1
+            for competitor in competitors:
+                competitor.draw = i
+                competitor.save()
+                i += 1
+            return
+
         # First, calculate all denormalized scores.
         self.session.calculate()
         # Recursively run rankings.
