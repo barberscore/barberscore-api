@@ -953,6 +953,7 @@ def send_entry(template, context):
 @job('high')
 def send_csa(context):
     competitor = context['competitor']
+    save_csa_report(competitor)
     round = context['round']
     officers = competitor.group.officers.filter(
         status__gt=0,

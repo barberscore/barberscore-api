@@ -279,20 +279,20 @@ class Round(TimeStampedModel):
         competitors = self.session.competitors.filter(
             status__gt=0,
         )
-        if self.round.num == 1:
+        if self.num == 1:
             for competitor in competitors:
                 appearance = competitor.appearances.create(
                     round=self,
                     num=competitor.entry.draw,
                 )
         else:
-            prior_round = self.session.rounds.get(num=self.round.num - 1)
+            prior_round = self.session.rounds.get(num=self.num - 1)
             prior_appearances = prior_round.appearances.filter(
                 draw__isnull=False,
             )
             for prior_appearance in prior_appearances:
-                new = competitor.appearances.create(
-                    round=self,
+                self.appearances.create(
+                    competitor=prior_appearance.competitor,
                     num=prior_appearance.draw,
                 )
         return

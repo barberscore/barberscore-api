@@ -506,6 +506,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         AppearanceInline,
+        StateLogInline,
         # GridInline,
         # ContestantInline,
     ]

@@ -299,7 +299,6 @@ class Competitor(TimeStampedModel):
         target=STATUS.finished,
     )
     def finish(self, *args, **kwargs):
-        save_csa_report.delay(self)
         return
 
     @fsm_log_by
