@@ -987,12 +987,12 @@ def send_csa(context):
         to=tos,
         cc=ccs,
     )
-    try:
-        result = email.send()
-    except Exception as e:
-        raise(e)
-    if result != 1:
-        raise RuntimeError("Email unsuccessful {0}".format(entry))
+    # try:
+    #     result = email.send()
+    # except Exception as e:
+    #     raise(e)
+    # if result != 1:
+    #     raise RuntimeError("Email unsuccessful {0}".format(entry))
     return
 
 
@@ -1018,12 +1018,12 @@ def send_sa(context):
         to=tos,
         cc=ccs,
     )
-    try:
-        result = email.send()
-    except Exception as e:
-        raise(e)
-    if result != 1:
-        raise RuntimeError("Email unsuccessful {0}".format(entry))
+    # try:
+    #     result = email.send()
+    # except Exception as e:
+    #     raise(e)
+    # if result != 1:
+    #     raise RuntimeError("Email unsuccessful {0}".format(entry))
     return
 
 
