@@ -300,7 +300,6 @@ class Competitor(TimeStampedModel):
     )
     def finish(self, *args, **kwargs):
         save_csa_report.delay(self)
-        self.draw = None
         return
 
     @fsm_log_by
@@ -310,7 +309,6 @@ class Competitor(TimeStampedModel):
         target=STATUS.scratched,
     )
     def scratch(self, *args, **kwargs):
-        self.draw = None
         self.tot_rank = None
         self.mus_rank = None
         self.per_rank = None

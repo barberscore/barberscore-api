@@ -279,11 +279,22 @@ class Round(TimeStampedModel):
         competitors = self.session.competitors.filter(
             status__gt=0,
         )
-        for competitor in competitors:
-            appearance = competitor.appearances.create(
-                round=self,
-                num=competitor.draw,
+        if self.round.num == 1:
+            for competitor in competitors:
+                appearance = competitor.appearances.create(
+                    round=self,
+                    num=competitor.entry.draw,
+                )
+        else:
+            prior_round = self.session.rounds.get(num=self.round.num - 1)
+            prior_appearances = prior_round.appearances.filter(
+                draw__isnull=False,
             )
+            for prior_appearance in prior_appearances:
+                new = competitor.appearances.create(
+                    round=self,
+                    num=prior_appearance.draw,
+                )
         return
 
 
@@ -303,13 +314,13 @@ class Round(TimeStampedModel):
         Contestant = apps.get_model('api.contestant')
         # If re-verifying, simply re-draw
         if self.status == self.STATUS.verified:
-            competitors = self.session.competitors.filter(
-                status__gt=0,
+            appearances = self.appearances.filter(
+                competitor__status__gt=0,
             ).order_by('?')
             i = 1
-            for competitor in competitors:
-                competitor.draw = i
-                competitor.save()
+            for appearance in appearances:
+                appearance.draw = i
+                appearance.save()
                 i += 1
             return
 
@@ -406,13 +417,13 @@ class Round(TimeStampedModel):
             competitor.finish()
             competitor.save()
         # Get advancers and draw
-        competitors = self.session.competitors.filter(
-            status__gt=0,
+        appearances = self.appearances.filter(
+            competitor__status__gt=0,
         ).order_by('?')
         i = 1
-        for competitor in competitors:
-            competitor.draw = i
-            competitor.save()
+        for appearance in appearances:
+            appearance.draw = i
+            appearance.save()
             i += 1
         return
 

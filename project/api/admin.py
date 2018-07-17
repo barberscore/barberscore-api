@@ -95,7 +95,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'competitor',
         'round',
         'num',
-        # 'draw',
+        'draw',
         'tot_score',
         'status',
     ]
@@ -479,7 +479,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'group',
         'entry',
         'rank',
-        'draw',
+        # 'draw',
         'image',
         'csa_report',
         ('is_ranked', 'is_multi',),
@@ -505,7 +505,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        # AppearanceInline,
+        AppearanceInline,
         # GridInline,
         # ContestantInline,
     ]

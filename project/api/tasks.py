@@ -659,6 +659,7 @@ def create_oss_report(round, full=True):
     Contest = apps.get_model('api.contest')
     Panelist = apps.get_model('api.panelist')
     Contestant = apps.get_model('api.contestant')
+    Round = apps.get_model('api.round')
     competitors = round.session.competitors.filter(
         status=Competitor.STATUS.finished,
         entry__is_private=False,
@@ -710,19 +711,16 @@ def create_oss_report(round, full=True):
         privates = privates.filter(
             appearances__round=round,
         )
-    advancers = round.session.competitors.filter(
-        status=Competitor.STATUS.started,
-    ).select_related(
-        'group',
-    ).prefetch_related(
-        'appearances',
-        'appearances__songs',
-        'appearances__songs__scores',
-        'appearances__songs__scores__panelist',
-        'appearances__songs__scores__panelist__person',
-    ).order_by(
-        'draw',
-    )
+    if round.kind != 1:
+        appearances = round.appearances.filter(
+            draw__isnull=False,
+        ).select_related(
+            'competitor__group',
+        ).order_by(
+            'draw',
+        )
+    else:
+        appearances = None
     contests = round.session.contests.filter(
         status=Contest.STATUS.included,
         contestants__isnull=False,
@@ -767,7 +765,7 @@ def create_oss_report(round, full=True):
         'round': round,
         'competitors': competitors,
         'privates': privates,
-        'advancers': advancers,
+        'appearances': appearances,
         'panelists': panelists,
         'contests': contests,
         'is_multi': is_multi,

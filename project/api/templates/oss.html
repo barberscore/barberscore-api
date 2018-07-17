@@ -222,12 +222,12 @@
             {% endfor %}
           </ul>
         </div>
-        {% if advancers %}
+        {% if appearances %}
           <div>
             <h4>Draw</h4>
             <ul class='list-inline'>
-              {% for advancer in advancers %}
-                <li><strong>{{advancer.draw}}</strong> {{advancer.group.name}}</li>
+              {% for appearance in appearances %}
+                <li><strong>{{appearance.draw}}</strong> {{appearance.competitor.group.name}}</li>
               {% endfor %}
             </ul>
           </div>

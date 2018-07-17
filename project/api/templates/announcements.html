@@ -67,12 +67,12 @@
           </ul>
       </section>
     {% endif %}
-    {% if advancers %}
+    {% if appearances %}
       <section>
           <h2>Draw</h2>
           <ul class='list-unstyled'>
-              {% for advancer in advancers %}
-                  <li>{{advancer.draw}}: {{advancer.group.name}}</li>
+              {% for appearance in appearances %}
+                  <li>{{appearance.draw}}: {{appearance.competitor.group.name}}</li>
               {% endfor %}
           </ul>
       </section>

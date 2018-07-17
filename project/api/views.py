@@ -838,9 +838,19 @@ class RoundViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
     def announcements(self, request, pk=None):
         round = Round.objects.get(pk=pk)
-        advancers = round.session.competitors.filter(
-            status=Competitor.STATUS.started,
-        ).order_by('draw')
+        try:
+            next_round = round.session.rounds.get(num=round.num + 1)
+        except Round.DoesNotExist:
+            next_round = None
+        if next_round:
+            appearances = next_round.appearances.all(
+            ).select_related(
+                'competitor__group',
+            ).order_by(
+                'draw',
+            )
+        else:
+            appearances = None
         contests = round.session.contests.filter(
             status=Contest.STATUS.included,
             award__rounds__lte=round.num,
@@ -859,7 +869,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         )
         context = {
             'round': round,
-            'advancers': advancers,
+            'appearances': appearances,
             'contests': contests,
             'competitors': competitors,
         }

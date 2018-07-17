@@ -428,7 +428,6 @@ class Session(TimeStampedModel):
             competitor = self.competitors.create(
                 entry=entry,
                 group=entry.group,
-                draw=entry.draw,
                 is_ranked=is_ranked,
                 is_multi=is_multi,
             )
