@@ -116,10 +116,10 @@ def test_person_endpoint_list(user_api_client, person):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_repertory_endpoint_list(user_api_client, repertory):
-    path = reverse('repertory-list')
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+# def test_repertory_endpoint_list(user_api_client, repertory):
+#     path = reverse('repertory-list')
+#     response = user_api_client.get(path)
+#     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 def test_round_endpoint_list(user_api_client, round):
