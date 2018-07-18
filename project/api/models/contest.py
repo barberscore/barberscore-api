@@ -94,25 +94,25 @@ class Contest(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return True
-        # return any([
-        #     request.user.person.officers.filter(office__is_convention_manager=True),
-        #     request.user.person.officers.filter(office__is_session_manager=True),
-        # ])
+        # return True
+        return any([
+            request.user.person.officers.filter(office__is_convention_manager=True),
+            request.user.person.officers.filter(office__is_session_manager=True),
+        ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return True
-        # return all([
-        #     self.session.convention.assignments.filter(
-        #         person__user=request.user,
-        #         category__lte=10,
-        #         kind=10,
-        #         status=10,
-        #     ),
-        #     self.session.status == self.session.STATUS.new,
-        # ])
+        # return True
+        return all([
+            self.session.convention.assignments.filter(
+                person__user=request.user,
+                category__lte=self.session.convention.assignments.model.CATEGORY.ca,
+                kind=self.session.convention.assignments.model.KIND.official,
+                status=self.session.convention.assignments.model.STATUS.active,
+            ),
+            self.session.status < self.session.STATUS.started,
+        ])
 
     # Methods
     def calculate(self, *args, **kwargs):
