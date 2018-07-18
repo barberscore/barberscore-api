@@ -147,6 +147,10 @@ class Office(TimeStampedModel):
         default=False,
     )
 
+    is_assignment_manager = models.BooleanField(
+        default=False,
+    )
+
     # Properties
     @cached_property
     def is_mc(self):

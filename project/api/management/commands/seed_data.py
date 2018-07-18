@@ -258,6 +258,7 @@ class Command(BaseCommand):
             is_award_manager=True,
             is_officer_manager=True,
             is_chart_manager=True,
+            is_assignment_manager=True,
         )
         drcj_office = OfficeFactory(
             name='District Director C&J',

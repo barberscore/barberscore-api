@@ -933,6 +933,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_award_manager',
         'is_officer_manager',
         'is_chart_manager',
+        'is_assignment_manager',
     ]
 
     list_display = [
@@ -948,6 +949,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_award_manager',
         'is_officer_manager',
         'is_chart_manager',
+        'is_assignment_manager',
     ]
     search_fields = [
         'name',
@@ -970,6 +972,7 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_award_manager',
         'is_officer_manager',
         'is_chart_manager',
+        'is_assignment_manager',
     ]
 
     # inlines = [

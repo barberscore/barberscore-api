@@ -446,6 +446,7 @@ class OfficeSerializer(serializers.ModelSerializer):
             'is_award_manager',
             'is_officer_manager',
             'is_chart_manager',
+            'is_assignment_manager',
             'officers',
             'permissions',
         ]
