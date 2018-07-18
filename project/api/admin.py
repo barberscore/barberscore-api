@@ -222,9 +222,17 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'season',
         'rounds',
         'is_primary', 'is_invitational', 'is_manual',
+        'threshold',
+        'advance',
+        'minimum',
         'status',
     ]
 
+    list_editable = [
+        'threshold',
+        'advance',
+        'minimum',
+    ]
     list_filter = [
         'status',
         'kind',
