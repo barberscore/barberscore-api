@@ -348,12 +348,14 @@ class Person(TimeStampedModel):
             all([
                 self.user == request.user,
                 self.status > 0,
+                self.mc_pk == None,
             ]),
             all([
                 self.members.filter(
                     group__officers__person__user=request.user,
                     group__officers__status__gt=0,
                 ),
+                self.mc_pk == None,
             ]),
         ])
 

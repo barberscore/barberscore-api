@@ -238,10 +238,13 @@ class Member(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.group.officers.filter(
-                person__user=request.user,
-                status__gt=0,
-            ),
+            all([
+                self.group.officers.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                ),
+                self.mc_pk == None,
+            ]),
         ])
 
     # Transitions
