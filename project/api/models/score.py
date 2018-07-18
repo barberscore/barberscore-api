@@ -220,7 +220,7 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_read_permission(request):
         return True
-        return request.user.person.officers.filter(office__is_scoring_manager=True)
+        return request.user.person.officers.filter(office__is_round_manager=True)
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -236,7 +236,7 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return request.user.person.officers.filter(office__is_scoring_manager=True)
+        return request.user.person.officers.filter(office__is_round_manager=True)
 
     @allow_staff_or_superuser
     @authenticated_users

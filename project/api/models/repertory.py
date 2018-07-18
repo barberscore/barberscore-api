@@ -71,7 +71,7 @@ class Repertory(TimeStampedModel):
     def has_read_permission(request):
         return any([
             request.user.person.officers.filter(office__is_convention_manager=True),
-            request.user.person.officers.filter(office__is_scoring_manager=True),
+            request.user.person.officers.filter(office__is_round_manager=True),
             request.user.person.officers.filter(office__is_group_manager=True),
             request.user.person.officers.filter(office__is_session_manager=True),
         ])
@@ -85,7 +85,7 @@ class Repertory(TimeStampedModel):
                 status__gt=0,
             ),
             request.user.person.officers.filter(office__is_convention_manager=True),
-            request.user.person.officers.filter(office__is_scoring_manager=True),
+            request.user.person.officers.filter(office__is_round_manager=True),
             request.user.person.officers.filter(office__is_session_manager=True),
         ])
 
@@ -95,7 +95,7 @@ class Repertory(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.person.officers.filter(office__is_convention_manager=True),
-            request.user.person.officers.filter(office__is_scoring_manager=True),
+            request.user.person.officers.filter(office__is_round_manager=True),
             request.user.person.officers.filter(office__is_group_manager=True),
         ])
 
@@ -108,7 +108,7 @@ class Repertory(TimeStampedModel):
                 status__gt=0,
             ),
             request.user.person.officers.filter(office__is_convention_manager=True),
-            request.user.person.officers.filter(office__is_scoring_manager=True),
+            request.user.person.officers.filter(office__is_round_manager=True),
         ])
 
     # Transitions

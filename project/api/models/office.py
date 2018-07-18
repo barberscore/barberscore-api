@@ -123,7 +123,7 @@ class Office(TimeStampedModel):
         default=False,
     )
 
-    is_scoring_manager = models.BooleanField(
+    is_round_manager = models.BooleanField(
         default=False,
     )
 
@@ -139,7 +139,7 @@ class Office(TimeStampedModel):
         default=False,
     )
 
-    is_judge_manager = models.BooleanField(
+    is_officer_manager = models.BooleanField(
         default=False,
     )
 

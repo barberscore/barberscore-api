@@ -240,7 +240,7 @@ class Session(TimeStampedModel):
         return any([
             request.user.person.officers.filter(office__is_convention_manager=True),
             request.user.person.officers.filter(office__is_session_manager=True),
-            request.user.person.officers.filter(office__is_scoring_manager=True),
+            request.user.person.officers.filter(office__is_round_manager=True),
         ])
 
     @allow_staff_or_superuser

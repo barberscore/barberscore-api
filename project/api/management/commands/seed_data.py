@@ -252,11 +252,11 @@ class Command(BaseCommand):
             code=Office.CODE.scjc_chair,
             is_convention_manager=True,
             is_session_manager=True,
-            is_scoring_manager=True,
+            is_round_manager=True,
             is_group_manager=True,
             is_person_manager=True,
             is_award_manager=True,
-            is_judge_manager=True,
+            is_officer_manager=True,
             is_chart_manager=True,
         )
         drcj_office = OfficeFactory(
@@ -271,26 +271,26 @@ class Command(BaseCommand):
             name='Contest Administrator',
             kind=Office.KIND.district,
             code=Office.CODE.judge_ca,
-            is_scoring_manager=True,
-            is_judge_manager=True,
+            is_round_manager=True,
+            is_officer_manager=True,
         )
         mus_office = OfficeFactory(
             name='Music Judge',
             kind=Office.KIND.district,
             code=Office.CODE.judge_mus,
-            is_judge_manager=True,
+            is_officer_manager=True,
         )
         per_office = OfficeFactory(
             name='Performance Judge',
             kind=Office.KIND.district,
             code=Office.CODE.judge_per,
-            is_judge_manager=True,
+            is_officer_manager=True,
         )
         sng_office = OfficeFactory(
             name='Singing Judge',
             kind=Office.KIND.district,
             code=Office.CODE.judge_sng,
-            is_judge_manager=True,
+            is_officer_manager=True,
         )
         chorus_manager = OfficeFactory(
             name='Chorus Manager',

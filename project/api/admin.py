@@ -927,11 +927,11 @@ class OfficeAdmin(admin.ModelAdmin):
         'mc_pk',
         'is_convention_manager',
         'is_session_manager',
-        'is_scoring_manager',
+        'is_round_manager',
         'is_group_manager',
         'is_person_manager',
         'is_award_manager',
-        'is_judge_manager',
+        'is_officer_manager',
         'is_chart_manager',
     ]
 
@@ -942,11 +942,11 @@ class OfficeAdmin(admin.ModelAdmin):
         'kind',
         'is_convention_manager',
         'is_session_manager',
-        'is_scoring_manager',
+        'is_round_manager',
         'is_group_manager',
         'is_person_manager',
         'is_award_manager',
-        'is_judge_manager',
+        'is_officer_manager',
         'is_chart_manager',
     ]
     search_fields = [
@@ -964,11 +964,11 @@ class OfficeAdmin(admin.ModelAdmin):
         MCListFilter,
         'is_convention_manager',
         'is_session_manager',
-        'is_scoring_manager',
+        'is_round_manager',
         'is_group_manager',
         'is_person_manager',
         'is_award_manager',
-        'is_judge_manager',
+        'is_officer_manager',
         'is_chart_manager',
     ]
 
