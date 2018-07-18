@@ -110,6 +110,7 @@ class Panelist(TimeStampedModel):
         return True
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_read_permission(self, request):
         return True
 
@@ -118,7 +119,7 @@ class Panelist(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(office__is_round_manager=True),
+            request.user.is_round_manager,
         ])
 
     @allow_staff_or_superuser

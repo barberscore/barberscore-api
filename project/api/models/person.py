@@ -331,6 +331,7 @@ class Person(TimeStampedModel):
         return True
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_read_permission(self, request):
         return True
 
@@ -338,7 +339,7 @@ class Person(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return False
+        return True
 
     @allow_staff_or_superuser
     @authenticated_users

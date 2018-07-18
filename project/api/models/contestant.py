@@ -226,6 +226,7 @@ class Contestant(TimeStampedModel):
         return True
 
     @allow_staff_or_superuser
+    @authenticated_users
     def has_object_read_permission(self, request):
         return True
 
@@ -234,9 +235,7 @@ class Contestant(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(office__is_convention_manager=True),
-            request.user.person.officers.filter(office__is_group_manager=True),
-            request.user.person.officers.filter(office__is_session_manager=True),
+            request.user.is_session_manager,
         ])
 
     @allow_staff_or_superuser

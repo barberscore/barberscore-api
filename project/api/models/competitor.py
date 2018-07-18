@@ -193,7 +193,7 @@ class Competitor(TimeStampedModel):
         return True
 
     @allow_staff_or_superuser
-    # @authenticated_users
+    @authenticated_users
     def has_object_read_permission(self, request):
         # checklist = any([
         #     self.session.convention.assignments.filter(
@@ -212,7 +212,9 @@ class Competitor(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return request.user.person.officers.filter(office__is_round_manager=True)
+        return any([
+            request.user.is_round_manager,
+        ])
 
     @allow_staff_or_superuser
     @authenticated_users
