@@ -212,6 +212,7 @@ class Entry(TimeStampedModel):
     # Permissions
     @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
     def has_read_permission(request):
         return True
 

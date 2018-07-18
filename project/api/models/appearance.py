@@ -249,13 +249,7 @@ class Appearance(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_read_permission(request):
-        checklist = any([
-            request.user.person.officers.filter(
-                office__is_round_manager=True,
-            ),
-        ])
         return True
-        return checklist
 
     @allow_staff_or_superuser
     @authenticated_users

@@ -127,6 +127,10 @@ class Office(TimeStampedModel):
         default=False,
     )
 
+    is_scoring_manager = models.BooleanField(
+        default=False,
+    )
+
     is_group_manager = models.BooleanField(
         default=False,
     )
@@ -169,6 +173,7 @@ class Office(TimeStampedModel):
     # Office Permissions
     @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
     def has_read_permission(request):
         return True
 

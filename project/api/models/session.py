@@ -222,10 +222,9 @@ class Session(TimeStampedModel):
     # Session Permissions
     @staticmethod
     @allow_staff_or_superuser
+    @authenticated_users
     def has_read_permission(request):
-        return any([
-            True,
-        ])
+        return True
 
     @allow_staff_or_superuser
     def has_object_read_permission(self, request):
