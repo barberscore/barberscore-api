@@ -88,21 +88,15 @@ class Venue(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return any([
-            True,
-        ])
+        return True
 
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(office__is_convention_manager=True),
-        ])
+        return True
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            request.user.person.officers.filter(office__is_convention_manager=True),
-        ])
+        return request.user.is_convention_manager

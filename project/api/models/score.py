@@ -228,12 +228,27 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        assi = bool(self.song.appearance.competitor.session.convention.assignments.filter(
-            person__user=request.user,
-            status__gt=0,
-        ))
-        return True
-        return assi
+        return any([
+            self.song.appearance.round.session.convention.assignments.filter(
+                person__user=request.user,
+                status__gt=0,
+                category__lte=10,
+            ),
+            all([
+                self.song.appearance.round.panelists.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                ),
+                self.song.appearance.competitor.status == self.song.appearance.competitor.STATUS.finished,
+            ]),
+            all([
+                self.song.appearance.competitor.group.officers.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                ),
+                self.song.appearance.competitor.status == self.song.appearance.competitor.STATUS.finished,
+            ]),
+        ])
 
     @staticmethod
     @allow_staff_or_superuser
@@ -247,10 +262,13 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        conditions = all([
-            self.song.appearance.competitor.session.convention.assignments.filter(
-                person__user=request.user,
-                status__gt=0,
-            ),
+        return any([
+            all([
+                self.round.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.round.status != self.round.STATUS.finished,
+            ]),
         ])
-        return conditions

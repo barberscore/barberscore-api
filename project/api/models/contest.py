@@ -104,15 +104,15 @@ class Contest(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        # return True
-        return all([
-            self.session.convention.assignments.filter(
-                person__user=request.user,
-                category__lte=self.session.convention.assignments.model.CATEGORY.ca,
-                kind=self.session.convention.assignments.model.KIND.official,
-                status=self.session.convention.assignments.model.STATUS.active,
-            ),
-            self.session.status < self.session.STATUS.started,
+        return any([
+            all([
+                self.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.session.status < self.session.STATUS.opened,
+            ]),
         ])
 
     # Methods

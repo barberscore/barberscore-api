@@ -110,10 +110,10 @@ def test_panelist_endpoint_list(user_api_client, panelist):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_person_endpoint_list(user_api_client, person):
-    path = reverse('person-list')
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+# def test_person_endpoint_list(user_api_client, person):
+#     path = reverse('person-list')
+#     response = user_api_client.get(path)
+#     assert response.status_code == status.HTTP_200_OK
 
 
 # def test_repertory_endpoint_list(user_api_client, repertory):
@@ -256,10 +256,10 @@ def test_panelist_endpoint_detail(user_api_client, panelist):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_person_endpoint_detail(user_api_client, person):
-    path = reverse('person-detail', args=(str(person.id),))
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+# def test_person_endpoint_detail(user_api_client, person):
+#     path = reverse('person-detail', args=(str(person.id),))
+#     response = user_api_client.get(path)
+#     assert response.status_code == status.HTTP_200_OK
 
 
 def test_repertory_endpoint_detail(user_api_client, repertory):

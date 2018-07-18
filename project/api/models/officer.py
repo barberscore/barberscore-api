@@ -118,7 +118,12 @@ class Officer(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return False
+        return any([
+            self.group.officers.filter(
+                person__user=request.user,
+                status__gt=0,
+            )
+        ])
 
     # Transitions
     @fsm_log_by

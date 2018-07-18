@@ -139,9 +139,7 @@ class Grid(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return any([
-            True,
-        ])
+        return True
 
     @staticmethod
     @allow_staff_or_superuser
@@ -155,11 +153,7 @@ class Grid(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return True
-        # return any([
-        #     self.round.session.convention.assignments.filter(
-        #         person__user=request.user,
-        #         category__lt=30,
-        #         kind=10,
-        #     ),
-        # ])
+        return any([
+            request.user.is_convention_manager,
+            request.user.is_session_manager,
+        ])

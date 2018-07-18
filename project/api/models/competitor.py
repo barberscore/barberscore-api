@@ -195,18 +195,14 @@ class Competitor(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        # checklist = any([
-        #     self.session.convention.assignments.filter(
-        #         person__user=request.user,
-        #         status__gt=0,
-        #     ),
-        #     self.group.members.filter(
-        #         person__user=request.user,
-        #         status__gt=0,
-        #     ),
-        # ])
-        return True
-        return checklist
+        return any([
+            self.round.status == self.round.STATUS.finished,
+            self.round.session.convention.assignments.filter(
+                person__user=request.user,
+                status__gt=0,
+                category__lte=10,
+            ),
+        ])
 
     @staticmethod
     @allow_staff_or_superuser
@@ -219,11 +215,16 @@ class Competitor(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        checklist = bool(self.session.convention.assignments.filter(
-            person__user=request.user,
-            status__gt=0,
-        ))
-        return checklist
+        return any([
+            all([
+                self.round.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.round.status != self.round.STATUS.finished,
+            ]),
+        ])
 
     # Competitor Methods
     def calculate(self):

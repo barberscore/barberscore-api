@@ -300,7 +300,7 @@ class Award(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            False,
+            request.user.is_award_manager,
         ])
 
     # Transitions

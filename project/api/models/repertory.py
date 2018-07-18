@@ -79,9 +79,9 @@ class Repertory(TimeStampedModel):
                 person__user=request.user,
                 status__gt=0,
             ),
-            request.user.person.officers.filter(office__is_convention_manager=True),
-            request.user.person.officers.filter(office__is_round_manager=True),
-            request.user.person.officers.filter(office__is_session_manager=True),
+            request.user.is_session_manager,
+            request.user.is_round_manager,
+            request.user.is_chart_manager,
         ])
 
     @staticmethod
@@ -100,8 +100,6 @@ class Repertory(TimeStampedModel):
                 person__user=request.user,
                 status__gt=0,
             ),
-            request.user.person.officers.filter(office__is_convention_manager=True),
-            request.user.person.officers.filter(office__is_round_manager=True),
         ])
 
     # Transitions

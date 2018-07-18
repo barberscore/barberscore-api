@@ -254,18 +254,14 @@ class Appearance(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        checklist = any([
-            self.competitor.session.convention.assignments.filter(
+        return any([
+            self.round.status == self.round.STATUS.finished,
+            self.round.session.convention.assignments.filter(
                 person__user=request.user,
                 status__gt=0,
+                category__lte=10,
             ),
-            self.competitor.group.members.filter(
-                person__user=request.user,
-                status__gt=0,
-            )
         ])
-        return True
-        return checklist
 
     @staticmethod
     @allow_staff_or_superuser
@@ -278,11 +274,16 @@ class Appearance(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        assi = bool(self.competitor.session.convention.assignments.filter(
-            person__user=request.user,
-            status__gt=0,
-        ))
-        return assi
+        return any([
+            all([
+                self.round.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.round.status != self.round.STATUS.finished,
+            ]),
+        ])
 
     # Transitions
     @fsm_log_by

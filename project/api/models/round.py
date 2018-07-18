@@ -225,21 +225,24 @@ class Round(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.is_convention_manager,
+            request.user.is_session_manager,
+            request.user.is_round_manager,
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.session.convention.assignments.filter(
-                person__user=request.user,
-                category__in=[
-                    10,
-                    20,
-                ],
-                kind=10,
-            ),
+            all([
+                self.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.status != self.STATUS.finished,
+            ]),
         ])
+
 
     # Methods
 

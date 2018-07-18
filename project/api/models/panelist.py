@@ -125,10 +125,13 @@ class Panelist(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        Assignment = apps.get_model('api.assignment')
         return any([
-            self.round.session.convention.assignments.filter(
-                category=Assignment.CATEGORY.ca,
-                kind=Assignment.KIND.official,
-            )
+            all([
+                self.round.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.round.status < self.round.status.started,
+            ]),
         ])

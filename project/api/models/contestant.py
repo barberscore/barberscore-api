@@ -236,21 +236,28 @@ class Contestant(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.is_session_manager,
+            request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.contest.session.convention.assignments.filter(
-                person__user=request.user,
-                category__lte=10,
-                kind=10,
-            ),
-            self.entry.group.officers.filter(
-                person__user=request.user,
-                status__gt=0,
-            ),
+            all([
+                self.contest.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.contest.session.status < self.contest.session.STATUS.started,
+            ]),
+            all([
+                self.entry.group.officers.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                ),
+                self.entry.status < self.entry.STATUS.approved,
+            ]),
         ])
 
     # Methods

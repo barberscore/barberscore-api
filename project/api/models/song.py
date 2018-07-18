@@ -280,18 +280,14 @@ class Song(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        checklist = any([
-            self.appearance.competitor.session.convention.assignments.filter(
+        return any([
+            self.appearance.round.status == self.round.STATUS.finished,
+            self.appearance.round.session.convention.assignments.filter(
                 person__user=request.user,
                 status__gt=0,
-            ),
-            self.appearance.competitor.group.members.filter(
-                person__user=request.user,
-                status__gt=0,
+                category__lte=10,
             ),
         ])
-        return True
-        return checklist
 
     @staticmethod
     @allow_staff_or_superuser
@@ -304,10 +300,14 @@ class Song(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        conditions = all([
-            self.appearance.competitor.session.convention.assignments.filter(
-                person__user=request.user,
-                status__gt=0,
-            ),
+        return any([
+            all([
+                self.appearance.round.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.appearance.round.status != self.appearance.round.STATUS.finished,
+            ]),
         ])
-        return conditions
+

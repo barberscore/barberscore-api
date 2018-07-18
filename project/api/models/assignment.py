@@ -108,11 +108,7 @@ class Assignment(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.convention.assignments.filter(
-                person__user=request.user,
-                category__lt=20,
-                status__gt=0,
-            )
+            request.user.is_assignment_manager,
         ])
 
     # Transitions

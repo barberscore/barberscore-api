@@ -233,13 +233,13 @@ class Entry(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        result = any([
-            # For Judges
+        return any([
+            # For CAs
             all([
                 self.session.convention.assignments.filter(
                     person__user=request.user,
+                    status__gt=0,
                     category__lt=10,
-                    kind=10,
                 ),
                 self.session.status < self.session.STATUS.started,
             ]),
@@ -250,10 +250,8 @@ class Entry(TimeStampedModel):
                     status__gt=0,
                 ),
                 self.status < self.STATUS.approved,
-                self.session.status < self.session.STATUS.started,
             ]),
         ])
-        return result
 
     # Methods
 

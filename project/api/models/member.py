@@ -242,7 +242,6 @@ class Member(TimeStampedModel):
                 person__user=request.user,
                 status__gt=0,
             ),
-            request.user.person.officers.filter(office__is_session_manager=True),
         ])
 
     # Transitions

@@ -229,9 +229,7 @@ class Session(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return any([
-            True,
-        ])
+        return True
 
     @staticmethod
     @allow_staff_or_superuser
@@ -239,17 +237,22 @@ class Session(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.is_convention_manager,
+            request.user.is_session_manager,
+            request.user.is_round_manager,
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            self.convention.assignments.filter(
-                person__user=request.user,
-                category__lt=30,
-                kind=10,
-            ),
+            all([
+                self.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.status < self.STATUS.finished,
+            ]),
         ])
 
     # Session Conditions
