@@ -441,6 +441,7 @@ class OfficeSerializer(serializers.ModelSerializer):
             'is_convention_manager',
             'is_session_manager',
             'is_round_manager',
+            'is_scoring_manager',
             'is_group_manager',
             'is_person_manager',
             'is_award_manager',

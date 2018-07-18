@@ -253,6 +253,7 @@ class Command(BaseCommand):
             is_convention_manager=True,
             is_session_manager=True,
             is_round_manager=True,
+            is_scoring_manager=True,
             is_group_manager=True,
             is_person_manager=True,
             is_award_manager=True,
@@ -273,6 +274,7 @@ class Command(BaseCommand):
             kind=Office.KIND.district,
             code=Office.CODE.judge_ca,
             is_round_manager=True,
+            is_scoring_manager=True,
             is_officer_manager=True,
         )
         mus_office = OfficeFactory(
