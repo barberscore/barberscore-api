@@ -94,6 +94,96 @@ class User(AbstractBaseUser):
     def is_superuser(self):
         return bool(self.is_staff)
 
+    @cached_property
+    def is_convention_manager(self):
+        return bool(
+            self.person.officers.filter(
+                office__is_convention_manager=True,
+                status__gt=0,
+            )
+        )
+
+    @cached_property
+    def is_session_manager(self):
+        return bool(
+            self.person.officers.filter(
+                office__is_session_manager=True,
+                status__gt=0,
+            )
+        )
+
+    @cached_property
+    def is_round_manager(self):
+        return bool(
+            self.person.officers.filter(
+                office__is_round_manager=True,
+                status__gt=0,
+            )
+        )
+
+    @cached_property
+    def is_scoring_manager(self):
+        return bool(
+            self.person.officers.filter(
+                office__is_scoring_manager=True,
+                status__gt=0,
+            )
+        )
+
+    @cached_property
+    def is_group_manager(self):
+        return bool(
+            self.person.officers.filter(
+                office__is_group_manager=True,
+                status__gt=0,
+            )
+        )
+
+    @cached_property
+    def is_person_manager(self):
+        return bool(
+            self.person.officers.filter(
+                office__is_person_manager=True,
+                status__gt=0,
+            )
+        )
+
+    @cached_property
+    def is_award_manager(self):
+        return bool(
+            self.person.officers.filter(
+                office__is_award_manager=True,
+                status__gt=0,
+            )
+        )
+
+    @cached_property
+    def is_officer_manager(self):
+        return bool(
+            self.person.officers.filter(
+                office__is_officer_manager=True,
+                status__gt=0,
+            )
+        )
+
+    @cached_property
+    def is_chart_manager(self):
+        return bool(
+            self.person.officers.filter(
+                office__is_chart_manager=True,
+                status__gt=0,
+            )
+        )
+
+    @cached_property
+    def is_assignment_manager(self):
+        return bool(
+            self.person.officers.filter(
+                office__is_assignment_manager=True,
+                status__gt=0,
+            )
+        )
+
     class JSONAPIMeta:
         resource_name = "user"
 
