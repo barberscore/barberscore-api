@@ -11,7 +11,7 @@ from rest_framework.decorators import action
 from rest_framework.decorators import parser_classes
 from rest_framework.parsers import FormParser
 from rest_framework.parsers import MultiPartParser
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.template.loader import render_to_string
@@ -1313,6 +1313,9 @@ class StateLogViewSet(viewsets.ModelViewSet):
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
+    ]
+    permission_classes = [
+        IsAuthenticated,
     ]
     resource_name = "statelog"
 
