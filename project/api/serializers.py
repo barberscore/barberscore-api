@@ -710,9 +710,30 @@ class UserSerializer(serializers.ModelSerializer):
             # 'name',
             'is_staff',
             'person',
+            'is_convention_manager',
+            'is_session_manager',
+            'is_round_manager',
+            'is_scoring_manager',
+            'is_group_manager',
+            'is_person_manager',
+            'is_award_manager',
+            'is_officer_manager',
+            'is_chart_manager',
+            'is_assignment_manager',
             'permissions',
         ]
-
+        read_only_fields = [
+            'is_convention_manager',
+            'is_session_manager',
+            'is_round_manager',
+            'is_scoring_manager',
+            'is_group_manager',
+            'is_person_manager',
+            'is_award_manager',
+            'is_officer_manager',
+            'is_chart_manager',
+            'is_assignment_manager',
+        ]
 
 class StateLogSerializer(serializers.ModelSerializer):
 
