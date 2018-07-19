@@ -265,7 +265,7 @@ class ChartViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=False, renderer_classes=[XLSXRenderer])
+    @action(methods=['get'], detail=False, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
     def report(self, request):
         xlsx = create_chart_report()
         file_name = 'chart-report'
@@ -586,7 +586,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
     def roster(self, request, pk=None):
         group = Group.objects.get(pk=pk)
         xlsx = create_roster_report(group)
@@ -1026,7 +1026,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
     def legacy(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         xlsx = create_legacy_report(session)
@@ -1044,7 +1044,7 @@ class SessionViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
     def drcj(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         xlsx = create_drcj_report(session)
@@ -1062,7 +1062,7 @@ class SessionViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
     def contact(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         xlsx = create_contact_report(session)
