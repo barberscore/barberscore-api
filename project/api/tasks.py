@@ -872,8 +872,6 @@ def create_sa_report(round):
         'appearances__songs__scores__panelist',
         'appearances__songs__scores__panelist__person',
     ).order_by(
-        '-is_ranked',
-        'tot_rank',
         '-tot_points',
         '-sng_points',
         '-mus_points',

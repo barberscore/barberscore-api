@@ -38,6 +38,11 @@
           <li>_________________________</li>
         </ul>
     </section>
+    {% if mos %}
+    <section>
+      Total Participants on Stage: {{mos}}
+    </section>
+    {% endif %}
     {% if contests %}
       <section>
           <h2>Awards</h2><br><br>
@@ -50,7 +55,7 @@
               {% for competitor in competitors %}
                   <li>
                     With a score of {{competitor.tot_points}}, a {{competitor.tot_score|floatformat:1}}<br>
-                    {% if competitor.tot_rank == 1 %}
+                    <!-- {% if competitor.tot_rank == 1 %}
                       the 2018 1st place gold medalist champion<br>
                     {% elif competitor.tot_rank ==  2 %}
                       the 2018 2nd place silver medalist chorus<br>
@@ -60,7 +65,7 @@
                       the 2018 4th place bronze medalist chorus<br>
                     {% elif competitor.tot_rank ==  5 %}
                       the 2018 5th place bronze medalist chorus<br>
-                    {% endif %}
+                    {% endif %}-->
                     => {{competitor.group.name}}
                   </li><br>
               {% endfor %}
