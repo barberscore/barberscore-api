@@ -11,7 +11,7 @@ from rest_framework.decorators import action
 from rest_framework.decorators import parser_classes
 from rest_framework.parsers import FormParser
 from rest_framework.parsers import MultiPartParser
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.template.loader import render_to_string
@@ -432,7 +432,7 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
     def csa(self, request, pk=None):
         competitor = Competitor.objects.get(pk=pk)
         pdf = create_csa_report(competitor)
@@ -835,7 +835,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
     def announcements(self, request, pk=None):
         round = Round.objects.get(pk=pk)
         try:
@@ -892,7 +892,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
     def oss(self, request, pk=None):
         round = Round.objects.select_related(
             'session',
@@ -916,7 +916,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         )
 
 
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
     def sa(self, request, pk=None):
         round = Round.objects.select_related(
             'session',
@@ -1080,7 +1080,7 @@ class SessionViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
     def oss(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         competitors = session.competitors.filter(
@@ -1170,7 +1170,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         )
 
 
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer])
+    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
     def sa(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         panelists = Panelist.objects.filter(
