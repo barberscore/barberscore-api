@@ -111,7 +111,7 @@ class Contest(TimeStampedModel):
                     status__gt=0,
                     category__lte=10,
                 ),
-                self.session.status < self.session.STATUS.opened,
+                # self.session.status < self.session.STATUS.opened,
             ]),
         ])
 

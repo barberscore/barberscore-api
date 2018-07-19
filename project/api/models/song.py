@@ -281,7 +281,7 @@ class Song(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         return any([
-            self.appearance.round.status == self.round.STATUS.finished,
+            self.appearance.round.status == self.appearance.round.STATUS.finished,
             self.appearance.round.session.convention.assignments.filter(
                 person__user=request.user,
                 status__gt=0,

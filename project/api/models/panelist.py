@@ -132,6 +132,6 @@ class Panelist(TimeStampedModel):
                     status__gt=0,
                     category__lte=10,
                 ),
-                self.round.status < self.round.status.started,
+                self.round.status < self.round.STATUS.started,
             ]),
         ])
