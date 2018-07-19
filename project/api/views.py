@@ -17,6 +17,7 @@ from rest_framework import status
 from django.template.loader import render_to_string
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
+from django.db.models import Sum
 
 # Local
 from .backends import CoalesceFilterBackend
@@ -867,11 +868,13 @@ class RoundViewSet(viewsets.ModelViewSet):
         ).order_by(
             '-tot_rank',
         )
+        mos = round.appearances.aggregate(sum=Sum('mos'))['sum']
         context = {
             'round': round,
             'appearances': appearances,
             'contests': contests,
             'competitors': competitors,
+            'mos': mos,
         }
         rendered = render_to_string('announcements.html', context)
         file = pydf.generate_pdf(rendered)
