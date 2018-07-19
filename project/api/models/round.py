@@ -263,8 +263,8 @@ class Round(TimeStampedModel):
         # build the panel
         i = 0
         assignments = self.session.convention.assignments.filter(
-            status=self.session.convention.assignments.model.STATUS.active,
-            category__gte=self.session.convention.assignments.model.CATEGORY.ca,
+            status=Assignment.STATUS.active,
+            category__gte=Assignment.CATEGORY.ca,
         )
         for assignment in assignments:
             if assignment.category == Assignment.CATEGORY.ca:
