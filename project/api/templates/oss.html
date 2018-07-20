@@ -7,7 +7,7 @@
     <style type="text/css">
       body {
         font-family: 'Encode Sans', sans-serif !important;
-        font-size: 9pt;
+        font-size: 10pt;
         font-weight: 200;
       }
 
@@ -17,8 +17,7 @@
       }
 
       h4 {
-        margin-top: 1px;
-        margin-bot: 1px;
+        margin: 1px;
       }
       h5 {
         margin: 2px;
@@ -26,7 +25,7 @@
       .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td
       {
           padding: 1px;
-          line-height: 1.3;
+          line-height: 1.4;
       }
 /*      .table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
          background-color: #D3D3D3;
@@ -86,24 +85,11 @@
                   <h4><strong>{{competitor.tot_rank|default:""}} {{competitor.group.name}}</strong></h4>
                   <div class='smaller-font'>
                     {% if competitor.group.get_kind_display == 'Chorus' %}
-                      {{competitor.group.parent.name|truncatechars_html:"50"}} ({{competitor.entry.representing|default:"(Unknown)"}})<br>
-                      Director(s): {{competitor.entry.directors|default:"(No Director Specified)"}}<br>
+                      {{competitor.group.parent.name|truncatechars_html:"50"}} [{{competitor.entry.representing}}] ({{competitor.contestants|join:", "|default:"None"}})<br>
+                      Dir(s): {{competitor.entry.directors|default:"(No Director Specified)"}}<br>
                     {% else %}
-                      {{competitor.entry.representing|default:"(Unknown)"}}&nbsp;
+                      {{competitor.entry.representing|default:"(Unknown)"}} Contesting: {{competitor.contestants|join:", "}}
                     {% endif %}
-                    {% for contestant in competitor.contestants %}
-                      {% if forloop.first %}
-                        Contesting: (
-                      {% endif %}
-                      {{contestant}}
-                      {% if not forloop.last %}
-                      ,
-                      {% endif %}
-                      {% if forloop.last %}
-                      )
-                      {% endif %}
-                    {% endfor %}
-                    <br>
                     {% if round.num != 1 %}
                       {% if competitor.tot_rank <= 20 %}
                       {% for appearance in competitor.appearances.all %}
@@ -197,12 +183,7 @@
             <tfoot>
               <tr>
                 <td colspan=6>
-                  <ul class='list-inline'>
-                    <li>The following groups sang for Evaluation-Only:</li>
-                    {% for private in privates %}
-                      <li>{{private.group.name}}</li>
-                    {% endfor %}
-                  </ul>
+                  The following groups sang for Evaluation-Only: {{privates|join:", "}}
                 </td>
               </tr>
             </tfoot>

@@ -711,6 +711,7 @@ def create_oss_report(round, full=True):
         privates = privates.filter(
             appearances__round=round,
         )
+    privates = privates.values_list('group__name', flat=True)
     if round.kind != 1:
         appearances = round.appearances.filter(
             draw__isnull=False,
