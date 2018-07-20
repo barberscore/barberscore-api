@@ -12,6 +12,7 @@ from rest_framework.decorators import parser_classes
 from rest_framework.parsers import FormParser
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework import status
 from django.template.loader import render_to_string
@@ -895,7 +896,15 @@ class RoundViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            # TemplateHTMLRenderer,
+            PDFRenderer,
+        ],
+        permission_classes=[AllowAny],
+    )
     def oss(self, request, pk=None):
         round = Round.objects.select_related(
             'session',
@@ -912,6 +921,10 @@ class RoundViewSet(viewsets.ModelViewSet):
                 )
             )
         )
+        # return Response(
+        #     pdf,
+        #     template_name='oss.html',
+        # )
         return PDFResponse(
             pdf,
             file_name=file_name,
