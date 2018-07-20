@@ -697,7 +697,18 @@ def create_oss_report(round, full=True):
         if contestants:
             competitor.contestants = contestants
         else:
-            competitor.contestants = None
+            competitor.contestants = ""
+    # Monkey Patch Members
+    for competitor in competitors:
+        members = competitor.group.members.filter(
+            status__gt=0,
+        ).order_by('part')
+        members = [member.person.common_name for member in members]
+        if members:
+            competitor.members = members
+        else:
+            competitor.members = ""
+    # Eval Only
     privates = round.session.competitors.filter(
         status=Competitor.STATUS.finished,
         entry__is_private=True,

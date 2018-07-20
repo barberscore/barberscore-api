@@ -85,17 +85,16 @@
                   <h4><strong>{{competitor.tot_rank|default:""}} {{competitor.group.name}}</strong></h4>
                   <div class='smaller-font'>
                     {% if competitor.group.get_kind_display == 'Chorus' %}
-                      {{competitor.group.parent.name|truncatechars_html:"50"}} [{{competitor.entry.representing}}] ({{competitor.contestants|join:", "|default:"None"}})<br>
+                      {{competitor.group.parent.name|truncatechars_html:"50"}} [{{competitor.entry.representing|default:"Unknown"}}] ({{competitor.contestants|join:", "|default:"None"}})<br>
                       Dir(s): {{competitor.entry.directors|default:"(No Director Specified)"}}<br>
                     {% else %}
-                      {{competitor.entry.representing|default:"(Unknown)"}} Contesting: {{competitor.contestants|join:", "}}
+                      {{competitor.entry.representing|default:"(Unknown)"}} ({{competitor.contestants|join:", "|default:"None"}})<br>
+                      {{competitor.members|join:", "|default:"(Unknown)"}}<br>
                     {% endif %}
                     {% if round.num != 1 %}
-                      {% if competitor.tot_rank <= 20 %}
                       {% for appearance in competitor.appearances.all %}
-                        &nbsp;&nbsp;&nbsp;&nbsp;{{appearance.round.get_kind_display}} Rank: {{appearance.tot_rank}}<br>
+                        {{appearance.round.get_kind_display}} Rank: {{appearance.tot_rank}}<br>
                       {% endfor %}
-                      {% endif %}
                     {% endif %}
                   </div>
                 </td>
@@ -108,7 +107,7 @@
                         <strong>Total Points: {{competitor.tot_points}}</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
                       {% endif %}
                       {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
-                        {{song.chart.nomen|truncatechars_html:100|default:"(Song not included in contestant repertory)"}}<br>
+                        {{song.chart.nomen|truncatechars_html:70|default:"(Song not included in contestant repertory)"}}<br>
                       {% endfor %}
                     {% else %}
                       {% if competitor.group.get_kind_display == 'Chorus' %}
@@ -117,7 +116,7 @@
                         <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
                       {% endif %}
                       {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
-                        {{song.chart.nomen|truncatechars_html:75|default:"(Song not included in contestant repertory)"}}<br>
+                        {{song.chart.nomen|truncatechars_html:70|default:"(Song not included in contestant repertory)"}}<br>
                       {% endfor %}
                     {% endif %}
                   {% else %}
@@ -126,7 +125,7 @@
                     <div class='spac'>
                       <span class='bolder'>{{appearance.round.get_kind_display}}&nbsp;</span><span class='smaller-font'>(OA: {{appearance.num}}, Points: {{appearance.tot_points}})</span><br>
                       {% for song in appearance.songs.all|dictsort:'num' %}
-                        &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:100|default:"(Song not included in contestant repertory)"}}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:70|default:"(Song not included in contestant repertory)"}}<br>
                       {% endfor %}
                     </div>
                     {% endfor %}
@@ -205,12 +204,12 @@
         </div>
         {% if appearances %}
           <div>
-            <h4>Draw</h4>
-            <ul class='list-inline'>
+            <h5>Draw</h5>
+            <p>
               {% for appearance in appearances %}
-                <li><strong>{{appearance.draw}}</strong> {{appearance.competitor.group.name}}</li>
+                <span class='text-nowrap'><strong>{{appearance.draw}}</strong> {{appearance.competitor.group.name}}&nbsp;</span>
               {% endfor %}
-            </ul>
+            </p>
           </div>
         {% endif %}
         {% if contests %}
