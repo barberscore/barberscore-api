@@ -57,7 +57,7 @@
       <div>
         <div class='row'>
           <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
-          <img class='pull-right small_logo' src="{{round.session.convention.image.url}}">
+          {% if round.session.convention.image %}<img class='pull-right small_logo' src="{{round.session.convention.image.url}}">{% endif %}
           <h4>
             Official Scoring Summary {{round.session.get_kind_display}} {{round.get_kind_display}};
             {{round.session.convention.name}}
