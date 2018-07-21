@@ -270,6 +270,8 @@ class CompetitorInline(admin.TabularInline):
         'session',
         'group',
         'tot_score',
+        'tot_rank',
+        'is_ranked',
     ]
     readonly_fields = [
         'status',

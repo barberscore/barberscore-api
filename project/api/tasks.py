@@ -21,6 +21,8 @@ from django.utils.crypto import get_random_string
 from django.core.validators import validate_email
 from django.core.validators import ValidationError
 from django.utils.text import slugify
+from django.db.models import Count
+from django.db.models import Q
 
 log = logging.getLogger(__name__)
 
@@ -740,6 +742,10 @@ def create_oss_report(round, full=True):
         'award',
         'group',
     ).distinct(
+    ).annotate(
+        cnt=Count('pk', filter=Q(contestants__status__gt=0)),
+    ).exclude(
+        cnt=0,
     ).order_by('award__tree_sort')
     # MonkeyPatch qualifiers
     for contest in contests:
