@@ -3,13 +3,17 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700" rel="stylesheet">
     <style type="text/css">
       body {
-        font-family: 'Encode Sans Condensed', sans-serif;
+        font-family: 'Roboto Mono', monospace;
       }
       table tr {
         white-space:nowrap;
+      }
+      strong {
+        font-family: 'Roboto Mono', sans-serif;
+        font-weight: 700;
       }
     <style type="text/css">
         .smalltd {
@@ -42,6 +46,15 @@
         .pbi_avoid {
             page-break-inside: avoid !important;
         }
+        .col-success {
+          background-color: #dff0d8;
+        }
+        .col-warning {
+          background-color: #fcf8e3;
+        }
+        .col-info {
+          background-color: #d9edf7;
+        }
     </style>
   </head>
   <body>
@@ -57,6 +70,12 @@
     <section>
       {% regroup panelists by person as panelist_tuple %}
       <table class='table table-condensed'>
+        <colgroup>
+          <col span=6>
+          <col span=5 class='col-warning'>
+          <col span=5 class='col-success'>
+          <col span=5 class='col-info'>
+        </colgroup>
         <thead>
           <tr>
             <th class='head_group'>Competitors</th>
