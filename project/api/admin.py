@@ -1259,6 +1259,13 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
     ]
 
+    ordering = (
+        '-session__convention__year',
+        'session__convention__name',
+        '-session__kind',
+        'kind',
+    )
+
     save_on_top = True
 
     readonly_fields = [
