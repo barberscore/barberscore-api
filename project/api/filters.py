@@ -260,6 +260,25 @@ class SessionGroupListFilter(admin.SimpleListFilter):
         return queryset
 
 
+class RoundGroupListFilter(admin.SimpleListFilter):
+    title = ('district')
+    parameter_name = 'district'
+
+    def lookups(self, request, model_admin):
+        districts = Group.objects.filter(
+            kind=Group.KIND.district,
+        ).order_by(
+            'tree_sort',
+        ).values_list('id', 'code')
+        return districts
+
+    def queryset(self, request, queryset):
+        district = request.GET.get('district')
+        if district:
+            return queryset.filter(session__convention__group=district)
+        return queryset
+
+
 class AssignmentFilter(FilterSet):
     class Meta:
         model = Assignment

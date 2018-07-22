@@ -21,6 +21,7 @@ from .filters import DistrictListFilter
 from .filters import DivisionListFilter
 from .filters import GroupListFilter
 from .filters import SessionGroupListFilter
+from .filters import RoundGroupListFilter
 from .forms import UserChangeForm
 from .forms import UserCreationForm
 from .inlines import ActiveQuartetInline
@@ -1250,9 +1251,11 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_filter = [
         SessionConventionStatusListFilter,
         'status',
+        'kind',
         'session__kind',
         'session__convention__season',
         'session__convention__year',
+        RoundGroupListFilter,
     ]
 
     fsm_field = [
