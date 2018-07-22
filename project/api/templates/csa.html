@@ -37,7 +37,7 @@
     <div class='container-fluid'>
       <section>
         <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
-        <img class='pull-right small_logo' src="{{competitor.session.convention.image.url}}">
+          {% if round.session.convention.image %}<img class='pull-right small_logo' src="{{round.session.convention.image.url}}">{% endif %}
         <h3>
           Competitor Scoring Analysis
         </h3>
@@ -60,16 +60,22 @@
           </div>
           <div class='well'>
             <h3><strong>{{competitor.group.name}}</strong></h3><br>
-            Rank:  {{competitor.tot_rank|default_if_none:"(Rank Not Yet Available)"}}<br>
-            Points:  {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
-            {% if competitor.tot_rank == 1 %}International Quartet Champion<br>{% endif %}
+            <strong>Rank:  {{competitor.tot_rank|default_if_none:"(Rank Not Yet Available)"}}</strong><br>
+            <strong>Points:  {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong><br><br>
+            <!-- {% if competitor.tot_rank == 1 %}International Quartet Champion<br>{% endif %}
             {% if competitor.tot_rank == 2 %}Second Place Silver Medalist Quartet<br>{% endif %}
             {% if competitor.tot_rank == 3 %}Third Place Bronze Medalist Quartet<br>{% endif %}
             {% if competitor.tot_rank == 4 %}Fourth Place Bronze Medalist Quartet<br>{% endif %}
             {% if competitor.tot_rank == 5 %}Fifth Place Bronze Medalist Quartet<br>{% endif %}
-            {% for member in members %}
-              {{member.person.common_name|safe}}&nbsp;&nbsp;
-            {% endfor %}
+            -->
+            {% if competitor.group.get_kind_display == 'Chorus' %}
+              Director(s): {{ competitor.entry.directors }}
+            {% else %}
+              Members:
+              {% for member in members %}
+                {{member.person.common_name|safe}}&nbsp;&nbsp;
+              {% endfor %}
+            {% endif %}
         </div>
         </div>
       </section>
