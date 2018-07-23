@@ -125,6 +125,7 @@ class AppearanceInline(admin.TabularInline):
     model = Appearance
     fields = [
         'competitor',
+        'legacy_group',
         'status',
         'num',
         'draw',
@@ -546,7 +547,6 @@ class SessionInline(admin.TabularInline):
     fields = [
         'convention',
         'kind',
-        'gender',
         'num_rounds',
     ]
     autocomplete_fields = [

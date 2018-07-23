@@ -78,6 +78,13 @@ class Appearance(TimeStampedModel):
         null=True,
         blank=True,
     )
+
+    legacy_group = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+
     # Privates
     rank = models.IntegerField(
         null=True,
@@ -164,7 +171,9 @@ class Appearance(TimeStampedModel):
     competitor = models.ForeignKey(
         'Competitor',
         related_name='appearances',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
     )
 
     @cached_property

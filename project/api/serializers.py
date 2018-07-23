@@ -625,7 +625,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'url',
             'status',
             'kind',
-            'gender',
             'is_invitational',
             'footnotes',
             'description',

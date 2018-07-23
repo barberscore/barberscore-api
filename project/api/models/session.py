@@ -62,22 +62,8 @@ class Session(TimeStampedModel):
         choices=KIND,
     )
 
-    GENDER = Choices(
-        (10, 'male', "Male"),
-        (20, 'female', "Female"),
-        (30, 'mixed', "Mixed"),
-    )
-
-    gender = models.IntegerField(
-        help_text="""
-            The gender of session.
-        """,
-        choices=GENDER,
-        null=True,
-        blank=True,
-    )
-
     num_rounds = models.IntegerField(
+        default=0,
     )
 
     is_invitational = models.BooleanField(
