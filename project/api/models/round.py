@@ -59,6 +59,7 @@ class Round(TimeStampedModel):
     )
 
     num = models.IntegerField(
+        default=0,
     )
 
     spots = models.IntegerField(
