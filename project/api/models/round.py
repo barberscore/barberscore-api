@@ -455,5 +455,5 @@ class Round(TimeStampedModel):
                 'competitor': c,
                 'round': self,
             }
-            send_csa.delay(context)
+            # send_csa.delay(context)
         return
