@@ -427,6 +427,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         'name',
+        'id',
         'start_date',
         'end_date',
         'year',
