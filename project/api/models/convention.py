@@ -37,6 +37,8 @@ class Convention(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-30, 'test', 'Test',),
+        (-20, 'incomplete', 'Incomplete',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
