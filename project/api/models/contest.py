@@ -51,6 +51,7 @@ class Contest(TimeStampedModel):
         blank=True,
         related_name='contests',
         on_delete=models.SET_NULL,
+        help_text="""The Winner of the Contest.""",
     )
 
     # FKs

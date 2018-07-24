@@ -203,6 +203,7 @@ class ContestInline(admin.TabularInline):
     model = Contest
     fields = [
         'award',
+        'group',
         'primary',
         'session',
         'status',
@@ -213,6 +214,7 @@ class ContestInline(admin.TabularInline):
     ]
     autocomplete_fields = [
         'award',
+        'group',
     ]
     ordering = (
         '-award__is_primary',
