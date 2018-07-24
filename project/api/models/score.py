@@ -157,6 +157,11 @@ class Score(TimeStampedModel):
         blank=True,
     )
 
+    class Meta:
+        unique_together = (
+            ('song', 'num',),
+        )
+
     class JSONAPIMeta:
         resource_name = "score"
 
