@@ -206,10 +206,10 @@ class Entry(TimeStampedModel):
             raise ValidationError(
                 {'is_private': 'You may not compete for an award and remain private.'}
             )
-        if self.session.status >= self.session.STATUS.started:
-            raise ValidationError(
-                {'session': 'You may not add entries after the Session has started.'}
-            )
+        # if self.session.status >= self.session.STATUS.started:
+        #     raise ValidationError(
+        #         {'session': 'You may not add entries after the Session has started.'}
+        #     )
 
 
     # Methods
