@@ -64,6 +64,13 @@ class Panelist(TimeStampedModel):
         blank=True,
     )
 
+    legacy_name = models.CharField(
+        max_length=255,
+        unique=True,
+        null=True,
+        blank=True,
+    )
+
     # FKs
     round = models.ForeignKey(
         'Round',
@@ -74,7 +81,9 @@ class Panelist(TimeStampedModel):
     person = models.ForeignKey(
         'Person',
         related_name='panelists',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     @cached_property
