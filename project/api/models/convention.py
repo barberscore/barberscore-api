@@ -36,6 +36,13 @@ class Convention(TimeStampedModel):
         unique=True,
     )
 
+    legacy_name = models.CharField(
+        max_length=255,
+        unique=True,
+        null=True,
+        blank=True,
+    )
+
     STATUS = Choices(
         (-30, 'test', 'Test',),
         (-25, 'manual', 'Manual',),
