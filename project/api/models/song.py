@@ -236,38 +236,58 @@ class Song(TimeStampedModel):
 
         if is_variance:
             return True
-        ordered_asc = self.scores.filter(
-            kind=self.scores.model.KIND.official,
-        ).order_by('points')
-        ultimate = ordered_asc[0]
-        penultimate = ordered_asc[1]
-        if penultimate.points - ultimate.points > 5:
-            ultimate.is_flagged = True
-            is_variance = True
-        else:
-            ultimate.is_flagged = False
-        ultimate.save()
-        practice_scores = self.scores.filter(
-            kind=self.scores.model.KIND.practice,
-            points__lte=ultimate.points,
-        )
-        practice_scores.update(is_flagged=True)
+
         ordered_dsc = self.scores.filter(
             kind=self.scores.model.KIND.official,
         ).order_by('-points')
-        ultimate = ordered_dsc[0]
-        penultimate = ordered_dsc[1]
-        if ultimate.points - penultimate.points > 5:
-            ultimate.is_flagged = True
-            is_variance = True
+        if ordered_dsc.count() == 3:
+            ultimate = ordered_dsc[0]
+            penultimate = ordered_dsc[1]
+            triultimate = ordered_dsc[2]
+            if ultimate.points - penultimate.points >= 10:
+                ultimate.is_flagged = True
+                is_variance = True
+            elif penultimate.points - triultimate.points >= 10:
+                triultimate.is_flagged = True
+                is_variance = True
+            else:
+                ultimate.is_flagged = False
+                triultimate.is_flagged = False
+            ultimate.save()
+            triultimate.save()
         else:
-            ultimate.is_flagged = False
-        ultimate.save()
-        practice_scores = self.scores.filter(
-            kind=self.scores.model.KIND.practice,
-            points__gte=ultimate.points,
-        )
-        practice_scores.update(is_flagged=True)
+            ordered_asc = self.scores.filter(
+                kind=self.scores.model.KIND.official,
+            ).order_by('points')
+            ultimate = ordered_asc[0]
+            penultimate = ordered_asc[1]
+            if penultimate.points - ultimate.points > 5:
+                ultimate.is_flagged = True
+                is_variance = True
+            else:
+                ultimate.is_flagged = False
+            ultimate.save()
+            practice_scores = self.scores.filter(
+                kind=self.scores.model.KIND.practice,
+                points__lte=ultimate.points,
+            )
+            practice_scores.update(is_flagged=True)
+            ordered_dsc = self.scores.filter(
+                kind=self.scores.model.KIND.official,
+            ).order_by('-points')
+            ultimate = ordered_dsc[0]
+            penultimate = ordered_dsc[1]
+            if ultimate.points - penultimate.points > 5:
+                ultimate.is_flagged = True
+                is_variance = True
+            else:
+                ultimate.is_flagged = False
+            ultimate.save()
+            practice_scores = self.scores.filter(
+                kind=self.scores.model.KIND.practice,
+                points__gte=ultimate.points,
+            )
+            practice_scores.update(is_flagged=True)
         return is_variance
 
     # Permissions
