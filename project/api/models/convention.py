@@ -40,6 +40,7 @@ class Convention(TimeStampedModel):
         (-30, 'test', 'Test',),
         (-25, 'manual', 'Manual',),
         (-20, 'incomplete', 'Incomplete',),
+        (-15, 'imported', 'Imported',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
