@@ -755,6 +755,8 @@ def create_oss_report(round, full=True):
                 qualifiers = contest.contestants.filter(
                     status__gt=0,
                     entry__competitor__tot_score__gte=threshold,
+                    entry__is_private=False,
+                ).distinct(
                 ).order_by(
                     'entry__group__name',
                 ).values_list(

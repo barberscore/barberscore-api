@@ -222,7 +222,7 @@
                     <li><strong>{{contest.num}}) {{contest.award.name}}:</strong>&nbsp;&nbsp;
                       {% if contest.qualifiers %}
                         {% for qualifier in contest.qualifiers %}
-                          {{qualifier}},&nbsp;
+                          {{qualifier}}{% if forloop.last %}{% else %},{% endif %}
                         {% endfor %}
                       {% else %}
                        (Qualifiers to be Determined Later.)
