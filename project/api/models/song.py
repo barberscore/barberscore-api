@@ -191,6 +191,7 @@ class Song(TimeStampedModel):
 
     def check_variance(self):
         is_variance = False
+        # Category Average
         mus_scores = self.scores.filter(
             category=self.scores.model.CATEGORY.music,
         )
@@ -233,14 +234,25 @@ class Song(TimeStampedModel):
             else:
                 score.is_flagged = False
             score.save()
-
         if is_variance:
             return True
+
+        # Dixon's Q Test
+        confidence = {
+            '3': 0.941,
+            '6': .56,
+            '9': .376,
+            '12': .437,
+            '15': .338,
+        }
 
         ordered_dsc = self.scores.filter(
             kind=self.scores.model.KIND.official,
         ).order_by('-points')
-        if ordered_dsc.count() == 3:
+        spread = ordered_dsc.first().points - ordered_dsc.last().points
+        size = str(ordered_dsc.count())
+
+        if size == '3':
             ultimate = ordered_dsc[0]
             penultimate = ordered_dsc[1]
             triultimate = ordered_dsc[2]
@@ -261,7 +273,10 @@ class Song(TimeStampedModel):
             ).order_by('points')
             ultimate = ordered_asc[0]
             penultimate = ordered_asc[1]
-            if penultimate.points - ultimate.points > 5:
+            distance = abs(ultimate.points - penultimate.points)
+            q = distance / spread
+            critical = confidence[size]
+            if q > critical and penultimate.points - ultimate.points > 5:
                 ultimate.is_flagged = True
                 is_variance = True
             else:
@@ -277,7 +292,10 @@ class Song(TimeStampedModel):
             ).order_by('-points')
             ultimate = ordered_dsc[0]
             penultimate = ordered_dsc[1]
-            if ultimate.points - penultimate.points > 5:
+            distance = abs(ultimate.points - penultimate.points)
+            q = distance / spread
+            critical = confidence[size]
+            if q > critical and ultimate.points - penultimate.points > 5:
                 ultimate.is_flagged = True
                 is_variance = True
             else:
