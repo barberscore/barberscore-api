@@ -45,6 +45,10 @@ class Contest(TimeStampedModel):
         null=True,
     )
 
+    is_primary = models.BooleanField(
+        default=False,
+    )
+
     # Private
     group = models.ForeignKey(
         'Group',
