@@ -130,11 +130,11 @@ class Contest(TimeStampedModel):
 
     # Methods
     def calculate(self, *args, **kwargs):
-        conditions = any([
-            self.award.level == self.award.LEVEL.qualifier,
-            self.award.is_manual,
-        ])
-        if conditions:
+        if self.award.level in [
+            self.award.LEVEL.qualifier,
+            self.award.LEVEL.manual,
+            self.award.LEVEL.deferred,
+        ]:
             return
         contestants = self.contestants.filter(
             status__gt=0,

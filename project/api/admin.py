@@ -204,10 +204,8 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'level',
         'season',
         'rounds',
-        ('is_primary', 'is_invitational', 'is_manual', 'is_later',),
         'parent',
         ('threshold', 'minimum', 'advance',),
-        'footnote',
         'description',
         'notes',
     ]
@@ -223,7 +221,6 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'level',
         'season',
         'rounds',
-        'is_primary', 'is_invitational', 'is_manual', 'is_later',
         'threshold',
         'advance',
         'minimum',
@@ -243,7 +240,6 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'age',
         'gender',
         'season',
-        'is_primary', 'is_invitational', 'is_manual', 'is_later',
         GroupListFilter,
     ]
 
@@ -350,7 +346,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_filter = [
         'status',
         'award__kind',
-        'award__is_primary',
+        'is_primary',
     ]
 
     save_on_top = True

@@ -360,7 +360,7 @@ class Round(TimeStampedModel):
         spots = self.session.rounds.get(num=self.num + 1).spots
 
         # get primary contest
-        contest = self.session.contests.get(award__is_primary=True)
+        contest = self.session.contests.get(is_primary=True)
         if contest.award.level == contest.award.LEVEL.qualifier:
             # Uses absolute cutoff.
             automatics = Competitor.objects.filter(

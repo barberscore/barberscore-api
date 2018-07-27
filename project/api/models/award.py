@@ -99,26 +99,6 @@ class Award(TimeStampedModel):
         choices=SEASON,
     )
 
-    is_primary = models.BooleanField(
-        help_text="""Primary (v. Secondary).""",
-        default=False,
-    )
-
-    is_invitational = models.BooleanField(
-        help_text="""Invite-only (v. Open).""",
-        default=False,
-    )
-
-    is_manual = models.BooleanField(
-        help_text="""Manual (v. Automatic).""",
-        default=False,
-    )
-
-    is_later = models.BooleanField(
-        help_text="""Deferred Award""",
-        default=False,
-    )
-
     rounds = models.IntegerField(
         help_text="""Number of rounds to determine the championship""",
     )
@@ -159,28 +139,6 @@ class Award(TimeStampedModel):
         help_text="""
             Private Notes (for internal use only).""",
         blank=True,
-    )
-
-    footnote = models.CharField(
-        help_text="""
-            The text to present on the OSS""",
-        blank=True,
-        max_length=255,
-    )
-
-    is_improved = models.BooleanField(
-        help_text="""Designates 'Most-Improved'.  Implies manual.""",
-        default=False,
-    )
-
-    is_multi = models.BooleanField(
-        help_text="""Award spans conventions; must be determined manually.""",
-        default=False,
-    )
-
-    is_rep_qualifies = models.BooleanField(
-        help_text="""Boolean; true means the district rep qualifies.""",
-        default=False,
     )
 
     AGE = Choices(
@@ -293,10 +251,6 @@ class Award(TimeStampedModel):
         # if self.level != self.LEVEL.qualifier and self.threshold:
         #     raise ValidationError(
         #         {'level': 'Non-Qualifiers must not have thresholds'}
-        #     )
-        # if self.level == self.LEVEL.qualifier and self.is_manual:
-        #     raise ValidationError(
-        #         {'level': 'Qualifiers must not be manual'}
         #     )
 
     # Award Permissions

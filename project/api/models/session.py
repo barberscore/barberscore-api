@@ -12,6 +12,7 @@ from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from ranking import Ranking
+from django.core.exceptions import ValidationError
 
 # Django
 from django.apps import apps
@@ -152,6 +153,12 @@ class Session(TimeStampedModel):
             self.convention,
             self.get_kind_display(),
         )
+
+    def clean(self):
+        if self.contests.filter(is_primary=True).count() > 1:
+            raise ValidationError(
+                {'level': 'Sessions may have only one primary contest'}
+            )
 
     # Methods
     def calculate(self):

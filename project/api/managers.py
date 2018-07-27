@@ -42,7 +42,6 @@ class AwardManager(Manager):
             '-status',  # Actives first
             'group__tree_sort',  # Basic BHS Hierarchy
             '-kind', # Quartet, Chorus
-            '-is_primary',  # Primary awards first
             F('age').asc(nulls_first=True), # Null, Senior, Youth
             'gender', #Male, mixed
             'level', #Championship, qualifier

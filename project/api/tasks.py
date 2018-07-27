@@ -740,11 +740,11 @@ def create_oss_report(round, full=True):
     ).distinct(
     ).order_by('award__tree_sort')
     # Determine Primaryrimary
-    primary = contests.filter(award__is_primary=True).first()
+    primary = contests.get(is_primary=True)
     # MonkeyPatch qualifiers
     for contest in contests:
         if round.num == contest.award.rounds:
-            if not contest.award.is_later:
+            if contest.award.level != contest.award.LEVEL.deferred:
                 if contest.award.level == contest.award.LEVEL.qualifier:
                     threshold = contest.award.threshold
                     if threshold:

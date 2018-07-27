@@ -197,31 +197,21 @@ class AwardInline(admin.TabularInline):
 
 
 class ContestInline(admin.TabularInline):
-    def primary(self, obj):
-        return obj.award.is_primary
-
     model = Contest
     fields = [
         'award',
         'group',
-        'primary',
+        'is_primary',
         'session',
         'status',
     ]
     readonly_fields = [
-        'primary',
         'status',
     ]
     autocomplete_fields = [
         'award',
         'group',
     ]
-    ordering = (
-        '-award__is_primary',
-        'award__is_improved',
-        'award__size',
-        'award__scope',
-    )
     show_change_link = True
     extra = 0
     classes = [

@@ -67,9 +67,6 @@ class AwardFactory(DjangoModelFactory):
     kind = Award.KIND.quartet
     level = Award.LEVEL.championship
     season = Award.SEASON.summer
-    is_primary = True
-    is_invitational = True
-    is_manual = False
     rounds = 3
     threshold = None
     minimum = None
