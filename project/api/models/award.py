@@ -15,6 +15,7 @@ from model_utils.models import TimeStampedModel
 from django.contrib.postgres.fields import FloatRangeField
 from django.contrib.postgres.fields import IntegerRangeField
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from api.managers import AwardManager
 
@@ -78,6 +79,8 @@ class Award(TimeStampedModel):
         (10, 'championship', "Championship"),
         (30, 'qualifier', "Qualifier"),
         (40, 'award', "Award"),
+        (50, 'deferred', "Deferred"),
+        (60, 'manual', "Manual"),
     )
 
     level = models.IntegerField(
@@ -280,6 +283,21 @@ class Award(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        pass
+        # if self.level == self.LEVEL.qualifier and not self.threshold:
+        #     raise ValidationError(
+        #         {'level': 'Qualifiers must have thresholds'}
+        #     )
+        # if self.level != self.LEVEL.qualifier and self.threshold:
+        #     raise ValidationError(
+        #         {'level': 'Non-Qualifiers must not have thresholds'}
+        #     )
+        # if self.level == self.LEVEL.qualifier and self.is_manual:
+        #     raise ValidationError(
+        #         {'level': 'Qualifiers must not be manual'}
+        #     )
 
     # Award Permissions
     @staticmethod

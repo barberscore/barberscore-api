@@ -14,6 +14,7 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.apps import apps as api_apps
 from django.db import models
+from django.core.exceptions import ValidationError
 
 config = api_apps.get_app_config('api')
 
@@ -80,6 +81,12 @@ class Contest(TimeStampedModel):
         return "{0}".format(
             self.award.name,
         )
+
+    def clean(self):
+        if self.award.level == self.award.LEVEL.qualifier and group:
+            raise ValidationError(
+                {'level': 'Qualifiers can not select winners'}
+            )
 
     # Contest Permissions
     @staticmethod
