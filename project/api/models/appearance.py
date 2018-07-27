@@ -294,7 +294,17 @@ class Appearance(TimeStampedModel):
             ]),
         ])
 
-    # Transitions
+    # Appearance Conditions
+    def can_verify(self):
+        if self.competitor.group.kind == self.competitor.group.KIND.chorus and not self.mos:
+            is_pos = False
+        else:
+            is_pos = True
+        return all([
+            is_pos,
+        ])
+
+    # Appearance Transitions
     @fsm_log_by
     @transition(field=status, source=[STATUS.new], target=STATUS.built)
     def build(self, *args, **kwargs):
@@ -336,7 +346,7 @@ class Appearance(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.verified)
+    @transition(field=status, source='*', target=STATUS.verified, conditions=[can_verify])
     def verify(self, *args, **kwargs):
         switch = False
         for song in self.songs.all():
