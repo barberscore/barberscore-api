@@ -178,15 +178,22 @@
               </tr>
             {% endfor %}
           </tbody>
-          {% if privates %}
-            <tfoot>
+          <tfoot>
+            {% if primary %}
+              <tr>
+                <td colspan=6>
+                  Rank is determined with respect to the {{primary.award.name}}.
+                </td>
+              </tr>
+            {% endif %}
+            {% if privates %}
               <tr>
                 <td colspan=6>
                   The following groups sang for Evaluation-Only: {{privates|join:", "}}
                 </td>
               </tr>
-            </tfoot>
-          {% endif %}
+            {% endif %}
+          </tfoot>
         </table>
       <div class='row'>
         <div class='pull-right'>

@@ -744,6 +744,8 @@ def create_oss_report(round, full=True):
     ).exclude(
         cnt=0,
     ).order_by('award__tree_sort')
+    # MonkeyPatch primary
+    primary = contests.filter(award__is_primary=True).first()
     # MonkeyPatch qualifiers
     for contest in contests:
         if contest.award.level == contest.award.LEVEL.qualifier:
@@ -786,6 +788,7 @@ def create_oss_report(round, full=True):
         'panelists': panelists,
         'contests': contests,
         'is_multi': is_multi,
+        'primary': primary,
     }
     rendered = render_to_string('oss.html', context)
     file = pydf.generate_pdf(
