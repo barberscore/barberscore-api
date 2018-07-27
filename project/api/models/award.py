@@ -111,6 +111,11 @@ class Award(TimeStampedModel):
         default=False,
     )
 
+    is_later = models.BooleanField(
+        help_text="""Deferred Award""",
+        default=False,
+    )
+
     rounds = models.IntegerField(
         help_text="""Number of rounds to determine the championship""",
     )

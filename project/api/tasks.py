@@ -688,8 +688,8 @@ def create_oss_report(round, full=True):
         competitors = competitors.filter(
             appearances__round=round,
         )
-    # Monkey-patch contesting
     for competitor in competitors:
+        # Monkey-patch contesting
         contestants = competitor.entry.contestants.filter(
             status=Contestant.STATUS.included,
         ).order_by('contest__num').values_list('contest__num', flat=True)
@@ -697,8 +697,7 @@ def create_oss_report(round, full=True):
             competitor.contestants = contestants
         else:
             competitor.contestants = ""
-    # Monkey Patch Members
-    for competitor in competitors:
+        # Monkey Patch Members
         members = competitor.group.members.filter(
             status__gt=0,
         ).order_by('part')
@@ -734,39 +733,47 @@ def create_oss_report(round, full=True):
         appearances = None
     contests = round.session.contests.filter(
         status=Contest.STATUS.included,
-        contestants__isnull=False,
+        contestants__status__gt=0,
     ).select_related(
         'award',
         'group',
     ).distinct(
-    ).annotate(
-        cnt=Count('pk', filter=Q(contestants__status__gt=0)),
-    ).exclude(
-        cnt=0,
     ).order_by('award__tree_sort')
-    # MonkeyPatch primary
+    # Determine Primaryrimary
     primary = contests.filter(award__is_primary=True).first()
     # MonkeyPatch qualifiers
     for contest in contests:
-        if contest.award.level == contest.award.LEVEL.qualifier:
-            threshold = contest.award.threshold
-            if threshold:
-                qualifiers = contest.contestants.filter(
-                    status__gt=0,
-                    entry__competitor__tot_score__gte=threshold,
-                    entry__is_private=False,
-                ).distinct(
-                ).order_by(
-                    'entry__group__name',
-                ).values_list(
-                    'entry__group__name',
-                    flat=True,
-                )
-                contest.qualifiers = qualifiers
+        if round.num == contest.award.rounds:
+            if not contest.award.is_later:
+                if contest.award.level == contest.award.LEVEL.qualifier:
+                    threshold = contest.award.threshold
+                    if threshold:
+                        qualifiers = contest.contestants.filter(
+                            status__gt=0,
+                            entry__competitor__tot_score__gte=threshold,
+                            entry__is_private=False,
+                        ).distinct(
+                        ).order_by(
+                            'entry__group__name',
+                        ).values_list(
+                            'entry__group__name',
+                            flat=True,
+                        )
+                        if qualifiers:
+                            contest.detail = ", ".join(
+                                qualifiers.values_list('entry__group__name', flat=True)
+                            )
+                        else:
+                            contest.detail = "(No qualifiers)"
+                else:
+                    if contest.group:
+                        contest.detail = str(contest.group.name)
+                    else:
+                        contest.detail = "(No recipient)"
             else:
-                contest.qualifiers = None
+                contest.detail = "(Result determined post-contest)"
         else:
-            contest.qualifiers = None
+            contest.detail = "(Result not yet determined)"
     panelists = round.panelists.select_related(
         'person',
     ).filter(

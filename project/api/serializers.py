@@ -104,6 +104,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'is_primary',
             'is_invitational',
             'is_manual',
+            'is_later',
             'rounds',
             'threshold',
             'minimum',

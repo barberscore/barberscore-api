@@ -10,6 +10,7 @@ from django.contrib.auth.models import Group as AuthGroup
 from django.utils import timezone
 
 # Local
+from .filters import AwardQualifierLevelFilter
 from .filters import OrphanListFilter
 from .filters import MCListFilter
 from .filters import MCUserListFilter
@@ -203,7 +204,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'level',
         'season',
         'rounds',
-        ('is_primary', 'is_invitational', 'is_manual'),
+        ('is_primary', 'is_invitational', 'is_manual', 'is_later',),
         'parent',
         ('threshold', 'minimum', 'advance',),
         'footnote',
@@ -222,7 +223,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'level',
         'season',
         'rounds',
-        'is_primary', 'is_invitational', 'is_manual',
+        'is_primary', 'is_invitational', 'is_manual', 'is_later',
         'threshold',
         'advance',
         'minimum',
@@ -238,10 +239,11 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'kind',
         'level',
+        AwardQualifierLevelFilter,
         'age',
         'gender',
         'season',
-        'is_primary', 'is_invitational', 'is_manual',
+        'is_primary', 'is_invitational', 'is_manual', 'is_later',
         GroupListFilter,
     ]
 
