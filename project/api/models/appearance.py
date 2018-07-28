@@ -177,8 +177,8 @@ class Appearance(TimeStampedModel):
     )
 
     @cached_property
-    def round_num(self):
-        return self.round.num
+    def round__kind(self):
+        return self.round.kind
 
     # Appearance Internals
     class Meta:
