@@ -333,6 +333,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'award',
         'session',
+        'is_primary',
         'group',
     ]
 
@@ -340,6 +341,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'award',
         'session',
+        'is_primary',
         'group',
     )
 
