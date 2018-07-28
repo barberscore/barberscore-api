@@ -301,6 +301,18 @@ class Round(TimeStampedModel):
                     competitor=prior_appearance.competitor,
                     num=prior_appearance.draw,
                 )
+            # MT
+            mt = self.session.competitors.filter(
+                status=Competitor.STATUS.finished,
+            ).order_by(
+                'tot_rank',
+                '-tot_sng',
+                '-tot_per',
+            ).first()
+            self.appearances.create(
+                competitor=mt,
+                num=0,
+            )
         return
 
 
