@@ -293,12 +293,10 @@ class Session(TimeStampedModel):
                 season=self.convention.season,
             ).order_by('tree_sort')
             for award in awards:
-                i += 1
                 # Could also do some logic here for more precision
                 self.contests.create(
                     status=self.contests.model.STATUS.included,
                     award=award,
-                    num=i,
                 )
         for i in range(self.num_rounds):
             num = i + 1
@@ -403,6 +401,20 @@ class Session(TimeStampedModel):
         # delete orphans
         # for entry in self.entries.filter(status=Entry.STATUS.new):
         #     entry.delete()
+        # Number Contests
+        contests = self.contests.filter(
+            status__gt=0,
+            contestants__status__gt=0,
+        ).distinct(
+        ).order_by(
+            '-is_primary',
+            'award__tree_sort',
+        )
+        i = 0
+        for contest in contests:
+            i += 1
+            contest.num = i
+            contest.save()
         # Build Competitor List
         entries = self.entries.filter(
             status=self.entries.model.STATUS.approved,

@@ -729,7 +729,10 @@ def create_oss_report(round, full=True):
         'award',
         'group',
     ).distinct(
-    ).order_by('award__tree_sort')
+    ).order_by(
+        '-is_primary',
+        'award__tree_sort',
+    )
     # Determine Primaryrimary
     primary = contests.get(is_primary=True)
     # MonkeyPatch qualifiers
