@@ -308,7 +308,7 @@ class Person(TimeStampedModel):
         if self.nick_name:
             first = self.nick_name[0].upper()
         else:
-            first = self.first_name[0].upper(),
+            first = self.first_name[0].upper()
         return "{0}{1}".format(
             first,
             self.last_name[0].upper(),

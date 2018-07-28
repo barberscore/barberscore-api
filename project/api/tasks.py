@@ -880,8 +880,35 @@ def create_sa_report(round):
     ).distinct(
     ).order_by(
         'category',
+        'kind',
         'person__last_name',
+        'person__nick_name',
+        'person__first_name',
     )
+    mo_count = panelists.filter(
+        category=Panelist.CATEGORY.music,
+        kind=Panelist.KIND.official,
+    ).count()
+    po_count = panelists.filter(
+        category=Panelist.CATEGORY.performance,
+        kind=Panelist.KIND.official,
+    ).count()
+    so_count = panelists.filter(
+        category=Panelist.CATEGORY.singing,
+        kind=Panelist.KIND.official,
+    ).count()
+    mp_count = panelists.filter(
+        category=Panelist.CATEGORY.music,
+        kind=Panelist.KIND.practice,
+    ).count()
+    pp_count = panelists.filter(
+        category=Panelist.CATEGORY.performance,
+        kind=Panelist.KIND.practice,
+    ).count()
+    sp_count = panelists.filter(
+        category=Panelist.CATEGORY.singing,
+        kind=Panelist.KIND.practice,
+    ).count()
     competitors = round.session.competitors.filter(
         status=Competitor.STATUS.finished,
     ).select_related(
@@ -903,6 +930,12 @@ def create_sa_report(round):
         'round': round,
         'panelists': panelists,
         'competitors': competitors,
+        'mo_count': mo_count,
+        'po_count': po_count,
+        'so_count': so_count,
+        'mp_count': mp_count,
+        'pp_count': pp_count,
+        'sp_count': sp_count,
     }
     rendered = render_to_string('sa.html', context)
     file = pydf.generate_pdf(

@@ -70,12 +70,18 @@
     <section>
       {% regroup panelists by person as panelist_tuple %}
       <table class='table table-condensed'>
-        <!-- <colgroup>
-          <col span=6>
-          <col span=5 class='col-warning'>
-          <col span=5 class='col-success'>
-          <col span=5 class='col-info'>
-        </colgroup> -->
+        <colgroup>
+          <col span=3>
+          <col span=1 class='col-warning'>
+          <col span=1 class='col-success'>
+          <col span=1 class='col-info'>
+          <col span={{mo_count}} class='col-warning'>
+          <col span={{mp_count}}>
+          <col span={{po_count}} class='col-success'>
+          <col span={{pp_count}}>
+          <col span={{so_count}} class='col-info'>
+          <col span={{sp_count}}>
+        </colgroup>
         <thead>
           <tr>
             <th class='head_group'>Competitors</th>
