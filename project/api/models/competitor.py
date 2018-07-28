@@ -61,7 +61,7 @@ class Competitor(TimeStampedModel):
         default=False,
     )
 
-    mos = models.IntegerField(
+    pos = models.IntegerField(
         help_text='Actual Participants-on-Stage',
         null=True,
         blank=True,

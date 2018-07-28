@@ -73,7 +73,7 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    mos = models.IntegerField(
+    pos = models.IntegerField(
         help_text='Actual Participants-on-Stage',
         null=True,
         blank=True,
@@ -296,7 +296,7 @@ class Appearance(TimeStampedModel):
 
     # Appearance Conditions
     def can_verify(self):
-        if self.competitor.group.kind == self.competitor.group.KIND.chorus and not self.mos:
+        if self.competitor.group.kind == self.competitor.group.KIND.chorus and not self.pos:
             is_pos = False
         else:
             is_pos = True

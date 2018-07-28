@@ -99,7 +99,7 @@
                   {% if round.num == 1 %}
                     {% if is_multi %}
                       {% if competitor.group.get_kind_display == 'Chorus' %}
-                        <strong>Total</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.appearances.first.mos|default:'N/A'}})</span><br>
+                        <strong>Total</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.appearances.first.pos|default:'N/A'}})</span><br>
                       {% else %}
                         <strong>Total Points: {{competitor.tot_points}}</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
                       {% endif %}
@@ -108,7 +108,7 @@
                       {% endfor %}
                     {% else %}
                       {% if competitor.group.get_kind_display == 'Chorus' %}
-                        <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.appearances.first.mos|default:'N/A'}})</span><br>
+                        <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.appearances.first.pos|default:'N/A'}})</span><br>
                       {% else %}
                         <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
                       {% endif %}

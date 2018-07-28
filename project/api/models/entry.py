@@ -82,7 +82,7 @@ class Entry(TimeStampedModel):
         default='',
     )
 
-    mos = models.IntegerField(
+    pos = models.IntegerField(
         help_text='Estimated Participants-on-Stage',
         null=True,
         blank=True,
@@ -293,7 +293,7 @@ class Entry(TimeStampedModel):
         if self.group.kind == self.group.KIND.chorus:
             checklist.append(
                 all([
-                    self.mos,
+                    self.pos,
                     self.directors
                 ])
             )

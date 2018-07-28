@@ -28,7 +28,7 @@ Contests Selected:
 {% if entry.group.kind == entry.group.KIND.chorus %}
 Director(s): {{entry.directors|safe|default:"(No Director Specified)"}}
 
-Estimated Participants-on-Stage:  {{entry.mos|default:"(No Estimate Provided)"}}
+Estimated Participants-on-Stage:  {{entry.pos|default:"(No Estimate Provided)"}}
 
 {% endif %}
 Additional Notes/Requests:
@@ -40,7 +40,7 @@ as needed, then click the "Re-Submit" button. You can also communicate any infor
 or special requests to your DRCJ by using the Additional Notes text box.
 
 
-NOTE: Please do not mark or flag this email as spam or junk mail, just delete it. Notication emails are 
-sent to all 4 active quartet members (for quartets) and the designated Chapter Leaders (for choruses). 
-If you are no longer an active member of the quartet or a Chapter Leader of your chorus, just send 
+NOTE: Please do not mark or flag this email as spam or junk mail, just delete it. Notication emails are
+sent to all 4 active quartet members (for quartets) and the designated Chapter Leaders (for choruses).
+If you are no longer an active member of the quartet or a Chapter Leader of your chorus, just send
 your request to be removed within the BHS Member Center to: customerservice@barbershop.org.

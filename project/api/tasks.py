@@ -417,7 +417,7 @@ def create_drcj_report(session):
         repertory_count = entry.group.repertories.filter(
             status__gt=0,
         ).count()
-        participant_count = entry.mos
+        participant_count = entry.pos
         members = entry.group.members.filter(
             status__gt=0,
         )

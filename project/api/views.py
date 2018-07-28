@@ -869,13 +869,13 @@ class RoundViewSet(viewsets.ModelViewSet):
         ).order_by(
             '-tot_rank',
         )
-        mos = round.appearances.aggregate(sum=Sum('mos'))['sum']
+        pos = round.appearances.aggregate(sum=Sum('pos'))['sum']
         context = {
             'round': round,
             'appearances': appearances,
             'contests': contests,
             'competitors': competitors,
-            'mos': mos,
+            'pos': pos,
         }
         rendered = render_to_string('announcements.html', context)
         file = pydf.generate_pdf(rendered)
