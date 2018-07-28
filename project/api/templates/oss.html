@@ -86,7 +86,7 @@
                       Dir(s): {{competitor.entry.participants|default:"(No Director Specified)"}}<br>
                     {% else %}
                       {{competitor.entry.representing|default:"(Unknown)"}} ({{competitor.contestants|join:", "|default:"None"}})<br>
-                      {{competitor.members|join:", "|default:"(Unknown)"}}<br>
+                      {{competitor.entry.participants|default:"(No Members Specified)"}}<br>
                     {% endif %}
                     {% if round.num != 1 %}
                       {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}

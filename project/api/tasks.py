@@ -393,7 +393,7 @@ def create_drcj_report(session):
         'Lead',
         'Baritone',
         'Bass',
-        'Director(s)',
+        'Director/Participant(s)',
         'Award(s)',
         'Chapter(s)',
     ]
@@ -697,16 +697,6 @@ def create_oss_report(round, full=True):
             competitor.contestants = contestants
         else:
             competitor.contestants = ""
-        # Monkey Patch Members
-        if competitor.group.kind == competitor.group.KIND.quartet:
-            members = competitor.group.members.filter(
-                status__gt=0,
-            ).order_by('part')
-            members = [member.person.common_name for member in members]
-            if members:
-                competitor.members = members
-            else:
-                competitor.members = ""
     # Eval Only
     privates = round.session.competitors.filter(
         status=Competitor.STATUS.finished,

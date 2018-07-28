@@ -71,10 +71,7 @@
             {% if competitor.group.get_kind_display == 'Chorus' %}
               Director(s): {{ competitor.entry.participants }}
             {% else %}
-              Members:
-              {% for member in members %}
-                {{member.person.common_name|safe}}&nbsp;&nbsp;
-              {% endfor %}
+              Members: {{ competitor.entry.participants }}
             {% endif %}
         </div>
         </div>
