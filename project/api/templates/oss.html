@@ -83,7 +83,7 @@
                   <div class='smaller-font'>
                     {% if competitor.group.get_kind_display == 'Chorus' %}
                       {{competitor.group.parent.name|truncatechars_html:"50"}} [{{competitor.entry.representing|default:"Unknown"}}] ({{competitor.contestants|join:", "|default:"None"}})<br>
-                      Dir(s): {{competitor.entry.directors|default:"(No Director Specified)"}}<br>
+                      Dir(s): {{competitor.entry.participants|default:"(No Director Specified)"}}<br>
                     {% else %}
                       {{competitor.entry.representing|default:"(Unknown)"}} ({{competitor.contestants|join:", "|default:"None"}})<br>
                       {{competitor.members|join:", "|default:"(Unknown)"}}<br>

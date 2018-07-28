@@ -276,7 +276,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'draw',
             'seed',
             'prelim',
-            'directors',
+            'participants',
             'pos',
             'representing',
             'rank',

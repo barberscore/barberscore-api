@@ -76,7 +76,7 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
-    directors = models.CharField(
+    participants = models.CharField(
         max_length=255,
         blank=True,
         default='',
@@ -294,7 +294,7 @@ class Entry(TimeStampedModel):
             checklist.append(
                 all([
                     self.pos,
-                    self.directors
+                    self.participants
                 ])
             )
         # ensure they can't submit a private while competiting.

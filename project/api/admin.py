@@ -557,7 +557,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'draw',
         'prelim',
         'seed',
-        'directors',
+        'participants',
         'rank',
         'description',
         'notes',

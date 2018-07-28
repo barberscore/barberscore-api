@@ -424,7 +424,7 @@ def create_drcj_report(session):
         expiring_count = members.filter(
             person__current_through__lte=session.convention.close_date,
         ).count()
-        directors = entry.directors
+        participants = entry.participants
         awards_list = []
         contestants = entry.contestants.filter(
             status__gt=0,
@@ -494,7 +494,7 @@ def create_drcj_report(session):
             parts[2],
             parts[3],
             parts[4],
-            directors,
+            participants,
             awards,
             chapters,
         ]

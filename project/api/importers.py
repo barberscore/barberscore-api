@@ -1702,7 +1702,7 @@ def import_db_divisions(path):
 #             print role
 
 
-# def import_db_directors(path):
+# def import_db_participants(path):
 #     with open(path) as f:
 #         reader = csv.reader(f, skipinitialspace=True)
 #         next(reader)

@@ -69,7 +69,7 @@
             {% if competitor.tot_rank == 5 %}Fifth Place Bronze Medalist Quartet<br>{% endif %}
             -->
             {% if competitor.group.get_kind_display == 'Chorus' %}
-              Director(s): {{ competitor.entry.directors }}
+              Director(s): {{ competitor.entry.participants }}
             {% else %}
               Members:
               {% for member in members %}
