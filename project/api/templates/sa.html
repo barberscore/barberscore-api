@@ -102,7 +102,7 @@
                 {{competitor.group.name}}&nbsp;({{competitor.entry.representing}})<br>
                 {% if competitor.appearances.count == 1 %}
                   {% for appearance in competitor.appearances.all %}
-                      {{appearance.round.get_kind_display|slice:":1"}}:{{appearance.num}}&nbsp;<strong>{{competitor.tot_rank|default:"N/A"}}</strong> {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
+                      <strong>{{competitor.tot_rank|default:"N/A"}}</strong> {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}}) {{appearance.round.get_kind_display|slice:":1"}}:{{appearance.num}}<br>
                   {% endfor %}
                   {% else %}
                     <strong>{{competitor.tot_rank|default:"N/A"}}</strong> {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})<br>
@@ -129,20 +129,23 @@
               </td>
               <td class='text-right'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {{appearance.mus_rank|default_if_none:""}}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                      {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
+                    {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
                   {% endfor %}
                 {% endfor %}
               </td>
               <td class='text-right'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {{appearance.per_rank|default_if_none:""}}
                   {% for song in appearance.songs.all|dictsort:'num' %}
-                      {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
+                       {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
                   {% endfor %}
                 {% endfor %}
               </td>
               <td class='text-right'>
                 {% for appearance in competitor.appearances.all|dictsort:'num' %}
+                  {{appearance.sng_rank|default_if_none:""}}
                   {% for song in appearance.songs.all|dictsort:'num' %}
                       {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
                   {% endfor %}
@@ -155,9 +158,9 @@
                       {% for score in song.scores.all %}
                         {% if score.panelist.person == item.grouper %}
                           {% if score.is_flagged %}
-                            <strong>{{score.points}}</strong><br>
+                            <strong>{{score.points|default_if_none:""}}</strong><br>
                           {% else %}
-                            {{score.points}}<br>
+                            {{score.points|default_if_none:""}}<br>
                           {% endif %}
                         {% endif %}
                       {% endfor %}
