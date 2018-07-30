@@ -286,23 +286,67 @@ class Round(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         Assignment = apps.get_model('api.assignment')
-        # build the panel
-        i = 0
+        # Build the panel
+        # First, create all CAs (no num)
         assignments = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
-            category__gte=Assignment.CATEGORY.ca,
+            category=Assignment.CATEGORY.ca,
+            kind__in=[
+                Assignment.KIND.official,
+                Assignment.KIND.practice,
+            ]
+        ).order_by(
+            'kind',
+            'person__last_name',
+            'person__nick_name',
+            'person__first_name',
         )
         for assignment in assignments:
-            if assignment.category == Assignment.CATEGORY.ca:
-                num = None
-            else:
-                i += 1
-                num = i
             self.panelists.create(
                 kind=assignment.kind,
                 category=assignment.category,
                 person=assignment.person,
-                num=num,
+                num=None,
+            )
+        # Next, create Official Panel
+        assignments = self.session.convention.assignments.filter(
+            status=Assignment.STATUS.active,
+            category__gt=Assignment.CATEGORY.ca,
+            kind=Assignment.KIND.official,
+        ).order_by(
+            'category',
+            'person__last_name',
+            'person__nick_name',
+            'person__first_name',
+        )
+        i = 0
+        for assignment in assignments:
+            i += 1
+            self.panelists.create(
+                kind=assignment.kind,
+                category=assignment.category,
+                person=assignment.person,
+                num=i,
+            )
+        # Finally, create Practice Panel
+        assignments = self.session.convention.assignments.filter(
+            status=Assignment.STATUS.active,
+            category__gt=Assignment.CATEGORY.ca,
+            kind=Assignment.KIND.practice,
+        ).order_by(
+            'category',
+            'person__last_name',
+            'person__nick_name',
+            'person__first_name',
+        )
+        i = 50
+        for assignment in assignments:
+            i += 1
+            self.panelists.create(
+                kind=assignment.kind,
+                category=assignment.category,
+                person=assignment.person,
+                num=i,
             )
         # build the appearances
         Competitor = apps.get_model('api.competitor')
