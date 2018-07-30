@@ -246,6 +246,14 @@ class Round(TimeStampedModel):
 
 
     # Methods
+    def reset(self):
+        panelists = self.panelists.all()
+        appearances = self.appearances.all()
+        panelists.delete()
+        appearances.delete()
+        self.status = self.STATUS.new
+        self.save()
+        return
 
     # Round Conditions
     def can_build(self):
