@@ -246,13 +246,17 @@ class Round(TimeStampedModel):
 
 
     # Methods
-    def reset(self):
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.new,
+    )
+    def reset(self, *args, **kwargs):
         panelists = self.panelists.all()
         appearances = self.appearances.all()
         panelists.delete()
         appearances.delete()
-        self.status = self.STATUS.new
-        self.save()
         return
 
     # Round Conditions
@@ -260,6 +264,19 @@ class Round(TimeStampedModel):
         return True
 
     # Round Transitions
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.new,
+    )
+    def reset(self, *args, **kwargs):
+        panelists = self.panelists.all()
+        appearances = self.appearances.all()
+        panelists.delete()
+        appearances.delete()
+        return
+
     @fsm_log_by
     @transition(
         field=status,
