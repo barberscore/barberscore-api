@@ -642,12 +642,12 @@ def create_variance_report(appearance):
         'scores': scores,
         'panelists': panelists,
     }
-    rendered = render_to_string('variance_copy.html', context)
+    rendered = render_to_string('variance.html', context)
     file = pydf.generate_pdf(rendered, enable_smart_shrinking=False)
     content = ContentFile(file)
     appearance.variance_report.save(
         "{0}-variance-report".format(
-            appearance.id,
+            slugify(appearance.competitor.group.name),
         ),
         content,
     )
