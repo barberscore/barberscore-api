@@ -733,8 +733,11 @@ def create_oss_report(round, full=True):
         '-is_primary',
         'award__tree_sort',
     )
-    # Determine Primaryrimary
-    primary = contests.get(is_primary=True)
+    # Determine Primary (if present)
+    try:
+        primary = contests.get(is_primary=True)
+    except Contest.DoesNotExist:
+        primary = None
     # MonkeyPatch qualifiers
     for contest in contests:
         if round.num == contest.award.rounds:

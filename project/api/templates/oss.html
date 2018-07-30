@@ -170,6 +170,8 @@
               <td colspan=6>
                 {% if primary %}
                   Rank is determined with respect to the {{primary.award.name}}.<br>
+                {% else %}
+                  There is no primary award; therefore, Rank is not provided.<br>
                 {% endif %}
                 {% if privates %}
                   The following groups sang for Evaluation-Only: {{privates|join:", "}}
@@ -207,7 +209,7 @@
             <h5>Awards</h5>
             <ul class='list-unstyled'>
               {% for contest in contests %}
-                <li>{{contest.num}}) {{contest.award.name}}: {{contest.detail}}</li>
+                <li><strong>{{contest.num}}) {{contest.award.name}}:</strong> {{contest.detail}}</li>
               {% endfor %}
             </ul>
           </div>
