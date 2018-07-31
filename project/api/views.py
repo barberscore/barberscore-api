@@ -92,6 +92,7 @@ from .tasks import create_chart_report
 from .tasks import create_csa_report
 from .tasks import create_oss_report
 from .tasks import create_sa_report
+from .tasks import create_sung_report
 
 
 log = logging.getLogger(__name__)
@@ -921,6 +922,40 @@ class RoundViewSet(viewsets.ModelViewSet):
         ).get(pk=pk)
         pdf = create_oss_report(round, full=False)
         file_name = '{0}-oss'.format(
+            slugify(
+                "{0} {1} {2} Round".format(
+                    round.session.convention.name,
+                    round.session.get_kind_display(),
+                    round.get_kind_display(),
+                )
+            )
+        )
+        # return Response(
+        #     pdf,
+        #     template_name='oss.html',
+        # )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            # TemplateHTMLRenderer,
+            PDFRenderer,
+        ],
+        permission_classes=[AllowAny],
+    )
+    def sung(self, request, pk=None):
+        round = Round.objects.prefetch_related(
+            'appearances',
+        ).get(pk=pk)
+        pdf = create_sung_report(round)
+        file_name = '{0}-sung-report'.format(
             slugify(
                 "{0} {1} {2} Round".format(
                     round.session.convention.name,

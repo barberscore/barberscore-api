@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <style type="text/css">
+    </style>
+  </head>
+  <body>
+    <section>
+      <h2>
+        <strong>{{round}}</strong>
+      </h2>
+      <h4>
+        Songs Sung Report
+      </h4>
+    </section>
+    <section>
+      <ul class='list-styled'>
+        {% for appearance in appearances %}
+          <li><strong>OA {{appearance.num}}: {{appearance.competitor.group.name}}</strong></li>
+          <ul class='list-styled'>
+            {% for sung in appearance.sungs %}
+              <li>{{sung}}</li>
+            {% endfor %}
+          </ul>
+        {% endfor %}
+      </ul>
+    </section>
+  </body>
+</html>

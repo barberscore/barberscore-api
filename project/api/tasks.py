@@ -656,6 +656,48 @@ def create_variance_report(appearance):
 
 
 @job
+def create_sung_report(round):
+    Song = apps.get_model('api.song')
+    prior_rounds = round.session.rounds.filter(
+        num__lt=round.num,
+    )
+    appearances = round.appearances.order_by(
+        'num',
+    )
+    for appearance in appearances:
+        songs = Song.objects.filter(
+            appearance__competitor=appearance.competitor
+        ).distinct().order_by(
+            'appearance__round__num',
+            'num',
+        )
+        sungs = []
+        for song in songs:
+            row = "{0} Song {1}: {2}".format(
+                song.appearance.round.get_kind_display(),
+                song.num,
+                song.chart.nomen,
+            )
+            sungs.append(row)
+        appearance.sungs = sungs
+
+    context = {
+        'appearances': appearances,
+        'round': round,
+    }
+    rendered = render_to_string('sung.html', context)
+    file = pydf.generate_pdf(
+        rendered,
+        page_size='Letter',
+        orientation='Portrait',
+        margin_top='5mm',
+        margin_bottom='5mm',
+    )
+    content = ContentFile(file)
+    return content
+
+
+@job
 def create_oss_report(round, full=True):
     Competitor = apps.get_model('api.competitor')
     Contest = apps.get_model('api.contest')
