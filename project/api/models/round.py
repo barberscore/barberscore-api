@@ -95,6 +95,13 @@ class Round(TimeStampedModel):
     )
 
     @cached_property
+    def sung(self):
+        return reverse(
+            'round-sung',
+            args=[str(self.id)]
+        )
+
+    @cached_property
     def announcements(self):
         return reverse(
             'round-announcements',

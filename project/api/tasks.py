@@ -658,15 +658,14 @@ def create_variance_report(appearance):
 @job
 def create_sung_report(round):
     Song = apps.get_model('api.song')
-    prior_rounds = round.session.rounds.filter(
-        num__lt=round.num,
-    )
-    appearances = round.appearances.order_by(
-        'num',
+    appearances = round.appearances.filter(
+        draw__isnull=False,
+    ).order_by(
+        'draw',
     )
     for appearance in appearances:
         songs = Song.objects.filter(
-            appearance__competitor=appearance.competitor
+            appearance__competitor=appearance.competitor,
         ).distinct().order_by(
             'appearance__round__num',
             'num',

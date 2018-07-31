@@ -9,22 +9,24 @@
   </head>
   <body>
     <section>
-      <h2>
+      <h3>
         <strong>{{round}}</strong>
-      </h2>
+      </h3>
       <h4>
-        Songs Sung Report
+        Songs Sung Report for those in Draw for Next Round
       </h4>
     </section>
     <section>
       <ul class='list-styled'>
         {% for appearance in appearances %}
-          <li><strong>OA {{appearance.num}}: {{appearance.competitor.group.name}}</strong></li>
+          <li><strong>Draw {{appearance.draw}}: {{appearance.competitor.group.name}}</strong></li>
           <ul class='list-styled'>
             {% for sung in appearance.sungs %}
               <li>{{sung}}</li>
             {% endfor %}
           </ul>
+        {% empty %}
+          (No Competitors in Draw for Next Round)
         {% endfor %}
       </ul>
     </section>
