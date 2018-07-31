@@ -182,7 +182,7 @@ class Session(TimeStampedModel):
             is_ranked=True,
         ).order_by('-tot_points')
         points = [x.tot_points for x in competitors]
-        ranked = Ranking(points, start=1)
+        ranked = Ranking(points, strategy='ORDINAL', start=1)
         for competitor in competitors:
             competitor.tot_rank = ranked.rank(competitor.tot_points)
             competitor.save()
@@ -301,7 +301,9 @@ class Session(TimeStampedModel):
         for i in range(self.num_rounds):
             num = i + 1
             kind = self.num_rounds - i
-            if kind == 1:
+            if num == 1:
+                spots = 10
+            elif num == 2 and kind !=1:
                 spots = 10
             else:
                 spots = None

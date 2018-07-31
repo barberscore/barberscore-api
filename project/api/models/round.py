@@ -147,7 +147,7 @@ class Round(TimeStampedModel):
             competitor__is_ranked=True,
         ).order_by('-tot_points')
         points = [x.tot_points for x in appearances]
-        ranked = Ranking(points, start=1)
+        ranked = Ranking(points, strategy='ORDINAL', start=1)
         for appearance in appearances:
             appearance.tot_rank = ranked.rank(appearance.tot_points)
             appearance.save()
@@ -182,7 +182,7 @@ class Round(TimeStampedModel):
             appearance__competitor__is_ranked=True,
         ).order_by('-tot_points')
         points = [x.tot_points for x in songs]
-        ranked = Ranking(points, start=1)
+        ranked = Ranking(points, strategy='ORDINAL', start=1)
         for song in songs:
             song.tot_rank = ranked.rank(song.tot_points)
             song.save()
@@ -412,16 +412,16 @@ class Round(TimeStampedModel):
         Competitor = apps.get_model('api.competitor')
         Contestant = apps.get_model('api.contestant')
         # If re-verifying, simply re-draw
-        if self.status == self.STATUS.verified:
-            appearances = self.appearances.filter(
-                competitor__status__gt=0,
-            ).order_by('?')
-            i = 1
-            for appearance in appearances:
-                appearance.draw = i
-                appearance.save()
-                i += 1
-            return
+        # if self.status == self.STATUS.verified:
+        #     appearances = self.appearances.filter(
+        #         competitor__status__gt=0,
+        #     ).order_by('?')
+        #     i = 1
+        #     for appearance in appearances:
+        #         appearance.draw = i
+        #         appearance.save()
+        #         i += 1
+        #     return
 
         # First, calculate all denormalized scores.
         self.session.calculate()
@@ -450,7 +450,7 @@ class Round(TimeStampedModel):
             return
 
         # Get spots available
-        spots = self.session.rounds.get(num=self.num + 1).spots
+        spots = self.spots
 
         # get primary contest
         contest = self.session.contests.get(is_primary=True)
