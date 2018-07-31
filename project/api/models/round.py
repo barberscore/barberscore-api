@@ -145,7 +145,8 @@ class Round(TimeStampedModel):
     def rank(self):
         appearances = self.appearances.filter(
             competitor__is_ranked=True,
-        ).order_by('-tot_points')
+            competitor__status__gt=0,
+        ).distinct().order_by('-tot_points')
         points = [x.tot_points for x in appearances]
         ranked = Ranking(points, strategy='ORDINAL', start=1)
         for appearance in appearances:
@@ -153,7 +154,8 @@ class Round(TimeStampedModel):
             appearance.save()
         appearances = self.appearances.filter(
             competitor__is_ranked=True,
-        ).order_by('-mus_points')
+            competitor__status__gt=0,
+        ).distinct().order_by('-mus_points')
         points = [x.mus_points for x in appearances]
         ranked = Ranking(points, start=1)
         for appearance in appearances:
@@ -161,7 +163,8 @@ class Round(TimeStampedModel):
             appearance.save()
         appearances = self.appearances.filter(
             competitor__is_ranked=True,
-        ).order_by('-per_points')
+            competitor__status__gt=0,
+        ).distinct().order_by('-per_points')
         points = [x.per_points for x in appearances]
         ranked = Ranking(points, start=1)
         for appearance in appearances:
@@ -169,7 +172,8 @@ class Round(TimeStampedModel):
             appearance.save()
         appearances = self.appearances.filter(
             competitor__is_ranked=True,
-        ).order_by('-sng_points')
+            competitor__status__gt=0,
+        ).distinct().order_by('-sng_points')
         points = [x.sng_points for x in appearances]
         ranked = Ranking(points, start=1)
         for appearance in appearances:
@@ -180,7 +184,8 @@ class Round(TimeStampedModel):
         songs = Song.objects.filter(
             appearance__round=self,
             appearance__competitor__is_ranked=True,
-        ).order_by('-tot_points')
+            appearance__competitor__status__gt=0,
+        ).distinct().order_by('-tot_points')
         points = [x.tot_points for x in songs]
         ranked = Ranking(points, strategy='ORDINAL', start=1)
         for song in songs:
@@ -189,7 +194,8 @@ class Round(TimeStampedModel):
         songs = Song.objects.filter(
             appearance__round=self,
             appearance__competitor__is_ranked=True,
-        ).order_by('-mus_points')
+            appearance__competitor__status__gt=0,
+        ).distinct().order_by('-mus_points')
         points = [x.mus_points for x in songs]
         ranked = Ranking(points, start=1)
         for song in songs:
@@ -198,7 +204,8 @@ class Round(TimeStampedModel):
         songs = Song.objects.filter(
             appearance__round=self,
             appearance__competitor__is_ranked=True,
-        ).order_by('-per_points')
+            appearance__competitor__status__gt=0,
+        ).distinct().order_by('-per_points')
         points = [x.per_points for x in songs]
         ranked = Ranking(points, start=1)
         for song in songs:
@@ -207,7 +214,8 @@ class Round(TimeStampedModel):
         songs = Song.objects.filter(
             appearance__round=self,
             appearance__competitor__is_ranked=True,
-        ).order_by('-sng_points')
+            appearance__competitor__status__gt=0,
+        ).distinct().order_by('-sng_points')
         points = [x.sng_points for x in songs]
         ranked = Ranking(points, start=1)
         for song in songs:

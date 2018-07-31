@@ -180,7 +180,8 @@ class Session(TimeStampedModel):
     def rank(self):
         competitors = self.competitors.filter(
             is_ranked=True,
-        ).order_by('-tot_points')
+            status__gt=0,
+        ).distinct().order_by('-tot_points')
         points = [x.tot_points for x in competitors]
         ranked = Ranking(points, strategy='ORDINAL', start=1)
         for competitor in competitors:
@@ -188,7 +189,8 @@ class Session(TimeStampedModel):
             competitor.save()
         competitors = self.competitors.filter(
             is_ranked=True,
-        ).order_by('-mus_points')
+            status__gt=0,
+        ).distinct().order_by('-mus_points')
         points = [x.mus_points for x in competitors]
         ranked = Ranking(points, start=1)
         for competitor in competitors:
@@ -196,7 +198,8 @@ class Session(TimeStampedModel):
             competitor.save()
         competitors = self.competitors.filter(
             is_ranked=True,
-        ).order_by('-per_points')
+            status__gt=0,
+        ).distinct().order_by('-per_points')
         points = [x.per_points for x in competitors]
         ranked = Ranking(points, start=1)
         for competitor in competitors:
@@ -204,7 +207,8 @@ class Session(TimeStampedModel):
             competitor.save()
         competitors = self.competitors.filter(
             is_ranked=True,
-        ).order_by('-sng_points')
+            status__gt=0,
+        ).distinct().order_by('-sng_points')
         points = [x.sng_points for x in competitors]
         ranked = Ranking(points, start=1)
         for competitor in competitors:
