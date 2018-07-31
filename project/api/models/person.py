@@ -348,9 +348,10 @@ class Person(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
+        user = getattr(self, 'user', None)
         return any([
             all([
-                self.user == request.user,
+                user == request.user,
                 self.status > 0,
                 self.mc_pk == None,
             ]),
