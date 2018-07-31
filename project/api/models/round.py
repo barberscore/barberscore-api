@@ -260,8 +260,13 @@ class Round(TimeStampedModel):
         target=STATUS.new,
     )
     def reset(self, *args, **kwargs):
+        Grid = apps.get_model('api.grid')
         panelists = self.panelists.all()
         appearances = self.appearances.all()
+        grids = Grid.objects.filter(
+            appearance__in=appearances,
+        )
+        grids.update(appearance=None)
         panelists.delete()
         appearances.delete()
         return
