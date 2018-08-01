@@ -301,10 +301,11 @@ class Round(TimeStampedModel):
             kind__in=[
                 Assignment.KIND.official,
                 Assignment.KIND.practice,
-            ]
+            ],
+            category__gte=Assignment.CATEGORY.ca,
         ).order_by(
             'kind',
-            'category'
+            'category',
             'person__last_name',
             'person__nick_name',
             'person__first_name',
@@ -359,6 +360,7 @@ class Round(TimeStampedModel):
         # Number the official panelists
         officials = self.panelists.filter(
             kind=Panelist.KIND.official,
+            category__gt=Panelist.CATEGORY.ca,
         ).order_by(
             'category',
             'person__last_name',
@@ -372,7 +374,8 @@ class Round(TimeStampedModel):
             official.save()
         # Number the practice panelists
         practices = self.panelists.filter(
-            kind=Panelist.KIND.official,
+            kind=Panelist.KIND.practice,
+            category__gt=Panelist.CATEGORY.ca,
         ).order_by(
             'category',
             'person__last_name',
