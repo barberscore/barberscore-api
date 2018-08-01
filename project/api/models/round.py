@@ -298,13 +298,13 @@ class Round(TimeStampedModel):
         # First, create all CAs (no num)
         assignments = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
-            category=Assignment.CATEGORY.ca,
             kind__in=[
                 Assignment.KIND.official,
                 Assignment.KIND.practice,
             ]
         ).order_by(
             'kind',
+            'category'
             'person__last_name',
             'person__nick_name',
             'person__first_name',
@@ -314,47 +314,6 @@ class Round(TimeStampedModel):
                 kind=assignment.kind,
                 category=assignment.category,
                 person=assignment.person,
-                num=None,
-            )
-        # Next, create Official Panel
-        assignments = self.session.convention.assignments.filter(
-            status=Assignment.STATUS.active,
-            category__gt=Assignment.CATEGORY.ca,
-            kind=Assignment.KIND.official,
-        ).order_by(
-            'category',
-            'person__last_name',
-            'person__nick_name',
-            'person__first_name',
-        )
-        i = 0
-        for assignment in assignments:
-            i += 1
-            self.panelists.create(
-                kind=assignment.kind,
-                category=assignment.category,
-                person=assignment.person,
-                num=i,
-            )
-        # Finally, create Practice Panel
-        assignments = self.session.convention.assignments.filter(
-            status=Assignment.STATUS.active,
-            category__gt=Assignment.CATEGORY.ca,
-            kind=Assignment.KIND.practice,
-        ).order_by(
-            'category',
-            'person__last_name',
-            'person__nick_name',
-            'person__first_name',
-        )
-        i = 50
-        for assignment in assignments:
-            i += 1
-            self.panelists.create(
-                kind=assignment.kind,
-                category=assignment.category,
-                person=assignment.person,
-                num=i,
             )
         # build the appearances
         Competitor = apps.get_model('api.competitor')
@@ -396,6 +355,36 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.built], target=STATUS.started)
     def start(self, *args, **kwargs):
+        Panelist = apps.get_model('api.panelist')
+        # Number the official panelists
+        officials = self.panelists.filter(
+            kind=Panelist.KIND.official,
+        ).order_by(
+            'category',
+            'person__last_name',
+            'person__nick_name',
+            'person__first_name',
+        )
+        i = 0
+        for official in officials:
+            i += 1
+            official.num = i
+            official.save()
+        # Number the practice panelists
+        practices = self.panelists.filter(
+            kind=Panelist.KIND.official,
+        ).order_by(
+            'category',
+            'person__last_name',
+            'person__nick_name',
+            'person__first_name',
+        )
+        i = 50
+        for practice in practices:
+            i += 1
+            practice.num = i
+            practice.save()
+        # Build the appearances
         appearances = self.appearances.all()
         for appearance in appearances:
             appearance.build()
