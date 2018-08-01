@@ -12,6 +12,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps
 from django.db import models
 from django.utils.functional import cached_property
+from django.core.exceptions import ValidationError
 
 
 log = logging.getLogger(__name__)
@@ -109,6 +110,24 @@ class Panelist(TimeStampedModel):
 
     def __str__(self):
         return str(self.id)
+
+    def clean(self):
+        if self.kind > self.KIND.practice:
+            raise ValidationError(
+                {'category': 'Panel may only contain Official and Practice'}
+            )
+        if self.num and self.num > 50 and self.kind == self.KIND.official:
+            raise ValidationError(
+                {'num': 'Official Num must be less than 50'}
+            )
+        if self.num and self.num <= 50 and self.kind == self.KIND.practice:
+            raise ValidationError(
+                {'num': 'Practice Num must be greater than 50'}
+            )
+        if self.num and self.num and self.category == self.CATEGORY.ca:
+            raise ValidationError(
+                {'num': 'CAs must not have a num.'}
+            )
 
     # Permissions
     @staticmethod
