@@ -261,6 +261,12 @@ class Round(TimeStampedModel):
 
 
     # Methods
+
+    # Round Conditions
+    def can_build(self):
+        return True
+
+    # Round Transitions
     @fsm_log_by
     @transition(
         field=status,
@@ -275,24 +281,6 @@ class Round(TimeStampedModel):
             appearance__in=appearances,
         )
         grids.update(appearance=None)
-        panelists.delete()
-        appearances.delete()
-        return
-
-    # Round Conditions
-    def can_build(self):
-        return True
-
-    # Round Transitions
-    @fsm_log_by
-    @transition(
-        field=status,
-        source='*',
-        target=STATUS.new,
-    )
-    def reset(self, *args, **kwargs):
-        panelists = self.panelists.all()
-        appearances = self.appearances.all()
         panelists.delete()
         appearances.delete()
         return
@@ -394,9 +382,9 @@ class Round(TimeStampedModel):
             mt = self.session.competitors.filter(
                 status=Competitor.STATUS.finished,
             ).order_by(
-                'tot_rank',
-                '-tot_sng',
-                '-tot_per',
+                '-tot_points',
+                '-sng_points',
+                '-per_points',
             ).first()
             self.appearances.create(
                 competitor=mt,
