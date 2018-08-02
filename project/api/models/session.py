@@ -161,22 +161,6 @@ class Session(TimeStampedModel):
             )
 
     # Methods
-    def calculate(self):
-        competitors = self.competitors.filter(
-            status__gt=0,
-        )
-        for competitor in competitors:
-            for appearance in competitor.appearances.all():
-                for song in appearance.songs.all():
-                    song.calculate()
-                    song.save()
-                appearance.calculate()
-                appearance.save()
-            competitor.calculate()
-            competitor.save()
-        return
-
-
     def rank(self):
         competitors = self.competitors.filter(
             is_ranked=True,

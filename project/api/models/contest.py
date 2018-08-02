@@ -142,11 +142,9 @@ class Contest(TimeStampedModel):
             return
         contestants = self.contestants.filter(
             status__gt=0,
-            entry__competitor__status__gt=0,
         ).order_by(
             '-entry__competitor__tot_points',
             '-entry__competitor__sng_points',
-            '-entry__competitor__mus_points',
             '-entry__competitor__per_points',
         )
         if contestants:
