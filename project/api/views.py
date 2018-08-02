@@ -25,6 +25,7 @@ from .backends import CoalesceFilterBackend
 from .filters import AssignmentFilter
 from .filters import ConventionFilter
 from .filters import GroupFilter
+from .filters import MemberFilter
 from .filters import OfficerFilter
 from .filters import ScoreFilter
 from .filters import RoundFilter
@@ -563,7 +564,6 @@ class GroupViewSet(viewsets.ModelViewSet):
         'repertories',
     ).distinct()
     serializer_class = GroupSerializer
-    filter_class = GroupFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -613,6 +613,7 @@ class MemberViewSet(viewsets.ModelViewSet):
         'person',
     ).order_by('id')
     serializer_class = MemberSerializer
+    filter_class = MemberFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,

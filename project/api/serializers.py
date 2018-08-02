@@ -413,6 +413,8 @@ class MemberSerializer(serializers.ModelSerializer):
             'url',
             'status',
             'part',
+            'established_date',
+            'current_through',
             'group',
             'person',
             'permissions',
