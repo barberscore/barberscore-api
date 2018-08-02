@@ -236,6 +236,7 @@ class Contestant(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.is_session_manager,
+            request.user.is_round_manager,
             request.user.is_group_manager,
         ])
 
@@ -249,7 +250,7 @@ class Contestant(TimeStampedModel):
                     status__gt=0,
                     category__lte=10,
                 ),
-                self.contest.session.status < self.contest.session.STATUS.started,
+                # self.contest.session.status < self.contest.session.STATUS.started,
             ]),
             all([
                 self.entry.group.officers.filter(
