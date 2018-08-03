@@ -12,6 +12,7 @@ from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from ranking import Ranking
+from ranking import ORDINAL
 
 # Django
 from django.apps import apps
@@ -157,7 +158,7 @@ class Round(TimeStampedModel):
             competitor__status__gt=0,
         ).distinct().order_by('-tot_points')
         points = [x.tot_points for x in appearances]
-        ranked = Ranking(points, strategy='ORDINAL', start=1)
+        ranked = Ranking(points, strategy=ORDINAL, start=1)
         for appearance in appearances:
             appearance.tot_rank = ranked.rank(appearance.tot_points)
             appearance.save()
@@ -196,7 +197,7 @@ class Round(TimeStampedModel):
             appearance__competitor__status__gt=0,
         ).distinct().order_by('-tot_points')
         points = [x.tot_points for x in songs]
-        ranked = Ranking(points, strategy='ORDINAL', start=1)
+        ranked = Ranking(points, strategy=ORDINAL, start=1)
         for song in songs:
             song.tot_rank = ranked.rank(song.tot_points)
             song.save()

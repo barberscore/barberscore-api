@@ -12,6 +12,7 @@ from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from ranking import Ranking
+from ranking import ORDINAL
 from django.core.exceptions import ValidationError
 
 # Django
@@ -167,7 +168,7 @@ class Session(TimeStampedModel):
             status__gt=0,
         ).distinct().order_by('-tot_points')
         points = [x.tot_points for x in competitors]
-        ranked = Ranking(points, strategy='ORDINAL', start=1)
+        ranked = Ranking(points, strategy=ORDINAL, start=1)
         for competitor in competitors:
             competitor.tot_rank = ranked.rank(competitor.tot_points)
             competitor.save()
