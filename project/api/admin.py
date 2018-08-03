@@ -1131,6 +1131,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
+        'common_name',
         'email',
         'phone',
         # 'mc_pk',
@@ -1152,6 +1153,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'id',
         'is_mc',
+        'common_name',
         # 'current_through',
         'created',
         'modified',
@@ -1182,6 +1184,10 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         StateLogInline,
     ]
 
+    ordering = [
+        'last_name',
+        'first_name',
+    ]
     # readonly_fields = [
     #     'common_name',
     # ]
