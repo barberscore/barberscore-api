@@ -1164,6 +1164,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     search_fields = [
         'last_name',
         'first_name',
+        'nick_name',
         'bhs_id',
         'email',
     ]

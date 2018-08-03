@@ -16,7 +16,7 @@ from django.db.models import F
 from django.db.models import CharField
 from django.db.models import Value
 from django.forms.models import model_to_dict
-from django.utils.timezone import now
+from django.utils.timezone import now, localdate
 from api.tasks import get_accounts
 from api.tasks import update_account
 from api.tasks import delete_account
@@ -371,17 +371,24 @@ class MemberManager(Manager):
             return
 
         # Set variables
-        status = getattr(
-            self.model.STATUS,
-            sub_status if sub_status else '',
-            self.model.STATUS.inactive,
-        )
-
         sub_status = getattr(
             self.model.SUB_STATUS,
             sub_status if sub_status else '',
             None,
         )
+
+        # Set status
+        is_active = all([
+            any([
+                inactive_date is None,
+                inactive_date > localdate(),
+            ]),
+            sub_status == self.model.SUB_STATUS.active,
+        ])
+        if is_active:
+            status = self.model.STATUS.active
+        else:
+            status = self.model.STATUS.inactive
 
         part = getattr(
             self.model.PART,
