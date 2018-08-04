@@ -8,6 +8,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from django.contrib.contenttypes.fields import GenericRelation
 
 
 # Django
@@ -19,6 +20,7 @@ from django.utils.functional import cached_property
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
 from django_fsm_log.decorators import fsm_log_description
+from django_fsm_log.models import StateLog
 
 # First-Party
 from api.managers import PersonManager
@@ -251,6 +253,12 @@ class Person(TimeStampedModel):
         null=True,
         blank=True,
         editable=True,
+    )
+
+    # Relations
+    logs = GenericRelation(
+        StateLog,
+        related_query_name='persons',
     )
 
     # Properties

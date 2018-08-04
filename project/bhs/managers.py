@@ -1,5 +1,6 @@
 from django.db.models import Manager
 from django.apps import apps
+from django_fsm_log.models import StateLog
 import django_rq
 
 
@@ -29,6 +30,11 @@ class HumanManager(Manager):
             'primary_voice_part',
             'is_deceased',
         )
+
+        # Clear log if resetting
+        # logs = StateLog.objects.filter(
+        #     content_type__model='person',
+        # )
 
         # Creating/Update Persons
         Person = apps.get_model('api.person')

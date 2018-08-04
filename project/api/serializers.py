@@ -33,6 +33,19 @@ from .models import User
 from .models import Venue
 
 
+class StateLogSerializer(serializers.ModelSerializer):
+    entries = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    class Meta:
+        model = StateLog
+        fields = (
+            'timestamp',
+            'object_id',
+            'transition',
+            'description',
+            'entries',
+        )
+
+
 class AppearanceSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
@@ -264,6 +277,8 @@ class EntrySerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
     )
+    # logs = StateLogSerializer(many=True)
+    logs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Entry
@@ -299,6 +314,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'competitor',
             'contestants',
             'permissions',
+            'logs',
         )
 
     def validate(self, data):
@@ -730,8 +746,3 @@ class UserSerializer(serializers.ModelSerializer):
             'is_assignment_manager',
         ]
 
-class StateLogSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = StateLog
-        fields = '__all__'
