@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "46437b000716eb2fa1475b157078ed2d3a20d1158b2dc66d32bdc710377950ad"
+            "sha256": "3498281e93629e472e489ad945add74c460b276ed871e309005ee72b27b847e9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -255,6 +255,10 @@
             ],
             "index": "pypi",
             "version": "==1.2.4"
+        },
+        "django-fsm-log": {
+            "git": "https://github.com/barberscore/django-fsm-log.git",
+            "ref": "3488d0c01e3e8585596dd61de7ceb9f85274cbe4"
         },
         "django-model-utils": {
             "hashes": [
