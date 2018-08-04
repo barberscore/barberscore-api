@@ -378,13 +378,13 @@ class MemberManager(Manager):
         )
 
         # Set status
-        is_active = all([
-            any([
-                inactive_date is None,
+        if not inactive_date:
+            is_active = True
+        else:
+            is_active = all([
                 inactive_date > localdate(),
-            ]),
-            sub_status == self.model.SUB_STATUS.active,
-        ])
+                sub_status == self.model.SUB_STATUS.active,
+            ])
         if is_active:
             status = self.model.STATUS.active
         else:
