@@ -34,7 +34,7 @@ from .models import Venue
 
 
 class StateLogSerializer(serializers.ModelSerializer):
-    entries = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # entries = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     class Meta:
         model = StateLog
         fields = (
@@ -42,7 +42,7 @@ class StateLogSerializer(serializers.ModelSerializer):
             'object_id',
             'transition',
             'description',
-            'entries',
+            # 'entries',
         )
 
 
@@ -278,7 +278,7 @@ class EntrySerializer(serializers.ModelSerializer):
         allow_null=True,
     )
     # logs = StateLogSerializer(many=True)
-    logs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Entry
@@ -314,7 +314,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'competitor',
             'contestants',
             'permissions',
-            'logs',
+            'statelogs',
         )
 
     def validate(self, data):
