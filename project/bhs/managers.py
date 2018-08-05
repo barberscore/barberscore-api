@@ -129,7 +129,8 @@ class RoleManager(Manager):
             )
         # Order and Return as objects
         roles = roles.order_by(
-            'modified'
+            'modified',
+            'created',
         ).values_list(
             'id',
             'name',
@@ -168,6 +169,7 @@ class JoinManager(Manager):
         # Order and Return as objects
         joins = joins.order_by(
             'modified',
+            'created',
         ).values_list(
             'id',
             'structure__id',
