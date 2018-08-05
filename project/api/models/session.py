@@ -14,6 +14,8 @@ from model_utils.models import TimeStampedModel
 from ranking import Ranking
 from ranking import ORDINAL
 from django.core.exceptions import ValidationError
+from django_fsm_log.models import StateLog
+from django.contrib.contenttypes.fields import GenericRelation
 
 # Django
 from django.apps import apps
@@ -107,6 +109,12 @@ class Session(TimeStampedModel):
         'Convention',
         related_name='sessions',
         on_delete=models.CASCADE,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='sessions',
     )
 
     # Properties

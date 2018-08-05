@@ -13,6 +13,8 @@ from timezone_field import TimeZoneField
 # Django
 from django.apps import apps as api_apps
 from django.db import models
+from django_fsm_log.models import StateLog
+from django.contrib.contenttypes.fields import GenericRelation
 
 config = api_apps.get_app_config('api')
 
@@ -64,6 +66,12 @@ class Venue(TimeStampedModel):
         help_text="""
             The local timezone of the venue.""",
         blank=True,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='venues',
     )
 
     # Methods

@@ -256,7 +256,7 @@ class Person(TimeStampedModel):
     )
 
     # Relations
-    logs = GenericRelation(
+    statelogs = GenericRelation(
         StateLog,
         related_query_name='persons',
     )
