@@ -31,11 +31,6 @@ class HumanManager(Manager):
             'is_deceased',
         )
 
-        # Clear log if resetting
-        # logs = StateLog.objects.filter(
-        #     content_type__model='person',
-        # )
-
         # Creating/Update Persons
         Person = apps.get_model('api.person')
         for human in humans:
@@ -67,11 +62,18 @@ class StructureManager(Manager):
     def update_groups(self, cursor=None):
         # Get base
         structures = self.all()
-        # Filter if cursored
         if cursor:
+            # Filter if cursored
             structures = structures.filter(
                 modified__gt=cursor,
             )
+        else:
+            # Else clear logs
+            ss = StateLog.objects.filter(
+                content_type__model='group',
+                content_object__mc_pk__isnull=False,
+            )
+            ss.delete()
         # Return as objects
         structures = structures.select_related(
             'status',
@@ -133,9 +135,17 @@ class RoleManager(Manager):
             roles = roles.filter(
                 modified__gt=cursor,
             )
+        else:
+            # Else clear logs
+            ss = StateLog.objects.filter(
+                content_type__model='officer',
+                content_object__mc_pk__isnull=False,
+            )
+            ss.delete()
         # Order and Return as objects
         roles = roles.order_by(
             'modified'
+            'created',
         ).values_list(
             'id',
             'name',
@@ -171,9 +181,17 @@ class JoinManager(Manager):
             joins = joins.filter(
                 modified__gt=cursor,
             )
+        else:
+            # Else clear logs
+            ss = StateLog.objects.filter(
+                content_type__model='member',
+                content_object__mc_pk__isnull=False,
+            )
+            ss.delete()
         # Order and Return as objects
         joins = joins.order_by(
             'modified',
+            'created',
         ).values_list(
             'id',
             'structure__id',
@@ -211,9 +229,17 @@ class SubscriptionManager(Manager):
             subscriptions = subscriptions.filter(
                 modified__gt=cursor,
             )
+        else:
+            # Else clear logs
+            ss = StateLog.objects.filter(
+                content_type__model='person',
+                content_object__mc_pk__isnull=False,
+            )
+            ss.delete()
         # Order and Return as objects
         subscriptions = subscriptions.order_by(
             'modified',
+            'created',
         ).values_list(
             'id',
             'human__id',
