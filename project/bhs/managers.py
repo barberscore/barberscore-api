@@ -71,7 +71,7 @@ class StructureManager(Manager):
             # Else clear logs
             ss = StateLog.objects.filter(
                 content_type__model='group',
-                content_object__mc_pk__isnull=False,
+                structures__mc_pk__isnull=False,
             )
             ss.delete()
         # Return as objects
@@ -139,12 +139,12 @@ class RoleManager(Manager):
             # Else clear logs
             ss = StateLog.objects.filter(
                 content_type__model='officer',
-                content_object__mc_pk__isnull=False,
+                officers__mc_pk__isnull=False,
             )
             ss.delete()
         # Order and Return as objects
         roles = roles.order_by(
-            'modified',
+            'modified'
             'created',
         ).values_list(
             'id',
@@ -185,7 +185,7 @@ class JoinManager(Manager):
             # Else clear logs
             ss = StateLog.objects.filter(
                 content_type__model='member',
-                content_object__mc_pk__isnull=False,
+                members__mc_pk__isnull=False,
             )
             ss.delete()
         # Order and Return as objects
@@ -233,7 +233,7 @@ class SubscriptionManager(Manager):
             # Else clear logs
             ss = StateLog.objects.filter(
                 content_type__model='person',
-                content_object__mc_pk__isnull=False,
+                persons__mc_pk__isnull=False,
             )
             ss.delete()
         # Order and Return as objects
@@ -256,3 +256,4 @@ class SubscriptionManager(Manager):
                 is_object=True,
             )
         return subscriptions.count()
+rn subscriptions.count()
