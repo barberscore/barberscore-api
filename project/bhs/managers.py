@@ -144,7 +144,7 @@ class RoleManager(Manager):
             ss.delete()
         # Order and Return as objects
         roles = roles.order_by(
-            'modified'
+            'modified',
             'created',
         ).values_list(
             'id',
