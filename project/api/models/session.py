@@ -94,12 +94,12 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-    oss_report = models.FileField(
+    oss = models.FileField(
         null=True,
         blank=True,
     )
 
-    sa_report = models.FileField(
+    sa = models.FileField(
         null=True,
         blank=True,
     )

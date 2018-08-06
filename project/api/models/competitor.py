@@ -139,7 +139,7 @@ class Competitor(TimeStampedModel):
         blank=True,
     )
 
-    csa_report = models.FileField(
+    csa = models.FileField(
         null=True,
         blank=True,
     )
@@ -287,7 +287,7 @@ class Competitor(TimeStampedModel):
         target=STATUS.started,
     )
     def start(self, *args, **kwargs):
-        self.csa_report.delete()
+        self.csa.delete()
         return
 
     @fsm_log_by

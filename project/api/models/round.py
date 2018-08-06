@@ -81,11 +81,11 @@ class Round(TimeStampedModel):
         blank=True,
     )
 
-    oss_report = models.FileField(
+    oss = models.FileField(
         null=True,
         blank=True,
     )
-    sa_report = models.FileField(
+    sa = models.FileField(
         null=True,
         blank=True,
     )
@@ -500,7 +500,7 @@ class Round(TimeStampedModel):
             next_round.build()
             next_round.save()
         content = create_oss_report(self, full=False)
-        self.oss_report.save(
+        self.oss.save(
             "{0}-oss".format(
                 self.id,
             ),
