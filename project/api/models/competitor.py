@@ -13,6 +13,8 @@ from model_utils.models import TimeStampedModel
 from ranking import Ranking
 from django.utils.functional import cached_property
 from django.urls import reverse
+from django_fsm_log.models import StateLog
+from django.contrib.contenttypes.fields import GenericRelation
 
 # Django
 from django.db import models
@@ -160,6 +162,12 @@ class Competitor(TimeStampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='competitors',
     )
 
     @cached_property

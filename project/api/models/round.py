@@ -13,6 +13,8 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from ranking import Ranking
 from ranking import ORDINAL
+from django_fsm_log.models import StateLog
+from django.contrib.contenttypes.fields import GenericRelation
 
 # Django
 from django.apps import apps
@@ -93,6 +95,12 @@ class Round(TimeStampedModel):
         'Session',
         related_name='rounds',
         on_delete=models.CASCADE,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='rounds',
     )
 
     @cached_property

@@ -529,7 +529,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     autocomplete_fields = [
         'session',
         'group',
-        'entry'
+        # 'entry'
     ]
 
     readonly_fields = (
@@ -656,7 +656,7 @@ class GridAdmin(admin.ModelAdmin):
     autocomplete_fields = [
         'round',
         'venue',
-        'appearance',
+        # 'appearance',
     ]
     ordering = [
         'round',
@@ -1560,7 +1560,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     ]
 
     autocomplete_fields = [
-        'person',
+        # 'person',
     ]
 
     list_filter = (

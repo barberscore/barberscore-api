@@ -10,6 +10,8 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from django_fsm_log.models import StateLog
+from django.contrib.contenttypes.fields import GenericRelation
 
 # Django
 from django.apps import apps as api_apps
@@ -75,6 +77,12 @@ class Assignment(TimeStampedModel):
         'Person',
         related_name='assignments',
         on_delete=models.CASCADE,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='assignments',
     )
 
     # Internals

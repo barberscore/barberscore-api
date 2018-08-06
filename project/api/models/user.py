@@ -18,6 +18,8 @@ from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
 from django_fsm_log.decorators import fsm_log_description
 # from api.tasks import update_or_create_account_from_user
+from django_fsm_log.models import StateLog
+from django.contrib.contenttypes.fields import GenericRelation
 
 # First-Party
 from api.managers import UserManager
@@ -76,6 +78,12 @@ class User(AbstractBaseUser):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='users',
     )
 
     objects = UserManager()

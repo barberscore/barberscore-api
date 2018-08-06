@@ -12,6 +12,8 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from ranking import Ranking
 from django.utils.functional import cached_property
+from django_fsm_log.models import StateLog
+from django.contrib.contenttypes.fields import GenericRelation
 
 # Django
 from django.db import models
@@ -174,6 +176,12 @@ class Appearance(TimeStampedModel):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='appearances',
     )
 
     @cached_property

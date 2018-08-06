@@ -10,6 +10,8 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from django_fsm_log.models import StateLog
+from django.contrib.contenttypes.fields import GenericRelation
 
 # Django
 from django.core.exceptions import ValidationError
@@ -184,6 +186,11 @@ class Entry(TimeStampedModel):
         'Group',
         related_name='entries',
         on_delete=models.CASCADE,
+    )
+
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='entries',
     )
 
     # Properties

@@ -12,6 +12,8 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from django_fsm_log.models import StateLog
+from django.contrib.contenttypes.fields import GenericRelation
 
 # Django
 from django.apps import apps
@@ -354,6 +356,12 @@ class Group(TimeStampedModel):
     is_senior = models.BooleanField(
         help_text="""Qualifies as a Senior Group.  This is set once, at creation.  If the group 'ages' into Senior status that needs to be edited manually here.""",
         default=False,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='groups',
     )
 
     # Properties

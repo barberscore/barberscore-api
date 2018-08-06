@@ -13,6 +13,8 @@ from django.apps import apps
 from django.db import models
 from django.utils.functional import cached_property
 from django.core.exceptions import ValidationError
+from django_fsm_log.models import StateLog
+from django.contrib.contenttypes.fields import GenericRelation
 
 
 log = logging.getLogger(__name__)
@@ -84,6 +86,12 @@ class Panelist(TimeStampedModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='panelists',
     )
 
     @cached_property

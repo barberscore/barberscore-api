@@ -11,6 +11,8 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from django_fsm_log.models import StateLog
+from django.contrib.contenttypes.fields import GenericRelation
 
 # Django
 from django.db import models
@@ -184,6 +186,12 @@ class Member(TimeStampedModel):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='members',
     )
 
     # Internals
