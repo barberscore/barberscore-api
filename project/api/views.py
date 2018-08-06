@@ -444,7 +444,7 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
-    def csa(self, request, pk=None):
+    def csadraft(self, request, pk=None):
         competitor = Competitor.objects.get(pk=pk)
         pdf = create_csa_report(competitor)
         file_name = '{0}-csa'.format(
@@ -931,7 +931,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         ],
         permission_classes=[AllowAny],
     )
-    def oss(self, request, pk=None):
+    def ossdraft(self, request, pk=None):
         round = Round.objects.select_related(
             'session',
             'session__convention',
@@ -993,7 +993,7 @@ class RoundViewSet(viewsets.ModelViewSet):
 
 
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
-    def sa(self, request, pk=None):
+    def sadraft(self, request, pk=None):
         round = Round.objects.select_related(
             'session',
             'session__convention',
@@ -1158,7 +1158,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         )
 
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
-    def oss(self, request, pk=None):
+    def ossdraft(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         competitors = session.competitors.filter(
             status=Competitor.STATUS.finished,
@@ -1248,7 +1248,7 @@ class SessionViewSet(viewsets.ModelViewSet):
 
 
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
-    def sa(self, request, pk=None):
+    def sadraft(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         panelists = Panelist.objects.filter(
             kind__in=[
