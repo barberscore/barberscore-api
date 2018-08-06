@@ -103,34 +103,6 @@ class Round(TimeStampedModel):
         related_query_name='rounds',
     )
 
-    @cached_property
-    def sung(self):
-        return reverse(
-            'round-sung',
-            args=[str(self.id)]
-        )
-
-    @cached_property
-    def announcements(self):
-        return reverse(
-            'round-announcements',
-            args=[str(self.id)]
-        )
-
-    @cached_property
-    def oss(self):
-        return reverse(
-            'round-oss',
-            args=[str(self.id)]
-        )
-
-    @cached_property
-    def sa(self):
-        return reverse(
-            'round-sa',
-            args=[str(self.id)]
-        )
-
     # Internals
     class Meta:
         unique_together = (

@@ -118,41 +118,6 @@ class Session(TimeStampedModel):
     )
 
     # Properties
-    @cached_property
-    def legacy(self):
-        return reverse(
-            'session-legacy',
-            args=[str(self.id)]
-        )
-
-    @cached_property
-    def drcj(self):
-        return reverse(
-            'session-drcj',
-            args=[(self.id)]
-        )
-
-    @cached_property
-    def contact(self):
-        return reverse(
-            'session-contact',
-            args=[str(self.id)]
-        )
-
-    @cached_property
-    def oss(self):
-        return reverse(
-            'session-oss',
-            args=[str(self.id)]
-        )
-
-    @cached_property
-    def sa(self):
-        return reverse(
-            'session-sa',
-            args=[str(self.id)]
-        )
-
     # Internals
     class JSONAPIMeta:
         resource_name = "session"

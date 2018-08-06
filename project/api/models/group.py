@@ -381,13 +381,6 @@ class Group(TimeStampedModel):
     def is_mc(self):
         return bool(self.mc_pk)
 
-    @cached_property
-    def roster(self):
-        return reverse(
-            'group-roster',
-            args=[str(self.id)]
-        )
-
     # Methods
     def is_active(self):
         return bool(self.status == self.STATUS.active)

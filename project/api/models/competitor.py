@@ -170,13 +170,6 @@ class Competitor(TimeStampedModel):
         related_query_name='competitors',
     )
 
-    @cached_property
-    def csa(self):
-        return reverse(
-            'competitor-csa',
-            args=[str(self.id)]
-        )
-
     # Internals
     class Meta:
         verbose_name_plural = 'competitors'
