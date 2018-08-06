@@ -672,10 +672,14 @@ def create_sung_report(round):
         )
         sungs = []
         for song in songs:
+            try:
+                title = song.chart.nomen
+            except AttributeError:
+                title = "Unknown (Not in Repertory)"
             row = "{0} Song {1}: {2}".format(
                 song.appearance.round.get_kind_display(),
                 song.num,
-                song.chart.nomen,
+                title,
             )
             sungs.append(row)
         appearance.sungs = sungs
