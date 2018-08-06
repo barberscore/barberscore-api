@@ -256,4 +256,3 @@ class SubscriptionManager(Manager):
                 is_object=True,
             )
         return subscriptions.count()
-rn subscriptions.count()
