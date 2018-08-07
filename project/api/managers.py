@@ -529,6 +529,9 @@ class MemberManager(Manager):
     #     return 'Updated'
 
     def update_from_join2(self, join):
+        Group = apps.get_model('api.group')
+        Person = apps.get_model('api.person')
+        Member = apps.get_model('api.member')
         group = Group.objects.get(
             mc_pk=join[0],
         )
