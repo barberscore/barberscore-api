@@ -232,7 +232,7 @@ class JoinManager(Manager):
         joins = joins.values_list(
             'structure__id',
             'subscription__human__id',
-        ).distinct()[:1000]
+        ).distinct()
 
         joins = [list(x) for x in joins]
 
@@ -251,7 +251,7 @@ class JoinManager(Manager):
                 Member.objects.update_from_join2,
                 join,
             )
-        return joins.count()
+        return len(joins)
 
 
 class SubscriptionManager(Manager):
