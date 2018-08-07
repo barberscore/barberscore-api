@@ -337,196 +337,214 @@ class GroupManager(Manager):
 
 
 class MemberManager(Manager):
-    def update_from_join(self, join, is_object=False):
-        # Map variables
-        if is_object:
-            mc_pk = join[0]
-            structure = join[1]
-            human = join[2]
-            inactive_date = join[3]
-            inactive_reason = join[4]
-            part = join[5]
-            sub_status = join[6]
-            current_through = join[7]
-            established_date = join[8]
-            mem_code = join[9]
-            mem_status = join[10]
-            paid = join[11]
-        else:
-            mc_pk = str(join.id)
-            structure = str(join.structure.id)
-            human = str(join.subscription.human.id)
-            inactive_date = join.inactive_date
-            inactive_reason = join.inactive_reason
-            part = join.vocal_part
-            sub_status = join.subscription.status
-            current_through = join.subscription.current_through
-            established_date = join.established_date
-            mem_code = join.membership.code
-            mem_status = join.membership.status.name
-            paid = join.paid
+    # def update_from_join(self, join, is_object=False):
+    #     # Map variables
+    #     if is_object:
+    #         mc_pk = join[0]
+    #         structure = join[1]
+    #         human = join[2]
+    #         inactive_date = join[3]
+    #         inactive_reason = join[4]
+    #         part = join[5]
+    #         sub_status = join[6]
+    #         current_through = join[7]
+    #         established_date = join[8]
+    #         mem_code = join[9]
+    #         mem_status = join[10]
+    #         paid = join[11]
+    #     else:
+    #         mc_pk = str(join.id)
+    #         structure = str(join.structure.id)
+    #         human = str(join.subscription.human.id)
+    #         inactive_date = join.inactive_date
+    #         inactive_reason = join.inactive_reason
+    #         part = join.vocal_part
+    #         sub_status = join.subscription.status
+    #         current_through = join.subscription.current_through
+    #         established_date = join.established_date
+    #         mem_code = join.membership.code
+    #         mem_status = join.membership.status.name
+    #         paid = join.paid
 
-        # Ignore rows without approval flow
-        if not paid:
-            return
+    #     # Ignore rows without approval flow
+    #     if not paid:
+    #         return
 
-        # Set variables
-        sub_status = getattr(
-            self.model.SUB_STATUS,
-            sub_status if sub_status else '',
-            None,
+    #     # Set variables
+    #     sub_status = getattr(
+    #         self.model.SUB_STATUS,
+    #         sub_status if sub_status else '',
+    #         None,
+    #     )
+
+    #     # Set status
+    #     if not inactive_date:
+    #         is_active = True
+    #     else:
+    #         is_active = all([
+    #             inactive_date > localdate(),
+    #             sub_status == self.model.SUB_STATUS.active,
+    #         ])
+    #     if is_active:
+    #         status = self.model.STATUS.active
+    #     else:
+    #         status = self.model.STATUS.inactive
+
+    #     part = getattr(
+    #         self.model.PART,
+    #         part.strip().lower() if part else '',
+    #         None,
+    #     )
+
+    #     inactive_reason = getattr(
+    #         self.model.INACTIVE_REASON,
+    #         inactive_reason.strip().replace("-", "_").replace(" ", "") if inactive_reason else '',
+    #         None,
+    #     )
+
+    #     mem_code = getattr(
+    #         self.model.MEM_CODE,
+    #         mem_code if mem_code else '',
+    #         None,
+    #     )
+
+    #     mem_status = getattr(
+    #         self.model.MEM_STATUS,
+    #         mem_status.strip().replace("-", "_") if mem_status else '',
+    #         None,
+    #     )
+
+    #     # Get the related fields
+    #     Group = apps.get_model('api.group')
+    #     group = Group.objects.get(
+    #         mc_pk=structure,
+    #     )
+    #     Person = apps.get_model('api.person')
+    #     try:
+    #         person = Person.objects.get(
+    #             mc_pk=human,
+    #         )
+    #     except Person.DoesNotExist:
+    #         Human = apps.get_model('bhs.human')
+    #         human = Human.objects.get(id=human)
+    #         person = Person.objects.update_or_create_from_human(human)
+
+    #     # get or create
+    #     member, created = self.get_or_create(
+    #         person=person,
+    #         group=group,
+    #     )
+
+    #     # Instantiate prior values dictionary
+    #     prior = {}
+    #     if member.mc_pk:
+    #         prior['mc_pk'] = str(member.mc_pk)
+    #     if member.sub_status:
+    #         prior['sub_status'] = member.get_sub_status_display()
+    #     if member.current_through:
+    #         prior['current_through'] = member.current_through.strftime('%Y-%m-%d')
+    #     if member.established_date:
+    #         prior['established_date'] = member.established_date.strftime('%Y-%m-%d')
+    #     if member.inactive_date:
+    #         prior['inactive_date'] = member.inactive_date.strftime('%Y-%m-%d')
+    #     if member.inactive_reason:
+    #         prior['inactive_reason'] = member.get_inactive_reason_display()
+    #     if member.part:
+    #         prior['part'] = member.get_part_display()
+    #     if member.mem_code:
+    #         prior['mem_code'] = member.get_mem_code_display()
+    #     if member.mem_status:
+    #         prior['mem_status'] = member.get_mem_status_display()
+
+    #     # Update the fields
+    #     member.mc_pk = mc_pk
+    #     member.inactive_date = inactive_date
+    #     member.inactive_reason = inactive_reason
+    #     member.part = part
+    #     member.sub_status = sub_status
+    #     member.current_through = current_through
+    #     member.established_date = established_date
+    #     member.mem_code = mem_code
+    #     member.mem_status = mem_status
+
+    #     # Build the diff from prior to new
+    #     diff = {}
+    #     if prior.get('mc_pk') != str(mc_pk):
+    #         diff['mc_pk'] = getattr(prior, 'mc_pk', None)
+
+    #     inactive_date_string = inactive_date.strftime('%Y-%m-%d') if inactive_date else None
+    #     if prior.get('inactive_date') != inactive_date_string:
+    #         diff['inactive_date'] = inactive_date_string
+
+    #     if prior.get('inactive_reason') != inactive_reason:
+    #         diff['inactive_reason'] = getattr(prior, 'inactive_reason', None)
+
+    #     part_string = self.model.PART[part] if part else None
+    #     if prior.get('part') != part_string:
+    #         diff['part'] = part_string
+
+    #     sub_status_string = self.model.SUB_STATUS[sub_status] if sub_status else None
+    #     if prior.get('sub_status') != sub_status_string:
+    #         diff['sub_status'] = sub_status_string
+
+    #     current_through_string = current_through.strftime('%Y-%m-%d') if current_through else None
+    #     if prior.get('current_through') != current_through_string:
+    #         diff['current_through'] = current_through_string
+
+    #     established_date_string = established_date.strftime('%Y-%m-%d') if established_date else None
+    #     if prior.get('established_date') != established_date_string:
+    #         diff['established_date'] = established_date_string
+
+    #     mem_code_string = self.model.MEM_CODE[mem_code] if mem_code else None
+    #     if prior.get('mem_code') != mem_code_string:
+    #         diff['mem_code'] = mem_code_string
+
+    #     mem_status_string = self.model.MEM_STATUS[mem_status] if mem_status else None
+    #     if prior.get('mem_status') != mem_status_string:
+    #         diff['mem_status'] = mem_status_string
+
+    #     # Skip duplicates
+    #     if not diff:
+    #         return 'Skipped'
+
+    #     # Set the transition description
+    #     if member.status == member.STATUS.new:
+    #         description = json.dumps({'status': 'New'})
+    #     else:
+    #         description = json.dumps(diff)
+
+    #     # Transition as appropriate
+    #     if status == self.model.STATUS.active:
+    #         member.activate(
+    #             description=description,
+    #         )
+    #     elif status == self.model.STATUS.inactive:
+    #         member.deactivate(
+    #             description=description,
+    #         )
+    #     else:
+    #         raise ValueError('Unknown status')
+    #     # Finally, save the record.
+    #     member.save()
+    #     return 'Updated'
+
+    def update_from_join2(self, join):
+        group = Group.objects.get(
+            mc_pk=join[0],
         )
-
-        # Set status
-        if not inactive_date:
-            is_active = True
-        else:
-            is_active = all([
-                inactive_date > localdate(),
-                sub_status == self.model.SUB_STATUS.active,
-            ])
-        if is_active:
+        person = Person.objects.get(
+            mc_pk=join[1],
+        )
+        if row[2]:
             status = self.model.STATUS.active
         else:
             status = self.model.STATUS.inactive
 
-        part = getattr(
-            self.model.PART,
-            part.strip().lower() if part else '',
-            None,
-        )
-
-        inactive_reason = getattr(
-            self.model.INACTIVE_REASON,
-            inactive_reason.strip().replace("-", "_").replace(" ", "") if inactive_reason else '',
-            None,
-        )
-
-        mem_code = getattr(
-            self.model.MEM_CODE,
-            mem_code if mem_code else '',
-            None,
-        )
-
-        mem_status = getattr(
-            self.model.MEM_STATUS,
-            mem_status.strip().replace("-", "_") if mem_status else '',
-            None,
-        )
-
-        # Get the related fields
-        Group = apps.get_model('api.group')
-        group = Group.objects.get(
-            mc_pk=structure,
-        )
-        Person = apps.get_model('api.person')
-        try:
-            person = Person.objects.get(
-                mc_pk=human,
-            )
-        except Person.DoesNotExist:
-            Human = apps.get_model('bhs.human')
-            human = Human.objects.get(id=human)
-            person = Person.objects.update_or_create_from_human(human)
-
-        # get or create
-        member, created = self.get_or_create(
-            person=person,
+        member, created = Member.objects.update_or_create(
             group=group,
+            person=person,
+            status=status,
         )
-
-        # Instantiate prior values dictionary
-        prior = {}
-        if member.mc_pk:
-            prior['mc_pk'] = str(member.mc_pk)
-        if member.sub_status:
-            prior['sub_status'] = member.get_sub_status_display()
-        if member.current_through:
-            prior['current_through'] = member.current_through.strftime('%Y-%m-%d')
-        if member.established_date:
-            prior['established_date'] = member.established_date.strftime('%Y-%m-%d')
-        if member.inactive_date:
-            prior['inactive_date'] = member.inactive_date.strftime('%Y-%m-%d')
-        if member.inactive_reason:
-            prior['inactive_reason'] = member.get_inactive_reason_display()
-        if member.part:
-            prior['part'] = member.get_part_display()
-        if member.mem_code:
-            prior['mem_code'] = member.get_mem_code_display()
-        if member.mem_status:
-            prior['mem_status'] = member.get_mem_status_display()
-
-        # Update the fields
-        member.mc_pk = mc_pk
-        member.inactive_date = inactive_date
-        member.inactive_reason = inactive_reason
-        member.part = part
-        member.sub_status = sub_status
-        member.current_through = current_through
-        member.established_date = established_date
-        member.mem_code = mem_code
-        member.mem_status = mem_status
-
-        # Build the diff from prior to new
-        diff = {}
-        if prior.get('mc_pk') != str(mc_pk):
-            diff['mc_pk'] = getattr(prior, 'mc_pk', None)
-
-        inactive_date_string = inactive_date.strftime('%Y-%m-%d') if inactive_date else None
-        if prior.get('inactive_date') != inactive_date_string:
-            diff['inactive_date'] = inactive_date_string
-
-        if prior.get('inactive_reason') != inactive_reason:
-            diff['inactive_reason'] = getattr(prior, 'inactive_reason', None)
-
-        part_string = self.model.PART[part] if part else None
-        if prior.get('part') != part_string:
-            diff['part'] = part_string
-
-        sub_status_string = self.model.SUB_STATUS[sub_status] if sub_status else None
-        if prior.get('sub_status') != sub_status_string:
-            diff['sub_status'] = sub_status_string
-
-        current_through_string = current_through.strftime('%Y-%m-%d') if current_through else None
-        if prior.get('current_through') != current_through_string:
-            diff['current_through'] = current_through_string
-
-        established_date_string = established_date.strftime('%Y-%m-%d') if established_date else None
-        if prior.get('established_date') != established_date_string:
-            diff['established_date'] = established_date_string
-
-        mem_code_string = self.model.MEM_CODE[mem_code] if mem_code else None
-        if prior.get('mem_code') != mem_code_string:
-            diff['mem_code'] = mem_code_string
-
-        mem_status_string = self.model.MEM_STATUS[mem_status] if mem_status else None
-        if prior.get('mem_status') != mem_status_string:
-            diff['mem_status'] = mem_status_string
-
-        # Skip duplicates
-        if not diff:
-            return 'Skipped'
-
-        # Set the transition description
-        if member.status == member.STATUS.new:
-            description = json.dumps({'status': 'New'})
-        else:
-            description = json.dumps(diff)
-
-        # Transition as appropriate
-        if status == self.model.STATUS.active:
-            member.activate(
-                description=description,
-            )
-        elif status == self.model.STATUS.inactive:
-            member.deactivate(
-                description=description,
-            )
-        else:
-            raise ValueError('Unknown status')
-        # Finally, save the record.
-        member.save()
-        return 'Updated'
 
 
 class OfficerManager(Manager):

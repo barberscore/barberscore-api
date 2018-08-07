@@ -87,7 +87,7 @@ class Command(BaseCommand):
         self.stdout.write("Queued {0} person statuses.".format(t))
 
         # Sync Members
-        t = Join.objects.update_members(cursor=cursor)
+        t = Join.objects.update_members2(cursor=cursor)
         self.stdout.write("Queued {0} members.".format(t))
 
         # Sync Roles

@@ -167,52 +167,88 @@ class RoleManager(Manager):
 
 
 class JoinManager(Manager):
-    def update_members(self, cursor=None):
+    # def update_members(self, cursor=None):
+    #     Member = apps.get_model('api.member')
+    #     # Get base
+    #     joins = self.select_related(
+    #         'structure',
+    #         'subscription',
+    #         'subscription__human',
+    #         'membership',
+    #         'membership__status',
+    #     )
+    #     if cursor:
+    #         joins = joins.filter(
+    #             modified__gt=cursor,
+    #         )
+    #     else:
+    #         # Else clear logs
+    #         ss = StateLog.objects.filter(
+    #             content_type__model='member',
+    #             members__mc_pk__isnull=False,
+    #         )
+    #         ss.delete()
+    #     # Order and Return as objects
+    #     joins = joins.order_by(
+    #         'modified',
+    #         'created',
+    #     ).values_list(
+    #         'id',
+    #         'structure__id',
+    #         'subscription__human__id',
+    #         'inactive_date',
+    #         'inactive_reason',
+    #         'vocal_part',
+    #         'subscription__status',
+    #         'subscription__current_through',
+    #         'established_date',
+    #         'membership__code',
+    #         'membership__status__name',
+    #         'paid',
+    #     )
+
+    #     # Creating/Update Persons
+    #     for join in joins:
+    #         django_rq.enqueue(
+    #             Member.objects.update_from_join,
+    #             join,
+    #             is_object=True,
+    #         )
+    #     return joins.count()
+
+    def update_members2(self, cursor=None):
         Member = apps.get_model('api.member')
         # Get base
         joins = self.select_related(
             'structure',
-            'subscription',
             'subscription__human',
-            'membership',
-            'membership__status',
-        )
+        ).exclude(paid=0)
         if cursor:
             joins = joins.filter(
                 modified__gt=cursor,
             )
-        else:
-            # Else clear logs
-            ss = StateLog.objects.filter(
-                content_type__model='member',
-                members__mc_pk__isnull=False,
-            )
-            ss.delete()
-        # Order and Return as objects
-        joins = joins.order_by(
-            'modified',
-            'created',
-        ).values_list(
-            'id',
+        # Return unique rows
+        joins = joins.values_list(
             'structure__id',
             'subscription__human__id',
-            'inactive_date',
-            'inactive_reason',
-            'vocal_part',
-            'subscription__status',
-            'subscription__current_through',
-            'established_date',
-            'membership__code',
-            'membership__status__name',
-            'paid',
-        )
+        ).distinct()[:1000]
 
-        # Creating/Update Persons
+        joins = [list(x) for x in joins]
+
+        # Creating/Update Member
         for join in joins:
+            join.append(bool(self.filter(
+                Q(inactive_date=None) |
+                Q(
+                    inactive_date__gt=localdate(),
+                    subscription__status=Member.SUB_STATUS.active,
+                ),
+                structure__id=join[0],
+                subscription__human__id=join[1],
+            ).exclude(paid=0)))
             django_rq.enqueue(
-                Member.objects.update_from_join,
+                Member.objects.update_from_join2,
                 join,
-                is_object=True,
             )
         return joins.count()
 
