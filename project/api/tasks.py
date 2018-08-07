@@ -10,6 +10,8 @@ from auth0.v3.management import Auth0
 from django_rq import job
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
+from django.db.models import Q
+from django.utils.timezone import localdate
 
 # Django
 from django.apps import apps
@@ -1205,14 +1207,39 @@ def send_session_reports(template, context):
     return email.send()
 
 
+# @job
+# def update_bhs_member(member):
+#     Join = apps.get_model('bhs.join')
+#     Member = apps.get_model('api.member')
+#     joins = Join.objects.filter(
+#         subscription__human__id=member.person.mc_pk,
+#         structure__id=member.group.mc_pk,
+#     ).order_by('modified')
+#     for join in joins:
+#         result = Member.objects.update_from_join(join)
+#     return result
+
 @job
 def update_bhs_member(member):
     Join = apps.get_model('bhs.join')
-    Member = apps.get_model('api.member')
-    joins = Join.objects.filter(
-        subscription__human__id=member.person.mc_pk,
+    if not member.mc_pk:
+        return ValueError("Not a MC Record")
+    status = bool(Join.objects.filter(
+        Q(inactive_date=None) |
+        Q(
+            inactive_date__gt=localdate(),
+            subscription__status='active',
+        ),
         structure__id=member.group.mc_pk,
-    ).order_by('modified')
-    for join in joins:
-        result = Member.objects.update_from_join(join)
-    return result
+        subscription__human__id=member.person.mc_pk,
+    ))
+    if status and member.status != member.STATUS.active:
+        member.activate()
+        member.save()
+        return "Activated"
+    if not status and member.status != member.STATUS.inactive:
+        member.deactivate()
+        member.save()
+        return "Deactivated"
+    return "No change"
+
