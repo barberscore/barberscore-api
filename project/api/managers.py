@@ -543,11 +543,12 @@ class MemberManager(Manager):
         else:
             status = self.model.STATUS.inactive
 
-        member, created = Member.objects.update_or_create(
+        member, created = Member.objects.get_or_create(
             group=group,
             person=person,
-            status=status,
         )
+        member.status = status
+        member.save()
 
 
 class OfficerManager(Manager):
