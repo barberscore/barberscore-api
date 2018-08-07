@@ -538,7 +538,7 @@ class MemberManager(Manager):
         person = Person.objects.get(
             mc_pk=join[1],
         )
-        if row[2]:
+        if join[2]:
             status = self.model.STATUS.active
         else:
             status = self.model.STATUS.inactive
