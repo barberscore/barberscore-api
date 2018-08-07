@@ -2,7 +2,8 @@ from django.db.models import Manager
 from django.apps import apps
 from django_fsm_log.models import StateLog
 import django_rq
-
+from django.db.models import Q
+from django.utils.timezone import localdate
 
 class HumanManager(Manager):
     def update_persons(self, cursor=None):
@@ -241,7 +242,7 @@ class JoinManager(Manager):
                 Q(inactive_date=None) |
                 Q(
                     inactive_date__gt=localdate(),
-                    subscription__status=Member.SUB_STATUS.active,
+                    subscription__status='active',
                 ),
                 structure__id=join[0],
                 subscription__human__id=join[1],
