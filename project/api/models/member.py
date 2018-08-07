@@ -13,10 +13,13 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from django_fsm_log.models import StateLog
 from django.contrib.contenttypes.fields import GenericRelation
+from django.utils.timezone import localdate
 
 # Django
 from django.db import models
+from django.db.models import Q
 from django.utils.functional import cached_property
+from django.apps import apps
 
 # First-Party
 from api.managers import MemberManager
@@ -221,6 +224,30 @@ class Member(TimeStampedModel):
         #         raise ValidationError(
         #             {'is_admin': 'Admin User account must be active.'}
         #         )
+
+    # Methods
+    def mc_check(self):
+        Join = apps.get_model('bhs.join')
+        if not self.mc_pk:
+            return ValueError("Not a MC Record")
+        status = bool(Join.objects.filter(
+            Q(inactive_date=None) |
+            Q(
+                inactive_date__gt=localdate(),
+                subscription__status='active',
+            ),
+            structure__id=self.group.mc_pk,
+            subscription__human__id=self.person.mc_pk,
+        ))
+        if status and self.status != self.STATUS.active:
+            self.activate()
+            self.save()
+            return "Activated"
+        if not status and self.status != self.STATUS.inactive:
+            self.deactivate()
+            self.save()
+            return "Deactivated"
+        return "No change"
 
     # Permissions
     @staticmethod
