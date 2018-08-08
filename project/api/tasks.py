@@ -703,14 +703,16 @@ def create_sung_report(round):
 
 
 @job
-def create_oss_report(round, full=True):
+def create_round_oss(round):
     Competitor = apps.get_model('api.competitor')
     Contest = apps.get_model('api.contest')
     Panelist = apps.get_model('api.panelist')
     Contestant = apps.get_model('api.contestant')
     Round = apps.get_model('api.round')
     competitors = round.session.competitors.filter(
-        status=Competitor.STATUS.finished,
+        # status=Competitor.STATUS.finished,
+        appearances__round=round,
+        appearances__draw__isnull=True,
         entry__is_private=False,
     ).select_related(
         'group',
@@ -731,10 +733,6 @@ def create_oss_report(round, full=True):
         '-per_points',
         'group__name',
     )
-    if not full:
-        competitors = competitors.filter(
-            appearances__round=round,
-        )
     for competitor in competitors:
         # Monkey-patch contesting
         contestants = competitor.entry.contestants.filter(
@@ -747,6 +745,7 @@ def create_oss_report(round, full=True):
     # Eval Only
     privates = round.session.competitors.filter(
         status=Competitor.STATUS.finished,
+        appearances__round=round,
         entry__is_private=True,
     ).select_related(
         'group',
@@ -754,13 +753,9 @@ def create_oss_report(round, full=True):
     ).order_by(
         'group__name',
     )
-    if not full:
-        privates = privates.filter(
-            appearances__round=round,
-        )
     privates = privates.values_list('group__name', flat=True)
-    if round.kind != 1:
-        appearances = round.appearances.filter(
+    if round.kind != round.KIND.finals:
+        advancers = round.appearances.filter(
             draw__isnull=False,
         ).select_related(
             'competitor__group',
@@ -768,7 +763,7 @@ def create_oss_report(round, full=True):
             'draw',
         )
     else:
-        appearances = None
+        advancers = None
     contests = round.session.contests.filter(
         status=Contest.STATUS.included,
         contestants__status__gt=0,
@@ -835,11 +830,139 @@ def create_oss_report(round, full=True):
         'round': round,
         'competitors': competitors,
         'privates': privates,
-        'appearances': appearances,
+        'advancers': advancers,
         'panelists': panelists,
         'contests': contests,
         'is_multi': is_multi,
         'primary': primary,
+    }
+    rendered = render_to_string('oss.html', context)
+    file = pydf.generate_pdf(
+        rendered,
+        page_size='Legal',
+        orientation='Portrait',
+        margin_top='5mm',
+        margin_bottom='5mm',
+    )
+    content = ContentFile(file)
+    return content
+
+
+@job
+def create_session_oss(session):
+    Competitor = apps.get_model('api.competitor')
+    Contest = apps.get_model('api.contest')
+    Panelist = apps.get_model('api.panelist')
+    Contestant = apps.get_model('api.contestant')
+    competitors = session.competitors.filter(
+        status=Competitor.STATUS.finished,
+        entry__is_private=False,
+    ).select_related(
+        'group',
+        'entry',
+    ).prefetch_related(
+        'entry__contestants',
+        'entry__contestants__contest',
+        'appearances',
+        'appearances__round',
+        'appearances__songs',
+        'appearances__songs__chart',
+        'appearances__songs__scores',
+        'appearances__songs__scores__panelist',
+        'appearances__songs__scores__panelist__person',
+    ).order_by(
+        '-tot_points',
+        '-sng_points',
+        '-per_points',
+        'group__name',
+    )
+    for competitor in competitors:
+        # Monkey-patch contesting
+        contestants = competitor.entry.contestants.filter(
+            status=Contestant.STATUS.included,
+        ).order_by('contest__num').values_list('contest__num', flat=True)
+        if contestants:
+            competitor.contestants = contestants
+        else:
+            competitor.contestants = ""
+    # Eval Only
+    privates = session.competitors.filter(
+        status=Competitor.STATUS.finished,
+        entry__is_private=True,
+    ).select_related(
+        'group',
+        'entry',
+    ).order_by(
+        'group__name',
+    )
+    privates = privates.values_list('group__name', flat=True)
+    contests = session.contests.filter(
+        status=Contest.STATUS.included,
+        contestants__status__gt=0,
+    ).select_related(
+        'award',
+        'group',
+    ).distinct(
+    ).order_by(
+        '-is_primary',
+        'award__tree_sort',
+    )
+    # Determine Primary (if present)
+    try:
+        primary = contests.get(is_primary=True)
+    except Contest.DoesNotExist:
+        primary = None
+    # MonkeyPatch qualifiers
+    for contest in contests:
+        if contest.award.level != contest.award.LEVEL.deferred:
+            if contest.award.level == contest.award.LEVEL.qualifier:
+                threshold = contest.award.threshold
+                if threshold:
+                    qualifiers = contest.contestants.filter(
+                        status__gt=0,
+                        entry__competitor__tot_score__gte=threshold,
+                        entry__is_private=False,
+                    ).distinct(
+                    ).order_by(
+                        'entry__group__name',
+                    ).values_list(
+                        'entry__group__name',
+                        flat=True,
+                    )
+                    if qualifiers:
+                        contest.detail = ", ".join(
+                            qualifiers.values_list('entry__group__name', flat=True)
+                        )
+                    else:
+                        contest.detail = "(No qualifiers)"
+            else:
+                if contest.group:
+                    contest.detail = str(contest.group.name)
+                else:
+                    contest.detail = "(No recipient)"
+        else:
+            contest.detail = "(Result determined post-contest)"
+    panelists = Panelist.objects.filter(
+        round__session=session,
+        kind=Panelist.KIND.official,
+        category__gte=Panelist.CATEGORY.ca,
+    ).distinct(
+        'category',
+        'person__last_name',
+        'person__first_name',
+    ).order_by(
+        'category',
+        'person__last_name',
+        'person__first_name',
+    )
+    context = {
+        'session': session,
+        'competitors': competitors,
+        'privates': privates,
+        'panelists': panelists,
+        'contests': contests,
+        'primary': primary,
+        'is_multi': False,
     }
     rendered = render_to_string('oss.html', context)
     file = pydf.generate_pdf(

@@ -91,7 +91,8 @@ from .tasks import create_contact_report
 from .tasks import create_roster_report
 from .tasks import create_chart_report
 from .tasks import create_csa_report
-from .tasks import create_oss_report
+from .tasks import create_round_oss
+from .tasks import create_session_oss
 from .tasks import create_sa_report
 from .tasks import create_sung_report
 
@@ -937,7 +938,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             'session__convention',
             'session__convention__venue',
         ).get(pk=pk)
-        pdf = create_oss_report(round, full=False)
+        pdf = create_round_oss(round)
         file_name = '{0}-oss'.format(
             slugify(
                 "{0} {1} {2} Round".format(
@@ -1157,81 +1158,21 @@ class SessionViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            # TemplateHTMLRenderer,
+            PDFRenderer,
+        ],
+        permission_classes=[AllowAny],
+    )
     def ossdraft(self, request, pk=None):
-        session = Session.objects.get(pk=pk)
-        competitors = session.competitors.filter(
-            status=Competitor.STATUS.finished,
-        ).select_related(
-            'group',
-        ).prefetch_related(
-            'appearances',
-            'appearances__songs',
-            'appearances__songs__scores',
-            'appearances__songs__scores__panelist',
-            'appearances__songs__scores__panelist__person',
-        ).order_by(
-            '-is_ranked',
-            'tot_rank',
-            '-tot_points',
-            '-sng_points',
-            '-mus_points',
-            '-per_points',
-            'group__name',
-        )
-        advancers = session.competitors.filter(
-            status=Competitor.STATUS.started,
-        ).select_related(
-            'group',
-        ).prefetch_related(
-            'appearances',
-            'appearances__songs',
-            'appearances__songs__scores',
-            'appearances__songs__scores__panelist',
-            'appearances__songs__scores__panelist__person',
-        ).order_by(
-            'draw',
-        )
-        current = session.rounds.filter(
-            status__gte=Round.STATUS.verified,
-        ).order_by('num').last().num
-        contests = session.contests.filter(
-            status=Contest.STATUS.included,
-            award__rounds__lte=current,
-            award__level__in=[
-                Award.LEVEL.championship,
-                Award.LEVEL.award,
-            ],
-        ).select_related(
-            'award',
-        ).order_by('award__tree_sort')
-        panelists = Panelist.objects.filter(
-            kind=Panelist.KIND.official,
-            round__session=session,
-        ).distinct(
-            'category',
-            'person__last_name',
-            'person__first_name',
-        ).order_by(
-            'category',
-            'person__last_name',
-            'person__first_name',
-        )
-        context = {
-            'session': session,
-            'competitors': competitors,
-            'advancers': advancers,
-            'panelists': panelists,
-            'contests': contests,
-        }
-        rendered = render_to_string('oss.html', context)
-        file = pydf.generate_pdf(
-            rendered,
-            page_size='Letter',
-            orientation='Portrait',
-        )
-        content = ContentFile(file)
-        pdf = content
+        session = Session.objects.select_related(
+            'convention',
+            'convention__venue',
+        ).get(pk=pk)
+        pdf = create_session_oss(session)
         file_name = '{0}-oss'.format(
             slugify(
                 "{0} {1} Session".format(
@@ -1240,6 +1181,10 @@ class SessionViewSet(viewsets.ModelViewSet):
                 )
             )
         )
+        # return Response(
+        #     pdf,
+        #     template_name='oss.html',
+        # )
         return PDFResponse(
             pdf,
             file_name=file_name,

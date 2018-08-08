@@ -24,7 +24,7 @@ from django.urls import reverse
 
 # First-Party
 from api.tasks import send_csa
-from api.tasks import create_oss_report
+from api.tasks import create_round_oss
 from api.tasks import create_csa_report
 
 log = logging.getLogger(__name__)
@@ -499,7 +499,7 @@ class Round(TimeStampedModel):
             next_round = self.session.rounds.get(num=self.num + 1)
             next_round.build()
             next_round.save()
-        content = create_oss_report(self, full=False)
+        content = create_round_oss(self)
         self.oss.save(
             "{0}-oss".format(
                 self.id,

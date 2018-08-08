@@ -424,6 +424,6 @@ class Session(TimeStampedModel):
         conditions=[],
     )
     def finish(self, *args, **kwargs):
-        # create_oss_report(self)
+        create_session_oss(self)
         # create_sa_report(self)
         return

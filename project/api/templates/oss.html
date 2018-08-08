@@ -50,7 +50,7 @@
   </head>
   <body>
     <div class='container-fluid'>
-      <div>
+      {% if round %}
         <div class='row'>
           <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
           {% if round.session.convention.image %}<img class='pull-right small_logo' src="{{round.session.convention.image.url}}">{% endif %}
@@ -62,7 +62,19 @@
             {{round.session.convention.venue.city|default:"(Unknown City)"}}, {{round.session.convention.venue.state|default:"(Unknown State)"}}; {{round.date|date:"F j, Y"|default:"(Unknown Date)"}}
           </h5>
         </div>
-      </div>
+      {% else %}
+        <div class='row'>
+          <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
+          {% if session.convention.image %}<img class='pull-right small_logo' src="{{session.convention.image.url}}">{% endif %}
+          <h4>
+            Official Scoring Summary {{session.get_kind_display}} Full Results;
+            {{session.convention.name}}
+          </h4>
+          <h5>
+            {{session.convention.venue.city|default:"(Unknown City)"}}, {{session.convention.venue.state|default:"(Unknown State)"}}; {{session.convention.start_date|date:"F j, Y"|default:"(Unknown Date)"}} - {{session.convention.end_date|date:"F j, Y"|default:"(Unknown Date)"}}
+          </h5>
+        </div>
+      {% endif %}
       <div>
         <table class='table table-condensed table-striped'>
           <thead>
@@ -165,21 +177,17 @@
               </tr>
             {% endfor %}
           </tbody>
-          <tfoot>
-            <tr>
-              <td colspan=6>
-                {% if primary %}
-                  Rank is determined with respect to the {{primary.award.name}}.<br>
-                {% else %}
-                  There is no primary award; therefore, Rank is not provided.<br>
-                {% endif %}
-                {% if privates %}
-                  The following groups sang for Evaluation-Only: {{privates|join:", "}}
-                {% endif %}
-              </td>
-            </tr>
-          </tfoot>
         </table>
+        <p>
+          {% if primary %}
+            Rank is determined with respect to the {{primary.award.name}}.<br>
+          {% else %}
+            There is no primary award; therefore, Rank is not provided.<br>
+          {% endif %}
+          {% if privates %}
+            The following groups sang for Evaluation-Only: {{privates|join:", "}}
+          {% endif %}
+        </p>
       <div class='row'>
         <div class='pull-right'>
           <h5>Judging Panel</h5>
@@ -194,12 +202,12 @@
             {% endfor %}
           </ul>
         </div>
-        {% if appearances %}
+        {% if advancers %}
           <div>
             <h5>Draw</h5>
             <p>
-              {% for appearance in appearances %}
-                <span class='text-nowrap'><strong>{{appearance.draw}}</strong> {{appearance.competitor.group.name}}&nbsp;</span>
+              {% for advancer in advancers %}
+                <span class='text-nowrap'><strong>{{advancer.draw}}</strong> {{advancer.competitor.group.name}}&nbsp;</span>
               {% endfor %}
             </p>
           </div>
@@ -214,11 +222,11 @@
             </ul>
           </div>
         {% endif %}
-        {%if round.footnotes %}
+        {%if session.footnotes %}
           <div>
             <h5>Footnotes</h5>
             <p>
-              {{round.footnotes}}
+              {{session.footnotes}}
             </p>
           </div>
         {% endif %}
