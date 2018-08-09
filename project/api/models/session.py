@@ -401,6 +401,8 @@ class Session(TimeStampedModel):
                 is_ranked=is_ranked,
                 is_multi=is_multi,
                 is_private=entry.is_private,
+                particpants=entry.participants,
+                representing=entry.representing,
             )
             competitor.start()
             competitor.save()
