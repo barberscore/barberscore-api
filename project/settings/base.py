@@ -139,6 +139,7 @@ RQ_QUEUES = {
     'default': {
         'USE_REDIS_CACHE': 'default',
         'ASYNC': True,
+        'DEFAULT_TIMEOUT': 300,
     },
     'high': {
         'USE_REDIS_CACHE': 'default',

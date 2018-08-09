@@ -1133,7 +1133,9 @@ def create_sa_report(round):
 def create_csa_round(round):
     Competitor = apps.get_model('api.competitor')
     competitors = round.session.competitors.filter(
-        status=Competitor.STATUS.finished,
+        # status=Competitor.STATUS.finished,
+        appearances__round=round,
+        appearances__draw__isnull=True,
     ).order_by(
         'group__name',
     )
@@ -1141,9 +1143,9 @@ def create_csa_round(round):
     for competitor in competitors:
         csa = create_csa_report(competitor)
         merger.append(csa, import_bookmarks=False)
-    with open("{0}.pdf".format(round.id), 'wb') as f:
+    with open("/tmp/{0}.pdf".format(round.id), 'wb') as f:
         merger.write(f)
-    reopen = open("{0}.pdf".format(round.id), 'rb')
+    reopen = open("/tmp/{0}.pdf".format(round.id), 'rb')
     content = File(reopen)
     return content
 
