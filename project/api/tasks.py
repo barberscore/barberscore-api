@@ -2,6 +2,9 @@
 import logging
 import time
 from django.core.files.base import ContentFile
+from django.core.files import File
+from PyPDF2 import PdfFileMerger
+
 # Third-Party
 import pydf
 from auth0.v3.authentication import GetToken
@@ -299,6 +302,7 @@ def create_account_from_human(human):
     account = auth0.users.create(payload)
     return account
 
+
 @job
 def unlink_user_account(user):
     client = get_auth0()
@@ -309,6 +313,7 @@ def unlink_user_account(user):
         user_id,
     )
     return
+
 
 @job
 def relink_user_account(user):
@@ -1122,6 +1127,39 @@ def create_sa_report(round):
     )
     content = ContentFile(file)
     return content
+
+
+@job
+def create_csa_round(round):
+    Competitor = apps.get_model('api.competitor')
+    competitors = round.session.competitors.filter(
+        status=Competitor.STATUS.finished,
+    ).order_by(
+        'group__name',
+    )
+    merger = PdfFileMerger()
+    for competitor in competitors:
+        csa = create_csa_report(competitor)
+        merger.append(csa, import_bookmarks=False)
+    with open("{0}.pdf".format(round.id), 'wb') as f:
+        merger.write(f)
+    reopen = open("{0}.pdf".format(round.id), 'rb')
+    content = File(reopen)
+    return content
+
+
+@job
+def save_csa_round(round):
+    content = create_csa_round(round)
+    round.csa.save(
+        slugify(
+            '{0} csa'.format(
+                round.id,
+            )
+        ),
+        content=content,
+    )
+    return
 
 
 @job

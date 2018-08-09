@@ -89,6 +89,10 @@ class Round(TimeStampedModel):
         null=True,
         blank=True,
     )
+    csa = models.FileField(
+        null=True,
+        blank=True,
+    )
 
     # FKs
     session = models.ForeignKey(
@@ -515,4 +519,5 @@ class Round(TimeStampedModel):
                 'round': self,
             }
             # send_csa.delay(context)
+        save_csa_round.delay(self)
         return

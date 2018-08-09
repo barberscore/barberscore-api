@@ -42,6 +42,7 @@ requests = "*"
 rq = "*"
 whitenoise = "*"
 maya = "*"
+"pypdf2" = "*"
 
 [dev-packages]
 "autopep8" = "*"
