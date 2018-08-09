@@ -713,7 +713,7 @@ def create_round_oss(round):
         # status=Competitor.STATUS.finished,
         appearances__round=round,
         appearances__draw__isnull=True,
-        entry__is_private=False,
+        is_private=False,
     ).select_related(
         'group',
         'entry',
@@ -746,7 +746,7 @@ def create_round_oss(round):
     privates = round.session.competitors.filter(
         status=Competitor.STATUS.finished,
         appearances__round=round,
-        entry__is_private=True,
+        is_private=True,
     ).select_related(
         'group',
         'entry',
@@ -856,7 +856,7 @@ def create_session_oss(session):
     Contestant = apps.get_model('api.contestant')
     competitors = session.competitors.filter(
         status=Competitor.STATUS.finished,
-        entry__is_private=False,
+        is_private=False,
     ).select_related(
         'group',
         'entry',
@@ -871,6 +871,7 @@ def create_session_oss(session):
         'appearances__songs__scores__panelist',
         'appearances__songs__scores__panelist__person',
     ).order_by(
+        'tot_rank',
         '-tot_points',
         '-sng_points',
         '-per_points',
@@ -878,9 +879,12 @@ def create_session_oss(session):
     )
     for competitor in competitors:
         # Monkey-patch contesting
-        contestants = competitor.entry.contestants.filter(
-            status=Contestant.STATUS.included,
-        ).order_by('contest__num').values_list('contest__num', flat=True)
+        try:
+            contestants = competitor.entry.contestants.filter(
+                status=Contestant.STATUS.included,
+            ).order_by('contest__num').values_list('contest__num', flat=True)
+        except AttributeError:
+            contestants = None
         if contestants:
             competitor.contestants = contestants
         else:
@@ -888,7 +892,7 @@ def create_session_oss(session):
     # Eval Only
     privates = session.competitors.filter(
         status=Competitor.STATUS.finished,
-        entry__is_private=True,
+        is_private=True,
     ).select_related(
         'group',
         'entry',

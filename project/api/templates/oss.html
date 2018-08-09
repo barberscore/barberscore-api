@@ -122,14 +122,14 @@
                       {% if competitor.group.get_kind_display == 'Chorus' %}
                         <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.appearances.first.pos|default:'N/A'}})</span><br>
                       {% else %}
-                        <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
+                        {% if competitor.tot_points %}<strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;{{competitor.tot_score|floatformat:1}}<br>{% endif %}
                       {% endif %}
                       {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
                         {{song.chart.nomen|truncatechars_html:70|default:"(Song not included in contestant repertory)"}}<br>
                       {% endfor %}
                     {% endif %}
                   {% else %}
-                    <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'></span><br>
+                    {% if competitor.tot_points %}<strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;{{competitor.tot_score|floatformat:1}}<br>{% endif %}
                     {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
                       <span class='bolder'>{{appearance.round.get_kind_display}}&nbsp;</span><span class='smaller-font'>(OA: {{appearance.num}}, Points: {{appearance.tot_points}})</span><br>
                       {% for song in appearance.songs.all|dictsort:'num' %}

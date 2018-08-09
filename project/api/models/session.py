@@ -400,6 +400,7 @@ class Session(TimeStampedModel):
                 group=entry.group,
                 is_ranked=is_ranked,
                 is_multi=is_multi,
+                is_private=entry.is_private,
             )
             competitor.start()
             competitor.save()

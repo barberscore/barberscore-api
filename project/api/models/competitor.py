@@ -53,6 +53,11 @@ class Competitor(TimeStampedModel):
         blank=True,
     )
 
+    is_private = models.BooleanField(
+        help_text="""Copied from entry.""",
+        default=False,
+    )
+
     is_ranked = models.BooleanField(
         help_text="""If the competitor will be ranked in OSS.""",
         default=False,
