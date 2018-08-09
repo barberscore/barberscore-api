@@ -68,6 +68,20 @@ class Competitor(TimeStampedModel):
         default=False,
     )
 
+    participants = models.CharField(
+        help_text='Director(s) or Members (listed TLBB)',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    representing = models.CharField(
+        help_text='Representing entity',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
     pos = models.IntegerField(
         help_text='Actual Participants-on-Stage',
         null=True,
