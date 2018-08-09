@@ -191,16 +191,20 @@
       <div class='row'>
         <div class='pull-right'>
           <h5>Judging Panel</h5>
-          {% regroup panelists by get_category_display as panelist_tuple %}
+          {% if panelists %}
+            {% regroup panelists by get_category_display as panelist_tuple %}
             <ul class='list-unstyled'>
-            {% for item in panelist_tuple %}
-              <li><strong>{{item.grouper}}:</strong>
-                {% for panelist in item.list %}
-                  {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
-                {% endfor %}
-              </li>
-            {% endfor %}
-          </ul>
+              {% for item in panelist_tuple %}
+                <li><strong>{{item.grouper}}:</strong>
+                  {% for panelist in item.list %}
+                    {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
+                  {% endfor %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            (Panel Unknown)
+          {% endif %}
         </div>
         {% if advancers %}
           <div>
