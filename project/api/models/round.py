@@ -26,6 +26,7 @@ from django.urls import reverse
 from api.tasks import send_csa
 from api.tasks import create_round_oss
 from api.tasks import create_csa_report
+from api.tasks import save_csa_round
 
 log = logging.getLogger(__name__)
 
@@ -416,6 +417,7 @@ class Round(TimeStampedModel):
             for competitor in competitors:
                 competitor.finish()
                 competitor.save()
+            save_csa_round(self)
             return
 
         # Get spots available
@@ -493,6 +495,7 @@ class Round(TimeStampedModel):
             appearance.draw = i
             appearance.save()
             i += 1
+        save_csa_round(self)
         return
 
     @fsm_log_by
@@ -519,5 +522,4 @@ class Round(TimeStampedModel):
                 'round': self,
             }
             # send_csa.delay(context)
-        save_csa_round.delay(self)
         return

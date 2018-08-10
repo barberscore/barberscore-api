@@ -60,14 +60,7 @@
           </div>
           <div class='well'>
             <h3><strong>{{competitor.group.name}}</strong></h3><br>
-            <strong>Rank:  {{competitor.tot_rank|default_if_none:"(Rank Not Yet Available)"}}</strong><br>
             <strong>Points:  {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong><br><br>
-            <!-- {% if competitor.tot_rank == 1 %}International Quartet Champion<br>{% endif %}
-            {% if competitor.tot_rank == 2 %}Second Place Silver Medalist Quartet<br>{% endif %}
-            {% if competitor.tot_rank == 3 %}Third Place Bronze Medalist Quartet<br>{% endif %}
-            {% if competitor.tot_rank == 4 %}Fourth Place Bronze Medalist Quartet<br>{% endif %}
-            {% if competitor.tot_rank == 5 %}Fifth Place Bronze Medalist Quartet<br>{% endif %}
-            -->
             {% if competitor.group.get_kind_display == 'Chorus' %}
               Director(s): {{ competitor.entry.participants }}
             {% else %}
@@ -92,7 +85,7 @@
               <tr>
                 <td>
                   <strong>Total</strong><br>
-                  {% for appearance in appearances.all|dictsortreversed:'round_num'  %}
+                  {% for appearance in appearances.all|dictsort:'round__kind'  %}
                     <span class='bolder'>{{appearance.round.get_kind_display}}</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {{song.chart.title|truncatewords_html:10|safe}}<br>
@@ -101,7 +94,7 @@
                 </td>
                 <td class='text-right'>
                   <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong><br>
-                  {% for appearance in appearances.all|dictsortreversed:'round_num' %}
+                  {% for appearance in appearances.all|dictsort:'round__kind' %}
                     <span class='bolder'>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
@@ -110,7 +103,7 @@
                 </td>
                 <td class='text-right'>
                   <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong><br>
-                  {% for appearance in appearances.all|dictsortreversed:'round_num' %}
+                  {% for appearance in appearances.all|dictsort:'round__kind' %}
                     <span class='bolder'>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
@@ -119,7 +112,7 @@
                 </td>
                 <td class='text-right'>
                   <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong><br>
-                  {% for appearance in appearances.all|dictsortreversed:'round_num'  %}
+                  {% for appearance in appearances.all|dictsort:'round__kind'  %}
                     <span class='bolder'>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
@@ -128,7 +121,7 @@
                 </td>
                 <td class='text-right'>
                   <strong>{{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong><br>
-                  {% for appearance in appearances.all|dictsortreversed:'round_num'  %}
+                  {% for appearance in appearances.all|dictsort:'round__kind'  %}
                     <span class='bolder'>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>

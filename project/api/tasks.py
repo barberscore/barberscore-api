@@ -1,6 +1,7 @@
 # Standard Libary
 import logging
 import time
+import tempfile
 from django.core.files.base import ContentFile
 from django.core.files import File
 from PyPDF2 import PdfFileMerger
@@ -1015,17 +1016,11 @@ def create_csa_report(competitor):
         '-appearance__round__num',
         'num',
     )
-    members = competitor.group.members.select_related(
-        'person',
-    ).filter(
-        status=Member.STATUS.active,
-    ).order_by('part')
     context = {
         'competitor': competitor,
         'panelists': panelists,
         'appearances': appearances,
         'songs': songs,
-        'members': members,
     }
     rendered = render_to_string('csa.html', context)
     file = pydf.generate_pdf(rendered)
@@ -1130,7 +1125,7 @@ def create_sa_report(round):
 
 
 @job
-def create_csa_round(round):
+def save_csa_round(round):
     Competitor = apps.get_model('api.competitor')
     competitors = round.session.competitors.filter(
         # status=Competitor.STATUS.finished,
@@ -1141,26 +1136,18 @@ def create_csa_round(round):
     )
     merger = PdfFileMerger()
     for competitor in competitors:
-        csa = create_csa_report(competitor)
-        merger.append(csa, import_bookmarks=False)
-    with open("/tmp/{0}.pdf".format(round.id), 'wb') as f:
-        merger.write(f)
-    reopen = open("/tmp/{0}.pdf".format(round.id), 'rb')
-    content = File(reopen)
-    return content
-
-
-@job
-def save_csa_round(round):
-    content = create_csa_round(round)
-    round.csa.save(
-        slugify(
-            '{0} csa'.format(
-                round.id,
-            )
-        ),
-        content=content,
-    )
+        merger.append(competitor.csa, import_bookmarks=False)
+    with tempfile.NamedTemporaryFile(mode='w+b',suffix='.pdf') as f:
+        merger.write(f.name)
+        round.csa.save(
+            slugify(
+                '{0} csa'.format(
+                    round.id,
+                )
+            ),
+            content=f,
+            save=True,
+        )
     return
 
 
@@ -1222,7 +1209,6 @@ def send_entry(template, context):
 @job('high')
 def send_csa(context):
     competitor = context['competitor']
-    save_csa_report(competitor)
     round = context['round']
     officers = competitor.group.officers.filter(
         status__gt=0,

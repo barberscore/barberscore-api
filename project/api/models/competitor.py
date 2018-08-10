@@ -295,6 +295,7 @@ class Competitor(TimeStampedModel):
         ).aggregate(
             tot=models.Avg('songs__scores__points')
         )['tot']
+        save_csa_report.delay(self)
 
     # Competitor Transition Conditions
 

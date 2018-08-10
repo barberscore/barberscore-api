@@ -484,6 +484,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     fields = (
+        'id',
         'status',
         'session',
         'group',
@@ -535,6 +536,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     readonly_fields = (
+        'id',
     )
 
     save_on_top = True
