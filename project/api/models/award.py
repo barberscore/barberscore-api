@@ -78,6 +78,7 @@ class Award(TimeStampedModel):
     LEVEL = Choices(
         (10, 'championship', "Championship"),
         (30, 'qualifier', "Qualifier"),
+        (35, 'top', "Top"),
         (40, 'award', "Award"),
         (50, 'deferred', "Deferred"),
         (60, 'manual', "Manual"),
@@ -124,6 +125,12 @@ class Award(TimeStampedModel):
             The score threshold to advance to next round (if any) in
             multi-round qualification.
         """,
+        null=True,
+        blank=True,
+    )
+
+    spots = models.IntegerField(
+        help_text="""Number of top spots which qualify""",
         null=True,
         blank=True,
     )

@@ -118,6 +118,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'threshold',
             'minimum',
             'advance',
+            'spots',
             'description',
             'notes',
             'age',

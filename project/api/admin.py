@@ -205,7 +205,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'season',
         'rounds',
         'parent',
-        ('threshold', 'minimum', 'advance',),
+        ('threshold', 'minimum', 'advance','spots',),
         'description',
         'notes',
     ]
