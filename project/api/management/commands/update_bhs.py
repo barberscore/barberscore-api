@@ -17,6 +17,7 @@ from bhs.models import Join
 
 log = logging.getLogger('updater')
 
+# post_save.disconnect(algolia_engine._AlgoliaEngine__post_save_receiver, sender=MyModel)
 
 class Command(BaseCommand):
     help = "Command to sync with BHS database."

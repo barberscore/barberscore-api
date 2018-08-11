@@ -438,6 +438,7 @@ class PanelistInline(admin.TabularInline):
         'category',
         'kind',
         'person',
+        'legacy_name',
         'round',
         'num',
     ]

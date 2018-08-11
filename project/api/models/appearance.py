@@ -304,10 +304,13 @@ class Appearance(TimeStampedModel):
 
     # Appearance Conditions
     def can_verify(self):
-        if self.competitor.group.kind == self.competitor.group.KIND.chorus and not self.pos:
+        try:
+            if self.competitor.group.kind == self.competitor.group.KIND.chorus and not self.pos:
+                is_pos = False
+            else:
+                is_pos = True
+        except AttributeError:
             is_pos = False
-        else:
-            is_pos = True
         return all([
             is_pos,
         ])
