@@ -88,7 +88,7 @@
                   {% for appearance in appearances.all|dictsort:'round__kind'  %}
                     <span class='bolder'>{{appearance.round.get_kind_display}}</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
-                      {{song.chart.title|truncatewords_html:10|safe}}<br>
+                      {{song.chart.title|truncatewords_html:10|safe|default:"(Song not included in contestant repertory)"}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
@@ -149,7 +149,7 @@
               {% for song in songs %}
                 <tr>
                   <td>
-                    {{song.chart.title|truncatewords_html:4|safe}}<br>
+                    {{song.chart.title|truncatewords_html:4|safe|default:"(Song not included in contestant repertory)"}}<br>
                   </td>
                   {% for item in panelist_tuple %}
                     {% for score in song.scores.all %}
