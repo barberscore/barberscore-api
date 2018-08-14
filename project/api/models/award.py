@@ -80,6 +80,7 @@ class Award(TimeStampedModel):
         (30, 'qualifier', "Qualifier"),
         (35, 'top', "Top"),
         (40, 'award', "Award"),
+        (45, 'representative', "Representative"),
         (50, 'deferred', "Deferred"),
         (60, 'manual', "Manual"),
     )
