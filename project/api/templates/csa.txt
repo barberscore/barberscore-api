@@ -14,7 +14,3 @@ Total: {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}}%)
 
 
 CSA PDF: {{competitor.csa.url}}
-
-
-OSS PDF: {{round.oss.url}}
-

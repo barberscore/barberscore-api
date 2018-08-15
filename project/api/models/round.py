@@ -444,6 +444,8 @@ class Round(TimeStampedModel):
         else:
             advancers = [a.id for a in multis]
 
+        # Reset draw
+        self.appearances.update(draw=None)
         # Get advancers and draw
         appearances = self.appearances.filter(
             competitor__id__in=advancers,
@@ -453,17 +455,22 @@ class Round(TimeStampedModel):
             appearance.draw = i
             appearance.save()
             i += 1
-        # save_csa_round(self)
+        # create MT
+        mt = self.appearances.filter(
+            draw=None,
+        ).order_by(
+            '-tot_points',
+            '-sng_points',
+            '-per_points',
+            ).first()
+        mt.draw = 0
+        mt.save()
+        save_csa_round(self)
         return
 
     @fsm_log_by
     @transition(field=status, source=[STATUS.verified], target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        Competitor = apps.get_model('api.competitor')
-        if self.kind != self.KIND.finals:
-            next_round = self.session.rounds.get(num=self.num + 1)
-            next_round.build()
-            next_round.save()
         content = create_round_oss(self)
         self.oss.save(
             "{0}-oss".format(
@@ -471,13 +478,14 @@ class Round(TimeStampedModel):
             ),
             content,
         )
-        cs = self.session.competitors.filter(
-            status=Competitor.STATUS.finished,
+        finishers = self.appearances.filter(
+            draw=None,
         )
-        for c in cs:
-            context = {
-                'competitor': c,
-                'round': self,
-            }
-            # send_csa.delay(context)
+        for finisher in finishers:
+            finisher.competitor.finish()
+            finisher.competitor.save()
+        if self.kind != self.KIND.finals:
+            next_round = self.session.rounds.get(num=self.num + 1)
+            next_round.build()
+            next_round.save()
         return
