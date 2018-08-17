@@ -5,6 +5,7 @@ import logging
 # Django
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from django.db.models.signals import post_save
 
 # First-Party
 from api.models import Person
@@ -15,9 +16,10 @@ from bhs.models import Subscription
 from bhs.models import Role
 from bhs.models import Join
 
+from algoliasearch_django import algolia_engine
+
 log = logging.getLogger('updater')
 
-# post_save.disconnect(algolia_engine._AlgoliaEngine__post_save_receiver, sender=MyModel)
 
 class Command(BaseCommand):
     help = "Command to sync with BHS database."
@@ -68,6 +70,12 @@ class Command(BaseCommand):
         else:
             cursor = None
 
+        if not cursor:
+            post_save.disconnect(
+                receiver=algolia_engine._AlgoliaEngine__post_save_receiver,
+                sender=Person,
+            )
+
         # Sync Persons
         t = Human.objects.update_persons(cursor=cursor)
         self.stdout.write("Queued {0} persons.".format(t))
@@ -100,5 +108,11 @@ class Command(BaseCommand):
         # if options['orphans']:
         #     t = User.objects.delete_orphans()
         #     self.stdout.write("Deleted {0} user orphans.".format(t))
+
+        if not cursor:
+            post_save.connect(
+                receiver=algolia_engine._AlgoliaEngine__post_save_receiver,
+                sender=Person,
+            )
 
         self.stdout.write("Complete.")
