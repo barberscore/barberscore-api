@@ -1,6 +1,5 @@
 We're writing to let you know that the draw has been completed for the {{session.convention.name|safe}} {{session.get_kind_display}} Session.
-Please note that this may not be the final order of appearance; additions, scratches, and
-other adjustments may occur up to the session start date.
+Please note that this may not be the final order of appearance; additions, scratches, and other adjustments may occur up until the day of contest.
 
 {% for entry in approved_entries %}
 {{entry.draw}} - {{entry.group.name}}
@@ -9,11 +8,10 @@ other adjustments may occur up to the session start date.
 
 Break a leg!
 
-If you have any other questions please don't hesitate to reach out to
-customerservice@barbershop.org and we'll respond ASAP.
+If you have any other questions or concerns, please contact your DRCJ (Cc'd on this email).
 
 Thanks!
 
 NOTE: This is not SPAM. Please do not report this email as SPAM. If you are receiving this
-email for an inactive group, or you are no longer the administrator for your group, we
+email for an inactive group, or you are no longer an administrator for your group, we
 can fix that. Just send your request to be removed to: customerservice@barbershop.org
