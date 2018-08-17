@@ -1431,12 +1431,21 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 @admin.register(Song)
 class SongAdmin(admin.ModelAdmin):
     fields = [
+        'id',
         # 'name',
         # 'status',
         'appearance',
         'chart',
         'num',
         'tot_points',
+        'tot_score',
+        'mus_points',
+        'mus_score',
+        'per_points',
+        'per_score',
+        'sng_points',
+        'sng_score',
+
 
         # 'title',
     ]
@@ -1463,6 +1472,7 @@ class SongAdmin(admin.ModelAdmin):
     save_on_top = True
 
     readonly_fields = (
+        'id',
     )
 
     autocomplete_fields = [
