@@ -11,36 +11,17 @@ class HumanManager(Manager):
         humans = self.all()
         # Filter if cursored
         if cursor:
-            humans = humans.filter(
+            humans = self.filter(
                 modified__gt=cursor,
             )
-        # Return as objects
-        humans = humans.values_list(
-            'id',
-            'first_name',
-            'middle_name',
-            'last_name',
-            'nick_name',
-            'email',
-            'birth_date',
-            'phone',
-            'cell_phone',
-            'work_phone',
-            'bhs_id',
-            'sex',
-            'primary_voice_part',
-            'is_deceased',
-        )
-
+        t = humans.count()
         # Creating/Update Persons
         Person = apps.get_model('api.person')
         for human in humans:
             django_rq.enqueue(
                 Person.objects.update_or_create_from_human,
                 human,
-                is_object=True,
             )
-        t = humans.count()
         return t
 
     def delete_orphans(self):
@@ -62,7 +43,7 @@ class HumanManager(Manager):
 class StructureManager(Manager):
     def update_groups(self, cursor=None):
         # Get base
-        structures = self.all()
+        structures = self.select_related('parent').all()
         if cursor:
             # Filter if cursored
             structures = structures.filter(
@@ -75,35 +56,15 @@ class StructureManager(Manager):
                 structures__mc_pk__isnull=False,
             )
             ss.delete()
-        # Return as objects
-        structures = structures.select_related(
-            'status',
-        ).values_list(
-            'id',
-            'name',
-            'preferred_name',
-            'chorus_name',
-            'status__name',
-            'kind',
-            'established_date',
-            'email',
-            'phone',
-            'website',
-            'facebook',
-            'twitter',
-            'bhs_id',
-            'parent__id',
-            'chapter_code',
-        )
+        t = structures.count()
         # Creating/Update Groups
         Group = apps.get_model('api.group')
         for structure in structures:
             django_rq.enqueue(
                 Group.objects.update_or_create_from_structure,
                 structure,
-                is_object=True,
             )
-        return structures.count()
+        return t
 
     def delete_orphans(self):
         # Get base
@@ -123,13 +84,13 @@ class StructureManager(Manager):
 
 class RoleManager(Manager):
     def update_officers(self, cursor=None):
-        # Get the cursor
-        Officer = apps.get_model('api.officer')
-
         # Get base
         roles = self.select_related(
             'structure',
             'human',
+        ).order_by(
+            'modified',
+            'created',
         )
         # Will rebuild without a cursor
         if cursor:
@@ -143,115 +104,88 @@ class RoleManager(Manager):
                 officers__mc_pk__isnull=False,
             )
             ss.delete()
-        # Order and Return as objects
-        roles = roles.order_by(
-            'modified',
-            'created',
-        ).values_list(
-            'id',
-            'name',
-            'structure',
-            'human',
-            'start_date',
-            'end_date',
-        )
-
+        t = roles.count()
         # Creating/Update Officers
         Officer = apps.get_model('api.officer')
         for role in roles:
             django_rq.enqueue(
                 Officer.objects.update_from_role,
                 role,
-                is_object=True,
             )
-        return roles.count()
+        return t
 
 
 class JoinManager(Manager):
+    def update_members(self, cursor=None):
+        Member = apps.get_model('api.member')
+        # Get base
+        joins = self.select_related(
+            'structure',
+            'subscription',
+            'subscription__human',
+            'membership',
+            'membership__status',
+        ).order_by(
+            'modified',
+            '-inactive_date',
+        )
+        if cursor:
+            joins = joins.filter(
+                modified__gt=cursor,
+            )
+        else:
+            # Else clear logs
+            ss = StateLog.objects.filter(
+                content_type__model='member',
+                members__mc_pk__isnull=False,
+            )
+            ss.delete()
+
+        t = joins.count()
+        # Creating/Update Membership
+        for join in joins:
+            django_rq.enqueue(
+                Member.objects.update_from_join,
+                join,
+            )
+        return t
+
     # def update_members(self, cursor=None):
     #     Member = apps.get_model('api.member')
     #     # Get base
     #     joins = self.select_related(
     #         'structure',
-    #         'subscription',
     #         'subscription__human',
-    #         'membership',
-    #         'membership__status',
-    #     )
+    #     ).exclude(paid=0)
     #     if cursor:
     #         joins = joins.filter(
     #             modified__gt=cursor,
     #         )
-    #     else:
-    #         # Else clear logs
-    #         ss = StateLog.objects.filter(
-    #             content_type__model='member',
-    #             members__mc_pk__isnull=False,
-    #         )
-    #         ss.delete()
-    #     # Order and Return as objects
-    #     joins = joins.order_by(
-    #         'modified',
-    #         'created',
-    #     ).values_list(
-    #         'id',
+    #     # Return unique rows
+    #     joins = joins.values_list(
     #         'structure__id',
     #         'subscription__human__id',
-    #         'inactive_date',
-    #         'inactive_reason',
-    #         'vocal_part',
-    #         'subscription__status',
-    #         'subscription__current_through',
-    #         'established_date',
-    #         'membership__code',
-    #         'membership__status__name',
-    #         'paid',
-    #     )
+    #     ).distinct()
 
-    #     # Creating/Update Persons
+    #     # Normalize to list of lists
+    #     joins = [list(x) for x in joins]
+
+    #     # Creating/Update Member
     #     for join in joins:
+    #         join.append(bool(self.filter(
+    #             Q(inactive_date=None) |
+    #             Q(
+    #                 inactive_date__gt=localdate(),
+    #                 subscription__status='active',
+    #             ),
+    #             structure__id=join[0],
+    #             subscription__human__id=join[1],
+    #         ).exclude(paid=0)))
     #         django_rq.enqueue(
-    #             Member.objects.update_from_join,
+    #             Member.objects.update_from_join2,
     #             join,
-    #             is_object=True,
     #         )
-    #     return joins.count()
-
-    def update_members2(self, cursor=None):
-        Member = apps.get_model('api.member')
-        # Get base
-        joins = self.select_related(
-            'structure',
-            'subscription__human',
-        ).exclude(paid=0)
-        if cursor:
-            joins = joins.filter(
-                modified__gt=cursor,
-            )
-        # Return unique rows
-        joins = joins.values_list(
-            'structure__id',
-            'subscription__human__id',
-        ).distinct()
-
-        joins = [list(x) for x in joins]
-
-        # Creating/Update Member
-        for join in joins:
-            join.append(bool(self.filter(
-                Q(inactive_date=None) |
-                Q(
-                    inactive_date__gt=localdate(),
-                    subscription__status='active',
-                ),
-                structure__id=join[0],
-                subscription__human__id=join[1],
-            ).exclude(paid=0)))
-            django_rq.enqueue(
-                Member.objects.update_from_join2,
-                join,
-            )
-        return len(joins)
+    #     return len(joins)
 
 
 class SubscriptionManager(Manager):
@@ -261,6 +195,9 @@ class SubscriptionManager(Manager):
             'human',
         ).filter(
             items_editable=True,
+        ).order_by(
+            'modified',
+            '-inactive_date',
         )
         if cursor:
             subscriptions = subscriptions.filter(
@@ -273,23 +210,12 @@ class SubscriptionManager(Manager):
                 persons__mc_pk__isnull=False,
             )
             ss.delete()
-        # Order and Return as objects
-        subscriptions = subscriptions.order_by(
-            'modified',
-            'created',
-        ).values_list(
-            'id',
-            'human__id',
-            'current_through',
-            'status',
-        )
-
+        t = subscriptions.count()
         # Creating/Update Persons
         Person = apps.get_model('api.person')
         for subscription in subscriptions:
             django_rq.enqueue(
                 Person.objects.update_from_subscription,
                 subscription,
-                is_object=True,
             )
-        return subscriptions.count()
+        return t
