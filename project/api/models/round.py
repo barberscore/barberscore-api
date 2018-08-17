@@ -394,7 +394,7 @@ class Round(TimeStampedModel):
             award__rounds=self.num,
         )
         for contest in contests:
-            contest.calculate()
+            contest.determine()
             contest.save()
 
         # "Finish" everyone if finals.
