@@ -1,21 +1,16 @@
-Congratulations on qualifying for the {{entry.session.convention.name|safe}} {{entry.session.get_kind_display}} Session!
+This is your formal invitation to enter the {{entry.session.convention.name|safe}} {{entry.session.get_kind_display}} session!
 
-This is your formal invitation to enter the contest using Barberscore, the
-new contest manager for the Barbershop Harmony Society.
+Login to Barberscore, the contest entry system for the Barbershop Harmony Society at: https://www.barberscore.com/
 
-To get started, go to https://www.barberscore.com/tutorials.  There you'll find
-helpful materials to guide you through the new process.
+Please note, the deadline for contest entry is: {{entry.session.convention.close_date|date:"SHORT_DATE_FORMAT" }}.
 
-Please note that if not responded to your invitation will automatically expire
-on {{entry.session.convention.close_date|date:"SHORT_DATE_FORMAT" }}.
+If you need more info, please go to: https://www.barberscore.com/tutorials. There you'll find helpful materials to guide you through the entry process.
 
-If you experience any problems or need help then please don't hesitate to reach
-out to customerservice@barbershop.org and we'll respond ASAP.
+If you experience any other problems, please don't hesitate to reach out to customerservice@barbershop.org and we'll respond ASAP.
 
 Thanks!
 
 
-NOTE: Please do not mark or flag this email as spam or junk mail, just delete it. Notication emails are 
-sent to all 4 active quartet members (for quartets) and the designated Chapter Leaders (for choruses). 
-If you are no longer an active member of the quartet or a Chapter Leader of your chorus, just send 
+NOTE: Please do not mark or flag this email as spam or junk mail, just delete it.
+If you are no longer the quartet admin or a Chapter Leader of your chorus, just send 
 your request to be removed within the BHS Member Center to: customerservice@barbershop.org.
