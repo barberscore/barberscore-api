@@ -1,20 +1,17 @@
 We're writing to let you know that the {{session.convention.name|safe}} {{session.get_kind_display}} Session is now accepting entries.
 
+The contest entry deadline is: {{session.convention.close_date|date:"SHORT_DATE_FORMAT" }}.
 
-If you'd like to enter the contest, please visit https://www.barberscore.com/tutorials.
-There you'll find helpful materials to guide you through the entry process.  This is new
-software that has replaced the old contest manager, so please do review the instructional
-materials if anything is unclear.
+To enter, go to: https://www.barberscore.com/
 
-The session will remain open until {{session.convention.close_date|date:"SHORT_DATE_FORMAT" }}.
-After that, you'll need approval from the DRCJ to enter the contest.
+If you're new to Barberscore, please visit https://www.barberscore.com/tutorials.
+There you'll find helpful materials to guide you through the contest entry process.
 
-
-If you experience any problems or need help then please don't hesitate to reach
+If you experience any other problems or need help, please don't hesitate to reach
 out to customerservice@barbershop.org and we'll respond ASAP.
 
 Thanks!
 
 NOTE: This is not SPAM. Please do not report this email as SPAM. If you are receiving this
-email for an inactive quartet, or you are no longer the administrator for your chapter, we
+email for an inactive quartet, or you are no longer an administrator for your chapter, we
 can fix that. Just send your request to be removed to: customerservice@barbershop.org
