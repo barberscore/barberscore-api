@@ -23,7 +23,6 @@ from django.utils.functional import cached_property
 from django.urls import reverse
 
 # First-Party
-from api.tasks import send_csa
 from api.tasks import create_round_oss
 from api.tasks import create_csa_report
 from api.tasks import save_csa_round

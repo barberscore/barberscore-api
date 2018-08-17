@@ -25,6 +25,7 @@ from django.db.models import Q
 from api.tasks import create_csa_report
 from api.fields import UploadPath
 from api.tasks import save_csa_report
+from api.tasks import send_csa
 
 log = logging.getLogger(__name__)
 
@@ -317,6 +318,10 @@ class Competitor(TimeStampedModel):
         target=STATUS.finished,
     )
     def finish(self, *args, **kwargs):
+        context = {
+            'competitor': self,
+        }
+        # send_csa.delay(context)
         return
 
     @fsm_log_by
