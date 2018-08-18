@@ -22,7 +22,6 @@ from django.contrib.contenttypes.fields import GenericRelation
 
 # First-Party
 from api.managers import UserManager
-from api.tasks import activate_user
 
 config = api_apps.get_app_config('api')
 
