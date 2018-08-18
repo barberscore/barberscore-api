@@ -197,7 +197,6 @@ class SubscriptionManager(Manager):
             items_editable=True,
         ).order_by(
             'modified',
-            '-inactive_date',
         )
         if cursor:
             subscriptions = subscriptions.filter(
