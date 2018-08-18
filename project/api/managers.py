@@ -619,6 +619,7 @@ class OfficerManager(Manager):
 class PersonManager(Manager):
     def update_or_create_from_human(self, human):
         # Clean
+        mc_pk = str(human.id)
         first_name = human.first_name
         middle_name = human.middle_name
         last_name = human.last_name
