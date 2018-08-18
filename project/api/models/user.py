@@ -17,7 +17,6 @@ from django.utils.functional import cached_property
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
 from django_fsm_log.decorators import fsm_log_description
-# from api.tasks import update_or_create_account_from_user
 from django_fsm_log.models import StateLog
 from django.contrib.contenttypes.fields import GenericRelation
 
@@ -49,7 +48,7 @@ class User(AbstractBaseUser):
     status = FSMIntegerField(
         help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
-        default=STATUS.new,
+        default=STATUS.active,
     )
 
     username = models.CharField(
@@ -201,7 +200,10 @@ class User(AbstractBaseUser):
         return results
 
     def clean(self):
-        pass
+        if not self.person and not self.is_staff:
+            raise ValidationError(
+                {'person': 'Non-staff user accounts must have Person attached.'}
+            )
         # if self.email != self.person.email:
         #     raise ValidationError(
         #         {'email': 'Email does not match person'}
@@ -255,12 +257,12 @@ class User(AbstractBaseUser):
     @fsm_log_description
     @transition(field=status, source='*', target=STATUS.active)
     def activate(self, description=None, *args, **kwargs):
-        activate_user(self)
+        # Should deactive AUTH0
         return
 
     @fsm_log_by
     @fsm_log_description
     @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, description=None, *args, **kwargs):
-        self.person = None
+        # Should deactive AUTH0
         return
