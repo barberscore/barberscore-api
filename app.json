@@ -78,6 +78,7 @@
         "CLOUDINARY_URL": "test",
         "ALGOLIASEARCH_APPLICATION_ID": "test",
         "ALGOLIASEARCH_API_KEY": "test",
+        "ALGOLIASEARCH_AUTO_INDEXING": "test",
         "AUTH0_CLIENT_ID": "test",
         "AUTH0_CLIENT_SECRET": "test",
         "AUTH0_DOMAIN": "test",
