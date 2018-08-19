@@ -177,6 +177,7 @@ JWT_AUTH = {
 ALGOLIA = {
     'APPLICATION_ID': get_env_variable("ALGOLIASEARCH_APPLICATION_ID"),
     'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
+    'AUTO_INDEXING': get_env_variable("ALGOLIASEARCH_AUTO_INDEXING"),
 }
 
 # Cloudinary
