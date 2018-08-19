@@ -53,7 +53,7 @@ class StructureManager(Manager):
             # Else clear logs
             ss = StateLog.objects.filter(
                 content_type__model='group',
-                structures__mc_pk__isnull=False,
+                groups__mc_pk__isnull=False,
             )
             ss.delete()
         t = structures.count()
