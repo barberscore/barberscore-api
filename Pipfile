@@ -21,7 +21,7 @@ django-fsm-admin = "*"
 django-fsm-log = {git = "https://github.com/barberscore/django-fsm-log.git"}
 django-model-utils = "*"
 django-redis = "*"
-django-rq = {git = "https://github.com/jordifierro/django-rq.git"}
+django-rq = "*"
 django-timezone-field = "*"
 djangorestframework = "*"
 djangorestframework-csv = "*"
