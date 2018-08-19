@@ -33,7 +33,8 @@ def user_pre_save(sender, instance, **kwargs):
         # settings.DJANGO_SETTINGS_MODULE == 'settings.dev',
     ])
     if allowed:
-        if not instance.is_staff and not instance.person:
+        person = getattr(instance, 'person', None)
+        if not instance.is_staff and not person:
             # Link person to user, only if empty
             Person = apps.get_model('api.person')
             auth0 = get_auth0()
@@ -50,7 +51,8 @@ def person_post_save(sender, instance, created, **kwargs):
         # settings.DJANGO_SETTINGS_MODULE == 'settings.dev',
     ])
     if allowed:
-        if instance.user:
+        user = getattr(instance, 'user', None)
+        if user:
             # Update if record linked.
             update_account.delay(instance)
     return
