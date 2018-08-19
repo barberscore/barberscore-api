@@ -50,13 +50,6 @@ class Command(BaseCommand):
             help='Number of hours to update.',
         )
 
-        parser.add_argument(
-            '--orphans',
-            nargs='?',
-            const=1,
-            help='Include orphans.',
-        )
-
     def handle(self, *args, **options):
         # Set Cursor
         if options['days']:
@@ -71,20 +64,20 @@ class Command(BaseCommand):
         # Sync Persons
         t = Human.objects.update_persons(cursor=cursor)
         self.stdout.write("Queued {0} persons.".format(t))
-        if options['orphans']:
+        if not cursor:
             t = Human.objects.delete_orphans()
             self.stdout.write("Deleted {0} person orphans.".format(t))
 
         # Sync Groups
         t = Structure.objects.update_groups(cursor=cursor)
         self.stdout.write("Queued {0} groups.".format(t))
-        if options['orphans']:
+        if not cursor:
             t = Structure.objects.delete_orphans()
             self.stdout.write("Deleted {0} group orphans.".format(t))
 
         # Sync Subscriptions
         t = Subscription.objects.update_persons(cursor=cursor)
-        self.stdout.write("Queued {0} person statuses.".format(t))
+        self.stdout.write("Queued {0} accounts.".format(t))
 
         # Sync Members
         t = Join.objects.update_members(cursor=cursor)
