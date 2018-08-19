@@ -79,13 +79,13 @@ class Command(BaseCommand):
         t = Subscription.objects.update_persons(cursor=cursor)
         self.stdout.write("Queued {0} accounts.".format(t))
 
-        # Sync Members
-        t = Join.objects.update_members(cursor=cursor)
-        self.stdout.write("Queued {0} members.".format(t))
-
         # Sync Roles
         t = Role.objects.update_officers(cursor=cursor)
         self.stdout.write("Queued {0} officers.".format(t))
+
+        # Sync Members
+        t = Join.objects.update_members(cursor=cursor)
+        self.stdout.write("Queued {0} members.".format(t))
 
         # Sync Users
         # t = Person.objects.update_users(cursor=cursor)
