@@ -70,7 +70,7 @@ class Command(BaseCommand):
         else:
             cursor = None
 
-        if not cursor:
+        if True:
             post_save.disconnect(
                 receiver=algolia_engine._AlgoliaEngine__post_save_receiver,
                 sender=Person,
@@ -109,7 +109,7 @@ class Command(BaseCommand):
         #     t = User.objects.delete_orphans()
         #     self.stdout.write("Deleted {0} user orphans.".format(t))
 
-        if not cursor:
+        if True:
             post_save.connect(
                 receiver=algolia_engine._AlgoliaEngine__post_save_receiver,
                 sender=Person,
