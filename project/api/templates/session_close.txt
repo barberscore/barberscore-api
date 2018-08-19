@@ -1,15 +1,9 @@
-We're writing to let you know that the {{session.convention.name|safe}} {{session.get_kind_display}} Session is no longer accepting entries.
+We're writing to let you know that the {{session.convention.name|safe}} {{session.get_kind_display}} Session is no longer accepting contest entries.
 
-
-If you missed the deadline but still would like to enter the contest, please speak with
-the DRCJ (cc'd on this email) for approval.
-
-
-If you have any other questions please don't hesitate to reach out to
-customerservice@barbershop.org and we'll respond ASAP.
+If you missed the deadline but still would like to enter the contest, please contact your DRCJ (cc'd on this email) to see if an exception can be granted.
 
 Thanks!
 
 NOTE: This is not SPAM. Please do not report this email as SPAM. If you are receiving this
-email for an inactive quartet, or you are no longer the administrator for your chapter, we
+email for an inactive quartet, or you are no longer an administrator for your chapter, we
 can fix that. Just send your request to be removed to: customerservice@barbershop.org
