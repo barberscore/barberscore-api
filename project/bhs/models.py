@@ -512,10 +512,11 @@ class Join(models.Model):
 
     # Internals
     def __str__(self):
-        return "{0} {1}".format(
-            self.subscription,
-            self.membership,
-        )
+        return str(self.id)
+        # return "{0} {1}".format(
+        #     self.subscription,
+        #     self.membership,
+        # )
 
     class Meta:
         managed = False
