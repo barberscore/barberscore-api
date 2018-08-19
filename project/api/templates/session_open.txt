@@ -1,4 +1,5 @@
-We're writing to let you know that the {{session.convention.name|safe}} {{session.get_kind_display}} Session is now accepting entries.
+We're writing to let you know that the {{session.convention.name|safe}} {{session.get_kind_display}}
+Session is now accepting entries.
 
 The contest entry deadline is: {{session.convention.close_date|date:"SHORT_DATE_FORMAT" }}.
 

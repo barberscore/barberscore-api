@@ -1,6 +1,8 @@
-We're writing to let you know that the {{session.convention.name|safe}} {{session.get_kind_display}} Session is no longer accepting contest entries.
+We're writing to let you know that the {{session.convention.name|safe}} {{session.get_kind_display}}
+Session is no longer accepting contest entries.
 
-If you missed the deadline but still would like to enter the contest, please contact your DRCJ (cc'd on this email) to see if an exception can be granted.
+If you missed the deadline but still would like to enter the contest,
+please contact your DRCJ (cc'd on this email) to see if an exception can be granted.
 
 Thanks!
 

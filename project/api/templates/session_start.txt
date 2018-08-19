@@ -1,4 +1,7 @@
-The {{session.convention.name|safe}} {{session.get_kind_display}} Session is starting soon, and your entry has been finalized. If you need to withdraw from the contest or make changes, please contact your DRCJ directly (Cc'd on this email).
+The {{session.convention.name|safe}} {{session.get_kind_display}}
+Session is starting soon, and your entry has been finalized. If you need to
+withdraw from the contest or make changes, please contact your DRCJ
+directly (Cc'd on this email).
 
 Break a leg!
 

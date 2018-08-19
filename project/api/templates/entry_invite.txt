@@ -4,13 +4,15 @@ Login to Barberscore, the contest entry system for the Barbershop Harmony Societ
 
 Please note, the deadline for contest entry is: {{entry.session.convention.close_date|date:"SHORT_DATE_FORMAT" }}.
 
-If you need more info, please go to: https://www.barberscore.com/tutorials. There you'll find helpful materials to guide you through the entry process.
+If you need more info, please go to: https://www.barberscore.com/tutorials.
+There you'll find helpful materials to guide you through the entry process.
 
-If you experience any other problems, please don't hesitate to reach out to customerservice@barbershop.org and we'll respond ASAP.
+If you experience any other problems, please don't hesitate to reach out to
+customerservice@barbershop.org and we'll respond ASAP.
 
 Thanks!
 
 
 NOTE: Please do not mark or flag this email as spam or junk mail, just delete it.
-If you are no longer the quartet admin or a Chapter Leader of your chorus, just send 
+If you are no longer the quartet admin or a Chapter Leader of your chorus, just send
 your request to be removed within the BHS Member Center to: customerservice@barbershop.org.
