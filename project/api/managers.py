@@ -703,11 +703,11 @@ class PersonManager(Manager):
         except IntegrityError as e:
             # Need to delete old offending record
             if "api_person_bhs_id_key" in str(e.args):
-                old = Person.objects.get(
+                old = self.get(
                     bhs_id=bhs_id,
                 )
                 old.delete()
-                new = Person.objects.get(
+                new = self.get(
                     mc_pk=mc_pk,
                 )
                 new.bhs_id = bhs_id
