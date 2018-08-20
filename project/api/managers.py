@@ -84,7 +84,13 @@ class GroupManager(Manager):
         chorus_name = chorus_name.strip() if chorus_name else ''
         kind = getattr(
             self.model.KIND,
-            kind.replace('chapter', 'chorus').replace('group', 'noncomp')
+            kind.replace(
+                'chapter', 'chorus'
+            ).replace(
+                'group', 'noncomp'
+            ).replace(
+                'organization', 'international'
+            )
         )
         email = email.strip()
         phone = phone.strip()
