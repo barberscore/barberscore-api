@@ -700,22 +700,38 @@ class PersonManager(Manager):
                 mc_pk=mc_pk,
                 defaults=defaults,
             )
-        except IntegrityError:
-            defaults['mc_pk'] = mc_pk
-            defaults.pop('bhs_id', None)
-            try:
-                person, created = self.update_or_create(
+        except IntegrityError as e:
+            # Need to delete old offending record
+            if "api_person_bhs_id_key" in str(e.args):
+                old = Person.objects.get(
                     bhs_id=bhs_id,
-                    defaults=defaults,
                 )
-            except IntegrityError:
-                defaults['mc_pk'] = mc_pk
-                defaults['bhs_id'] = bhs_id
-                defaults.pop('email', None)
+                old.delete()
+                new = Person.objects.get(
+                    mc_pk=mc_pk,
+                )
+                new.bhs_id = bhs_id
+                new.save()
                 person, created = self.update_or_create(
-                    email=email,
+                    mc_pk=mc_pk,
                     defaults=defaults,
                 )
+            else:
+                defaults['mc_pk'] = mc_pk
+                defaults.pop('bhs_id', None)
+                try:
+                    person, created = self.update_or_create(
+                        bhs_id=bhs_id,
+                        defaults=defaults,
+                    )
+                except IntegrityError:
+                    defaults['mc_pk'] = mc_pk
+                    defaults['bhs_id'] = bhs_id
+                    defaults.pop('email', None)
+                    person, created = self.update_or_create(
+                        email=email,
+                        defaults=defaults,
+                    )
         return person, created
 
     def update_from_subscription(self, subscription):
