@@ -327,15 +327,15 @@ class MemberManager(Manager):
         mc_pk = str(join.id)
         structure = str(join.structure.id)
         human = str(join.subscription.human.id)
+        established_date = join.established_date
         inactive_date = join.inactive_date
         inactive_reason = join.inactive_reason
         part = join.vocal_part
+        paid = join.paid
         sub_status = join.subscription.status
         current_through = join.subscription.current_through
-        established_date = join.established_date
-        mem_code = join.membership.code
-        mem_status = join.membership.status.name
-        paid = join.paid
+        # mem_code = join.membership.code
+        # mem_status = join.membership.status.name
 
         # Ignore rows without approval flow
         if not paid:
@@ -373,17 +373,17 @@ class MemberManager(Manager):
             None,
         )
 
-        mem_code = getattr(
-            self.model.MEM_CODE,
-            mem_code if mem_code else '',
-            None,
-        )
+        # mem_code = getattr(
+        #     self.model.MEM_CODE,
+        #     mem_code if mem_code else '',
+        #     None,
+        # )
 
-        mem_status = getattr(
-            self.model.MEM_STATUS,
-            mem_status.strip().replace("-", "_") if mem_status else '',
-            None,
-        )
+        # mem_status = getattr(
+        #     self.model.MEM_STATUS,
+        #     mem_status.strip().replace("-", "_") if mem_status else '',
+        #     None,
+        # )
 
         # Get the related fields
         Group = apps.get_model('api.group')
@@ -422,10 +422,10 @@ class MemberManager(Manager):
             prior['inactive_reason'] = member.get_inactive_reason_display()
         if member.part:
             prior['part'] = member.get_part_display()
-        if member.mem_code:
-            prior['mem_code'] = member.get_mem_code_display()
-        if member.mem_status:
-            prior['mem_status'] = member.get_mem_status_display()
+        # if member.mem_code:
+        #     prior['mem_code'] = member.get_mem_code_display()
+        # if member.mem_status:
+        #     prior['mem_status'] = member.get_mem_status_display()
 
         # Update the fields
         member.mc_pk = mc_pk
@@ -435,8 +435,8 @@ class MemberManager(Manager):
         member.sub_status = sub_status
         member.current_through = current_through
         member.established_date = established_date
-        member.mem_code = mem_code
-        member.mem_status = mem_status
+        # member.mem_code = mem_code
+        # member.mem_status = mem_status
 
         # Build the diff from prior to new
         diff = {}
@@ -466,13 +466,13 @@ class MemberManager(Manager):
         if prior.get('established_date') != established_date_string:
             diff['established_date'] = established_date_string
 
-        mem_code_string = self.model.MEM_CODE[mem_code] if mem_code else None
-        if prior.get('mem_code') != mem_code_string:
-            diff['mem_code'] = mem_code_string
+        # mem_code_string = self.model.MEM_CODE[mem_code] if mem_code else None
+        # if prior.get('mem_code') != mem_code_string:
+        #     diff['mem_code'] = mem_code_string
 
-        mem_status_string = self.model.MEM_STATUS[mem_status] if mem_status else None
-        if prior.get('mem_status') != mem_status_string:
-            diff['mem_status'] = mem_status_string
+        # mem_status_string = self.model.MEM_STATUS[mem_status] if mem_status else None
+        # if prior.get('mem_status') != mem_status_string:
+        #     diff['mem_status'] = mem_status_string
 
         # Skip duplicates
         if not diff:
