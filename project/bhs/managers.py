@@ -123,8 +123,6 @@ class JoinManager(Manager):
             'structure',
             'subscription',
             'subscription__human',
-            'membership',
-            'membership__status',
         ).order_by(
             'modified',
             '-inactive_date',
