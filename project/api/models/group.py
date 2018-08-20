@@ -304,7 +304,7 @@ class Group(TimeStampedModel):
         null=True,
         blank=True,
         max_length=36,
-        # unique=True,
+        unique=True,
         db_index=True,
     )
 
