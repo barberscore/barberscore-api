@@ -734,7 +734,36 @@ class PersonManager(Manager):
                     )
         return person, created
 
-    def update_from_subscription(self, subscription):
+# class RoundManager(Manager):
+#     def rank(self):
+#         appearances = self.appearances.filter(
+#             competitor__is_ranked=True,
+#         ).order_by('-competitor__tot_points')
+#         points = [x.competitor.tot_points for x in competitors]
+#         ranked = Ranking(points, start=1)
+#         for competitor in competitors:
+#             if competitor.is_ranked:
+#                 competitor.tot_rank = ranked.rank(self.tot_points)
+#             else:
+#                 competitor.tot_rank = None
+#             competitor.save()
+#         return
+
+
+class UserManager(BaseUserManager):
+    # def delete_orphans(self):
+    #     accounts = get_accounts()
+    #     users = list(self.filter(
+    #         account_id__isnull=False
+    #     ).values_list('account_id', flat=True))
+    #     i = 0
+    #     for account in accounts:
+    #         if account['account_id'] not in users:
+    #             i += 1
+    #             delete_account.delay(account['account_id'])
+    #     return i
+
+    def update_or_create_from_subscription(self, subscription):
         # Clean
         mc_pk = str(subscription.id)
         human = str(subscription.human.id)
@@ -795,35 +824,6 @@ class PersonManager(Manager):
         person.save()
         return 'Updated'
 
-
-# class RoundManager(Manager):
-#     def rank(self):
-#         appearances = self.appearances.filter(
-#             competitor__is_ranked=True,
-#         ).order_by('-competitor__tot_points')
-#         points = [x.competitor.tot_points for x in competitors]
-#         ranked = Ranking(points, start=1)
-#         for competitor in competitors:
-#             if competitor.is_ranked:
-#                 competitor.tot_rank = ranked.rank(self.tot_points)
-#             else:
-#                 competitor.tot_rank = None
-#             competitor.save()
-#         return
-
-
-class UserManager(BaseUserManager):
-    # def delete_orphans(self):
-    #     accounts = get_accounts()
-    #     users = list(self.filter(
-    #         account_id__isnull=False
-    #     ).values_list('account_id', flat=True))
-    #     i = 0
-    #     for account in accounts:
-    #         if account['account_id'] not in users:
-    #             i += 1
-    #             delete_account.delay(account['account_id'])
-    #     return i
 
     def create_user(self, username, **kwargs):
         user = self.model(
