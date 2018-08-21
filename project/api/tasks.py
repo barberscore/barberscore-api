@@ -140,6 +140,16 @@ def delete_account(user):
 
 
 @job
+def link_account(user):
+    Person = apps.get_model('api.person')
+    auth0 = get_auth0()
+    account = auth0.users.get(user.username)
+    email = account['email'].lower()
+    person, created = Person.objects.get_or_create(email=email)
+    return person
+
+
+@job
 def unlink_user_account(user):
     client = get_auth0()
     user_id = user.username.partition('|')[2]
