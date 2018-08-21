@@ -78,6 +78,14 @@ class User(AbstractBaseUser):
         editable=True,
     )
 
+    mc_pk = models.CharField(
+        null=True,
+        blank=True,
+        max_length=36,
+        unique=True,
+        db_index=True,
+    )
+
     is_staff = models.BooleanField(
         default=False,
     )
