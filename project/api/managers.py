@@ -749,7 +749,7 @@ class UserManager(BaseUserManager):
         )
 
         Person = apps.get_model('api.person')
-        person = Person.objects.update_or_create_from_human(human)
+        person, created = Person.objects.update_or_create_from_human(human)
         name = str(person)
         email = person.email
         defaults = {
@@ -764,6 +764,7 @@ class UserManager(BaseUserManager):
             user = self.get(
                 mc_pk=mc_pk,
             )
+            created = False
         except self.model.DoesNotExist:
             user = self.create_user(
                 name=name,
@@ -771,7 +772,7 @@ class UserManager(BaseUserManager):
                 current_through=current_through,
                 person=person,
             )
-
+            created = True
         # set prior values
         prior = model_to_dict(
             user,
@@ -822,7 +823,7 @@ class UserManager(BaseUserManager):
         else:
             raise ValueError('Unknown status')
         user.save()
-        return 'Updated'
+        return user, created
 
 
     # def delete_orphans(self):
