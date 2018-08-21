@@ -22,6 +22,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 
 # First-Party
 from api.managers import UserManager
+from api.fields import LowerEmailField
 
 config = api_apps.get_app_config('api')
 
@@ -54,6 +55,14 @@ class User(AbstractBaseUser):
         max_length=100,
         unique=True,
         editable=True,
+    )
+
+    email = LowerEmailField(
+        help_text="""
+            The contact email of the resource.""",
+        null=True,
+        blank=True,
+        unique=True,
     )
 
     name = models.CharField(
