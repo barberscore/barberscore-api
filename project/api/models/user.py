@@ -56,6 +56,19 @@ class User(AbstractBaseUser):
         editable=True,
     )
 
+    name = models.CharField(
+        null=True,
+        blank=True,
+        max_length=255,
+        editable=True,
+    )
+
+    current_through = models.DateField(
+        null=True,
+        blank=True,
+        editable=True,
+    )
+
     is_staff = models.BooleanField(
         default=False,
     )
