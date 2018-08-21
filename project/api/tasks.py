@@ -66,6 +66,7 @@ def get_accounts():
             results = auth0.users.list(
                 fields=[
                     'user_id',
+                    'email',
                 ],
                 per_page=100,
                 page=i,
@@ -89,6 +90,7 @@ def get_accounts():
         for user in users:
             payload = {
                 'username': user['user_id'],
+                'email': user['email'],
             }
             output.append(payload)
         more = bool(results['users'])

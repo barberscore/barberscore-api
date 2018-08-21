@@ -795,44 +795,6 @@ class PersonManager(Manager):
         person.save()
         return 'Updated'
 
-    # def update_users(self, cursor=None):
-    #     # Get Base - currently only active officers persons
-    #     Officer = apps.get_model('api.officer')
-    #     persons = self.filter(
-    #         officers__status=Officer.STATUS.active,
-    #         status=self.model.STATUS.active,
-    #         email__isnull=False,
-    #     ).distinct()
-    #     if cursor:
-    #         persons = persons.filter(
-    #             modified__gt=cursor,
-    #         )
-    #     # Return as objects
-    #     persons = persons.annotate(
-    #         nom=Concat(
-    #             'first_name', Value(' '),
-    #             'middle_name', Value(' '),
-    #             'last_name', Value(' ('),
-    #             'nick_name', Value(') ['),
-    #             'bhs_id', Value(']'),
-    #             output_field=CharField()
-    #         )
-    #     )
-    #     persons = persons.values_list(
-    #         'id',
-    #         'nom',
-    #         'email',
-    #         'status',
-    #     )
-    #     User = apps.get_model('api.user')
-    #     for person in persons:
-    #         django_rq.enqueue(
-    #             User.objects.update_or_create_from_person,
-    #             person,
-    #             is_object=True,
-    #         )
-    #     return persons.count()
-
 
 # class RoundManager(Manager):
 #     def rank(self):
