@@ -1294,7 +1294,7 @@ class VenueViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.select_related(
-        # 'person',
+        'person',
     ).prefetch_related(
         'statelogs',
     ).order_by('id')
