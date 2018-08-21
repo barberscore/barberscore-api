@@ -75,17 +75,17 @@ class Command(BaseCommand):
             t = Structure.objects.delete_orphans()
             self.stdout.write("Deleted {0} group orphans.".format(t))
 
-        # Sync Subscriptions
-        t = Subscription.objects.update_persons(cursor=cursor)
-        self.stdout.write("Queued {0} accounts.".format(t))
-
-        # Sync Roles
+        # Sync Officers
         t = Role.objects.update_officers(cursor=cursor)
         self.stdout.write("Queued {0} officers.".format(t))
 
         # Sync Members
         t = Join.objects.update_members(cursor=cursor)
         self.stdout.write("Queued {0} members.".format(t))
+
+        # Sync Subscriptions
+        t = Subscription.objects.update_users(cursor=cursor)
+        self.stdout.write("Queued {0} users.".format(t))
 
         # Sync Users
         # t = Person.objects.update_users(cursor=cursor)

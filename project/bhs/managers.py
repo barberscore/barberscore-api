@@ -187,7 +187,7 @@ class JoinManager(Manager):
 
 
 class SubscriptionManager(Manager):
-    def update_persons(self, cursor=None):
+    def update_users(self, cursor=None):
         # Get base
         subscriptions = self.select_related(
             'human',
@@ -203,16 +203,16 @@ class SubscriptionManager(Manager):
         else:
             # Else clear logs
             ss = StateLog.objects.filter(
-                content_type__model='person',
-                persons__mc_pk__isnull=False,
+                content_type__model='user',
+                users__mc_pk__isnull=False,
             )
             ss.delete()
         t = subscriptions.count()
         # Creating/Update Persons
-        Person = apps.get_model('api.person')
+        User = apps.get_model('api.user')
         for subscription in subscriptions:
             django_rq.enqueue(
-                Person.objects.update_from_subscription,
+                User.objects.update_from_subscription,
                 subscription,
             )
         return t
