@@ -106,6 +106,7 @@ def create_account(person):
     name = person.__str__()
     random = get_random_string()
     payload = {
+        'connection': 'Default',
         'email': email,
         'email_verified': True,
         'password': random,
