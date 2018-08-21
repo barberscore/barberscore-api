@@ -20,7 +20,6 @@ from .repertory import Repertory
 from .round import Round
 from .score import Score
 from .session import Session
-from .subscription import Subscription
 from .song import Song
 from .user import User
 from .venue import Venue

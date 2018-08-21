@@ -69,7 +69,6 @@ from .models import Round
 from .models import Score
 from .models import Session
 from .models import Song
-from .models import Subscription
 from .models import User
 from .models import Venue
 
@@ -895,7 +894,6 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_filter = [
         'status',
         MCListFilter,
-        'subscription',
         'group__kind',
         'group__status',
         'part',
@@ -1479,38 +1477,6 @@ class SongAdmin(admin.ModelAdmin):
 
     ordering = (
         'num',
-    )
-
-
-@admin.register(Subscription)
-class SubscriptionAdmin(admin.ModelAdmin):
-    fields = [
-        'name',
-        'status',
-        'code',
-    ]
-
-    list_display = (
-        'name',
-        'status',
-        'code',
-    )
-
-    list_filter = (
-        'status',
-    )
-
-    search_fields = [
-        'name',
-    ]
-
-    save_on_top = True
-
-    readonly_fields = (
-    )
-
-    ordering = (
-        'name',
     )
 
 
