@@ -13,14 +13,14 @@ from .tasks import update_account
 from .tasks import link_account
 
 
-@receiver(pre_delete, sender=User)
+# @receiver(pre_delete, sender=User)
 def user_pre_delete(sender, instance, **kwargs):
     if not instance.is_staff:
         delete_account.delay(instance)
     return
 
 
-@receiver(pre_save, sender=User)
+# @receiver(pre_save, sender=User)
 def user_pre_save(sender, instance, **kwargs):
     """Create User-Person Link"""
     person = getattr(instance, 'person', None)
@@ -31,7 +31,7 @@ def user_pre_save(sender, instance, **kwargs):
     return
 
 
-@receiver(post_save, sender=Person)
+# @receiver(post_save, sender=Person)
 def person_post_save(sender, instance, created, **kwargs):
     user = getattr(instance, 'user', None)
     # changed = instance.tracker.has_changed('email')

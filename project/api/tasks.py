@@ -278,7 +278,7 @@ def create_drcj_report(session):
             status__gt=0,
         )
         expiring_count = members.filter(
-            person__current_through__lte=session.convention.close_date,
+            person__user__current_through__lte=session.convention.close_date,
         ).count()
         participants = entry.participants
         awards_list = []
@@ -418,7 +418,7 @@ def create_roster_report(group):
         bhs_id = member.person.bhs_id
         first_name = member.person.first_name
         last_name = member.person.last_name
-        expiration = member.person.current_through
+        expiration = member.person.user.current_through
         status = member.person.get_status_display()
         row = [
             bhs_id,

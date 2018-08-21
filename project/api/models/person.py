@@ -251,11 +251,11 @@ class Person(TimeStampedModel):
         db_index=True,
     )
 
-    current_through = models.DateField(
-        null=True,
-        blank=True,
-        editable=True,
-    )
+    # current_through = models.DateField(
+    #     null=True,
+    #     blank=True,
+    #     editable=True,
+    # )
 
     # Relations
     # tracker = FieldTracker(

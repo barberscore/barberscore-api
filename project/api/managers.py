@@ -734,42 +734,71 @@ class PersonManager(Manager):
                     )
         return person, created
 
-    def update_from_subscription(self, subscription):
+
+class UserManager(BaseUserManager):
+    def update_or_create_from_subscription(self, subscription):
         # Clean
         mc_pk = str(subscription.id)
-        human = str(subscription.human.id)
+        human = subscription.human
         current_through = subscription.current_through
-        status = subscription.status
 
         status = getattr(
             self.model.STATUS,
-            status,
+            subscription.status,
             self.model.STATUS.inactive,
         )
+
+        Person = apps.get_model('api.person')
+        person = Person.objects.update_or_create_from_human(human)
+        name = str(person)
+        email = person.email
+        defaults = {
+            'name': name,
+            'email': email,
+            'current_through': current_through,
+            'person': person,
+        }
+
+        # Get or create
         try:
-            person = self.get(
-                mc_pk=human,
+            user = self.get(
+                mc_pk=mc_pk,
             )
         except self.model.DoesNotExist:
-            Human = apps.get_model('bhs.human')
-            human = Human.objects.get(id=human)
-            person, created = self.update_or_create_from_human(human)
+            user = self.create_user(
+                name=name,
+                email=email,
+                current_through=current_through,
+                person=person,
+            )
 
-        # Instantiate prior values dictionary
-        prior = {}
-        prior['status'] = person.get_status_display()
-        prior['current_through'] = person.current_through.strftime('%Y-%m-%d') if person.current_through else None
+        # set prior values
+        prior = model_to_dict(
+            user,
+            fields=[
+                'status',
+                'name',
+                'email',
+                'current_through',
+            ],
+        )
 
-        # Update
-        person.current_through = current_through
+        # update the group to new values
+        for key, value in defaults.items():
+            setattr(user, key, value)
+
 
         # Build the diff from prior to new
         diff = {}
-        if person.status != status:
+        if user.status != status:
             diff['status'] = prior['status']
         current_through_string = current_through.strftime('%Y-%m-%d') if current_through else None
         if prior.get('current_through') != current_through_string:
             diff['current_through'] = prior['current_through']
+        if prior.get('name') != name:
+            diff['name'] = prior['name']
+        if prior.get('email') != email:
+            diff['name'] = prior['name']
         if diff:
             diff['mc_pk'] = mc_pk
 
@@ -777,42 +806,25 @@ class PersonManager(Manager):
             return 'Skipped'
 
         # Set the transition description
-        if person.status == person.STATUS.new:
+        if user.status == user.STATUS.new:
             description = json.dumps({'status': 'New'})
         else:
             description = json.dumps(diff)
 
         if status == self.model.STATUS.active:
-            person.activate(
+            user.activate(
                 description=description,
             )
         elif status == self.model.STATUS.inactive:
-            person.deactivate(
+            user.deactivate(
                 description=description,
             )
         else:
             raise ValueError('Unknown status')
-        person.save()
+        user.save()
         return 'Updated'
 
 
-# class RoundManager(Manager):
-#     def rank(self):
-#         appearances = self.appearances.filter(
-#             competitor__is_ranked=True,
-#         ).order_by('-competitor__tot_points')
-#         points = [x.competitor.tot_points for x in competitors]
-#         ranked = Ranking(points, start=1)
-#         for competitor in competitors:
-#             if competitor.is_ranked:
-#                 competitor.tot_rank = ranked.rank(self.tot_points)
-#             else:
-#                 competitor.tot_rank = None
-#             competitor.save()
-#         return
-
-
-class UserManager(BaseUserManager):
     # def delete_orphans(self):
     #     accounts = get_accounts()
     #     users = list(self.filter(
