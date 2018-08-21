@@ -212,7 +212,7 @@ class SubscriptionManager(Manager):
         User = apps.get_model('api.user')
         for subscription in subscriptions:
             django_rq.enqueue(
-                User.objects.update_from_subscription,
+                User.objects.update_or_create_from_subscription,
                 subscription,
             )
         return t
