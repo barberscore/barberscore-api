@@ -751,6 +751,95 @@ class PersonManager(Manager):
 
 
 class UserManager(BaseUserManager):
+    def update_or_create_from_subscription(self, subscription):
+        # Clean
+        mc_pk = str(subscription.id)
+        human = subscription.human
+        current_through = subscription.current_through
+
+        status = getattr(
+            self.model.STATUS,
+            subscription.status,
+            self.model.STATUS.inactive,
+        )
+
+        Person = apps.get_model('api.person')
+        person = Person.objects.update_or_create_from_human(human)
+        name = str(person)
+        email = person.email
+        defaults = {
+            'name': name,
+            'email': email,
+            'current_through': current_through,
+            'person': person,
+        }
+
+        # Get or create
+        try:
+            user = self.get(
+                mc_pk=mc_pk,
+            )
+        except self.model.DoesNotExist:
+            user = self.create_user(
+                name=name,
+                email=email,
+                current_through=current_through,
+                person=person,
+            )
+
+        # set prior values
+        prior = model_to_dict(
+            user,
+            fields=[
+                'status',
+                'name',
+                'email',
+                'current_through',
+            ],
+        )
+
+        # update the group to new values
+        for key, value in defaults.items():
+            setattr(user, key, value)
+
+
+        # Build the diff from prior to new
+        diff = {}
+        if user.status != status:
+            diff['status'] = prior['status']
+        current_through_string = current_through.strftime('%Y-%m-%d') if current_through else None
+        if prior.get('current_through') != current_through_string:
+            diff['current_through'] = prior['current_through']
+        if prior.get('name') != name:
+            diff['name'] = prior['name']
+        if prior.get('email') != email:
+            diff['name'] = prior['name']
+        if diff:
+            diff['mc_pk'] = mc_pk
+
+        if not diff:
+            return 'Skipped'
+
+        # Set the transition description
+        if user.status == user.STATUS.new:
+            description = json.dumps({'status': 'New'})
+        else:
+            description = json.dumps(diff)
+
+        if status == self.model.STATUS.active:
+            user.activate(
+                description=description,
+            )
+        elif status == self.model.STATUS.inactive:
+            user.deactivate(
+                description=description,
+            )
+        else:
+            raise ValueError('Unknown status')
+        user.save()
+        return 'Updated'
+
+
     # def delete_orphans(self):
     #     accounts = get_accounts()
     #     users = list(self.filter(
@@ -762,68 +851,6 @@ class UserManager(BaseUserManager):
     #             i += 1
     #             delete_account.delay(account['account_id'])
     #     return i
-
-    def update_or_create_from_subscription(self, subscription):
-        # Clean
-        mc_pk = str(subscription.id)
-        human = str(subscription.human.id)
-        current_through = subscription.current_through
-        status = subscription.status
-
-        status = getattr(
-            self.model.STATUS,
-            status,
-            self.model.STATUS.inactive,
-        )
-        try:
-            person = self.get(
-                mc_pk=human,
-            )
-        except self.model.DoesNotExist:
-            Human = apps.get_model('bhs.human')
-            human = Human.objects.get(id=human)
-            person, created = self.update_or_create_from_human(human)
-
-        # Instantiate prior values dictionary
-        prior = {}
-        prior['status'] = person.get_status_display()
-        prior['current_through'] = person.current_through.strftime('%Y-%m-%d') if person.current_through else None
-
-        # Update
-        person.current_through = current_through
-
-        # Build the diff from prior to new
-        diff = {}
-        if person.status != status:
-            diff['status'] = prior['status']
-        current_through_string = current_through.strftime('%Y-%m-%d') if current_through else None
-        if prior.get('current_through') != current_through_string:
-            diff['current_through'] = prior['current_through']
-        if diff:
-            diff['mc_pk'] = mc_pk
-
-        if not diff:
-            return 'Skipped'
-
-        # Set the transition description
-        if person.status == person.STATUS.new:
-            description = json.dumps({'status': 'New'})
-        else:
-            description = json.dumps(diff)
-
-        if status == self.model.STATUS.active:
-            person.activate(
-                description=description,
-            )
-        elif status == self.model.STATUS.inactive:
-            person.deactivate(
-                description=description,
-            )
-        else:
-            raise ValueError('Unknown status')
-        person.save()
-        return 'Updated'
-
 
     def create_user(self, username, **kwargs):
         user = self.model(
