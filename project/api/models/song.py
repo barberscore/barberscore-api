@@ -181,13 +181,13 @@ class Song(TimeStampedModel):
             avg=Avg('points'),
         )
         self.tot_points = tot['sum']
-        self.tot_scores = tot['avg']
+        self.tot_score = tot['avg']
         self.mus_points = mus['sum']
-        self.mus_scores = mus['avg']
+        self.mus_score = mus['avg']
         self.per_points = per['sum']
-        self.per_scores = per['avg']
+        self.per_score = per['avg']
         self.sng_points = sng['sum']
-        self.sng_scores = sng['avg']
+        self.sng_score = sng['avg']
 
     def check_variance(self):
         is_variance = False

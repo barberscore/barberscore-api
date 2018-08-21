@@ -21,6 +21,7 @@ from django.db import models
 from django.db.models import Sum
 from django.db.models import Avg
 from django.db.models import Q
+from django.apps import apps
 
 from api.tasks import create_csa_report
 from api.fields import UploadPath
@@ -289,13 +290,13 @@ class Competitor(TimeStampedModel):
             avg=Avg('points'),
         )
         self.tot_points = tot['sum']
-        self.tot_scores = tot['avg']
+        self.tot_score = tot['avg']
         self.mus_points = mus['sum']
-        self.mus_scores = mus['avg']
+        self.mus_score = mus['avg']
         self.per_points = per['sum']
-        self.per_scores = per['avg']
+        self.per_score = per['avg']
         self.sng_points = sng['sum']
-        self.sng_scores = sng['avg']
+        self.sng_score = sng['avg']
         save_csa_report.delay(self)
 
     # Competitor Transition Conditions
