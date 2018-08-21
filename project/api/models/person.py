@@ -258,11 +258,11 @@ class Person(TimeStampedModel):
     )
 
     # Relations
-    tracker = FieldTracker(
-        fields=[
-            'email',
-        ],
-    )
+    # tracker = FieldTracker(
+    #     fields=[
+    #         'email',
+    #     ],
+    # )
 
     statelogs = GenericRelation(
         StateLog,

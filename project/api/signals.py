@@ -34,7 +34,8 @@ def user_pre_save(sender, instance, **kwargs):
 @receiver(post_save, sender=Person)
 def person_post_save(sender, instance, created, **kwargs):
     user = getattr(instance, 'user', None)
-    changed = instance.tracker.has_changed('email')
+    # changed = instance.tracker.has_changed('email')
+    changed = True
     if user and changed:
         # Update if record linked and name/email has changed
         update_account.delay(instance)
