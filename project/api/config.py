@@ -10,7 +10,7 @@ class ApiConfig(AppConfig):
 
     def ready(self):
         import algoliasearch_django as algoliasearch
-        import signals
+        import api.signals
         from .indexes import ChartIndex
         from .indexes import PersonIndex
         from .indexes import GroupIndex
