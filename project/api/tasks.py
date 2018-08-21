@@ -100,10 +100,10 @@ def get_accounts():
 
 
 @job
-def create_account(person):
+def create_account(email, name):
     auth0 = get_auth0()
-    email = person.email.lower()
-    name = person.__str__()
+    email = email.lower()
+    name = name.strip()
     random = get_random_string()
     payload = {
         'connection': 'Default',

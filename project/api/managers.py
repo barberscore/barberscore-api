@@ -18,6 +18,7 @@ from django.db.models import Value
 from django.forms.models import model_to_dict
 from django.utils.timezone import now, localdate
 from api.tasks import get_accounts
+from api.tasks import create_account
 from api.tasks import delete_account
 from django.db.models.functions import Concat
 
@@ -766,7 +767,10 @@ class UserManager(BaseUserManager):
             )
             created = False
         except self.model.DoesNotExist:
+            account = create_account(email, name)
+            username = account['user_id']
             user = self.create_user(
+                username=username,
                 name=name,
                 email=email,
                 current_through=current_through,
