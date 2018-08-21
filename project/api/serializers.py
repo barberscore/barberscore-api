@@ -708,6 +708,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'url',
+            'status',
             'username',
             'email',
             'name',
