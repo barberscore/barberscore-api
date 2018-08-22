@@ -156,7 +156,7 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    all_points = models.IntegerField(
+    practice_points = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -256,6 +256,13 @@ class Appearance(TimeStampedModel):
         self.per_score = per['avg']
         self.sng_points = sng['sum']
         self.sng_score = sng['avg']
+
+        self.practice_points = Score.objects.filter(
+            song__appearance=self,
+            kind=Score.KIND.practice,
+        ).aggregate(
+            sum=Sum('points'),
+        )['sum']
 
     # Appearance Permissions
     @staticmethod
