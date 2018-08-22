@@ -21,6 +21,8 @@ from api.tasks import get_accounts
 from api.tasks import create_account
 from api.tasks import delete_account
 from django.db.models.functions import Concat
+from django.core.serializers.json import DjangoJSONEncoder
+from dictdiffer import diff
 
 log = logging.getLogger(__name__)
 
@@ -754,6 +756,7 @@ class UserManager(BaseUserManager):
         name = str(person)
         email = person.email
         defaults = {
+            'status': status,
             'name': name,
             'email': email,
             'current_through': current_through,
@@ -777,44 +780,31 @@ class UserManager(BaseUserManager):
                 person=person,
             )
             created = True
-        # set prior values
-        prior = model_to_dict(
-            user,
-            fields=[
-                'status',
-                'name',
-                'email',
-                'current_through',
-            ],
-        )
 
-        # update the group to new values
-        for key, value in defaults.items():
-            setattr(user, key, value)
-
-
-        # Build the diff from prior to new
-        diff = {}
-        if user.status != status:
-            diff['status'] = prior['status']
-        current_through_string = current_through.strftime('%Y-%m-%d') if current_through else None
-        if prior.get('current_through') != current_through_string:
-            diff['current_through'] = prior['current_through']
-        if prior.get('name') != name:
-            diff['name'] = prior['name']
-        if prior.get('email') != email:
-            diff['name'] = prior['name']
-        if diff:
-            diff['mc_pk'] = mc_pk
-
-        if not diff:
-            return 'Skipped'
-
-        # Set the transition description
-        if user.status == user.STATUS.new:
-            description = json.dumps({'status': 'New'})
+        if created:
+            description = "Initial"
         else:
-            description = json.dumps(diff)
+            pre = model_to_dict(
+                user,
+                fields=[
+                    'status',
+                    'name',
+                    'email',
+                    'current_through',
+                    'person',
+                ],
+            )
+
+            # Remove status
+            defaults.pop('status')
+            # update the group to new values
+            for key, value in defaults.items():
+                setattr(user, key, value)
+            result = list(diff(pre, defaults))
+            if result:
+                str(result)
+            else:
+                "No Changes"
 
         if status == self.model.STATUS.active:
             user.activate(

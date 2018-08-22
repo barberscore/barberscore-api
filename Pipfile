@@ -43,6 +43,7 @@ rq = "*"
 whitenoise = "*"
 maya = "*"
 "pypdf2" = "*"
+dictdiffer = "*"
 
 [dev-packages]
 "autopep8" = "*"
