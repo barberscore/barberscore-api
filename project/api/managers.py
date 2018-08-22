@@ -770,18 +770,31 @@ class UserManager(BaseUserManager):
             )
             created = False
         except self.model.DoesNotExist:
-            account = create_account(email, name)
-            username = account['user_id']
-            user = self.create_user(
-                username=username,
-                status=status,
-                name=name,
-                email=email,
-                current_through=current_through,
-                person=person,
-                mc_pk=mc_pk,
-            )
-            created = True
+            if email and status==self.model.STATUS.active:
+                account = create_account(email, name)
+                username = account['user_id']
+                user = self.create_user(
+                    username=username,
+                    status=status,
+                    name=name,
+                    email=email,
+                    current_through=current_through,
+                    person=person,
+                    mc_pk=mc_pk,
+                )
+                created = True
+            else:
+                username = str(subscription.human.bhs_id)
+                user = self.create_user(
+                    username=username,
+                    status=status,
+                    name=name,
+                    email=email,
+                    current_through=current_through,
+                    person=person,
+                    mc_pk=mc_pk,
+                )
+                created = True
 
         if created:
             description = "Initial"
