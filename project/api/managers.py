@@ -774,6 +774,7 @@ class UserManager(BaseUserManager):
             username = account['user_id']
             user = self.create_user(
                 username=username,
+                status=status,
                 name=name,
                 email=email,
                 current_through=current_through,
@@ -788,19 +789,27 @@ class UserManager(BaseUserManager):
             pre = model_to_dict(
                 user,
                 fields=[
+                    'status',
                     'name',
                     'email',
                     'current_through',
                     'person',
                 ],
             )
-
-            # Remove status
-            defaults.pop('status')
             # update the group to new values
             for key, value in defaults.items():
                 setattr(user, key, value)
-            result = list(diff(pre, defaults))
+            post = model_to_dict(
+                user,
+                fields=[
+                    'status',
+                    'name',
+                    'email',
+                    'current_through',
+                    'person',
+                ],
+            )
+            result = list(diff(pre, post))
             if result:
                 description = str(result)
             else:
