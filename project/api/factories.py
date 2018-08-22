@@ -10,7 +10,9 @@ from factory import Sequence
 from factory import SubFactory
 from factory import RelatedFactory
 from factory.django import DjangoModelFactory
+from factory.django import mute_signals
 from factory.fuzzy import FuzzyInteger
+from django.db.models.signals import pre_save, pre_delete, post_save
 
 # First-Party
 from api.models import Appearance
@@ -273,6 +275,7 @@ class PanelistFactory(DjangoModelFactory):
         model = Panelist
 
 
+@mute_signals(post_save)
 class PersonFactory(DjangoModelFactory):
     # name = Faker('name_male')
     first_name = Faker('first_name_male')
@@ -290,7 +293,6 @@ class PersonFactory(DjangoModelFactory):
     image = ''
     description = ''
     notes = ''
-    current_through = '2018-12-31'
     bhs_id = Sequence(lambda x: '1{0:05d}'.format(x))
 
     class Meta:
@@ -377,10 +379,12 @@ class VenueFactory(DjangoModelFactory):
         model = Venue
 
 
+@mute_signals(pre_save, pre_delete)
 class UserFactory(DjangoModelFactory):
     username = Faker('uuid4')
     status = User.STATUS.active
     password = PostGenerationMethodCall('set_password', 'password')
+    current_through = '2018-12-31'
     is_staff = False
 
     class Meta:

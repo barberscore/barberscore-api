@@ -141,9 +141,10 @@ class Contest(TimeStampedModel):
         ])
 
     # Methods
-    def calculate(self, *args, **kwargs):
+    def determine(self, *args, **kwargs):
         if self.award.level in [
             self.award.LEVEL.qualifier,
+            self.award.LEVEL.top,
             self.award.LEVEL.manual,
             self.award.LEVEL.deferred,
         ]:

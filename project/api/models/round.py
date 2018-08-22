@@ -23,7 +23,6 @@ from django.utils.functional import cached_property
 from django.urls import reverse
 
 # First-Party
-from api.tasks import send_csa
 from api.tasks import create_round_oss
 from api.tasks import create_csa_report
 from api.tasks import save_csa_round
@@ -128,15 +127,6 @@ class Round(TimeStampedModel):
         )
 
     # Methods
-    def calculate(self):
-        for appearance in self.appearances.all():
-            for song in appearance.songs.all():
-                song.calculate()
-                song.save()
-            appearance.calculate()
-            appearance.save()
-        return
-
     def rank(self):
         appearances = self.appearances.filter(
             competitor__is_ranked=True,
@@ -394,8 +384,6 @@ class Round(TimeStampedModel):
     def verify(self, *args, **kwargs):
         Competitor = apps.get_model('api.competitor')
         Contestant = apps.get_model('api.contestant')
-        # First, calculate all denormalized scores.
-        self.calculate()
         # Run rankings.
         self.rank()
         self.session.rank()
@@ -406,7 +394,7 @@ class Round(TimeStampedModel):
             award__rounds=self.num,
         )
         for contest in contests:
-            contest.calculate()
+            contest.determine()
             contest.save()
 
         # No next round.

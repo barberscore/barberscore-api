@@ -12,6 +12,9 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.apps import apps
 from django.db import models
+from django.db.models import Sum
+from django.db.models import Avg
+from django.db.models import Q
 
 log = logging.getLogger(__name__)
 
@@ -141,53 +144,50 @@ class Song(TimeStampedModel):
 
     # Methods
     def calculate(self):
-        self.mus_points = self.scores.filter(
-            kind=10,
-            category=30,
+        Score = apps.get_model('api.score')
+        tot = Sum('points')
+        mus = Sum('points', filter=Q(category=Score.CATEGORY.music))
+        per = Sum('points', filter=Q(category=Score.CATEGORY.performance))
+        sng = Sum('points', filter=Q(category=Score.CATEGORY.singing))
+        officials = Score.objects.filter(
+            song=self,
+            kind=Score.KIND.official,
+        ).annotate(
+            tot=tot,
+            mus=mus,
+            per=per,
+            sng=sng,
+        )
+        tot = officials.aggregate(
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+        mus = officials.filter(
+            category=Score.CATEGORY.music,
         ).aggregate(
-            tot=models.Sum('points')
-        )['tot']
-        self.per_points = self.scores.filter(
-            kind=10,
-            category=40,
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+        per = officials.filter(
+            category=Score.CATEGORY.performance,
         ).aggregate(
-            tot=models.Sum('points')
-        )['tot']
-        self.sng_points = self.scores.filter(
-            kind=10,
-            category=50,
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+        sng = officials.filter(
+            category=Score.CATEGORY.singing,
         ).aggregate(
-            tot=models.Sum('points')
-        )['tot']
-
-        self.tot_points = self.scores.filter(
-            kind=10,
-        ).aggregate(
-            tot=models.Sum('points')
-        )['tot']
-        self.mus_score = self.scores.filter(
-            kind=10,
-            category=30,
-        ).aggregate(
-            tot=models.Avg('points')
-        )['tot']
-        self.per_score = self.scores.filter(
-            kind=10,
-            category=40,
-        ).aggregate(
-            tot=models.Avg('points')
-        )['tot']
-        self.sng_score = self.scores.filter(
-            kind=10,
-            category=50,
-        ).aggregate(
-            tot=models.Avg('points')
-        )['tot']
-        self.tot_score = self.scores.filter(
-            kind=10,
-        ).aggregate(
-            tot=models.Avg('points')
-        )['tot']
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+        self.tot_points = tot['sum']
+        self.tot_score = tot['avg']
+        self.mus_points = mus['sum']
+        self.mus_score = mus['avg']
+        self.per_points = per['sum']
+        self.per_score = per['avg']
+        self.sng_points = sng['sum']
+        self.sng_score = sng['avg']
 
     def check_variance(self):
         is_variance = False
@@ -195,11 +195,8 @@ class Song(TimeStampedModel):
         mus_scores = self.scores.filter(
             category=self.scores.model.CATEGORY.music,
         )
-        mus_avg = mus_scores.filter(
-            kind=self.scores.model.KIND.official,
-        ).aggregate(avg=models.Avg('points'))['avg']
         for score in mus_scores:
-            if abs(score.points - mus_avg) > 5:
+            if abs(score.points - self.mus_score) > 5:
                 score.is_flagged = True
                 if score.kind == score.KIND.official:
                     is_variance = True
@@ -209,11 +206,8 @@ class Song(TimeStampedModel):
         per_scores = self.scores.filter(
             category=self.scores.model.CATEGORY.performance,
         )
-        per_avg = per_scores.filter(
-            kind=self.scores.model.KIND.official,
-        ).aggregate(avg=models.Avg('points'))['avg']
         for score in per_scores:
-            if abs(score.points - per_avg) > 5:
+            if abs(score.points - self.per_score) > 5:
                 score.is_flagged = True
                 if score.kind == score.KIND.official:
                     is_variance = True
@@ -223,11 +217,8 @@ class Song(TimeStampedModel):
         sng_scores = self.scores.filter(
             category=self.scores.model.CATEGORY.singing,
         )
-        sng_avg = sng_scores.filter(
-            kind=self.scores.model.KIND.official,
-        ).aggregate(avg=models.Avg('points'))['avg']
         for score in sng_scores:
-            if abs(score.points - sng_avg) > 5:
+            if abs(score.points - self.sng_score) > 5:
                 score.is_flagged = True
                 if score.kind == score.KIND.official:
                     is_variance = True

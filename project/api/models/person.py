@@ -8,6 +8,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from model_utils import FieldTracker
 from django.contrib.contenttypes.fields import GenericRelation
 
 
@@ -76,7 +77,7 @@ class Person(TimeStampedModel):
     status = FSMIntegerField(
         help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
-        default=STATUS.new,
+        default=STATUS.active,
     )
 
     birth_date = models.DateField(
@@ -242,20 +243,27 @@ class Person(TimeStampedModel):
         unique=True,
     )
 
-    mc_pk = models.UUIDField(
+    mc_pk = models.CharField(
         null=True,
         blank=True,
+        max_length=36,
         unique=True,
         db_index=True,
     )
 
-    current_through = models.DateField(
-        null=True,
-        blank=True,
-        editable=True,
-    )
+    # current_through = models.DateField(
+    #     null=True,
+    #     blank=True,
+    #     editable=True,
+    # )
 
     # Relations
+    # tracker = FieldTracker(
+    #     fields=[
+    #         'email',
+    #     ],
+    # )
+
     statelogs = GenericRelation(
         StateLog,
         related_query_name='persons',

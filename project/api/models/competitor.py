@@ -18,10 +18,15 @@ from django.contrib.contenttypes.fields import GenericRelation
 
 # Django
 from django.db import models
+from django.db.models import Sum
+from django.db.models import Avg
+from django.db.models import Q
+from django.apps import apps
 
 from api.tasks import create_csa_report
 from api.fields import UploadPath
 from api.tasks import save_csa_report
+from api.tasks import send_csa
 
 log = logging.getLogger(__name__)
 
@@ -248,53 +253,50 @@ class Competitor(TimeStampedModel):
 
     # Competitor Methods
     def calculate(self):
-        self.mus_points = self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=30,
+        Score = apps.get_model('api.score')
+        tot = Sum('points')
+        mus = Sum('points', filter=Q(category=Score.CATEGORY.music))
+        per = Sum('points', filter=Q(category=Score.CATEGORY.performance))
+        sng = Sum('points', filter=Q(category=Score.CATEGORY.singing))
+        officials = Score.objects.filter(
+            song__appearance__competitor=self,
+            kind=Score.KIND.official,
+        ).annotate(
+            tot=tot,
+            mus=mus,
+            per=per,
+            sng=sng,
+        )
+        tot = officials.aggregate(
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+        mus = officials.filter(
+            category=Score.CATEGORY.music,
         ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-        self.per_points = self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=40,
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+        per = officials.filter(
+            category=Score.CATEGORY.performance,
         ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-        self.sng_points = self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=50,
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+        sng = officials.filter(
+            category=Score.CATEGORY.singing,
         ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-        self.tot_points = self.appearances.filter(
-            songs__scores__kind=10,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-        self.mus_score = self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=30,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-        self.per_score = self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=40,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-        self.sng_score = self.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=50,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-        self.tot_score = self.appearances.filter(
-            songs__scores__kind=10,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+        self.tot_points = tot['sum']
+        self.tot_score = tot['avg']
+        self.mus_points = mus['sum']
+        self.mus_score = mus['avg']
+        self.per_points = per['sum']
+        self.per_score = per['avg']
+        self.sng_points = sng['sum']
+        self.sng_score = sng['avg']
         save_csa_report.delay(self)
 
     # Competitor Transition Conditions
@@ -320,7 +322,7 @@ class Competitor(TimeStampedModel):
         context = {
             'competitor': self,
         }
-        send_csa.delay(context)
+        # send_csa.delay(context)
         return
 
     @fsm_log_by

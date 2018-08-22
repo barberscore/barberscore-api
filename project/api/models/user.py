@@ -17,13 +17,12 @@ from django.utils.functional import cached_property
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
 from django_fsm_log.decorators import fsm_log_description
-# from api.tasks import update_or_create_account_from_user
 from django_fsm_log.models import StateLog
 from django.contrib.contenttypes.fields import GenericRelation
 
 # First-Party
 from api.managers import UserManager
-from api.tasks import activate_user
+from api.fields import LowerEmailField
 
 config = api_apps.get_app_config('api')
 
@@ -49,13 +48,42 @@ class User(AbstractBaseUser):
     status = FSMIntegerField(
         help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
-        default=STATUS.new,
+        default=STATUS.active,
     )
 
     username = models.CharField(
         max_length=100,
         unique=True,
         editable=True,
+    )
+
+    email = LowerEmailField(
+        help_text="""
+            The contact email of the resource.""",
+        null=True,
+        blank=True,
+        unique=True,
+    )
+
+    name = models.CharField(
+        null=True,
+        blank=True,
+        max_length=255,
+        editable=True,
+    )
+
+    current_through = models.DateField(
+        null=True,
+        blank=True,
+        editable=True,
+    )
+
+    mc_pk = models.CharField(
+        null=True,
+        blank=True,
+        max_length=36,
+        unique=True,
+        db_index=True,
     )
 
     is_staff = models.BooleanField(
@@ -201,7 +229,10 @@ class User(AbstractBaseUser):
         return results
 
     def clean(self):
-        pass
+        if not self.person and not self.is_staff:
+            raise ValidationError(
+                {'person': 'Non-staff user accounts must have Person attached.'}
+            )
         # if self.email != self.person.email:
         #     raise ValidationError(
         #         {'email': 'Email does not match person'}
@@ -255,12 +286,12 @@ class User(AbstractBaseUser):
     @fsm_log_description
     @transition(field=status, source='*', target=STATUS.active)
     def activate(self, description=None, *args, **kwargs):
-        activate_user(self)
+        # Should deactive AUTH0
         return
 
     @fsm_log_by
     @fsm_log_description
     @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, description=None, *args, **kwargs):
-        self.person = None
+        # Should deactive AUTH0
         return

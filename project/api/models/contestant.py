@@ -142,89 +142,6 @@ class Contestant(TimeStampedModel):
         return str(self.id)
 
     # Methods
-    def calculate(self, *args, **kwargs):
-        self.mus_points = self.calculate_mus_points()
-        self.per_points = self.calculate_per_points()
-        self.sng_points = self.calculate_sng_points()
-        self.tot_points = self.calculate_tot_points()
-        self.mus_score = self.calculate_mus_score()
-        self.per_score = self.calculate_per_score()
-        self.sng_score = self.calculate_sng_score()
-        self.tot_score = self.calculate_tot_score()
-        self.rank = self.calculate_rank()
-
-    # def calculate_rank(self):
-    #     return self.contest.ranking(self.calculate_tot_points())
-
-    def calculate_mus_points(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=30,
-            round__num__lte=self.contest.award.rounds,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_per_points(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=40,
-            round__num__lte=self.contest.award.rounds,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_sng_points(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=50,
-            round__num__lte=self.contest.award.rounds,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_tot_points(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=10,
-            round__num__lte=self.contest.award.rounds,
-        ).aggregate(
-            tot=models.Sum('songs__scores__points')
-        )['tot']
-
-    def calculate_mus_score(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=30,
-            round__num__lte=self.contest.award.rounds,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_per_score(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=40,
-            round__num__lte=self.contest.award.rounds,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_sng_score(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=10,
-            songs__scores__category=50,
-            round__num__lte=self.contest.award.rounds,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
-
-    def calculate_tot_score(self):
-        return self.entry.appearances.filter(
-            songs__scores__kind=10,
-            round__num__lte=self.contest.award.rounds,
-        ).aggregate(
-            tot=models.Avg('songs__scores__points')
-        )['tot']
 
     # Permissions
     @staticmethod
@@ -268,8 +185,6 @@ class Contestant(TimeStampedModel):
                 self.entry.status < self.entry.STATUS.approved,
             ]),
         ])
-
-    # Methods
 
     # Contestant Transitions
     @fsm_log_by

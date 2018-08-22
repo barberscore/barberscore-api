@@ -15,9 +15,9 @@ from bhs.models import Subscription
 from bhs.models import Role
 from bhs.models import Join
 
+
 log = logging.getLogger('updater')
 
-# post_save.disconnect(algolia_engine._AlgoliaEngine__post_save_receiver, sender=MyModel)
 
 class Command(BaseCommand):
     help = "Command to sync with BHS database."
@@ -50,13 +50,6 @@ class Command(BaseCommand):
             help='Number of hours to update.',
         )
 
-        parser.add_argument(
-            '--orphans',
-            nargs='?',
-            const=1,
-            help='Include orphans.',
-        )
-
     def handle(self, *args, **options):
         # Set Cursor
         if options['days']:
@@ -69,31 +62,30 @@ class Command(BaseCommand):
             cursor = None
 
         # Sync Persons
-
         t = Human.objects.update_persons(cursor=cursor)
         self.stdout.write("Queued {0} persons.".format(t))
-        if options['orphans']:
+        if not cursor:
             t = Human.objects.delete_orphans()
             self.stdout.write("Deleted {0} person orphans.".format(t))
 
         # Sync Groups
         t = Structure.objects.update_groups(cursor=cursor)
         self.stdout.write("Queued {0} groups.".format(t))
-        if options['orphans']:
+        if not cursor:
             t = Structure.objects.delete_orphans()
             self.stdout.write("Deleted {0} group orphans.".format(t))
 
-        # Sync Subscriptions
-        t = Subscription.objects.update_persons(cursor=cursor)
-        self.stdout.write("Queued {0} person statuses.".format(t))
-
-        # Sync Members
-        # t = Join.objects.update_members2(cursor=cursor)
-        # self.stdout.write("Queued {0} members.".format(t))
-
-        # Sync Roles
+        # Sync Officers
         t = Role.objects.update_officers(cursor=cursor)
         self.stdout.write("Queued {0} officers.".format(t))
+
+        # Sync Members
+        t = Join.objects.update_members(cursor=cursor)
+        self.stdout.write("Queued {0} members.".format(t))
+
+        # Sync Subscriptions
+        t = Subscription.objects.update_users(cursor=cursor)
+        self.stdout.write("Queued {0} users.".format(t))
 
         # Sync Users
         # t = Person.objects.update_users(cursor=cursor)

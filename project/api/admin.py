@@ -69,7 +69,6 @@ from .models import Round
 from .models import Score
 from .models import Session
 from .models import Song
-from .models import Subscription
 from .models import User
 from .models import Venue
 
@@ -895,7 +894,6 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_filter = [
         'status',
         MCListFilter,
-        'subscription',
         'group__kind',
         'group__status',
         'part',
@@ -1118,7 +1116,6 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_mc',
         'bhs_id',
         'mc_pk',
-        'current_through',
         'birth_date',
         'part',
         'gender',
@@ -1139,7 +1136,6 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'email',
         'phone',
         # 'mc_pk',
-        # 'current_through',
         'part',
         'gender',
         'is_mc',
@@ -1158,7 +1154,6 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'is_mc',
         'common_name',
-        # 'current_through',
         'created',
         'modified',
     ]
@@ -1431,12 +1426,21 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 @admin.register(Song)
 class SongAdmin(admin.ModelAdmin):
     fields = [
+        'id',
         # 'name',
         # 'status',
         'appearance',
         'chart',
         'num',
         'tot_points',
+        'tot_score',
+        'mus_points',
+        'mus_score',
+        'per_points',
+        'per_score',
+        'sng_points',
+        'sng_score',
+
 
         # 'title',
     ]
@@ -1463,6 +1467,7 @@ class SongAdmin(admin.ModelAdmin):
     save_on_top = True
 
     readonly_fields = (
+        'id',
     )
 
     autocomplete_fields = [
@@ -1472,38 +1477,6 @@ class SongAdmin(admin.ModelAdmin):
 
     ordering = (
         'num',
-    )
-
-
-@admin.register(Subscription)
-class SubscriptionAdmin(admin.ModelAdmin):
-    fields = [
-        'name',
-        'status',
-        'code',
-    ]
-
-    list_display = (
-        'name',
-        'status',
-        'code',
-    )
-
-    list_filter = (
-        'status',
-    )
-
-    search_fields = [
-        'name',
-    ]
-
-    save_on_top = True
-
-    readonly_fields = (
-    )
-
-    ordering = (
-        'name',
     )
 
 
@@ -1583,6 +1556,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
                 'status',
                 # 'email',
                 'person',
+                'current_through',
                 'is_mc',
                 'is_staff',
                 'created',

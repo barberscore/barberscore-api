@@ -19,6 +19,9 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.utils.timezone import now
 from django.apps import apps
+from django.db.models import Sum
+from django.db.models import Avg
+from django.db.models import Q
 
 # First-Party
 from api.tasks import create_variance_report
@@ -153,7 +156,7 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    all_points = models.IntegerField(
+    practice_points = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -209,57 +212,57 @@ class Appearance(TimeStampedModel):
 
     # Methods
     def calculate(self):
-        self.mus_points = self.songs.filter(
-            scores__kind=10,
-            scores__category=30,
+        Score = apps.get_model('api.score')
+        tot = Sum('points')
+        mus = Sum('points', filter=Q(category=Score.CATEGORY.music))
+        per = Sum('points', filter=Q(category=Score.CATEGORY.performance))
+        sng = Sum('points', filter=Q(category=Score.CATEGORY.singing))
+        officials = Score.objects.filter(
+            song__appearance=self,
+            kind=Score.KIND.official,
+        ).annotate(
+            tot=tot,
+            mus=mus,
+            per=per,
+            sng=sng,
+        )
+        tot = officials.aggregate(
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+        mus = officials.filter(
+            category=Score.CATEGORY.music,
         ).aggregate(
-            tot=models.Sum('scores__points')
-        )['tot']
-        self.per_points = self.songs.filter(
-            scores__kind=10,
-            scores__category=40,
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+        per = officials.filter(
+            category=Score.CATEGORY.performance,
         ).aggregate(
-            tot=models.Sum('scores__points')
-        )['tot']
-        self.sng_points = self.songs.filter(
-            scores__kind=10,
-            scores__category=50,
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+        sng = officials.filter(
+            category=Score.CATEGORY.singing,
         ).aggregate(
-            tot=models.Sum('scores__points')
-        )['tot']
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+        self.tot_points = tot['sum']
+        self.tot_score = tot['avg']
+        self.mus_points = mus['sum']
+        self.mus_score = mus['avg']
+        self.per_points = per['sum']
+        self.per_score = per['avg']
+        self.sng_points = sng['sum']
+        self.sng_score = sng['avg']
 
-        self.tot_points = self.songs.filter(
-            scores__kind=10,
+        self.practice_points = Score.objects.filter(
+            song__appearance=self,
+            kind=Score.KIND.practice,
         ).aggregate(
-            tot=models.Sum('scores__points')
-        )['tot']
-        self.mus_score = self.songs.filter(
-            scores__kind=10,
-            scores__category=30,
-        ).aggregate(
-            tot=models.Avg('scores__points')
-        )['tot']
-        self.per_score = self.songs.filter(
-            scores__kind=10,
-            scores__category=40,
-        ).aggregate(
-            tot=models.Avg('scores__points')
-        )['tot']
-        self.sng_score = self.songs.filter(
-            scores__kind=10,
-            scores__category=50,
-        ).aggregate(
-            tot=models.Avg('scores__points')
-        )['tot']
-        self.tot_score = self.songs.filter(
-            scores__kind=10,
-        ).aggregate(
-            tot=models.Avg('scores__points')
-        )['tot']
-        self.all_points = self.songs.aggregate(
-            tot=models.Sum('scores__points')
-        )['tot']
-
+            sum=Sum('points'),
+        )['sum']
 
     # Appearance Permissions
     @staticmethod
