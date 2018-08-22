@@ -778,6 +778,7 @@ class UserManager(BaseUserManager):
                 email=email,
                 current_through=current_through,
                 person=person,
+                mc_pk=mc_pk,
             )
             created = True
 
@@ -787,7 +788,6 @@ class UserManager(BaseUserManager):
             pre = model_to_dict(
                 user,
                 fields=[
-                    'status',
                     'name',
                     'email',
                     'current_through',
@@ -802,9 +802,9 @@ class UserManager(BaseUserManager):
                 setattr(user, key, value)
             result = list(diff(pre, defaults))
             if result:
-                str(result)
+                description = str(result)
             else:
-                "No Changes"
+                return 'Skipped'
 
         if status == self.model.STATUS.active:
             user.activate(
