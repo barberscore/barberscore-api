@@ -166,36 +166,19 @@ class GroupManager(Manager):
             'bhs_id': bhs_id,
             'mem_status': mem_status,
         }
+
+        # Get or Create
         group, created = self.get_or_create(
             mc_pk=mc_pk,
             kind=kind,
         )
 
-        # set prior values
-        prior = model_to_dict(
-            group,
-            fields=[
-                'name',
-                'status',
-                'kind',
-                'start_date',
-                'email',
-                'phone',
-                'website',
-                'facebook',
-                'twitter',
-                'code',
-                'bhs_id',
-                'mem_status',
-            ],
-        )
-
-        # update the group to new values
-        for key, value in defaults.items():
-            setattr(group, key, value)
-
-        # Set parent on create only
         if created:
+            description = "Initial"
+            # Update Values
+            for key, value in defaults.items():
+                setattr(group, key, value)
+            # Set parent on create only
             if kind == self.model.KIND.chorus:
                 kind = self.model.KIND.chapter
                 name = raw_name.strip() if raw_name else 'UNKNOWN'
@@ -221,37 +204,51 @@ class GroupManager(Manager):
             if parent.code in divs:
                 group.save()
                 return group, created
-
-        # Build the diff from prior to new
-        diff = {}
-        for key, value in prior.items():
-            if defaults[key] != value:
-                if key == 'status':
-                    diff[key] = self.model.STATUS[value]
-                elif key == 'kind':
-                    diff[key] = self.model.KIND[value]
-                elif key == 'mem_status':
-                    try:
-                        diff[key] = self.model.MEM_STATUS[value]
-                    except KeyError:
-                        diff[key] = None
-                elif key == 'start_date':
-                    try:
-                        diff[key] = value.strftime('%Y-%d-%m')
-                    except AttributeError:
-                        diff[key] = None
-                else:
-                    diff[key] = value
-
-        # Bypass if not dirty
-        if not diff:
-            return group, None
-
-        # Set the transition description
-        if group.status == group.STATUS.new:
-            description = json.dumps({'status': 'New'})
         else:
-            description = json.dumps(diff)
+            # set prior values
+            pre = model_to_dict(
+                group,
+                fields=[
+                    'name',
+                    'status',
+                    'kind',
+                    'start_date',
+                    'email',
+                    'phone',
+                    'website',
+                    'facebook',
+                    'twitter',
+                    'code',
+                    'bhs_id',
+                    'mem_status',
+                ],
+            )
+            # update the group to new values
+            for key, value in defaults.items():
+                setattr(group, key, value)
+
+            post = model_to_dict(
+                group,
+                fields=[
+                    'name',
+                    'status',
+                    'kind',
+                    'start_date',
+                    'email',
+                    'phone',
+                    'website',
+                    'facebook',
+                    'twitter',
+                    'code',
+                    'bhs_id',
+                    'mem_status',
+                ],
+            )
+            result = list(diff(pre, post))
+            if result:
+                description = str(result)
+            else:
+                return 'Skipped'
 
         # Transition as appropriate
         if status == self.model.STATUS.active:
@@ -331,7 +328,7 @@ class GroupManager(Manager):
 
 
 class MemberManager(Manager):
-    def update_from_join(self, join):
+    def update_or_create_from_join(self, join):
         # Clean
         mc_pk = str(join.id)
         structure = str(join.structure.id)
@@ -409,89 +406,70 @@ class MemberManager(Manager):
             human = Human.objects.get(id=human)
             person = Person.objects.update_or_create_from_human(human)
 
+        defaults = {
+            'status': status,
+            'mc_pk': mc_pk,
+            'kind': kind,
+            'established_date': established_date,
+            'inactive_date': inactive_date,
+            'inactive_reason': inactive_reason,
+            'part': part,
+            'paid': paid,
+            'sub_status': sub_status,
+            'current_through': current_through,
+        }
+
         # get or create
         member, created = self.get_or_create(
             person=person,
             group=group,
         )
 
-        # Instantiate prior values dictionary
-        prior = {}
-        if member.mc_pk:
-            prior['mc_pk'] = str(member.mc_pk)
-        if member.sub_status:
-            prior['sub_status'] = member.get_sub_status_display()
-        if member.current_through:
-            prior['current_through'] = member.current_through.strftime('%Y-%m-%d')
-        if member.established_date:
-            prior['established_date'] = member.established_date.strftime('%Y-%m-%d')
-        if member.inactive_date:
-            prior['inactive_date'] = member.inactive_date.strftime('%Y-%m-%d')
-        if member.inactive_reason:
-            prior['inactive_reason'] = member.get_inactive_reason_display()
-        if member.part:
-            prior['part'] = member.get_part_display()
-        # if member.mem_code:
-        #     prior['mem_code'] = member.get_mem_code_display()
-        # if member.mem_status:
-        #     prior['mem_status'] = member.get_mem_status_display()
+        if created:
+            description = "Initial"
+            # update the group to new values
+            for key, value in defaults.items():
+                setattr(member, key, value)
 
-        # Update the fields
-        member.mc_pk = mc_pk
-        member.inactive_date = inactive_date
-        member.inactive_reason = inactive_reason
-        member.part = part
-        member.sub_status = sub_status
-        member.current_through = current_through
-        member.established_date = established_date
-        # member.mem_code = mem_code
-        # member.mem_status = mem_status
-
-        # Build the diff from prior to new
-        diff = {}
-        if prior.get('mc_pk') != str(mc_pk):
-            diff['mc_pk'] = getattr(prior, 'mc_pk', None)
-
-        inactive_date_string = inactive_date.strftime('%Y-%m-%d') if inactive_date else None
-        if prior.get('inactive_date') != inactive_date_string:
-            diff['inactive_date'] = inactive_date_string
-
-        if prior.get('inactive_reason') != inactive_reason:
-            diff['inactive_reason'] = getattr(prior, 'inactive_reason', None)
-
-        part_string = self.model.PART[part] if part else None
-        if prior.get('part') != part_string:
-            diff['part'] = part_string
-
-        sub_status_string = self.model.SUB_STATUS[sub_status] if sub_status else None
-        if prior.get('sub_status') != sub_status_string:
-            diff['sub_status'] = sub_status_string
-
-        current_through_string = current_through.strftime('%Y-%m-%d') if current_through else None
-        if prior.get('current_through') != current_through_string:
-            diff['current_through'] = current_through_string
-
-        established_date_string = established_date.strftime('%Y-%m-%d') if established_date else None
-        if prior.get('established_date') != established_date_string:
-            diff['established_date'] = established_date_string
-
-        # mem_code_string = self.model.MEM_CODE[mem_code] if mem_code else None
-        # if prior.get('mem_code') != mem_code_string:
-        #     diff['mem_code'] = mem_code_string
-
-        # mem_status_string = self.model.MEM_STATUS[mem_status] if mem_status else None
-        # if prior.get('mem_status') != mem_status_string:
-        #     diff['mem_status'] = mem_status_string
-
-        # Skip duplicates
-        if not diff:
-            return 'Skipped'
-
-        # Set the transition description
-        if member.status == member.STATUS.new:
-            description = json.dumps({'status': 'New'})
         else:
-            description = json.dumps(diff)
+            pre = model_to_dict(
+                member,
+                fields=[
+                    'status',
+                    'mc_pk',
+                    'kind',
+                    'established_date',
+                    'inactive_date',
+                    'inactive_reason',
+                    'part',
+                    'paid',
+                    'sub_status',
+                    'current_through',
+                ],
+            )
+            # update the group to new values
+            for key, value in defaults.items():
+                setattr(member, key, value)
+            post = model_to_dict(
+                member,
+                fields=[
+                    'status',
+                    'mc_pk',
+                    'kind',
+                    'established_date',
+                    'inactive_date',
+                    'inactive_reason',
+                    'part',
+                    'paid',
+                    'sub_status',
+                    'current_through',
+                ],
+            )
+            result = list(diff(pre, post))
+            if result:
+                description = str(result)
+            else:
+                return 'Skipped'
 
         # Transition as appropriate
         if status == self.model.STATUS.active:
@@ -506,33 +484,11 @@ class MemberManager(Manager):
             raise ValueError('Unknown status')
         # Finally, save the record.
         member.save()
-        return 'Updated'
-
-    # def update_from_join2(self, join):
-    #     Group = apps.get_model('api.group')
-    #     Person = apps.get_model('api.person')
-    #     Member = apps.get_model('api.member')
-    #     group = Group.objects.get(
-    #         mc_pk=join[0],
-    #     )
-    #     person = Person.objects.get(
-    #         mc_pk=join[1],
-    #     )
-    #     if join[2]:
-    #         status = self.model.STATUS.active
-    #     else:
-    #         status = self.model.STATUS.inactive
-
-    #     member, created = Member.objects.get_or_create(
-    #         group=group,
-    #         person=person,
-    #     )
-    #     member.status = status
-    #     member.save()
+        return member, created
 
 
 class OfficerManager(Manager):
-    def update_from_role(self, role):
+    def update_or_create_from_role(self, role):
         # Clean
         mc_pk = str(role.id)
         office = role.name
@@ -559,6 +515,13 @@ class OfficerManager(Manager):
         Office = apps.get_model('api.office')
         office = Office.objects.get(name=office)
 
+        defaults = {
+            'status': status,
+            'mc_pk': mc_pk,
+            'start_date': start_date,
+            'end_date': end_date,
+        }
+
         # get or create
         officer, created = self.get_or_create(
             person=person,
@@ -566,43 +529,35 @@ class OfficerManager(Manager):
             office=office,
         )
 
-        # Instantiate prior values dictionary
-        prior = {}
-        if officer.mc_pk:
-            prior['mc_pk'] = str(officer.mc_pk)
-        if officer.start_date:
-            prior['start_date'] = officer.start_date.strftime('%Y-%m-%d')
-        if officer.end_date:
-            prior['end_date'] = officer.end_date.strftime('%Y-%m-%d')
-
-        # Update the fields
-        officer.mc_pk = mc_pk
-        officer.start_date = start_date
-        officer.end_date = end_date
-
-        # Build the diff from prior to new
-        diff = {}
-
-        if prior.get('mc_pk') != mc_pk:
-            diff['mc_pk'] = prior.get('mc_pk')
-
-        start_date_string = start_date.strftime('%Y-%m-%d') if start_date else None
-        if prior.get('start_date') != start_date_string:
-            diff['start_date'] = prior.get('start_date')
-
-        end_date_string = end_date.strftime('%Y-%m-%d') if end_date else None
-        if prior.get('end_date') != end_date_string:
-            diff['end_date'] = prior.get('end_date')
-
-        # Skip duplicates
-        if not diff:
-            return 'Skipped'
-
-        # Set the transition description
-        if officer.status == officer.STATUS.new:
-            description = json.dumps({'status': 'New'})
+        if created:
+            description = "Initial"
         else:
-            description = json.dumps(diff)
+            pre = model_to_dict(
+                officer,
+                fields=[
+                    'status',
+                    'mc_pk',
+                    'start_date',
+                    'end_date',
+                ],
+            )
+            # update the group to new values
+            for key, value in defaults.items():
+                setattr(officer, key, value)
+            post = model_to_dict(
+                officer,
+                fields=[
+                    'status',
+                    'mc_pk',
+                    'start_date',
+                    'end_date',
+                ],
+            )
+            result = list(diff(pre, post))
+            if result:
+                description = str(result)
+            else:
+                return 'Skipped'
 
         # Transition as appropriate
         if status == self.model.STATUS.active:
@@ -616,16 +571,8 @@ class OfficerManager(Manager):
         else:
             raise ValueError('Unknown status')
         # Finally, save the record.  Break link if an overwrite to MC
-        try:
-            officer.save()
-        except IntegrityError:
-            old = self.get(
-                mc_pk=mc_pk,
-            )
-            old.mc_pk = None
-            old.save()
-            officer.save()
-        return 'Updated'
+        officer.save()
+        return officer, created
 
 
 class PersonManager(Manager):

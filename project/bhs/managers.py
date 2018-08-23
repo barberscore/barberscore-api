@@ -109,7 +109,7 @@ class RoleManager(Manager):
         Officer = apps.get_model('api.officer')
         for role in roles:
             django_rq.enqueue(
-                Officer.objects.update_from_role,
+                Officer.objects.update_or_create_from_role,
                 role,
             )
         return t
@@ -143,7 +143,7 @@ class JoinManager(Manager):
         # Creating/Update Membership
         for join in joins:
             django_rq.enqueue(
-                Member.objects.update_from_join,
+                Member.objects.update_or_create_from_join,
                 join,
             )
         return t
