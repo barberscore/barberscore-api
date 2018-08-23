@@ -236,7 +236,12 @@ class Session(TimeStampedModel):
             ).count() == 0,
         ])
 
-    # Session Transitions
+    def can_finish_session(self):
+        # Session Transitions
+        return all([
+            not self.rounds.exclude(status=self.rounds.model.STATUS.finished)
+        ])
+
     @fsm_log_by
     @transition(
         field=status,
@@ -424,7 +429,7 @@ class Session(TimeStampedModel):
         field=status,
         source=[STATUS.started, STATUS.finished],
         target=STATUS.finished,
-        conditions=[],
+        conditions=[can_finish_session],
     )
     def finish(self, *args, **kwargs):
         create_session_oss(self)
