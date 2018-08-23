@@ -710,7 +710,7 @@ class UserManager(BaseUserManager):
         # Get or create
         try:
             user = self.get(
-                mc_pk=mc_pk,
+                person=person,
             )
             created = False
         except self.model.DoesNotExist:
