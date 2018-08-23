@@ -399,7 +399,7 @@ class Round(TimeStampedModel):
 
         # No next round.
         if self.kind == self.KIND.finals:
-            save_csa_round(self)
+            # save_csa_round(self)
             return
 
         # Get spots available
@@ -410,7 +410,6 @@ class Round(TimeStampedModel):
             status__gt=0,
             is_multi=True,
         )
-
         if spots:
             # All those above 73.0 advance automatically
             automatics = multis.filter(
@@ -446,14 +445,16 @@ class Round(TimeStampedModel):
         # create MT
         mt = self.appearances.filter(
             draw=None,
+            competitor__status__gt=0,
+            competitor__is_multi=True,
         ).order_by(
             '-tot_points',
             '-sng_points',
             '-per_points',
-            ).first()
+        ).first()
         mt.draw = 0
         mt.save()
-        save_csa_round(self)
+        # save_csa_round(self)
         return
 
     @fsm_log_by
