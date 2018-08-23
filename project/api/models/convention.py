@@ -217,6 +217,11 @@ class Convention(TimeStampedModel):
             self.sessions.count() > 0,
         ])
 
+    def can_deactivate_convention(self):
+        return all([
+            not self.sessions.exclude(status=self.sessions.model.STATUS.finished)
+        ])
+
     # Convention Transitions
     @fsm_log_by
     @transition(
@@ -234,6 +239,7 @@ class Convention(TimeStampedModel):
         field=status,
         source='*',
         target=STATUS.inactive,
+        conditions=[can_deactivate_convention],
     )
     def deactivate(self, *args, **kwargs):
         """Archive convention and related sessions."""
