@@ -142,7 +142,7 @@ class JoinManager(Manager):
         t = joins.count()
         # Creating/Update Membership
         for join in joins:
-            Member.objects.update_from_join(join)
+            Member.objects.update_or_create_from_join(join)
             # django_rq.enqueue(
             #     Member.objects.update_from_join,
             #     join,
