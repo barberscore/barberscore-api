@@ -242,18 +242,6 @@ class Structure(models.Model):
             self.bhs_id,
         )
 
-    def clean(self):
-        if not self.kind == 'quartet' or not self.status.name == 'active':
-            return
-        members = self.memberships.filter(
-            joins__status=True,
-        )
-        count = members.count()
-        if count != 4:
-            raise ValidationError(
-                {'status': 'Quartet member count is incorrect {0}'.format(count)}
-            )
-
     class Meta:
         managed=False
         db_table = 'vwStructures'
