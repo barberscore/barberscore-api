@@ -60,8 +60,6 @@ class User(AbstractBaseUser):
     email = LowerEmailField(
         help_text="""
             The contact email of the resource.""",
-        null=True,
-        blank=True,
         unique=True,
     )
 
