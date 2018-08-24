@@ -1,4 +1,5 @@
 # Standard Libary
+import csv
 import logging
 import time
 import tempfile
@@ -55,48 +56,12 @@ def get_auth0():
     return auth0
 
 
-def get_accounts():
-    auth0 = get_auth0()
-    output = []
-    more = True
-    i = 0
-    t = 0
-    while more:
-        try:
-            results = auth0.users.list(
-                fields=[
-                    'user_id',
-                    'email',
-                ],
-                per_page=100,
-                page=i,
-            )
-        except Auth0Error as e:
-            t += 1
-            if t <= 5:
-                time.sleep(t ** 2)
-                continue
-            else:
-                raise e
-        try:
-            users = results['users']
-        except KeyError as e:
-            t += 1
-            if t <= 5:
-                time.sleep(t ** 2)
-                continue
-            else:
-                raise e
-        for user in users:
-            payload = {
-                'username': user['user_id'],
-                'email': user['email'],
-            }
-            output.append(payload)
-        more = bool(results['users'])
-        i += 1
-        t = 0
-    return output
+def get_accounts(path='barberscore.csv'):
+    with open(path) as f:
+        next(f)  # Skip headers
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        return rows
 
 
 @job
