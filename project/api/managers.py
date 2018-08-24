@@ -409,7 +409,6 @@ class MemberManager(Manager):
         defaults = {
             'status': status,
             'mc_pk': mc_pk,
-            'kind': kind,
             'established_date': established_date,
             'inactive_date': inactive_date,
             'inactive_reason': inactive_reason,
@@ -437,7 +436,6 @@ class MemberManager(Manager):
                 fields=[
                     'status',
                     'mc_pk',
-                    'kind',
                     'established_date',
                     'inactive_date',
                     'inactive_reason',
@@ -455,7 +453,6 @@ class MemberManager(Manager):
                 fields=[
                     'status',
                     'mc_pk',
-                    'kind',
                     'established_date',
                     'inactive_date',
                     'inactive_reason',
@@ -713,7 +710,7 @@ class UserManager(BaseUserManager):
         # Get or create
         try:
             user = self.get(
-                mc_pk=mc_pk,
+                person=person,
             )
             created = False
         except self.model.DoesNotExist:
