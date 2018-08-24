@@ -84,6 +84,27 @@ def create_account(email, name):
 
 
 @job
+def create_auth0(user):
+    auth0 = get_auth0()
+    email = user.email.lower()
+    name = user.name.strip()
+    random = get_random_string()
+    payload = {
+        'connection': 'Default',
+        'email': email,
+        'email_verified': True,
+        'password': random,
+        'user_metadata': {
+            'name': name,
+        }
+    }
+    account = auth0.users.create(payload)
+    user.username = account['user_id']
+    user.save()
+    return user
+
+
+@job
 def update_account(person):
     auth0 = get_auth0()
     name = person.__str__()
