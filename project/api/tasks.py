@@ -1234,6 +1234,7 @@ def send_session_reports(template, context):
 @job
 def update_mc_member(member):
     Join = apps.get_model('bhs.join')
+    Member = apps.get_model('api.member')
     join = Join.objects.select_related(
         'structure',
         'subscription',
@@ -1250,6 +1251,7 @@ def update_mc_member(member):
 @job
 def update_mc_officer(officer):
     Role = apps.get_model('bhs.role')
+    Officer = apps.get_model('api.officer')
     role = Role.objects.select_related(
         'human',
         'structure',
@@ -1266,6 +1268,7 @@ def update_mc_officer(officer):
 @job
 def update_mc_user(user):
     Subscription = apps.get_model('bhs.subscription')
+    User = apps.get_model('api.user')
     subscription = Subscription.objects.select_related(
         'human',
     ).filter(
