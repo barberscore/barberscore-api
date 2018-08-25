@@ -1239,8 +1239,8 @@ def update_mc_member(member):
         'subscription',
         'subscription__human',
     ).filter(
-        structure__id=member__group__mc_pk,
-        subscription__human__id=member__person__mc_pk,
+        structure__id=member.group.mc_pk,
+        subscription__human__id=member.person.mc_pk,
     ).latest(
         'modified',
         '-inactive_date',
@@ -1254,9 +1254,9 @@ def update_mc_officer(officer):
         'human',
         'structure',
     ).filter(
-        human__id=officer__person__mc_pk,
-        structure__id=officer__group__mc_pk,
-        name=officer__office__name,
+        human__id=officer.person.mc_pk,
+        structure__id=officer.group.mc_pk,
+        name=officer.office.name,
     ).latest(
         'modified',
         '-end_date',
@@ -1269,7 +1269,7 @@ def update_mc_user(user):
     subscription = Subscription.objects.select_related(
         'human',
     ).filter(
-        human__id=user__person__mc_pk,
+        human__id=user.person.mc_pk,
     ).latest(
         'modified',
     )

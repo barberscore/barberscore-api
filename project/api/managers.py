@@ -20,6 +20,9 @@ from django.utils.timezone import now, localdate
 from api.tasks import get_accounts
 from api.tasks import create_account
 from api.tasks import delete_account
+from api.tasks import update_mc_member
+from api.tasks import update_mc_officer
+from api.tasks import update_mc_user
 from django.db.models.functions import Concat
 from django.core.serializers.json import DjangoJSONEncoder
 from dictdiffer import diff
@@ -326,6 +329,25 @@ class GroupManager(Manager):
                 quartet.save()
         return
 
+    def update_actives(self):
+        actives = self.filter(
+            kind__in=[
+                self.model.KIND.quartet,
+                self.model.KIND.chorus,
+            ],
+            status__gt=0,
+            mc_pk__isnull=False,
+        )
+        for active in actives:
+            members = active.members.filter(
+                person__mc_pk__isnull=False,
+            )
+            for member in members:
+                update_mc_member.delay(member)
+            officers = active.officers.all()
+            for officer in officers:
+                update_mc_officer.delay(officer)
+        return
 
 class MemberManager(Manager):
     def update_or_create_from_join(self, join):
@@ -482,6 +504,18 @@ class MemberManager(Manager):
         # Finally, save the record.
         member.save()
         return member, created
+
+
+    def update_actives(self):
+        actives = self.filter(
+            status__gt=0,
+            mc_pk__isnull=False,
+            user__isnull=False,
+        )
+        for active in actives:
+            update_mc_user.delay(active.user)
+        return
+
 
 
 class OfficerManager(Manager):
@@ -714,7 +748,7 @@ class UserManager(BaseUserManager):
             )
             created = False
         except self.model.DoesNotExist:
-            if email and status==self.model.STATUS.active:
+            if email:
                 account = create_account(email, name)
                 username = account['user_id']
                 user = self.create_user(
@@ -728,17 +762,7 @@ class UserManager(BaseUserManager):
                 )
                 created = True
             else:
-                username = str(subscription.human.bhs_id)
-                user = self.create_user(
-                    username=username,
-                    status=status,
-                    name=name,
-                    email=email,
-                    current_through=current_through,
-                    person=person,
-                    mc_pk=mc_pk,
-                )
-                created = True
+                return 'No Email'
 
         if created:
             description = "Initial"
