@@ -1206,27 +1206,71 @@ def send_session_reports(template, context):
 #         result = Member.objects.update_from_join(join)
 #     return result
 
-@job
-def update_bhs_member(member):
-    Join = apps.get_model('bhs.join')
-    if not member.mc_pk:
-        return ValueError("Not a MC Record")
-    status = bool(Join.objects.filter(
-        Q(inactive_date=None) |
-        Q(
-            inactive_date__gt=localdate(),
-            subscription__status='active',
-        ),
-        structure__id=member.group.mc_pk,
-        subscription__human__id=member.person.mc_pk,
-    ))
-    if status and member.status != member.STATUS.active:
-        member.activate()
-        member.save()
-        return "Activated"
-    if not status and member.status != member.STATUS.inactive:
-        member.deactivate()
-        member.save()
-        return "Deactivated"
-    return "No change"
+# @job
+# def update_bhs_member(member):
+#     Join = apps.get_model('bhs.join')
+#     if not member.mc_pk:
+#         return ValueError("Not a MC Record")
+#     status = bool(Join.objects.filter(
+#         Q(inactive_date=None) |
+#         Q(
+#             inactive_date__gt=localdate(),
+#             subscription__status='active',
+#         ),
+#         structure__id=member.group.mc_pk,
+#         subscription__human__id=member.person.mc_pk,
+#     ))
+#     if status and member.status != member.STATUS.active:
+#         member.activate()
+#         member.save()
+#         return "Activated"
+#     if not status and member.status != member.STATUS.inactive:
+#         member.deactivate()
+#         member.save()
+#         return "Deactivated"
+#     return "No change"
 
+# Cleanup
+@job
+def update_mc_member(member):
+    Join = apps.get_model('bhs.join')
+    join = Join.objects.select_related(
+        'structure',
+        'subscription',
+        'subscription__human',
+    ).filter(
+        structure__id=member__group__mc_pk,
+        subscription__human__id=member__person__mc_pk,
+    ).latest(
+        'modified',
+        '-inactive_date',
+    )
+    return Member.objects.update_or_create_from_join(join)
+
+@job
+def update_mc_officer(officer):
+    Role = apps.get_model('bhs.role')
+    role = Role.objects.select_related(
+        'human',
+        'structure',
+    ).filter(
+        human__id=officer__person__mc_pk,
+        structure__id=officer__group__mc_pk,
+        name=officer__office__name,
+    ).latest(
+        'modified',
+        '-end_date',
+    )
+    return Officer.objects.update_or_create_from_role(role)
+
+@job
+def update_mc_user(user):
+    Subscription = apps.get_model('bhs.subscription')
+    subscription = Subscription.objects.select_related(
+        'human',
+    ).filter(
+        human__id=user__person__mc_pk,
+    ).latest(
+        'modified',
+    )
+    return User.objects.update_or_create_from_subscription(subscription)
