@@ -129,6 +129,24 @@ class Human(models.Model):
             self.bhs_id,
         )
 
+    def update_person(self):
+        Person = apps.get_model('api.person')
+        return Person.objects.update_or_create_from_human(self)
+
+    def update_users(self):
+        Subscription = apps.get_model('bhs.subscription')
+        User = apps.get_model('api.user')
+        try:
+            subscription = self.subscriptions.filter(
+                items_editable=True,
+            ).latest('modified')
+            django_rq.enqueue(
+                User.objects.update_or_create_from_subscription,
+                subscription,
+            )
+        except Subscription.DoesNotExist:
+            pass
+
     class Meta:
         managed=False
         db_table = 'vwMembers'
@@ -263,7 +281,7 @@ class Structure(models.Model):
                 'subscription',
                 'subscription__human',
             ).filter(
-                subscription__human__id__in=human,
+                subscription__human__id=human,
             ).latest(
                 'modified',
                 '-inactive_date',
