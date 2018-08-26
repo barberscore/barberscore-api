@@ -8,7 +8,8 @@ from bhs.managers import HumanManager
 from bhs.managers import RoleManager
 from bhs.managers import JoinManager
 from django.utils.functional import cached_property
-
+from django.apps import apps
+import django_rq
 
 class Human(models.Model):
     id = models.CharField(
@@ -241,6 +242,60 @@ class Structure(models.Model):
             name,
             self.bhs_id,
         )
+
+
+    def update_group(self):
+        Group = apps.get_model('api.group')
+        return Group.objects.update_or_create_from_structure(self)
+
+
+    def update_members(self):
+        Member = apps.get_model('api.member')
+        humans = self.joins.select_related(
+            'subscription__human',
+        ).values_list(
+            'subscription__human',
+            flat=True,
+        ).distinct()
+        t = humans.count()
+        for human in humans:
+            join = self.joins.select_related(
+                'subscription',
+                'subscription__human',
+            ).filter(
+                subscription__human__id__in=human,
+            ).latest(
+                'modified',
+                '-inactive_date',
+            )
+            django_rq.enqueue(
+                Member.objects.update_or_create_from_join,
+                join,
+            )
+        return t
+
+    def update_officers(self):
+        Officer = apps.get_model('api.officer')
+        pairs = self.roles.select_related(
+            'human',
+        ).values_list(
+            'human',
+            'name',
+        ).distinct()
+        for human, name in pairs:
+            role = self.roles.select_related(
+                'human',
+            ).filter(
+                human__id=human,
+                name=name,
+            ).latest(
+                'modified',
+                '-end_date',
+            )
+            django_rq.enqueue(
+                Officer.objects.update_or_create_from_role,
+                role,
+            )
 
     class Meta:
         managed=False
