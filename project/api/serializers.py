@@ -34,7 +34,6 @@ from .models import Venue
 
 
 class StateLogSerializer(serializers.ModelSerializer):
-    # by = serializers.StringRelatedField(many=True)
     class Meta:
         model = StateLog
         fields = (
