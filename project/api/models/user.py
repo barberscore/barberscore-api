@@ -57,19 +57,6 @@ class User(AbstractBaseUser):
         editable=True,
     )
 
-    email = LowerEmailField(
-        help_text="""
-            The contact email of the resource.""",
-        unique=True,
-    )
-
-    name = models.CharField(
-        null=True,
-        blank=True,
-        max_length=255,
-        editable=True,
-    )
-
     current_through = models.DateField(
         null=True,
         blank=True,
@@ -113,6 +100,16 @@ class User(AbstractBaseUser):
     )
 
     objects = UserManager()
+
+    @cached_property
+    def name(self):
+        """Proxy status."""
+        return getattr(getattr(self, 'person'), 'nomen', None)
+
+    @cached_property
+    def email(self):
+        """Proxy status."""
+        return getattr(getattr(self, 'person'), 'email', None)
 
     @cached_property
     def is_mc(self):
