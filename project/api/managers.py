@@ -2,6 +2,7 @@
 import logging
 import django_rq
 import json
+import uuid
 
 # Django
 from django.apps import apps
@@ -754,8 +755,6 @@ class UserManager(BaseUserManager):
                 user = self.create_user(
                     username=username,
                     status=status,
-                    name=name,
-                    email=email,
                     current_through=current_through,
                     person=person,
                     mc_pk=mc_pk,
@@ -822,8 +821,12 @@ class UserManager(BaseUserManager):
     #             delete_account.delay(account['account_id'])
     #     return i
 
-    def create_user(self, username, **kwargs):
+    def create_user(self, username=None, **kwargs):
+        pk = uuid.uuid4()
+        if not username:
+            username = "orphan|{0}".format(str(pk))
         user = self.model(
+            id=pk,
             username=username,
             **kwargs
         )
