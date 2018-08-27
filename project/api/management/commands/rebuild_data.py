@@ -46,9 +46,9 @@ class Command(BaseCommand):
         else:
             cursor = None
         Group = apps.get_model('api.group')
-        # Group.objects.denormalize(cursor=cursor)
-        # Group.objects.sort_tree()
-        # Group.objects.update_seniors()
+        Group.objects.denormalize(cursor=cursor)
+        Group.objects.sort_tree()
+        Group.objects.update_seniors()
         Award = apps.get_model('api.award')
         Award.objects.sort_tree()
         return
