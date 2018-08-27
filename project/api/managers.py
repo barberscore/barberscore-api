@@ -316,7 +316,6 @@ class GroupManager(Manager):
             group.save()
         return
 
-    @disable_auto_indexing
     def update_seniors(self):
         quartets = self.filter(
             kind=self.model.KIND.quartet,
@@ -329,7 +328,8 @@ class GroupManager(Manager):
             is_senior = quartet.get_is_senior()
             if prior != is_senior:
                 quartet.is_senior = is_senior
-                quartet.save()
+                with disable_auto_indexing(model=Group):
+                    quartet.save()
         return
 
     def update_actives(self):
