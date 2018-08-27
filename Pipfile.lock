@@ -26,11 +26,11 @@
         },
         "algoliasearch-django": {
             "hashes": [
-                "sha256:5a1d6424a69329ff8681e5bd6586a85caf00b0c8e351015d8c469684ca58e916",
-                "sha256:99386a36c5f56cd3bf091a0c50d9e46738f7a516455103b8863c323f36f2b65a"
+                "sha256:119111d15f91ee79666902db53fff68525aa57ebf1d50518d130ad37615ab526",
+                "sha256:e6874bf0e41032759f90162e1587a195992f0da8f4a99fb4cc588e8dad500a99"
             ],
             "index": "pypi",
-            "version": "==1.6.0"
+            "version": "==1.7.0"
         },
         "appnope": {
             "hashes": [
@@ -811,10 +811,11 @@
         },
         "atomicwrites": {
             "hashes": [
-                "sha256:240831ea22da9ab882b551b31d4225591e5e447a68c5e188db5b89ca1d487585",
-                "sha256:a24da68318b08ac9c9c45029f4a10371ab5b20e4226738e150e6e7c571630ae6"
+                "sha256:6b5282987b21cd79151f51caccead7a09d0a32e89c568bd9e3c4aaa7bbdf3f3a",
+                "sha256:e16334d50fe0f90919ef7339c24b9b62e6abaa78cd2d226f3d94eb067eb89043"
             ],
-            "version": "==1.1.5"
+            "markers": "python_version != '3.0.*' and python_version != '3.3.*' and python_version >= '2.7' and python_version != '3.2.*' and python_version != '3.1.*'",
+            "version": "==1.2.0"
         },
         "attrs": {
             "hashes": [
@@ -978,11 +979,11 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:3459a123ad5532852d36f6f4501dfe1acf4af1dd9541834a164666aa40395b02",
-                "sha256:96bfd45dbe863b447a3054145cd78a9d7f31475d2bce6111b133c0cc4f305118"
+                "sha256:2e7c330338b2732ddb992217962e3454aa7290434e75329b1a6739cea41bea6b",
+                "sha256:4abcd98faeea3eb95bd05aa6a7b121d5f89d72e4d36ddb0dcbbfd1ec9f3651d1"
             ],
             "index": "pypi",
-            "version": "==3.7.2"
+            "version": "==3.7.3"
         },
         "pytest-django": {
             "hashes": [
