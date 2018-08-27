@@ -27,6 +27,7 @@ from api.tasks import update_mc_user
 from django.db.models.functions import Concat
 from django.core.serializers.json import DjangoJSONEncoder
 from dictdiffer import diff
+from algoliasearch_django.decorators import disable_auto_indexing
 
 log = logging.getLogger(__name__)
 
@@ -315,6 +316,7 @@ class GroupManager(Manager):
             group.save()
         return
 
+    @disable_auto_indexing
     def update_seniors(self):
         quartets = self.filter(
             kind=self.model.KIND.quartet,
