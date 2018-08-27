@@ -384,6 +384,7 @@ class Group(TimeStampedModel):
 
     # Methods
     def is_active(self):
+        # For Algolia indexing
         return bool(self.status == self.STATUS.active)
 
     # Internals
