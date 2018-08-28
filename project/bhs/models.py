@@ -133,7 +133,7 @@ class Human(models.Model):
         Person = apps.get_model('api.person')
         return Person.objects.update_or_create_from_human(self)
 
-    def update_users(self):
+    def update_user(self):
         Subscription = apps.get_model('bhs.subscription')
         User = apps.get_model('api.user')
         try:

@@ -149,43 +149,6 @@ class JoinManager(Manager):
             # )
         return t
 
-    # def update_members(self, cursor=None):
-    #     Member = apps.get_model('api.member')
-    #     # Get base
-    #     joins = self.select_related(
-    #         'structure',
-    #         'subscription__human',
-    #     ).exclude(paid=0)
-    #     if cursor:
-    #         joins = joins.filter(
-    #             modified__gt=cursor,
-    #         )
-    #     # Return unique rows
-    #     joins = joins.values_list(
-    #         'structure__id',
-    #         'subscription__human__id',
-    #     ).distinct()
-
-    #     # Normalize to list of lists
-    #     joins = [list(x) for x in joins]
-
-    #     # Creating/Update Member
-    #     for join in joins:
-    #         join.append(bool(self.filter(
-    #             Q(inactive_date=None) |
-    #             Q(
-    #                 inactive_date__gt=localdate(),
-    #                 subscription__status='active',
-    #             ),
-    #             structure__id=join[0],
-    #             subscription__human__id=join[1],
-    #         ).exclude(paid=0)))
-    #         django_rq.enqueue(
-    #             Member.objects.update_from_join2,
-    #             join,
-    #         )
-    #     return len(joins)
-
 
 class SubscriptionManager(Manager):
     def update_users(self, cursor=None):
