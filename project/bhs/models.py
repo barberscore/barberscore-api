@@ -262,9 +262,18 @@ class Structure(models.Model):
         )
 
 
-    def update_group(self):
+    def update_bs(self):
         Group = apps.get_model('api.group')
-        return Group.objects.update_or_create_from_structure(self)
+        Member = apps.get_model('api.member')
+        Officer = apps.get_model('api.officer')
+        Group.objects.update_or_create_from_structure(self),
+        joins = self.get_joins()
+        for join in joins:
+                Member.objects.update_or_create_from_join(join)
+        roles = self.get_roles()
+        for role in roles:
+                Officer.objects.update_or_create_from_role(role)
+        return
 
 
     def get_joins(self):
@@ -288,10 +297,6 @@ class Structure(models.Model):
                 '-inactive_date',
             )
             joins.append(join)
-            # django_rq.enqueue(
-            #     Member.objects.update_or_create_from_join,
-            #     join,
-            # )
         return joins
 
     def get_roles(self):
@@ -314,10 +319,6 @@ class Structure(models.Model):
                 '-end_date',
             )
             roles.append(role)
-            # django_rq.enqueue(
-            #     Officer.objects.update_or_create_from_role,
-            #     role,
-            # )
         return roles
 
     class Meta:
