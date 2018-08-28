@@ -267,7 +267,7 @@ class Structure(models.Model):
         return Group.objects.update_or_create_from_structure(self)
 
 
-    def update_members(self):
+    def get_joins(self):
         Member = apps.get_model('api.member')
         humans = self.joins.select_related(
             'subscription__human',
@@ -276,6 +276,7 @@ class Structure(models.Model):
             flat=True,
         ).distinct()
         t = humans.count()
+        joins = []
         for human in humans:
             join = self.joins.select_related(
                 'subscription',
@@ -286,13 +287,14 @@ class Structure(models.Model):
                 'modified',
                 '-inactive_date',
             )
-            django_rq.enqueue(
-                Member.objects.update_or_create_from_join,
-                join,
-            )
-        return t
+            joins.append(join)
+            # django_rq.enqueue(
+            #     Member.objects.update_or_create_from_join,
+            #     join,
+            # )
+        return joins
 
-    def update_officers(self):
+    def get_roles(self):
         Officer = apps.get_model('api.officer')
         pairs = self.roles.select_related(
             'human',
@@ -300,6 +302,7 @@ class Structure(models.Model):
             'human',
             'name',
         ).distinct()
+        roles = []
         for human, name in pairs:
             role = self.roles.select_related(
                 'human',
@@ -310,10 +313,12 @@ class Structure(models.Model):
                 'modified',
                 '-end_date',
             )
-            django_rq.enqueue(
-                Officer.objects.update_or_create_from_role,
-                role,
-            )
+            roles.append(role)
+            # django_rq.enqueue(
+            #     Officer.objects.update_or_create_from_role,
+            #     role,
+            # )
+        return roles
 
     class Meta:
         managed=False
