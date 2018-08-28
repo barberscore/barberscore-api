@@ -97,7 +97,7 @@ class GroupManager(Manager):
                 'organization', 'international'
             )
         )
-        email = email.strip()
+        email = email.strip().lower()
         phone = phone.strip()
         website = website.strip()
         facebook = facebook.strip()
