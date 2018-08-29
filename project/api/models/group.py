@@ -239,6 +239,7 @@ class Group(TimeStampedModel):
         help_text="""
             The contact email of the resource.""",
         blank=True,
+        null=True,
     )
 
     phone = models.CharField(
@@ -384,6 +385,7 @@ class Group(TimeStampedModel):
 
     # Methods
     def is_active(self):
+        # For Algolia indexing
         return bool(self.status == self.STATUS.active)
 
     # Internals

@@ -57,19 +57,16 @@ class User(AbstractBaseUser):
         editable=True,
     )
 
-    email = LowerEmailField(
-        help_text="""
-            The contact email of the resource.""",
-        null=True,
-        blank=True,
+    name = models.CharField(
+        max_length=100,
         unique=True,
+        editable=True,
     )
 
-    name = models.CharField(
-        null=True,
+    email = LowerEmailField(
+        max_length=100,
         blank=True,
-        max_length=255,
-        editable=True,
+        unique=True,
     )
 
     current_through = models.DateField(

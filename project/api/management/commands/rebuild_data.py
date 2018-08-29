@@ -1,4 +1,4 @@
-# Django
+ # Django
 from django.apps import apps
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -47,7 +47,7 @@ class Command(BaseCommand):
             cursor = None
         Group = apps.get_model('api.group')
         Group.objects.denormalize(cursor=cursor)
-        # Group.objects.sort_tree()
+        Group.objects.sort_tree()
         Group.objects.update_seniors()
         Award = apps.get_model('api.award')
         Award.objects.sort_tree()

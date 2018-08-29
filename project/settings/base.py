@@ -60,7 +60,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 USERNAME_FIELD = 'username'
 REQUIRED_FIELDS = [
-    # 'email',
+    'email',
     # 'name',
 ]
 LOGIN_URL = 'admin:login'
@@ -142,6 +142,10 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 300,
     },
     'high': {
+        'USE_REDIS_CACHE': 'default',
+        'ASYNC': True,
+    },
+    'low': {
         'USE_REDIS_CACHE': 'default',
         'ASYNC': True,
     },

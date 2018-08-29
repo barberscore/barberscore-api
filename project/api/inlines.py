@@ -381,6 +381,8 @@ class MemberInline(admin.TabularInline):
         'person',
         'group',
         'part',
+        'start_date',
+        'end_date',
         'status',
     ]
     autocomplete_fields = [

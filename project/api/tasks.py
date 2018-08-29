@@ -1,4 +1,5 @@
 # Standard Libary
+import csv
 import logging
 import time
 import tempfile
@@ -55,86 +56,81 @@ def get_auth0():
     return auth0
 
 
-def get_accounts():
-    auth0 = get_auth0()
-    output = []
-    more = True
-    i = 0
-    t = 0
-    while more:
-        try:
-            results = auth0.users.list(
-                fields=[
-                    'user_id',
-                    'email',
-                ],
-                per_page=100,
-                page=i,
-            )
-        except Auth0Error as e:
-            t += 1
-            if t <= 5:
-                time.sleep(t ** 2)
-                continue
-            else:
-                raise e
-        try:
-            users = results['users']
-        except KeyError as e:
-            t += 1
-            if t <= 5:
-                time.sleep(t ** 2)
-                continue
-            else:
-                raise e
-        for user in users:
-            payload = {
-                'username': user['user_id'],
-                'email': user['email'],
-            }
-            output.append(payload)
-        more = bool(results['users'])
-        i += 1
-        t = 0
-    return output
+def get_accounts(path='barberscore.csv'):
+    with open(path) as f:
+        next(f)  # Skip headers
+        reader = csv.reader(f, skipinitialspace=True)
+        rows = [row for row in reader]
+        return rows
 
 
-@job
-def create_account(email, name):
+@job('low')
+def create_account(user):
     auth0 = get_auth0()
-    email = email.lower()
-    name = name.strip()
+    email = user.email.lower()
+    name = user.name.strip()
     random = get_random_string()
+    status = user.get_status_display()
+    if user.person:
+        bhs_id = user.person.bhs_id
+    else:
+        bhs_id = None
+    if user.current_through:
+        current_through = user.current_through.isoformat()
+    else:
+        current_through = None
+    pk = str(user.id)
     payload = {
         'connection': 'Default',
         'email': email,
         'email_verified': True,
         'password': random,
-        'user_metadata': {
+        'app_metadata': {
+            'pk': pk,
+            'status': status,
             'name': name,
+            'bhs_id': bhs_id,
+            'current_through': current_through,
         }
     }
     account = auth0.users.create(payload)
+    user.username = account['user_id']
+    user.save()
     return account
 
 
-@job
-def update_account(person):
+@job('low')
+def update_account(user):
     auth0 = get_auth0()
-    name = person.__str__()
-    email = person.email.lower()
+    name = user.name
+    email = user.email
+    status = user.get_status_display()
+    if user.person:
+        bhs_id = user.person.bhs_id
+    else:
+        bhs_id = None
+    if user.current_through:
+        current_through = user.current_through.isoformat()
+    else:
+        current_through = None
+    pk = str(user.id)
     payload = {
         'email': email,
         'email_verified': True,
-        'user_metadata': {
+        'user_metadata': None,
+        'app_metadata': {
+            'pk': pk,
+            'status': status,
             'name': name,
+            'bhs_id': bhs_id,
+            'current_through': current_through,
         }
     }
-    account = auth0.users.update(person.user.username, payload)
+    account = auth0.users.update(user.username, payload)
     return account
 
 
-@job
+@job('low')
 def delete_account(user):
     auth0 = get_auth0()
     # Delete Auth0
@@ -142,7 +138,7 @@ def delete_account(user):
     return
 
 
-@job
+@job('low')
 def link_account(user):
     Person = apps.get_model('api.person')
     auth0 = get_auth0()
@@ -152,7 +148,7 @@ def link_account(user):
     return person
 
 
-@job
+@job('low')
 def unlink_user_account(user):
     client = get_auth0()
     user_id = user.username.partition('|')[2]
@@ -164,7 +160,7 @@ def unlink_user_account(user):
     return
 
 
-@job
+@job('low')
 def relink_user_account(user):
     client = get_auth0()
     user_id = user.account_id.partition('|')[2]
@@ -1205,41 +1201,3 @@ def send_session_reports(template, context):
         to=to,
     )
     return email.send()
-
-
-# @job
-# def update_bhs_member(member):
-#     Join = apps.get_model('bhs.join')
-#     Member = apps.get_model('api.member')
-#     joins = Join.objects.filter(
-#         subscription__human__id=member.person.mc_pk,
-#         structure__id=member.group.mc_pk,
-#     ).order_by('modified')
-#     for join in joins:
-#         result = Member.objects.update_from_join(join)
-#     return result
-
-@job
-def update_bhs_member(member):
-    Join = apps.get_model('bhs.join')
-    if not member.mc_pk:
-        return ValueError("Not a MC Record")
-    status = bool(Join.objects.filter(
-        Q(inactive_date=None) |
-        Q(
-            inactive_date__gt=localdate(),
-            subscription__status='active',
-        ),
-        structure__id=member.group.mc_pk,
-        subscription__human__id=member.person.mc_pk,
-    ))
-    if status and member.status != member.STATUS.active:
-        member.activate()
-        member.save()
-        return "Activated"
-    if not status and member.status != member.STATUS.inactive:
-        member.deactivate()
-        member.save()
-        return "Deactivated"
-    return "No change"
-

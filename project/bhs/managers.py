@@ -14,11 +14,19 @@ class HumanManager(Manager):
             humans = self.filter(
                 modified__gt=cursor,
             )
+        else:
+            # Else clear logs
+            ss = StateLog.objects.filter(
+                content_type__model='person',
+                groups__mc_pk__isnull=False,
+            )
+            ss.delete()
         t = humans.count()
         # Creating/Update Persons
         Person = apps.get_model('api.person')
+        queue = django_rq.get_queue('low')
         for human in humans:
-            django_rq.enqueue(
+            queue.enqueue(
                 Person.objects.update_or_create_from_human,
                 human,
             )
@@ -59,8 +67,9 @@ class StructureManager(Manager):
         t = structures.count()
         # Creating/Update Groups
         Group = apps.get_model('api.group')
+        queue = django_rq.get_queue('low')
         for structure in structures:
-            django_rq.enqueue(
+            queue.enqueue(
                 Group.objects.update_or_create_from_structure,
                 structure,
             )
@@ -107,9 +116,10 @@ class RoleManager(Manager):
         t = roles.count()
         # Creating/Update Officers
         Officer = apps.get_model('api.officer')
+        queue = django_rq.get_queue('low')
         for role in roles:
-            django_rq.enqueue(
-                Officer.objects.update_from_role,
+            queue.enqueue(
+                Officer.objects.update_or_create_from_role,
                 role,
             )
         return t
@@ -141,50 +151,23 @@ class JoinManager(Manager):
 
         t = joins.count()
         # Creating/Update Membership
+        queue = django_rq.get_queue('low')
+        prior = None
         for join in joins:
-            Member.objects.update_from_join(join)
-            # django_rq.enqueue(
-            #     Member.objects.update_from_join,
-            #     join,
-            # )
+            # Member.objects.update_or_create_from_join(join)
+            if not prior:
+                prior = queue.enqueue(
+                    Member.objects.update_or_create_from_join,
+                    join,
+                )
+            else:
+                current = queue.enqueue(
+                    Member.objects.update_or_create_from_join,
+                    join,
+                    depends_on=prior,
+                )
+                prior = current
         return t
-
-    # def update_members(self, cursor=None):
-    #     Member = apps.get_model('api.member')
-    #     # Get base
-    #     joins = self.select_related(
-    #         'structure',
-    #         'subscription__human',
-    #     ).exclude(paid=0)
-    #     if cursor:
-    #         joins = joins.filter(
-    #             modified__gt=cursor,
-    #         )
-    #     # Return unique rows
-    #     joins = joins.values_list(
-    #         'structure__id',
-    #         'subscription__human__id',
-    #     ).distinct()
-
-    #     # Normalize to list of lists
-    #     joins = [list(x) for x in joins]
-
-    #     # Creating/Update Member
-    #     for join in joins:
-    #         join.append(bool(self.filter(
-    #             Q(inactive_date=None) |
-    #             Q(
-    #                 inactive_date__gt=localdate(),
-    #                 subscription__status='active',
-    #             ),
-    #             structure__id=join[0],
-    #             subscription__human__id=join[1],
-    #         ).exclude(paid=0)))
-    #         django_rq.enqueue(
-    #             Member.objects.update_from_join2,
-    #             join,
-    #         )
-    #     return len(joins)
 
 
 class SubscriptionManager(Manager):
@@ -211,8 +194,9 @@ class SubscriptionManager(Manager):
         t = subscriptions.count()
         # Creating/Update Persons
         User = apps.get_model('api.user')
+        queue = django_rq.get_queue('low')
         for subscription in subscriptions:
-            django_rq.enqueue(
+            queue.enqueue(
                 User.objects.update_or_create_from_subscription,
                 subscription,
             )

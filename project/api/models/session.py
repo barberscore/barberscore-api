@@ -211,19 +211,19 @@ class Session(TimeStampedModel):
         ])
 
     # Session Conditions
-    def can_build_session(self):
+    def can_build(self):
         return all([
             self.convention.grantors.count() > 0,
             self.num_rounds,
         ])
 
-    def can_open_session(self):
+    def can_open(self):
         Contest = apps.get_model('api.contest')
         return all([
             self.contests.filter(status=Contest.STATUS.included),
         ])
 
-    def can_close_session(self):
+    def can_close(self):
         Entry = apps.get_model('api.entry')
         return all([
             self.convention.close_date < datetime.date.today(),
@@ -236,13 +236,18 @@ class Session(TimeStampedModel):
             ).count() == 0,
         ])
 
-    # Session Transitions
+    def can_finish(self):
+        # Session Transitions
+        return all([
+            not self.rounds.exclude(status=self.rounds.model.STATUS.finished)
+        ])
+
     @fsm_log_by
     @transition(
         field=status,
         source=STATUS.new,
         target=STATUS.built,
-        conditions=[can_build_session],
+        conditions=[can_build],
     )
     def build(self, *args, **kwargs):
         """Build session contests."""
@@ -281,7 +286,7 @@ class Session(TimeStampedModel):
         field=status,
         source=STATUS.built,
         target=STATUS.opened,
-        conditions=[can_open_session],
+        conditions=[can_open],
     )
     def open(self, *args, **kwargs):
         """Make session available for entry."""
@@ -295,7 +300,7 @@ class Session(TimeStampedModel):
         field=status,
         source=STATUS.opened,
         target=STATUS.closed,
-        conditions=[can_close_session]
+        conditions=[can_close]
     )
     def close(self, *args, **kwargs):
         """Make session unavailable and set initial draw."""
@@ -424,7 +429,7 @@ class Session(TimeStampedModel):
         field=status,
         source=[STATUS.started, STATUS.finished],
         target=STATUS.finished,
-        conditions=[],
+        conditions=[can_finish],
     )
     def finish(self, *args, **kwargs):
         create_session_oss(self)
