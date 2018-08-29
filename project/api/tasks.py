@@ -89,13 +89,24 @@ def create_auth0(user):
     email = user.email.lower()
     name = user.name.strip()
     random = get_random_string()
+    status = user.get_status_display()
+    if user.person:
+        bhs_id = user.person.bhs_id
+    else:
+        bhs_id = None
+    current_through = user.current_through.isoformat()
+    pk = str(user.id)
     payload = {
         'connection': 'Default',
         'email': email,
         'email_verified': True,
         'password': random,
-        'user_metadata': {
+        'app_metadata': {
+            'pk': pk,
+            'status': status,
             'name': name,
+            'bhs_id': bhs_id,
+            'current_through': current_through,
         }
     }
     account = auth0.users.create(payload)
@@ -105,18 +116,30 @@ def create_auth0(user):
 
 
 @job
-def update_account(person):
+def update_account(user):
     auth0 = get_auth0()
-    name = person.__str__()
-    email = person.email.lower()
+    name = user.name
+    email = user.email
+    status = user.get_status_display()
+    if user.person:
+        bhs_id = user.person.bhs_id
+    else:
+        bhs_id = None
+    current_through = user.current_through.isoformat()
+    pk = str(user.id)
     payload = {
         'email': email,
         'email_verified': True,
-        'user_metadata': {
+        'user_metadata': None,
+        'app_metadata': {
+            'pk': pk,
+            'status': status,
             'name': name,
+            'bhs_id': bhs_id,
+            'current_through': current_through,
         }
     }
-    account = auth0.users.update(person.user.username, payload)
+    account = auth0.users.update(user.username, payload)
     return account
 
 
