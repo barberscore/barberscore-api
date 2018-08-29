@@ -754,6 +754,8 @@ class UserManager(BaseUserManager):
         person, created = Person.objects.update_or_create_from_human(human)
         name = str(person)
         email = person.email
+        if not email:
+            return
         defaults = {
             'status': status,
             'name': name,
@@ -769,16 +771,14 @@ class UserManager(BaseUserManager):
             )
             created = False
         except self.model.DoesNotExist:
-            if email:
-                user = self.create_user(
-                    status=status,
-                    current_through=current_through,
-                    person=person,
-                    mc_pk=mc_pk,
-                )
-                created = True
-            else:
-                return 'No Email'
+            user = self.create_user(
+                status=status,
+                email=email,
+                current_through=current_through,
+                person=person,
+                mc_pk=mc_pk,
+            )
+            created = True
 
         if created:
             description = "Initial"
