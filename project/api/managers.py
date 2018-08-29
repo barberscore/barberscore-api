@@ -750,7 +750,7 @@ class UserManager(BaseUserManager):
         )
 
         Person = apps.get_model('api.person')
-        person, created = Person.objects.update_or_create_from_human(human)
+        person = Person.objects.get(mc_pk=human.id)
         name = str(person)
         email = person.email
         defaults = {
