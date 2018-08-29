@@ -251,7 +251,7 @@ class GroupManager(Manager):
             if result:
                 description = str(result)
             else:
-                return 'Skipped'
+                return group, created
 
         # Transition as appropriate
         if status == self.model.STATUS.active:
@@ -449,7 +449,7 @@ class MemberManager(Manager):
             if result:
                 description = str(result)
             else:
-                return 'Skipped'
+                return member, created
 
         # Transition as appropriate
         if status == self.model.STATUS.active:
@@ -537,7 +537,7 @@ class OfficerManager(Manager):
             if result:
                 description = str(result)
             else:
-                return 'Skipped'
+                return officer, created
 
         # Transition as appropriate
         if status == self.model.STATUS.active:
@@ -719,7 +719,7 @@ class PersonManager(Manager):
             if result:
                 description = str(result)
             else:
-                return 'Skipped'
+                return person, created
 
         # Transition as appropriate
         if person.status == person.STATUS.active:
@@ -751,7 +751,7 @@ class UserManager(BaseUserManager):
         )
 
         Person = apps.get_model('api.person')
-        person = Person.objects.get(mc_pk=human.id)
+        person, created = Person.objects.update_or_create_from_human(human)
         name = str(person)
         email = person.email
         defaults = {
@@ -810,7 +810,7 @@ class UserManager(BaseUserManager):
             if result:
                 description = str(result)
             else:
-                return 'Skipped'
+                return user, created
 
         if status == self.model.STATUS.active:
             user.activate(
