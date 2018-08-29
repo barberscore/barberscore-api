@@ -772,15 +772,23 @@ class UserManager(BaseUserManager):
             )
             created = False
         except self.model.DoesNotExist:
-            user = self.create_user(
-                status=status,
-                name=name,
-                email=email,
-                current_through=current_through,
-                person=person,
-                mc_pk=mc_pk,
-            )
-            created = True
+            try:
+                user = self.create_user(
+                    **defaults,
+                )
+            except IntegrityError as e:
+                # Need to delete old offending record
+                if "api_user_mc_pk_key" in str(e.args):
+                    old = self.get(
+                        mc_pk=mc_pk,
+                    )
+                    old.delete()
+                    user = self.create_user(
+                        **defaults,
+                    )
+                else:
+                    raise(e)
+        created = True
 
         if created:
             description = "Initial"
