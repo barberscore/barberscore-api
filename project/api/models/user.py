@@ -61,14 +61,12 @@ class User(AbstractBaseUser):
         max_length=100,
         unique=True,
         editable=True,
-        null=True,
     )
 
     email = LowerEmailField(
         max_length=100,
         blank=True,
         unique=True,
-        null=True,
     )
 
     current_through = models.DateField(

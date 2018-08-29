@@ -379,9 +379,11 @@ class VenueFactory(DjangoModelFactory):
         model = Venue
 
 
-@mute_signals(pre_save, pre_delete)
+@mute_signals(pre_delete, post_save)
 class UserFactory(DjangoModelFactory):
     username = Faker('uuid4')
+    email = Faker('email')
+    name = Faker('name')
     status = User.STATUS.active
     password = PostGenerationMethodCall('set_password', 'password')
     current_through = '2018-12-31'

@@ -770,10 +770,7 @@ class UserManager(BaseUserManager):
             created = False
         except self.model.DoesNotExist:
             if email:
-                account = create_account(email, name)
-                username = account['user_id']
                 user = self.create_user(
-                    username=username,
                     status=status,
                     current_through=current_through,
                     person=person,

@@ -65,26 +65,7 @@ def get_accounts(path='barberscore.csv'):
 
 
 @job('low')
-def create_account(email, name):
-    auth0 = get_auth0()
-    email = email.lower()
-    name = name.strip()
-    random = get_random_string()
-    payload = {
-        'connection': 'Default',
-        'email': email,
-        'email_verified': True,
-        'password': random,
-        'user_metadata': {
-            'name': name,
-        }
-    }
-    account = auth0.users.create(payload)
-    return account
-
-
-@job('low')
-def create_auth0(user):
+def create_account(user):
     auth0 = get_auth0()
     email = user.email.lower()
     name = user.name.strip()
@@ -115,7 +96,7 @@ def create_auth0(user):
     account = auth0.users.create(payload)
     user.username = account['user_id']
     user.save()
-    return user
+    return account
 
 
 @job('low')
