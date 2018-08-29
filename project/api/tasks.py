@@ -94,7 +94,10 @@ def create_auth0(user):
         bhs_id = user.person.bhs_id
     else:
         bhs_id = None
-    current_through = user.current_through.isoformat()
+    if user.current_through:
+        current_through = user.current_through.isoformat()
+    else:
+        current_through = None
     pk = str(user.id)
     payload = {
         'connection': 'Default',
@@ -125,7 +128,10 @@ def update_account(user):
         bhs_id = user.person.bhs_id
     else:
         bhs_id = None
-    current_through = user.current_through.isoformat()
+    if user.current_through:
+        current_through = user.current_through.isoformat()
+    else:
+        current_through = None
     pk = str(user.id)
     payload = {
         'email': email,
