@@ -252,7 +252,9 @@ class Round(TimeStampedModel):
         return True
 
     def can_finish(self):
-        return True
+        return all([
+            not self.appearances.exclude(status=self.appearances.model.STATUS.verified)
+        ])
 
     # Round Transitions
     @fsm_log_by
