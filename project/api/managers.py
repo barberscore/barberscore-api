@@ -752,11 +752,12 @@ class UserManager(BaseUserManager):
 
         Person = apps.get_model('api.person')
         person, created = Person.objects.update_or_create_from_human(human)
-        name = str(person)
+        name = person.nomen
         email = person.email
         if not email:
             return
         defaults = {
+            'mc_pk': mc_pk,
             'status': status,
             'name': name,
             'email': email,
@@ -773,6 +774,7 @@ class UserManager(BaseUserManager):
         except self.model.DoesNotExist:
             user = self.create_user(
                 status=status,
+                name=name,
                 email=email,
                 current_through=current_through,
                 person=person,
@@ -791,6 +793,7 @@ class UserManager(BaseUserManager):
                     'email',
                     'current_through',
                     'person',
+                    'mc_pk',
                 ],
             )
             # update the person to new values
@@ -804,6 +807,7 @@ class UserManager(BaseUserManager):
                     'email',
                     'current_through',
                     'person',
+                    'mc_pk',
                 ],
             )
             result = list(diff(pre, post))
