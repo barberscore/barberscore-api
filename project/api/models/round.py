@@ -252,7 +252,9 @@ class Round(TimeStampedModel):
         return True
 
     def can_finish(self):
-        return True
+        return all([
+            not self.appearances.exclude(status=self.appearances.model.STATUS.verified)
+        ])
 
     # Round Transitions
     @fsm_log_by
@@ -400,103 +402,69 @@ class Round(TimeStampedModel):
             contest.determine()
             contest.save()
 
-        # "Finish" everyone if finals.
+        # No next round.
         if self.kind == self.KIND.finals:
-            competitors = self.session.competitors.filter(
-                status__gt=0,
-            )
-            for competitor in competitors:
-                competitor.finish()
-                competitor.save()
-            save_csa_round(self)
+            # save_csa_round(self)
             return
 
         # Get spots available
         spots = self.spots
 
-        # get primary contest
-        contest = self.session.contests.get(is_primary=True)
-        if contest.award.level == contest.award.LEVEL.qualifier:
-            # Uses absolute cutoff.
-            automatics = Competitor.objects.filter(
-                status__gt=0,
-                entry__contestants__contest=contest,
-                entry__contestants__status=Contestant.STATUS.included,
-                tot_score__gte=contest.award.advance,
-            ).distinct(
-            )
-        elif contest.award.level == contest.award.LEVEL.championship:
-            # Get the top scorer
-            top = Competitor.objects.filter(
-                status__gt=0,
-                entry__contestants__contest=contest,
-                entry__contestants__status=Contestant.STATUS.included,
-            ).distinct(
-            ).order_by(
-                '-tot_points',
-            ).first()
-            # Derive the approve threshold from that top score.
-            # 4.0 points a constant, from SCJC David Mills
-            advance = top.tot_score - 4.0
-            automatics = Competitor.objects.filter(
-                status__gt=0,
-                entry__contestants__contest=contest,
-                entry__contestants__status=Contestant.STATUS.included,
-                tot_score__gte=advance,
-            ).distinct(
-            )
-
-        # list comprehension since we're slicing queryset
-        advancers = [x.id for x in automatics]
-        # Append up to spots available.
+        # Get all multi competitors.
+        multis = self.session.competitors.filter(
+            status__gt=0,
+            is_multi=True,
+        )
         if spots:
-            diff = spots - len(advancers)
-        else:
-            diff = 0
-        if diff > 0:
-            # Append to advancers list if there is room to do so
-            excludes = advancers
-            adds = self.session.competitors.filter(
-                status__gt=0,
-                is_multi=True,
-            ).exclude(
-                id__in=excludes,
-            ).distinct(
+            # All those above 73.0 advance automatically
+            automatics = multis.filter(
+                tot_score__gte=73.0,
+            )
+            cnt = automatics.count()
+            # create list of advancers
+            advancers = [a.id for a in automatics]
+            diff = spots - cnt
+            adds = multis.exclude(
+                id__in=advancers,
             ).order_by(
                 '-tot_points',
+                '-sng_points',
+                '-per_points',
             )[:diff]
             for a in adds:
                 advancers.append(a.id)
+        else:
+            advancers = [a.id for a in multis]
 
-        # Set all remaining to finished..
-        competitors = self.session.competitors.filter(
-            status__gt=0,
-        ).exclude(
-            id__in=advancers,
-        )
-        for competitor in competitors:
-            competitor.finish()
-            competitor.save()
+        # Reset draw
+        self.appearances.update(draw=None)
         # Get advancers and draw
         appearances = self.appearances.filter(
-            competitor__status__gt=0,
+            competitor__id__in=advancers,
         ).order_by('?')
         i = 1
         for appearance in appearances:
             appearance.draw = i
             appearance.save()
             i += 1
-        save_csa_round(self)
+        # create MT
+        mt = self.appearances.filter(
+            draw=None,
+            competitor__status__gt=0,
+            competitor__is_multi=True,
+        ).order_by(
+            '-tot_points',
+            '-sng_points',
+            '-per_points',
+        ).first()
+        mt.draw = 0
+        mt.save()
+        # save_csa_round(self)
         return
 
     @fsm_log_by
     @transition(field=status, source=[STATUS.verified], target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        Competitor = apps.get_model('api.competitor')
-        if self.kind != self.KIND.finals:
-            next_round = self.session.rounds.get(num=self.num + 1)
-            next_round.build()
-            next_round.save()
         content = create_round_oss(self)
         self.oss.save(
             "{0}-oss".format(
@@ -504,13 +472,14 @@ class Round(TimeStampedModel):
             ),
             content,
         )
-        cs = self.session.competitors.filter(
-            status=Competitor.STATUS.finished,
+        finishers = self.appearances.filter(
+            draw=None,
         )
-        for c in cs:
-            context = {
-                'competitor': c,
-                'round': self,
-            }
-            # send_csa.delay(context)
+        for finisher in finishers:
+            finisher.competitor.finish()
+            finisher.competitor.save()
+        if self.kind != self.KIND.finals:
+            next_round = self.session.rounds.get(num=self.num + 1)
+            next_round.build()
+            next_round.save()
         return
