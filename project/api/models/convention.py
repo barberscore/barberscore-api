@@ -197,7 +197,7 @@ class Convention(TimeStampedModel):
         ])
 
     # Convention Transition Conditions
-    def can_activate_convention(self):
+    def can_activate(self):
         if any([
             not self.open_date,
             not self.close_date,
@@ -217,7 +217,7 @@ class Convention(TimeStampedModel):
             self.sessions.count() > 0,
         ])
 
-    def can_deactivate_convention(self):
+    def can_deactivate(self):
         return all([
             not self.sessions.exclude(status=self.sessions.model.STATUS.finished)
         ])
@@ -228,7 +228,7 @@ class Convention(TimeStampedModel):
         field=status,
         source='*',
         target=STATUS.active,
-        conditions=[can_activate_convention],
+        conditions=[can_activate],
     )
     def activate(self, *args, **kwargs):
         """Publish convention and related sessions."""
@@ -239,7 +239,7 @@ class Convention(TimeStampedModel):
         field=status,
         source='*',
         target=STATUS.inactive,
-        conditions=[can_deactivate_convention],
+        conditions=[can_deactivate],
     )
     def deactivate(self, *args, **kwargs):
         """Archive convention and related sessions."""

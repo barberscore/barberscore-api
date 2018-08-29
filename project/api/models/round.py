@@ -251,6 +251,9 @@ class Round(TimeStampedModel):
     def can_build(self):
         return True
 
+    def can_finish(self):
+        return True
+
     # Round Transitions
     @fsm_log_by
     @transition(
