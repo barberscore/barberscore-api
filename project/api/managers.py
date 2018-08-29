@@ -340,36 +340,23 @@ class MemberManager(Manager):
         mc_pk = str(join.id)
         structure = str(join.structure.id)
         human = str(join.subscription.human.id)
-        established_date = join.established_date
-        inactive_date = join.inactive_date
-        inactive_reason = join.inactive_reason
+        start_date = join.established_date
+        end_date = join.inactive_date
         part = join.vocal_part
-        paid = join.paid
-        sub_status = join.subscription.status
-        current_through = join.subscription.current_through
+        # inactive_date = join.inactive_date
+        # inactive_reason = join.inactive_reason
+        # sub_status = join.subscription.status
         # mem_code = join.membership.code
         # mem_status = join.membership.status.name
 
         # Ignore rows without approval flow
-        if not paid:
+        if not join.paid:
             return
 
-        # Set variables
-        sub_status = getattr(
-            self.model.SUB_STATUS,
-            sub_status if sub_status else '',
-            None,
-        )
-
         # Set status
-        if not inactive_date:
-            is_active = True
-        else:
-            is_active = all([
-                inactive_date > localdate(),
-                sub_status == self.model.SUB_STATUS.active,
-            ])
-        if is_active:
+        if not end_date:
+            status = self.model.STATUS.active
+        elif end_date > localdate():
             status = self.model.STATUS.active
         else:
             status = self.model.STATUS.inactive
@@ -380,11 +367,11 @@ class MemberManager(Manager):
             None,
         )
 
-        inactive_reason = getattr(
-            self.model.INACTIVE_REASON,
-            inactive_reason.strip().replace("-", "_").replace(" ", "") if inactive_reason else '',
-            None,
-        )
+        # inactive_reason = getattr(
+        #     self.model.INACTIVE_REASON,
+        #     inactive_reason.strip().replace("-", "_").replace(" ", "") if inactive_reason else '',
+        #     None,
+        # )
 
         # mem_code = getattr(
         #     self.model.MEM_CODE,
@@ -416,13 +403,9 @@ class MemberManager(Manager):
         defaults = {
             'status': status,
             'mc_pk': mc_pk,
-            'established_date': established_date,
-            'inactive_date': inactive_date,
-            'inactive_reason': inactive_reason,
+            'start_date': start_date,
+            'end_date': end_date,
             'part': part,
-            'paid': paid,
-            'sub_status': sub_status,
-            'current_through': current_through,
         }
 
         # get or create
@@ -443,13 +426,9 @@ class MemberManager(Manager):
                 fields=[
                     'status',
                     'mc_pk',
-                    'established_date',
-                    'inactive_date',
-                    'inactive_reason',
+                    'start_date',
+                    'end_date',
                     'part',
-                    'paid',
-                    'sub_status',
-                    'current_through',
                 ],
             )
             # update the group to new values
@@ -460,13 +439,9 @@ class MemberManager(Manager):
                 fields=[
                     'status',
                     'mc_pk',
-                    'established_date',
-                    'inactive_date',
-                    'inactive_reason',
+                    'start_date',
+                    'end_date',
                     'part',
-                    'paid',
-                    'sub_status',
-                    'current_through',
                 ],
             )
             result = list(diff(pre, post))
@@ -632,8 +607,15 @@ class PersonManager(Manager):
             part = getattr(self.model.PART, part.casefold(), None)
         else:
             part = None
+
         is_deceased = bool(is_deceased)
-        # Set default; subscriptions updates it.
+
+        # Status check?
+        # if is_deceased:
+        #     status = self.model.STATUS.active
+        # else:
+        #     status = self.model.STATUS.inactive
+
         defaults = {
             'first_name': first_name,
             'middle_name': middle_name,
@@ -649,43 +631,106 @@ class PersonManager(Manager):
             'part': part,
             'is_deceased': is_deceased,
         }
+        # Get or create
         try:
-            person, created = self.update_or_create(
+            person = self.get(
                 mc_pk=mc_pk,
-                defaults=defaults,
             )
-        except IntegrityError as e:
-            # Need to delete old offending record
-            if "api_person_bhs_id_key" in str(e.args):
-                old = self.get(
-                    bhs_id=bhs_id,
+            created = False
+        except self.model.DoesNotExist:
+            try:
+                person = self.create(
+                    **defaults,
                 )
-                old.delete()
-                new = self.get(
-                    mc_pk=mc_pk,
-                )
-                new.bhs_id = bhs_id
-                new.save()
-                person, created = self.update_or_create(
-                    mc_pk=mc_pk,
-                    defaults=defaults,
-                )
-            else:
-                defaults['mc_pk'] = mc_pk
-                defaults.pop('bhs_id', None)
-                try:
-                    person, created = self.update_or_create(
+            except IntegrityError as e:
+                # Need to delete old offending record
+                if "api_person_bhs_id_key" in str(e.args):
+                    old = self.get(
                         bhs_id=bhs_id,
-                        defaults=defaults,
                     )
-                except IntegrityError:
+                    old.delete()
+                    person = self.create(
+                        **defaults,
+                    )
+                else:
                     defaults['mc_pk'] = mc_pk
-                    defaults['bhs_id'] = bhs_id
-                    defaults.pop('email', None)
-                    person, created = self.update_or_create(
-                        email=email,
-                        defaults=defaults,
-                    )
+                    defaults.pop('bhs_id', None)
+                    try:
+                        person = self.create(
+                            **defaults,
+                        )
+                    except IntegrityError:
+                        defaults['mc_pk'] = mc_pk
+                        defaults['bhs_id'] = bhs_id
+                        defaults.pop('email', None)
+                        person = self.create(
+                            **defaults,
+                        )
+            created = True
+
+        if created:
+            description = "Initial"
+            # Update Values
+            for key, value in defaults.items():
+                setattr(group, key, value)
+        else:
+            # set prior values
+            pre = model_to_dict(
+                group,
+                fields=[
+                    'first_name',
+                    'middle_name',
+                    'last_name',
+                    'nick_name',
+                    'email',
+                    'birth_date',
+                    'phone',
+                    'cell_phone',
+                    'work_phone',
+                    'bhs_id',
+                    'gender',
+                    'part',
+                    'is_deceased',
+                ],
+            )
+            for key, value in defaults.items():
+                setattr(group, key, value)
+
+            post = model_to_dict(
+                group,
+                fields=[
+                    'first_name',
+                    'middle_name',
+                    'last_name',
+                    'nick_name',
+                    'email',
+                    'birth_date',
+                    'phone',
+                    'cell_phone',
+                    'work_phone',
+                    'bhs_id',
+                    'gender',
+                    'part',
+                    'is_deceased',
+                ],
+            )
+            result = list(diff(pre, post))
+            if result:
+                description = str(result)
+            else:
+                return 'Skipped'
+
+        # Transition as appropriate
+        if status == self.model.STATUS.active:
+            person.activate(
+                description=description,
+            )
+        elif status == self.model.STATUS.inactive:
+            person.deactivate(
+                description=description,
+            )
+        # Finally, save the record
+        person.save()
         return person, created
 
 
