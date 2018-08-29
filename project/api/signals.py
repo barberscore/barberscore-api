@@ -16,7 +16,7 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 
 
-# @receiver(post_save, sender=User)
+@receiver(post_save, sender=User)
 def user_post_save(sender, instance, created, **kwargs):
     if not instance.is_staff:
         if created:
@@ -25,13 +25,13 @@ def user_post_save(sender, instance, created, **kwargs):
             update_account.delay(instance)
     return
 
-# @receiver(pre_delete, sender=User)
+@receiver(pre_delete, sender=User)
 def user_pre_delete(sender, instance, **kwargs):
     if not instance.is_staff:
         delete_account.delay(instance)
     return
 
-# @receiver(post_save, sender=Person)
+@receiver(post_save, sender=Person)
 def person_post_save(sender, instance, created, **kwargs):
     user = getattr(instance, 'user', None)
     if user:
