@@ -239,6 +239,7 @@ class Group(TimeStampedModel):
         help_text="""
             The contact email of the resource.""",
         blank=True,
+        null=True,
     )
 
     phone = models.CharField(

@@ -97,7 +97,14 @@ class GroupManager(Manager):
                 'organization', 'international'
             )
         )
-        email = email.strip().lower()
+        if email:
+            email = email.strip().lower()
+            try:
+                validate_email(email)
+            except ValidationError:
+                email = None
+        else:
+            email = None
         phone = phone.strip()
         website = website.strip()
         facebook = facebook.strip()
@@ -115,12 +122,6 @@ class GroupManager(Manager):
             name = chorus_name if chorus_name else 'UNKNOWN'
         else:
             name = name if name else 'UNKNOWN'
-
-        # Clean email
-        try:
-            validate_email(email)
-        except ValidationError:
-            email = ""
 
         # Clean website
         try:
@@ -586,7 +587,7 @@ class PersonManager(Manager):
         if nick_name == first_name:
             nick_name = ""
         if email:
-            email = email.strip()
+            email = email.strip().lower()
             try:
                 validate_email(email)
             except ValidationError:
