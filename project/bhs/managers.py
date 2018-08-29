@@ -14,6 +14,13 @@ class HumanManager(Manager):
             humans = self.filter(
                 modified__gt=cursor,
             )
+        else:
+            # Else clear logs
+            ss = StateLog.objects.filter(
+                content_type__model='person',
+                groups__mc_pk__isnull=False,
+            )
+            ss.delete()
         t = humans.count()
         # Creating/Update Persons
         Person = apps.get_model('api.person')
