@@ -145,12 +145,21 @@ class JoinManager(Manager):
         t = joins.count()
         # Creating/Update Membership
         queue = django_rq.get_queue('low')
+        prior = None
         for join in joins:
             # Member.objects.update_or_create_from_join(join)
-            queue.enqueue(
-                Member.objects.update_from_join,
-                join,
-            )
+            if not prior:
+                prior = queue.enqueue(
+                    Member.objects.update_or_create_from_join,
+                    join,
+                )
+            else:
+                current = queue.enqueue(
+                    Member.objects.update_or_create_from_join,
+                    join,
+                    depends_on=prior,
+                )
+                prior = current
         return t
 
 
