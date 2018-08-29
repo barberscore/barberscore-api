@@ -672,11 +672,11 @@ class PersonManager(Manager):
             description = "Initial"
             # Update Values
             for key, value in defaults.items():
-                setattr(group, key, value)
+                setattr(person, key, value)
         else:
             # set prior values
             pre = model_to_dict(
-                group,
+                person,
                 fields=[
                     'first_name',
                     'middle_name',
@@ -694,10 +694,10 @@ class PersonManager(Manager):
                 ],
             )
             for key, value in defaults.items():
-                setattr(group, key, value)
+                setattr(person, key, value)
 
             post = model_to_dict(
-                group,
+                person,
                 fields=[
                     'first_name',
                     'middle_name',
@@ -793,7 +793,7 @@ class UserManager(BaseUserManager):
                     'person',
                 ],
             )
-            # update the group to new values
+            # update the person to new values
             for key, value in defaults.items():
                 setattr(user, key, value)
             post = model_to_dict(
