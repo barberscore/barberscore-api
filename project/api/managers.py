@@ -398,7 +398,7 @@ class MemberManager(Manager):
         except Person.DoesNotExist:
             Human = apps.get_model('bhs.human')
             human = Human.objects.get(id=human)
-            person = Person.objects.update_or_create_from_human(human)
+            person, created = Person.objects.update_or_create_from_human(human)
 
         defaults = {
             'status': status,
@@ -721,11 +721,11 @@ class PersonManager(Manager):
                 return 'Skipped'
 
         # Transition as appropriate
-        if status == self.model.STATUS.active:
+        if status == person.STATUS.active:
             person.activate(
                 description=description,
             )
-        elif status == self.model.STATUS.inactive:
+        elif status == person.STATUS.inactive:
             person.deactivate(
                 description=description,
             )
