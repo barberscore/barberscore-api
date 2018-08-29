@@ -64,7 +64,7 @@ def get_accounts(path='barberscore.csv'):
         return rows
 
 
-@job
+@job('low')
 def create_account(email, name):
     auth0 = get_auth0()
     email = email.lower()
@@ -83,7 +83,7 @@ def create_account(email, name):
     return account
 
 
-@job
+@job('low')
 def create_auth0(user):
     auth0 = get_auth0()
     email = user.email.lower()
@@ -118,7 +118,7 @@ def create_auth0(user):
     return user
 
 
-@job
+@job('low')
 def update_account(user):
     auth0 = get_auth0()
     name = user.name
@@ -149,7 +149,7 @@ def update_account(user):
     return account
 
 
-@job
+@job('low')
 def delete_account(user):
     auth0 = get_auth0()
     # Delete Auth0
@@ -157,7 +157,7 @@ def delete_account(user):
     return
 
 
-@job
+@job('low')
 def link_account(user):
     Person = apps.get_model('api.person')
     auth0 = get_auth0()
@@ -167,7 +167,7 @@ def link_account(user):
     return person
 
 
-@job
+@job('low')
 def unlink_user_account(user):
     client = get_auth0()
     user_id = user.username.partition('|')[2]
@@ -179,7 +179,7 @@ def unlink_user_account(user):
     return
 
 
-@job
+@job('low')
 def relink_user_account(user):
     client = get_auth0()
     user_id = user.account_id.partition('|')[2]
