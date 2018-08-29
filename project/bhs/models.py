@@ -136,11 +136,12 @@ class Human(models.Model):
     def update_user(self):
         Subscription = apps.get_model('bhs.subscription')
         User = apps.get_model('api.user')
+        queue = django_rq.get_queue('low')
         try:
             subscription = self.subscriptions.filter(
                 items_editable=True,
             ).latest('modified')
-            django_rq.enqueue(
+            queue.enqueue(
                 User.objects.update_or_create_from_subscription,
                 subscription,
             )

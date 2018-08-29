@@ -17,8 +17,9 @@ class HumanManager(Manager):
         t = humans.count()
         # Creating/Update Persons
         Person = apps.get_model('api.person')
+        queue = django_rq.get_queue('low')
         for human in humans:
-            django_rq.enqueue(
+            queue.enqueue(
                 Person.objects.update_or_create_from_human,
                 human,
             )
@@ -59,8 +60,9 @@ class StructureManager(Manager):
         t = structures.count()
         # Creating/Update Groups
         Group = apps.get_model('api.group')
+        queue = django_rq.get_queue('low')
         for structure in structures:
-            django_rq.enqueue(
+            queue.enqueue(
                 Group.objects.update_or_create_from_structure,
                 structure,
             )
@@ -107,8 +109,9 @@ class RoleManager(Manager):
         t = roles.count()
         # Creating/Update Officers
         Officer = apps.get_model('api.officer')
+        queue = django_rq.get_queue('low')
         for role in roles:
-            django_rq.enqueue(
+            queue.enqueue(
                 Officer.objects.update_or_create_from_role,
                 role,
             )
@@ -141,12 +144,13 @@ class JoinManager(Manager):
 
         t = joins.count()
         # Creating/Update Membership
+        queue = django_rq.get_queue('low')
         for join in joins:
-            Member.objects.update_or_create_from_join(join)
-            # django_rq.enqueue(
-            #     Member.objects.update_from_join,
-            #     join,
-            # )
+            # Member.objects.update_or_create_from_join(join)
+            queue.enqueue(
+                Member.objects.update_from_join,
+                join,
+            )
         return t
 
 
@@ -174,8 +178,9 @@ class SubscriptionManager(Manager):
         t = subscriptions.count()
         # Creating/Update Persons
         User = apps.get_model('api.user')
+        queue = django_rq.get_queue('low')
         for subscription in subscriptions:
-            django_rq.enqueue(
+            queue.enqueue(
                 User.objects.update_or_create_from_subscription,
                 subscription,
             )

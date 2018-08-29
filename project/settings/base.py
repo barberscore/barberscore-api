@@ -145,6 +145,10 @@ RQ_QUEUES = {
         'USE_REDIS_CACHE': 'default',
         'ASYNC': True,
     },
+    'low': {
+        'USE_REDIS_CACHE': 'default',
+        'ASYNC': True,
+    },
 }
 RQ_SHOW_ADMIN_LINK = True
 

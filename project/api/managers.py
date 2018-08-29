@@ -721,14 +721,16 @@ class PersonManager(Manager):
                 return 'Skipped'
 
         # Transition as appropriate
-        if status == person.STATUS.active:
+        if person.status == person.STATUS.active:
             person.activate(
                 description=description,
             )
-        elif status == person.STATUS.inactive:
+        elif person.status == person.STATUS.inactive:
             person.deactivate(
                 description=description,
             )
+        else:
+            pass
         # Finally, save the record
         person.save()
         return person, created
