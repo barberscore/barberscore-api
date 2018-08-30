@@ -156,6 +156,7 @@ class GroupManager(Manager):
             status = getattr(self.model.STATUS, 'aic')
             name = self.model.AIC[str(bhs_id)]
         defaults = {
+            'mc_pk': mc_pk,
             'name': name,
             'status': status,
             'kind': kind,
@@ -212,6 +213,7 @@ class GroupManager(Manager):
             pre = model_to_dict(
                 group,
                 fields=[
+                    'mc_pk',
                     'name',
                     'status',
                     'kind',
@@ -233,6 +235,7 @@ class GroupManager(Manager):
             post = model_to_dict(
                 group,
                 fields=[
+                    'mc_pk',
                     'name',
                     'status',
                     'kind',
@@ -402,8 +405,8 @@ class MemberManager(Manager):
             person, created = Person.objects.update_or_create_from_human(human)
 
         defaults = {
-            'status': status,
             'mc_pk': mc_pk,
+            'status': status,
             'start_date': start_date,
             'end_date': end_date,
             'part': part,
@@ -425,8 +428,8 @@ class MemberManager(Manager):
             pre = model_to_dict(
                 member,
                 fields=[
-                    'status',
                     'mc_pk',
+                    'status',
                     'start_date',
                     'end_date',
                     'part',
@@ -438,8 +441,8 @@ class MemberManager(Manager):
             post = model_to_dict(
                 member,
                 fields=[
-                    'status',
                     'mc_pk',
+                    'status',
                     'start_date',
                     'end_date',
                     'part',
@@ -496,8 +499,8 @@ class OfficerManager(Manager):
         office = Office.objects.get(name=office)
 
         defaults = {
-            'status': status,
             'mc_pk': mc_pk,
+            'status': status,
             'start_date': start_date,
             'end_date': end_date,
         }
@@ -515,8 +518,8 @@ class OfficerManager(Manager):
             pre = model_to_dict(
                 officer,
                 fields=[
-                    'status',
                     'mc_pk',
+                    'status',
                     'start_date',
                     'end_date',
                 ],
@@ -527,8 +530,8 @@ class OfficerManager(Manager):
             post = model_to_dict(
                 officer,
                 fields=[
-                    'status',
                     'mc_pk',
+                    'status',
                     'start_date',
                     'end_date',
                 ],
@@ -618,6 +621,7 @@ class PersonManager(Manager):
         #     status = self.model.STATUS.inactive
 
         defaults = {
+            'mc_pk': mc_pk,
             'first_name': first_name,
             'middle_name': middle_name,
             'last_name': last_name,
@@ -679,6 +683,7 @@ class PersonManager(Manager):
             pre = model_to_dict(
                 person,
                 fields=[
+                    'mc_pk',
                     'first_name',
                     'middle_name',
                     'last_name',
@@ -700,6 +705,7 @@ class PersonManager(Manager):
             post = model_to_dict(
                 person,
                 fields=[
+                    'mc_pk',
                     'first_name',
                     'middle_name',
                     'last_name',
@@ -796,12 +802,12 @@ class UserManager(BaseUserManager):
             pre = model_to_dict(
                 user,
                 fields=[
+                    'mc_pk',
                     'status',
                     'name',
                     'email',
                     'current_through',
                     'person',
-                    'mc_pk',
                 ],
             )
             # update the person to new values
@@ -810,12 +816,12 @@ class UserManager(BaseUserManager):
             post = model_to_dict(
                 user,
                 fields=[
+                    'mc_pk',
                     'status',
                     'name',
                     'email',
                     'current_through',
                     'person',
-                    'mc_pk',
                 ],
             )
             result = list(diff(pre, post))
@@ -838,17 +844,22 @@ class UserManager(BaseUserManager):
         return user, created
 
 
-    # def delete_orphans(self):
-    #     accounts = get_accounts()
-    #     users = list(self.filter(
-    #         account_id__isnull=False
-    #     ).values_list('account_id', flat=True))
-    #     i = 0
-    #     for account in accounts:
-    #         if account['account_id'] not in users:
-    #             i += 1
-    #             delete_account.delay(account['account_id'])
-    #     return i
+    def delete_orphans(self):
+        auth0 = get_auth0()
+        queue = django_rq.get_queue('low')
+        accounts = get_accounts()
+        users = list(self.filter(
+            username__startswith='auth0|',
+        ).values_list('username', flat=True))
+        i = 0
+        for account in accounts:
+            if account[0] not in users:
+                i += 1
+                queue.enqueue(
+                    auth0.users.delete,
+                    account[0],
+                )
+        return i
 
     def create_user(self, username=None, **kwargs):
         pk = uuid.uuid4()
