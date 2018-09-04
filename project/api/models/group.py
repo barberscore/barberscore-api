@@ -263,7 +263,6 @@ class Group(TimeStampedModel):
     )
 
     bhs_id = models.IntegerField(
-        # unique=True,
         blank=True,
         null=True,
     )
@@ -394,6 +393,9 @@ class Group(TimeStampedModel):
     class Meta:
         ordering = ['tree_sort']
         verbose_name_plural = 'groups'
+        unique_together = (
+            ('bhs_id', 'kind'),
+        )
 
     class JSONAPIMeta:
         resource_name = "group"
