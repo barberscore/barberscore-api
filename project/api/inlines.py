@@ -181,8 +181,6 @@ class AwardInline(admin.TabularInline):
         'kind',
         'gender',
         'rounds',
-        'size',
-        'is_improved',
         'group',
     ]
     readonly_fields = [
