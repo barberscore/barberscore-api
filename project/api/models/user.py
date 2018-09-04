@@ -60,7 +60,6 @@ class User(AbstractBaseUser):
 
     name = models.CharField(
         max_length=100,
-        unique=True,
         editable=True,
     )
 
