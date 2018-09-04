@@ -30,21 +30,3 @@ def user_pre_delete(sender, instance, **kwargs):
     if not instance.is_staff:
         delete_account.delay(instance)
     return
-
-@receiver(post_save, sender=Person)
-def person_post_save(sender, instance, created, **kwargs):
-    user = getattr(instance, 'user', None)
-    if user:
-        try:
-            validate_email(instance.email)
-        except ValidationError:
-            user.delete()
-            return
-        if any([
-            user.email != instance.email,
-            user.name != instance.nomen,
-        ]):
-            user.email = instance.email
-            user.name = instance.nomen
-            user.save()
-    return
