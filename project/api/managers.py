@@ -758,8 +758,9 @@ class UserManager(BaseUserManager):
 
         Person = apps.get_model('api.person')
         person, created = Person.objects.update_or_create_from_human(human)
-        name = person.nomen
+        name = person.common_name
         email = person.email
+        bhs_id = person.bhd_id
         if not email:
             return
         defaults = {
@@ -767,6 +768,7 @@ class UserManager(BaseUserManager):
             'status': status,
             'name': name,
             'email': email,
+            'bhs_id': bhs_id,
             'current_through': current_through,
             'person': person,
         }
@@ -806,6 +808,7 @@ class UserManager(BaseUserManager):
                     'status',
                     'name',
                     'email',
+                    'bhs_id',
                     'current_through',
                     'person',
                 ],
@@ -820,6 +823,7 @@ class UserManager(BaseUserManager):
                     'status',
                     'name',
                     'email',
+                    'bhs_id',
                     'current_through',
                     'person',
                 ],
