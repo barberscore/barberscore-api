@@ -186,7 +186,7 @@ class GroupManager(Manager):
             if kind == self.model.KIND.chorus:
                 kind = self.model.KIND.chapter
                 name = raw_name.strip() if raw_name else 'UNKNOWN'
-                parent = self.model.get_or_create(
+                parent, make = self.get_or_create(
                     name=name,
                     code=code,
                     bhs_id=bhs_id,
