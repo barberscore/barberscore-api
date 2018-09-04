@@ -173,8 +173,8 @@ class GroupManager(Manager):
 
         # Get or Create
         group, created = self.get_or_create(
-            mc_pk=mc_pk,
             kind=kind,
+            bhs_id=bhs_id,
         )
 
         if created:
