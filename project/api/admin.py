@@ -1581,6 +1581,9 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
             'classes': ('wide',),
             'fields': (
                 'person',
+                'name',
+                'email',
+                'bhs_id',
             )
         }),
     )

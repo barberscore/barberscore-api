@@ -71,10 +71,7 @@ def create_account(user):
     name = user.name.strip()
     random = get_random_string()
     status = user.get_status_display()
-    if user.person:
-        bhs_id = user.person.bhs_id
-    else:
-        bhs_id = None
+    bhs_id = user.bhs_id
     if user.current_through:
         current_through = user.current_through.isoformat()
     else:
@@ -105,10 +102,7 @@ def update_account(user):
     name = user.name
     email = user.email
     status = user.get_status_display()
-    if user.person:
-        bhs_id = user.person.bhs_id
-    else:
-        bhs_id = None
+    bhs_id = user.bhs_id
     if user.current_through:
         current_through = user.current_through.isoformat()
     else:
