@@ -3,6 +3,7 @@ import logging
 
 # Third-Party
 import pydf
+from django_fsm import TransitionNotAllowed
 from django_filters.rest_framework import DjangoFilterBackend
 from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissions
@@ -123,7 +124,13 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def start(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.start(by=self.request.user)
+        try:
+            object.start(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -131,7 +138,13 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def finish(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.finish(by=self.request.user)
+        try:
+            object.finish(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -139,7 +152,13 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def verify(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.verify(by=self.request.user)
+        try:
+            object.verify(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -147,7 +166,13 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def confirm(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.confirm(by=self.request.user)
+        try:
+            object.confirm(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -155,7 +180,13 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def include(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.include(by=self.request.user)
+        try:
+            object.include(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -163,7 +194,13 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def exclude(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.exclude(by=self.request.user)
+        try:
+            object.exclude(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -191,7 +228,13 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def activate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.activate(by=self.request.user)
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -199,7 +242,13 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def deactivate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.deactivate(by=self.request.user)
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -226,7 +275,13 @@ class AwardViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def activate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.activate(by=self.request.user)
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -234,7 +289,13 @@ class AwardViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def deactivate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.deactivate(by=self.request.user)
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -260,7 +321,13 @@ class ChartViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def activate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.activate(by=self.request.user)
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -268,7 +335,13 @@ class ChartViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def deactivate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.deactivate(by=self.request.user)
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -307,7 +380,13 @@ class ContestViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def include(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.include(by=self.request.user)
+        try:
+            object.include(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -315,7 +394,13 @@ class ContestViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def exclude(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.exclude(by=self.request.user)
+        try:
+            object.exclude(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -341,7 +426,13 @@ class ContestantViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def include(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.include(by=self.request.user)
+        try:
+            object.include(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -349,7 +440,13 @@ class ContestantViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def exclude(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.exclude(by=self.request.user)
+        try:
+            object.exclude(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -379,7 +476,13 @@ class ConventionViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def activate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.activate(by=self.request.user)
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -387,7 +490,13 @@ class ConventionViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def deactivate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.deactivate(by=self.request.user)
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -415,7 +524,13 @@ class CompetitorViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def start(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.start(by=self.request.user)
+        try:
+            object.start(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -423,7 +538,13 @@ class CompetitorViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def finish(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.finish(by=self.request.user)
+        try:
+            object.finish(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -431,7 +552,13 @@ class CompetitorViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def disqualify(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.disqualify(by=self.request.user)
+        try:
+            object.disqualify(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -439,7 +566,13 @@ class CompetitorViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def scratch(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.scratch(by=self.request.user)
+        try:
+            object.scratch(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -486,7 +619,13 @@ class EntryViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def build(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.build(by=self.request.user)
+        try:
+            object.build(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -494,7 +633,13 @@ class EntryViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def invite(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.invite(by=self.request.user)
+        try:
+            object.invite(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -502,7 +647,13 @@ class EntryViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def withdraw(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.withdraw(by=self.request.user)
+        try:
+            object.withdraw(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -510,7 +661,13 @@ class EntryViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def submit(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.submit(by=self.request.user)
+        try:
+            object.submit(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -518,7 +675,13 @@ class EntryViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def approve(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.approve(by=self.request.user)
+        try:
+            object.approve(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -586,7 +749,13 @@ class GroupViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def activate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.activate(by=self.request.user)
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -594,7 +763,13 @@ class GroupViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def deactivate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.deactivate(by=self.request.user)
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -638,7 +813,13 @@ class MemberViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def activate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.activate(by=self.request.user)
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -646,7 +827,13 @@ class MemberViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def deactivate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.deactivate(by=self.request.user)
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -690,7 +877,13 @@ class OfficerViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def activate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.activate(by=self.request.user)
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -698,7 +891,13 @@ class OfficerViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def deactivate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.deactivate(by=self.request.user)
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -746,7 +945,13 @@ class PersonViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def activate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.activate(by=self.request.user)
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -754,7 +959,13 @@ class PersonViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def deactivate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.deactivate(by=self.request.user)
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -781,7 +992,13 @@ class RepertoryViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def activate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.activate(by=self.request.user)
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -789,7 +1006,13 @@ class RepertoryViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def deactivate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.deactivate(by=self.request.user)
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -818,7 +1041,13 @@ class RoundViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def reset(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.reset(by=self.request.user)
+        try:
+            object.reset(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -826,7 +1055,13 @@ class RoundViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def build(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.build(by=self.request.user)
+        try:
+            object.build(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -834,7 +1069,13 @@ class RoundViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def start(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.start(by=self.request.user)
+        try:
+            object.start(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -842,7 +1083,13 @@ class RoundViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def review(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.review(by=self.request.user)
+        try:
+            object.review(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -850,7 +1097,13 @@ class RoundViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def verify(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.verify(by=self.request.user)
+        try:
+            object.verify(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -858,7 +1111,13 @@ class RoundViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def finish(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.finish(by=self.request.user)
+        try:
+            object.finish(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -1059,7 +1318,13 @@ class SessionViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def build(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.build(by=self.request.user)
+        try:
+            object.build(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -1067,7 +1332,13 @@ class SessionViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def open(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.open(by=self.request.user)
+        try:
+            object.open(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -1075,7 +1346,13 @@ class SessionViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def close(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.close(by=self.request.user)
+        try:
+            object.close(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -1083,7 +1360,13 @@ class SessionViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def verify(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.verify(by=self.request.user)
+        try:
+            object.verify(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -1091,7 +1374,13 @@ class SessionViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def start(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.start(by=self.request.user)
+        try:
+            object.start(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -1099,7 +1388,13 @@ class SessionViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def finish(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.finish(by=self.request.user)
+        try:
+            object.finish(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -1312,7 +1607,13 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def activate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.activate(by=self.request.user)
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
@@ -1320,7 +1621,13 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def deactivate(self, request, pk=None, **kwargs):
         object = self.get_object()
-        object.deactivate(by=self.request.user)
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
