@@ -19,6 +19,7 @@ from django_fsm_log.decorators import fsm_log_by
 from django_fsm_log.decorators import fsm_log_description
 from django_fsm_log.models import StateLog
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.exceptions import ValidationError
 
 # First-Party
 from api.managers import UserManager
@@ -242,26 +243,24 @@ class User(AbstractBaseUser):
 
 
     def clean(self):
-        if not self.person and not self.is_staff:
+        if self.is_staff:
+            return
+        if not self.person:
             raise ValidationError(
                 {'person': 'Non-staff user accounts must have Person attached.'}
             )
-        # if self.email != self.person.email:
-        #     raise ValidationError(
-        #         {'email': 'Email does not match person'}
-        #     )
-        # if self.name != self.person.full_name:
-        #     raise ValidationError(
-        #         {'name': 'Name does not match person'}
-        #     )
-        # if self.is_active and self.person.status <= 0:
-        #     raise ValidationError(
-        #         {'name': 'Should not be active.'}
-        #     )
-        # if not self.is_active and self.person.status > 0:
-        #     raise ValidationError(
-        #         {'is_active': 'Should be active.'}
-        #     )
+        if self.email != self.person.email:
+            raise ValidationError(
+                {'email': 'Email does not match person'}
+            )
+        if self.name != self.person.common_name:
+            raise ValidationError(
+                {'name': 'Name does not match person'}
+            )
+        if self.bhs_id != self.person.bhs_id:
+            raise ValidationError(
+                {'bhs_id': 'BHS ID does not match person'}
+            )
 
     def has_perm(self, perm, obj=None):
         return self.is_staff
