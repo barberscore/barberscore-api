@@ -1528,7 +1528,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     ]
     list_display = [
         'username',
-        # 'name',
+        'name',
         'person',
         'status',
         'is_mc',
@@ -1538,7 +1538,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     ]
 
     autocomplete_fields = [
-        # 'person',
+        'person',
     ]
 
     list_filter = (
@@ -1552,9 +1552,9 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
             'fields': (
                 'id',
                 'username',
-                # 'name',
+                'name',
                 'status',
-                # 'email',
+                'email',
                 'person',
                 'current_through',
                 'is_mc',
@@ -1574,14 +1574,14 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
             )
         }),
     )
-    # add_fieldsets = (
-    #     (None, {
-    #         'classes': ('wide',),
-    #         'fields': (
-    #             'person',
-    #         )
-    #     }),
-    # )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': (
+                'person',
+            )
+        }),
+    )
     search_fields = [
         'username',
         'person__first_name',
