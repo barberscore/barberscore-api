@@ -69,6 +69,12 @@ class User(AbstractBaseUser):
         editable=True,
     )
 
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+        unique=True,
+    )
+
     current_through = models.DateField(
         null=True,
         blank=True,
@@ -222,8 +228,18 @@ class User(AbstractBaseUser):
 
     # User Internals
     def __str__(self):
-        results = getattr(self.person, 'common_name', self.username)
-        return results
+        if self.is_staff:
+            return self.name
+        if self.bhs_id:
+            suffix = "[{0}]".format(self.bhs_id)
+        else:
+            suffix = "[No BHS ID]"
+        full = "{0} {1}".format(
+            self.name,
+            suffix,
+        )
+        return " ".join(full.split())
+
 
     def clean(self):
         if not self.person and not self.is_staff:
