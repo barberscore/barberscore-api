@@ -760,7 +760,7 @@ class UserManager(BaseUserManager):
         person, created = Person.objects.update_or_create_from_human(human)
         name = person.common_name
         email = person.email
-        bhs_id = person.bhd_id
+        bhs_id = person.bhs_id
         if not email:
             return
         defaults = {
