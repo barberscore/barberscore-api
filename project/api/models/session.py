@@ -57,6 +57,7 @@ class Session(TimeStampedModel):
     KIND = Choices(
         (32, 'chorus', "Chorus"),
         (41, 'quartet', "Quartet"),
+        (42, 'mixed', "Mixed"),
     )
 
     kind = models.IntegerField(
