@@ -110,7 +110,8 @@ class Panelist(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('round', 'person',)
+            ('round', 'person',),
+            ('round', 'num',),
         )
 
     class JSONAPIMeta:
