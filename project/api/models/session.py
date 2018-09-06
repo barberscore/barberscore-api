@@ -120,6 +120,11 @@ class Session(TimeStampedModel):
 
     # Properties
     # Internals
+    class Meta:
+        unique_together = (
+            ('convention', 'kind')
+        )
+
     class JSONAPIMeta:
         resource_name = "session"
 
