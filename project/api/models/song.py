@@ -48,6 +48,12 @@ class Song(TimeStampedModel):
     num = models.IntegerField(
     )
 
+    legacy_chart = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+
     # Privates
     rank = models.IntegerField(
         null=True,
