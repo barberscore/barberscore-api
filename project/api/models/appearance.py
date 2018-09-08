@@ -22,6 +22,7 @@ from django.apps import apps
 from django.db.models import Sum
 from django.db.models import Avg
 from django.db.models import Q
+from django.core.exceptions import ValidationError
 
 # First-Party
 from api.tasks import create_variance_report
@@ -192,6 +193,14 @@ class Appearance(TimeStampedModel):
         return self.round.kind
 
     # Appearance Internals
+    def clean(self):
+        if self.competitor:
+            if self.competitor.group.kind != self.round.session.kind:
+                raise ValidationError(
+                    {'competitor': 'Competitor kind must match session'}
+                )
+
+
     class Meta:
         ordering = [
             '-round__num',
