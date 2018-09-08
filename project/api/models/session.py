@@ -57,6 +57,7 @@ class Session(TimeStampedModel):
     KIND = Choices(
         (32, 'chorus', "Chorus"),
         (41, 'quartet', "Quartet"),
+        (42, 'mixed', "Mixed"),
     )
 
     kind = models.IntegerField(
@@ -119,6 +120,11 @@ class Session(TimeStampedModel):
 
     # Properties
     # Internals
+    class Meta:
+        unique_together = (
+            ('convention', 'kind')
+        )
+
     class JSONAPIMeta:
         resource_name = "session"
 

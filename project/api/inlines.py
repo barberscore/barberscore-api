@@ -491,7 +491,7 @@ class ScoreInline(admin.TabularInline):
     fields = [
         'song',
         'num',
-        'panelist',
+        'panelist__person__common_name',
         'category',
         'kind',
         'points',
@@ -502,18 +502,19 @@ class ScoreInline(admin.TabularInline):
     readonly_fields = [
         'song',
         'category',
-        'panelist',
+        'panelist__person__common_name',
         'status',
     ]
     ordering = (
         'num',
-        'panelist',
     )
     show_change_link = True
     extra = 0
     classes = [
         'collapse',
     ]
+    def panelist__person__common_name(self, obj):
+        return getattr(getattr(obj.panelist, 'person'), 'common_name', getattr(obj.panelist, 'legacy_name'))
 
 
 class SongInline(admin.TabularInline):

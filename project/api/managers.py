@@ -200,7 +200,7 @@ class GroupManager(Manager):
             divs = [
                 'MAD',
                 'FWD',
-                'SWD',
+                'EVG',
                 'LOL',
                 'NED',
                 'SWD',

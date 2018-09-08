@@ -1431,6 +1431,7 @@ class SongAdmin(admin.ModelAdmin):
         # 'status',
         'appearance',
         'chart',
+        'legacy_chart',
         'num',
         'tot_points',
         'tot_score',

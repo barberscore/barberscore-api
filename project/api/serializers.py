@@ -658,6 +658,7 @@ class SongSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'status',
+            'legacy_chart',
             'num',
             'rank',
             'mus_points',
