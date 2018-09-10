@@ -46,7 +46,12 @@
           {{competitor.session.convention.name}}
         </h4>
         <h5>
-          {{competitor.session.convention.venue.city|default:"(Unknown City)"}}, {{competitor.session.convention.venue.state|default:"(Unknown State)"}}; {{competitor.session.convention.start_date|date:"F j, Y"}} - {{competitor.session.convention.end_date|date:"F j, Y"}}
+          {% if competitor.session.convention.venue and competitor.session.convention.start_date %}
+            {{competitor.session.convention.venue.city|default:"(Unknown City)"}}, {{competitor.session.convention.venue.state|default:"(Unknown State)"}};
+            {{competitor.session.convention.start_date|date:"F j, Y"}} - {{competitor.session.convention.end_date|date:"F j, Y"}}
+          {% else %}
+            (Unknown Venue and Dates)
+          {% endif %}
         </h5>
       </section>
       <section>
@@ -62,9 +67,9 @@
             <h3><strong>{{competitor.group.name}}</strong></h3><br>
             <strong>Points:  {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong><br><br>
             {% if competitor.group.get_kind_display == 'Chorus' %}
-              Director(s): {{ competitor.entry.participants }}
+              Director(s): {{ competitor.entry.participants|default:"(Unknown)" }}
             {% else %}
-              Members: {{ competitor.entry.participants }}
+              Members: {{ competitor.entry.participants|default:"(Unknown)"  }}
             {% endif %}
         </div>
         </div>
@@ -88,7 +93,11 @@
                   {% for appearance in appearances.all|dictsort:'round__kind'  %}
                     <span class='bolder'>{{appearance.round.get_kind_display}}</span><br>
                     {% for song in appearance.songs.all|dictsort:'num' %}
-                      {{song.chart.title|truncatewords_html:10|safe|default:"(Song not included in contestant repertory)"}}<br>
+                      {% if song.chart %}
+                        {{song.chart.title|truncatewords_html:10|safe|default:"(Song not included in contestant repertory)"}}<br>
+                      {% else %}
+                        {{song.legacy_chart|truncatewords_html:10|safe|default:"(Song not included in contestant repertory)"}}<br>
+                      {% endif %}
                     {% endfor %}
                   {% endfor %}
                 </td>
@@ -149,7 +158,11 @@
               {% for song in songs %}
                 <tr>
                   <td>
-                    {{song.chart.title|truncatewords_html:4|safe|default:"(Song not included in contestant repertory)"}}<br>
+                    {% if song.chart %}
+                      {{song.chart.title|truncatewords_html:10|safe|default:"(Song not included in contestant repertory)"}}<br>
+                    {% else %}
+                      {{song.legacy_chart|truncatewords_html:10|safe|default:"(Song not included in contestant repertory)"}}<br>
+                    {% endif %}
                   </td>
                   {% for item in panelist_tuple %}
                     {% for score in song.scores.all %}
