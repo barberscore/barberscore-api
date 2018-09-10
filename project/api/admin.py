@@ -1069,6 +1069,7 @@ class PanelistAdmin(admin.ModelAdmin):
         'kind',
         'round',
         'person',
+        'legacy_name',
         'category',
     ]
 
@@ -1078,9 +1079,13 @@ class PanelistAdmin(admin.ModelAdmin):
         'kind',
         'category',
         'person',
+        'legacy_name',
         'round',
     ]
 
+    list_editable = [
+        'person',
+    ]
     list_filter = (
         'status',
         'kind',
