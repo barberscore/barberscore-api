@@ -177,9 +177,7 @@ class Appearance(TimeStampedModel):
     competitor = models.ForeignKey(
         'Competitor',
         related_name='appearances',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.CASCADE,
     )
 
     # Relations
