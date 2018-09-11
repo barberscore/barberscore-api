@@ -59,7 +59,12 @@
             {{round.session.convention.name}}
           </h4>
           <h5>
-            {{round.session.convention.venue.city|default:"(Unknown City)"}}, {{round.session.convention.venue.state|default:"(Unknown State)"}}; {{round.date|date:"F j, Y"|default:"(Unknown Date)"}}
+            {% if round.session.convention.venue and round.session.convention.start_date %}
+              {{round.session.convention.venue.city|default:"(Unknown City)"}}, {{round.session.convention.venue.state|default:"(Unknown State)"}};
+              {{round.session.convention.start_date|date:"F j, Y"}} - {{round.session.convention.end_date|date:"F j, Y"}}
+            {% else %}
+              (Unknown Venue and Dates)
+            {% endif %}
           </h5>
         </div>
       {% else %}
@@ -71,7 +76,12 @@
             {{session.convention.name}}
           </h4>
           <h5>
-            {{session.convention.venue.city|default:"(Unknown City)"}}, {{session.convention.venue.state|default:"(Unknown State)"}}; {{session.convention.start_date|date:"F j, Y"|default:"(Unknown Date)"}} - {{session.convention.end_date|date:"F j, Y"|default:"(Unknown Date)"}}
+            {% if round.session.convention.venue and round.session.convention.start_date %}
+              {{round.session.convention.venue.city|default:"(Unknown City)"}}, {{round.session.convention.venue.state|default:"(Unknown State)"}};
+              {{round.session.convention.start_date|date:"F j, Y"}} - {{round.session.convention.end_date|date:"F j, Y"}}
+            {% else %}
+              (Unknown Venue and Dates)
+            {% endif %}
           </h5>
         </div>
       {% endif %}
@@ -125,7 +135,11 @@
                         {% if competitor.tot_points %}<strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;{{competitor.tot_score|floatformat:1}}<br>{% endif %}
                       {% endif %}
                       {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
-                        {{song.chart.nomen|truncatechars_html:70|default:"(Song not included in contestant repertory)"}}<br>
+                        {% if song.chart %}
+                          {{song.chart.nomen|truncatewords_html:70|safe|default:"(Song not included in contestant repertory)"}}<br>
+                        {% else %}
+                          {{song.legacy_chart|truncatewords_html:70|safe|default:"(Song not included in contestant repertory)"}}<br>
+                        {% endif %}
                       {% endfor %}
                     {% endif %}
                   {% else %}
@@ -133,7 +147,11 @@
                     {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
                       <span class='bolder'>{{appearance.round.get_kind_display}}&nbsp;</span><span class='smaller-font'>(OA: {{appearance.num}}, Points: {{appearance.tot_points}})</span><br>
                       {% for song in appearance.songs.all|dictsort:'num' %}
-                        &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:70|default:"(Song not included in contestant repertory)"}}<br>
+                        {% if song.chart %}
+                          &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatewords_html:70|safe|default:"(Song not included in contestant repertory)"}}<br>
+                        {% else %}
+                          &nbsp;&nbsp;&nbsp;&nbsp;{{song.legacy_chart|truncatewords_html:70|safe|default:"(Song not included in contestant repertory)"}}<br>
+                        {% endif %}
                       {% endfor %}
                     {% endfor %}
                   {% endif %}
