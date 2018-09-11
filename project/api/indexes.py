@@ -15,6 +15,17 @@ class ChartIndex(AlgoliaIndex):
     should_index = 'is_searchable'
 
 
+class ConventionIndex(AlgoliaIndex):
+    fields = [
+        'name',
+    ]
+    settings = {
+        'searchableAttributes': [
+            'name',
+        ]
+    }
+
+
 class GroupIndex(AlgoliaIndex):
     should_index = 'is_active'
     fields = [
