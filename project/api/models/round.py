@@ -94,6 +94,11 @@ class Round(TimeStampedModel):
         blank=True,
     )
 
+    legacy_oss = models.FileField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',

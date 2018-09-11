@@ -22,6 +22,7 @@ from .filters import DistrictListFilter
 from .filters import DivisionListFilter
 from .filters import GroupListFilter
 from .filters import SessionGroupListFilter
+from .filters import RoundLegacyOssListFilter
 from .filters import RoundGroupListFilter
 from .forms import UserChangeForm
 from .forms import UserCreationForm
@@ -1244,9 +1245,9 @@ class RepertoryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 @admin.register(Round)
 class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
-        # 'name',
         'id',
         'status',
+        'legacy_oss',
         'oss',
         'sa',
         'csa',
@@ -1256,12 +1257,12 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
+        '__str__',
         'status',
-        'session',
-        'kind',
     ]
 
     list_filter = [
+        RoundLegacyOssListFilter,
         SessionConventionStatusListFilter,
         'status',
         'kind',
