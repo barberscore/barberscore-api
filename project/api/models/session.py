@@ -397,7 +397,7 @@ class Session(TimeStampedModel):
         for entry in entries:
             # Set is_ranked=True if they are competing for a primary award.
             is_ranked = bool(entry.contestants.filter(
-                contest__award__is_primary=True,
+                contest__is_primary=True,
                 status__gt=0,
             ))
             # Set is_multi=True if they are competiting for at least
@@ -412,7 +412,7 @@ class Session(TimeStampedModel):
                 is_ranked=is_ranked,
                 is_multi=is_multi,
                 is_private=entry.is_private,
-                particpants=entry.participants,
+                participants=entry.participants,
                 representing=entry.representing,
             )
             competitor.start()
