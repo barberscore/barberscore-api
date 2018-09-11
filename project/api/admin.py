@@ -8,6 +8,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group as AuthGroup
 from django.utils import timezone
+from django.utils.html import mark_safe
+from django.conf import settings
+
 
 # Local
 from .filters import AwardQualifierLevelFilter
@@ -1259,6 +1262,9 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         '__str__',
         'status',
+        'draft',
+        'oss',
+        'legacy_oss',
     ]
 
     list_filter = [
@@ -1287,6 +1293,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
+        'draft',
         # 'session',
         # 'kind',
     ]
@@ -1305,6 +1312,15 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     search_fields = [
         'session__convention__name',
     ]
+
+    def draft(self, instance):
+        return mark_safe(
+            '<a href="{0}/api/round/{1}/ossdraft" target="blank">Draft OSS</a>'.format(
+                settings.HOST_NAME,
+                instance.id,
+            )
+        )
+    draft.short_description = ('Draft OSS')
 
     def get_formsets_with_inlines(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
