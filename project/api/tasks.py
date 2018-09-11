@@ -554,7 +554,7 @@ def create_round_oss(round):
     Contestant = apps.get_model('api.contestant')
     Round = apps.get_model('api.round')
     competitors = round.session.competitors.filter(
-        # status=Competitor.STATUS.finished,
+        status=Competitor.STATUS.finished,
         appearances__round=round,
         appearances__draw__isnull=True,
         is_private=False,
@@ -579,9 +579,12 @@ def create_round_oss(round):
     )
     for competitor in competitors:
         # Monkey-patch contesting
-        contestants = competitor.entry.contestants.filter(
-            status=Contestant.STATUS.included,
-        ).order_by('contest__num').values_list('contest__num', flat=True)
+        try:
+            contestants = competitor.entry.contestants.filter(
+                status=Contestant.STATUS.included,
+            ).order_by('contest__num').values_list('contest__num', flat=True)
+        except AttributeError:
+            contestants = None
         if contestants:
             competitor.contestants = contestants
         else:
