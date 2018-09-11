@@ -126,7 +126,11 @@
                         <strong>Total Points: {{competitor.tot_points}}</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
                       {% endif %}
                       {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
-                        {{song.chart.nomen|truncatechars_html:70|default:"(Song not included in contestant repertory)"}}<br>
+                        {% if song.chart %}
+                          {{song.chart.nomen|truncatewords_html:70|safe|default:"(Song not included in contestant repertory)"}}<br>
+                        {% else %}
+                          {{song.legacy_chart|truncatewords_html:70|safe|default:"(Song not included in contestant repertory)"}}<br>
+                        {% endif %}
                       {% endfor %}
                     {% else %}
                       {% if competitor.group.get_kind_display == 'Chorus' %}
