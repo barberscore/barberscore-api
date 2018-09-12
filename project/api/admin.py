@@ -470,7 +470,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     ordering = (
         '-year',
-        '-season',
+        'season',
         'group__tree_sort',
     )
     list_select_related = [
@@ -1262,7 +1262,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         '__str__',
         'status',
-        'draft',
         'oss',
         'legacy_oss',
     ]
@@ -1293,7 +1292,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
-        'draft',
         # 'session',
         # 'kind',
     ]
@@ -1312,15 +1310,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     search_fields = [
         'session__convention__name',
     ]
-
-    def draft(self, instance):
-        return mark_safe(
-            '<a href="{0}/api/round/{1}/ossdraft" target="blank">Draft OSS</a>'.format(
-                settings.HOST_NAME,
-                instance.id,
-            )
-        )
-    draft.short_description = ('Draft OSS')
 
     def get_formsets_with_inlines(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
