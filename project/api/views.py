@@ -121,6 +121,14 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "appearance"
 
+    @action(methods=['get'], detail=True)
+    def mock(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.mock()
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
     @action(methods=['post'], detail=True)
     def start(self, request, pk=None, **kwargs):
         object = self.get_object()

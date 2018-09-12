@@ -1,5 +1,6 @@
 # Standard Libary
 import uuid
+from random import randint
 
 # Third-Party
 
@@ -218,6 +219,51 @@ class Appearance(TimeStampedModel):
         )
 
     # Methods
+    def mock(self):
+        # Mock Appearance
+        Chart = apps.get_model('api.chart')
+        appearance = self
+        prelim = appearance.competitor.entry.prelim
+        if appearance.competitor.group.kind == appearance.competitor.group.KIND.chorus:
+            pos = appearance.competitor.group.members.filter(
+                status=appearance.competitor.group.members.model.STATUS.active,
+            ).count()
+            appearance.pos = pos
+        if not prelim:
+            average = appearance.competitor.group.competitors.filter(
+                status=appearance.competitor.group.competitors.model.STATUS.finished,
+            ).aggregate(avg=Avg('tot_score'))['avg']
+            if average:
+                prelim = average
+            else:
+                prelim = randint(65, 80)
+        songs = appearance.songs.all()
+        for song in songs:
+            song.chart = Chart.objects.filter(
+                status=Chart.STATUS.active
+            ).order_by("?").first()
+            song.save()
+            scores = song.scores.all()
+            for score in scores:
+                d = randint(-4,4)
+                score.points = prelim + d
+                score.save()
+        if appearance.status == appearance.STATUS.new:
+            raise RuntimeError("Out of state")
+        if appearance.status == appearance.STATUS.built:
+            appearance.start()
+            appearance.finish()
+            appearance.verify()
+            return
+        if appearance.status == appearance.STATUS.started:
+            appearance.finish()
+            appearance.verify()
+            return
+        if appearance.status == appearance.STATUS.finished:
+            appearance.verify()
+            return
+
+
     def calculate(self):
         Score = apps.get_model('api.score')
         tot = Sum('points')
