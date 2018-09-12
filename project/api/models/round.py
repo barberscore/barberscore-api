@@ -231,7 +231,7 @@ class Round(TimeStampedModel):
     def has_write_permission(request):
         return any([
             request.user.is_convention_manager,
-            request.user.is_session_manager,
+            # request.user.is_session_manager,
             request.user.is_round_manager,
         ])
 
