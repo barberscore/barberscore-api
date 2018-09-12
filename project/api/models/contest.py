@@ -95,7 +95,7 @@ class Contest(TimeStampedModel):
         )
 
     def clean(self):
-        if self.award.level == self.award.LEVEL.qualifier and group:
+        if self.award.level == self.award.LEVEL.qualifier and self.group:
             raise ValidationError(
                 {'level': 'Qualifiers can not select winners'}
             )
