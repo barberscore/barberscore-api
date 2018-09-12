@@ -253,7 +253,7 @@ class Entry(TimeStampedModel):
                     status__gt=0,
                     category__lt=10,
                 ),
-                # self.session.status < self.session.STATUS.started,
+                self.session.status < self.session.STATUS.started,
             ]),
             # For Groups
             all([
