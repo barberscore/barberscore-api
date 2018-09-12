@@ -200,6 +200,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'status',
+            'is_primary',
             'num',
             'group',
             'session',
