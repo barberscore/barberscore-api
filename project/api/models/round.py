@@ -272,10 +272,27 @@ class Round(TimeStampedModel):
         Grid = apps.get_model('api.grid')
         panelists = self.panelists.all()
         appearances = self.appearances.all()
+        competitors = self.session.competitors.filter(
+            status=self.session.competitors.model.STATUS.started,
+        )
         grids = Grid.objects.filter(
             appearance__in=appearances,
         )
         grids.update(appearance=None)
+        competitors.update(
+            mus_points=None,
+            mus_rank=None,
+            mus_score=None,
+            per_points=None,
+            per_rank=None,
+            per_score=None,
+            sng_points=None,
+            sng_rank=None,
+            sng_score=None,
+            tot_points=None,
+            tot_rank=None,
+            tot_score=None,
+        )
         panelists.delete()
         appearances.delete()
         return
