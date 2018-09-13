@@ -23,8 +23,7 @@ from django.utils.functional import cached_property
 from django.urls import reverse
 
 # First-Party
-from api.tasks import create_round_oss
-from api.tasks import create_csa_report
+from api.tasks import save_round_oss
 from api.tasks import save_csa_round
 
 log = logging.getLogger(__name__)
@@ -426,7 +425,6 @@ class Round(TimeStampedModel):
 
         # No next round.
         if self.kind == self.KIND.finals:
-            # save_csa_round(self)
             return
 
         # Get spots available
@@ -481,19 +479,13 @@ class Round(TimeStampedModel):
         ).first()
         mt.draw = 0
         mt.save()
-        # save_csa_round(self)
         return
 
     @fsm_log_by
     @transition(field=status, source=[STATUS.verified], target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        content = create_round_oss(self)
-        self.oss.save(
-            "{0}-oss".format(
-                self.id,
-            ),
-            content,
-        )
+        save_round_oss.delay(self)
+        save_csa_round.delay(self)
         finishers = self.appearances.filter(
             draw=None,
         )

@@ -696,6 +696,20 @@ def create_round_oss(round):
 
 
 @job
+def save_round_oss(round):
+    content = create_round_oss(round)
+    round.oss.save(
+        slugify(
+            '{0} oss'.format(
+                round,
+            )
+        ),
+        content=content,
+    )
+    return
+
+
+@job
 def create_session_oss(session):
     Competitor = apps.get_model('api.competitor')
     Contest = apps.get_model('api.contest')
