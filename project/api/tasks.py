@@ -2,7 +2,8 @@
 import csv
 import logging
 import time
-import tempfile
+from io import BytesIO
+
 from django.core.files.base import ContentFile
 from django.core.files import File
 from PyPDF2 import PdfFileMerger
@@ -554,7 +555,6 @@ def create_round_oss(round):
     Contestant = apps.get_model('api.contestant')
     Round = apps.get_model('api.round')
     competitors = round.session.competitors.filter(
-        status=Competitor.STATUS.finished,
         appearances__round=round,
         appearances__draw__isnull=True,
         is_private=False,
@@ -927,7 +927,8 @@ def create_sa_report(round):
         kind=Panelist.KIND.practice,
     ).count()
     competitors = round.session.competitors.filter(
-        status=Competitor.STATUS.finished,
+        appearances__round=round,
+        appearances__draw__isnull=True,
     ).select_related(
         'group',
     ).prefetch_related(
@@ -965,7 +966,7 @@ def create_sa_report(round):
 
 
 @job
-def save_csa_round(round):
+def create_csa_round(round):
     Competitor = apps.get_model('api.competitor')
     competitors = round.session.competitors.filter(
         # status=Competitor.STATUS.finished,
@@ -976,18 +977,25 @@ def save_csa_round(round):
     )
     merger = PdfFileMerger()
     for competitor in competitors:
-        merger.append(competitor.csa, import_bookmarks=False)
-    with tempfile.NamedTemporaryFile(mode='w+b',suffix='.pdf') as f:
-        merger.write(f.name)
-        round.csa.save(
-            slugify(
-                '{0} csa'.format(
-                    round.id,
-                )
-            ),
-            content=f,
-            save=True,
-        )
+        merger.append(create_csa_report(competitor), import_bookmarks=False)
+    stream = BytesIO()
+    merger.write(stream)
+    data = stream.getvalue()
+    content = ContentFile(data)
+    return content
+
+
+@job
+def save_csa_round(round):
+    content = create_csa_round(round)
+    round.csa.save(
+        slugify(
+            '{0} csa'.format(
+                round,
+            )
+        ),
+        content=content,
+    )
     return
 
 

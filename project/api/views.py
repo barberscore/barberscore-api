@@ -96,6 +96,7 @@ from .tasks import create_round_oss
 from .tasks import create_session_oss
 from .tasks import create_sa_report
 from .tasks import create_sung_report
+from .tasks import create_csa_round
 
 
 log = logging.getLogger(__name__)
@@ -1153,16 +1154,26 @@ class RoundViewSet(viewsets.ModelViewSet):
             award__level__in=[
                 Award.LEVEL.championship,
                 Award.LEVEL.award,
+                Award.LEVEL.representative,
+                Award.LEVEL.manual,
             ],
         ).order_by('award__tree_sort')
-        competitors = round.session.competitors.filter(
-            status=Competitor.STATUS.finished,
-            tot_rank__lte=5,
-        ).select_related(
-            'group',
-        ).order_by(
-            '-tot_rank',
-        )
+        if round.kind == round.KIND.finals:
+            competitors = round.session.competitors.filter(
+                status__in=[
+                    Competitor.STATUS.finished,
+                    Competitor.STATUS.started,
+                ],
+                tot_rank__lte=5,
+            ).select_related(
+                'group',
+            ).order_by(
+                '-tot_rank',
+            )
+        else:
+            competitors = round.appearances.filter(
+                draw__isnull=True,
+            ).values_list('competitor', flat=True)
         pos = round.appearances.aggregate(sum=Sum('pos'))['sum']
         context = {
             'round': round,
@@ -1189,6 +1200,42 @@ class RoundViewSet(viewsets.ModelViewSet):
             file_name=file_name,
             status=status.HTTP_200_OK
         )
+
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            # TemplateHTMLRenderer,
+            PDFRenderer,
+        ],
+        permission_classes=[AllowAny],
+    )
+    def csarounddraft(self, request, pk=None):
+        round = Round.objects.select_related(
+            'session',
+            'session__convention',
+            'session__convention__venue',
+        ).get(pk=pk)
+        pdf = create_csa_round(round)
+        file_name = '{0}-csa'.format(
+            slugify(
+                "{0} {1} {2} Round".format(
+                    round.session.convention.name,
+                    round.session.get_kind_display(),
+                    round.get_kind_display(),
+                )
+            )
+        )
+        # return Response(
+        #     pdf,
+        #     template_name='oss.html',
+        # )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
 
     @action(
         methods=['get'],
