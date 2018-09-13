@@ -91,12 +91,6 @@ from .tasks import create_drcj_report
 from .tasks import create_contact_report
 from .tasks import create_roster_report
 from .tasks import create_chart_report
-from .tasks import create_csa_report
-from .tasks import create_round_oss
-from .tasks import create_session_oss
-from .tasks import create_sa_report
-from .tasks import create_sung_report
-from .tasks import create_csa_round
 
 
 log = logging.getLogger(__name__)
@@ -589,7 +583,7 @@ class CompetitorViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
     def csadraft(self, request, pk=None):
         competitor = Competitor.objects.get(pk=pk)
-        pdf = create_csa_report(competitor)
+        pdf = competitor.get_csa()
         file_name = '{0}-csa'.format(
             slugify(
                 "{0} {1} {2}".format(
@@ -1216,7 +1210,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             'session__convention',
             'session__convention__venue',
         ).get(pk=pk)
-        pdf = create_csa_round(round)
+        pdf = round.get_csa()
         file_name = '{0}-csa'.format(
             slugify(
                 "{0} {1} {2} Round".format(
@@ -1252,7 +1246,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             'session__convention',
             'session__convention__venue',
         ).get(pk=pk)
-        pdf = create_round_oss(round)
+        pdf = round.get_oss()
         file_name = '{0}-oss'.format(
             slugify(
                 "{0} {1} {2} Round".format(
@@ -1286,7 +1280,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         round = Round.objects.prefetch_related(
             'appearances',
         ).get(pk=pk)
-        pdf = create_sung_report(round)
+        pdf = round.get_sung()
         file_name = '{0}-sung-report'.format(
             slugify(
                 "{0} {1} {2} Round".format(
@@ -1314,7 +1308,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             'session__convention',
             'session__convention__venue',
         ).get(pk=pk)
-        pdf = create_sa_report(round)
+        pdf = round.get_sa()
         file_name = '{0}-sa'.format(
             slugify(
                 "{0} {1} {2} Round".format(
@@ -1522,7 +1516,7 @@ class SessionViewSet(viewsets.ModelViewSet):
             'convention',
             'convention__venue',
         ).get(pk=pk)
-        pdf = create_session_oss(session)
+        pdf = session.get_oss()
         file_name = '{0}-oss'.format(
             slugify(
                 "{0} {1} Session".format(

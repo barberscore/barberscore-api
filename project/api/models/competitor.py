@@ -23,7 +23,6 @@ from django.db.models import Avg
 from django.db.models import Q
 from django.apps import apps
 
-from api.tasks import create_csa_report
 from api.fields import UploadPath
 from api.tasks import save_csa_report
 from api.tasks import send_csa
@@ -298,6 +297,46 @@ class Competitor(TimeStampedModel):
         self.sng_points = sng['sum']
         self.sng_score = sng['avg']
         save_csa_report.delay(self)
+
+    def get_csa(self):
+        Panelist = apps.get_model('api.panelist')
+        Member = apps.get_model('api.member')
+        Song = apps.get_model('api.song')
+        panelists = Panelist.objects.filter(
+            kind=Panelist.KIND.official,
+            round__session=self.session,
+        ).distinct(
+        ).order_by(
+            'category',
+            'person__last_name',
+        )
+        appearances = self.appearances.order_by(
+            '-num',
+        ).prefetch_related(
+            'songs',
+        )
+        songs = Song.objects.select_related(
+            'chart',
+        ).filter(
+            appearance__competitor=self,
+        ).prefetch_related(
+            'scores',
+            'scores__panelist__person',
+        ).order_by(
+            '-appearance__round__num',
+            'num',
+        )
+        context = {
+            'competitor': self,
+            'panelists': panelists,
+            'appearances': appearances,
+            'songs': songs,
+        }
+        rendered = render_to_string('csa.html', context)
+        file = pydf.generate_pdf(rendered)
+        content = ContentFile(file)
+        return content
+
 
     # Competitor Transition Conditions
 

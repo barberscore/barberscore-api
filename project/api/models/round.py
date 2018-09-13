@@ -212,6 +212,274 @@ class Round(TimeStampedModel):
             song.save()
         return
 
+    def get_oss(self):
+        Competitor = apps.get_model('api.competitor')
+        Contest = apps.get_model('api.contest')
+        Panelist = apps.get_model('api.panelist')
+        Contestant = apps.get_model('api.contestant')
+        competitors = Competitor.objects.filter(
+            appearances__round=self,
+            appearances__draw__isnull=True,
+            is_private=False,
+        ).select_related(
+            'group',
+            'entry',
+        ).prefetch_related(
+            'entry__contestants',
+            'entry__contestants__contest',
+            'appearances',
+            'appearances__round',
+            'appearances__songs',
+            'appearances__songs__chart',
+            'appearances__songs__scores',
+            'appearances__songs__scores__panelist',
+            'appearances__songs__scores__panelist__person',
+        ).order_by(
+            '-tot_points',
+            '-sng_points',
+            '-per_points',
+            'group__name',
+        )
+        for competitor in competitors:
+            # Monkey-patch contesting
+            try:
+                contestants = competitor.entry.contestants.filter(
+                    status=Contestant.STATUS.included,
+                ).order_by('contest__num').values_list('contest__num', flat=True)
+            except AttributeError:
+                contestants = None
+            if contestants:
+                competitor.contestants = contestants
+            else:
+                competitor.contestants = ""
+        # Eval Only
+        privates = self.session.competitors.filter(
+            status=Competitor.STATUS.finished,
+            appearances__round=self,
+            is_private=True,
+        ).select_related(
+            'group',
+            'entry',
+        ).order_by(
+            'group__name',
+        )
+        privates = privates.values_list('group__name', flat=True)
+        if self.kind != self.KIND.finals:
+            advancers = self.appearances.filter(
+                draw__isnull=False,
+            ).select_related(
+                'competitor__group',
+            ).order_by(
+                'draw',
+            )
+        else:
+            advancers = None
+        contests = self.session.contests.filter(
+            status=Contest.STATUS.included,
+            contestants__status__gt=0,
+        ).select_related(
+            'award',
+            'group',
+        ).distinct(
+        ).order_by(
+            '-is_primary',
+            'award__tree_sort',
+        )
+        # Determine Primary (if present)
+        try:
+            primary = contests.get(is_primary=True)
+        except Contest.DoesNotExist:
+            primary = None
+        # MonkeyPatch qualifiers
+        for contest in contests:
+            if self.num == contest.award.rounds:
+                if contest.award.level != contest.award.LEVEL.deferred:
+                    if contest.award.level == contest.award.LEVEL.qualifier:
+                        threshold = contest.award.threshold
+                        if threshold:
+                            qualifiers = contest.contestants.filter(
+                                status__gt=0,
+                                entry__competitor__tot_score__gte=threshold,
+                                entry__is_private=False,
+                            ).distinct(
+                            ).order_by(
+                                'entry__group__name',
+                            ).values_list(
+                                'entry__group__name',
+                                flat=True,
+                            )
+                            if qualifiers:
+                                contest.detail = ", ".join(
+                                    qualifiers.values_list('entry__group__name', flat=True)
+                                )
+                            else:
+                                contest.detail = "(No qualifiers)"
+                    else:
+                        if contest.group:
+                            contest.detail = str(contest.group.name)
+                        else:
+                            contest.detail = "(No recipient)"
+                else:
+                    contest.detail = "(Result determined post-contest)"
+            else:
+                contest.detail = "(Result not yet determined)"
+        panelists = self.panelists.select_related(
+            'person',
+        ).filter(
+            kind=Panelist.KIND.official,
+            category__gte=Panelist.CATEGORY.ca,
+        ).order_by(
+            'category',
+            'person__last_name',
+            'person__first_name',
+        )
+        is_multi = all([
+            self.session.rounds.count() > 1,
+        ])
+        context = {
+            'round': self,
+            'competitors': competitors,
+            'privates': privates,
+            'advancers': advancers,
+            'panelists': panelists,
+            'contests': contests,
+            'is_multi': is_multi,
+            'primary': primary,
+        }
+        rendered = render_to_string('oss.html', context)
+        file = pydf.generate_pdf(
+            rendered,
+            page_size='Legal',
+            orientation='Portrait',
+            margin_top='5mm',
+            margin_bottom='5mm',
+        )
+        content = ContentFile(file)
+        return content
+
+
+    def get_sa(self):
+        Panelist = apps.get_model('api.panelist')
+        panelists = self.panelists.filter(
+            kind__in=[
+                Panelist.KIND.official,
+                Panelist.KIND.practice,
+            ],
+        ).select_related(
+            'person',
+        ).distinct(
+        ).order_by(
+            'category',
+            'kind',
+            'person__last_name',
+            'person__nick_name',
+            'person__first_name',
+        )
+        mo_count = panelists.filter(
+            category=Panelist.CATEGORY.music,
+            kind=Panelist.KIND.official,
+        ).count()
+        po_count = panelists.filter(
+            category=Panelist.CATEGORY.performance,
+            kind=Panelist.KIND.official,
+        ).count()
+        so_count = panelists.filter(
+            category=Panelist.CATEGORY.singing,
+            kind=Panelist.KIND.official,
+        ).count()
+        mp_count = panelists.filter(
+            category=Panelist.CATEGORY.music,
+            kind=Panelist.KIND.practice,
+        ).count()
+        pp_count = panelists.filter(
+            category=Panelist.CATEGORY.performance,
+            kind=Panelist.KIND.practice,
+        ).count()
+        sp_count = panelists.filter(
+            category=Panelist.CATEGORY.singing,
+            kind=Panelist.KIND.practice,
+        ).count()
+        competitors = self.session.competitors.filter(
+            appearances__round=self,
+            appearances__draw__isnull=True,
+        ).select_related(
+            'group',
+        ).prefetch_related(
+            'appearances',
+            'appearances__songs',
+            'appearances__songs__scores',
+            'appearances__songs__scores__panelist',
+            'appearances__songs__scores__panelist__person',
+        ).order_by(
+            '-tot_points',
+            '-sng_points',
+            '-mus_points',
+            '-per_points',
+            'group__name',
+        )
+        context = {
+            'round': self,
+            'panelists': panelists,
+            'competitors': competitors,
+            'mo_count': mo_count,
+            'po_count': po_count,
+            'so_count': so_count,
+            'mp_count': mp_count,
+            'pp_count': pp_count,
+            'sp_count': sp_count,
+        }
+        rendered = render_to_string('sa.html', context)
+        file = pydf.generate_pdf(
+            rendered,
+            page_size='Letter',
+            orientation='Landscape',
+        )
+        content = ContentFile(file)
+        return content
+
+    def get_sung(self):
+        Song = apps.get_model('api.song')
+        appearances = self.appearances.filter(
+            draw__isnull=False,
+        ).order_by(
+            'draw',
+        )
+        for appearance in appearances:
+            songs = Song.objects.filter(
+                appearance__competitor=appearance.competitor,
+            ).distinct().order_by(
+                'appearance__round__num',
+                'num',
+            )
+            sungs = []
+            for song in songs:
+                try:
+                    title = song.chart.nomen
+                except AttributeError:
+                    title = "Unknown (Not in Repertory)"
+                row = "{0} Song {1}: {2}".format(
+                    song.appearance.self.get_kind_display(),
+                    song.num,
+                    title,
+                )
+                sungs.append(row)
+            appearance.sungs = sungs
+
+        context = {
+            'appearances': appearances,
+            'round': self,
+        }
+        rendered = render_to_string('sung.html', context)
+        file = pydf.generate_pdf(
+            rendered,
+            page_size='Letter',
+            orientation='Portrait',
+            margin_top='5mm',
+            margin_bottom='5mm',
+        )
+        content = ContentFile(file)
+        return content
+
     # Permissions
     @staticmethod
     @allow_staff_or_superuser
@@ -250,6 +518,99 @@ class Round(TimeStampedModel):
 
 
     # Methods
+    def get_csa(self):
+        competitors = self.session.competitors.filter(
+            appearances__round=self,
+            appearances__draw__isnull=True,
+        ).order_by(
+            'group__name',
+        )
+        merger = PdfFileMerger()
+        for competitor in competitors:
+            merger.append(competitor.get_csa(), import_bookmarks=False)
+        stream = BytesIO()
+        merger.write(stream)
+        data = stream.getvalue()
+        content = ContentFile(data)
+        return content
+
+def get_sa(self):
+    Panelist = apps.get_model('api.panelist')
+    panelists = self.panelists.filter(
+        kind__in=[
+            Panelist.KIND.official,
+            Panelist.KIND.practice,
+        ],
+    ).select_related(
+        'person',
+    ).distinct(
+    ).order_by(
+        'category',
+        'kind',
+        'person__last_name',
+        'person__nick_name',
+        'person__first_name',
+    )
+    # Counts for proper formatting
+    mo_count = panelists.filter(
+        category=Panelist.CATEGORY.music,
+        kind=Panelist.KIND.official,
+    ).count()
+    po_count = panelists.filter(
+        category=Panelist.CATEGORY.performance,
+        kind=Panelist.KIND.official,
+    ).count()
+    so_count = panelists.filter(
+        category=Panelist.CATEGORY.singing,
+        kind=Panelist.KIND.official,
+    ).count()
+    mp_count = panelists.filter(
+        category=Panelist.CATEGORY.music,
+        kind=Panelist.KIND.practice,
+    ).count()
+    pp_count = panelists.filter(
+        category=Panelist.CATEGORY.performance,
+        kind=Panelist.KIND.practice,
+    ).count()
+    sp_count = panelists.filter(
+        category=Panelist.CATEGORY.singing,
+        kind=Panelist.KIND.practice,
+    ).count()
+
+    competitors = self.appearances.filter(
+        draw__isnull=True,
+    ).prefetch_related(
+        'songs',
+        'songs__scores',
+        'songs__scores__panelist',
+        'songs__scores__panelist__person',
+    ).order_by(
+        '-competitor__tot_points',
+        '-competitor__sng_points',
+        '-competitor__mus_points',
+        '-competitor__per_points',
+        'competitor__group__name',
+    ).values_list('competitor', flat=True)
+    context = {
+        'round': self,
+        'panelists': panelists,
+        'competitors': competitors,
+        'mo_count': mo_count,
+        'po_count': po_count,
+        'so_count': so_count,
+        'mp_count': mp_count,
+        'pp_count': pp_count,
+        'sp_count': sp_count,
+    }
+    rendered = render_to_string('sa.html', context)
+    file = pydf.generate_pdf(
+        rendered,
+        page_size='Letter',
+        orientation='Landscape',
+    )
+    content = ContentFile(file)
+    return content
+
 
     # Round Conditions
     def can_build(self):
