@@ -322,7 +322,7 @@ class Competitor(TimeStampedModel):
         context = {
             'competitor': self,
         }
-        # send_csa.delay(context)
+        send_csa.delay(context)
         return
 
     @fsm_log_by
