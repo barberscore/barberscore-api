@@ -327,7 +327,7 @@ class Round(TimeStampedModel):
                 category=assignment.category,
                 person=assignment.person,
             )
-        # build the appearances
+        # build the appearances  TODO Should this move to competitor.start()?
         Competitor = apps.get_model('api.competitor')
         Grid = apps.get_model('api.grid')
         competitors = self.session.competitors.filter(

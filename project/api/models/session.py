@@ -260,17 +260,20 @@ class Session(TimeStampedModel):
         grantors = self.convention.grantors.order_by('group__tree_sort')
         i = 0
         for grantor in grantors:
+            # Get all the active awards for the grantors
             awards = grantor.group.awards.filter(
                 status=grantor.group.awards.model.STATUS.active,
                 kind=self.kind,
                 season=self.convention.season,
             ).order_by('tree_sort')
             for award in awards:
+                # Create contests for each active award.
                 # Could also do some logic here for more precision
                 self.contests.create(
                     status=self.contests.model.STATUS.included,
                     award=award,
                 )
+        # Create the rounds for the session, along with default # spots
         for i in range(self.num_rounds):
             num = i + 1
             kind = self.num_rounds - i
@@ -296,6 +299,7 @@ class Session(TimeStampedModel):
     )
     def open(self, *args, **kwargs):
         """Make session available for entry."""
+        # Send notification for all public contests
         if not self.is_invitational:
             context = {'session': self}
             send_session.delay('session_open.txt', context)
@@ -332,6 +336,7 @@ class Session(TimeStampedModel):
             entry.draw = i
             entry.save()
             i += 1
+        # Notify for all public contests
         if not self.is_invitational:
             context = {'session': self}
             send_session.delay('session_close.txt', context)
@@ -351,11 +356,11 @@ class Session(TimeStampedModel):
             'host_name': settings.HOST_NAME,
         }
         send_session_reports.delay('session_reports.txt', context)
-        # approved_entries = self.entries.filter(
-        #     status=self.entries.model.STATUS.approved,
-        # ).order_by('draw')
-        # context = {'session': self, 'approved_entries': approved_entries}
-        # send_session.delay('session_verify.txt', context)
+        approved_entries = self.entries.filter(
+            status=self.entries.model.STATUS.approved,
+        ).order_by('draw')
+        context = {'session': self, 'approved_entries': approved_entries}
+        send_session.delay('session_verify.txt', context)
         return
 
     @fsm_log_by
@@ -374,8 +379,8 @@ class Session(TimeStampedModel):
         }
         send_session_reports.delay('session_reports.txt', context)
         # delete orphans
-        # for entry in self.entries.filter(status=Entry.STATUS.new):
-        #     entry.delete()
+        [entry.delete() for entry in self.entries.filter(status=Entry.STATUS.new)]
+
         # Number Contests
         contests = self.contests.filter(
             status__gt=0,
@@ -423,7 +428,7 @@ class Session(TimeStampedModel):
         )
         round.build()
         round.save()
-        # notify entrants
+        # notify entrants  TODO Maybe competitor.start()?
         context = {
             'session': self,
         }
