@@ -545,12 +545,6 @@ class Session(TimeStampedModel):
             )
             competitor.start()
             competitor.save()
-        # Build Round
-        round = self.rounds.get(
-            num=1,
-        )
-        round.build()
-        round.save()
         #  Create and send the reports
         context = {
             'session': self,
