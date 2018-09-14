@@ -357,7 +357,6 @@ class Round(TimeStampedModel):
         content = ContentFile(file)
         return content
 
-
     def get_sa(self):
         Panelist = apps.get_model('api.panelist')
         panelists = self.panelists.filter(
@@ -435,6 +434,22 @@ class Round(TimeStampedModel):
             orientation='Landscape',
         )
         content = ContentFile(file)
+        return content
+
+    def get_csa(self):
+        competitors = self.session.competitors.filter(
+            appearances__round=self,
+            appearances__draw__isnull=True,
+        ).order_by(
+            'group__name',
+        )
+        merger = PdfFileMerger()
+        for competitor in competitors:
+            merger.append(competitor.get_csa(), import_bookmarks=False)
+        stream = BytesIO()
+        merger.write(stream)
+        data = stream.getvalue()
+        content = ContentFile(data)
         return content
 
     def get_sung(self):
@@ -515,102 +530,6 @@ class Round(TimeStampedModel):
                 self.status != self.STATUS.finished,
             ]),
         ])
-
-
-    # Methods
-    def get_csa(self):
-        competitors = self.session.competitors.filter(
-            appearances__round=self,
-            appearances__draw__isnull=True,
-        ).order_by(
-            'group__name',
-        )
-        merger = PdfFileMerger()
-        for competitor in competitors:
-            merger.append(competitor.get_csa(), import_bookmarks=False)
-        stream = BytesIO()
-        merger.write(stream)
-        data = stream.getvalue()
-        content = ContentFile(data)
-        return content
-
-def get_sa(self):
-    Panelist = apps.get_model('api.panelist')
-    panelists = self.panelists.filter(
-        kind__in=[
-            Panelist.KIND.official,
-            Panelist.KIND.practice,
-        ],
-    ).select_related(
-        'person',
-    ).distinct(
-    ).order_by(
-        'category',
-        'kind',
-        'person__last_name',
-        'person__nick_name',
-        'person__first_name',
-    )
-    # Counts for proper formatting
-    mo_count = panelists.filter(
-        category=Panelist.CATEGORY.music,
-        kind=Panelist.KIND.official,
-    ).count()
-    po_count = panelists.filter(
-        category=Panelist.CATEGORY.performance,
-        kind=Panelist.KIND.official,
-    ).count()
-    so_count = panelists.filter(
-        category=Panelist.CATEGORY.singing,
-        kind=Panelist.KIND.official,
-    ).count()
-    mp_count = panelists.filter(
-        category=Panelist.CATEGORY.music,
-        kind=Panelist.KIND.practice,
-    ).count()
-    pp_count = panelists.filter(
-        category=Panelist.CATEGORY.performance,
-        kind=Panelist.KIND.practice,
-    ).count()
-    sp_count = panelists.filter(
-        category=Panelist.CATEGORY.singing,
-        kind=Panelist.KIND.practice,
-    ).count()
-
-    competitors = self.appearances.filter(
-        draw__isnull=True,
-    ).prefetch_related(
-        'songs',
-        'songs__scores',
-        'songs__scores__panelist',
-        'songs__scores__panelist__person',
-    ).order_by(
-        '-competitor__tot_points',
-        '-competitor__sng_points',
-        '-competitor__mus_points',
-        '-competitor__per_points',
-        'competitor__group__name',
-    ).values_list('competitor', flat=True)
-    context = {
-        'round': self,
-        'panelists': panelists,
-        'competitors': competitors,
-        'mo_count': mo_count,
-        'po_count': po_count,
-        'so_count': so_count,
-        'mp_count': mp_count,
-        'pp_count': pp_count,
-        'sp_count': sp_count,
-    }
-    rendered = render_to_string('sa.html', context)
-    file = pydf.generate_pdf(
-        rendered,
-        page_size='Letter',
-        orientation='Landscape',
-    )
-    content = ContentFile(file)
-    return content
-
 
     # Round Conditions
     def can_build(self):
