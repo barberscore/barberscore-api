@@ -63,7 +63,7 @@ class AwardManager(Manager):
         return
 
 class ChartManager(Manager):
-    def get_legacy(self):
+    def get_report(self):
         wb = Workbook()
         ws = wb.active
         fieldnames = [
@@ -376,6 +376,58 @@ class GroupManager(Manager):
                 with disable_auto_indexing(model=self.model):
                     quartet.save()
         return
+
+    def get_quartets(self):
+        wb = Workbook()
+        ws = wb.active
+        fieldnames = [
+            'PK',
+            'Name',
+            'Kind',
+            'Organization',
+            'District',
+            'Division',
+            'Chapter',
+            'Senior?',
+            'BHS ID',
+            'Code',
+            'Status',
+        ]
+        ws.append(fieldnames)
+        groups = self.filter(
+            status=self.model.STATUS.active,
+            kind=self.model.KIND.quartet,
+        ).order_by('name')
+        for group in groups:
+            pk = str(group.pk)
+            name = group.name
+            kind = group.get_kind_display()
+            organization = group.international
+            district = group.district
+            division = group.division
+            chapter = group.chapter
+            is_senior = group.is_senior
+            bhs_id = group.bhs_id
+            code = group.code
+            status = group.get_status_display()
+            row = [
+                pk,
+                name,
+                kind,
+                organization,
+                district,
+                division,
+                chapter,
+                is_senior,
+                bhs_id,
+                code,
+                status,
+            ]
+            ws.append(row)
+        file = save_virtual_workbook(wb)
+        content = ContentFile(file)
+        return content
+
 
 class MemberManager(Manager):
     def update_or_create_from_join(self, join):

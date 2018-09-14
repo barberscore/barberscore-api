@@ -349,8 +349,8 @@ class ChartViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['get'], detail=False, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
-    def legacy(self, request):
-        xlsx = Chart.objects.get_legacy()
+    def report(self, request):
+        xlsx = Chart.objects.get_report()
         file_name = 'chart-report'
         return XLSXResponse(
             xlsx,
@@ -787,6 +787,21 @@ class GroupViewSet(viewsets.ModelViewSet):
                 )
             )
         )
+        return XLSXResponse(
+            xlsx,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+    @action(
+        methods=['get'],
+        detail=False,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[AllowAny],
+    )
+    def quartets(self, request):
+        xlsx = Group.objects.get_quartets()
+        file_name = 'quartets-report'
         return XLSXResponse(
             xlsx,
             file_name=file_name,
