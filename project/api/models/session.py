@@ -509,8 +509,6 @@ class Session(TimeStampedModel):
             'host_name': settings.HOST_NAME,
         }
         send_session_reports.delay('session_reports.txt', context)
-        # delete orphans
-        [entry.delete() for entry in self.entries.filter(status=Entry.STATUS.new)]
 
         # Number Contests
         contests = self.contests.filter(
@@ -526,6 +524,7 @@ class Session(TimeStampedModel):
             i += 1
             contest.num = i
             contest.save()
+
         # Build Competitor List
         entries = self.entries.filter(
             status=self.entries.model.STATUS.approved,
