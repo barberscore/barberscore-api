@@ -585,8 +585,7 @@ class Round(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         Assignment = apps.get_model('api.assignment')
-        # Build the panel
-        # First, create all CAs (no num)
+        # Build the panel (CAs and Judges)
         assignments = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
             kind__in=[
@@ -648,7 +647,7 @@ class Round(TimeStampedModel):
     @transition(field=status, source=[STATUS.built], target=STATUS.started)
     def start(self, *args, **kwargs):
         Panelist = apps.get_model('api.panelist')
-        # Number the official panelists
+        # Number the panelists
         officials = self.panelists.filter(
             kind=Panelist.KIND.official,
             category__gt=Panelist.CATEGORY.ca,
@@ -663,7 +662,6 @@ class Round(TimeStampedModel):
             i += 1
             official.num = i
             official.save()
-        # Number the practice panelists
         practices = self.panelists.filter(
             kind=Panelist.KIND.practice,
             category__gt=Panelist.CATEGORY.ca,
