@@ -523,6 +523,11 @@ class Round(TimeStampedModel):
     def can_build(self):
         return True
 
+    def can_verify(self):
+        return all([
+            not self.appearances.exclude(status=self.appearances.model.STATUS.verified)
+        ])
+
     def can_finish(self):
         return all([
             not self.appearances.exclude(status=self.appearances.model.STATUS.verified)
@@ -669,7 +674,7 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.verified)
+    @transition(field=status, source='*', target=STATUS.verified, conditions=[can_verify,])
     def verify(self, *args, **kwargs):
         Competitor = apps.get_model('api.competitor')
         Contestant = apps.get_model('api.contestant')
