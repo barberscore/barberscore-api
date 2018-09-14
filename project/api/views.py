@@ -90,7 +90,6 @@ from .tasks import create_legacy_report
 from .tasks import create_drcj_report
 from .tasks import create_contact_report
 from .tasks import create_roster_report
-from .tasks import create_chart_report
 
 
 log = logging.getLogger(__name__)
@@ -350,8 +349,8 @@ class ChartViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['get'], detail=False, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
-    def report(self, request):
-        xlsx = create_chart_report()
+    def legacy(self, request):
+        xlsx = Chart.objects.get_legacy()
         file_name = 'chart-report'
         return XLSXResponse(
             xlsx,

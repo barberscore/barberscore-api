@@ -3,7 +3,7 @@ import logging
 import django_rq
 import json
 import uuid
-
+from django.core.files.base import ContentFile
 # Django
 from django.apps import apps
 from django.contrib.auth.models import BaseUserManager
@@ -25,6 +25,8 @@ from django.db.models.functions import Concat
 from django.core.serializers.json import DjangoJSONEncoder
 from dictdiffer import diff
 from algoliasearch_django.decorators import disable_auto_indexing
+from openpyxl import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
 
 log = logging.getLogger(__name__)
 
@@ -59,6 +61,43 @@ class AwardManager(Manager):
             award.tree_sort = i
             award.save()
         return
+
+class ChartManager(Manager):
+    def get_legacy(self):
+        wb = Workbook()
+        ws = wb.active
+        fieldnames = [
+            'PK',
+            'Title',
+            'Arrangers',
+            'Composers',
+            'Lyricists',
+            'Holders',
+            'Status',
+        ]
+        ws.append(fieldnames)
+        charts = self.order_by('title', 'arrangers')
+        for chart in charts:
+            pk = str(chart.pk)
+            title = chart.title
+            arrangers = chart.arrangers
+            composers = chart.composers
+            lyricists = chart.lyricists
+            holders = chart.holders
+            status = chart.get_status_display()
+            row = [
+                pk,
+                title,
+                arrangers,
+                composers,
+                lyricists,
+                holders,
+                status,
+            ]
+            ws.append(row)
+        file = save_virtual_workbook(wb)
+        content = ContentFile(file)
+        return content
 
 
 class GroupManager(Manager):
@@ -469,7 +508,6 @@ class MemberManager(Manager):
         member.save()
         return member, created
 
-
 class OfficerManager(Manager):
     def update_or_create_from_role(self, role):
         # Clean
@@ -556,7 +594,6 @@ class OfficerManager(Manager):
         # Finally, save the record.  Break link if an overwrite to MC
         officer.save()
         return officer, created
-
 
 class PersonManager(Manager):
     def update_or_create_from_human(self, human):
@@ -741,7 +778,6 @@ class PersonManager(Manager):
         # Finally, save the record
         person.save()
         return person, created
-
 
 class UserManager(BaseUserManager):
     def update_or_create_from_subscription(self, subscription):

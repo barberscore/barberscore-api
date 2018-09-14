@@ -18,6 +18,7 @@ from django.db import models
 from django.utils.functional import cached_property
 
 from api.fields import UploadPath
+from api.managers import ChartManager
 
 log = logging.getLogger(__name__)
 
@@ -98,6 +99,8 @@ class Chart(TimeStampedModel):
         return bool(self.status == self.STATUS.active)
 
     # Internals
+    objects = ChartManager()
+
     class Meta:
         unique_together = (
             ('title', 'arrangers',)
