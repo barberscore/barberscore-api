@@ -430,6 +430,21 @@ class Session(TimeStampedModel):
     )
     def open(self, *args, **kwargs):
         """Make session available for entry."""
+        # Number Contests
+        contests = self.contests.filter(
+            status__gt=0,
+            contestants__status__gt=0,
+        ).distinct(
+        ).order_by(
+            '-is_primary',
+            'award__tree_sort',
+        )
+        i = 0
+        for contest in contests:
+            i += 1
+            contest.num = i
+            contest.save()
+
         # Send notification for all public contests
         if not self.is_invitational:
             context = {'session': self}
@@ -503,28 +518,6 @@ class Session(TimeStampedModel):
     )
     def start(self, *args, **kwargs):
         """Button up session and transfer to CA."""
-        #  Create and send the reports
-        context = {
-            'session': self,
-            'host_name': settings.HOST_NAME,
-        }
-        send_session_reports.delay('session_reports.txt', context)
-
-        # Number Contests
-        contests = self.contests.filter(
-            status__gt=0,
-            contestants__status__gt=0,
-        ).distinct(
-        ).order_by(
-            '-is_primary',
-            'award__tree_sort',
-        )
-        i = 0
-        for contest in contests:
-            i += 1
-            contest.num = i
-            contest.save()
-
         # Build Competitor List
         entries = self.entries.filter(
             status=self.entries.model.STATUS.approved,
@@ -558,6 +551,13 @@ class Session(TimeStampedModel):
         )
         round.build()
         round.save()
+        #  Create and send the reports
+        context = {
+            'session': self,
+            'host_name': settings.HOST_NAME,
+        }
+        send_session_reports.delay('session_reports.txt', context)
+
         # notify entrants  TODO Maybe competitor.start()?
         context = {
             'session': self,
