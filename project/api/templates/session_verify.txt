@@ -4,7 +4,7 @@ Please note that this may not be the final order of appearance; additions,
 scratches, and other adjustments may occur up until the day of contest.
 
 {% for entry in approved_entries %}
-{{entry.draw}} - {{entry.group.name}}
+{{entry.draw}} - {{entry.group.name|safe}}
 {% endfor %}
 
 
