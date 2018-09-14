@@ -573,7 +573,7 @@ class Round(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         Assignment = apps.get_model('api.assignment')
-        # Build the panel (CAs and Judges)
+        # Create the panel (CAs and Judges)
         assignments = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
             kind__in=[
@@ -594,40 +594,37 @@ class Round(TimeStampedModel):
                 category=assignment.category,
                 person=assignment.person,
             )
-        # build the appearances  TODO Should this move to competitor.start()?
+        # Create the appearances
         Competitor = apps.get_model('api.competitor')
         Grid = apps.get_model('api.grid')
         competitors = self.session.competitors.filter(
             status__gt=0,
         )
-        if self.num == 1:
-            for competitor in competitors:
-                appearance = competitor.appearances.create(
-                    round=self,
-                    num=competitor.entry.draw,
+        for competitor in competitors:
+            if self.num == 1:
+                num = competitor.entry.draw
+            else:
+                prior_round = self.session.rounds.get(num=self.num - 1)
+                prior_appearance = prior_round.appearances.get(
+                    competitor=competitor,
                 )
-        else:
-            prior_round = self.session.rounds.get(num=self.num - 1)
-            prior_appearances = prior_round.appearances.filter(
-                draw__isnull=False,
+                num = prior_appearance.draw
+            appearance = self.appearances.create(
+                competitor=competitor,
+                num=num,
             )
-            for prior_appearance in prior_appearances:
-                self.appearances.create(
-                    competitor=prior_appearance.competitor,
-                    num=prior_appearance.draw,
-                )
-            # MT
-            mt = self.session.competitors.filter(
-                status=Competitor.STATUS.finished,
-            ).order_by(
-                '-tot_points',
-                '-sng_points',
-                '-per_points',
-            ).first()
-            self.appearances.create(
-                competitor=mt,
-                num=0,
-            )
+        # MT
+        # mt = self.session.competitors.filter(
+        #     status=Competitor.STATUS.finished,
+        # ).order_by(
+        #     '-tot_points',
+        #     '-sng_points',
+        #     '-per_points',
+        # ).first()
+        # self.appearances.create(
+        #     competitor=mt,
+        #     num=0,
+        # )
         return
 
 
@@ -758,8 +755,4 @@ class Round(TimeStampedModel):
         for finisher in finishers:
             finisher.competitor.finish()
             finisher.competitor.save()
-        if self.kind != self.KIND.finals:
-            next_round = self.session.rounds.get(num=self.num + 1)
-            next_round.build()
-            next_round.save()
         return
