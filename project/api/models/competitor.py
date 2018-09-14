@@ -355,6 +355,7 @@ class Competitor(TimeStampedModel):
         target=STATUS.started,
     )
     def start(self, *args, **kwargs):
+        # Notification?
         return
 
     @fsm_log_by
