@@ -495,6 +495,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'rank',
         'representing',
         'participants',
+        'contesting',
         # 'draw',
         'image',
         'csa',

@@ -240,18 +240,6 @@ class Round(TimeStampedModel):
             '-per_points',
             'group__name',
         )
-        for competitor in competitors:
-            # Monkey-patch contesting
-            try:
-                contestants = competitor.entry.contestants.filter(
-                    status=Contestant.STATUS.included,
-                ).order_by('contest__num').values_list('contest__num', flat=True)
-            except AttributeError:
-                contestants = None
-            if contestants:
-                competitor.contestants = contestants
-            else:
-                competitor.contestants = ""
         # Eval Only
         privates = self.session.competitors.filter(
             status=Competitor.STATUS.finished,

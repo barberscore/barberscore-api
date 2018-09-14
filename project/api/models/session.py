@@ -208,18 +208,6 @@ class Session(TimeStampedModel):
             '-per_points',
             'group__name',
         )
-        for competitor in competitors:
-            # Monkey-patch contesting
-            try:
-                contestants = competitor.entry.contestants.filter(
-                    status=Contestant.STATUS.included,
-                ).order_by('contest__num').values_list('contest__num', flat=True)
-            except AttributeError:
-                contestants = None
-            if contestants:
-                competitor.contestants = contestants
-            else:
-                competitor.contestants = ""
         # Eval Only
         privates = self.competitors.filter(
             status=Competitor.STATUS.finished,
@@ -534,6 +522,21 @@ class Session(TimeStampedModel):
                 contest__award__rounds__gt=1,
                 status__gt=0,
             ))
+            # Create the contesting legend
+            contestants = entry.contestants.filter(
+                status=entry.contestants.model.STATUS.included,
+            ).order_by(
+                'contest__num',
+            ).values_list(
+                'contest__num',
+                flat=True,
+            )
+            contestants = [str(x) for x in contestants]
+            if contestants:
+                contesting = ",".join(contestants)
+            else:
+                contesting = ""
+            # Create and start competitor
             competitor = self.competitors.create(
                 entry=entry,
                 group=entry.group,
@@ -542,6 +545,7 @@ class Session(TimeStampedModel):
                 is_private=entry.is_private,
                 participants=entry.participants,
                 representing=entry.representing,
+                contesting=contesting,
             )
             competitor.start()
             competitor.save()

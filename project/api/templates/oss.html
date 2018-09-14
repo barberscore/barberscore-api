@@ -104,10 +104,10 @@
                   <h4><strong>{{competitor.tot_rank|default:""}} {{competitor.group.name}}</strong></h4>
                   <div class='smaller-font'>
                     {% if competitor.group.get_kind_display == 'Chorus' %}
-                      {{competitor.group.parent.name|truncatechars_html:"50"}} [{{competitor.representing|default:"Unknown"}}] ({{competitor.contestants|join:", "|default:"None"}})<br>
+                      {{competitor.group.parent.name|truncatechars_html:"50"}} [{{competitor.representing|default:"Unknown"}}] ({{competitor.contesting|default:"None"}})<br>
                       Dir(s): {{competitor.participants|default:"(No Director Specified)"}}<br>
                     {% else %}
-                      {{competitor.representing|default:"(Unknown)"}} ({{competitor.contestants|join:", "|default:"None"}})<br>
+                      {{competitor.representing|default:"(Unknown)"}} ({{competitor.contesting|default:"None"}})<br>
                       {{competitor.participants|default:"(No Members Specified)"}}<br>
                     {% endif %}
                     {% if round.num != 1 %}
