@@ -330,7 +330,7 @@ class Session(TimeStampedModel):
         return any([
             request.user.is_convention_manager,
             request.user.is_session_manager,
-            request.user.is_round_manager,
+            # request.user.is_round_manager,
         ])
 
     @allow_staff_or_superuser
@@ -341,7 +341,7 @@ class Session(TimeStampedModel):
                 self.convention.assignments.filter(
                     person__user=request.user,
                     status__gt=0,
-                    category__lte=10,
+                    category=self.convention.assignments.model.CATEGORY.drcj,
                 ),
                 self.status < self.STATUS.finished,
             ]),

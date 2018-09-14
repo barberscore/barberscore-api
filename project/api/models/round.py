@@ -525,7 +525,7 @@ class Round(TimeStampedModel):
                 self.session.convention.assignments.filter(
                     person__user=request.user,
                     status__gt=0,
-                    category__lte=10,
+                    category=self.session.convention.assignments.model.CATEGORY.ca,
                 ),
                 self.status != self.STATUS.finished,
             ]),
