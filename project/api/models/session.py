@@ -16,7 +16,9 @@ from ranking import ORDINAL
 from django.core.exceptions import ValidationError
 from django_fsm_log.models import StateLog
 from django.contrib.contenttypes.fields import GenericRelation
-
+from django.template.loader import render_to_string
+import django_rq
+from django.core.mail import EmailMessage
 # Django
 from django.apps import apps
 from django.db import models
@@ -25,8 +27,6 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 
 # First-Party
-from api.tasks import send_session
-from api.tasks import send_session_reports
 
 log = logging.getLogger(__name__)
 
@@ -298,6 +298,86 @@ class Session(TimeStampedModel):
         content = ContentFile(file)
         return content
 
+    def queue_reports(self):
+        subject = "[Barberscore] {0} Session Reports".format(
+            self,
+        )
+        template = 'session/Reports.txt'
+        context = {
+            'session': self,
+            'host_name': settings.HOST_NAME,
+        }
+        body = render_to_string(template, context)
+        assignments = self.convention.assignments.filter(
+            category__lte=self.convention.assignments.model.CATEGORY.ca,
+            status=self.convention.assignments.model.STATUS.active,
+        ).exclude(person__email=None)
+        to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
+        email = EmailMessage(
+            subject=subject,
+            body=body,
+            from_email='Barberscore <admin@barberscore.com>',
+            to=to,
+        )
+        queue = django_rq.get_queue('high')
+        result = queue.enqueue(
+            email.send
+        )
+        return result
+
+    def queue_notifications(self, template):
+        if self.is_invitational:
+            return
+        subject = "[Barberscore] {0} Session Notification".format(
+            self,
+        )
+        approved_entries = self.entries.filter(
+            status=self.entries.model.STATUS.approved,
+        ).order_by('draw')
+        context = {
+            'session': self,
+            'approved_entries': approved_entries,
+        }
+        body = render_to_string(template, context)
+
+        assignments = self.convention.assignments.filter(
+            category__lte=self.convention.assignments.model.CATEGORY.ca,
+            status=self.convention.assignments.model.STATUS.active,
+        ).exclude(person__email=None)
+        to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
+
+        # Start with base officers
+        Officer = apps.get_model('api.officer')
+        if self.kind == self.KIND.quartet:
+            officers = Officer.objects.filter(
+                status__gt=0,
+                person__email__isnull=False,
+                group__status__gt=0,
+                group__kind=self.kind,
+                group__parent__grantors__convention=self.convention,
+            ).distinct()
+        else:
+            officers = Officer.objects.filter(
+                status__gt=0,
+                person__email__isnull=False,
+                group__status__gt=0,
+                group__kind=self.kind,
+                group__parent__parent__grantors__convention=self.convention,
+            ).distinct()
+
+        bcc = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
+        email = EmailMessage(
+            subject=subject,
+            body=body,
+            from_email='Barberscore <admin@barberscore.com>',
+            to=to,
+            bcc=bcc,
+        )
+        queue = django_rq.get_queue('high')
+        result = queue.enqueue(
+            email.send
+        )
+        return result
 
     # Session Permissions
     @staticmethod
@@ -419,9 +499,7 @@ class Session(TimeStampedModel):
     def open(self, *args, **kwargs):
         """Make session available for entry."""
         # Send notification for all public contests
-        if not self.is_invitational:
-            context = {'session': self}
-            send_session.delay('session_open.txt', context)
+        self.queue_notifications(template='session/opened.txt')
         return
 
     @fsm_log_by
@@ -456,9 +534,7 @@ class Session(TimeStampedModel):
             entry.save()
             i += 1
         # Notify for all public contests
-        if not self.is_invitational:
-            context = {'session': self}
-            send_session.delay('session_close.txt', context)
+        self.queue_notifications(template='session/closed.txt')
         return
 
     @fsm_log_by
@@ -470,16 +546,8 @@ class Session(TimeStampedModel):
     )
     def verify(self, *args, **kwargs):
         """Make draw public."""
-        context = {
-            'session': self,
-            'host_name': settings.HOST_NAME,
-        }
-        send_session_reports.delay('session_reports.txt', context)
-        approved_entries = self.entries.filter(
-            status=self.entries.model.STATUS.approved,
-        ).order_by('draw')
-        context = {'session': self, 'approved_entries': approved_entries}
-        send_session.delay('session_verify.txt', context)
+        self.queue_reports()
+        self.queue_notifications(template='session/verified.txt')
         return
 
     @fsm_log_by
@@ -548,19 +616,10 @@ class Session(TimeStampedModel):
                 contesting=contesting,
             )
             competitor.start()
+            # notify entrants  TODO Maybe competitor.start()?
             competitor.save()
         #  Create and send the reports
-        context = {
-            'session': self,
-            'host_name': settings.HOST_NAME,
-        }
-        send_session_reports.delay('session_reports.txt', context)
-
-        # notify entrants  TODO Maybe competitor.start()?
-        context = {
-            'session': self,
-        }
-        send_session.delay('session_start.txt', context)
+        self.queue_reports()
         return
 
     @fsm_log_by

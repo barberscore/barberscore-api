@@ -8,12 +8,6 @@ scratches, and other adjustments may occur up until the day of contest.
 {% endfor %}
 
 
-Break a leg!
-
-If you have any other questions or concerns, please contact your DRCJ (Cc'd on this email).
-
-Thanks!
-
 NOTE: This is not SPAM. Please do not report this email as SPAM. If you are receiving this
 email for an inactive group, or you are no longer an administrator for your group, we
 can fix that. Just send your request to be removed to: customerservice@barbershop.org
