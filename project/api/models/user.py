@@ -108,7 +108,7 @@ class User(AbstractBaseUser):
     person = models.OneToOneField(
         'Person',
         related_name='user',
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
