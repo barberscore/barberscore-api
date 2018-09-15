@@ -285,7 +285,6 @@ class User(AbstractBaseUser):
         payload = {
             'email': email,
             'email_verified': True,
-            'user_metadata': None,
             'app_metadata': {
                 'pk': pk,
                 'status': status,
