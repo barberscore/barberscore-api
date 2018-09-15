@@ -1,4 +1,6 @@
 # Django
+import django_rq
+
 # Third-Party
 from collections import defaultdict
 from django.db.models.signals import post_save
