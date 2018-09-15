@@ -308,8 +308,8 @@ class User(AbstractBaseUser):
     def delete_account(self):
         auth0 = get_auth0()
         # Delete Auth0
-        auth0.users.delete(self.username)
-        return
+        result = auth0.users.delete(self.username)
+        return result
 
     def get_or_create_person(self):
         Person = apps.get_model('api.person')
