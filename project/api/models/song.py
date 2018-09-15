@@ -271,7 +271,10 @@ class Song(TimeStampedModel):
             ultimate = ordered_asc[0]
             penultimate = ordered_asc[1]
             distance = abs(ultimate.points - penultimate.points)
-            q = distance / spread
+            try:
+                q = distance / spread
+            except ZeroDivisionError:
+                q = 0
             critical = confidence[size]
             if q > critical and penultimate.points - ultimate.points > 5:
                 ultimate.is_flagged = True
@@ -290,7 +293,10 @@ class Song(TimeStampedModel):
             ultimate = ordered_dsc[0]
             penultimate = ordered_dsc[1]
             distance = abs(ultimate.points - penultimate.points)
-            q = distance / spread
+            try:
+                q = distance / spread
+            except ZeroDivisionError:
+                q = 0
             critical = confidence[size]
             if q > critical and ultimate.points - penultimate.points > 5:
                 ultimate.is_flagged = True
