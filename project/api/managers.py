@@ -25,6 +25,7 @@ from dictdiffer import diff
 from algoliasearch_django.decorators import disable_auto_indexing
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
+from api.tasks import get_auth0
 
 log = logging.getLogger(__name__)
 
