@@ -87,11 +87,4 @@ class Command(BaseCommand):
         t = Subscription.objects.update_users(cursor=cursor)
         self.stdout.write("Queued {0} users.".format(t))
 
-        # Sync Users
-        # t = Person.objects.update_users(cursor=cursor)
-        # self.stdout.write("Queued {0} users.".format(t))
-        # if options['orphans']:
-        #     t = User.objects.delete_orphans()
-        #     self.stdout.write("Deleted {0} user orphans.".format(t))
-
         self.stdout.write("Complete.")

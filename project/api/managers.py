@@ -934,22 +934,22 @@ class UserManager(BaseUserManager):
         return user, created
 
 
-    # def delete_orphans(self):
-    #     auth0 = get_auth0()
-    #     queue = django_rq.get_queue('low')
-    #     accounts = get_accounts()
-    #     users = list(self.filter(
-    #         username__startswith='auth0|',
-    #     ).values_list('username', flat=True))
-    #     i = 0
-    #     for account in accounts:
-    #         if account[0] not in users:
-    #             i += 1
-    #             queue.enqueue(
-    #                 auth0.users.delete,
-    #                 account[0],
-    #             )
-    #     return i
+    def delete_orphans(self):
+        auth0 = get_auth0()
+        queue = django_rq.get_queue('low')
+        accounts = get_accounts()
+        users = list(self.filter(
+            username__startswith='auth0|',
+        ).values_list('username', flat=True))
+        i = 0
+        for account in accounts:
+            if account[0] not in users:
+                i += 1
+                queue.enqueue(
+                    auth0.users.delete,
+                    account[0],
+                )
+        return i
 
     def create_user(self, username=None, **kwargs):
         pk = uuid.uuid4()
