@@ -2,6 +2,12 @@
 import logging
 import random
 import uuid
+from django.template.loader import render_to_string
+import pydf
+from django.core.files.base import ContentFile
+from PyPDF2 import PdfFileMerger
+from io import BytesIO
+from django.utils.text import slugify
 
 # Third-Party
 from django_fsm import FSMIntegerField
@@ -352,6 +358,7 @@ class Round(TimeStampedModel):
                 Panelist.KIND.official,
                 Panelist.KIND.practice,
             ],
+            category__gt=Panelist.CATEGORY.ca,
         ).select_related(
             'person',
         ).distinct(
@@ -752,8 +759,22 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.verified], target=STATUS.finished)
     def finish(self, *args, **kwargs):
-        save_round_oss.delay(self)
-        save_csa_round.delay(self)
+        content = self.get_oss()
+        self.oss.save(
+            slugify(
+                '{0} oss'.format(self)
+            ),
+            content=content,
+            save=False,
+        )
+        content = self.get_sa()
+        self.sa.save(
+            slugify(
+                '{0} sa'.format(self)
+            ),
+            content=content,
+            save=False,
+        )
         finishers = self.appearances.filter(
             draw=None,
         )

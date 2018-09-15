@@ -1,6 +1,8 @@
 # Standard Libary
 import logging
 import uuid
+import pydf
+from django.core.files.base import ContentFile
 
 # Third-Party
 from django_fsm import FSMIntegerField
@@ -15,7 +17,7 @@ from django.utils.functional import cached_property
 from django.urls import reverse
 from django_fsm_log.models import StateLog
 from django.contrib.contenttypes.fields import GenericRelation
-
+from django.template.loader import render_to_string
 # Django
 from django.db import models
 from django.db.models import Sum
@@ -312,6 +314,7 @@ class Competitor(TimeStampedModel):
         panelists = Panelist.objects.filter(
             kind=Panelist.KIND.official,
             round__session=self.session,
+            category__gt=Panelist.CATEGORY.ca,
         ).distinct(
         ).order_by(
             'category',
