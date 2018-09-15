@@ -24,6 +24,7 @@ from django.core.exceptions import ValidationError
 # First-Party
 from api.managers import UserManager
 from api.fields import LowerEmailField
+from api.tasks import get_auth0
 
 config = api_apps.get_app_config('api')
 
@@ -240,7 +241,6 @@ class User(AbstractBaseUser):
         )
         return " ".join(full.split())
 
-
     def clean(self):
         if self.is_staff:
             return
@@ -266,6 +266,82 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_staff
+
+    # Methods
+    def update_or_create_account(self):
+        if self.is_staff:
+            raise ValueError('Staff should not have accounts')
+        auth0 = get_auth0()
+        email = self.email.lower()
+        pk = str(self.id)
+        status = self.get_status_display()
+        name = self.name.strip()
+        bhs_id = self.bhs_id
+        if self.current_through:
+            current_through = self.current_through.isoformat()
+        else:
+            current_through = None
+        payload = {
+            'email': email,
+            'email_verified': True,
+            'user_metadata': None,
+            'app_metadata': {
+                'pk': pk,
+                'status': status,
+                'name': name,
+                'bhs_id': bhs_id,
+                'current_through': current_through,
+            }
+        }
+        if self.username.startswith('auth0|'):
+            account = auth0.users.update(self.username, payload)
+            created = False
+        elif self.username.startswith('orphan|'):
+            payload['connection'] = 'Default'
+            payload['password'] = get_random_string()
+            account = auth0.users.create(payload)
+            created = True
+        else:
+            ValueError("Unknown Username type")
+        return account, created
+
+    def delete_account(self):
+        auth0 = get_auth0()
+        # Delete Auth0
+        auth0.users.delete(self.username)
+        return
+
+    def get_or_create_person(self):
+        Person = apps.get_model('api.person')
+        auth0 = get_auth0()
+        account = auth0.users.get(self.username)
+        email = account['email'].lower()
+        person, created = Person.objects.get_or_create(email=email)
+        return person, created
+
+    def unlink_user_account(self):
+        client = get_auth0()
+        user_id = self.username.partition('|')[2]
+        client.users.unlink_user_account(
+            self.account_id,
+            'auth0',
+            user_id,
+        )
+        return
+
+    def relink_user_account(self):
+        client = get_auth0()
+        user_id = self.account_id.partition('|')[2]
+        payload = {
+            'provider': 'email',
+            'user_id': user_id,
+        }
+        client.users.link_user_account(
+            self.username,
+            payload,
+        )
+        return
+
 
     # User Permissions
     @staticmethod

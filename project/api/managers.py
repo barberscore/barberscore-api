@@ -19,8 +19,6 @@ from django.db.models import Value
 from django.forms.models import model_to_dict
 from django.utils.timezone import now, localdate
 from api.tasks import get_accounts
-from api.tasks import create_account
-from api.tasks import delete_account
 from django.db.models.functions import Concat
 from django.core.serializers.json import DjangoJSONEncoder
 from dictdiffer import diff
@@ -936,22 +934,22 @@ class UserManager(BaseUserManager):
         return user, created
 
 
-    def delete_orphans(self):
-        auth0 = get_auth0()
-        queue = django_rq.get_queue('low')
-        accounts = get_accounts()
-        users = list(self.filter(
-            username__startswith='auth0|',
-        ).values_list('username', flat=True))
-        i = 0
-        for account in accounts:
-            if account[0] not in users:
-                i += 1
-                queue.enqueue(
-                    auth0.users.delete,
-                    account[0],
-                )
-        return i
+    # def delete_orphans(self):
+    #     auth0 = get_auth0()
+    #     queue = django_rq.get_queue('low')
+    #     accounts = get_accounts()
+    #     users = list(self.filter(
+    #         username__startswith='auth0|',
+    #     ).values_list('username', flat=True))
+    #     i = 0
+    #     for account in accounts:
+    #         if account[0] not in users:
+    #             i += 1
+    #             queue.enqueue(
+    #                 auth0.users.delete,
+    #                 account[0],
+    #             )
+    #     return i
 
     def create_user(self, username=None, **kwargs):
         pk = uuid.uuid4()
