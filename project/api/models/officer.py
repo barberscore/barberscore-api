@@ -13,7 +13,8 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from django_fsm_log.models import StateLog
 from django.contrib.contenttypes.fields import GenericRelation
-
+from django.core.exceptions import ValidationError
+from django.utils.timezone import now
 # Django
 from django.db import models
 from django.utils.functional import cached_property
@@ -104,6 +105,23 @@ class Officer(TimeStampedModel):
     def __str__(self):
         return str(self.id)
 
+    def clean(self):
+        if all([
+            self.status == self.STATUS.active,
+            self.person.status == self.person.STATUS.inactive,
+        ]):
+            raise ValidationError({
+                'status': 'Can not be active when person is inactive',
+            })
+        if self.end_date:
+            if all([
+                self.status == self.STATUS.active,
+                self.end_date < now().date(),
+
+            ]):
+                raise ValidationError({
+                    'status': 'Can not be active with a passed end date',
+                })
     # Permissions
     @staticmethod
     @allow_staff_or_superuser

@@ -13,7 +13,8 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from django_fsm_log.models import StateLog
 from django.contrib.contenttypes.fields import GenericRelation
-
+from django.core.exceptions import ValidationError
+from django.utils.timezone import now
 # Django
 from django.db import models
 from django.db.models import Q
@@ -203,18 +204,22 @@ class Member(TimeStampedModel):
         return str(self.id)
 
     def clean(self):
-        pass
-        # if self.is_admin:
-        #     try:
-        #         is_active = self.person.user.is_active
-        #     except ObjectDoesNotExist:
-        #         raise ValidationError(
-        #             {'is_admin': 'Admin must User account.'}
-        #         )
-        #     if not is_active:
-        #         raise ValidationError(
-        #             {'is_admin': 'Admin User account must be active.'}
-        #         )
+        if all([
+            self.status == self.STATUS.active,
+            self.person.status == self.person.STATUS.inactive,
+        ]):
+            raise ValidationError({
+                'status': 'Can not be active when person is inactive',
+            })
+        if self.end_date:
+            if all([
+                self.status == self.STATUS.active,
+                self.end_date < now().date(),
+
+            ]):
+                raise ValidationError({
+                    'status': 'Can not be active with a passed end date',
+                })
 
     # Permissions
     @staticmethod
