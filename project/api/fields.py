@@ -1,13 +1,18 @@
-# Third-Party
+
+
+# Standard Library
 import os
+
+# Third-Party
 import pytz
 import six
 from rest_framework_json_api import serializers
 
 # Django
 from django.core.exceptions import ValidationError
-from django.utils.deconstruct import deconstructible
 from django.db.models import EmailField
+from django.utils.deconstruct import deconstructible
+
 
 @deconstructible
 class UploadPath(object):

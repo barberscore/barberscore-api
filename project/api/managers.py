@@ -1,30 +1,37 @@
-# Standard Libary
-import logging
-import django_rq
+
+# Standard Library
 import json
+import logging
 import uuid
-from django.core.files.base import ContentFile
+
+# Third-Party
+import django_rq
+from algoliasearch_django.decorators import disable_auto_indexing
+from dictdiffer import diff
+from openpyxl import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
+
 # Django
 from django.apps import apps
 from django.contrib.auth.models import BaseUserManager
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from django.core.serializers.json import DjangoJSONEncoder
 from django.core.validators import RegexValidator
 from django.core.validators import URLValidator
 from django.core.validators import validate_email
 from django.db import IntegrityError
-from django.db.models import Manager
-from django.db.models import F
 from django.db.models import CharField
+from django.db.models import F
+from django.db.models import Manager
 from django.db.models import Value
-from django.forms.models import model_to_dict
-from django.utils.timezone import now, localdate
-from api.tasks import get_accounts
 from django.db.models.functions import Concat
-from django.core.serializers.json import DjangoJSONEncoder
-from dictdiffer import diff
-from algoliasearch_django.decorators import disable_auto_indexing
-from openpyxl import Workbook
-from openpyxl.writer.excel import save_virtual_workbook
+from django.forms.models import model_to_dict
+from django.utils.timezone import localdate
+from django.utils.timezone import now
+
+# First-Party
+from api.tasks import get_accounts
 from api.tasks import get_auth0
 
 log = logging.getLogger(__name__)

@@ -1,18 +1,22 @@
-# Django
-import django_rq
+
+
+# Standard Library
+from collections import defaultdict
 
 # Third-Party
-from collections import defaultdict
+import django_rq
+
+# Django
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db.models.signals import post_save
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-from django.conf import settings
 
 # Local
 from .models import Person
 from .models import User
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
 
 
 @receiver(post_save, sender=User)

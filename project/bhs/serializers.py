@@ -1,12 +1,11 @@
+
 # Third-Party
 # from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_json_api import serializers
 
 # Local
-from .models import (
-    Human,
-    Structure,
-)
+from .models import Human
+from .models import Structure
 
 
 class HumanSerializer(serializers.ModelSerializer):

@@ -1,15 +1,21 @@
-# Django
-from django.db import models
-from django.core.exceptions import ValidationError
 
+
+# Third-Party
+import django_rq
+
+# Django
+from django.apps import apps
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils.functional import cached_property
+
+# First-Party
+from bhs.managers import HumanManager
+from bhs.managers import JoinManager
+from bhs.managers import RoleManager
 from bhs.managers import StructureManager
 from bhs.managers import SubscriptionManager
-from bhs.managers import HumanManager
-from bhs.managers import RoleManager
-from bhs.managers import JoinManager
-from django.utils.functional import cached_property
-from django.apps import apps
-import django_rq
+
 
 class Human(models.Model):
     id = models.CharField(

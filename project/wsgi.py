@@ -7,7 +7,8 @@ For more information on this file, see
 https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/
 """
 
-# Standard Libary
+
+# Standard Library
 import os
 
 # Django

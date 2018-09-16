@@ -1,4 +1,5 @@
-# Standard Libary
+
+# Standard Library
 import logging
 import uuid
 
@@ -12,9 +13,9 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.apps import apps
 from django.db import models
-from django.db.models import Sum
 from django.db.models import Avg
 from django.db.models import Q
+from django.db.models import Sum
 
 log = logging.getLogger(__name__)
 
@@ -351,4 +352,3 @@ class Song(TimeStampedModel):
                 self.appearance.round.status != self.appearance.round.STATUS.finished,
             ]),
         ])
-

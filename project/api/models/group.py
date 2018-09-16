@@ -1,4 +1,5 @@
-# Standard Libary
+
+# Standard Library
 import datetime
 import logging
 import uuid
@@ -8,26 +9,25 @@ from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
 from django_fsm_log.decorators import fsm_log_description
+from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django_fsm_log.models import StateLog
-from django.contrib.contenttypes.fields import GenericRelation
 
 # Django
 from django.apps import apps
+from django.contrib.contenttypes.fields import GenericRelation
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
-from django.core.exceptions import ValidationError
-from django.utils.functional import cached_property
 from django.urls import reverse
+from django.utils.functional import cached_property
 
 # First-Party
-from api.managers import GroupManager
-from api.fields import UploadPath
 from api.fields import LowerEmailField
-
+from api.fields import UploadPath
+from api.managers import GroupManager
 
 log = logging.getLogger(__name__)
 

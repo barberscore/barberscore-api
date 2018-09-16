@@ -1,18 +1,25 @@
-# Third-Party
-# Standard Libary
+
+
+
+# Standard Library
 import datetime
 
+# Third-Party
 from factory import Faker  # post_generation,
 from factory import Iterator
 from factory import LazyAttribute
 from factory import PostGenerationMethodCall
+from factory import RelatedFactory
 from factory import Sequence
 from factory import SubFactory
-from factory import RelatedFactory
 from factory.django import DjangoModelFactory
 from factory.django import mute_signals
 from factory.fuzzy import FuzzyInteger
-from django.db.models.signals import pre_save, pre_delete, post_save
+
+# Django
+from django.db.models.signals import post_save
+from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_save
 
 # First-Party
 from api.models import Appearance

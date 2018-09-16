@@ -1,9 +1,14 @@
-from django.db.models import Manager
-from django.apps import apps
-from django_fsm_log.models import StateLog
+
+# Third-Party
 import django_rq
+from django_fsm_log.models import StateLog
+
+# Django
+from django.apps import apps
+from django.db.models import Manager
 from django.db.models import Q
 from django.utils.timezone import localdate
+
 
 class HumanManager(Manager):
     def update_persons(self, cursor=None):

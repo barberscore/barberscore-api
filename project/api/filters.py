@@ -1,9 +1,10 @@
+
 # Third-Party
 from django_filters.rest_framework import FilterSet
+from django_fsm_log.models import StateLog
 
 # Django
 from django.contrib import admin
-from django_fsm_log.models import StateLog
 
 # Local
 from .models import Assignment
@@ -11,8 +12,8 @@ from .models import Convention
 from .models import Group
 from .models import Member
 from .models import Officer
-from .models import Score
 from .models import Round
+from .models import Score
 from .models import Session
 from .models import User
 

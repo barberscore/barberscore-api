@@ -1,29 +1,29 @@
-# Standard Libary
+
+# Standard Library
 import uuid
 from random import randint
 
 # Third-Party
-
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
+from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from ranking import Ranking
-from django.utils.functional import cached_property
-from django_fsm_log.models import StateLog
-from django.contrib.contenttypes.fields import GenericRelation
 
 # Django
-from django.db import models
-from django.utils.timezone import now
 from django.apps import apps
-from django.db.models import Sum
+from django.contrib.contenttypes.fields import GenericRelation
+from django.core.exceptions import ValidationError
+from django.db import models
 from django.db.models import Avg
 from django.db.models import Q
-from django.core.exceptions import ValidationError
+from django.db.models import Sum
+from django.utils.functional import cached_property
+from django.utils.timezone import now
 
 # First-Party
 from api.tasks import create_variance_report

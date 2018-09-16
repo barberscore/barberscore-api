@@ -1,12 +1,18 @@
+
+
+# Standard Library
+import datetime
+from random import randint
+
 # Django
 from django.apps import apps
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-import datetime
-from random import randint
 
+# First-Party
 from api.models import Appearance
 from api.models import Round
+
 
 class Command(BaseCommand):
     help = "Command to mock remaining round appearances."

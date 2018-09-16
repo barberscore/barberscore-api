@@ -1,3 +1,4 @@
+
 # Third-Party
 import pytest
 from rest_framework.test import APIClient
@@ -6,33 +7,30 @@ from rest_framework.test import APIClient
 from django.test.client import Client
 
 # First-Party
-from api.factories import (
-    AppearanceFactory,
-    AssignmentFactory,
-    AwardFactory,
-    ChartFactory,
-    ContestantFactory,
-    ContestFactory,
-    ConventionFactory,
-    CompetitorFactory,
-    EntryFactory,
-    GrantorFactory,
-    GridFactory,
-    GroupFactory,
-    MemberFactory,
-    OfficeFactory,
-    OfficerFactory,
-    PanelistFactory,
-    PersonFactory,
-    RepertoryFactory,
-    RoundFactory,
-    ScoreFactory,
-    SessionFactory,
-    SongFactory,
-    UserFactory,
-    VenueFactory,
-)
-
+from api.factories import AppearanceFactory
+from api.factories import AssignmentFactory
+from api.factories import AwardFactory
+from api.factories import ChartFactory
+from api.factories import CompetitorFactory
+from api.factories import ContestantFactory
+from api.factories import ContestFactory
+from api.factories import ConventionFactory
+from api.factories import EntryFactory
+from api.factories import GrantorFactory
+from api.factories import GridFactory
+from api.factories import GroupFactory
+from api.factories import MemberFactory
+from api.factories import OfficeFactory
+from api.factories import OfficerFactory
+from api.factories import PanelistFactory
+from api.factories import PersonFactory
+from api.factories import RepertoryFactory
+from api.factories import RoundFactory
+from api.factories import ScoreFactory
+from api.factories import SessionFactory
+from api.factories import SongFactory
+from api.factories import UserFactory
+from api.factories import VenueFactory
 
 # @pytest.fixture(scope='session')
 # def django_db_modify_db_settings():

@@ -1,6 +1,7 @@
+
 # Third-Party
-from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework.renderers import BaseRenderer
+from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework_json_api.renderers import JSONRenderer
 
 

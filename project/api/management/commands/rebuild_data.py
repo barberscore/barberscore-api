@@ -1,8 +1,13 @@
- # Django
+
+
+# Standard Library
+import datetime
+
+# Django
 from django.apps import apps
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-import datetime
+
 
 class Command(BaseCommand):
     help = "Command to rebuild denorms."

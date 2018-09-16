@@ -1,37 +1,39 @@
-# Django
-# Third-Party
+
+
+
+
 # Third-Party
 from django_fsm_log.admin import StateLogInline
 from fsm_admin.mixins import FSMTransitionMixin
 
+# Django
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group as AuthGroup
 from django.utils import timezone
 from django.utils.html import mark_safe
-from django.conf import settings
-
 
 # Local
-from .filters import AwardQualifierLevelFilter
-from .filters import OrphanListFilter
-from .filters import MCListFilter
-from .filters import MCUserListFilter
-from .filters import ConventionStatusListFilter
-from .filters import SessionConventionStatusListFilter
 from .filters import AppearanceConventionStatusListFilter
+from .filters import AwardQualifierLevelFilter
 from .filters import ConventionGroupListFilter
+from .filters import ConventionStatusListFilter
 from .filters import DistrictListFilter
 from .filters import DivisionListFilter
 from .filters import GroupListFilter
-from .filters import SessionGroupListFilter
-from .filters import RoundLegacyOssListFilter
+from .filters import MCListFilter
+from .filters import MCUserListFilter
+from .filters import OrphanListFilter
 from .filters import RoundGroupListFilter
+from .filters import RoundLegacyOssListFilter
+from .filters import SessionConventionStatusListFilter
+from .filters import SessionGroupListFilter
 from .forms import UserChangeForm
 from .forms import UserCreationForm
-from .inlines import ActiveQuartetInline
 from .inlines import ActiveChapterInline
 from .inlines import ActiveChorusInline
+from .inlines import ActiveQuartetInline
 from .inlines import AppearanceInline
 from .inlines import AssignmentInline
 from .inlines import AwardInline

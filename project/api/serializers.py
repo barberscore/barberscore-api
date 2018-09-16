@@ -1,3 +1,4 @@
+
 # Third-Party
 from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissionsField
@@ -740,4 +741,3 @@ class UserSerializer(serializers.ModelSerializer):
             'is_chart_manager',
             'is_assignment_manager',
         ]
-

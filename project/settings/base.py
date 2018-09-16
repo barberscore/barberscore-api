@@ -1,15 +1,17 @@
-# Standard Libary
+
+# Standard Library
 import os
 
 # Third-Party
 import dj_database_url
 import requests
-from cryptography.x509 import load_pem_x509_certificate
 from cryptography.hazmat.backends import default_backend
+from cryptography.x509 import load_pem_x509_certificate
 
 # Django
-from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth import authenticate
+from django.core.exceptions import ImproperlyConfigured
+
 
 def get_env_variable(var_name):
     """Get the environment variable or return exception."""

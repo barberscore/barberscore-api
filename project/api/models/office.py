@@ -1,4 +1,5 @@
-# Standard Libary
+
+# Standard Library
 import logging
 import uuid
 
@@ -12,7 +13,6 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.db import models
 from django.utils.functional import cached_property
-
 
 log = logging.getLogger(__name__)
 

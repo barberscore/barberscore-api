@@ -1,9 +1,11 @@
-# Standard Libary
+
+# Standard Library
 import logging
 import uuid
 
 # Third-Party
 from django_fsm import FSMIntegerField
+from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
@@ -12,9 +14,8 @@ from timezone_field import TimeZoneField
 
 # Django
 from django.apps import apps as api_apps
-from django.db import models
-from django_fsm_log.models import StateLog
 from django.contrib.contenttypes.fields import GenericRelation
+from django.db import models
 
 config = api_apps.get_app_config('api')
 

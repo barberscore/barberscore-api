@@ -1,36 +1,37 @@
-# Standard Libary
+
+# Standard Library
 import logging
 import random
 import uuid
-from django.template.loader import render_to_string
-import pydf
-from django.core.files.base import ContentFile
-from PyPDF2 import PdfFileMerger
 from io import BytesIO
-from django.utils.text import slugify
 
 # Third-Party
+import pydf
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
+from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from ranking import Ranking
+from PyPDF2 import PdfFileMerger
 from ranking import ORDINAL
-from django_fsm_log.models import StateLog
-from django.contrib.contenttypes.fields import GenericRelation
+from ranking import Ranking
 
 # Django
 from django.apps import apps
+from django.contrib.contenttypes.fields import GenericRelation
+from django.core.files.base import ContentFile
 from django.db import models
-from django.utils.functional import cached_property
+from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.functional import cached_property
+from django.utils.text import slugify
 
 # First-Party
-from api.tasks import save_round_oss
 from api.tasks import save_csa_round
+from api.tasks import save_round_oss
 
 log = logging.getLogger(__name__)
 

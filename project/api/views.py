@@ -1,25 +1,29 @@
-# Standard Libary
+
+# Standard Library
 import logging
 
 # Third-Party
 import pydf
-from django_fsm import TransitionNotAllowed
 from django_filters.rest_framework import DjangoFilterBackend
+from django_fsm import TransitionNotAllowed
 from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissions
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.decorators import parser_classes
 from rest_framework.parsers import FormParser
 from rest_framework.parsers import MultiPartParser
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
-from rest_framework import status
-from django.template.loader import render_to_string
+
+# Django
 from django.core.files.base import ContentFile
-from django.utils.text import slugify
 from django.db.models import Sum
+from django.template.loader import render_to_string
+from django.utils.text import slugify
 
 # Local
 from .backends import CoalesceFilterBackend
@@ -28,11 +32,11 @@ from .filters import ConventionFilter
 from .filters import GroupFilter
 from .filters import MemberFilter
 from .filters import OfficerFilter
-from .filters import ScoreFilter
 from .filters import RoundFilter
+from .filters import ScoreFilter
 from .filters import SessionFilter
-from .filters import UserFilter
 from .filters import StateLogFilter
+from .filters import UserFilter
 from .models import Appearance
 from .models import Assignment
 from .models import Award
@@ -57,6 +61,10 @@ from .models import Session
 from .models import Song
 from .models import User
 from .models import Venue
+from .renderers import PDFRenderer
+from .renderers import XLSXRenderer
+from .responders import PDFResponse
+from .responders import XLSXResponse
 from .serializers import AppearanceSerializer
 from .serializers import AssignmentSerializer
 from .serializers import AwardSerializer
@@ -82,15 +90,10 @@ from .serializers import SongSerializer
 from .serializers import StateLogSerializer
 from .serializers import UserSerializer
 from .serializers import VenueSerializer
-from .renderers import PDFRenderer
-from .responders import PDFResponse
-from .renderers import XLSXRenderer
-from .responders import XLSXResponse
-from .tasks import create_legacy_report
-from .tasks import create_drcj_report
 from .tasks import create_contact_report
+from .tasks import create_drcj_report
+from .tasks import create_legacy_report
 from .tasks import create_roster_report
-
 
 log = logging.getLogger(__name__)
 
@@ -1712,4 +1715,3 @@ class StateLogViewSet(viewsets.ModelViewSet):
         IsAuthenticated,
     ]
     resource_name = "statelog"
-

@@ -1,5 +1,9 @@
-# Django
+
+
+# Standard Library
 import os
+
+# Django
 from django.apps import AppConfig
 
 

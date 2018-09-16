@@ -1,32 +1,32 @@
-# Standard Libary
+
+# Standard Library
 import logging
 import uuid
 
 # Third-Party
 from django_fsm import FSMIntegerField
-from dry_rest_permissions.generics import allow_staff_or_superuser
-from dry_rest_permissions.generics import authenticated_users
-from model_utils import Choices
-from model_utils.models import TimeStampedModel
-from model_utils import FieldTracker
-from django.contrib.contenttypes.fields import GenericRelation
-
-
-# Django
-from django.contrib.postgres.fields import ArrayField
-from django.core.validators import RegexValidator
-from django.core.exceptions import ValidationError
-from django.db import models
-from django.utils.functional import cached_property
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
 from django_fsm_log.decorators import fsm_log_description
 from django_fsm_log.models import StateLog
+from dry_rest_permissions.generics import allow_staff_or_superuser
+from dry_rest_permissions.generics import authenticated_users
+from model_utils import Choices
+from model_utils import FieldTracker
+from model_utils.models import TimeStampedModel
+
+# Django
+from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import ArrayField
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from django.db import models
+from django.utils.functional import cached_property
 
 # First-Party
-from api.managers import PersonManager
-from api.fields import UploadPath
 from api.fields import LowerEmailField
+from api.fields import UploadPath
+from api.managers import PersonManager
 
 log = logging.getLogger(__name__)
 

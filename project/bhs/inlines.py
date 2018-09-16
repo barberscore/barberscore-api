@@ -1,16 +1,15 @@
+
 # Django
 from django.contrib import admin
 
 # Local
-from .models import (
-    Human,
-    Membership,
-    Role,
-    Join,
-    Status,
-    Structure,
-    Subscription,
-)
+from .models import Human
+from .models import Join
+from .models import Membership
+from .models import Role
+from .models import Status
+from .models import Structure
+from .models import Subscription
 
 
 class SubscriptionInline(admin.TabularInline):

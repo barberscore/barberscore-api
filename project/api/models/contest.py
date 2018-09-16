@@ -1,4 +1,5 @@
-# Standard Libary
+
+# Standard Library
 import logging
 import uuid
 
@@ -6,17 +7,17 @@ import uuid
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
+from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django_fsm_log.models import StateLog
-from django.contrib.contenttypes.fields import GenericRelation
 
 # Django
 from django.apps import apps as api_apps
-from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
+from django.db import models
 
 config = api_apps.get_app_config('api')
 

@@ -1,21 +1,19 @@
-# Django
+
+
+
 # Third-Party
 from rest_framework.documentation import include_docs_urls
 from rest_framework.schemas import get_schema_view
-from django.views.static import serve
 
-
+# Django
 from django.conf import settings
-from django.urls import (
-    include,
-    path,
-    re_path,
-)
 from django.contrib import admin
-from django.http import (
-    HttpResponse,
-    HttpResponseRedirect,
-)
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.urls import include
+from django.urls import path
+from django.urls import re_path
+from django.views.static import serve
 
 schema_view = get_schema_view(
     title='Barberscore API',

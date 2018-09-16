@@ -1,8 +1,9 @@
-# Standard Libary
+
 # Debug Toolbar
+
+# Local
 from .base import *
 
-# Django
 DEBUG = True
 HOST_NAME = 'http://localhost:8000'
 ALLOWED_HOSTS = [

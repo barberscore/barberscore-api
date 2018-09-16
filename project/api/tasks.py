@@ -1,12 +1,9 @@
-# Standard Libary
+
+# Standard Library
 import csv
 import logging
 import time
 from io import BytesIO
-
-from django.core.files.base import ContentFile
-from django.core.files import File
-from PyPDF2 import PdfFileMerger
 
 # Third-Party
 import pydf
@@ -16,21 +13,23 @@ from auth0.v3.management import Auth0
 from django_rq import job
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
-from django.db.models import Q
-from django.utils.timezone import localdate
+from PyPDF2 import PdfFileMerger
 
 # Django
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
+from django.core.files import File
+from django.core.files.base import ContentFile
 from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
-from django.utils.crypto import get_random_string
-from django.core.validators import validate_email
 from django.core.validators import ValidationError
-from django.utils.text import slugify
+from django.core.validators import validate_email
 from django.db.models import Count
 from django.db.models import Q
+from django.template.loader import render_to_string
+from django.utils.crypto import get_random_string
+from django.utils.text import slugify
+from django.utils.timezone import localdate
 
 log = logging.getLogger(__name__)
 
@@ -528,4 +527,3 @@ def send_sa(context):
     if result != 1:
         raise RuntimeError("Email unsuccessful {0}".format(entry))
     return
-

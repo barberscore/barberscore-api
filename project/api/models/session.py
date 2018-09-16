@@ -1,35 +1,34 @@
-# Standard Libary
+
+# Standard Library
 import datetime
 import logging
 import uuid
-from django.template.loader import render_to_string
-import pydf
-from django.core.files.base import ContentFile
 
 # Third-Party
+import django_rq
+import pydf
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
+from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from ranking import Ranking
 from ranking import ORDINAL
-from django.core.exceptions import ValidationError
-from django_fsm_log.models import StateLog
-from django.contrib.contenttypes.fields import GenericRelation
-from django.template.loader import render_to_string
-import django_rq
-from django.core.mail import EmailMessage
+from ranking import Ranking
+
 # Django
 from django.apps import apps
-from django.db import models
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
+from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from django.core.mail import EmailMessage
+from django.db import models
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.functional import cached_property
-
-# First-Party
 
 log = logging.getLogger(__name__)
 

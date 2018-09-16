@@ -1,23 +1,20 @@
+
+
 # Django
-# Third-Party
 from django.contrib import admin
 
 # Local
-from .inlines import (
-    MembershipInline,
-    RoleInline,
-    JoinInline,
-    SubscriptionInline,
-)
-from .models import (
-    Human,
-    Membership,
-    Role,
-    Join,
-    Status,
-    Structure,
-    Subscription,
-)
+from .inlines import JoinInline
+from .inlines import MembershipInline
+from .inlines import RoleInline
+from .inlines import SubscriptionInline
+from .models import Human
+from .models import Join
+from .models import Membership
+from .models import Role
+from .models import Status
+from .models import Structure
+from .models import Subscription
 
 admin.site.disable_action('delete_selected')
 

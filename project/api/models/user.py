@@ -1,30 +1,32 @@
-# Standard Libary
+
+# Standard Library
 import logging
 import uuid
-from auth0.v3.exceptions import Auth0Error
+
 # Third-Party
+from auth0.v3.exceptions import Auth0Error
 from django_fsm import FSMIntegerField
+from django_fsm import transition
+from django_fsm_log.decorators import fsm_log_by
+from django_fsm_log.decorators import fsm_log_description
+from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
-from django.utils.crypto import get_random_string
 
 # Django
 from django.apps import apps as api_apps
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser
-from django.db import models
-from django.utils.functional import cached_property
-from django_fsm import transition
-from django_fsm_log.decorators import fsm_log_by
-from django_fsm_log.decorators import fsm_log_description
-from django_fsm_log.models import StateLog
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils.crypto import get_random_string
+from django.utils.functional import cached_property
 
 # First-Party
-from api.managers import UserManager
 from api.fields import LowerEmailField
+from api.managers import UserManager
 from api.tasks import get_auth0
 
 config = api_apps.get_app_config('api')

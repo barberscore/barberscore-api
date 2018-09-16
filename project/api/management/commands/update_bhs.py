@@ -1,4 +1,5 @@
-# Standard Libary
+
+# Standard Library
 import datetime
 import logging
 
@@ -10,11 +11,10 @@ from django.utils import timezone
 from api.models import Person
 from api.models import User
 from bhs.models import Human
+from bhs.models import Join
+from bhs.models import Role
 from bhs.models import Structure
 from bhs.models import Subscription
-from bhs.models import Role
-from bhs.models import Join
-
 
 log = logging.getLogger('updater')
 

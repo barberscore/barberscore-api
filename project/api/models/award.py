@@ -1,4 +1,5 @@
-# Standard Libary
+
+# Standard Library
 import logging
 import uuid
 
@@ -14,9 +15,10 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.contrib.postgres.fields import FloatRangeField
 from django.contrib.postgres.fields import IntegerRangeField
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
 
+# First-Party
 from api.managers import AwardManager
 
 log = logging.getLogger(__name__)
