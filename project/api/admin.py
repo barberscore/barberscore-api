@@ -915,8 +915,7 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         StateLogInline,
     ]
 
-    @staticmethod
-    def is_mc(instance):
+    def is_mc(self, instance):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
@@ -988,8 +987,7 @@ class OfficeAdmin(admin.ModelAdmin):
     #     OfficerInline,
     # ]
 
-    @staticmethod
-    def is_mc(instance):
+    def is_mc(self, instance):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
@@ -997,9 +995,8 @@ class OfficeAdmin(admin.ModelAdmin):
 
 @admin.register(Officer)
 class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    @staticmethod
-    def office__code(obj):
-        return "{0}".format(obj.office.code)
+    def office__code(self, instance):
+        return "{0}".format(instance.office.code)
 
     fsm_field = [
         'status',
@@ -1058,8 +1055,7 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'person__first_name',
     ]
 
-    @staticmethod
-    def is_mc(instance):
+    def is_mc(self, instance):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
@@ -1200,8 +1196,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     # readonly_fields = [
     #     'common_name',
     # ]
-    @staticmethod
-    def is_mc(instance):
+    def is_mc(self, instance):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
@@ -1631,8 +1626,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         'is_assignment_manager',
     ]
 
-    @staticmethod
-    def is_mc(instance):
+    def is_mc(self, instance):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
