@@ -302,7 +302,7 @@ class User(AbstractBaseUser):
             try:
                 account = auth0.users.create(payload)
             except Auth0Error as e:
-                if e.message = 'The user already exists.':
+                if e.message == 'The user already exists.':
                     account = auth0.users_by_email.search_users_by_email(self.email)
                     self.username = account['user_id']
                     self.save()
