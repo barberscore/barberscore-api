@@ -579,6 +579,16 @@ class Join(models.Model):
     )
 
     # Internals
+    def clean(self):
+        if all([
+            not self.inactive_date,
+            self.subscription.items_editable,
+            self.subscription.status == 'expired',
+        ]):
+            raise ValidationError({
+                'inactive_date': 'Inactive Date is missing on expired subscription.',
+            })
+
     def __str__(self):
         return str(self.id)
         # return "{0} {1}".format(
