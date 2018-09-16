@@ -1,18 +1,12 @@
-
-
-
-
 # Third-Party
 from django_fsm_log.admin import StateLogInline
 from fsm_admin.mixins import FSMTransitionMixin
 
 # Django
-from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group as AuthGroup
 from django.utils import timezone
-from django.utils.html import mark_safe
 
 # Local
 from .filters import AppearanceConventionStatusListFilter
@@ -88,7 +82,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'actual_start',
         'actual_finish',
-        ('competitor','legacy_group',),
+        ('competitor', 'legacy_group',),
         'round',
         'num',
         'draw',
@@ -210,7 +204,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'season',
         'rounds',
         'parent',
-        ('threshold', 'minimum', 'advance','spots',),
+        ('threshold', 'minimum', 'advance', 'spots',),
         'description',
         'notes',
     ]
@@ -921,7 +915,8 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         StateLogInline,
     ]
 
-    def is_mc(self, instance):
+    @staticmethod
+    def is_mc(instance):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
@@ -993,7 +988,8 @@ class OfficeAdmin(admin.ModelAdmin):
     #     OfficerInline,
     # ]
 
-    def is_mc(self, instance):
+    @staticmethod
+    def is_mc(instance):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
@@ -1001,7 +997,8 @@ class OfficeAdmin(admin.ModelAdmin):
 
 @admin.register(Officer)
 class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    def office__code(self, obj):
+    @staticmethod
+    def office__code(obj):
         return "{0}".format(obj.office.code)
 
     fsm_field = [
@@ -1061,7 +1058,8 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'person__first_name',
     ]
 
-    def is_mc(self, instance):
+    @staticmethod
+    def is_mc(instance):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
@@ -1202,7 +1200,8 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     # readonly_fields = [
     #     'common_name',
     # ]
-    def is_mc(self, instance):
+    @staticmethod
+    def is_mc(instance):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
@@ -1632,7 +1631,8 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         'is_assignment_manager',
     ]
 
-    def is_mc(self, instance):
+    @staticmethod
+    def is_mc(instance):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
