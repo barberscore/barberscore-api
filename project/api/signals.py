@@ -1,4 +1,6 @@
 # Django
+import django_rq
+
 # Third-Party
 from collections import defaultdict
 from django.db.models.signals import post_save
@@ -9,9 +11,6 @@ from django.conf import settings
 # Local
 from .models import Person
 from .models import User
-from .tasks import create_account
-from .tasks import update_account
-from .tasks import delete_account
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 
@@ -20,13 +19,23 @@ from django.core.exceptions import ValidationError
 def user_post_save(sender, instance, created, **kwargs):
     if not instance.is_staff:
         if created:
-            create_account.delay(instance)
+            account, new = instance.update_or_create_account()
+            if new:
+                # Set username if new; otherwise it's an overwrite and skip save
+                instance.username = account['user_id']
+                instance.save()
         else:
-            update_account.delay(instance)
+            queue = django_rq.get_queue('low')
+            queue.enqueue(
+                instance.update_or_create_account
+            )
     return
 
 @receiver(pre_delete, sender=User)
 def user_pre_delete(sender, instance, **kwargs):
     if not instance.is_staff:
-        delete_account.delay(instance)
+        queue = django_rq.get_queue('low')
+        queue.enqueue(
+            instance.delete_account
+        )
     return

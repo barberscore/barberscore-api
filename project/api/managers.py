@@ -19,14 +19,13 @@ from django.db.models import Value
 from django.forms.models import model_to_dict
 from django.utils.timezone import now, localdate
 from api.tasks import get_accounts
-from api.tasks import create_account
-from api.tasks import delete_account
 from django.db.models.functions import Concat
 from django.core.serializers.json import DjangoJSONEncoder
 from dictdiffer import diff
 from algoliasearch_django.decorators import disable_auto_indexing
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
+from api.tasks import get_auth0
 
 log = logging.getLogger(__name__)
 
