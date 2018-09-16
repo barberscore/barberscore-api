@@ -20,10 +20,10 @@ def user_post_save(sender, instance, created, **kwargs):
     if not instance.is_staff:
         if created:
             account, new = instance.update_or_create_account()
-            if not new:
-                raise RuntimeError('User problem')
-            instance.username = account['user_id']
-            instance.save()
+            if new:
+                # Set username if new; otherwise it's an overwrite and skip save
+                instance.username = account['user_id']
+                instance.save()
         else:
             queue = django_rq.get_queue('low')
             queue.enqueue(

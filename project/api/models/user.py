@@ -1,7 +1,7 @@
 # Standard Libary
 import logging
 import uuid
-
+from auth0.v3.exceptions import Auth0Error
 # Third-Party
 from django_fsm import FSMIntegerField
 from dry_rest_permissions.generics import allow_staff_or_superuser
@@ -299,7 +299,16 @@ class User(AbstractBaseUser):
         elif self.username.startswith('orphan|'):
             payload['connection'] = 'Default'
             payload['password'] = get_random_string()
-            account = auth0.users.create(payload)
+            try:
+                account = auth0.users.create(payload)
+            except Auth0Error as e:
+                if e.message = 'The user already exists.':
+                    account = auth0.users_by_email.search_users_by_email(self.email)
+                    self.username = account['user_id']
+                    self.save()
+                    created = False
+                    return account, created
+                raise(e)
             created = True
         else:
             ValueError("Unknown Username type")
