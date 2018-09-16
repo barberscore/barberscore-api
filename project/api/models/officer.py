@@ -12,15 +12,13 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django_fsm_log.models import StateLog
-from django.contrib.contenttypes.fields import GenericRelation
-from django.core.exceptions import ValidationError
-from django.utils.timezone import now
 
 # Django
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.functional import cached_property
+from django.utils.timezone import now
 
 # First-Party
 from api.managers import OfficerManager
