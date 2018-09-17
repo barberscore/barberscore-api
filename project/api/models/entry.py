@@ -18,9 +18,6 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 
-# First-Party
-from api.tasks import send_entry
-
 log = logging.getLogger(__name__)
 
 
@@ -267,6 +264,49 @@ class Entry(TimeStampedModel):
         ])
 
     # Methods
+    def queue_notification(self, template, context=None):
+        officers = self.group.officers.filter(
+            status__gt=0,
+            person__email__isnull=False,
+        )
+        if not officers:
+            raise RuntimeError("No officers for {0}".format(self.group))
+        ccs = []
+        assignments = self.session.convention.assignments.filter(
+            category__lt=10,
+        ).exclude(person__email=None)
+        tos = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
+        ccs = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
+        if self.group.kind == self.group.KIND.quartet:
+            members = self.group.members.filter(
+                status__gt=0,
+                person__email__isnull=False,
+            ).exclude(
+                person__officers__in=officers,
+            ).distinct()
+            for member in members:
+                ccs.append(
+                    "{0} <{1}>".format(member.person.common_name, member.person.email)
+                )
+        rendered = render_to_string(template, context)
+        subject = "[Barberscore] {0} {1} {2} Session".format(
+            self.group.name,
+            self.session.convention.name,
+            self.session.get_kind_display(),
+        )
+        email = EmailMessage(
+            subject=subject,
+            body=rendered,
+            from_email='Barberscore <admin@barberscore.com>',
+            to=tos,
+            cc=ccs,
+        )
+        queue = django_rq.get_queue('high')
+        result = queue.enqueue(
+            email.send
+        )
+        return result
+
 
     # Entry Transition Conditions
     def can_build_entry(self):
@@ -359,8 +399,7 @@ class Entry(TimeStampedModel):
         conditions=[can_invite_entry],
     )
     def invite(self, *args, **kwargs):
-        context = {'entry': self}
-        send_entry.delay('entry_invite.txt', context)
+        entry.queue_notification('entry_invite.txt')
         return
 
     @fsm_log_by
@@ -387,8 +426,7 @@ class Entry(TimeStampedModel):
         for contestant in contestants:
             contestant.exclude()
             contestant.save()
-        context = {'entry': self}
-        send_entry.delay('entry_withdraw.txt', context)
+        entry.queue_notification('entry_withdraw.txt')
         return
 
     @fsm_log_by
@@ -407,10 +445,9 @@ class Entry(TimeStampedModel):
             status__gt=0,
         ).order_by('contest__award__name')
         context = {
-            'entry': self,
             'contestants': contestants,
         }
-        send_entry.delay('entry_submit.txt', context)
+        entry.queue_notification('entry_submit.txt', context)
         return
 
     @fsm_log_by
@@ -442,5 +479,5 @@ class Entry(TimeStampedModel):
             'contestants': contestants,
             'members': members,
         }
-        send_entry.delay('entry_approve.txt', context)
+        entry.queue_notification('entry_approve.txt', context)
         return

@@ -11,12 +11,9 @@ from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.decorators import parser_classes
 from rest_framework.parsers import FormParser
-from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 
 # Django
@@ -29,7 +26,6 @@ from django.utils.text import slugify
 from .backends import CoalesceFilterBackend
 from .filters import AssignmentFilter
 from .filters import ConventionFilter
-from .filters import GroupFilter
 from .filters import MemberFilter
 from .filters import OfficerFilter
 from .filters import RoundFilter
@@ -90,10 +86,6 @@ from .serializers import SongSerializer
 from .serializers import StateLogSerializer
 from .serializers import UserSerializer
 from .serializers import VenueSerializer
-from .tasks import create_contact_report
-from .tasks import create_drcj_report
-from .tasks import create_legacy_report
-from .tasks import create_roster_report
 
 log = logging.getLogger(__name__)
 
@@ -782,7 +774,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
     def roster(self, request, pk=None):
         group = Group.objects.get(pk=pk)
-        xlsx = create_roster_report(group)
+        xlsx = group.get_roster()
         file_name = '{0}-roster'.format(
             slugify(
                 "{0}".format(
@@ -1468,7 +1460,7 @@ class SessionViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
     def legacy(self, request, pk=None):
         session = Session.objects.get(pk=pk)
-        xlsx = create_legacy_report(session)
+        xlsx = session.get_legacy()
         file_name = '{0}-legacy'.format(
             slugify(
                 "{0} {1} Session".format(
@@ -1486,7 +1478,7 @@ class SessionViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
     def drcj(self, request, pk=None):
         session = Session.objects.get(pk=pk)
-        xlsx = create_drcj_report(session)
+        xlsx = session.get_drcj()
         file_name = '{0}-drcj'.format(
             slugify(
                 "{0} {1} Session".format(
@@ -1504,7 +1496,7 @@ class SessionViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
     def contact(self, request, pk=None):
         session = Session.objects.get(pk=pk)
-        xlsx = create_contact_report(session)
+        xlsx = session.get_contact()
         file_name = '{0}-contact'.format(
             slugify(
                 "{0} {1} Session".format(

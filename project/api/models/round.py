@@ -29,10 +29,6 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 
-# First-Party
-from api.tasks import save_csa_round
-from api.tasks import save_round_oss
-
 log = logging.getLogger(__name__)
 
 

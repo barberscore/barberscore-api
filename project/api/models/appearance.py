@@ -12,7 +12,6 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from ranking import Ranking
 
 # Django
 from django.apps import apps
@@ -24,9 +23,6 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.utils.functional import cached_property
 from django.utils.timezone import now
-
-# First-Party
-from api.tasks import create_variance_report
 
 
 class Appearance(TimeStampedModel):
@@ -219,6 +215,36 @@ class Appearance(TimeStampedModel):
         )
 
     # Methods
+    def get_variance(self):
+        Score = apps.get_model('api.score')
+        Panelist = apps.get_model('api.panelist')
+        songs = self.songs.order_by('num')
+        scores = Score.objects.filter(
+            kind=Score.KIND.official,
+            song__in=songs,
+        ).order_by(
+            'category',
+            'panelist__person__last_name',
+            'song__num',
+        )
+        panelists = self.round.panelists.filter(
+            kind=Panelist.KIND.official,
+            category__gt=Panelist.CATEGORY.ca,
+        ).order_by(
+            'category',
+            'person__last_name',
+        )
+        context = {
+            'appearance': self,
+            'songs': songs,
+            'scores': scores,
+            'panelists': panelists,
+        }
+        rendered = render_to_string('variance.html', context)
+        file = pydf.generate_pdf(rendered, enable_smart_shrinking=False)
+        return content
+
+
     def mock(self):
         # Mock Appearance
         Chart = apps.get_model('api.chart')
@@ -423,10 +449,27 @@ class Appearance(TimeStampedModel):
             if variance:
                 switch = True
         if switch:
-            create_variance_report(self)
+            content = self.get_variance()
+            self.variance_report.save(
+                "{0}-variance-report".format(
+                    slugify(self.competitor.group.name),
+                ),
+                content,
+                save=False,
+            )
         else:
             self.variance_report = None
         self.calculate()
         self.competitor.calculate()
         self.competitor.save()
+        content = self.competitor.get_csa()
+        self.competitor.csa.save(
+            slugify(
+                '{0} csa'.format(
+                    competitor.group.name,
+                )
+            ),
+            content=content,
+            save=False,
+        )
         return

@@ -383,6 +383,40 @@ class Group(TimeStampedModel):
         return bool(self.mc_pk)
 
     # Methods
+    def get_roster(self):
+        Member = apps.get_model('api.member')
+        wb = Workbook()
+        ws = wb.active
+        fieldnames = [
+            'BHS ID',
+            'First Name',
+            'Last Name',
+            'Expiration Date',
+            'Status',
+        ]
+        ws.append(fieldnames)
+        members = self.members.filter(
+            status=Member.STATUS.active,
+        ).order_by('person__last_name', 'person__first_name')
+        for member in members:
+            bhs_id = member.person.bhs_id
+            first_name = member.person.first_name
+            last_name = member.person.last_name
+            expiration = member.person.user.current_through
+            status = member.person.get_status_display()
+            row = [
+                bhs_id,
+                first_name,
+                last_name,
+                expiration,
+                status,
+            ]
+            ws.append(row)
+        file = save_virtual_workbook(wb)
+        content = ContentFile(file)
+        return content
+
+
     def is_active(self):
         # For Algolia indexing
         return bool(self.status == self.STATUS.active)

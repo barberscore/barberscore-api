@@ -13,7 +13,6 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from ranking import Ranking
 
 # Django
 from django.apps import apps
@@ -24,13 +23,9 @@ from django.db.models import Avg
 from django.db.models import Q
 from django.db.models import Sum
 from django.template.loader import render_to_string
-from django.urls import reverse
-from django.utils.functional import cached_property
 
 # First-Party
 from api.fields import UploadPath
-from api.tasks import save_csa_report
-from api.tasks import send_csa
 
 log = logging.getLogger(__name__)
 
@@ -308,7 +303,6 @@ class Competitor(TimeStampedModel):
         self.per_score = per['avg']
         self.sng_points = sng['sum']
         self.sng_score = sng['avg']
-        save_csa_report.delay(self)
 
     def get_csa(self):
         Panelist = apps.get_model('api.panelist')
@@ -350,6 +344,44 @@ class Competitor(TimeStampedModel):
         content = ContentFile(file)
         return content
 
+    def queue_notification(self):
+        officers = self.group.officers.filter(
+            status__gt=0,
+            person__email__isnull=False,
+        )
+        if not officers:
+            raise RuntimeError("No officers for {0}".format(self.group))
+        tos = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
+        ccs = ["David Mills <proclamation56@gmail.com>"]
+        if self.group.kind == self.group.KIND.quartet:
+            members = self.group.members.filter(
+                status__gt=0,
+                person__email__isnull=False,
+            ).exclude(
+                person__officers__in=officers,
+            ).distinct()
+            for member in members:
+                ccs.append(
+                    "{0} <{1}>".format(member.person.common_name, member.person.email)
+                )
+        rendered = render_to_string('csa.txt', context)
+        subject = "[Barberscore] {0} {1} {2} Session CSA".format(
+            self.group.name,
+            self.session.convention.name,
+            self.session.get_kind_display(),
+        )
+        email = EmailMessage(
+            subject=subject,
+            body=rendered,
+            from_email='Barberscore <admin@barberscore.com>',
+            to=tos,
+            cc=ccs,
+        )
+        queue = django_rq.get_queue('high')
+        result = queue.enqueue(
+            email.send
+        )
+        return result
 
     # Competitor Transition Conditions
 
@@ -371,10 +403,7 @@ class Competitor(TimeStampedModel):
         target=STATUS.finished,
     )
     def finish(self, *args, **kwargs):
-        context = {
-            'competitor': self,
-        }
-        send_csa.delay(context)
+        self.queue_notification()
         return
 
     @fsm_log_by

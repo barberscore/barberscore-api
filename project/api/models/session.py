@@ -15,6 +15,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from openpyxl.writer.excel import save_virtual_workbook
 from ranking import ORDINAL
 from ranking import Ranking
 
@@ -181,6 +182,221 @@ class Session(TimeStampedModel):
             competitor.sng_rank = ranked.rank(competitor.sng_points)
             competitor.save()
         return
+
+    def get_legacy(self):
+        Entry = apps.get_model('api.entry')
+        wb = Workbook()
+        ws = wb.active
+        fieldnames = [
+            'oa',
+            'contestant_id',
+            'group_name',
+            'group_type',
+            'song_number',
+            'song_title',
+        ]
+        ws.append(fieldnames)
+        entries = self.entries.filter(
+            status__in=[
+                Entry.STATUS.approved,
+            ]
+        ).order_by('draw')
+        for entry in entries:
+            oa = entry.draw
+            group_name = entry.group.name.encode('utf-8').strip()
+            group_type = entry.group.get_kind_display()
+            if group_type == 'Quartet':
+                contestant_id = entry.group.bhs_id
+            elif group_type == 'Chorus':
+                contestant_id = entry.group.code
+            else:
+                raise RuntimeError("Improper Entity Type")
+            i = 1
+            for repertory in entry.group.repertories.order_by('chart__title'):
+                song_number = i
+                song_title = repertory.chart.title.encode('utf-8').strip()
+                i += 1
+                row = [
+                    oa,
+                    contestant_id,
+                    group_name,
+                    group_type,
+                    song_number,
+                    song_title,
+                ]
+                ws.append(row)
+        file = save_virtual_workbook(wb)
+        content = ContentFile(file)
+        return content
+
+
+    def get_drcj(self):
+        Entry = apps.get_model('api.entry')
+        Group = apps.get_model('api.group')
+        Member = apps.get_model('api.member')
+        wb = Workbook()
+        ws = wb.active
+        fieldnames = [
+            'OA',
+            'Group Name',
+            'Representing',
+            'Evaluation?',
+            'Score/Eval-Only?',
+            'BHS ID',
+            'Group Status',
+            'Repertory Count',
+            'Estimated MOS',
+            'Members Expiring',
+            'Tenor',
+            'Lead',
+            'Baritone',
+            'Bass',
+            'Director/Participant(s)',
+            'Award(s)',
+            'Chapter(s)',
+        ]
+        ws.append(fieldnames)
+        entries = self.entries.filter(
+            status__in=[
+                Entry.STATUS.approved,
+            ]
+        ).order_by('draw')
+        for entry in entries:
+            oa = entry.draw
+            group_name = entry.group.name
+            representing = entry.representing
+            evaluation = entry.is_evaluation
+            private = entry.is_private
+            bhs_id = entry.group.bhs_id
+            repertory_count = entry.group.repertories.filter(
+                status__gt=0,
+            ).count()
+            group_status = entry.group.get_status_display()
+            repertory_count = entry.group.repertories.filter(
+                status__gt=0,
+            ).count()
+            participant_count = entry.pos
+            members = entry.group.members.filter(
+                status__gt=0,
+            )
+            expiring_count = members.filter(
+                person__user__current_through__lte=self.convention.close_date,
+            ).count()
+            participants = entry.participants
+            awards_list = []
+            contestants = entry.contestants.filter(
+                status__gt=0,
+            ).order_by('contest__award__name')
+            for contestant in contestants:
+                awards_list.append(contestant.contest.award.name)
+            awards = "\n".join(filter(None, awards_list))
+            parts = {}
+            part = 1
+            while part <= 4:
+                try:
+                    member = members.get(
+                        part=part,
+                    )
+                except Member.DoesNotExist:
+                    parts[part] = None
+                    part += 1
+                    continue
+                except Member.MultipleObjectsReturned:
+                    parts[part] = None
+                    part += 1
+                    continue
+                member_list = []
+                member_list.append(
+                    member.person.nomen,
+                )
+                member_list.append(
+                    member.person.email,
+                )
+                member_list.append(
+                    member.person.phone,
+                )
+                member_detail = "\n".join(filter(None, member_list))
+                parts[part] = member_detail
+                part += 1
+            if entry.group.kind == entry.group.KIND.quartet:
+                persons = members.values_list('person', flat=True)
+                cs = Group.objects.filter(
+                    members__person__in=persons,
+                    members__status__gt=0,
+                    kind=Group.KIND.chorus,
+                ).distinct(
+                ).order_by(
+                    'parent__name',
+                ).values_list(
+                    'parent__name',
+                    flat=True
+                )
+                chapters = "\n".join(cs)
+            elif entry.group.kind == entry.group.KIND.chorus:
+                try:
+                    chapters = entry.group.parent.name
+                except AttributeError:
+                    chapters = None
+            row = [
+                oa,
+                group_name,
+                representing,
+                evaluation,
+                private,
+                bhs_id,
+                group_status,
+                repertory_count,
+                participant_count,
+                expiring_count,
+                parts[1],
+                parts[2],
+                parts[3],
+                parts[4],
+                participants,
+                awards,
+                chapters,
+            ]
+            ws.append(row)
+        file = save_virtual_workbook(wb)
+        content = ContentFile(file)
+        return content
+
+    def get_contact(self):
+        Entry = apps.get_model('api.entry')
+        wb = Workbook()
+        ws = wb.active
+        fieldnames = [
+            'group',
+            'admin',
+            'email',
+            'cell',
+        ]
+        ws.append(fieldnames)
+        entries = self.entries.filter(
+            status__in=[
+                Entry.STATUS.approved,
+            ]
+        ).order_by('group__name')
+        for entry in entries:
+            admins = entry.group.officers.filter(
+                status__gt=0,
+            )
+            for admin in admins:
+                group = entry.group.nomen
+                person = admin.person.nomen
+                email = admin.person.email
+                cell = admin.person.cell_phone
+                row = [
+                    group,
+                    person,
+                    email,
+                    cell,
+                ]
+                ws.append(row)
+        file = save_virtual_workbook(wb)
+        content = ContentFile(file)
+        return content
+
 
     def get_oss(self):
         Competitor = apps.get_model('api.competitor')
