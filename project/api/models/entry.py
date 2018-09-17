@@ -247,7 +247,7 @@ class Entry(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            # For CAs
+            # For DRCJs
             all([
                 self.session.convention.assignments.filter(
                     person__user=request.user,
