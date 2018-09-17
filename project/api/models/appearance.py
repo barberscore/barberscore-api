@@ -1,6 +1,7 @@
 
 # Standard Library
 import uuid
+import pydf
 from random import randint
 
 # Third-Party
@@ -23,6 +24,8 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.utils.functional import cached_property
 from django.utils.timezone import now
+from django.template.loader import render_to_string
+from django.utils.text import slugify
 
 
 class Appearance(TimeStampedModel):
@@ -462,14 +465,4 @@ class Appearance(TimeStampedModel):
         self.calculate()
         self.competitor.calculate()
         self.competitor.save()
-        content = self.competitor.get_csa()
-        self.competitor.csa.save(
-            slugify(
-                '{0} csa'.format(
-                    competitor.group.name,
-                )
-            ),
-            content=content,
-            save=False,
-        )
         return
