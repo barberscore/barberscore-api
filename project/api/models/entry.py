@@ -2,6 +2,7 @@
 # Standard Library
 import logging
 import uuid
+import django_rq
 
 # Third-Party
 from django_fsm import FSMIntegerField
@@ -17,6 +18,8 @@ from model_utils.models import TimeStampedModel
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
 
 log = logging.getLogger(__name__)
 
@@ -399,7 +402,8 @@ class Entry(TimeStampedModel):
         conditions=[can_invite_entry],
     )
     def invite(self, *args, **kwargs):
-        entry.queue_notification('entry_invite.txt')
+        context = {'entry': self}
+        self.queue_notification('entry_invite.txt', context)
         return
 
     @fsm_log_by
@@ -426,7 +430,8 @@ class Entry(TimeStampedModel):
         for contestant in contestants:
             contestant.exclude()
             contestant.save()
-        entry.queue_notification('entry_withdraw.txt')
+        context = {'entry': self}
+        self.queue_notification('entry_withdraw.txt', context)
         return
 
     @fsm_log_by
@@ -445,9 +450,10 @@ class Entry(TimeStampedModel):
             status__gt=0,
         ).order_by('contest__award__name')
         context = {
+            'entry': self,
             'contestants': contestants,
         }
-        entry.queue_notification('entry_submit.txt', context)
+        self.queue_notification('entry_submit.txt', context)
         return
 
     @fsm_log_by
@@ -479,5 +485,5 @@ class Entry(TimeStampedModel):
             'contestants': contestants,
             'members': members,
         }
-        entry.queue_notification('entry_approve.txt', context)
+        self.queue_notification('entry_approve.txt', context)
         return
