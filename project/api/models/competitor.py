@@ -364,6 +364,7 @@ class Competitor(TimeStampedModel):
                 ccs.append(
                     "{0} <{1}>".format(member.person.common_name, member.person.email)
                 )
+        context = {'competitor': self}
         rendered = render_to_string('csa.txt', context)
         subject = "[Barberscore] {0} {1} {2} Session CSA".format(
             self.group.name,
