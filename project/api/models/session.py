@@ -18,6 +18,8 @@ from model_utils.models import TimeStampedModel
 from openpyxl.writer.excel import save_virtual_workbook
 from ranking import ORDINAL
 from ranking import Ranking
+from openpyxl import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
 
 # Django
 from django.apps import apps
@@ -28,8 +30,6 @@ from django.core.files.base import ContentFile
 from django.core.mail import EmailMessage
 from django.db import models
 from django.template.loader import render_to_string
-from django.urls import reverse
-from django.utils.functional import cached_property
 
 log = logging.getLogger(__name__)
 
