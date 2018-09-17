@@ -244,7 +244,7 @@ class Appearance(TimeStampedModel):
             'panelists': panelists,
         }
         rendered = render_to_string('variance.html', context)
-        file = pydf.generate_pdf(rendered, enable_smart_shrinking=False)
+        content = pydf.generate_pdf(rendered, enable_smart_shrinking=False)
         return content
 
 
@@ -464,5 +464,13 @@ class Appearance(TimeStampedModel):
             self.variance_report = None
         self.calculate()
         self.competitor.calculate()
+        content = self.competitor.get_csa()
+        self.competitor.csa.save(
+            "{0}-csa".format(
+                slugify(self.competitor.group.name),
+            ),
+            content,
+            save=False,
+        )
         self.competitor.save()
         return
