@@ -528,8 +528,14 @@ class Round(TimeStampedModel):
         return True
 
     def can_verify(self):
+        Award = apps.get_model('api.award')
         return all([
-            not self.appearances.exclude(status=self.appearances.model.STATUS.verified)
+            not self.appearances.exclude(status=self.appearances.model.STATUS.verified),
+            not self.session.contests.filter(
+                award__level=Award.LEVEL.manual,
+                award__rounds=self.num,
+                group__isnull=True,
+            ),
         ])
 
     def can_finish(self):
