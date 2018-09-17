@@ -34,9 +34,9 @@ DEBUG_TOOLBAR_PANELS = [
 ]
 
 # RQ Overwrite
-RQ_QUEUES['default']['ASYNC'] = True
-RQ_QUEUES['high']['ASYNC'] = True
-RQ_QUEUES['low']['ASYNC'] = True
+RQ_QUEUES['default']['ASYNC'] = False
+RQ_QUEUES['high']['ASYNC'] = False
+RQ_QUEUES['low']['ASYNC'] = False
 
 # Algolia Overwrite
 ALGOLIA['AUTO_INDEXING'] = False
