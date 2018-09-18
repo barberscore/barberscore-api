@@ -5,6 +5,7 @@ import pydf
 from random import randint
 
 # Third-Party
+import django_rq
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
@@ -273,7 +274,7 @@ class Appearance(TimeStampedModel):
             song.save()
             scores = song.scores.all()
             for score in scores:
-                d = randint(-4,4)
+                d = randint(-4, 4)
                 score.points = prelim + d
                 score.save()
         if self.status == self.STATUS.new:
@@ -463,13 +464,8 @@ class Appearance(TimeStampedModel):
             self.variance_report = None
         self.calculate()
         self.competitor.calculate()
-        content = self.competitor.get_csa()
-        self.competitor.csa.save(
-            "{0}-csa".format(
-                slugify(self.competitor.group.name),
-            ),
-            content,
-            save=False,
-        )
         self.competitor.save()
+        django_rq.enqueue(
+            self.competitor.save_csa,
+        )
         return
