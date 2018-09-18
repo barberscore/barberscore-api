@@ -8,6 +8,7 @@ from random import randint
 import django_rq
 from django_fsm import FSMIntegerField
 from django_fsm import transition
+from django_fsm import RETURN_VALUE
 from django_fsm_log.decorators import fsm_log_by
 from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
@@ -561,30 +562,22 @@ class Appearance(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.verified, conditions=[can_verify])
+    @transition(
+        field=status,
+        source=[STATUS.finished, STATUS.verified, STATUS.variance],
+        target=RETURN_VALUE(STATUS.variance, STATUS.verified,),
+    )
     def verify(self, *args, **kwargs):
-        switch = False
-        for song in self.songs.all():
-            song.calculate()
-            song.save()
-            variance = song.check_variance()
+        if self.status == self.STATUS.finished:
+            variance = self.check_variance()
             if variance:
-                switch = True
-        if switch:
-            content = self.get_variance()
-            self.variance_report.save(
-                "{0}-variance-report".format(
-                    slugify(self.competitor.group.name),
-                ),
-                content,
-                save=False,
-            )
+                content = self.get_variance()
+                self.variance_report.save(
+                    "{0}-variance-report".format(
+                        slugify(self.competitor.group.name),
+                    ),
+                    content,
+                )
         else:
-            self.variance_report = None
-        self.calculate()
-        self.competitor.calculate()
-        self.competitor.save()
-        django_rq.enqueue(
-            self.competitor.save_csa,
-        )
-        return
+            variance = None
+        return self.STATUS.variance if variance else self.STATUS.verified
