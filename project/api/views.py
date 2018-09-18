@@ -574,26 +574,6 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
-    def csadraft(self, request, pk=None):
-        competitor = Competitor.objects.get(pk=pk)
-        pdf = competitor.get_csa()
-        file_name = '{0}-csa'.format(
-            slugify(
-                "{0} {1} {2}".format(
-                    competitor.session.convention.name,
-                    competitor.session.get_kind_display(),
-                    competitor.group.name,
-                )
-            )
-        )
-        return PDFResponse(
-            pdf,
-            file_name=file_name,
-            status=status.HTTP_200_OK
-        )
-
-
 class EntryViewSet(viewsets.ModelViewSet):
     queryset = Entry.objects.select_related(
         'session',
