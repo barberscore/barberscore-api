@@ -7,6 +7,7 @@ from random import randint
 # Third-Party
 import django_rq
 from django_fsm import FSMIntegerField
+from django.core.files.base import ContentFile
 from django_fsm import transition
 from django_fsm import RETURN_VALUE
 from django_fsm_log.decorators import fsm_log_by
@@ -247,7 +248,8 @@ class Appearance(TimeStampedModel):
             'panelists': panelists,
         }
         rendered = render_to_string('variance.html', context)
-        content = pydf.generate_pdf(rendered, enable_smart_shrinking=False)
+        pdf = pydf.generate_pdf(rendered, enable_smart_shrinking=False)
+        content = ContentFile(pdf)
         return content
 
 
