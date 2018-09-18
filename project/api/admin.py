@@ -532,7 +532,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     autocomplete_fields = [
         'session',
         'group',
-        # 'entry'
+        'entry'
     ]
 
     readonly_fields = (
