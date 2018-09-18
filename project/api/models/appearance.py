@@ -546,7 +546,7 @@ class Appearance(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.started], target=STATUS.finished)
+    @transition(field=status, source=[STATUS.started, STATUS.verified], target=STATUS.finished)
     def finish(self, *args, **kwargs):
         self.actual_finish = now()
         return
