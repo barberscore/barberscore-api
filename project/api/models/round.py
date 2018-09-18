@@ -628,6 +628,14 @@ class Round(TimeStampedModel):
                 competitor=competitor,
                 num=num,
             )
+            defaults = {
+                'appearance': appearance,
+            }
+            grid, created = Grid.objects.update_or_create(
+                round=self,
+                num=num,
+                defaults=defaults,
+            )
         # MT
         # mt = self.session.competitors.filter(
         #     status=Competitor.STATUS.finished,
