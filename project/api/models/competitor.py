@@ -25,6 +25,7 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+from django.utils.text import slugify
 
 # First-Party
 from api.fields import UploadPath
@@ -345,6 +346,17 @@ class Competitor(TimeStampedModel):
         file = pydf.generate_pdf(rendered)
         content = ContentFile(file)
         return content
+
+    def save_csa(self):
+        content = self.get_csa()
+        self.csa.save(
+            "{0}-csa".format(
+                slugify(self.group.name),
+            ),
+            content,
+            save=False,
+        )
+
 
     def queue_notification(self):
         officers = self.group.officers.filter(
