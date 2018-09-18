@@ -251,22 +251,21 @@ class Appearance(TimeStampedModel):
     def mock(self):
         # Mock Appearance
         Chart = apps.get_model('api.chart')
-        appearance = self
-        prelim = appearance.competitor.entry.prelim
-        if appearance.competitor.group.kind == appearance.competitor.group.KIND.chorus:
-            pos = appearance.competitor.group.members.filter(
-                status=appearance.competitor.group.members.model.STATUS.active,
+        prelim = self.competitor.entry.prelim
+        if self.competitor.group.kind == self.competitor.group.KIND.chorus:
+            pos = self.competitor.group.members.filter(
+                status=self.competitor.group.members.model.STATUS.active,
             ).count()
-            appearance.pos = pos
+            self.pos = pos
         if not prelim:
-            average = appearance.competitor.group.competitors.filter(
-                status=appearance.competitor.group.competitors.model.STATUS.finished,
+            average = self.competitor.group.competitors.filter(
+                status=self.competitor.group.competitors.model.STATUS.finished,
             ).aggregate(avg=Avg('tot_score'))['avg']
             if average:
                 prelim = average
             else:
                 prelim = randint(65, 80)
-        songs = appearance.songs.all()
+        songs = self.songs.all()
         for song in songs:
             song.chart = Chart.objects.filter(
                 status=Chart.STATUS.active
@@ -277,19 +276,19 @@ class Appearance(TimeStampedModel):
                 d = randint(-4,4)
                 score.points = prelim + d
                 score.save()
-        if appearance.status == appearance.STATUS.new:
+        if self.status == self.STATUS.new:
             raise RuntimeError("Out of state")
-        if appearance.status == appearance.STATUS.built:
-            appearance.start()
-            appearance.finish()
-            appearance.verify()
+        if self.status == self.STATUS.built:
+            self.start()
+            self.finish()
+            self.verify()
             return
-        if appearance.status == appearance.STATUS.started:
-            appearance.finish()
-            appearance.verify()
+        if self.status == self.STATUS.started:
+            self.finish()
+            self.verify()
             return
-        if appearance.status == appearance.STATUS.finished:
-            appearance.verify()
+        if self.status == self.STATUS.finished:
+            self.verify()
             return
 
 
