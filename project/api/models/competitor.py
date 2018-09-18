@@ -354,7 +354,6 @@ class Competitor(TimeStampedModel):
                 slugify(self.group.name),
             ),
             content,
-            save=False,
         )
 
 

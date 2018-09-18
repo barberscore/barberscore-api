@@ -776,7 +776,6 @@ class Round(TimeStampedModel):
                 '{0} oss'.format(self)
             ),
             content=content,
-            save=False,
         )
         content = self.get_sa()
         self.sa.save(
@@ -784,7 +783,6 @@ class Round(TimeStampedModel):
                 '{0} sa'.format(self)
             ),
             content=content,
-            save=False,
         )
         finishers = self.appearances.filter(
             draw=None,
