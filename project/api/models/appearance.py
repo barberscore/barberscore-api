@@ -47,6 +47,7 @@ class Appearance(TimeStampedModel):
         (7, 'built', 'Built',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
+        (25, 'variance', 'Variance',),
         (30, 'verified', 'Verified',),
     )
 
