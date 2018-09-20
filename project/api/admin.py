@@ -1542,6 +1542,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         'bhs_id',
         'status',
         'is_mc',
+        'mc_pk',
     ]
     list_select_related = [
         'person',
