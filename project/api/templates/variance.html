@@ -19,6 +19,10 @@
         padding: 50px;
         line-height: 50px;
       }
+      .side-border {
+        border-left: 10px solid black;
+        border-right: 10px solid black;
+      }
     </style>
   </head>
   <body>
@@ -32,12 +36,12 @@
       <h3>
         <strong>Total Points:</strong> {{appearance.tot_points}}
       </h3>
-    </section>
       <ul class='list-unstyled'>
         {% for song in songs %}
-          <li class='panelist'>Song #{{song.num}}:&nbsp;{{song.chart.title}}&nbsp;&nbsp;Average: {{song.tot_score|floatformat:1}}</li>
+          <li class='panelist'>Song #{{song.num}}:&nbsp;{{song.chart.title}}</li>
         {% endfor %}
       </ul>
+    </section>
     <section>
       <table class='table table-condensed'>
         <thead>
@@ -56,19 +60,37 @@
         </thead>
         <tbody>
           {% for panelist in panelists %}
-            {% if panelist.get_category_display == 'Music' %}<tr class='warning'>{% endif %}
-            {% if panelist.get_category_display == 'Performance' %}<tr class='success'>{% endif %}
-            {% if panelist.get_category_display == 'Singing' %}<tr class='info'>{% endif %}
+            {% if panelist.get_category_display == 'Music' %}
+              {% if panelist.category in variances %}
+                <tr class='warning side-border'>
+              {% else %}
+                <tr class='warning'>
+              {% endif %}
+            {% endif %}
+            {% if panelist.get_category_display == 'Performance' %}
+              {% if panelist.category in variances %}
+                <tr class='success side-border'>
+              {% else %}
+                <tr class='success'>
+              {% endif %}
+            {% endif %}
+            {% if panelist.get_category_display == 'Singing' %}
+              {% if panelist.category in variances %}
+                <tr class='info side-border'>
+              {% else %}
+                <tr class='info'>
+              {% endif %}
+            {% endif %}
               <td class='panelist'>
                 {{panelist.person.common_name}}
               </td>
               {% for song in songs %}
                 {% for score in panelist.scores.all %}
                   {% if score.song == song %}
-                    <td class='text-right'>
-                      {% if score.is_flagged %}<i class='icon-hand-right icon-2x'></i>&nbsp;{%endif%}<span class='points'>{{score.points}}</span>
+                    <td class='text-right left-border'>
+                      <span class='points'>{{score.points}}</span>
                     </td>
-                    <td>
+                    <td class='right-border'>
                       <input class='enter-height'>
                     </td>
                   {% endif %}

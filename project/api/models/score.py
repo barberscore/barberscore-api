@@ -15,6 +15,7 @@ from django.apps import apps as api_apps
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Min, Max, Count, Avg
 
 config = api_apps.get_app_config('api')
 
@@ -131,10 +132,6 @@ class Score(TimeStampedModel):
         ]
     )
 
-    is_flagged = models.BooleanField(
-        default=False,
-    )
-
     # FKs
     song = models.ForeignKey(
         'Song',
@@ -169,56 +166,6 @@ class Score(TimeStampedModel):
     def __str__(self):
         return str(self.pk)
 
-    # Methods
-    def verify(self):
-        variance = False
-        mus_avg = self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
-            category=self.song.scores.model.CATEGORY.music,
-        ).aggregate(
-            avg=models.Avg('points')
-        )['avg']
-        if self.category == self.CATEGORY.music:
-            if abs(self.points - mus_avg) > 5:
-                log.info("Variance Music {0}".format(self))
-                variance = True
-        per_avg = self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
-            category=self.song.scores.model.CATEGORY.performance,
-        ).aggregate(
-            avg=models.Avg('points')
-        )['avg']
-        if self.category == self.CATEGORY.performance:
-            if abs(self.points - per_avg) > 5:
-                log.info("Variance Performance {0}".format(self))
-                variance = True
-        sng_avg = self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
-            category=self.song.scores.model.CATEGORY.singing,
-        ).aggregate(
-            avg=models.Avg('points')
-        )['avg']
-        if self.category == self.CATEGORY.singing:
-            if abs(self.points - sng_avg) > 5:
-                log.info("Variance Singing {0}".format(self))
-                variance = True
-        ordered_asc = self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
-        ).order_by('points')
-        if ordered_asc[1].points - ordered_asc[0].points > 5 and ordered_asc[0].points == self.points:
-            log.info("Variance Low {0}".format(self))
-            variance = True
-        ordered_dsc = self.song.scores.filter(
-            kind=self.song.scores.model.KIND.official,
-        ).order_by('-points')
-        if ordered_dsc[0].points - ordered_dsc[1].points > 5 and ordered_dsc[0].points == self.points:
-            log.info("Variance High {0}".format(self))
-            variance = True
-        if variance:
-            self.original = self.points
-            self.is_flagged = True
-            self.save()
-        return variance
 
     # Permissions
     @staticmethod

@@ -157,11 +157,7 @@
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {% for score in song.scores.all %}
                         {% if score.panelist.person == item.grouper %}
-                          {% if score.is_flagged %}
-                            <strong>{{score.points|default_if_none:""}}</strong><br>
-                          {% else %}
-                            {{score.points|default_if_none:""}}<br>
-                          {% endif %}
+                          {{score.points|default_if_none:""}}<br>
                         {% endif %}
                       {% endfor %}
                     {% endfor %}

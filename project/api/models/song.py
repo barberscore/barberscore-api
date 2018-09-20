@@ -15,7 +15,8 @@ from django.apps import apps
 from django.db import models
 from django.db.models import Avg
 from django.db.models import Q
-from django.db.models import Sum
+from django.db.models import Sum, Min, Max, Count
+from django.contrib.postgres.fields import ArrayField
 
 log = logging.getLogger(__name__)
 
@@ -53,6 +54,20 @@ class Song(TimeStampedModel):
         max_length=255,
         blank=True,
         null=True,
+    )
+
+    asterisks = ArrayField(
+        base_field=models.IntegerField(
+        ),
+        default=list,
+        blank=True,
+    )
+
+    dixons = ArrayField(
+        base_field=models.IntegerField(
+        ),
+        default=list,
+        blank=True,
     )
 
     # Privates
@@ -195,6 +210,78 @@ class Song(TimeStampedModel):
         self.per_score = per['avg']
         self.sng_points = sng['sum']
         self.sng_score = sng['avg']
+
+    # Methods
+    def get_asterisks(self):
+        """Check to see if the score produces a category variance (asterisk)"""
+        asterisks = []
+        scores = self.scores.all()
+        categories = self.scores.filter(
+            kind=self.scores.model.KIND.official,
+        ).values(
+            'category',
+        ).annotate(
+            avg=Avg('points'),
+        )
+        for category in categories:
+            is_asterisk = [
+                abs(i.points - category['avg']) > 5
+                for i in scores
+                if i.category == category['category']
+            ][0]
+            if is_asterisk:
+                asterisks.append(category['category'])
+        return asterisks
+
+    def get_dixons(self):
+        # Dixon's Q Test
+        output = []
+        confidence = {
+            '3': 0.941,
+            '6': .56,
+            '9': .376,
+            '12': .437,
+            '15': .338,
+        }
+        scores = self.scores.filter(
+            kind=self.scores.model.KIND.official,
+        )
+        aggregates = scores.aggregate(
+            max=Max('points'),
+            min=Min('points'),
+            cnt=Count('id'),
+            spread=Max('points') - Min('points'),
+        )
+        # Bypass to avoid division by zero
+        if not aggregates['spread']:
+            return output
+        if aggregates['cnt'] < 3:
+            return RuntimeError('Panel too small error')
+        ascending = scores.order_by('points')
+        descending = scores.order_by('-points')
+        if aggregates['cnt'] == '3':
+            if abs(ascending[0].points - ascending[1].points) >= 10:
+                output.append(ascending[0].category)
+            if abs(descending[0].points - descending[1].points) >= 10:
+                output.append(descending[0].category)
+            return output
+        critical = confidence[str(aggregates['cnt'])]
+        ascending_distance = abs(ascending[0].points - ascending[1].points)
+        ascending_q = ascending_distance / aggregates['spread']
+        if ascending_q > critical and ascending_distance > 5:
+            output.append(ascending[0].category)
+        descending_distance = abs(descending[0].points - descending[1].points)
+        descending_q = descending_distance / aggregates['spread']
+        if descending_q > critical and descending_distance > 5:
+            output.append(descending[0].category)
+        return output
+
+    def get_variance(self):
+        variance = any([
+            self.get_asterisks(),
+            self.get_dixons(),
+        ])
+        return variance
 
     # Permissions
     @staticmethod

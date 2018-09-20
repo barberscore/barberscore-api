@@ -333,7 +333,6 @@ class ScoreFactory(DjangoModelFactory):
     original = None
     violation = None
     penalty = None
-    is_flagged = False
     song = SubFactory('api.factories.SongFactory')
     panelist = None
 

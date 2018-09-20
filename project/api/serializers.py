@@ -617,7 +617,6 @@ class ScoreSerializer(serializers.ModelSerializer):
             'original',
             'violation',
             'penalty',
-            'is_flagged',
             'song',
             'panelist',
             'permissions',

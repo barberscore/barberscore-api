@@ -236,11 +236,17 @@ class Appearance(TimeStampedModel):
             'category',
             'person__last_name',
         )
+        variances = []
+        for song in songs:
+            variances.extend(song.dixons)
+            variances.extend(song.asterisks)
+        variances = list(set(variances))
         context = {
             'appearance': self,
             'songs': songs,
             'scores': scores,
             'panelists': panelists,
+            'variances': variances,
         }
         rendered = render_to_string('variance.html', context)
         pdf = pydf.generate_pdf(rendered, enable_smart_shrinking=False)
@@ -339,122 +345,20 @@ class Appearance(TimeStampedModel):
         self.sng_score = sng['avg']
 
     def check_variance(self):
-        is_variance = False
+        variance = False
         for song in self.songs.all():
             song.calculate()
-            # Category Average
-            mus_scores = song.scores.filter(
-                category=song.scores.model.CATEGORY.music,
-            )
-            for score in mus_scores:
-                if abs(score.points - song.mus_score) > 5:
-                    score.is_flagged = True
-                    if score.kind == score.KIND.official:
-                        is_variance = True
-                else:
-                    score.is_flagged = False
-                score.save()
-            per_scores = song.scores.filter(
-                category=song.scores.model.CATEGORY.performance,
-            )
-            for score in per_scores:
-                if abs(score.points - song.per_score) > 5:
-                    score.is_flagged = True
-                    if score.kind == score.KIND.official:
-                        is_variance = True
-                else:
-                    score.is_flagged = False
-                score.save()
-            sng_scores = song.scores.filter(
-                category=song.scores.model.CATEGORY.singing,
-            )
-            for score in sng_scores:
-                if abs(score.points - song.sng_score) > 5:
-                    score.is_flagged = True
-                    if score.kind == score.KIND.official:
-                        is_variance = True
-                else:
-                    score.is_flagged = False
-                score.save()
-            if is_variance:
-                return True
+            asterisks = song.get_asterisks()
+            if asterisks:
+                song.asterisks = asterisks
+                variance = True
+            dixons = song.get_dixons()
+            if dixons:
+                song.dixons = dixons
+                variance = True
+            song.save()
+        return variance
 
-            # Dixon's Q Test
-            confidence = {
-                '3': 0.941,
-                '6': .56,
-                '9': .376,
-                '12': .437,
-                '15': .338,
-            }
-
-            ordered_dsc = song.scores.filter(
-                kind=song.scores.model.KIND.official,
-            ).order_by('-points')
-            spread = ordered_dsc.first().points - ordered_dsc.last().points
-            size = str(ordered_dsc.count())
-
-            if size == '3':
-                ultimate = ordered_dsc[0]
-                penultimate = ordered_dsc[1]
-                triultimate = ordered_dsc[2]
-                if ultimate.points - penultimate.points >= 10:
-                    ultimate.is_flagged = True
-                    is_variance = True
-                elif penultimate.points - triultimate.points >= 10:
-                    triultimate.is_flagged = True
-                    is_variance = True
-                else:
-                    ultimate.is_flagged = False
-                    triultimate.is_flagged = False
-                ultimate.save()
-                triultimate.save()
-            else:
-                ordered_asc = song.scores.filter(
-                    kind=song.scores.model.KIND.official,
-                ).order_by('points')
-                ultimate = ordered_asc[0]
-                penultimate = ordered_asc[1]
-                distance = abs(ultimate.points - penultimate.points)
-                try:
-                    q = distance / spread
-                except ZeroDivisionError:
-                    q = 0
-                critical = confidence[size]
-                if q > critical and penultimate.points - ultimate.points > 5:
-                    ultimate.is_flagged = True
-                    is_variance = True
-                else:
-                    ultimate.is_flagged = False
-                ultimate.save()
-                practice_scores = song.scores.filter(
-                    kind=song.scores.model.KIND.practice,
-                    points__lte=ultimate.points,
-                )
-                practice_scores.update(is_flagged=True)
-                ordered_dsc = song.scores.filter(
-                    kind=song.scores.model.KIND.official,
-                ).order_by('-points')
-                ultimate = ordered_dsc[0]
-                penultimate = ordered_dsc[1]
-                distance = abs(ultimate.points - penultimate.points)
-                try:
-                    q = distance / spread
-                except ZeroDivisionError:
-                    q = 0
-                critical = confidence[size]
-                if q > critical and ultimate.points - penultimate.points > 5:
-                    ultimate.is_flagged = True
-                    is_variance = True
-                else:
-                    ultimate.is_flagged = False
-                ultimate.save()
-                practice_scores = song.scores.filter(
-                    kind=song.scores.model.KIND.practice,
-                    points__gte=ultimate.points,
-                )
-                practice_scores.update(is_flagged=True)
-        return is_variance
 
     # Appearance Permissions
     @staticmethod
