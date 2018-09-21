@@ -25,8 +25,25 @@
     "heroku-postgresql:hobby-dev"
   ],
   "env": {
-    "AUTH0_DOMAIN": {
-      "description": "Auth0 API endpoint.",
+    "ALGOLIASEARCH_API_KEY": {
+      "description": "Algolia API key.",
+      "required": true
+    },
+    "ALGOLIASEARCH_API_KEY_SEARCH": {
+      "description": "Algolia Search key.",
+      "required": true
+    },
+    "ALGOLIASEARCH_APPLICATION_ID": {
+      "description": "Algolia Application ID key.",
+      "required": true
+    },
+    "ALGOLIASEARCH_AUTO_INDEXING": {
+      "description": "Algolia API key.",
+      "value": false,
+      "required": true
+    },
+    "AUTH0_AUDIENCE": {
+      "description": "Auth0 API audience.",
       "required": true
     },
     "AUTH0_CLIENT_ID": {
@@ -37,8 +54,17 @@
       "description": "Auth0 Client secret.",
       "required": true
     },
-    "AUTH0_AUDIENCE": {
-      "description": "Auth0 API audience.",
+    "AUTH0_DOMAIN": {
+      "description": "Auth0 API endpoint.",
+      "required": true
+    },
+    "BHS_DATABASE_URL": {
+      "description": "BHS Database.",
+      "required": true
+    },
+    "ENV": {
+      "description": "The Environment.",
+      "value": "staging",
       "required": true
     },
     "REDIS_MAX_CONNECTIONS": {
