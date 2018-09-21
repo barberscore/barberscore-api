@@ -22,7 +22,8 @@
   },
   "addons": [
     "heroku-redis:hobby-dev",
-    "heroku-postgresql:hobby-dev"
+    "heroku-postgresql:hobby-dev",
+    "sentry:f1"
   ],
   "env": {
     "ALGOLIASEARCH_API_KEY": {
@@ -60,6 +61,10 @@
     },
     "BHS_DATABASE_URL": {
       "description": "BHS Database.",
+      "required": true
+    },
+    "CLOUDINARY_URL": {
+      "description": "Cloudinary service.",
       "required": true
     },
     "ENV": {
