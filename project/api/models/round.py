@@ -704,18 +704,29 @@ class Round(TimeStampedModel):
         self.rank()
         self.session.rank()
 
-        # Run contests by round
+        # No next round.
+        if self.kind == self.KIND.finals:
+            # Run relevant contests yet to be determined
+            contests = self.session.contests.filter(
+                num__isnull=False,
+                group__isnull=True,
+            )
+            for contest in contests:
+                contest.determine()
+                contest.save()
+            return
+
+        # If not finals, only determine winners when no contestants
+        # are in multi-round contests to avoid leaking standings.
         contests = self.session.contests.filter(
-            status__gt=0,
-            award__rounds=self.num,
-        )
+            num__isnull=False,
+            award__rounds__lte=self.num,
+            contestants__status=Contestant.STATUS.included,
+            contestants__entry__competitor__is_multi=False,
+        ).distinct()
         for contest in contests:
             contest.determine()
             contest.save()
-
-        # No next round.
-        if self.kind == self.KIND.finals:
-            return
 
         # Get spots available
         spots = self.spots
