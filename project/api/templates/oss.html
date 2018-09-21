@@ -112,7 +112,7 @@
                     {% endif %}
                     {% if round.num != 1 %}
                       {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
-                        {{appearance.round.get_kind_display}}{#  Rank: {{appearance.tot_rank}} #}<br>
+                        {#  {{appearance.round.get_kind_display}}Rank: {{appearance.tot_rank}} #}<br>
                       {% endfor %}
                     {% endif %}
                   </div>
@@ -201,6 +201,9 @@
           </tbody>
         </table>
         <p>
+          {% if round.kind == 1 %}
+            Competitors are listed above in ranked order by total points.<br>
+          {% else %}
             Competitors not advancing to the finals (or competing only for single-round awards) are listed above in order by total score.<br>
           {% endif %}
           {% if privates %}

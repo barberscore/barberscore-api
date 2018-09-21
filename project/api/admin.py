@@ -1270,8 +1270,8 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'session__kind',
         'session__convention__season',
-        'session__convention__year',
         RoundGroupListFilter,
+        'session__convention__year',
     ]
 
     fsm_field = [
