@@ -734,15 +734,16 @@ class Round(TimeStampedModel):
             # create list of advancers
             advancers = [a.id for a in automatics]
             diff = spots - cnt
-            adds = multis.exclude(
-                id__in=advancers,
-            ).order_by(
-                '-tot_points',
-                '-sng_points',
-                '-per_points',
-            )[:diff]
-            for a in adds:
-                advancers.append(a.id)
+            if diff > 0:
+                adds = multis.exclude(
+                    id__in=advancers,
+                ).order_by(
+                    '-tot_points',
+                    '-sng_points',
+                    '-per_points',
+                )[:diff]
+                for a in adds:
+                    advancers.append(a.id)
         else:
             advancers = [a.id for a in multis]
 
