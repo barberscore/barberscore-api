@@ -474,4 +474,9 @@ class Appearance(TimeStampedModel):
                 )
         else:
             variance = None
+        self.competitor.calculate()
+        self.competitor.save()
+        django_rq.enqueue(
+            self.competitor.save_csa,
+        )
         return self.STATUS.variance if variance else self.STATUS.verified

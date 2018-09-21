@@ -349,6 +349,7 @@ class Competitor(TimeStampedModel):
 
     def save_csa(self):
         content = self.get_csa()
+        self.refresh_from_db()
         self.csa.save(
             "{0}-csa".format(
                 slugify(self.group.name),

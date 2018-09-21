@@ -1150,7 +1150,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         ],
         permission_classes=[AllowAny],
     )
-    def csarounddraft(self, request, pk=None):
+    def csadraft(self, request, pk=None):
         round = Round.objects.select_related(
             'session',
             'session__convention',

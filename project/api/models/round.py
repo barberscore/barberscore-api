@@ -437,7 +437,11 @@ class Round(TimeStampedModel):
         )
         merger = PdfFileMerger()
         for competitor in competitors:
-            merger.append(competitor.get_csa(), import_bookmarks=False)
+            try:
+                file = ContentFile(competitor.csa.read())
+            except ValueError:
+                file = competitor.get_csa()
+            merger.append(file, import_bookmarks=False)
         stream = BytesIO()
         merger.write(stream)
         data = stream.getvalue()
@@ -531,16 +535,16 @@ class Round(TimeStampedModel):
         Award = apps.get_model('api.award')
         return all([
             not self.appearances.exclude(status=self.appearances.model.STATUS.verified),
+        ])
+
+    def can_finish(self):
+        return all([
+            not self.appearances.exclude(status=self.appearances.model.STATUS.verified),
             not self.session.contests.filter(
                 award__level=Award.LEVEL.manual,
                 award__rounds=self.num,
                 group__isnull=True,
             ),
-        ])
-
-    def can_finish(self):
-        return all([
-            not self.appearances.exclude(status=self.appearances.model.STATUS.verified)
         ])
 
     # Round Transitions
@@ -754,17 +758,17 @@ class Round(TimeStampedModel):
             appearance.save()
             i += 1
         # create MT
-        mt = self.appearances.filter(
-            draw=None,
-            competitor__status__gt=0,
-            competitor__is_multi=True,
-        ).order_by(
-            '-tot_points',
-            '-sng_points',
-            '-per_points',
-        ).first()
-        mt.draw = 0
-        mt.save()
+        # mt = self.appearances.filter(
+        #     draw=None,
+        #     competitor__status__gt=0,
+        #     competitor__is_multi=True,
+        # ).order_by(
+        #     '-tot_points',
+        #     '-sng_points',
+        #     '-per_points',
+        # ).first()
+        # mt.draw = 0
+        # mt.save()
         return
 
     @fsm_log_by
