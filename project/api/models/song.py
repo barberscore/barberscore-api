@@ -225,9 +225,9 @@ class Song(TimeStampedModel):
         )
         for category in categories:
             is_asterisk = [
-                abs(i.points - category['avg']) > 5
-                for i in scores
-                if i.category == category['category']
+                abs(score.points - category['avg']) > 5
+                for score in scores
+                if score.category == category['category'] and score.kind == score.KIND.official
             ][0]
             if is_asterisk:
                 asterisks.append(category['category'])
