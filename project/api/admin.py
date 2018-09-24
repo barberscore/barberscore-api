@@ -1248,6 +1248,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'status',
         'legacy_oss',
+        'legacy_sa',
         'oss',
         'sa',
         'csa',
@@ -1261,6 +1262,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'oss',
         'legacy_oss',
+        'legacy_sa',
     ]
 
     list_filter = [
