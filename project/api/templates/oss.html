@@ -1,3 +1,4 @@
+{% load category_code %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -202,7 +203,7 @@
         </table>
         <p>
           {% if round.kind == 1 %}
-            Competitors are listed above in ranked order by total points.<br>
+            Competitors are listed above in order by total points.<br>
           {% else %}
             Competitors not advancing to the finals (or competing only for single-round awards) are listed above in order by total score.<br>
           {% endif %}
@@ -212,12 +213,12 @@
         </p>
       <div class='row'>
         <div class='pull-right'>
-          <h5>Judging Panel</h5>
+          <h5>Official Panel</h5>
           {% if panelists %}
-            {% regroup panelists by get_category_display as panelist_tuple %}
+            {% regroup panelists by category as panelist_tuple %}
             <ul class='list-unstyled'>
               {% for item in panelist_tuple %}
-                <li><strong>{{item.grouper}}:</strong>
+                <li><strong>{{item.grouper|shortcat}}:</strong>
                   {% for panelist in item.list %}
                     {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
                   {% endfor %}
