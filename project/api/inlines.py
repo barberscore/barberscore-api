@@ -200,6 +200,7 @@ class ContestInline(admin.TabularInline):
     fields = [
         'award',
         'group',
+        'num',
         'is_primary',
         'session',
         'status',
