@@ -27,7 +27,7 @@ EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
 RAVEN_CONFIG = {
     'environment': 'staging',
     'dsn': get_env_variable("SENTRY_DSN"),
-    'release': get_env_variable("HEROKU_SLUG_DESCRIPTION"),
+    'release': 'foo',
 }
 
 # Logging

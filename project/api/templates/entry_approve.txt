@@ -41,7 +41,7 @@ Director(s): {{entry.participants|safe|default:"(No Director Specified)"}}
 Estimated Participants-on-Stage:  {{entry.pos|default:"(No Estimate Provided)"}}
 
 {% else %}
-Members (TLBB): {{entry.participants|safe|default:"(No Members Specified)"}}
+Members (TLBrBs): {{entry.participants|safe|default:"(No Members Specified)"}}
 
 {% endif %}
 Additional Notes/Requests:

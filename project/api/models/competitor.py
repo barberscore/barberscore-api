@@ -385,12 +385,22 @@ class Competitor(TimeStampedModel):
             self.session.convention.name,
             self.session.get_kind_display(),
         )
+        # email = EmailMessage(
+        #     subject=subject,
+        #     body=rendered,
+        #     from_email='Barberscore <admin@barberscore.com>',
+        #     to=tos,
+        #     cc=ccs,
+        # )
         email = EmailMessage(
             subject=subject,
             body=rendered,
             from_email='Barberscore <admin@barberscore.com>',
-            to=tos,
-            cc=ccs,
+            to=[
+                'dbinetti@gmail.com',
+                'proclamation56@gmail.com',
+                'chris.buechler@verizon.net',
+            ],
         )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(

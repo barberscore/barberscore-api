@@ -1075,29 +1075,17 @@ class RoundViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
     def announcements(self, request, pk=None):
         round = Round.objects.get(pk=pk)
-        try:
-            next_round = round.session.rounds.get(num=round.num + 1)
-        except Round.DoesNotExist:
-            next_round = None
-        if next_round:
-            appearances = next_round.appearances.all(
-            ).select_related(
-                'competitor__group',
-            ).order_by(
-                'draw',
-            )
-        else:
-            appearances = None
+        appearances = round.appearances.filter(
+            draw__isnull=False,
+        ).select_related(
+            'competitor__group',
+        ).order_by(
+            'draw',
+        )
         contests = round.session.contests.filter(
-            status=Contest.STATUS.included,
-            award__rounds__lte=round.num,
-            award__level__in=[
-                Award.LEVEL.championship,
-                Award.LEVEL.award,
-                Award.LEVEL.representative,
-                Award.LEVEL.manual,
-            ],
-        ).order_by('award__tree_sort')
+            num__isnull=False,
+            group__isnull=False,
+        ).order_by('num')
         if round.kind == round.KIND.finals:
             competitors = round.session.competitors.filter(
                 status__in=[
@@ -1111,9 +1099,7 @@ class RoundViewSet(viewsets.ModelViewSet):
                 '-tot_rank',
             )
         else:
-            competitors = round.appearances.filter(
-                draw__isnull=True,
-            ).values_list('competitor', flat=True)
+            competitors = None
         pos = round.appearances.aggregate(sum=Sum('pos'))['sum']
         context = {
             'round': round,

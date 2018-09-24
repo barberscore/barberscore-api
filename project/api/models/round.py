@@ -266,24 +266,17 @@ class Round(TimeStampedModel):
         else:
             advancers = None
         contests = self.session.contests.filter(
-            status=Contest.STATUS.included,
-            contestants__status__gt=0,
+            num__isnull=False,
         ).select_related(
             'award',
             'group',
         ).distinct(
         ).order_by(
-            '-is_primary',
-            'award__tree_sort',
+            'num',
         )
-        # Determine Primary (if present)
-        try:
-            primary = contests.get(is_primary=True)
-        except Contest.DoesNotExist:
-            primary = None
         # MonkeyPatch qualifiers
         for contest in contests:
-            if self.num == contest.award.rounds:
+            if self.num >= contest.award.rounds:
                 if contest.award.level != contest.award.LEVEL.deferred:
                     if contest.award.level == contest.award.LEVEL.qualifier:
                         threshold = contest.award.threshold
@@ -309,7 +302,7 @@ class Round(TimeStampedModel):
                         if contest.group:
                             contest.detail = str(contest.group.name)
                         else:
-                            contest.detail = "(No recipient)"
+                            contest.detail = "(Result announced following Finals)"
                 else:
                     contest.detail = "(Result determined post-contest)"
             else:
@@ -335,7 +328,6 @@ class Round(TimeStampedModel):
             'panelists': panelists,
             'contests': contests,
             'is_multi': is_multi,
-            'primary': primary,
         }
         rendered = render_to_string('oss.html', context)
         file = pydf.generate_pdf(
@@ -469,7 +461,7 @@ class Round(TimeStampedModel):
                 except AttributeError:
                     title = "Unknown (Not in Repertory)"
                 row = "{0} Song {1}: {2}".format(
-                    song.appearance.self.get_kind_display(),
+                    song.appearance.round.get_kind_display(),
                     song.num,
                     title,
                 )
@@ -704,18 +696,29 @@ class Round(TimeStampedModel):
         self.rank()
         self.session.rank()
 
-        # Run contests by round
+        # No next round.
+        if self.kind == self.KIND.finals:
+            # Run relevant contests yet to be determined
+            contests = self.session.contests.filter(
+                num__isnull=False,
+                group__isnull=True,
+            )
+            for contest in contests:
+                contest.determine()
+                contest.save()
+            return
+
+        # If not finals, only determine winners when no contestants
+        # are in multi-round contests to avoid leaking standings.
         contests = self.session.contests.filter(
-            status__gt=0,
-            award__rounds=self.num,
-        )
+            num__isnull=False,
+            award__rounds__lte=self.num,
+            contestants__status=Contestant.STATUS.included,
+            contestants__entry__competitor__is_multi=False,
+        ).distinct()
         for contest in contests:
             contest.determine()
             contest.save()
-
-        # No next round.
-        if self.kind == self.KIND.finals:
-            return
 
         # Get spots available
         spots = self.spots
@@ -734,15 +737,16 @@ class Round(TimeStampedModel):
             # create list of advancers
             advancers = [a.id for a in automatics]
             diff = spots - cnt
-            adds = multis.exclude(
-                id__in=advancers,
-            ).order_by(
-                '-tot_points',
-                '-sng_points',
-                '-per_points',
-            )[:diff]
-            for a in adds:
-                advancers.append(a.id)
+            if diff > 0:
+                adds = multis.exclude(
+                    id__in=advancers,
+                ).order_by(
+                    '-tot_points',
+                    '-sng_points',
+                    '-per_points',
+                )[:diff]
+                for a in adds:
+                    advancers.append(a.id)
         else:
             advancers = [a.id for a in multis]
 
