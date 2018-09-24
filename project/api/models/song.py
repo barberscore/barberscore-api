@@ -15,8 +15,8 @@ from django.apps import apps
 from django.db import models
 from django.db.models import Avg
 from django.db.models import Q
-from django.db.models import Sum, Min, Max, Count
-from django.contrib.postgres.fields import ArrayField
+from django.db.models import Sum, Min, Max, Count, StdDev
+from django.contrib.postgres.fields import ArrayField, JSONField
 
 log = logging.getLogger(__name__)
 
@@ -67,6 +67,11 @@ class Song(TimeStampedModel):
         base_field=models.IntegerField(
         ),
         default=list,
+        blank=True,
+    )
+
+    stats = JSONField(
+        null=True,
         blank=True,
     )
 
@@ -210,6 +215,35 @@ class Song(TimeStampedModel):
         self.per_score = per['avg']
         self.sng_points = sng['sum']
         self.sng_score = sng['avg']
+
+    def get_stats(self):
+        stats = {}
+        totals = self.scores.filter(
+            kind=self.scores.model.KIND.official,
+        ).aggregate(
+            avg=Avg('points'),
+            sum=Sum('points'),
+            dev=StdDev('points'),
+        )
+        stats['tot'] = totals
+        category_map = {
+            30: 'mus',
+            40: 'per',
+            50: 'sng',
+        }
+        categories = self.scores.filter(
+            kind=self.scores.model.KIND.official,
+        ).values(
+            'category',
+        ).annotate(
+            avg=Avg('points'),
+            sum=Sum('points'),
+            dev=StdDev('points'),
+        )
+        for category in categories:
+            name = category_map[category.pop('category')]
+            stats[name] = category
+        return stats
 
     # Methods
     def get_asterisks(self):

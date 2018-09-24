@@ -1436,7 +1436,7 @@ class SongAdmin(admin.ModelAdmin):
     fields = [
         'id',
         # 'name',
-        # 'status',
+        'stats',
         'appearance',
         'chart',
         'legacy_chart',
@@ -1477,6 +1477,7 @@ class SongAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         'id',
+        'stats',
     )
 
     autocomplete_fields = [
