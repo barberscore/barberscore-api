@@ -4,7 +4,6 @@ from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_json_api import serializers
-from rest_framework_json_api.relations import ResourceRelatedField
 
 # Local
 from .fields import TimezoneField
@@ -363,16 +362,6 @@ class GridSerializer(serializers.ModelSerializer):
             'appearance',
             'permissions',
         ]
-
-
-# class GroupMemberField(ResourceRelatedField):
-#     def get_queryset(self, request):
-#         print('dfd')
-#         qs = super().get_queryset(request)
-#         qs = qs.filter(
-#             status__gt=0,
-#         )
-#         return qs
 
 
 class GroupSerializer(serializers.ModelSerializer):

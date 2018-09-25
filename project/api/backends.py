@@ -1,7 +1,6 @@
 
 # Third-Party
 from django_filters.rest_framework.backends import DjangoFilterBackend
-from dry_rest_permissions.generics import DRYPermissionFiltersBase
 
 
 class CoalesceFilterBackend(DjangoFilterBackend):
@@ -14,16 +13,3 @@ class CoalesceFilterBackend(DjangoFilterBackend):
             view.pagination_class = None
             queryset = queryset.filter(id__in=ids)
         return queryset
-
-
-class ScoreFilterBackend(DRYPermissionFiltersBase):
-    def filter_list_queryset(self, request, queryset, view):
-        """Limit all requests to superuser."""
-        if request.user.is_authenticated():
-            if request.user.is_staff:
-                return queryset.all()
-            # else:
-            #     return queryset.filter(
-            #         song__appearance__entry__entity__officers__person__user=request.user,
-            #     )
-        return queryset.none()
