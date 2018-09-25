@@ -983,9 +983,9 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_assignment_manager',
     ]
 
-    # inlines = [
-    #     OfficerInline,
-    # ]
+    inlines = [
+        OfficerInline,
+    ]
 
     def is_mc(self, instance):
         return instance.is_mc
@@ -1183,8 +1183,8 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
 
     inlines = [
-        OfficerInline,
         MemberInline,
+        OfficerInline,
         AssignmentInline,
         StateLogInline,
     ]
@@ -1300,8 +1300,8 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        AppearanceInline,
         PanelistInline,
+        AppearanceInline,
         GridInline,
         StateLogInline,
     ]

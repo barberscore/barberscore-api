@@ -4,14 +4,15 @@ import logging
 
 # Third-Party
 import pydf
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework_json_api.filters import QueryParameterValidationFilter
+from rest_framework_json_api.filters import OrderingFilter
+from rest_framework_json_api.django_filters import DjangoFilterBackend
 from django_fsm import TransitionNotAllowed
 from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.parsers import FormParser
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -24,15 +25,15 @@ from django.utils.text import slugify
 
 # Local
 from .backends import CoalesceFilterBackend
-from .filters import AssignmentFilter
-from .filters import ConventionFilter
-from .filters import MemberFilter
-from .filters import OfficerFilter
-from .filters import RoundFilter
-from .filters import ScoreFilter
-from .filters import SessionFilter
-from .filters import StateLogFilter
-from .filters import UserFilter
+from .filtersets import AssignmentFilterset
+from .filtersets import ConventionFilterset
+from .filtersets import MemberFilterset
+from .filtersets import OfficerFilterset
+from .filtersets import RoundFilterset
+from .filtersets import ScoreFilterset
+from .filtersets import SessionFilterset
+from .filtersets import StateLogFilterset
+from .filtersets import UserFilterset
 from .models import Appearance
 from .models import Assignment
 from .models import Award
@@ -100,8 +101,10 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = AppearanceSerializer
-    filter_class = None
+    filterset_class = None
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -169,8 +172,10 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = AssignmentSerializer
-    filter_class = AssignmentFilter
+    filterset_class = AssignmentFilterset
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -218,6 +223,8 @@ class AwardViewSet(viewsets.ModelViewSet):
     ).order_by('status', 'name')
     serializer_class = AwardSerializer
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -264,6 +271,8 @@ class ChartViewSet(viewsets.ModelViewSet):
     ).order_by('status', 'title')
     serializer_class = ChartSerializer
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -321,8 +330,10 @@ class ContestViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = ContestSerializer
-    filter_class = None
+    filterset_class = None
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -369,6 +380,8 @@ class ContestantViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = ContestantSerializer
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -417,8 +430,10 @@ class ConventionViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = ConventionSerializer
-    filter_class = ConventionFilter
+    filterset_class = ConventionFilterset
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -467,6 +482,8 @@ class CompetitorViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = CompetitorSerializer
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -542,6 +559,8 @@ class EntryViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = EntrySerializer
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -630,6 +649,8 @@ class GridViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = GridSerializer
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -647,6 +668,8 @@ class GrantorViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = GrantorSerializer
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -672,6 +695,8 @@ class GroupViewSet(viewsets.ModelViewSet):
     ).distinct()
     serializer_class = GroupSerializer
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -749,8 +774,10 @@ class MemberViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = MemberSerializer
-    filter_class = MemberFilter
+    filterset_class = MemberFilterset
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -795,6 +822,8 @@ class OfficeViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = OfficeSerializer
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -813,8 +842,10 @@ class OfficerViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = OfficerSerializer
-    filter_class = OfficerFilter
+    filterset_class = OfficerFilterset
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -862,6 +893,8 @@ class PanelistViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = PanelistSerializer
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -883,6 +916,8 @@ class PersonViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = PersonSerializer
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -928,8 +963,10 @@ class RepertoryViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = RepertorySerializer
-    filter_class = None
+    filterset_class = None
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -977,8 +1014,10 @@ class RoundViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = RoundSerializer
-    filter_class = RoundFilter
+    filterset_class = RoundFilterset
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -1264,8 +1303,10 @@ class ScoreViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     ).order_by('id')
     serializer_class = ScoreSerializer
-    filter_class = ScoreFilter
+    filterset_class = ScoreFilterset
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -1286,8 +1327,10 @@ class SessionViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = SessionSerializer
-    filter_class = SessionFilter
+    filterset_class = SessionFilterset
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -1539,8 +1582,10 @@ class SongViewSet(viewsets.ModelViewSet):
         'scores',
     ).order_by('id')
     serializer_class = SongSerializer
-    filter_class = None
+    filterset_class = None
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -1559,6 +1604,8 @@ class VenueViewSet(viewsets.ModelViewSet):
     ).order_by('name')
     serializer_class = VenueSerializer
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -1575,8 +1622,10 @@ class UserViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = UserSerializer
-    filter_class = UserFilter
+    filterset_class = UserFilterset
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
@@ -1621,8 +1670,10 @@ class StateLogViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     )
     serializer_class = StateLogSerializer
-    filter_class = StateLogFilter
+    filterset_class = StateLogFilterset
     filter_backends = [
+        QueryParameterValidationFilter,
+        OrderingFilter,
         CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
