@@ -100,7 +100,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = AppearanceSerializer
-    filter_class = None
+    filerset_class = None
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -169,7 +169,7 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = AssignmentSerializer
-    filter_class = AssignmentFilter
+    filerset_class = AssignmentFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -321,7 +321,7 @@ class ContestViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = ContestSerializer
-    filter_class = None
+    filerset_class = None
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -417,7 +417,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = ConventionSerializer
-    filter_class = ConventionFilter
+    filerset_class = ConventionFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -749,7 +749,7 @@ class MemberViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = MemberSerializer
-    filter_class = MemberFilter
+    filerset_class = MemberFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -813,7 +813,7 @@ class OfficerViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = OfficerSerializer
-    filter_class = OfficerFilter
+    filerset_class = OfficerFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -928,7 +928,7 @@ class RepertoryViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = RepertorySerializer
-    filter_class = None
+    filerset_class = None
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -977,7 +977,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = RoundSerializer
-    filter_class = RoundFilter
+    filerset_class = RoundFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -1264,7 +1264,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     ).order_by('id')
     serializer_class = ScoreSerializer
-    filter_class = ScoreFilter
+    filerset_class = ScoreFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -1286,7 +1286,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = SessionSerializer
-    filter_class = SessionFilter
+    filerset_class = SessionFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -1539,7 +1539,7 @@ class SongViewSet(viewsets.ModelViewSet):
         'scores',
     ).order_by('id')
     serializer_class = SongSerializer
-    filter_class = None
+    filerset_class = None
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -1575,7 +1575,7 @@ class UserViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = UserSerializer
-    filter_class = UserFilter
+    filerset_class = UserFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
@@ -1621,7 +1621,7 @@ class StateLogViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     )
     serializer_class = StateLogSerializer
-    filter_class = StateLogFilter
+    filerset_class = StateLogFilter
     filter_backends = [
         CoalesceFilterBackend,
         DjangoFilterBackend,
