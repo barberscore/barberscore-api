@@ -22,8 +22,7 @@
   },
   "addons": [
     "heroku-redis:hobby-dev",
-    "heroku-postgresql:hobby-dev",
-    "sentry:f1"
+    "heroku-postgresql:hobby-dev"
   ],
   "env": {
     "ALGOLIASEARCH_API_KEY": {
@@ -65,6 +64,10 @@
     },
     "CLOUDINARY_URL": {
       "description": "Cloudinary service.",
+      "required": true
+    },
+    "SENTRY_DSN": {
+      "description": "Sentry Bug Tracker.  Use production key.",
       "required": true
     },
     "ENV": {
