@@ -983,9 +983,9 @@ class OfficeAdmin(admin.ModelAdmin):
         'is_assignment_manager',
     ]
 
-    # inlines = [
-    #     OfficerInline,
-    # ]
+    inlines = [
+        OfficerInline,
+    ]
 
     def is_mc(self, instance):
         return instance.is_mc

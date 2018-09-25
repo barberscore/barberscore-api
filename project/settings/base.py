@@ -195,7 +195,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
     'DEFAULT_PAGINATION_CLASS': 'rest_framework_json_api.pagination.JsonApiPageNumberPagination',
     'EXCEPTION_HANDLER': 'rest_framework_json_api.exceptions.exception_handler',
-    'DEFAULT_METADATA_CLASS': 'rest_framework_json_api.metadata.JSONAPIMetadata',
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework_json_api.parsers.JSONParser',
         'rest_framework.parsers.FormParser',
@@ -203,17 +202,21 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser'
     ],
     'DEFAULT_RENDERER_CLASSES': [
-        'api.renderers.CustomJSONRenderer',
-        'rest_framework.renderers.JSONRenderer',
+        'api.renderers.NoGroupMembersJSONRenderer',
         'api.renderers.NoHTMLFormBrowsableAPIRenderer',
+        'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.AdminRenderer',
     ],
+    'DEFAULT_METADATA_CLASS': 'rest_framework_json_api.metadata.JSONAPIMetadata',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ],
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'TEST_REQUEST_RENDERER_CLASSES': (
+        'api.renderers.NoGroupMembersJSONRenderer',
+    ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'vnd.api+json',
 }
 
 # JSONAPI
