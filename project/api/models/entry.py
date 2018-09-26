@@ -419,7 +419,7 @@ class Entry(TimeStampedModel):
         conditions=[],
     )
     def withdraw(self, *args, **kwargs):
-        if self.session.status == self.session.STATUS.verified:
+        if self.draw:
             remains = self.session.entries.filter(draw__gt=self.draw)
             self.draw = None
             self.save()
