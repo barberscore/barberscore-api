@@ -25,37 +25,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         round = Round.objects.get(id=options['round_id'])
+        if round.status < Round.STATUS.started:
+            raise RuntimeError("Round not started")
         appearances = round.appearances.exclude(
             status=Appearance.STATUS.verified,
         )
         for appearance in appearances:
-            prelim = appearance.competitor.entry.prelim
-            if not prelim:
-                prelim = randint(65, 80)
-            if prelim:
-                songs = appearance.songs.all()
-                for song in songs:
-                    scores = song.scores.all()
-                    for score in scores:
-                        d = randint(-4,4)
-                        score.points = prelim + d
-                        score.save()
-            if appearance.status == appearance.STATUS.new:
-                raise RuntimeError("Out of state")
-            if appearance.status == appearance.STATUS.built:
-                appearance.start()
-                appearance.finish()
-                appearance.verify()
-                appearance.save()
-                continue
-            if appearance.status == appearance.STATUS.started:
-                appearance.finish()
-                appearance.verify()
-                appearance.save()
-                continue
-            if appearance.status == appearance.STATUS.finished:
-                appearance.verify()
-                appearance.save()
-                continue
+            appearance.mock()
+            appearance.save()
         self.stdout.write("Mocked round")
         return
