@@ -250,7 +250,7 @@ class Round(TimeStampedModel):
         )
         # Eval Only
         privates = self.session.competitors.filter(
-            status=Competitor.STATUS.finished,
+            draw__isnull=True,
             appearances__round=self,
             is_private=True,
         ).select_related(
