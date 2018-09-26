@@ -212,23 +212,7 @@
           {% endif %}
         </p>
       <div class='row'>
-        <div class='pull-right'>
-          <h5>Official Panel</h5>
-          {% if panelists %}
-            {% regroup panelists by category as panelist_tuple %}
-            <ul class='list-unstyled'>
-              {% for item in panelist_tuple %}
-                <li><strong>{{item.grouper|shortcat}}:</strong>
-                  {% for panelist in item.list %}
-                    {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
-                  {% endfor %}
-                </li>
-              {% endfor %}
-            </ul>
-          {% else %}
-            (Panel Unknown)
-          {% endif %}
-        </div>
+        <div class='col-xs-8'>
         {% if advancers %}
           <div>
             <h5>Draw</h5>
@@ -257,6 +241,24 @@
             </p>
           </div>
         {% endif %}
+        </div>
+        <div class='col-xs-4'>
+          <h5>Official Panel</h5>
+          {% if panelists %}
+            {% regroup panelists by category as panelist_tuple %}
+            <ul class='list-unstyled'>
+              {% for item in panelist_tuple %}
+                <li><strong>{{item.grouper|shortcat}}:</strong>
+                  {% for panelist in item.list %}
+                    {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
+                  {% endfor %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            (Panel Unknown)
+          {% endif %}
+        </div>
       </div>
     </div>
   </body>
