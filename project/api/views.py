@@ -1107,7 +1107,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             'competitor__group',
         ).order_by(
             'competitor__group__name',
-        )
+        ).first()
         contests = round.session.contests.filter(
             num__isnull=False,
             group__isnull=False,

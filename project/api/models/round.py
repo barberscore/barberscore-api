@@ -268,6 +268,13 @@ class Round(TimeStampedModel):
             ).order_by(
                 'draw',
             )
+            mt = self.appearances.filter(
+                draw=0,
+            ).select_related(
+                'competitor__group',
+            ).order_by(
+                'draw',
+            ).first()
         else:
             advancers = None
         contests = self.session.contests.filter(
@@ -330,6 +337,7 @@ class Round(TimeStampedModel):
             'competitors': competitors,
             'privates': privates,
             'advancers': advancers,
+            'mt': mt,
             'panelists': panelists,
             'contests': contests,
             'is_multi': is_multi,
@@ -721,9 +729,10 @@ class Round(TimeStampedModel):
             contestants__status=Contestant.STATUS.included,
             contestants__entry__competitor__is_multi=False,
         ).distinct()
-        for contest in contests:
-            contest.determine()
-            contest.save()
+
+        # for contest in contests:
+        #     contest.determine()
+        #     contest.save()
 
         # Get spots available
         spots = self.spots
@@ -767,17 +776,16 @@ class Round(TimeStampedModel):
             appearance.save()
             i += 1
         # create MT
-        # mt = self.appearances.filter(
-        #     draw=None,
-        #     competitor__status__gt=0,
-        #     competitor__is_multi=True,
-        # ).order_by(
-        #     '-tot_points',
-        #     '-sng_points',
-        #     '-per_points',
-        # ).first()
-        # mt.draw = 0
-        # mt.save()
+        mt = self.appearances.filter(
+            draw=None,
+            competitor__is_multi=True,
+        ).order_by(
+            '-tot_points',
+            '-sng_points',
+            '-per_points',
+        ).first()
+        mt.draw = 0
+        mt.save()
         return
 
     @fsm_log_by

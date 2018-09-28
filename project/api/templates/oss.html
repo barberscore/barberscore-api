@@ -128,9 +128,9 @@
                       {% endif %}
                       {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
                         {% if song.chart %}
-                          {{song.chart.nomen|truncatewords_html:70|safe|default:"(Song not included in contestant repertory)"}}<br>
+                          {{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
                         {% else %}
-                          {{song.legacy_chart|truncatewords_html:70|safe|default:"(Song not included in contestant repertory)"}}<br>
+                          {{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
                         {% endif %}
                       {% endfor %}
                     {% else %}
@@ -141,9 +141,9 @@
                       {% endif %}
                       {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
                         {% if song.chart %}
-                          {{song.chart.nomen|truncatewords_html:70|safe|default:"(Song not included in contestant repertory)"}}<br>
+                          {{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
                         {% else %}
-                          {{song.legacy_chart|truncatewords_html:70|safe|default:"(Song not included in contestant repertory)"}}<br>
+                          {{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
                         {% endif %}
                       {% endfor %}
                     {% endif %}
@@ -153,9 +153,9 @@
                       <span class='bolder'>{{appearance.round.get_kind_display}}&nbsp;</span><span class='smaller-font'>(OA: {{appearance.num}}, Points: {{appearance.tot_points}})</span><br>
                       {% for song in appearance.songs.all|dictsort:'num' %}
                         {% if song.chart %}
-                          &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatewords_html:70|safe|default:"(Song not included in contestant repertory)"}}<br>
+                          &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
                         {% else %}
-                          &nbsp;&nbsp;&nbsp;&nbsp;{{song.legacy_chart|truncatewords_html:70|safe|default:"(Song not included in contestant repertory)"}}<br>
+                          &nbsp;&nbsp;&nbsp;&nbsp;{{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
                         {% endif %}
                       {% endfor %}
                     {% endfor %}
@@ -220,6 +220,7 @@
               {% for advancer in advancers %}
                 <span class='text-nowrap'><strong>{{advancer.draw}}</strong> {{advancer.competitor.group.name}}&nbsp;</span>
               {% endfor %}
+              <span class='text-nowrap'><strong>MT</strong> {{mt.competitor.group.name}}&nbsp;</span>
             </p>
           </div>
         {% endif %}

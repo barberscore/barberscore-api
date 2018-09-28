@@ -43,9 +43,9 @@
       Total Participants on Stage: {{pos}}
     </section>
     {% endif %}
-    {% if contests %}
-      <section>
-          <h2>Awards</h2>
+    <section>
+        <h2>Awards</h2>
+        {% if contests  %}
           <ul class='list-unstyled'>
               {% for contest in contests %}
                   <li>{{contest.award.name}}: {{contest.group.name}}</li>
@@ -70,8 +70,10 @@
                   </li><br>
               {% endfor %}
           </ul>
-      </section>
-    {% endif %}
+        {% else %}
+          <p>(No announceable awards.)</p>
+        {% endif %}
+    </section>
     {% if appearances %}
       <section>
           <h2>Draw</h2>
@@ -79,6 +81,7 @@
               {% for appearance in appearances %}
                   <li>{{appearance.draw}}: {{appearance.competitor.group.name}}</li>
               {% endfor %}
+              <li>MT: {{mt.competitor.group.name}}
           </ul>
       </section>
     {% endif %}
