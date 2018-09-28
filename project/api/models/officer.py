@@ -108,13 +108,13 @@ class Officer(TimeStampedModel):
         return str(self.id)
 
     def clean(self):
-        if all([
-            self.status == self.STATUS.active,
-            self.person.status == self.person.STATUS.inactive,
-        ]):
-            raise ValidationError({
-                'status': 'Can not be active when person is inactive',
-            })
+        # if all([
+        #     self.status == self.STATUS.active,
+        #     self.person.status == self.person.STATUS.inactive,
+        # ]):
+        #     raise ValidationError({
+        #         'status': 'Can not be active when person is inactive',
+        #     })
         if self.end_date:
             if all([
                 self.status == self.STATUS.active,
