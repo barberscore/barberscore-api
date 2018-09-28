@@ -24,6 +24,7 @@ from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.files.base import ContentFile
 from django.db import models
+from django.db.models import Q
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -226,8 +227,8 @@ class Round(TimeStampedModel):
         Panelist = apps.get_model('api.panelist')
         Contestant = apps.get_model('api.contestant')
         competitors = Competitor.objects.filter(
+            Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
             appearances__round=self,
-            appearances__draw__gt=0,
             is_private=False,
         ).select_related(
             'group',
@@ -387,8 +388,8 @@ class Round(TimeStampedModel):
             kind=Panelist.KIND.practice,
         ).count()
         competitors = self.session.competitors.filter(
+            Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
             appearances__round=self,
-            appearances__draw__gt=0,
         ).select_related(
             'group',
         ).prefetch_related(
@@ -426,8 +427,8 @@ class Round(TimeStampedModel):
 
     def get_csa(self):
         competitors = self.session.competitors.filter(
+            Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
             appearances__round=self,
-            appearances__draw__gt=0,
         ).order_by(
             'group__name',
         )
