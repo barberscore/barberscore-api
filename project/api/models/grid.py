@@ -15,6 +15,8 @@ from django.apps import apps as api_apps
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
+from api.managers import GridManager
+
 config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
@@ -123,6 +125,9 @@ class Grid(TimeStampedModel):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
+    # Internals
+    objects = GridManager()
 
     class JSONAPIMeta:
         resource_name = "grid"

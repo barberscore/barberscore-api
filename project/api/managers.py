@@ -3,6 +3,7 @@
 import json
 import logging
 import uuid
+import maya
 
 # Third-Party
 import django_rq
@@ -104,6 +105,28 @@ class ChartManager(Manager):
         file = save_virtual_workbook(wb)
         content = ContentFile(file)
         return content
+
+
+class GridManager(Manager):
+    def fill_grids(self, round, onstage, duration, num, max=10):
+        venue = round.session.convention.venue
+        timezone = venue.timezone.zone
+        if not venue:
+            return ValueError("Must have venue selected.")
+        maya_object = maya.when(onstage, timezone=timezone)
+        while num <= max:
+            onstage = maya_object.datetime()
+            defaults = {
+                'onstage': onstage,
+                'venue': venue,
+            }
+            grid, created = round.grids.update_or_create(
+                num=num,
+                defaults=defaults,
+            )
+            num += 1
+            maya_object = maya_object.add(minutes=duration)
+        return
 
 
 class GroupManager(Manager):
