@@ -1095,11 +1095,18 @@ class RoundViewSet(viewsets.ModelViewSet):
     def announcements(self, request, pk=None):
         round = Round.objects.get(pk=pk)
         appearances = round.appearances.filter(
-            draw__isnull=False,
+            draw__gt=0,
         ).select_related(
             'competitor__group',
         ).order_by(
             'draw',
+        )
+        mt = round.appearances.filter(
+            draw=0,
+        ).select_related(
+            'competitor__group',
+        ).order_by(
+            'competitor__group__name',
         )
         contests = round.session.contests.filter(
             num__isnull=False,
@@ -1123,6 +1130,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         context = {
             'round': round,
             'appearances': appearances,
+            'mt': mt,
             'contests': contests,
             'competitors': competitors,
             'pos': pos,
