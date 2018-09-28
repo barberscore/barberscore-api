@@ -227,7 +227,7 @@ class Round(TimeStampedModel):
         Contestant = apps.get_model('api.contestant')
         competitors = Competitor.objects.filter(
             appearances__round=self,
-            appearances__draw__isnull=True,
+            appearances__draw__gt=0,
             is_private=False,
         ).select_related(
             'group',
@@ -250,7 +250,6 @@ class Round(TimeStampedModel):
         )
         # Eval Only
         privates = self.session.competitors.filter(
-            draw__isnull=True,
             appearances__round=self,
             is_private=True,
         ).select_related(
@@ -262,7 +261,7 @@ class Round(TimeStampedModel):
         privates = privates.values_list('group__name', flat=True)
         if self.kind != self.KIND.finals:
             advancers = self.appearances.filter(
-                draw__isnull=False,
+                draw__gt=0,
             ).select_related(
                 'competitor__group',
             ).order_by(
@@ -389,7 +388,7 @@ class Round(TimeStampedModel):
         ).count()
         competitors = self.session.competitors.filter(
             appearances__round=self,
-            appearances__draw__isnull=True,
+            appearances__draw__gt=0,
         ).select_related(
             'group',
         ).prefetch_related(
@@ -428,7 +427,7 @@ class Round(TimeStampedModel):
     def get_csa(self):
         competitors = self.session.competitors.filter(
             appearances__round=self,
-            appearances__draw__isnull=True,
+            appearances__draw__gt=0,
         ).order_by(
             'group__name',
         )
@@ -448,7 +447,7 @@ class Round(TimeStampedModel):
     def get_sung(self):
         Song = apps.get_model('api.song')
         appearances = self.appearances.filter(
-            draw__isnull=False,
+            draw__gt=0,
         ).order_by(
             'draw',
         )
