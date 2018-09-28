@@ -228,6 +228,7 @@ class Round(TimeStampedModel):
         Contestant = apps.get_model('api.contestant')
         competitors = Competitor.objects.filter(
             Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
+            appearances__num__gt=0,
             appearances__round=self,
             is_private=False,
         ).select_related(
@@ -277,6 +278,7 @@ class Round(TimeStampedModel):
             ).first()
         else:
             advancers = None
+            mt = None
         contests = self.session.contests.filter(
             num__isnull=False,
         ).select_related(

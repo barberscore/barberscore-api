@@ -269,7 +269,9 @@ class Competitor(TimeStampedModel):
         sng = Sum('points', filter=Q(category=Score.CATEGORY.singing))
         officials = Score.objects.filter(
             song__appearance__competitor=self,
+            song__appearance__num__gt=0,
             kind=Score.KIND.official,
+        ).distinct(
         ).annotate(
             tot=tot,
             mus=mus,
