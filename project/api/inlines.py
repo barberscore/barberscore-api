@@ -201,7 +201,6 @@ class ContestInline(admin.TabularInline):
         'award',
         'group',
         'num',
-        'is_primary',
         'session',
         'status',
     ]
@@ -264,7 +263,6 @@ class CompetitorInline(admin.TabularInline):
         'group',
         'tot_score',
         'tot_rank',
-        'is_ranked',
     ]
     readonly_fields = [
         'status',

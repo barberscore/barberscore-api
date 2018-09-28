@@ -332,7 +332,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'award',
         'session',
-        'is_primary',
         'group',
     ]
 
@@ -340,14 +339,12 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'award',
         'session',
-        'is_primary',
         'group',
     )
 
     list_filter = [
         'status',
         'award__kind',
-        'is_primary',
     ]
 
     save_on_top = True
@@ -495,7 +492,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'draw',
         'image',
         'csa',
-        ('is_private', 'is_ranked', 'is_multi',),
+        ('is_private', 'is_multi',),
         ('tot_points', 'mus_points', 'per_points', 'sng_points',),
         ('tot_score', 'mus_score', 'per_score', 'sng_score',),
     )
@@ -506,7 +503,6 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session',
         'tot_score',
         'tot_points',
-        'is_ranked',
     )
 
     list_filter = [
@@ -1422,7 +1418,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     ordering = (
         '-convention__year',
-        '-convention__season',
+        'convention__season',
         'convention__group__tree_sort',
         'kind',
     )

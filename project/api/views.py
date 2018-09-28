@@ -1516,11 +1516,8 @@ class SessionViewSet(viewsets.ModelViewSet):
             'appearances__songs__scores__panelist',
             'appearances__songs__scores__panelist__person',
         ).order_by(
-            '-is_ranked',
-            'tot_rank',
             '-tot_points',
             '-sng_points',
-            '-mus_points',
             '-per_points',
             'group__name',
         )

@@ -100,10 +100,6 @@ class Contest(TimeStampedModel):
             raise ValidationError(
                 {'level': 'Qualifiers can not select winners'}
             )
-        if self.is_primary and self.status <= 0:
-            raise ValidationError(
-                {'is_primary': 'Primary contests must have status of included'}
-            )
 
     # Contest Permissions
     @staticmethod

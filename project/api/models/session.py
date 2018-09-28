@@ -138,15 +138,12 @@ class Session(TimeStampedModel):
         )
 
     def clean(self):
-        if self.contests.filter(is_primary=True).count() > 1:
-            raise ValidationError(
-                {'level': 'Sessions may have only one primary contest'}
-            )
+        pass
 
     # Methods
     def rank(self):
         competitors = self.competitors.filter(
-            is_ranked=True,
+            is_private=False,
             status__gt=0,
         ).distinct().order_by('-tot_points')
         points = [x.tot_points for x in competitors]
@@ -155,7 +152,7 @@ class Session(TimeStampedModel):
             competitor.tot_rank = ranked.rank(competitor.tot_points)
             competitor.save()
         competitors = self.competitors.filter(
-            is_ranked=True,
+            is_private=False,
             status__gt=0,
         ).distinct().order_by('-mus_points')
         points = [x.mus_points for x in competitors]
@@ -164,7 +161,7 @@ class Session(TimeStampedModel):
             competitor.mus_rank = ranked.rank(competitor.mus_points)
             competitor.save()
         competitors = self.competitors.filter(
-            is_ranked=True,
+            is_private=False,
             status__gt=0,
         ).distinct().order_by('-per_points')
         points = [x.per_points for x in competitors]
@@ -173,7 +170,7 @@ class Session(TimeStampedModel):
             competitor.per_rank = ranked.rank(competitor.per_points)
             competitor.save()
         competitors = self.competitors.filter(
-            is_ranked=True,
+            is_private=False,
             status__gt=0,
         ).distinct().order_by('-sng_points')
         points = [x.sng_points for x in competitors]
@@ -445,14 +442,8 @@ class Session(TimeStampedModel):
             'group',
         ).distinct(
         ).order_by(
-            '-is_primary',
             'award__tree_sort',
         )
-        # Determine Primary (if present)
-        try:
-            primary = contests.get(is_primary=True)
-        except Contest.DoesNotExist:
-            primary = None
         # MonkeyPatch qualifiers
         for contest in contests:
             if contest.award.level != contest.award.LEVEL.deferred:
@@ -502,7 +493,6 @@ class Session(TimeStampedModel):
             'privates': privates,
             'panelists': panelists,
             'contests': contests,
-            'primary': primary,
             'is_multi': False,
         }
         rendered = render_to_string('oss.html', context)
@@ -783,7 +773,6 @@ class Session(TimeStampedModel):
             contestants__status__gt=0,
         ).distinct(
         ).order_by(
-            '-is_primary',
             'award__tree_sort',
         )
         i = 0
@@ -797,11 +786,6 @@ class Session(TimeStampedModel):
             status=self.entries.model.STATUS.approved,
         )
         for entry in entries:
-            # Set is_ranked=True if they are competing for a primary award.
-            is_ranked = bool(entry.contestants.filter(
-                contest__is_primary=True,
-                status__gt=0,
-            ))
             # Set is_multi=True if they are competiting for at least
             # one multi-round award.
             is_multi = bool(entry.contestants.filter(
@@ -826,7 +810,6 @@ class Session(TimeStampedModel):
             competitor = self.competitors.create(
                 entry=entry,
                 group=entry.group,
-                is_ranked=is_ranked,
                 is_multi=is_multi,
                 is_private=entry.is_private,
                 participants=entry.participants,
