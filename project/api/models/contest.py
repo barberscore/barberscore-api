@@ -158,7 +158,14 @@ class Contest(TimeStampedModel):
             '-entry__competitor__per_points',
         )
         if contestants:
-            group = contestants.first().entry.group
+            multis = self.session.competitors.filter(
+                appearances__draw__gt=0,
+                is_multi=True,
+            )
+            if multis:
+                group = contestants.first().entry.group
+            else:
+                group = None
         else:
             group = None
         self.group = group
