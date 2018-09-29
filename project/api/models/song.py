@@ -302,11 +302,11 @@ class Song(TimeStampedModel):
         critical = confidence[str(aggregates['cnt'])]
         ascending_distance = abs(ascending[0].points - ascending[1].points)
         ascending_q = ascending_distance / aggregates['spread']
-        if ascending_q > critical and ascending_distance > 5:
+        if ascending_q > critical and ascending_distance > 4:
             output.append(ascending[0].category)
         descending_distance = abs(descending[0].points - descending[1].points)
         descending_q = descending_distance / aggregates['spread']
-        if descending_q > critical and descending_distance > 5:
+        if descending_q > critical and descending_distance > 4:
             output.append(descending[0].category)
         return output
 
