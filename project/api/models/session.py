@@ -20,7 +20,7 @@ from ranking import ORDINAL
 from ranking import Ranking
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
-
+from django.utils.text import slugify
 # Django
 from django.apps import apps
 from django.conf import settings
@@ -505,6 +505,16 @@ class Session(TimeStampedModel):
         )
         content = ContentFile(file)
         return content
+
+    def save_oss(self):
+        content = self.get_oss()
+        self.refresh_from_db()
+        self.oss.save(
+            "{0}-oss".format(
+                slugify(self),
+            ),
+            content,
+        )
 
     def queue_reports(self):
         subject = "[Barberscore] {0} Session Reports".format(
