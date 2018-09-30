@@ -450,6 +450,16 @@ class Round(TimeStampedModel):
         content = ContentFile(data)
         return content
 
+    def save_oss(self):
+        content = self.get_oss()
+        self.refresh_from_db()
+        self.oss.save(
+            "{0}-oss".format(
+                slugify(self),
+            ),
+            content,
+        )
+
     def get_sung(self):
         Song = apps.get_model('api.song')
         appearances = self.appearances.filter(
