@@ -360,7 +360,7 @@ class Competitor(TimeStampedModel):
         )
 
 
-    def queue_notification(self):
+    def queue_csa(self):
         officers = self.group.officers.filter(
             status__gt=0,
             person__email__isnull=False,
@@ -430,7 +430,7 @@ class Competitor(TimeStampedModel):
         target=STATUS.finished,
     )
     def finish(self, *args, **kwargs):
-        self.queue_notification()
+        self.queue_csa()
         return
 
     @fsm_log_by
