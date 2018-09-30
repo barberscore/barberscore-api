@@ -92,11 +92,6 @@ class Round(TimeStampedModel):
         null=True,
         blank=True,
     )
-    csa = models.FileField(
-        null=True,
-        blank=True,
-    )
-
     legacy_oss = models.FileField(
         null=True,
         blank=True,

@@ -579,7 +579,6 @@ class RoundSerializer(serializers.ModelSerializer):
             'footnotes',
             'oss',
             'sa',
-            'csa',
             'session',
             'appearances',
             'panelists',
