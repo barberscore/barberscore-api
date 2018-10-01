@@ -269,7 +269,9 @@ class Competitor(TimeStampedModel):
         sng = Sum('points', filter=Q(category=Score.CATEGORY.singing))
         officials = Score.objects.filter(
             song__appearance__competitor=self,
+            song__appearance__num__gt=0,
             kind=Score.KIND.official,
+        ).distinct(
         ).annotate(
             tot=tot,
             mus=mus,
@@ -358,7 +360,7 @@ class Competitor(TimeStampedModel):
         )
 
 
-    def queue_notification(self):
+    def queue_csa(self):
         officers = self.group.officers.filter(
             status__gt=0,
             person__email__isnull=False,
@@ -428,7 +430,7 @@ class Competitor(TimeStampedModel):
         target=STATUS.finished,
     )
     def finish(self, *args, **kwargs):
-        self.queue_notification()
+        self.queue_csa()
         return
 
     @fsm_log_by

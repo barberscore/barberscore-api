@@ -20,7 +20,7 @@ from ranking import ORDINAL
 from ranking import Ranking
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
-
+from django.utils.text import slugify
 # Django
 from django.apps import apps
 from django.conf import settings
@@ -417,7 +417,6 @@ class Session(TimeStampedModel):
             'appearances__songs__scores__panelist',
             'appearances__songs__scores__panelist__person',
         ).order_by(
-            'tot_rank',
             '-tot_points',
             '-sng_points',
             '-per_points',
@@ -435,14 +434,13 @@ class Session(TimeStampedModel):
         )
         privates = privates.values_list('group__name', flat=True)
         contests = self.contests.filter(
-            status=Contest.STATUS.included,
-            contestants__status__gt=0,
+            num__isnull=False,
         ).select_related(
             'award',
             'group',
         ).distinct(
         ).order_by(
-            'award__tree_sort',
+            'num',
         )
         # MonkeyPatch qualifiers
         for contest in contests:
@@ -505,6 +503,16 @@ class Session(TimeStampedModel):
         )
         content = ContentFile(file)
         return content
+
+    def save_oss(self):
+        content = self.get_oss()
+        self.refresh_from_db()
+        self.oss.save(
+            "{0}-oss".format(
+                slugify(self),
+            ),
+            content,
+        )
 
     def queue_reports(self):
         subject = "[Barberscore] {0} Session Reports".format(

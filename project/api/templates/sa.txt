@@ -4,4 +4,3 @@ beta testing of Barberscore.  Thanks.
 
 SA PDF: {{round.sa.url}}
 
-Thanks.

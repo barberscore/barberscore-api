@@ -333,6 +333,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'award',
         'session',
+        'result',
         'group',
     ]
 
@@ -340,6 +341,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'award',
         'session',
+        'result',
         'group',
     )
 
@@ -1289,7 +1291,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'legacy_sa',
         'oss',
         'sa',
-        'csa',
         ('session', 'kind', 'num', 'spots',),
         'date',
         'footnotes',

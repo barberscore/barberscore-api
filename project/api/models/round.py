@@ -4,7 +4,7 @@ import logging
 import random
 import uuid
 from io import BytesIO
-
+import django_rq
 # Third-Party
 import pydf
 from django_fsm import FSMIntegerField
@@ -18,6 +18,7 @@ from model_utils.models import TimeStampedModel
 from PyPDF2 import PdfFileMerger
 from ranking import ORDINAL
 from ranking import Ranking
+from django.core.mail import EmailMessage
 
 # Django
 from django.apps import apps
@@ -92,11 +93,6 @@ class Round(TimeStampedModel):
         null=True,
         blank=True,
     )
-    csa = models.FileField(
-        null=True,
-        blank=True,
-    )
-
     legacy_oss = models.FileField(
         null=True,
         blank=True,
@@ -228,6 +224,7 @@ class Round(TimeStampedModel):
         Contestant = apps.get_model('api.contestant')
         competitors = Competitor.objects.filter(
             Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
+            appearances__num__gt=0,
             appearances__round=self,
             is_private=False,
         ).select_related(
@@ -277,6 +274,7 @@ class Round(TimeStampedModel):
             ).first()
         else:
             advancers = None
+            mt = None
         contests = self.session.contests.filter(
             num__isnull=False,
         ).select_related(
@@ -433,6 +431,16 @@ class Round(TimeStampedModel):
         content = ContentFile(file)
         return content
 
+    def save_sa(self):
+        content = self.get_sa()
+        self.refresh_from_db()
+        self.sa.save(
+            "{0}-sa".format(
+                slugify(self),
+            ),
+            content,
+        )
+
     def get_csa(self):
         competitors = self.session.competitors.filter(
             Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
@@ -452,6 +460,16 @@ class Round(TimeStampedModel):
         data = stream.getvalue()
         content = ContentFile(data)
         return content
+
+    def save_oss(self):
+        content = self.get_oss()
+        self.refresh_from_db()
+        self.oss.save(
+            "{0}-oss".format(
+                slugify(self),
+            ),
+            content,
+        )
 
     def get_sung(self):
         Song = apps.get_model('api.song')
@@ -495,6 +513,43 @@ class Round(TimeStampedModel):
         )
         content = ContentFile(file)
         return content
+
+    def queue_sa(self):
+        panelists = self.panelists(
+            person__email__isnull=False,
+        )
+        if not panelists:
+            raise RuntimeError("No panelists for {0}".format(self))
+        tos = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email) for panelist in panelists]
+        context = {'round': self}
+        rendered = render_to_string('sa.txt', context)
+        subject = "[Barberscore] {0} {1} {2} SA".format(
+            self.session.convention.name,
+            self.session.get_kind_display(),
+            self.get_kind_display(),
+        )
+        # email = EmailMessage(
+        #     subject=subject,
+        #     body=rendered,
+        #     from_email='Barberscore <admin@barberscore.com>',
+        #     to=tos,
+        #     cc=ccs,
+        # )
+        email = EmailMessage(
+            subject=subject,
+            body=rendered,
+            from_email='Barberscore <admin@barberscore.com>',
+            to=[
+                'dbinetti@gmail.com',
+                'proclamation56@gmail.com',
+                'chris.buechler@verizon.net',
+            ],
+        )
+        queue = django_rq.get_queue('high')
+        result = queue.enqueue(
+            email.send
+        )
+        return result
 
     # Permissions
     @staticmethod
@@ -806,9 +861,12 @@ class Round(TimeStampedModel):
             content=content,
         )
         finishers = self.appearances.filter(
-            draw=None,
+            Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
         )
+        panelists = self.panelists.all()
         for finisher in finishers:
             finisher.competitor.finish()
             finisher.competitor.save()
+        for panelist in panelists:
+            panelist.queue_sa()
         return
