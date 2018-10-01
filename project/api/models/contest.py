@@ -52,6 +52,12 @@ class Contest(TimeStampedModel):
         default=False,
     )
 
+    result = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
     # Private
     group = models.ForeignKey(
         'Group',

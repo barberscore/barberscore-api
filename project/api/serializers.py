@@ -199,6 +199,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'url',
             'status',
             'num',
+            'result',
             'group',
             'session',
             'award',
