@@ -105,6 +105,12 @@ def test_officer_endpoint_list(anon_api_client, officer):
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
+def test_outcome_endpoint_list(anon_api_client, outcome):
+    path = reverse('outcome-list')
+    response = anon_api_client.get(path)
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
 def test_panelist_endpoint_list(anon_api_client, panelist):
     path = reverse('panelist-list')
     response = anon_api_client.get(path)
@@ -247,6 +253,12 @@ def test_office_endpoint_detail(anon_api_client, office):
 
 def test_officer_endpoint_detail(anon_api_client, officer):
     path = reverse('officer-detail', args=(str(officer.id),))
+    response = anon_api_client.get(path)
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_outcome_endpoint_detail(anon_api_client, outcome):
+    path = reverse('outcome-detail', args=(str(outcome.id),))
     response = anon_api_client.get(path)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 

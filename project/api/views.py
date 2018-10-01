@@ -48,6 +48,7 @@ from .models import Group
 from .models import Member
 from .models import Office
 from .models import Officer
+from .models import Outcome
 from .models import Panelist
 from .models import Person
 from .models import Repertory
@@ -76,6 +77,7 @@ from .serializers import GroupSerializer
 from .serializers import MemberSerializer
 from .serializers import OfficerSerializer
 from .serializers import OfficeSerializer
+from .serializers import OutcomeSerializer
 from .serializers import PanelistSerializer
 from .serializers import PersonSerializer
 from .serializers import RepertorySerializer
@@ -867,6 +869,25 @@ class OfficerViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+class OutcomeViewSet(viewsets.ModelViewSet):
+    queryset = Outcome.objects.select_related(
+        'round',
+        'contest',
+    ).prefetch_related(
+        'statelogs',
+    ).order_by('id')
+    serializer_class = OutcomeSerializer
+    filter_backends = [
+        # OrderingFilter,
+        CoalesceFilterBackend,
+        DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "outcome"
+
+
 class PanelistViewSet(viewsets.ModelViewSet):
     queryset = Panelist.objects.select_related(
         'round',
@@ -992,6 +1013,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         'appearances',
         'panelists',
         'grids',
+        'outcomes',
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = RoundSerializer

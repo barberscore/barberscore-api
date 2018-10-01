@@ -121,6 +121,13 @@ def test_officer_endpoint_list(admin_api_client, officer, django_assert_num_quer
         assert response.status_code == status.HTTP_200_OK
 
 
+def test_outcome_endpoint_list(admin_api_client, outcome, django_assert_num_queries):
+    with django_assert_num_queries(4):
+        path = reverse('outcome-list')
+        response = admin_api_client.get(path)
+        assert response.status_code == status.HTTP_200_OK
+
+
 def test_panelist_endpoint_list(admin_api_client, panelist, django_assert_num_queries):
     with django_assert_num_queries(5):
         path = reverse('panelist-list')
@@ -143,7 +150,7 @@ def test_repertory_endpoint_list(admin_api_client, repertory, django_assert_num_
 
 
 def test_round_endpoint_list(admin_api_client, round, django_assert_num_queries):
-    with django_assert_num_queries(7):
+    with django_assert_num_queries(8):
         path = reverse('round-list')
         response = admin_api_client.get(path)
         assert response.status_code == status.HTTP_200_OK
@@ -291,6 +298,13 @@ def test_officer_endpoint_detail(admin_api_client, officer, django_assert_num_qu
         assert response.status_code == status.HTTP_200_OK
 
 
+def test_outcome_endpoint_detail(admin_api_client, outcome, django_assert_num_queries):
+    with django_assert_num_queries(2):
+        path = reverse('outcome-detail', args=(str(outcome.id),))
+        response = admin_api_client.get(path)
+        assert response.status_code == status.HTTP_200_OK
+
+
 def test_panelist_endpoint_detail(admin_api_client, panelist, django_assert_num_queries):
     with django_assert_num_queries(3):
         path = reverse('panelist-detail', args=(str(panelist.id),))
@@ -313,7 +327,7 @@ def test_repertory_endpoint_detail(admin_api_client, repertory, django_assert_nu
 
 
 def test_round_endpoint_detail(admin_api_client, round, django_assert_num_queries):
-    with django_assert_num_queries(5):
+    with django_assert_num_queries(6):
         path = reverse('round-detail', args=(str(round.id),))
         response = admin_api_client.get(path)
         assert response.status_code == status.HTTP_200_OK

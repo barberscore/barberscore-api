@@ -18,6 +18,7 @@ from .views import GroupViewSet
 from .views import MemberViewSet
 from .views import OfficerViewSet
 from .views import OfficeViewSet
+from .views import OutcomeViewSet
 from .views import PanelistViewSet
 from .views import PersonViewSet
 from .views import RepertoryViewSet
@@ -48,6 +49,7 @@ router.register(r'group', GroupViewSet)
 router.register(r'member', MemberViewSet)
 router.register(r'office', OfficeViewSet)
 router.register(r'officer', OfficerViewSet)
+router.register(r'outcome', OutcomeViewSet)
 router.register(r'panelist', PanelistViewSet)
 router.register(r'person', PersonViewSet)
 router.register(r'repertory', RepertoryViewSet)

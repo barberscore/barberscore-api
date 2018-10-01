@@ -22,6 +22,7 @@ from .models import Group
 from .models import Member
 from .models import Office
 from .models import Officer
+from .models import Outcome
 from .models import Panelist
 from .models import Person
 from .models import Repertory
@@ -476,6 +477,24 @@ class OfficerSerializer(serializers.ModelSerializer):
         ]
 
 
+class OutcomeSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Outcome
+        fields = (
+            'id',
+            'url',
+            'status',
+            'round',
+            'contest',
+            'num',
+            'name',
+            'legacy_name',
+            'permissions',
+        )
+
+
 class PanelistSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
@@ -584,6 +603,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'appearances',
             'panelists',
             'grids',
+            'outcomes',
             'permissions',
         )
 

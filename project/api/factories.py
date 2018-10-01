@@ -37,6 +37,7 @@ from api.models import Group
 from api.models import Member
 from api.models import Office
 from api.models import Officer
+from api.models import Outcome
 from api.models import Panelist
 from api.models import Person
 from api.models import Repertory
@@ -269,6 +270,14 @@ class OfficerFactory(DjangoModelFactory):
 
     class Meta:
         model = Officer
+
+
+class OutcomeFactory(DjangoModelFactory):
+    round = SubFactory('api.factories.RoundFactory')
+    contest = SubFactory('api.factories.ContestFactory')
+
+    class Meta:
+        model = Outcome
 
 
 class PanelistFactory(DjangoModelFactory):

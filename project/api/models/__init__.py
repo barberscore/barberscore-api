@@ -14,6 +14,7 @@ from .group import Group
 from .member import Member
 from .office import Office
 from .officer import Officer
+from .outcome import Outcome
 from .panelist import Panelist
 from .person import Person
 from .repertory import Repertory

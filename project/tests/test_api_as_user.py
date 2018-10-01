@@ -105,6 +105,12 @@ def test_officer_endpoint_list(user_api_client, officer):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_outcome_endpoint_list(user_api_client, outcome):
+    path = reverse('outcome-list')
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_panelist_endpoint_list(user_api_client, panelist):
     path = reverse('panelist-list')
     response = user_api_client.get(path)
@@ -249,6 +255,12 @@ def test_officer_endpoint_detail(user_api_client, officer):
     path = reverse('officer-detail', args=(str(officer.id),))
     response = user_api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
+
+
+def test_outcome_endpoint_detail(user_api_client, outcome):
+    path = reverse('outcome-detail', args=(str(outcome.id),))
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 def test_panelist_endpoint_detail(user_api_client, panelist):

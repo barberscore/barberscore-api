@@ -22,6 +22,7 @@ from api.factories import GroupFactory
 from api.factories import MemberFactory
 from api.factories import OfficeFactory
 from api.factories import OfficerFactory
+from api.factories import OutcomeFactory
 from api.factories import PanelistFactory
 from api.factories import PersonFactory
 from api.factories import RepertoryFactory
@@ -149,6 +150,11 @@ def office():
 @pytest.fixture
 def officer():
     return OfficerFactory()
+
+
+@pytest.fixture
+def outcome():
+    return OutcomeFactory()
 
 
 @pytest.fixture

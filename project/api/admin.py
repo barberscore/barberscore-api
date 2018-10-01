@@ -62,6 +62,7 @@ from .models import Group
 from .models import Member
 from .models import Office
 from .models import Officer
+from .models import Outcome
 from .models import Panelist
 from .models import Person
 from .models import Repertory
@@ -1055,6 +1056,47 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
+
+
+@admin.register(Outcome)
+class OutcomeAdmin(admin.ModelAdmin):
+    save_on_top = True
+    fields = [
+        'id',
+        'status',
+        'round',
+        'contest',
+        'num',
+        'name',
+        'legacy_name',
+    ]
+
+    list_display = [
+        'status',
+        'round',
+        'contest',
+        'num',
+        'name',
+        'legacy_name',
+    ]
+
+    list_filter = (
+        'status',
+    )
+
+    list_select_related = [
+        'round',
+        'contest',
+    ]
+
+    autocomplete_fields = [
+        'round',
+        'contest',
+    ]
+
+    readonly_fields = [
+        'id',
+    ]
 
 
 @admin.register(Panelist)
