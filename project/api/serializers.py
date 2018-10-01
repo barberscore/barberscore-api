@@ -271,11 +271,11 @@ class ConventionSerializer(serializers.ModelSerializer):
 
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    competitor = serializers.PrimaryKeyRelatedField(
-        queryset=Competitor.objects.all(),
-        required=False,
-        allow_null=True,
-    )
+    # competitor = serializers.PrimaryKeyRelatedField(
+    #     queryset=Competitor.objects.all(),
+    #     required=False,
+    #     allow_null=True,
+    # )
     # logs = StateLogSerializer(many=True)
     statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
