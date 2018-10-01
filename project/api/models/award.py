@@ -83,6 +83,8 @@ class Award(TimeStampedModel):
         (45, 'representative', "Representative"),
         (50, 'deferred', "Deferred"),
         (60, 'manual', "Manual"),
+        (70, 'raw', "Improved - Raw"),
+        (80, 'standard', "Improved - Standard"),
     )
 
     level = models.IntegerField(
