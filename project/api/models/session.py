@@ -417,7 +417,6 @@ class Session(TimeStampedModel):
             'appearances__songs__scores__panelist',
             'appearances__songs__scores__panelist__person',
         ).order_by(
-            'tot_rank',
             '-tot_points',
             '-sng_points',
             '-per_points',
@@ -435,14 +434,13 @@ class Session(TimeStampedModel):
         )
         privates = privates.values_list('group__name', flat=True)
         contests = self.contests.filter(
-            status=Contest.STATUS.included,
-            contestants__status__gt=0,
+            num__isnull=False,
         ).select_related(
             'award',
             'group',
         ).distinct(
         ).order_by(
-            'award__tree_sort',
+            'num',
         )
         # MonkeyPatch qualifiers
         for contest in contests:
