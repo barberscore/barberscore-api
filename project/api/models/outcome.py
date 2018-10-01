@@ -44,13 +44,13 @@ class Outcome(TimeStampedModel):
     )
 
     name = models.CharField(
-        max_length=255,
+        max_length=1024,
         null=True,
         blank=True,
     )
 
     legacy_name = models.CharField(
-        max_length=255,
+        max_length=1024,
         null=True,
         blank=True,
     )
@@ -76,6 +76,46 @@ class Outcome(TimeStampedModel):
         related_query_name='outcomes',
     )
 
+    # Methods
+    def get_name(self):
+        if self.round.num < self.contest.award.rounds:
+            return "(Result not yet determined)"
+        if self.contest.award.level == self.contest.award.LEVEL.deferred:
+            return "(Result determined post-contest)"
+        if self.contest.award.level == self.contest.award.LEVEL.qualifier:
+            threshold = self.contest.award.threshold
+            qualifiers = self.contest.contestants.filter(
+                status__gt=0,
+                entry__competitor__tot_score__gte=threshold,
+                entry__is_private=False,
+            ).distinct(
+            ).order_by(
+                'entry__group__name',
+            ).values_list(
+                'entry__group__name',
+                flat=True,
+            )
+            if qualifiers:
+                return ", ".join(
+                    qualifiers.values_list('entry__group__name', flat=True)
+                )
+            else:
+                return "(No qualifiers)"
+        else: # Rest are championship, representative, and manual
+            advancers = self.round.appearances.filter(
+                draw__gt=0,
+            ).values_list('competitor__entry', flat=True)
+            continuing = self.contest.contestants.filter(
+                status__gt=0,
+                entry__in=advancers,
+            )
+            if continuing:
+                return "(Result announced following Finals)"
+            else:
+                if self.contest.group:
+                    return str(self.contest.group.name)
+                else:
+                    return "(No recipient)"
 
     # Internals
     class JSONAPIMeta:

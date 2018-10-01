@@ -41,6 +41,7 @@ from .inlines import GridInline
 from .inlines import GroupInline
 from .inlines import MemberInline
 from .inlines import OfficerInline
+from .inlines import OutcomeInline
 from .inlines import PanelistInline
 from .inlines import RepertoryInline
 from .inlines import RoundInline
@@ -1342,6 +1343,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         PanelistInline,
         AppearanceInline,
         GridInline,
+        OutcomeInline,
         StateLogInline,
     ]
 

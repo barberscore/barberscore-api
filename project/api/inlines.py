@@ -16,6 +16,7 @@ from .models import Grid
 from .models import Group
 from .models import Member
 from .models import Officer
+from .models import Outcome
 from .models import Panelist
 from .models import Repertory
 from .models import Round
@@ -428,6 +429,28 @@ class OfficerInline(admin.TabularInline):
     ]
     readonly_fields = [
         'status',
+    ]
+
+
+class OutcomeInline(admin.TabularInline):
+    model = Outcome
+    fields = [
+        'name',
+        'legacy_name',
+        'round',
+        'contest',
+    ]
+    autocomplete_fields = [
+        'contest',
+        'round',
+    ]
+    ordering = (
+        'num',
+    )
+    extra = 0
+    show_change_link = True
+    classes = [
+        'collapse',
     ]
 
 

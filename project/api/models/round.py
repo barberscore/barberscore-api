@@ -275,48 +275,6 @@ class Round(TimeStampedModel):
         else:
             advancers = None
             mt = None
-        contests = self.session.contests.filter(
-            num__isnull=False,
-        ).select_related(
-            'award',
-            'group',
-        ).distinct(
-        ).order_by(
-            'num',
-        )
-        # MonkeyPatch qualifiers
-        for contest in contests:
-            if self.num >= contest.award.rounds:
-                if contest.award.level != contest.award.LEVEL.deferred:
-                    if contest.award.level == contest.award.LEVEL.qualifier:
-                        threshold = contest.award.threshold
-                        if threshold:
-                            qualifiers = contest.contestants.filter(
-                                status__gt=0,
-                                entry__competitor__tot_score__gte=threshold,
-                                entry__is_private=False,
-                            ).distinct(
-                            ).order_by(
-                                'entry__group__name',
-                            ).values_list(
-                                'entry__group__name',
-                                flat=True,
-                            )
-                            if qualifiers:
-                                contest.detail = ", ".join(
-                                    qualifiers.values_list('entry__group__name', flat=True)
-                                )
-                            else:
-                                contest.detail = "(No qualifiers)"
-                    else:
-                        if contest.group:
-                            contest.detail = str(contest.group.name)
-                        else:
-                            contest.detail = "(Result announced following Finals)"
-                else:
-                    contest.detail = "(Result determined post-contest)"
-            else:
-                contest.detail = "(Result not yet determined)"
         panelists = self.panelists.select_related(
             'person',
         ).filter(
@@ -326,6 +284,13 @@ class Round(TimeStampedModel):
             'category',
             'person__last_name',
             'person__first_name',
+        )
+        outcomes = self.outcomes.select_related(
+            'round',
+            'contest',
+            'contest__award',
+        ).order_by(
+            'num',
         )
         is_multi = all([
             self.session.rounds.count() > 1,
@@ -337,7 +302,7 @@ class Round(TimeStampedModel):
             'advancers': advancers,
             'mt': mt,
             'panelists': panelists,
-            'contests': contests,
+            'outcomes': outcomes,
             'is_multi': is_multi,
         }
         rendered = render_to_string('oss.html', context)

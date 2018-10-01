@@ -251,11 +251,10 @@ class Award(TimeStampedModel):
         return self.name
 
     def clean(self):
-        pass
-        # if self.level == self.LEVEL.qualifier and not self.threshold:
-        #     raise ValidationError(
-        #         {'level': 'Qualifiers must have thresholds'}
-        #     )
+        if self.level == self.LEVEL.qualifier and not self.threshold:
+            raise ValidationError(
+                {'level': 'Qualifiers must have thresholds'}
+            )
         # if self.level != self.LEVEL.qualifier and self.threshold:
         #     raise ValidationError(
         #         {'level': 'Non-Qualifiers must not have thresholds'}

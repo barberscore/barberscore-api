@@ -224,12 +224,12 @@
             </p>
           </div>
         {% endif %}
-        {% if contests %}
+        {% if outcomes %}
           <div>
             <h5>Awards</h5>
             <ul class='list-unstyled'>
-              {% for contest in contests %}
-                <li><strong>{{contest.num}}) {{contest.award.name}}:</strong> {{contest.detail}}</li>
+              {% for outcome in outcomes %}
+                <li><strong>{{outcome.num}}) {{outcome.contest.award.name}}:</strong> {{outcome.name}}</li>
               {% endfor %}
             </ul>
           </div>
