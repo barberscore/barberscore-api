@@ -700,18 +700,15 @@ class Round(TimeStampedModel):
                 num=num,
                 defaults=defaults,
             )
-        # MT
-        # mt = self.session.competitors.filter(
-        #     status=Competitor.STATUS.finished,
-        # ).order_by(
-        #     '-tot_points',
-        #     '-sng_points',
-        #     '-per_points',
-        # ).first()
-        # self.appearances.create(
-        #     competitor=mt,
-        #     num=0,
-        # )
+        # Create the Outcomes
+        contests = self.session.contests.filter(
+            num__isnull=False,
+        )
+        for contest in contests:
+            self.outcomes.create(
+                num=contest.num,
+                contest=contest,
+            )
         return
 
 
