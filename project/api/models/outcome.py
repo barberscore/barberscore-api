@@ -13,9 +13,8 @@ from model_utils.models import TimeStampedModel
 # Django
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
-from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.functional import cached_property
+from django.db.models import Sum, Q
 
 log = logging.getLogger(__name__)
 
@@ -76,6 +75,8 @@ class Outcome(TimeStampedModel):
 
     # Methods
     def get_name(self):
+        Competitor = apps.get_model('api.competitor')
+        Score = apps.get_model('api.score')
         if self.round.num < self.contest.award.rounds:
             return "(Result not yet determined)"
         if self.contest.award.level == self.contest.award.LEVEL.deferred:
@@ -113,18 +114,42 @@ class Outcome(TimeStampedModel):
         if continuing:
             # Wait to announce
             return "(Result announced following Finals)"
-        contestant = self.contest.contestants.filter(
-            status__gt=0,
+
+        winner = Competitor.objects.filter(
+            entry__contestants__contest=self.contest,
+            entry__contestants__status__gt=0,
+        ).distinct(
+        ).annotate(
+            tot=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__kind=Score.KIND.official,
+                    appearances__round__num__lte=self.contest.award.rounds,
+                ),
+            ),
+            sng=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__kind=Score.KIND.official,
+                    appearances__songs__scores__category=Score.CATEGORY.singing,
+                    appearances__round__num__lte=self.contest.award.rounds,
+                ),
+            ),
+            per=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__kind=Score.KIND.official,
+                    appearances__songs__scores__category=Score.CATEGORY.performance,
+                    appearances__round__num__lte=self.contest.award.rounds,
+                ),
+            ),
         ).order_by(
-            '-entry__competitor__tot_points',
-            '-entry__competitor__sng_points',
-            '-entry__competitor__per_points',
+            '-tot',
+            '-sng',
+            '-per',
         ).first()
-        if contestant:
-            group = self.contest.get_group()
-            self.contest.group = group
-            self.contest.save()
-            return str(group.name)
+        if winner:
+            return str(winner.group.name)
         return "(No Recipient)"
 
     # Internals
