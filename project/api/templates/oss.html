@@ -102,7 +102,7 @@
             {% for competitor in competitors %}
               <tr class='pbi_avoid'>
                 <td>
-                  <h4><strong>{# {{competitor.tot_rank|default:""}}  #}{{competitor.group.name}}</strong></h4>
+                  <h4><strong>{% if round.kind == 1 %}{{competitor.tot_rank|default:""}} {% endif %}{{competitor.group.name}}</strong></h4>
                   <div class='smaller-font'>
                     {% if competitor.group.get_kind_display == 'Chorus' %}
                       {{competitor.group.parent.name|truncatechars_html:"50"}} [{{competitor.representing|default:"Unknown"}}] ({{competitor.contesting|default:"None"}})<br>
@@ -111,9 +111,9 @@
                       {{competitor.representing|default:"(Unknown)"}} ({{competitor.contesting|default:"None"}})<br>
                       {{competitor.participants|default:"(No Members Specified)"}}<br>
                     {% endif %}
-                    {% if round.num != 1 %}
+                    {% if round.kind == 1 %}
                       {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
-                        {#  {{appearance.round.get_kind_display}}Rank: {{appearance.tot_rank}} #}<br>
+                         {{appearance.round.get_kind_display}} Rank: {{appearance.tot_rank}}<br>
                       {% endfor %}
                     {% endif %}
                   </div>
