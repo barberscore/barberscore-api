@@ -65,9 +65,7 @@ class Outcome(TimeStampedModel):
     contest = models.ForeignKey(
         'Contest',
         related_name='outcomes',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.CASCADE,
     )
 
     # Relations
