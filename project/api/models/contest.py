@@ -152,7 +152,7 @@ class Contest(TimeStampedModel):
     def get_group(self):
         if self.award.level not in [
             self.award.LEVEL.championship,
-            self.award.self.award.LEVEL.representative,
+            self.award.LEVEL.representative,
         ]:
             return
         contestant = self.contestants.filter(
@@ -164,8 +164,7 @@ class Contest(TimeStampedModel):
         ).first()
         if contestant:
             return contestant.entry.group
-        else:
-            return
+        return
 
     # Transitions
     @fsm_log_by
