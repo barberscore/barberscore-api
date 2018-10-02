@@ -99,8 +99,7 @@ class Outcome(TimeStampedModel):
                 return ", ".join(
                     qualifiers.values_list('entry__group__name', flat=True)
                 )
-            else:
-                return "(No qualifiers)"
+            return "(No qualifiers)"
         if self.contest.award.level == self.contest.award.LEVEL.manual:
             return "MUST SELECT WINNER MANUALLY"
         # Rest are championship and representative
@@ -116,18 +115,19 @@ class Outcome(TimeStampedModel):
         if continuing:
             # Wait to announce
             return "(Result announced following Finals)"
-        else:
-            contestant = self.contest.contestants.filter(
-                status__gt=0,
-            ).order_by(
-                '-entry__competitor__tot_points',
-                '-entry__competitor__sng_points',
-                '-entry__competitor__per_points',
-            ).first()
-            if contestant:
-                return str(contestant.entry.group.name)
-            else:
-                return "(No Recipient)"
+        contestant = self.contest.contestants.filter(
+            status__gt=0,
+        ).order_by(
+            '-entry__competitor__tot_points',
+            '-entry__competitor__sng_points',
+            '-entry__competitor__per_points',
+        ).first()
+        if contestant:
+            group = self.contest.get_group()
+            self.contest.group = group
+            self.contest.save()
+            return str(group.name)
+        return "(No Recipient)"
 
     # Internals
     class JSONAPIMeta:
