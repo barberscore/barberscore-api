@@ -310,7 +310,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'tot_rank',
             'session',
             'group',
-            'competitor',
+            # 'competitor',
             'contestants',
             'permissions',
             'statelogs',

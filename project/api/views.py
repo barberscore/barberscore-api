@@ -545,7 +545,6 @@ class EntryViewSet(viewsets.ModelViewSet):
     queryset = Entry.objects.select_related(
         'session',
         'group',
-        'competitor',
     ).prefetch_related(
         'contestants',
         'statelogs',
