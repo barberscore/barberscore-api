@@ -149,34 +149,23 @@ class Contest(TimeStampedModel):
         ])
 
     # Methods
-    def determine(self, *args, **kwargs):
-        if self.award.level in [
-            self.award.LEVEL.qualifier,
-            self.award.LEVEL.top,
-            self.award.LEVEL.manual,
-            self.award.LEVEL.deferred,
+    def get_group(self):
+        if self.award.level not in [
+            self.award.LEVEL.championship,
+            self.award.self.award.LEVEL.representative,
         ]:
             return
-        contestants = self.contestants.filter(
+        contestant = self.contestants.filter(
             status__gt=0,
         ).order_by(
             '-entry__competitor__tot_points',
             '-entry__competitor__sng_points',
             '-entry__competitor__per_points',
-        )
-        if contestants:
-            multis = self.session.competitors.filter(
-                appearances__draw__gt=0,
-                is_multi=True,
-            )
-            if multis:
-                group = contestants.first().entry.group
-            else:
-                group = None
+        ).first()
+        if contestant:
+            return contestant.entry.group
         else:
-            group = None
-        self.group = group
-        return
+            return
 
     # Transitions
     @fsm_log_by

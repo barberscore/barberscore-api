@@ -728,28 +728,12 @@ class Round(TimeStampedModel):
 
         # No next round.
         if self.kind == self.KIND.finals:
-            # Run relevant contests yet to be determined
-            contests = self.session.contests.filter(
-                num__isnull=False,
-                group__isnull=True,
-            )
-            for contest in contests:
-                contest.determine()
-                contest.save()
+            # Run outcomes
+            outcomes = self.outcomes.all()
+            for outcome in outcomes:
+                outcome.name = outcome.get_name()
+                outcome.save()
             return
-
-        # If not finals, only determine winners when no contestants
-        # are in multi-round contests to avoid leaking standings.
-        contests = self.session.contests.filter(
-            num__isnull=False,
-            award__rounds__lte=self.num,
-            contestants__status=Contestant.STATUS.included,
-            contestants__entry__competitor__is_multi=False,
-        ).distinct()
-
-        # for contest in contests:
-        #     contest.determine()
-        #     contest.save()
 
         # Get spots available
         spots = self.spots
@@ -783,6 +767,7 @@ class Round(TimeStampedModel):
 
         # Reset draw
         self.appearances.update(draw=None)
+
         # Get advancers and draw
         appearances = self.appearances.filter(
             competitor__id__in=advancers,
@@ -803,6 +788,12 @@ class Round(TimeStampedModel):
         ).first()
         mt.draw = 0
         mt.save()
+
+        # Run Outcomes
+        outcomes = self.outcomes.all()
+        for outcome in outcomes:
+            outcome.name = outcome.get_name()
+            outcome.save()
         return
 
     @fsm_log_by

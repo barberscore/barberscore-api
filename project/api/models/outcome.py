@@ -101,21 +101,33 @@ class Outcome(TimeStampedModel):
                 )
             else:
                 return "(No qualifiers)"
-        else: # Rest are championship, representative, and manual
-            advancers = self.round.appearances.filter(
-                draw__gt=0,
-            ).values_list('competitor__entry', flat=True)
-            continuing = self.contest.contestants.filter(
+        if self.contest.award.level == self.contest.award.LEVEL.manual:
+            return "MUST SELECT WINNER MANUALLY"
+        # Rest are championship and representative
+        # First, get all advancers
+        advancers = self.round.appearances.filter(
+            draw__gt=0,
+        ).values_list('competitor__entry', flat=True)
+        # Check to see if they are in the contestants for this award.
+        continuing = self.contest.contestants.filter(
+            status__gt=0,
+            entry__in=advancers,
+        )
+        if continuing:
+            # Wait to announce
+            return "(Result announced following Finals)"
+        else:
+            contestant = self.contest.contestants.filter(
                 status__gt=0,
-                entry__in=advancers,
-            )
-            if continuing:
-                return "(Result announced following Finals)"
+            ).order_by(
+                '-entry__competitor__tot_points',
+                '-entry__competitor__sng_points',
+                '-entry__competitor__per_points',
+            ).first()
+            if contestant:
+                return str(contestant.entry.group.name)
             else:
-                if self.contest.group:
-                    return str(self.contest.group.name)
-                else:
-                    return "(No recipient)"
+                return "(No Recipient)"
 
     # Internals
     class JSONAPIMeta:
