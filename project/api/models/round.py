@@ -720,8 +720,6 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.verified, conditions=[can_verify,])
     def verify(self, *args, **kwargs):
-        Competitor = apps.get_model('api.competitor')
-        Contestant = apps.get_model('api.contestant')
         # Run rankings.
         self.rank()
         self.session.rank()
