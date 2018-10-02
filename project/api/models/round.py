@@ -19,7 +19,7 @@ from PyPDF2 import PdfFileMerger
 from ranking import ORDINAL
 from ranking import Ranking
 from django.core.mail import EmailMessage
-
+from django.db.models import Sum, Max
 # Django
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
@@ -218,15 +218,16 @@ class Round(TimeStampedModel):
         return
 
     def get_oss(self):
-        Competitor = apps.get_model('api.competitor')
-        Contest = apps.get_model('api.contest')
         Panelist = apps.get_model('api.panelist')
-        Contestant = apps.get_model('api.contestant')
-        competitors = Competitor.objects.filter(
-            Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
-            appearances__num__gt=0,
-            appearances__round=self,
-            is_private=False,
+        Score = apps.get_model('api.score')
+        scored = self.appearances.filter(
+            Q(draw__isnull=True) | Q(draw=0),
+            competitor__is_private=False,
+        ).exclude(
+            num=0,
+        ).values_list('competitor', flat=True)
+        competitors = self.session.competitors.filter(
+            pk__in=scored,
         ).select_related(
             'group',
             'entry',
@@ -240,12 +241,51 @@ class Round(TimeStampedModel):
             'appearances__songs__scores',
             'appearances__songs__scores__panelist',
             'appearances__songs__scores__panelist__person',
+        ).annotate(
+            tot=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__kind=Score.KIND.official,
+                    appearances__round__num__lte=self.num,
+                    appearances__num__gt=0,
+                ),
+            ),
+            sng=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__kind=Score.KIND.official,
+                    appearances__songs__scores__category=Score.CATEGORY.singing,
+                    appearances__round__num__lte=self.num,
+                    appearances__num__gt=0,
+                ),
+            ),
+            per=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__kind=Score.KIND.official,
+                    appearances__songs__scores__category=Score.CATEGORY.performance,
+                    appearances__round__num__lte=self.num,
+                    appearances__num__gt=0,
+                ),
+            ),
+            max=Max(
+                'appearances__round__num',
+                filter=Q(
+                    appearances__num__gt=0,
+                )
+            ),
         ).order_by(
-            '-tot_points',
-            '-sng_points',
-            '-per_points',
-            'group__name',
+            '-tot',
+            '-sng',
+            '-per',
         )
+
+        # Monkeypatch Semis Only
+        for competitor in competitors:
+            competitor.appearances__filtered = competitor.appearances.filter(
+                round__num__lte=self.num,
+            )
+
         # Eval Only
         privates = self.session.competitors.filter(
             appearances__round=self,
@@ -305,10 +345,10 @@ class Round(TimeStampedModel):
             'outcomes': outcomes,
             'is_multi': is_multi,
         }
-        rendered = render_to_string('oss.html', context)
+        rendered = render_to_string('round/oss.html', context)
         file = pydf.generate_pdf(
             rendered,
-            page_size='Legal',
+            page_size='Letter',
             orientation='Portrait',
             margin_top='5mm',
             margin_bottom='5mm',

@@ -11,12 +11,10 @@
         font-size: 10pt;
         font-weight: 200;
       }
-
       strong {
         font-family: 'Encode Sans', sans-serif;
         font-weight: 600;
       }
-
       h4 {
         margin: 1px;
       }
@@ -28,10 +26,6 @@
           padding: 1px;
           line-height: 1.4;
       }
-/*      .table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
-         background-color: #D3D3D3;
-      }
-*/
       .table {
         margin: 10px;
       }
@@ -51,47 +45,30 @@
   </head>
   <body>
     <div class='container-fluid'>
-      {% if round %}
-        <div class='row'>
-          <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
-          {% if round.session.convention.image %}<img class='pull-right small_logo' src="{{round.session.convention.image.url}}">{% endif %}
-          <h4>
-            Official Scoring Summary {{round.session.get_kind_display}} {{round.get_kind_display}};
-            {{round.session.convention.name}}
-          </h4>
-          <h5>
-            {% if round.session.convention.venue and round.session.convention.start_date %}
-              {{round.session.convention.venue.city|default:"(Unknown City)"}}, {{round.session.convention.venue.state|default:"(Unknown State)"}};
-              {{round.session.convention.start_date|date:"F j, Y"}} - {{round.session.convention.end_date|date:"F j, Y"}}
-            {% else %}
-              (Unknown Venue and Dates)
-            {% endif %}
-          </h5>
-        </div>
-      {% else %}
-        <div class='row'>
-          <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
-          {% if session.convention.image %}<img class='pull-right small_logo' src="{{session.convention.image.url}}">{% endif %}
-          <h4>
-            Official Scoring Summary {{session.get_kind_display}} Full Results;
-            {{session.convention.name}}
-          </h4>
-          <h5>
-            {% if round.session.convention.venue and round.session.convention.start_date %}
-              {{round.session.convention.venue.city|default:"(Unknown City)"}}, {{round.session.convention.venue.state|default:"(Unknown State)"}};
-              {{round.session.convention.start_date|date:"F j, Y"}} - {{round.session.convention.end_date|date:"F j, Y"}}
-            {% else %}
-              (Unknown Venue and Dates)
-            {% endif %}
-          </h5>
-        </div>
-      {% endif %}
+      <div class='row'>
+        <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
+        {% if round.session.convention.image %}
+          <img class='pull-right small_logo' src="{{round.session.convention.image.url}}">
+        {% endif %}
+        <h4>
+          Official Scoring Summary {{round.session.get_kind_display}} {{round.get_kind_display}};
+          {{round.session.convention.name}}
+        </h4>
+        <h5>
+          {% if round.session.convention.venue and round.date %}
+            {{round.session.convention.venue.city|default:"(Unknown City)"}}, {{round.session.convention.venue.state|default:"(Unknown State)"}};
+            {{round.date|date:"F j, Y"}}
+          {% else %}
+            (Unknown Venue and Dates)
+          {% endif %}
+        </h5>
+      </div>
       <div>
         <table class='table table-condensed table-striped'>
           <thead>
             <tr>
-              <th class='col-md-3'>Group</th>
-              <th class='col-md-5'>Songs</th>
+              <th class='col-md-2'>Group</th>
+              <th class='col-md-6'>Songs</th>
               <th class='text-right col-md-1'>MUS</th>
               <th class='text-right col-md-1'>PER</th>
               <th class='text-right col-md-1'>SNG</th>
@@ -102,68 +79,55 @@
             {% for competitor in competitors %}
               <tr class='pbi_avoid'>
                 <td>
-                  <h4><strong>{% if round.kind == 1 %}{{competitor.tot_rank|default:""}} {% endif %}{{competitor.group.name}}</strong></h4>
+                  <h4>
+                    <strong>
+                      {% if round.kind == 1 %}
+                        {{competitor.tot_rank|default:""}}
+                      {% endif %}
+                      {{competitor.group.name}}
+                    </strong>
+                  </h4>
                   <div class='smaller-font'>
                     {% if competitor.group.get_kind_display == 'Chorus' %}
-                      {{competitor.group.parent.name|truncatechars_html:"50"}} [{{competitor.representing|default:"Unknown"}}] ({{competitor.contesting|default:"None"}})<br>
+                      {{competitor.group.parent.name|truncatechars_html:"50"}} [{{competitor.representing|default:"Unknown"}}] (Contesting: {{competitor.contesting|default:"None"}})<br>
                       Dir(s): {{competitor.participants|default:"(No Director Specified)"}}<br>
                     {% else %}
-                      {{competitor.representing|default:"(Unknown)"}} ({{competitor.contesting|default:"None"}})<br>
+                      {{competitor.representing|default:"(Unknown)"}} (Contesting: {{competitor.contesting|default:"None"}})<br>
                       {{competitor.participants|default:"(No Members Specified)"}}<br>
                     {% endif %}
-                    {% if round.kind == 1 %}
+                    {% if competitor.max > 1 %}
                       {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
-                         {{appearance.round.get_kind_display}} Rank: {{appearance.tot_rank}}<br>
+                        {{appearance.round.get_kind_display}} Rank: {{appearance.tot_rank}}<br>
                       {% endfor %}
                     {% endif %}
                   </div>
                 </td>
                 <td>
-                  {% if round.num == 1 %}
-                    {% if is_multi %}
-                      {% if competitor.group.get_kind_display == 'Chorus' %}
-                        <strong>Total</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.appearances.first.pos|default:'N/A'}})</span><br>
-                      {% else %}
-                        <strong>Total Points: {{competitor.tot_points}}</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
-                      {% endif %}
-                      {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
-                        {% if song.chart %}
-                          {{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
-                        {% else %}
-                          {{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
-                        {% endif %}
-                      {% endfor %}
-                    {% else %}
-                      {% if competitor.group.get_kind_display == 'Chorus' %}
-                        <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.appearances.first.pos|default:'N/A'}})</span><br>
-                      {% else %}
-                        {% if competitor.tot_points %}<strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;{{competitor.tot_score|floatformat:1}}<br>{% endif %}
-                      {% endif %}
-                      {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
-                        {% if song.chart %}
-                          {{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
-                        {% else %}
-                          {{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
-                        {% endif %}
-                      {% endfor %}
-                    {% endif %}
-                  {% else %}
-                    {% if competitor.tot_points %}<strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;{{competitor.tot_score|floatformat:1}}<br>{% endif %}
-                    {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
-                      <span class='bolder'>{{appearance.round.get_kind_display}}&nbsp;</span><span class='smaller-font'>(OA: {{appearance.num}}, Points: {{appearance.tot_points}})</span><br>
-                      {% for song in appearance.songs.all|dictsort:'num' %}
-                        {% if song.chart %}
-                          &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
-                        {% else %}
-                          &nbsp;&nbsp;&nbsp;&nbsp;{{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
-                        {% endif %}
-                      {% endfor %}
-                    {% endfor %}
+                  {% if competitor.max > 1 %}
+                    <strong>Total: {{competitor.tot_points}} Points</strong><br>
                   {% endif %}
+                  {% for appearance in competitor.appearances__filtered.all|dictsort:"round__kind" %}
+                    {% if competitor.max == 1 %}
+                      <strong>Total: {{competitor.tot_points}} Points</strong>
+                      {% if competitor.group.get_kind_display == 'Chorus' %}
+                        &nbsp;(OnStage: {{appearance.pos|default:"N/A"}})
+                      {% endif %}
+                      <br>
+                    {% else %}
+                      <span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>
+                    {% endif %}
+                    {% for song in appearance.songs.all|dictsort:'num' %}
+                      {% if song.chart %}
+                        &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
+                      {% else %}
+                        &nbsp;&nbsp;&nbsp;&nbsp;{{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
                 </td>
                 <td class='text-right'>
                   <strong>{{competitor.mus_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
+                  {% for appearance in competitor.appearances__filtered.all|dictsort:"round__kind" %}
                     {% if round.num != 1 %}<span class='bolder'>{{ appearance.mus_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.mus_score|floatformat:1}}<br>
@@ -172,7 +136,7 @@
                 </td>
                 <td class='text-right'>
                   <strong>{{competitor.per_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
+                  {% for appearance in competitor.appearances__filtered.all|dictsort:"round__kind" %}
                     {% if round.num != 1 %}<span class='bolder'>{{ appearance.per_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.per_score|floatformat:1}}<br>
@@ -181,7 +145,7 @@
                 </td>
                 <td class='text-right'>
                   <strong>{{competitor.sng_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
+                  {% for appearance in competitor.appearances__filtered.all|dictsort:"round__kind" %}
                     {% if round.num != 1 %}<span class='bolder'>{{ appearance.sng_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.sng_score|floatformat:1}}<br>
@@ -190,7 +154,7 @@
                 </td>
                 <td class='text-right'>
                   <strong>{{competitor.tot_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
+                  {% for appearance in competitor.appearances__filtered.all|dictsort:"round__kind" %}
                     {% if round.num != 1 %}<span class='bolder'>{{ appearance.tot_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
                         {{song.tot_score|floatformat:1}}<br>
