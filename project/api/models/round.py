@@ -520,7 +520,7 @@ class Round(TimeStampedModel):
         return content
 
     def queue_sa(self):
-        panelists = self.panelists(
+        panelists = self.panelists.filter(
             person__email__isnull=False,
         )
         if not panelists:
@@ -852,12 +852,13 @@ class Round(TimeStampedModel):
             content=content,
         )
         finishers = self.appearances.filter(
-            Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
+            Q(draw=0) | Q(draw__isnull=True),
         )
         panelists = self.panelists.all()
         for finisher in finishers:
             finisher.competitor.finish()
             finisher.competitor.save()
-        for panelist in panelists:
-            panelist.queue_sa()
+        # for panelist in panelists:
+        #     panelist.queue_sa()
+        self.queue_sa()
         return
