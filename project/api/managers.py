@@ -252,10 +252,10 @@ class GroupManager(Manager):
                     bhs_id=bhs_id,
                 )
                 old.delete()
-                group = self.create(
-                    **defaults,
+                group, created = self.update_or_create(
+                    mc_pk=mc_pk,
+                    defaults=defaults,
                 )
-                created = True
             else:
                 raise e
                 # defaults['mc_pk'] = mc_pk
