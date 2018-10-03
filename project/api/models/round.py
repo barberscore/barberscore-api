@@ -824,8 +824,9 @@ class Round(TimeStampedModel):
             '-sng_points',
             '-per_points',
         ).first()
-        mt.draw = 0
-        mt.save()
+        if mt:
+            mt.draw = 0
+            mt.save()
 
         # Run Outcomes
         outcomes = self.outcomes.all()

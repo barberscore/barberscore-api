@@ -184,7 +184,7 @@
               {% for advancer in advancers %}
                 <span class='text-nowrap'><strong>{{advancer.draw}}</strong> {{advancer.competitor.group.name}}&nbsp;</span>
               {% endfor %}
-              <span class='text-nowrap'><strong>MT</strong> {{mt.competitor.group.name}}&nbsp;</span>
+              {% if mt %}<span class='text-nowrap'><strong>MT</strong> {{mt.competitor.group.name}}&nbsp;</span>{% endif %}
             </p>
           </div>
         {% endif %}
