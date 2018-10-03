@@ -240,9 +240,37 @@ class GroupManager(Manager):
         }
 
         # Get or Create
-        group, created = self.update_or_create(
-            mc_pk=mc_pk,
-        )
+        try:
+            group, created = self.update_or_create(
+                mc_pk=mc_pk,
+                defaults=defaults,
+            )
+        except IntegrityError as e:
+            # Need to delete old offending record
+            if "api_group_bhs_id_kind" in str(e.args):
+                old = self.get(
+                    bhs_id=bhs_id,
+                )
+                old.delete()
+                group = self.create(
+                    **defaults,
+                )
+                created = True
+            else:
+                raise e
+                # defaults['mc_pk'] = mc_pk
+                # defaults.pop('bhs_id', None)
+                # try:
+                #     person = self.create(
+                #         **defaults,
+                #     )
+                # except IntegrityError:
+                #     defaults['mc_pk'] = mc_pk
+                #     defaults['bhs_id'] = bhs_id
+                #     defaults.pop('email', None)
+                #     person = self.create(
+                #         **defaults,
+                #     )
 
         if created:
             description = "Initial"
