@@ -728,6 +728,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'parent',
         'bhs_id',
+        'code',
         'is_mc',
         'status',
     ]

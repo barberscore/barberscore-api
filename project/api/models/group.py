@@ -375,11 +375,16 @@ class Group(TimeStampedModel):
             suffix = "[{0}]".format(self.bhs_id)
         else:
             suffix = "[No BHS ID]"
-        full = "{0} {1}".format(
+        if self.code:
+            code = "({0})".format(self.code)
+        else:
+            code = ""
+        full = [
             self.name,
+            code,
             suffix,
-        )
-        return " ".join(full.split())
+        ]
+        return " ".join(full)
 
     @cached_property
     def is_mc(self):
