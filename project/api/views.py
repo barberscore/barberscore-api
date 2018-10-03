@@ -1129,10 +1129,9 @@ class RoundViewSet(viewsets.ModelViewSet):
         ).order_by(
             'competitor__group__name',
         ).first()
-        contests = round.session.contests.filter(
-            num__isnull=False,
-            group__isnull=False,
-        ).order_by('num')
+        outcomes = round.outcomes.order_by(
+            '-contest__num',
+        )
         if round.kind == round.KIND.finals:
             competitors = round.session.competitors.filter(
                 status__in=[
@@ -1152,7 +1151,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             'round': round,
             'appearances': appearances,
             'mt': mt,
-            'contests': contests,
+            'outcomes': outcomes,
             'competitors': competitors,
             'pos': pos,
         }

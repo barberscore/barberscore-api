@@ -45,10 +45,10 @@
     {% endif %}
     <section>
         <h2>Awards</h2>
-        {% if contests  %}
+        {% if outcomes %}
           <ul class='list-unstyled'>
-              {% for contest in contests %}
-                  <li>{{contest.award.name}}: {{contest.group.name}}</li>
+              {% for outcome in outcomes %}
+                  <li>{{outcome.contest.award.name}}: {{outcome.name}}</li>
               {% endfor %}
           </ul>
           <ul class='list-unstyled'>
