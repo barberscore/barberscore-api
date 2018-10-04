@@ -121,22 +121,23 @@ class RoleManager(Manager):
             'created',
         )
 
+    def update_or_create_role_from_flat(self, flat):
+        Officer = apps.get_model('api.officer')
+        role = self.get_role_from_flat(flat)
+        officer, created = Officer.objects.update_or_create_from_join(role)
+        return officer, created
+
+
     def update_officers(self, cursor=None):
         # Get base
         flats = self.get_flats(cursor)
         t = flats.count()
         # Creating/Update From Flattened Record
         queue = django_rq.get_queue('low')
-        Officer = apps.get_model('api.officer')
         for flat in flats:
-            role = queue.enqueue(
-                self.get_role_from_flat,
-                flat,
-            )
             queue.enqueue(
-                Officer.objects.update_or_create_from_role,
-                role.result,
-                depends_on=role,
+                self.update_or_create_role_from_flat,
+                flat,
             )
         return t
 
@@ -166,22 +167,21 @@ class JoinManager(Manager):
             '-inactive_date',
         )
 
-    def update_members(self, cursor=None):
+    def update_or_create_member_from_flat(self, flat):
         Member = apps.get_model('api.member')
+        join = self.get_join_from_flat(flat)
+        member, created = Member.objects.update_or_create_from_join(join)
+        return member, created
+
+    def update_members(self, cursor=None):
         flats = self.get_flats(cursor)
         t = flats.count()
-
         # Creating/Update From Flattened Record
         queue = django_rq.get_queue('low')
         for flat in flats:
-            join = queue.enqueue(
-                self.get_join_from_flat,
-                flat,
-            )
             queue.enqueue(
-                Member.objects.update_or_create_from_join,
-                join.result,
-                depends_on=join,
+                self.update_or_create_member_from_flat,
+                flat,
             )
         return t
 
