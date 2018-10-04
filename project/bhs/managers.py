@@ -97,43 +97,52 @@ class StructureManager(Manager):
 
 
 class RoleManager(Manager):
-    def update_officers(self, cursor=None):
-        # Get base
+    def get_flats(self, cursor=None):
         roles = self.select_related(
             'structure',
             'human',
-        ).order_by(
-            'modified',
-            'created',
         )
-        # Will rebuild without a cursor
         if cursor:
             roles = roles.filter(
                 modified__gt=cursor,
             )
-        else:
-            # Else clear logs
-            ss = StateLog.objects.filter(
-                content_type__model='officer',
-                officers__mc_pk__isnull=False,
-            )
-            ss.delete()
-        t = roles.count()
-        # Creating/Update Officers
-        Officer = apps.get_model('api.officer')
+        flats = roles.values(
+            'structure',
+            'human',
+        ).distinct()
+        return flats
+
+
+    def get_role_from_flat(self, flat):
+        return self.filter(
+            **flat,
+        ).latest(
+            'modified',
+            'created',
+        )
+
+    def update_officers(self, cursor=None):
+        # Get base
+        flats = self.get_flats(cursor)
+        t = flats.count()
+        # Creating/Update From Flattened Record
         queue = django_rq.get_queue('low')
-        for role in roles:
+        Officer = apps.get_model('api.officer')
+        for flat in flats:
+            role = queue.enqueue(
+                self.get_role_from_flat,
+                flat,
+            )
             queue.enqueue(
                 Officer.objects.update_or_create_from_role,
-                role,
+                role.result,
+                depends_on=role,
             )
         return t
 
 
 class JoinManager(Manager):
-    def update_members(self, cursor=None):
-        Member = apps.get_model('api.member')
-        # Get base
+    def get_flats(self, cursor=None):
         joins = self.select_related(
             'structure',
             'subscription',
@@ -143,35 +152,37 @@ class JoinManager(Manager):
             joins = joins.filter(
                 modified__gt=cursor,
             )
-        else:
-            # Else clear logs
-            ss = StateLog.objects.filter(
-                content_type__model='member',
-                members__mc_pk__isnull=False,
-            )
-            ss.delete()
-
-        # Flatten results
         flats = joins.values(
             'structure',
             'subscription__human',
         ).distinct()
+        return flats
+
+    def get_join_from_flat(self, flat):
+        return self.filter(
+            **flat,
+        ).latest(
+            'modified',
+            '-inactive_date',
+        )
+
+    def update_members(self, cursor=None):
+        Member = apps.get_model('api.member')
+        flats = self.get_flats(cursor)
         t = flats.count()
 
-        # Creating/Update Current Join
+        # Creating/Update From Flattened Record
         queue = django_rq.get_queue('low')
         for flat in flats:
-            lookup = self.filter(
-                **flat,
-            ).latest(
-                'modified',
-                '-inactive_date',
+            join = queue.enqueue(
+                self.get_join_from_flat,
+                flat,
             )
-            if lookup:
-                queue.enqueue(
-                    Member.objects.update_or_create_from_join,
-                    lookup,
-                )
+            queue.enqueue(
+                Member.objects.update_or_create_from_join,
+                join.result,
+                depends_on=join,
+            )
         return t
 
 class SubscriptionManager(Manager):
