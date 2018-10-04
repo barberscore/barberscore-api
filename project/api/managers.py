@@ -616,6 +616,7 @@ class MemberManager(Manager):
         member.save()
         return member, created
 
+
 class OfficerManager(Manager):
     def update_or_create_from_role(self, role):
         # Clean
@@ -702,6 +703,7 @@ class OfficerManager(Manager):
         # Finally, save the record.  Break link if an overwrite to MC
         officer.save()
         return officer, created
+
 
 class PersonManager(Manager):
     def update_or_create_from_human(self, human):
@@ -886,6 +888,7 @@ class PersonManager(Manager):
         # Finally, save the record
         person.save()
         return person, created
+
 
 class UserManager(BaseUserManager):
     def update_or_create_from_subscription(self, subscription):
