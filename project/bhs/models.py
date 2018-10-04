@@ -269,70 +269,6 @@ class Structure(models.Model):
         )
 
 
-    def update_bs(self):
-        Group = apps.get_model('api.group')
-        Member = apps.get_model('api.member')
-        Officer = apps.get_model('api.officer')
-        Group.objects.update_or_create_from_structure(self),
-        joins = self.get_joins()
-        for join in joins:
-                Member.objects.update_or_create_from_join(join)
-        roles = self.get_roles()
-        for role in roles:
-                Officer.objects.update_or_create_from_role(role)
-        return
-
-
-    def get_joins(self):
-        Member = apps.get_model('api.member')
-        humans = self.joins.select_related(
-            'subscription__human',
-        ).values_list(
-            'subscription__human',
-            flat=True,
-        ).distinct()
-        t = humans.count()
-        joins = []
-        for human in humans:
-            join = self.joins.select_related(
-                'subscription',
-                'subscription__human',
-            ).filter(
-                subscription__human__id=human,
-            ).latest(
-                'modified',
-                '-inactive_date',
-            )
-            joins.append(join)
-        return joins
-
-    def get_roles(self):
-        Officer = apps.get_model('api.officer')
-        pairs = self.roles.select_related(
-            'human',
-        ).values_list(
-            'human',
-            'name',
-        ).distinct()
-        roles = []
-        for human, name in pairs:
-            role = self.roles.select_related(
-                'human',
-            ).filter(
-                human__id=human,
-                name=name,
-            ).latest(
-                'modified',
-                '-end_date',
-            )
-            roles.append(role)
-        return roles
-
-    class Meta:
-        managed=False
-        db_table = 'vwStructures'
-
-
 class Status(models.Model):
     id = models.CharField(
         primary_key=True,
@@ -349,7 +285,7 @@ class Status(models.Model):
         return str(self.name)
 
     class Meta:
-        managed=False
+        managed = False
         db_table = 'vwStatuses'
         verbose_name_plural = 'statuses'
 
@@ -397,7 +333,7 @@ class Membership(models.Model):
         )
 
     class Meta:
-        managed=False
+        managed = False
         db_table = 'vwMemberships'
 
 
