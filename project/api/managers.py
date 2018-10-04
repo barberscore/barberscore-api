@@ -147,7 +147,7 @@ class GroupManager(Manager):
         twitter = structure.twitter
         bhs_id = structure.bhs_id
         try:
-            parent = self.get(structure.parent.id)
+            parent = self.get(mc_pk=structure.parent.id)
         except AttributeError:
             parent = None
         except self.model.DoesNotExist:
