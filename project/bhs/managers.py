@@ -138,9 +138,6 @@ class JoinManager(Manager):
             'structure',
             'subscription',
             'subscription__human',
-        ).order_by(
-            'modified',
-            '-inactive_date',
         )
         if cursor:
             joins = joins.filter(
@@ -154,25 +151,26 @@ class JoinManager(Manager):
             )
             ss.delete()
 
-        t = joins.count()
-        # Creating/Update Membership
+        # Flatten results
+        flats = joins.values(
+            'structure',
+            'subscription__human',
+        ).distinct()
+
+        # Creating/Update Current Join
         queue = django_rq.get_queue('low')
-        prior = None
-        for join in joins:
-            # Member.objects.update_or_create_from_join(join)
-            if not prior:
-                prior = queue.enqueue(
+        for flat in flats:
+            lookup = self.filter(
+                **flat,
+            ).latest(
+                'modified',
+                '-inactive_date',
+            )
+            if lookup:
+                queue.enqueue(
                     Member.objects.update_or_create_from_join,
-                    join,
+                    lookup,
                 )
-            else:
-                current = queue.enqueue(
-                    Member.objects.update_or_create_from_join,
-                    join,
-                    depends_on=prior,
-                )
-                prior = current
-        return t
 
 
 class SubscriptionManager(Manager):
