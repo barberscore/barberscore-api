@@ -147,8 +147,10 @@ class GroupManager(Manager):
         twitter = structure.twitter
         bhs_id = structure.bhs_id
         try:
-            parent = str(structure.parent.id)
+            parent = self.get(structure.parent.id)
         except AttributeError:
+            parent = None
+        except self.model.DoesNotExist:
             parent = None
         code = structure.chapter_code
 
@@ -257,21 +259,20 @@ class GroupManager(Manager):
             else:
                 raise e
 
-        # Set parent on create (if applicable)
-        divs = [
-            'MAD',
-            'FWD',
-            'EVG',
-            'LOL',
-            'NED',
-            'SWD',
-        ]
-        if created and parent and kind == self.model.KIND.quartet:
-            if parent.code not in divs:
-                group.parent = self.get(mc_pk=parent)
-                group.save()
-        if not group.parent:
-            group.status = self.model.STATUS.new
+        # Set parent on create only
+        if created:
+            group.parent = parent
+            parent_code = parent.getattr('code', None)
+            divs = [
+                'MAD',
+                'FWD',
+                'EVG',
+                'LOL',
+                'NED',
+                'SWD',
+            ]
+            if parent_code in divs or kind != self.model.KIND.quartet:
+                group.status = self.model.STATUS.new
             group.save()
         return group, created
 
