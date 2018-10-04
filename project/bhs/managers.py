@@ -156,6 +156,7 @@ class JoinManager(Manager):
             'structure',
             'subscription__human',
         ).distinct()
+        t = flats.count()
 
         # Creating/Update Current Join
         queue = django_rq.get_queue('low')
@@ -171,7 +172,7 @@ class JoinManager(Manager):
                     Member.objects.update_or_create_from_join,
                     lookup,
                 )
-
+        return t
 
 class SubscriptionManager(Manager):
     def update_users(self, cursor=None):
