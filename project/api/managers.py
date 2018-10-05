@@ -55,11 +55,11 @@ class AwardManager(Manager):
             '-status',  # Actives first
             'group__tree_sort',  # Basic BHS Hierarchy
             '-kind', # Quartet, Chorus
-            F('age').asc(nulls_first=True), # Null, Senior, Youth
             'gender', #Male, mixed
+            F('age').asc(nulls_first=True), # Null, Senior, Youth
             'level', #Championship, qualifier
-            'size', # Plateau v1
-            'scope', # plateau
+            F('size').asc(nulls_first=True), # Platueaus
+            F('scope').asc(nulls_first=True), # Platueaus
             'name', # alpha
         )
         i = 0

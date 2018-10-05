@@ -153,6 +153,7 @@ class Award(TimeStampedModel):
 
     AGE = Choices(
         (10, 'seniors', 'Seniors',),
+        (20, 'novice', 'Novice',),
         (30, 'youth', 'Youth',),
     )
 
