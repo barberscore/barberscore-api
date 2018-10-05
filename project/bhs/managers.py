@@ -121,7 +121,7 @@ class RoleManager(Manager):
             'created',
         )
 
-    def update_or_create_role_from_flat(self, flat):
+    def update_or_create_officer_from_flat(self, flat):
         Officer = apps.get_model('api.officer')
         role = self.get_role_from_flat(flat)
         officer, created = Officer.objects.update_or_create_from_role(role)
