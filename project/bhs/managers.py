@@ -162,6 +162,7 @@ class JoinManager(Manager):
     def get_join_from_flat(self, flat):
         return self.filter(
             **flat,
+            paid=True,
         ).latest(
             'modified',
             '-inactive_date',
@@ -170,8 +171,9 @@ class JoinManager(Manager):
     def update_or_create_member_from_flat(self, flat):
         Member = apps.get_model('api.member')
         join = self.get_join_from_flat(flat)
-        member, created = Member.objects.update_or_create_from_join(join)
-        return member, created
+        if join:
+            member, created = Member.objects.update_or_create_from_join(join)
+            return member, created
 
     def update_members(self, cursor=None):
         flats = self.get_flats(cursor)
