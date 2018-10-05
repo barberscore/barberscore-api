@@ -499,6 +499,7 @@ class OfficerManager(Manager):
             person=person,
             group=group,
             office=office,
+            defaults=defaults,
         )
         return officer, created
 
@@ -578,6 +579,7 @@ class PersonManager(Manager):
         try:
             person, created = self.update_or_create(
                 mc_pk=mc_pk,
+                defaults=defaults,
             )
         except IntegrityError as e:
             # Need to delete old offending record
@@ -588,6 +590,7 @@ class PersonManager(Manager):
                 old.delete()
                 person, created = self.update_or_create(
                     mc_pk=mc_pk,
+                    defaults=defaults,
                 )
             else:
                 raise e
@@ -624,11 +627,13 @@ class UserManager(BaseUserManager):
             'person': person,
         }
 
-        # Get or create
+        # Update or create
         try:
             user = self.get(
                 person=person,
             )
+            for key, value in defaults.iteritems():
+                setattr(user, key, value)
             created = False
         except self.model.DoesNotExist:
             try:
@@ -645,56 +650,17 @@ class UserManager(BaseUserManager):
                     user = self.create_user(
                         **defaults,
                     )
+                elif "api_user_email_key" in str(e.args):
+                    old = self.get(
+                        email=email,
+                    )
+                    old.delete()
+                    user = self.create_user(
+                        **defaults,
+                    )
                 else:
-                    raise(e)
-        created = True
-
-        if created:
-            description = "Initial"
-        else:
-            pre = model_to_dict(
-                user,
-                fields=[
-                    'mc_pk',
-                    'status',
-                    'name',
-                    'email',
-                    'bhs_id',
-                    'current_through',
-                    'person',
-                ],
-            )
-            # update the person to new values
-            for key, value in defaults.items():
-                setattr(user, key, value)
-            post = model_to_dict(
-                user,
-                fields=[
-                    'mc_pk',
-                    'status',
-                    'name',
-                    'email',
-                    'bhs_id',
-                    'current_through',
-                    'person',
-                ],
-            )
-            result = list(diff(pre, post))
-            if result:
-                description = str(result)
-            else:
-                return user, created
-
-        if status == self.model.STATUS.active:
-            user.activate(
-                description=description,
-            )
-        elif status == self.model.STATUS.inactive:
-            user.deactivate(
-                description=description,
-            )
-        else:
-            raise ValueError('Unknown status')
+                    raise
+            created = True
         user.save()
         return user, created
 

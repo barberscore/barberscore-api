@@ -13,6 +13,7 @@ from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
+from django.apps import apps
 
 # Django
 from django.apps import apps as api_apps
@@ -311,7 +312,7 @@ class User(AbstractBaseUser):
                     self.save()
                     created = False
                     return account, created
-                raise(e)
+                raise
             created = True
         else:
             ValueError("Unknown Username type")
