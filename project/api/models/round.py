@@ -623,6 +623,7 @@ class Round(TimeStampedModel):
         Grid = apps.get_model('api.grid')
         panelists = self.panelists.all()
         appearances = self.appearances.all()
+        outcomes = self.outcomes.all()
         competitors = self.session.competitors.filter(
             status=self.session.competitors.model.STATUS.started,
         )
@@ -645,6 +646,7 @@ class Round(TimeStampedModel):
             tot_score=None,
         )
         panelists.delete()
+        outcomes.delete()
         appearances.delete()
         return
 
