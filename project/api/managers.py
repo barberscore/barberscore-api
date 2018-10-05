@@ -632,7 +632,7 @@ class UserManager(BaseUserManager):
             user = self.get(
                 person=person,
             )
-            for key, value in defaults.iteritems():
+            for key, value in defaults.items():
                 setattr(user, key, value)
             created = False
         except self.model.DoesNotExist:
