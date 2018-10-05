@@ -260,7 +260,7 @@ class GroupManager(Manager):
                 raise e
 
         # Set parent on create only
-        if created:
+        if created and parent:
             group.parent = parent
             parent_code = parent.getattr('code', None)
             divs = [
