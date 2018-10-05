@@ -81,7 +81,9 @@
               {% for appearance in appearances %}
                   <li>{{appearance.draw}}: {{appearance.competitor.group.name}}</li>
               {% endfor %}
-              <li>MT: {{mt.competitor.group.name}}
+              {% if mt %}
+                <li>MT: {{mt.competitor.group.name}}
+              {% endif %}
           </ul>
       </section>
     {% endif %}
