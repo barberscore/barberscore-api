@@ -710,7 +710,7 @@ class Round(TimeStampedModel):
         # Create the Outcomes
         contests = self.session.contests.filter(
             num__isnull=False,
-        )
+        ).distinct()
         for contest in contests:
             self.outcomes.create(
                 num=contest.num,
