@@ -52,6 +52,7 @@ from .models import Appearance
 from .models import Assignment
 from .models import Award
 from .models import Chart
+from .models import Complete
 from .models import Competitor
 from .models import Contest
 from .models import Contestant
@@ -69,12 +70,110 @@ from .models import Person
 from .models import Repertory
 from .models import Round
 from .models import Score
+from .models import Selection
 from .models import Session
 from .models import Song
 from .models import User
 from .models import Venue
 
 admin.site.site_header = 'Barberscore Admin Backend'
+
+
+# @admin.register(Selection)
+class SelectionAdmin(admin.ModelAdmin):
+
+    fields = [
+        'id',
+        'row',
+        'year',
+        'season',
+        'district',
+        'name',
+        'session_kind',
+        'round_kind',
+        'legacy_group',
+        'draw',
+        'num',
+        'legacy_chart',
+        'totals',
+        'points',
+    ]
+    list_display = [
+        'id',
+        'row',
+        'year',
+        'season',
+        'district',
+        'name',
+        'session_kind',
+        'round_kind',
+        'legacy_group',
+        'draw',
+        'num',
+        'legacy_chart',
+        'totals',
+        'points',
+    ]
+    list_filter = [
+        # 'year',
+        # 'season',
+    ]
+    ordering = (
+        'row',
+        'draw',
+        'num',
+    )
+    readonly_fields = [
+        'id',
+    ]
+
+# @admin.register(Complete)
+class CompleteAdmin(admin.ModelAdmin):
+
+    fields = [
+        'id',
+        'row',
+        'year',
+        'season',
+        'district',
+        'name',
+        'session_kind',
+        'round_kind',
+        'category',
+        'judge',
+        'single',
+        'draw',
+        'num',
+        'points',
+    ]
+    list_display = [
+        'id',
+        'row',
+        'year',
+        'season',
+        'district',
+        'name',
+        'session_kind',
+        'round_kind',
+        'category',
+        'judge',
+        'single',
+        'draw',
+        'num',
+        'points',
+    ]
+    list_filter = [
+        # 'year',
+        # 'season',
+    ]
+    ordering = (
+        'row',
+        'draw',
+        'num',
+    )
+    readonly_fields = [
+        'id',
+    ]
 
 
 @admin.register(Appearance)
