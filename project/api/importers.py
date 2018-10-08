@@ -211,11 +211,9 @@ def import_complete(path):
         ]
         for row in rows:
             # Get variables
-            c = 1
             year = int(row[0])
             season = season_map[row[1]]
-            group = Group.objects.get(code=district_map[row[2]])
-            code = group.code
+            code = district_map[row[2]]
             name = str(row[3].strip() if row[3] else "")
             session_kind = session_map[row[4]]
             round_kind = round_map[row[5]]
