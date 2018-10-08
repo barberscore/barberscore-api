@@ -97,6 +97,11 @@ class SelectionAdmin(admin.ModelAdmin):
         'legacy_chart',
         'totals',
         'points',
+        'convention',
+        'session',
+        'round',
+        'appearance',
+        'song',
     ]
     list_display = [
         'id',
@@ -115,8 +120,8 @@ class SelectionAdmin(admin.ModelAdmin):
         'points',
     ]
     list_filter = [
-        # 'year',
-        # 'season',
+        'year',
+        'season',
     ]
     ordering = (
         'row',
@@ -125,6 +130,13 @@ class SelectionAdmin(admin.ModelAdmin):
     )
     readonly_fields = [
         'id',
+    ]
+    autocomplete_fields = [
+        'convention',
+        'session',
+        'round',
+        'appearance',
+        'song',
     ]
 
 @admin.register(Complete)
@@ -145,6 +157,12 @@ class CompleteAdmin(admin.ModelAdmin):
         'draw',
         'num',
         'points',
+        'convention',
+        'session',
+        'round',
+        'appearance',
+        'song',
+        'score',
     ]
     list_display = [
         'id',
@@ -163,8 +181,8 @@ class CompleteAdmin(admin.ModelAdmin):
         'points',
     ]
     list_filter = [
-        # 'year',
-        # 'season',
+        'year',
+        'season',
     ]
     ordering = (
         'row',
@@ -174,7 +192,14 @@ class CompleteAdmin(admin.ModelAdmin):
     readonly_fields = [
         'id',
     ]
-
+    autocomplete_fields = [
+        'convention',
+        'session',
+        'round',
+        'appearance',
+        'song',
+        'score',
+    ]
 
 @admin.register(Appearance)
 class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
@@ -1502,6 +1527,10 @@ class ScoreAdmin(admin.ModelAdmin):
         'song',
         'panelist',
     ]
+    search_fields = [
+        'id',
+    ]
+
     save_on_top = True
 
 
