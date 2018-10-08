@@ -79,7 +79,7 @@ from .models import Venue
 admin.site.site_header = 'Barberscore Admin Backend'
 
 
-# @admin.register(Selection)
+@admin.register(Selection)
 class SelectionAdmin(admin.ModelAdmin):
 
     fields = [
@@ -127,7 +127,7 @@ class SelectionAdmin(admin.ModelAdmin):
         'id',
     ]
 
-# @admin.register(Complete)
+@admin.register(Complete)
 class CompleteAdmin(admin.ModelAdmin):
 
     fields = [
