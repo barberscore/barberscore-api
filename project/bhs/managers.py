@@ -136,7 +136,7 @@ class RoleManager(Manager):
         queue = django_rq.get_queue('low')
         for flat in flats:
             queue.enqueue(
-                self.update_or_create_role_from_flat,
+                self.update_or_create_officer_from_flat,
                 flat,
             )
         return t
