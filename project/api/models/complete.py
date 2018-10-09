@@ -140,6 +140,20 @@ class Complete(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    group = models.ForeignKey(
+        'Group',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     round = models.ForeignKey(
         'Round',
         null=True,
