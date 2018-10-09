@@ -97,6 +97,7 @@ class CompleteAdmin(admin.ModelAdmin):
         'draw',
         'num',
         'panelist_num',
+        'group_name',
         'song_title',
         'points',
         'convention',

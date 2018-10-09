@@ -104,6 +104,11 @@ class Complete(models.Model):
         blank=True,
     )
 
+    group_name = models.CharField(
+        blank=True,
+        max_length=255,
+    )
+
     song_title = models.CharField(
         blank=True,
         max_length=255,
