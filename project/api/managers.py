@@ -262,7 +262,7 @@ class GroupManager(Manager):
         # Set parent on create only
         if created and parent:
             group.parent = parent
-            parent_code = parent.getattr('code', None)
+            parent_code = parent.code
             divs = [
                 'MAD',
                 'FWD',
