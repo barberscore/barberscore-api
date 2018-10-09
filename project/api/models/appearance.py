@@ -412,6 +412,7 @@ class Appearance(TimeStampedModel):
             is_pos = False
         return all([
             is_pos,
+            not self.songs.filter(scores__points__isnull=True),
         ])
 
     # Appearance Transitions
