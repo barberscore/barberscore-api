@@ -460,6 +460,7 @@ class Appearance(TimeStampedModel):
         field=status,
         source=[STATUS.finished, STATUS.verified, STATUS.variance],
         target=RETURN_VALUE(STATUS.variance, STATUS.verified,),
+        conditions=[can_verify],
     )
     def verify(self, *args, **kwargs):
         if self.status == self.STATUS.finished:
