@@ -99,6 +99,16 @@ class Complete(models.Model):
         blank=True,
     )
 
+    panelist_num = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    song_title = models.CharField(
+        blank=True,
+        max_length=255,
+    )
+
     points = models.IntegerField(
         null=True,
         blank=True,
@@ -118,8 +128,22 @@ class Complete(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    competitor = models.ForeignKey(
+        'Competitor',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     round = models.ForeignKey(
         'Round',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    panelist = models.ForeignKey(
+        'Panelist',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -145,4 +169,3 @@ class Complete(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
-

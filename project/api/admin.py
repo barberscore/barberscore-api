@@ -79,6 +79,74 @@ from .models import Venue
 admin.site.site_header = 'Barberscore Admin Backend'
 
 
+@admin.register(Complete)
+class CompleteAdmin(admin.ModelAdmin):
+
+    fields = [
+        'id',
+        'row',
+        'year',
+        'season',
+        'district',
+        'name',
+        'session_kind',
+        'round_kind',
+        'category',
+        'judge',
+        'single',
+        'draw',
+        'num',
+        'panelist_num',
+        'song_title',
+        'points',
+        'convention',
+        'session',
+        'competitor',
+        'round',
+        'panelist',
+        'appearance',
+        'song',
+        'score',
+    ]
+    list_display = [
+        'id',
+        'row',
+        'year',
+        'season',
+        'district',
+        'name',
+        'session_kind',
+        'round_kind',
+        'category',
+        'judge',
+        'single',
+        'draw',
+        'num',
+        'points',
+    ]
+    list_filter = [
+        'year',
+        'season',
+    ]
+    ordering = (
+        'row',
+        'draw',
+        'num',
+    )
+    readonly_fields = [
+        'id',
+    ]
+    autocomplete_fields = [
+        'convention',
+        'session',
+        'round',
+        'appearance',
+        'panelist',
+        'competitor',
+        'song',
+        'score',
+    ]
+
 @admin.register(Selection)
 class SelectionAdmin(admin.ModelAdmin):
 
@@ -137,68 +205,6 @@ class SelectionAdmin(admin.ModelAdmin):
         'round',
         'appearance',
         'song',
-    ]
-
-@admin.register(Complete)
-class CompleteAdmin(admin.ModelAdmin):
-
-    fields = [
-        'id',
-        'row',
-        'year',
-        'season',
-        'district',
-        'name',
-        'session_kind',
-        'round_kind',
-        'category',
-        'judge',
-        'single',
-        'draw',
-        'num',
-        'points',
-        'convention',
-        'session',
-        'round',
-        'appearance',
-        'song',
-        'score',
-    ]
-    list_display = [
-        'id',
-        'row',
-        'year',
-        'season',
-        'district',
-        'name',
-        'session_kind',
-        'round_kind',
-        'category',
-        'judge',
-        'single',
-        'draw',
-        'num',
-        'points',
-    ]
-    list_filter = [
-        'year',
-        'season',
-    ]
-    ordering = (
-        'row',
-        'draw',
-        'num',
-    )
-    readonly_fields = [
-        'id',
-    ]
-    autocomplete_fields = [
-        'convention',
-        'session',
-        'round',
-        'appearance',
-        'song',
-        'score',
     ]
 
 @admin.register(Appearance)
