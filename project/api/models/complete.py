@@ -14,6 +14,21 @@ class Complete(models.Model):
         blank=True,
     )
 
+    convention_raw = models.CharField(
+        blank=True,
+        max_length=255,
+    )
+
+    session_raw = models.CharField(
+        blank=True,
+        max_length=255,
+    )
+
+    round_raw = models.CharField(
+        blank=True,
+        max_length=255,
+    )
+
     year = models.IntegerField(
         null=True,
         blank=True,
