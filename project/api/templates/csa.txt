@@ -12,4 +12,6 @@ Total: {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}}%)
 {% endfor %}
 
 
+{{#if competitor.csa}}
 CSA PDF: {{competitor.csa.url}}
+{{/if}}
