@@ -1138,14 +1138,15 @@ class RoundViewSet(viewsets.ModelViewSet):
                     Competitor.STATUS.finished,
                     Competitor.STATUS.started,
                 ],
-                tot_rank__lte=5,
             ).select_related(
                 'group',
             ).order_by(
-                '-tot_rank',
-            )
+                '-tot_points',
+            )[:5]
         else:
             competitors = None
+        if competitors:
+            competitors = reversed(competitors)
         pos = round.appearances.aggregate(sum=Sum('pos'))['sum']
         context = {
             'round': round,
