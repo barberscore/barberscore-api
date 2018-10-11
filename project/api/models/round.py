@@ -682,12 +682,12 @@ class Round(TimeStampedModel):
             )
         # Create the appearances
         Grid = apps.get_model('api.grid')
-        prior_round = self.session.rounds.get(num=self.num - 1)
         if self.num == 1:
             competitors = self.session.competitors.filter(
-                draw__isnull=False,
+                status__gt=0,
             ).distinct()
         else:
+            prior_round = self.session.rounds.get(num=self.num - 1)
             appearances = prior_round.appearances.filter(
                 draw__isnull=False,
             ).distinct()
@@ -696,6 +696,8 @@ class Round(TimeStampedModel):
             # If the first round, create the OA from the competitor draw
             if self.num == 1:
                 num = competitor.entry.draw
+                if competitor.entry.is_mt:
+                    num = 0
             # Otherwise take draw from appearance
             else:
                 prior_appearance = prior_round.appearances.get(

@@ -58,6 +58,12 @@ class Entry(TimeStampedModel):
         default=False,
     )
 
+    is_mt = models.BooleanField(
+        help_text="""
+            Keep scores private.""",
+        default=False,
+    )
+
     draw = models.IntegerField(
         help_text="""
             The draw for the initial round only.""",

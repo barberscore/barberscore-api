@@ -287,6 +287,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'status',
             'is_evaluation',
             'is_private',
+            'is_mt',
             'draw',
             'seed',
             'prelim',

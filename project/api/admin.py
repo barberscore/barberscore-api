@@ -694,7 +694,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session',
         'group',
         'representing',
-        ('is_evaluation', 'is_private',),
+        ('is_evaluation', 'is_private', 'is_mt'),
         'draw',
         'prelim',
         'seed',
