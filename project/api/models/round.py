@@ -7,6 +7,7 @@ from io import BytesIO
 import django_rq
 # Third-Party
 import pydf
+import maya
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
@@ -216,6 +217,27 @@ class Round(TimeStampedModel):
             song.sng_rank = ranked.rank(song.sng_points)
             song.save()
         return
+
+    def create_grids(self, onstage, duration, start, finish):
+        venue = self.session.convention.venue
+        timezone = venue.timezone.zone
+        if not venue:
+            return ValueError("Must have venue selected.")
+        maya_object = maya.when(onstage, timezone=timezone)
+        while start <= finish:
+            onstage = maya_object.datetime()
+            defaults = {
+                'onstage': onstage,
+                'venue': venue,
+            }
+            self.grids.update_or_create(
+                num=start,
+                defaults=defaults,
+            )
+            start += 1
+            maya_object = maya_object.add(minutes=duration)
+        return
+
 
     def get_oss(self):
         Panelist = apps.get_model('api.panelist')
