@@ -197,7 +197,7 @@ class Complete(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    score = models.ForeignKey(
+    score = models.OneToOneField(
         'Score',
         null=True,
         blank=True,
