@@ -170,10 +170,6 @@ class SelectionAdmin(admin.ModelAdmin):
         'legacy_chart',
         'totals',
         'points',
-        'convention',
-        'session',
-        'round',
-        'appearance',
         'song',
     ]
     list_display = [
@@ -205,10 +201,6 @@ class SelectionAdmin(admin.ModelAdmin):
         'id',
     ]
     autocomplete_fields = [
-        'convention',
-        'session',
-        'round',
-        'appearance',
         'song',
     ]
 

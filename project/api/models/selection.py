@@ -99,43 +99,8 @@ class Selection(models.Model):
         null=True,
         blank=True,
     )
-    convention = models.ForeignKey(
-        'Convention',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    session = models.ForeignKey(
-        'Session',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    round = models.ForeignKey(
-        'Round',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    appearance = models.ForeignKey(
-        'Appearance',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    song = models.ForeignKey(
+    song = models.OneToOneField(
         'Song',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    score = models.ForeignKey(
-        'Score',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
