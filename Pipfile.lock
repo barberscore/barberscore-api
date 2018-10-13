@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "157a37ce481594d6996f46dbf7aefca0d66f797d9e3fa4ae7b5aa62321db7600"
+            "sha256": "7e09c460a4349e6201c8e9bd8a53eb2c628b8b453ebb3ec657d9c120992ee1c5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -154,10 +154,10 @@
         },
         "cloudinary": {
             "hashes": [
-                "sha256:b1c3cd8894efa944429fad8028e2e04132aa47faa455f8435b9ba050ebce9c8c"
+                "sha256:6db07ce3e14d3edc96313aa42d7f472eac637e0f583f122738ffe1327f1cc031"
             ],
             "index": "pypi",
-            "version": "==1.13.0"
+            "version": "==1.14.0"
         },
         "coreapi": {
             "hashes": [
@@ -298,11 +298,11 @@
         },
         "django-sendgrid-v5": {
             "hashes": [
-                "sha256:24c615e5b5d21fd74b2641f0c2e55fc5eaa0024671d6c9661b2da1935c8a888b",
-                "sha256:b2c0cc5ecc00c661ea6b7e7757a4cf83b14fb662aab62250248e0ad0f8d6be1c"
+                "sha256:0b2ec4e761a0613a235ed44ab04af39391051e04f3004ba37fa6e48954bc6e46",
+                "sha256:1aa8b112b4946271a4e86ce9ecc20002fd987aa8eec25c0fcb39ba97d380e307"
             ],
             "index": "pypi",
-            "version": "==0.6.893"
+            "version": "==0.7.0"
         },
         "django-timezone-field": {
             "hashes": [
@@ -392,11 +392,11 @@
         },
         "ipython": {
             "hashes": [
-                "sha256:47b17ea874454a5c2eacc2732b04a750d260b01ba479323155ac8a39031f5535",
-                "sha256:9fed506c3772c875a3048bc134a25e6f5e997b1569b2636f6a5d891f34cbfd46"
+                "sha256:007dcd929c14631f83daff35df0147ea51d1af420da303fd078343878bd5fb62",
+                "sha256:b0f2ef9eada4a68ef63ee10b6dde4f35c840035c50fd24265f8052c98947d5a4"
             ],
             "index": "pypi",
-            "version": "==7.0.1"
+            "version": "==6.5.0"
         },
         "ipython-genutils": {
             "hashes": [
@@ -549,11 +549,11 @@
         },
         "prompt-toolkit": {
             "hashes": [
-                "sha256:5eff0c9fd652384ecfe730bbcdf3658868725c6928fbf608d9338834d7a974b6",
-                "sha256:81da9ecf6ca6806a549697529af8ec3ac5b739c13ac14607218e650db1b53131",
-                "sha256:c67c1c264d8a0d9e1070e9272bacee00f76c81daab7bc4bf09ff991bd1e224a7"
+                "sha256:1df952620eccb399c53ebb359cc7d9a8d3a9538cb34c5a1344bdbeb29fbcc381",
+                "sha256:3f473ae040ddaa52b52f97f6b4a493cfa9f5920c255a12dc56a7d34397a398a4",
+                "sha256:858588f1983ca497f1cf4ffde01d978a3ea02b01c8a26a8bbc5cd2e66d816917"
             ],
-            "version": "==2.0.5"
+            "version": "==1.0.15"
         },
         "psycopg2-binary": {
             "hashes": [
@@ -857,11 +857,11 @@
         },
         "faker": {
             "hashes": [
-                "sha256:74b32991f8e08e4f2f84858b919eca253becfaec4b3fa5fcff7fdbd70d5d78b1",
-                "sha256:c2ce42dd8361e6d392276006d757532562463c8642b1086709584200b7fd7758"
+                "sha256:2621643b80a10b91999925cfd20f64d2b36f20bf22136bbdc749bb57d6ffe124",
+                "sha256:5ed822d31bd2d6edf10944d176d30dc9c886afdd381eefb7ba8b7aad86171646"
             ],
             "index": "pypi",
-            "version": "==0.9.1"
+            "version": "==0.9.2"
         },
         "graphviz": {
             "hashes": [
@@ -938,10 +938,10 @@
         },
         "py": {
             "hashes": [
-                "sha256:06a30435d058473046be836d3fc4f27167fd84c45b99704f2fb5509ef61f9af1",
-                "sha256:50402e9d1c9005d759426988a492e0edaadb7f4e68bcddfea586bc7432d009c6"
+                "sha256:bf92637198836372b520efcba9e020c330123be8ce527e535d185ed4b6f45694",
+                "sha256:e76826342cefe3c3d5f7e8ee4316b80d1dd8a300781612ddbc765c17ba25a6c6"
             ],
-            "version": "==1.6.0"
+            "version": "==1.7.0"
         },
         "pycodestyle": {
             "hashes": [
