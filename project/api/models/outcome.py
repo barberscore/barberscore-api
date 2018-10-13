@@ -153,6 +153,11 @@ class Outcome(TimeStampedModel):
         return "(No Recipient)"
 
     # Internals
+    class Meta:
+        unique_together = (
+            ('round', 'contest',)
+        )
+
     class JSONAPIMeta:
         resource_name = "outcome"
 
