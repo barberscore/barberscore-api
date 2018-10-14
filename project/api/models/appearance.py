@@ -60,8 +60,6 @@ class Appearance(TimeStampedModel):
     )
 
     num = models.IntegerField(
-        null=True,
-        blank=True,
     )
 
     draw = models.IntegerField(
