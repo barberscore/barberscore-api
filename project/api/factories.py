@@ -51,7 +51,7 @@ from api.models import Venue
 
 class AppearanceFactory(DjangoModelFactory):
     status = Appearance.STATUS.new
-    num = None
+    num = 1
     actual_start = None
     actual_finish = None
     round = SubFactory('api.factories.RoundFactory')
