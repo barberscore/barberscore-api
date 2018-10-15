@@ -67,8 +67,6 @@ class Score(TimeStampedModel):
     )
 
     num = models.IntegerField(
-        null=True,
-        blank=True,
     )
 
     points = models.IntegerField(
