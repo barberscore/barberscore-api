@@ -1499,11 +1499,9 @@ class ScoreAdmin(admin.ModelAdmin):
         # 'status',
         'song',
         'panelist',
+        'legacy_panelist',
         'category',
         'kind',
-        'original',
-        'violation',
-        'penalty',
         'points',
     ]
 

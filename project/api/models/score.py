@@ -88,6 +88,12 @@ class Score(TimeStampedModel):
         ]
     )
 
+    legacy_panelist = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
     original = models.IntegerField(
         help_text="""
             The original score (before revision).""",
