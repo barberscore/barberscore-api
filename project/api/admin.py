@@ -52,6 +52,7 @@ from .models import Appearance
 from .models import Assignment
 from .models import Award
 from .models import Chart
+from .models import Flat
 from .models import Complete
 from .models import Competitor
 from .models import Contest
@@ -148,6 +149,66 @@ class CompleteAdmin(admin.ModelAdmin):
         'panelist',
         'group',
         'competitor',
+    ]
+
+@admin.register(Flat)
+class FlatAdmin(admin.ModelAdmin):
+
+    fields = [
+        'id',
+        'mark',
+        'row',
+        'year',
+        'season',
+        'district',
+        'convention_raw',
+        'session_raw',
+        'round_raw',
+        'category',
+        'panelist_name',
+        'panelist_num',
+        'single',
+        'points',
+        'convention',
+        'session',
+        'round',
+        'panelist',
+    ]
+    list_display = [
+        'id',
+        'mark',
+        'row',
+        'year',
+        'season',
+        'district',
+        'convention_raw',
+        'session_raw',
+        'round_raw',
+        'category',
+        'panelist_name',
+        'panelist_num',
+        'single',
+        'points',
+        'convention',
+        'session',
+        'round',
+        'panelist',
+    ]
+    list_filter = [
+        'year',
+        'season',
+    ]
+    ordering = (
+        'row',
+    )
+    readonly_fields = [
+        'id',
+    ]
+    autocomplete_fields = [
+        'convention',
+        'session',
+        'round',
+        'panelist',
     ]
 
 @admin.register(Selection)
