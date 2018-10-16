@@ -9,6 +9,10 @@ class Complete(models.Model):
         editable=False,
     )
 
+    mark = models.BooleanField(
+        default=False,
+    )
+
     row = models.IntegerField(
         null=True,
         blank=True,
@@ -94,7 +98,7 @@ class Complete(models.Model):
         choices=CATEGORY
     )
 
-    judge = models.CharField(
+    panelist_name = models.CharField(
         blank=True,
         max_length=255,
     )
@@ -104,12 +108,12 @@ class Complete(models.Model):
         max_length=255,
     )
 
-    draw = models.IntegerField(
+    appearance_num = models.IntegerField(
         null=True,
         blank=True,
     )
 
-    num = models.IntegerField(
+    song_num = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -148,36 +152,8 @@ class Complete(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    competitor = models.ForeignKey(
-        'Competitor',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    group = models.ForeignKey(
-        'Group',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    person = models.ForeignKey(
-        'Person',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     round = models.ForeignKey(
         'Round',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    panelist = models.ForeignKey(
-        'Panelist',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -199,6 +175,33 @@ class Complete(models.Model):
 
     score = models.OneToOneField(
         'Score',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    competitor = models.ForeignKey(
+        'Competitor',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    group = models.ForeignKey(
+        'Group',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    person = models.ForeignKey(
+        'Person',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    panelist = models.ForeignKey(
+        'Panelist',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,

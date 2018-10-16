@@ -68,22 +68,22 @@ class Selection(models.Model):
         choices=ROUND_KIND
     )
 
-    legacy_group = models.CharField(
+    group_name = models.CharField(
         blank=True,
         max_length=255,
     )
 
-    draw = models.IntegerField(
+    appearance_num = models.IntegerField(
         null=True,
         blank=True,
     )
 
-    num = models.IntegerField(
+    song_num = models.IntegerField(
         null=True,
         blank=True,
     )
 
-    legacy_chart = models.CharField(
+    song_title = models.CharField(
         blank=True,
         max_length=255,
     )

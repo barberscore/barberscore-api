@@ -89,27 +89,30 @@ class CompleteAdmin(admin.ModelAdmin):
         'season',
         'district',
         'name',
+        'convention_raw',
+        'session_raw',
+        'round_raw',
         'session_kind',
         'round_kind',
         'category',
-        'judge',
+        'panelist_name',
         'single',
-        'draw',
-        'num',
+        'appearance_num',
+        'song_num',
         'panelist_num',
         'group_name',
         'song_title',
         'points',
         'convention',
         'session',
-        'group',
-        'competitor',
         'round',
-        'person',
-        'panelist',
         'appearance',
         'song',
         'score',
+        'group',
+        'competitor',
+        'person',
+        'panelist',
     ]
     list_display = [
         'id',
@@ -121,11 +124,6 @@ class CompleteAdmin(admin.ModelAdmin):
         'session_kind',
         'round_kind',
         'category',
-        'judge',
-        'single',
-        'draw',
-        'num',
-        'points',
     ]
     list_filter = [
         'year',
@@ -133,8 +131,8 @@ class CompleteAdmin(admin.ModelAdmin):
     ]
     ordering = (
         'row',
-        'draw',
-        'num',
+        'appearance_num',
+        'song_num',
     )
     readonly_fields = [
         'id',
@@ -144,12 +142,12 @@ class CompleteAdmin(admin.ModelAdmin):
         'session',
         'round',
         'appearance',
+        'song',
+        'score',
         'person',
         'panelist',
         'group',
         'competitor',
-        'song',
-        'score',
     ]
 
 @admin.register(Selection)
@@ -164,10 +162,10 @@ class SelectionAdmin(admin.ModelAdmin):
         'name',
         'session_kind',
         'round_kind',
-        'legacy_group',
-        'draw',
-        'num',
-        'legacy_chart',
+        'group_name',
+        'appearance_num',
+        'song_num',
+        'song_title',
         'totals',
         'points',
         'song',
@@ -181,10 +179,10 @@ class SelectionAdmin(admin.ModelAdmin):
         'name',
         'session_kind',
         'round_kind',
-        'legacy_group',
-        'draw',
-        'num',
-        'legacy_chart',
+        'group_name',
+        'appearance_num',
+        'song_num',
+        'song_title',
         'totals',
         'points',
     ]
@@ -194,8 +192,8 @@ class SelectionAdmin(admin.ModelAdmin):
     ]
     ordering = (
         'row',
-        'draw',
-        'num',
+        'appearance_num',
+        'song_num',
     )
     readonly_fields = [
         'id',
