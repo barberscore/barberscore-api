@@ -111,6 +111,7 @@ def import_complete(path):
         session_map = {
             'Chorus': Session.KIND.chorus,
             'College': Session.KIND.quartet,
+            'Mixed': Session.KIND.mixed,
             'Quartet': Session.KIND.quartet,
             'Quartet College': Session.KIND.quartet,
             'Senior Chorus': Session.KIND.chorus,
@@ -133,23 +134,23 @@ def import_complete(path):
         }
 
         name_map = {
-            'Intl': 'International Convention',
-            'Denver': 'International Convention',
             '2006': 'International Convention',
-            'International': 'International Convention',
-            'International Convention': 'International Convention',
-            'International Quartet and Chorus Convention': 'International Convention',
-            'Seniors': 'International Seniors Convention',
-            'Senior': 'International Seniors Convention',
-            'Winter': 'International Seniors Convention',
-            'International Midwinter Convention': 'International Seniors Convention',
-            'International Seniors Quartet Convention': 'International Seniors Convention',
-            'College': 'International Youth Convention',
-            'Harmony Foundation Youth Barbershop Quartet Contest': 'International Youth Convention',
-            'Harmony Foundation Collegiate Barbershop Quartet Contest': 'International Youth Convention',
             'Bank of America Collegiate Barbershop Quartet Contest': 'International Youth Convention',
-            'International Youth Convention': 'International Youth Convention',
+            'College': 'International Youth Convention',
+            'Denver': 'International Convention',
+            'Harmony Foundation Collegiate Barbershop Quartet Contest': 'International Youth Convention',
+            'Harmony Foundation Youth Barbershop Quartet Contest': 'International Youth Convention',
             'International Collegiate Quartet Preliminary Contest': 'International Youth Prelims',
+            'International Convention': 'International Convention',
+            'International Midwinter Convention': 'International Seniors Convention',
+            'International Quartet and Chorus Convention': 'International Convention',
+            'International Seniors Quartet Convention': 'International Seniors Convention',
+            'International Youth Convention': 'International Youth Convention',
+            'International': 'International Convention',
+            'Intl': 'International Convention',
+            'Senior': 'International Seniors Convention',
+            'Seniors': 'International Seniors Convention',
+            'Winter': 'International Seniors Convention',
         }
 
         exploded = [
@@ -320,6 +321,26 @@ def import_flat(path):
                 panelist_name=panelist_name,
                 points=points,
             )
+    fs = Flat.objects.order_by(
+        'row',
+    )
+    last_round = None
+    for f in fs:
+        round = " ".join([
+            str(f.year),
+            f.season,
+            f.district,
+            f.convention_raw,
+            f.session_raw,
+            f.round_raw,
+        ])
+        if last_round != round:
+            i = 1
+        else:
+            i += 1
+        f.panelist_num = i
+        f.save()
+        last_round = round
 
 
 
