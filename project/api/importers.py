@@ -1,5 +1,3 @@
-
-# Standard Library
 import csv
 import logging
 from datetime import datetime
@@ -53,7 +51,7 @@ def print_headers(path):
         for key, value in enumerate(rows[0]):
             print(key, value)
 
-def import_complete(path):
+def import_flat(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         next(reader)
@@ -262,7 +260,7 @@ def import_complete(path):
                 num = e[2]
                 points = int(row[k]) if row[k] else None
                 if points:
-                    Complete.objects.create(
+                    Flat.objects.create(
                         row=r,
                         year=year,
                         season=season,
@@ -280,7 +278,7 @@ def import_complete(path):
             r += 1
 
 
-def import_flat(path):
+def import_complete(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         next(reader)
@@ -309,7 +307,7 @@ def import_flat(path):
                     break
                 points.append(clean)
                 i += 1
-            Flat.objects.create(
+            Complete.objects.create(
                 row=rw,
                 year=year,
                 season=season,
@@ -321,7 +319,7 @@ def import_flat(path):
                 panelist_name=panelist_name,
                 points=points,
             )
-    fs = Flat.objects.order_by(
+    fs = Complete.objects.order_by(
         'row',
     )
     last_round = None
