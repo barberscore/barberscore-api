@@ -52,8 +52,8 @@ from .models import Appearance
 from .models import Assignment
 from .models import Award
 from .models import Chart
-from .models import Flat
-from .models import Complete
+# from .models import Flat
+# from .models import Complete
 from .models import Competitor
 from .models import Contest
 from .models import Contestant
@@ -80,8 +80,8 @@ from .models import Venue
 admin.site.site_header = 'Barberscore Admin Backend'
 
 
-@admin.register(Complete)
-class CompleteAdmin(admin.ModelAdmin):
+# @admin.register(Flat)
+class FlatAdmin(admin.ModelAdmin):
 
     fields = [
         'id',
@@ -151,8 +151,8 @@ class CompleteAdmin(admin.ModelAdmin):
         'competitor',
     ]
 
-@admin.register(Flat)
-class FlatAdmin(admin.ModelAdmin):
+# @admin.register(Complete)
+class CompleteAdmin(admin.ModelAdmin):
 
     fields = [
         'id',
