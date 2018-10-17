@@ -3,8 +3,8 @@ from .appearance import Appearance
 from .assignment import Assignment
 from .award import Award
 from .chart import Chart
-# from .complete import Complete
-# from .flat import Flat
+from .complete import Complete
+from .flat import Flat
 from .competitor import Competitor
 from .contest import Contest
 from .contestant import Contestant
