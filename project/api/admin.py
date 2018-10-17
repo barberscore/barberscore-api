@@ -187,7 +187,7 @@ class FlatAdmin(admin.ModelAdmin):
         'category',
         'panelist_num',
         # 'points',
-        # 'convention',
+        'convention',
         # 'session',
         # 'round',
         # 'panelist',
