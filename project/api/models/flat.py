@@ -62,10 +62,6 @@ class Flat(models.Model):
         null=True,
         blank=True,
     )
-    single = models.CharField(
-        blank=True,
-        max_length=255,
-    )
     points = ArrayField(
         base_field=models.IntegerField(
             null=True,

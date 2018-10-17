@@ -288,71 +288,39 @@ def import_flat(path):
         # Conversion maps
         for row in rows:
             # Get variables
-            year = int(row[0])
-            season = season_map[row[1]]
-            code = district_map[row[2]]
-            name = str(row[3].strip() if row[3] else "")
-            session_kind = session_map[row[4]]
-            round_kind = round_map[row[5]]
-            category = category_map[row[6]]
-            panelist_name = str(row[7].strip()) if row[7] else ""
-            single = str(row[7].strip()) if row[8] else ""
+            rw = int(row[0])
+            year = int(row[1])
+            season = str(row[2].strip() if row[2] else "")
+            district = str(row[3].strip() if row[3] else "")
+            convention_raw = str(row[4].strip() if row[4] else "")
+            session_raw = str(row[5].strip() if row[5] else "")
+            round_raw = str(row[6].strip() if row[6] else "")
+            category = str(row[7].strip() if row[7] else "")
+            panelist_name = str(row[8].strip() if row[8] else "")
+            points = []
+            i = 10
+            while i <=123:
+                try:
+                    clean = int(row[i])
+                except TypeError:
+                    break
+                except ValueError:
+                    break
+                points.append(clean)
+                i += 1
+            Flat.objects.create(
+                row=rw,
+                year=year,
+                season=season,
+                district=district,
+                convention_raw=convention_raw,
+                session_raw=session_raw,
+                round_raw=round_raw,
+                category=category,
+                panelist_name=panelist_name,
+                points=points,
+            )
 
-            # Remap BHS
-            if code == 'BHS':
-                if any(x in name for x in ['Senior', 'Midwinter', 'Winter',]):
-                    season = Convention.SEASON.midwinter
-                elif any(x in name for x in ['College', 'Collegiate', 'Youth',]):
-                    if "Preliminary" in name:
-                        season = Convention.SEASON.spring
-                    else:
-                        season = Convention.SEASON.summer
-                else:
-                    season = Convention.SEASON.summer
-                rename = name_map[name]
-            else:
-                rename = name
-
-            # Format legacy name
-            if season in [
-                Convention.SEASON.summer,
-                Convention.SEASON.midwinter,
-            ]:
-                legacy_name = " ".join([
-                    str(code),
-                    rename,
-                    str(year),
-                ])
-            else:
-                legacy_name = " ".join([
-                    str(code),
-                    Convention.SEASON[season],
-                    rename,
-                    str(year),
-                ])
-            name = legacy_name
-            for e in exploded:
-                k = e[0] + 8
-                draw = e[1]
-                num = e[2]
-                points = int(row[k]) if row[k] else None
-                if points:
-                    Complete.objects.create(
-                        row=r,
-                        year=year,
-                        season=season,
-                        district=code,
-                        name=name,
-                        session_kind=session_kind,
-                        round_kind=round_kind,
-                        category=category,
-                        judge=panelist_name,
-                        single=single,
-                        num=num,
-                        draw=draw,
-                        points=points,
-                    )
-            r += 1
 
 
 def import_selection(path):
