@@ -82,8 +82,10 @@ class Panelist(TimeStampedModel):
 
     person = models.ForeignKey(
         'Person',
+        null=True,
+        blank=True,
         related_name='panelists',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
     )
 
     # Relations

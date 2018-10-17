@@ -43,7 +43,7 @@ class OrphanListFilter(admin.SimpleListFilter):
                     'EVG',
                     'FWD',
                     'LOL',
-                    'MAD'
+                    'MAD',
                     'NED',
                     'SWD',
                 ],
