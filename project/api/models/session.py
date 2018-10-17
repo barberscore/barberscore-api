@@ -62,6 +62,8 @@ class Session(TimeStampedModel):
         (41, 'quartet', "Quartet"),
         (42, 'mixed', "Mixed"),
         (43, 'senior', "Senior"),
+        (44, 'youth', "Youth"),
+        (45, 'unknown', "Unknown"),
     )
 
     kind = models.IntegerField(
