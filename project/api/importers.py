@@ -285,6 +285,11 @@ def import_complete(path):
         r = 2
         rows = [row for row in reader]
         # Conversion maps
+        panelist_map = {
+            'Missing': None,
+            'XXX,': None,
+            'XXX': None,
+        }
         for row in rows:
             # Get variables
             rw = int(row[0])
@@ -295,7 +300,8 @@ def import_complete(path):
             session_raw = str(row[5].strip() if row[5] else "")
             round_raw = str(row[6].strip() if row[6] else "")
             category = str(row[7].strip() if row[7] else "")
-            panelist_name = str(row[8].strip() if row[8] else "")
+            panelist_name = row[8].strip() if row[8] else None
+            panelist_name = panelist_map.get(panelist_name, panelist_name)
             points = []
             i = 10
             while i <=123:

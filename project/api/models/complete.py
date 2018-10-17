@@ -55,6 +55,7 @@ class Complete(models.Model):
 
     panelist_name = models.CharField(
         blank=True,
+        null=True,
         max_length=255,
     )
 

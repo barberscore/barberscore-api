@@ -159,6 +159,16 @@ class Convention(TimeStampedModel):
     )
 
     # Internals
+    class Meta:
+        unique_together = (
+            (
+                'year',
+                'season',
+                'name',
+                'group',
+            ),
+        )
+
     class JSONAPIMeta:
         resource_name = "convention"
 

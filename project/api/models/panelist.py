@@ -111,6 +111,7 @@ class Panelist(TimeStampedModel):
     class Meta:
         unique_together = (
             ('round', 'num',),
+            ('round', 'legacy_name',),
         )
 
     class JSONAPIMeta:
