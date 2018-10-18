@@ -48,6 +48,9 @@ class Selection(models.Model):
         (32, 'chorus', "Chorus"),
         (41, 'quartet', "Quartet"),
         (42, 'mixed', "Mixed"),
+        (43, 'senior', "Senior"),
+        (44, 'youth', "Youth"),
+        (45, 'unknown', "Unknown"),
     )
 
     session_kind = models.IntegerField(
