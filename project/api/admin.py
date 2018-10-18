@@ -218,10 +218,13 @@ class SelectionAdmin(admin.ModelAdmin):
     fields = [
         'id',
         'row',
-        'year',
         'season',
+        'year',
         'district',
-        'name',
+        'event_raw',
+        'session_raw',
+        'season_kind',
+        'convention_name',
         'session_kind',
         'round_kind',
         'group_name',
@@ -233,24 +236,31 @@ class SelectionAdmin(admin.ModelAdmin):
         'song',
     ]
     list_display = [
-        'id',
         'row',
-        'year',
         'season',
-        'district',
-        'name',
+        'year',
+        'district_raw',
+        'event_raw',
+        'session_raw',
+        'district_code',
+        'season_kind',
+        'convention_name',
         'session_kind',
         'round_kind',
         'group_name',
         'appearance_num',
         'song_num',
         'song_title',
-        'totals',
-        'points',
+        # 'totals',
+        # 'points',
+        # 'song',
     ]
     list_filter = [
         'year',
         'season',
+        'district_raw',
+        'event_raw',
+        'session_raw',
     ]
     ordering = (
         'row',
@@ -261,7 +271,7 @@ class SelectionAdmin(admin.ModelAdmin):
         'id',
     ]
     autocomplete_fields = [
-        'song',
+        # 'song',
     ]
 
 @admin.register(Appearance)

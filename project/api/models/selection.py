@@ -15,17 +15,27 @@ class Selection(models.Model):
         blank=True,
     )
 
+    season = models.CharField(
+        blank=True,
+        max_length=255,
+    )
+
     year = models.IntegerField(
         null=True,
         blank=True,
     )
 
-    district = models.CharField(
+    district_raw = models.CharField(
         blank=True,
         max_length=255,
     )
 
-    name = models.CharField(
+    event_raw = models.CharField(
+        blank=True,
+        max_length=255,
+    )
+
+    session_raw = models.CharField(
         blank=True,
         max_length=255,
     )
@@ -38,10 +48,20 @@ class Selection(models.Model):
         (9, 'video', 'Video',),
     )
 
-    season = models.IntegerField(
+    season_kind = models.IntegerField(
         null=True,
         blank=True,
         choices=SEASON
+    )
+
+    district_code = models.CharField(
+        blank=True,
+        max_length=255,
+    )
+
+    convention_name = models.CharField(
+        blank=True,
+        max_length=255,
     )
 
     SESSION_KIND = Choices(

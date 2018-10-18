@@ -405,7 +405,7 @@ def import_selection(path):
             'SUN': 'SUN',
             'SWD': 'SWD',
             'Senior': 'BHS',
-         }
+        }
 
         session_map = {
             'Chorus Finals': Session.KIND.chorus,
@@ -658,74 +658,73 @@ def import_selection(path):
             'LOL Spring Prelims/Div 10K,SW 2016': 'LOL Spring International Quartet Preliminaries and 10 2016',
         }
         for row in rows:
-            season = season_map[row[0]]
-            year = int(row[1])
-            code = district_map[row[2]]
-            name = str(row[3]).strip() if row[3] else ""
-            session_kind = session_map[row[4]]
-            round_kind = round_map[row[4]]
-            legacy_group = str(row[5]).strip()
-            draw = int(row[6])
-            num = int(row[7])
-            legacy_chart = str(row[8]).strip()
-            totals = int(row[9])
+            rw = int(row[0])
+            season = str(row[1]).strip() if row[1] else ""
+            year = int(row[2])
+            district_raw = str(row[3]).strip() if row[3] else ""
+            event_raw = str(row[4]).strip() if row[4] else ""
+            session_raw = str(row[5]).strip() if row[5] else ""
+            group_name = str(row[6]).strip() if row[6] else ""
+            appearance_num = int(row[7])
+            song_num = int(row[8])
+            song_title = str(row[9]).strip() if row[9] else ""
+            totals = int(row[10])
             points = []
 
             # Remap BHS
-            if code == 'BHS':
-                if any(x in name for x in [
-                    'Senior', 'Seniors', 'Seniors Int\'l',
-                ]):
-                    season = Convention.SEASON.midwinter
-                elif "Video Prelims" in name:
-                    season = Convention.SEASON.spring
-                else:
-                    season = Convention.SEASON.summer
-                rename = name_map[name]
-            else:
-                rename = name
+            # if code == 'BHS':
+            #     if any(x in name for x in [
+            #         'Senior', 'Seniors', 'Seniors Int\'l',
+            #     ]):
+            #         season = Convention.SEASON.midwinter
+            #     elif "Video Prelims" in name:
+            #         season = Convention.SEASON.spring
+            #     else:
+            #         season = Convention.SEASON.summer
+            #     rename = name_map[name]
+            # else:
+            #     rename = name
 
-            # Format legacy name
-            if season == Convention.SEASON.summer or season == Convention.SEASON.midwinter:
-                legacy_name = " ".join([
-                    str(code),
-                    rename,
-                    str(year),
-                ])
-            else:
-                legacy_name = " ".join([
-                    str(code),
-                    Convention.SEASON[season],
-                    rename,
-                    str(year),
-                ])
+            # # Format legacy name
+            # if season == Convention.SEASON.summer or season == Convention.SEASON.midwinter:
+            #     legacy_name = " ".join([
+            #         str(code),
+            #         rename,
+            #         str(year),
+            #     ])
+            # else:
+            #     legacy_name = " ".join([
+            #         str(code),
+            #         Convention.SEASON[season],
+            #         rename,
+            #         str(year),
+            #     ])
 
-            if legacy_name in legacy_map:
-                legacy_name = legacy_map[legacy_name]
+            # if legacy_name in legacy_map:
+            #     legacy_name = legacy_map[legacy_name]
 
-            i = 14
-            while i <=28:
-                clean = int(row[i]) if row[i] else None
+            i = 1
+            while i <= 29:
+                if row[i] == '':
+                    break
+                clean = int(row[i])
                 points.append(clean)
                 i += 1
 
             Selection.objects.create(
-                row=r,
+                row=rw,
                 season=season,
                 year=year,
-                district=code,
-                name=legacy_name,
-                session_kind=session_kind,
-                round_kind=round_kind,
-                legacy_group=legacy_group,
-                draw=draw,
-                num=num,
-                legacy_chart=legacy_chart,
+                district_raw=district_raw,
+                event_raw=event_raw,
+                session_raw=session_raw,
+                group_name=group_name,
+                appearance_num=appearance_num,
+                song_num=song_num,
+                song_title=song_title,
                 totals=totals,
                 points=points,
             )
-            r += 1
-
 
 
 def import_persons(path):
