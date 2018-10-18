@@ -289,6 +289,23 @@ def import_complete(path):
             'Missing': None,
             'XXX,': None,
             'XXX': None,
+            'Butterfield,Jay': 'Butterfield,Dr. Jay',
+            'Campbell,Robert': 'Campbell,Rob',
+            'Debar,Phil': 'DeBar,Phil',
+            'Debusman,Jim': 'DeBusman,Jim',
+            'Fritzen,Ed': 'Fritzen Jr,Ed',
+            'Gray Jr,Bobby': 'Gray Jr.,Bobby',
+            'Gray,Bobby': 'Gray Jr.,Bobby',
+            'Hunter,Joe C.': 'Hunter Jr,Joe',
+            'Hunter,Jr,Joe': 'Hunter Jr,Joe',
+            'McFadden,Bob': 'McFadden,Robert',
+            'McQueeney,Tom': 'McQueeny,Tom',
+            'O\'Leary,L. Brian': 'O\' Leary,Brian',
+            'Payne,Rog': 'Payne,Roger',
+            'Peterson,Christopher': 'Peterson,Chris',
+            'Rashleigh,William': 'Rashleigh,Bill',
+            'Rubin,Dave': 'Rubin,David',
+            'Treptow,Richard': 'Treptow,Trep',
         }
         for row in rows:
             # Get variables

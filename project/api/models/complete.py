@@ -71,6 +71,21 @@ class Complete(models.Model):
         null=True,
         blank=True,
     )
+    num_appearances = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    num_rounds = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    num_panelists = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     convention = models.ForeignKey(
         'Convention',
         null=True,
