@@ -23,12 +23,12 @@ class Complete(models.Model):
         blank=True,
     )
 
-    season = models.CharField(
+    season_raw = models.CharField(
         blank=True,
         max_length=255,
     )
 
-    district = models.CharField(
+    district_raw = models.CharField(
         blank=True,
         max_length=255,
     )

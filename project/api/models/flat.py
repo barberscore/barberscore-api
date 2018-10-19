@@ -53,7 +53,6 @@ class Flat(models.Model):
         (2, 'midwinter', 'Midwinter',),
         (3, 'fall', 'Fall',),
         (4, 'spring', 'Spring',),
-        (9, 'video', 'Video',),
     )
 
     season = models.IntegerField(

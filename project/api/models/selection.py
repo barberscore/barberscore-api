@@ -15,7 +15,7 @@ class Selection(models.Model):
         blank=True,
     )
 
-    season = models.CharField(
+    season_raw = models.CharField(
         blank=True,
         max_length=255,
     )
@@ -45,7 +45,6 @@ class Selection(models.Model):
         (2, 'midwinter', 'Midwinter',),
         (3, 'fall', 'Fall',),
         (4, 'spring', 'Spring',),
-        (9, 'video', 'Video',),
     )
 
     season_kind = models.IntegerField(
@@ -124,6 +123,30 @@ class Selection(models.Model):
     )
     song = models.OneToOneField(
         'Song',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    convention = models.ForeignKey(
+        'Convention',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    session = models.ForeignKey(
+        'Session',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    round = models.ForeignKey(
+        'Round',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    appearance = models.ForeignKey(
+        'Appearance',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
