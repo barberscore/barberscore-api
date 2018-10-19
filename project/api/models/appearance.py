@@ -440,6 +440,7 @@ class Appearance(TimeStampedModel):
                     category=panelist.category,
                     kind=panelist.kind,
                     panelist=panelist,
+                    num=panelist.num,
                 )
             i += 1
         return
