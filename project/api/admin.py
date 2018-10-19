@@ -164,6 +164,10 @@ class CompleteAdmin(admin.ModelAdmin):
         'convention_raw',
         'session_raw',
         'round_raw',
+        'season_kind',
+        'convention_name',
+        'session_kind',
+        'round_kind',
         'category',
         'panelist_name',
         'panelist_num',
@@ -194,11 +198,10 @@ class CompleteAdmin(admin.ModelAdmin):
     ]
     list_filter = [
         'year',
-        'season_raw',
-        'session_raw',
-        'round_raw',
+        'season_kind',
+        'session_kind',
+        'round_kind',
         # 'district_raw',
-        ConventionGroupListFilter,
     ]
     ordering = (
         'row',
