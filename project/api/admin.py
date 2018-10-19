@@ -178,21 +178,21 @@ class CompleteAdmin(admin.ModelAdmin):
         'panelist',
     ]
     list_display = [
-        'row',
-        'mark',
-        'season_raw',
-        'district_raw',
-        'convention_raw',
-        'session_raw',
-        'round_raw',
+        # 'row',
+        # 'mark',
+        'convention',
+        'session_kind',
+        'round_kind',
         # 'id',
-        'year',
-        'panelist_name',
         'category',
         'panelist_num',
+        'panelist_name',
+        'num_appearances',
+        'num_rounds',
+        'num_panelists',
         # 'points',
-        'convention',
-        'session',
+        # 'convention',
+        # 'session',
         # 'round',
         # 'panelist',
     ]
@@ -204,7 +204,13 @@ class CompleteAdmin(admin.ModelAdmin):
         'district_code',
     ]
     ordering = (
-        'row',
+        'year',
+        'district_code',
+        'season_kind',
+        'convention__name',
+        'session_kind',
+        'round_kind',
+        'panelist_num',
     )
     readonly_fields = [
         'id',
@@ -240,16 +246,14 @@ class SelectionAdmin(admin.ModelAdmin):
         'song',
     ]
     list_display = [
-        'row',
+        # 'row',
         # 'season_raw',
         # 'district_raw',
         # 'event_raw',
         # 'session_raw',
-        'district_code',
-        'event_raw',
-        'convention_name',
-        'season_kind',
-        'year',
+        # 'district_code',
+        # 'event_raw',
+        'convention',
         'session_kind',
         'round_kind',
         'appearance_num',
@@ -260,7 +264,7 @@ class SelectionAdmin(admin.ModelAdmin):
         'session',
         'round',
         'appearance',
-        'totals',
+        # 'totals',
         # 'points',
         'song',
     ]
@@ -276,7 +280,7 @@ class SelectionAdmin(admin.ModelAdmin):
         'round_kind',
     ]
     list_editable = [
-        'convention_name',
+        # 'convention_name',
     ]
 
     ordering = (
@@ -288,7 +292,7 @@ class SelectionAdmin(admin.ModelAdmin):
         'id',
     ]
     autocomplete_fields = [
-        # 'song',
+        'song',
     ]
 
 @admin.register(Appearance)
