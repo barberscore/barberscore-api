@@ -197,7 +197,8 @@ class CompleteAdmin(admin.ModelAdmin):
         'season_raw',
         'session_raw',
         'round_raw',
-        'district_raw',
+        # 'district_raw',
+        ConventionGroupListFilter,
     ]
     ordering = (
         'row',
@@ -242,6 +243,7 @@ class SelectionAdmin(admin.ModelAdmin):
         # 'event_raw',
         # 'session_raw',
         'district_code',
+        'event_raw',
         'convention_name',
         'season_kind',
         'year',
@@ -255,7 +257,7 @@ class SelectionAdmin(admin.ModelAdmin):
         'session',
         'round',
         'appearance',
-        # 'totals',
+        'totals',
         # 'points',
         'song',
     ]
@@ -270,6 +272,10 @@ class SelectionAdmin(admin.ModelAdmin):
         'session_kind',
         'round_kind',
     ]
+    list_editable = [
+        'convention_name',
+    ]
+
     ordering = (
         'row',
         'appearance_num',
