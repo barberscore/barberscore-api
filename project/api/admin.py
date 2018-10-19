@@ -201,7 +201,7 @@ class CompleteAdmin(admin.ModelAdmin):
         'season_kind',
         'session_kind',
         'round_kind',
-        # 'district_raw',
+        'district_code',
     ]
     ordering = (
         'row',
