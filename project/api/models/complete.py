@@ -155,7 +155,7 @@ class Complete(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
-    panelist = models.ForeignKey(
+    panelist = models.OneToOneField(
         'Panelist',
         null=True,
         blank=True,
