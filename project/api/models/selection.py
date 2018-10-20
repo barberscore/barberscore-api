@@ -70,7 +70,9 @@ class Selection(models.Model):
         (43, 'senior', "Senior"),
         (44, 'youth', "Youth"),
         (45, 'unknown', "Unknown"),
+        (46, 'vlq', "VLQ"),
     )
+
 
     session_kind = models.IntegerField(
         null=True,
