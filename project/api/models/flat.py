@@ -9,62 +9,42 @@ class Flat(models.Model):
         editable=False,
     )
 
-    mark = models.BooleanField(
-        default=False,
-    )
-
-    row = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    convention_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
-    session_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
-    round_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
     year = models.IntegerField(
         null=True,
         blank=True,
     )
 
-    district = models.CharField(
+    district_code = models.CharField(
         blank=True,
         max_length=255,
     )
 
-    name = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
-    SEASON = Choices(
+    SEASON_KIND = Choices(
         (1, 'summer', 'Summer',),
         (2, 'midwinter', 'Midwinter',),
         (3, 'fall', 'Fall',),
         (4, 'spring', 'Spring',),
     )
 
-    season = models.IntegerField(
+    season_kind = models.IntegerField(
         null=True,
         blank=True,
-        choices=SEASON
+        choices=SEASON_KIND
+    )
+
+    convention_name = models.CharField(
+        blank=True,
+        max_length=255,
     )
 
     SESSION_KIND = Choices(
         (32, 'chorus', "Chorus"),
         (41, 'quartet', "Quartet"),
         (42, 'mixed', "Mixed"),
+        (43, 'senior', "Senior"),
+        (44, 'youth', "Youth"),
+        (45, 'unknown', "Unknown"),
+        (46, 'vlq', "VLQ"),
     )
 
     session_kind = models.IntegerField(
@@ -97,16 +77,6 @@ class Flat(models.Model):
         choices=CATEGORY
     )
 
-    panelist_name = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
-    single = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
     appearance_num = models.IntegerField(
         null=True,
         blank=True,
@@ -122,6 +92,16 @@ class Flat(models.Model):
         blank=True,
     )
 
+    points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    panelist_name = models.CharField(
+        blank=True,
+        max_length=255,
+    )
+
     group_name = models.CharField(
         blank=True,
         max_length=255,
@@ -130,11 +110,6 @@ class Flat(models.Model):
     song_title = models.CharField(
         blank=True,
         max_length=255,
-    )
-
-    points = models.IntegerField(
-        null=True,
-        blank=True,
     )
 
     convention = models.ForeignKey(
@@ -158,6 +133,12 @@ class Flat(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    panelist = models.ForeignKey(
+        'Panelist',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
     appearance = models.ForeignKey(
         'Appearance',
         null=True,
@@ -178,13 +159,6 @@ class Flat(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
-    competitor = models.ForeignKey(
-        'Competitor',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     group = models.ForeignKey(
         'Group',
         null=True,
@@ -194,13 +168,6 @@ class Flat(models.Model):
 
     person = models.ForeignKey(
         'Person',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    panelist = models.ForeignKey(
-        'Panelist',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,

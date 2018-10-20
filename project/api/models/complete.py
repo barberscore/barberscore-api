@@ -141,24 +141,28 @@ class Complete(models.Model):
 
     convention = models.ForeignKey(
         'Convention',
+        related_name='completes',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
     session = models.ForeignKey(
         'Session',
+        related_name='completes',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
     round = models.ForeignKey(
         'Round',
+        related_name='completes',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
     panelist = models.OneToOneField(
         'Panelist',
+        related_name='completes',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,

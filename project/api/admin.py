@@ -85,19 +85,14 @@ class FlatAdmin(admin.ModelAdmin):
 
     fields = [
         'id',
-        'row',
         'year',
-        'season',
-        'district',
-        'name',
-        'convention_raw',
-        'session_raw',
-        'round_raw',
+        'season_kind',
+        'district_code',
+        'convention_name',
         'session_kind',
         'round_kind',
         'category',
         'panelist_name',
-        'single',
         'appearance_num',
         'song_num',
         'panelist_num',
@@ -117,24 +112,18 @@ class FlatAdmin(admin.ModelAdmin):
     ]
     list_display = [
         'id',
-        'row',
         'year',
-        'season',
-        'district',
-        'name',
+        'season_kind',
+        'district_code',
+        'convention_name',
         'session_kind',
         'round_kind',
         'category',
     ]
     list_filter = [
         'year',
-        'season',
+        'season_kind',
     ]
-    ordering = (
-        'row',
-        'appearance_num',
-        'song_num',
-    )
     readonly_fields = [
         'id',
     ]
@@ -148,7 +137,6 @@ class FlatAdmin(admin.ModelAdmin):
         'person',
         'panelist',
         'group',
-        'competitor',
     ]
 
 @admin.register(Complete)
@@ -178,7 +166,7 @@ class CompleteAdmin(admin.ModelAdmin):
         'panelist',
     ]
     list_display = [
-        # 'row',
+        'row',
         # 'mark',
         'convention',
         'session_kind',
@@ -220,6 +208,9 @@ class CompleteAdmin(admin.ModelAdmin):
         'session',
         'round',
         'panelist',
+    ]
+    search_fields = [
+        'round',
     ]
 
 @admin.register(Selection)
@@ -279,6 +270,13 @@ class SelectionAdmin(admin.ModelAdmin):
         'session_kind',
         'round_kind',
     ]
+    list_select_related = [
+        'convention',
+        'session',
+        'round',
+        'appearance',
+        'song',
+    ]
     list_editable = [
         # 'convention_name',
     ]
@@ -293,6 +291,9 @@ class SelectionAdmin(admin.ModelAdmin):
     ]
     autocomplete_fields = [
         'song',
+    ]
+    search_fields = [
+        'round',
     ]
 
 @admin.register(Appearance)

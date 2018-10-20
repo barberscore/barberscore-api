@@ -10,6 +10,10 @@ class Selection(models.Model):
         editable=False,
     )
 
+    mark = models.BooleanField(
+        default=False,
+    )
+
     row = models.IntegerField(
         null=True,
         blank=True,
@@ -131,24 +135,28 @@ class Selection(models.Model):
     )
     convention = models.ForeignKey(
         'Convention',
+        related_name='selections',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
     session = models.ForeignKey(
         'Session',
+        related_name='selections',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
     round = models.ForeignKey(
         'Round',
+        related_name='selections',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
     appearance = models.ForeignKey(
         'Appearance',
+        related_name='selections',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
