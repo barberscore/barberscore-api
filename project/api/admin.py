@@ -88,7 +88,8 @@ class FlatAdmin(admin.ModelAdmin):
         'year',
         'season_kind',
         'district_code',
-        'convention_name',
+        'complete_name',
+        'selection_name',
         'session_kind',
         'round_kind',
         'category',
@@ -115,10 +116,13 @@ class FlatAdmin(admin.ModelAdmin):
         'year',
         'season_kind',
         'district_code',
-        'convention_name',
+        'complete_name',
         'session_kind',
         'round_kind',
         'category',
+        'panelist_num',
+        'panelist_name',
+        'complete',
     ]
     list_filter = [
         'year',
@@ -190,6 +194,7 @@ class CompleteAdmin(admin.ModelAdmin):
         'session_kind',
         'round_kind',
         'district_code',
+        'category',
     ]
     ordering = (
         'year',

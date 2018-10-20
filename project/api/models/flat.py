@@ -32,7 +32,12 @@ class Flat(models.Model):
         choices=SEASON_KIND
     )
 
-    convention_name = models.CharField(
+    complete_name = models.CharField(
+        blank=True,
+        max_length=255,
+    )
+
+    selection_name = models.CharField(
         blank=True,
         max_length=255,
     )
@@ -112,8 +117,25 @@ class Flat(models.Model):
         max_length=255,
     )
 
+    complete = models.ForeignKey(
+        'Complete',
+        related_name='flats',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    selection = models.ForeignKey(
+        'Selection',
+        related_name='flats',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     convention = models.ForeignKey(
         'Convention',
+        related_name='flats',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -121,6 +143,7 @@ class Flat(models.Model):
 
     session = models.ForeignKey(
         'Session',
+        related_name='flats',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -128,6 +151,7 @@ class Flat(models.Model):
 
     round = models.ForeignKey(
         'Round',
+        related_name='flats',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -135,12 +159,14 @@ class Flat(models.Model):
 
     panelist = models.ForeignKey(
         'Panelist',
+        related_name='flats',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
     appearance = models.ForeignKey(
         'Appearance',
+        related_name='flats',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -148,6 +174,7 @@ class Flat(models.Model):
 
     song = models.ForeignKey(
         'Song',
+        related_name='flats',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -161,6 +188,7 @@ class Flat(models.Model):
     )
     group = models.ForeignKey(
         'Group',
+        related_name='flats',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -168,6 +196,7 @@ class Flat(models.Model):
 
     person = models.ForeignKey(
         'Person',
+        related_name='flats',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
