@@ -174,3 +174,13 @@ class Complete(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+    class Meta:
+        unique_together = (
+            (
+                'convention',
+                'session',
+                'round',
+                'panelist',
+                'person',
+            ),
+        )

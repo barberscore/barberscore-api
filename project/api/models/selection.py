@@ -127,6 +127,21 @@ class Selection(models.Model):
         null=True,
         blank=True,
     )
+    num_appearances = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    num_rounds = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    num_panelists = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     song = models.OneToOneField(
         'Song',
         null=True,
@@ -161,3 +176,13 @@ class Selection(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+    class Meta:
+        unique_together = (
+            (
+                'convention',
+                'session',
+                'round',
+                'appearance',
+                'song',
+            ),
+        )
