@@ -167,3 +167,10 @@ class Complete(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+    person = models.ForeignKey(
+        'Person',
+        related_name='completes',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )

@@ -168,6 +168,7 @@ class CompleteAdmin(admin.ModelAdmin):
         'session',
         'round',
         'panelist',
+        'person',
     ]
     list_display = [
         'row',
@@ -179,9 +180,10 @@ class CompleteAdmin(admin.ModelAdmin):
         'category',
         'panelist_num',
         'panelist_name',
-        'num_appearances',
-        'num_rounds',
-        'num_panelists',
+        'person',
+        # 'num_appearances',
+        # 'num_rounds',
+        # 'num_panelists',
         # 'points',
         # 'convention',
         # 'session',
