@@ -7,23 +7,15 @@ class Flat(models.Model):
         default=uuid.uuid4,
         editable=False,
     )
-    points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
     complete = models.ForeignKey(
         'Complete',
         related_name='flats',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
     selection = models.ForeignKey(
         'Selection',
         related_name='flats',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
     score = models.OneToOneField(
         'Score',

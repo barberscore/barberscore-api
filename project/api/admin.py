@@ -85,14 +85,12 @@ class FlatAdmin(admin.ModelAdmin):
 
     fields = [
         'id',
-        'points',
         'complete',
         'selection',
         'score',
     ]
     list_display = [
         'id',
-        'points',
         'complete',
         'selection',
         'score',
