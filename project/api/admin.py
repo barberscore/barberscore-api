@@ -85,62 +85,25 @@ class FlatAdmin(admin.ModelAdmin):
 
     fields = [
         'id',
-        'year',
-        'season_kind',
-        'district_code',
-        'complete_name',
-        'selection_name',
-        'session_kind',
-        'round_kind',
-        'category',
-        'panelist_name',
-        'appearance_num',
-        'song_num',
-        'panelist_num',
-        'group_name',
-        'song_title',
         'points',
-        'convention',
-        'session',
-        'round',
-        'appearance',
-        'song',
+        'complete',
+        'selection',
         'score',
-        'group',
-        'competitor',
-        'person',
-        'panelist',
     ]
     list_display = [
         'id',
-        'year',
-        'season_kind',
-        'district_code',
-        'complete_name',
-        'session_kind',
-        'round_kind',
-        'category',
-        'panelist_num',
-        'panelist_name',
+        'points',
         'complete',
-    ]
-    list_filter = [
-        'year',
-        'season_kind',
+        'selection',
+        'score',
     ]
     readonly_fields = [
         'id',
     ]
     autocomplete_fields = [
-        'convention',
-        'session',
-        'round',
-        'appearance',
-        'song',
+        'complete',
+        'selection',
         'score',
-        'person',
-        'panelist',
-        'group',
     ]
 
 @admin.register(Complete)
