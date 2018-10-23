@@ -134,7 +134,7 @@ class CompleteAdmin(admin.ModelAdmin):
     list_display = [
         'row',
         # 'mark',
-        'convetion_raw',
+        'convention_raw',
         'convention',
         'session_raw',
         'session_kind',
