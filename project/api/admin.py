@@ -218,6 +218,7 @@ class SelectionAdmin(admin.ModelAdmin):
         # 'district_code',
         # 'event_raw',
         'convention',
+        'event_raw',
         'session_raw',
         'session_kind',
         'session',
