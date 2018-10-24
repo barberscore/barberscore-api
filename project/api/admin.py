@@ -222,6 +222,7 @@ class SelectionAdmin(admin.ModelAdmin):
         'session_raw',
         'session_kind',
         'session',
+        'round',
         # 'round_kind',
         # 'appearance_num',
         # 'song_num',
