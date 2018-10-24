@@ -224,7 +224,7 @@ class SelectionAdmin(admin.ModelAdmin):
         # 'session',
         'appearance',
         'appearance_num',
-        'song'
+        'song',
         'song_num',
         # 'round_kind',
         # 'appearance_num',
