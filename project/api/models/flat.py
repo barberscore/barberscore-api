@@ -23,3 +23,7 @@ class Flat(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+    class Meta:
+        unique_together = (
+            ('complete', 'selection', 'score'),
+        )
