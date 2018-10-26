@@ -297,7 +297,13 @@ class User(AbstractBaseUser):
             }
         }
         if self.username.startswith('auth0|'):
-            account = auth0.users.update(self.username, payload)
+            try:
+                account = auth0.users.update(self.username, payload)
+            except Auth0Error as e:
+                if e.message == 'The user does not exist.':
+                    self.status = self.STATUS.new
+                    self.save()
+                raise
             created = False
         elif self.username.startswith('orphan|'):
             payload['connection'] = 'Default'
