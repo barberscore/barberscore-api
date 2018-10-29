@@ -8,6 +8,7 @@ from .flat import Flat
 from .competitor import Competitor
 from .contest import Contest
 from .contestant import Contestant
+from .contender import Contender
 from .convention import Convention
 from .entry import Entry
 from .grantor import Grantor

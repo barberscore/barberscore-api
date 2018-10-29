@@ -28,6 +28,7 @@ from api.models import Award
 from api.models import Chart
 from api.models import Competitor
 from api.models import Contest
+from api.models import Contender
 from api.models import Contestant
 from api.models import Convention
 from api.models import Entry
@@ -105,6 +106,15 @@ class ContestFactory(DjangoModelFactory):
 
     class Meta:
         model = Contest
+
+
+class ContenderFactory(DjangoModelFactory):
+    status = Contender.STATUS.new
+    appearance = SubFactory('api.factories.AppearanceFactory')
+    round = SubFactory('api.factories.RoundFactory')
+
+    class Meta:
+        model = Contender
 
 
 class ContestantFactory(DjangoModelFactory):

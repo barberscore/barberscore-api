@@ -56,6 +56,7 @@ from .models import Flat
 from .models import Complete
 from .models import Competitor
 from .models import Contest
+from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
@@ -575,6 +576,38 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     search_fields = [
         'award__name',
     ]
+
+
+@admin.register(Contender)
+class ContenderAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
+    fields = [
+        'status',
+        'appearance',
+        'round',
+    ]
+
+    list_filter = (
+        'status',
+    )
+
+    readonly_fields = [
+    ]
+
+    autocomplete_fields = [
+        'appearance',
+        'round',
+    ]
+
+    search_fields = [
+        'id',
+    ]
+
+    ordering = (
+    )
 
 
 @admin.register(Contestant)
