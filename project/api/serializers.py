@@ -232,7 +232,7 @@ class ContenderSerializer(serializers.ModelSerializer):
             'sng_rank',
             'tot_rank',
             'appearance',
-            'round',
+            'outcome',
             'permissions',
         )
 

@@ -108,8 +108,8 @@ class Contender(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    round = models.ForeignKey(
-        'Round',
+    outcome = models.ForeignKey(
+        'Outcome',
         related_name='contenders',
         on_delete=models.CASCADE,
     )
@@ -123,7 +123,7 @@ class Contender(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('appearance', 'round',),
+            ('appearance', 'outcome',),
         )
 
     class JSONAPIMeta:

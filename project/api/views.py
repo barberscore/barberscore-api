@@ -361,7 +361,7 @@ class ContestViewSet(viewsets.ModelViewSet):
 class ContenderViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'appearance',
-        'round',
+        'outcome',
     ).prefetch_related(
         'statelogs',
     ).order_by('id')
@@ -862,6 +862,7 @@ class OutcomeViewSet(viewsets.ModelViewSet):
         'round',
         'contest',
     ).prefetch_related(
+        'contenders',
         'statelogs',
     ).order_by('id')
     serializer_class = OutcomeSerializer

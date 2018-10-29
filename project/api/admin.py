@@ -587,7 +587,7 @@ class ContenderAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'status',
         'appearance',
-        'round',
+        'outcome',
     ]
 
     list_filter = (
@@ -599,7 +599,7 @@ class ContenderAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     autocomplete_fields = [
         'appearance',
-        'round',
+        'outcome',
     ]
 
     search_fields = [
@@ -1335,7 +1335,9 @@ class OutcomeAdmin(admin.ModelAdmin):
     readonly_fields = [
         'id',
     ]
-
+    search_fields = [
+        'id',
+    ]
 
 @admin.register(Panelist)
 class PanelistAdmin(admin.ModelAdmin):

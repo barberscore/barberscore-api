@@ -111,7 +111,7 @@ class ContestFactory(DjangoModelFactory):
 class ContenderFactory(DjangoModelFactory):
     status = Contender.STATUS.new
     appearance = SubFactory('api.factories.AppearanceFactory')
-    round = SubFactory('api.factories.RoundFactory')
+    outcome = SubFactory('api.factories.OutcomeFactory')
 
     class Meta:
         model = Contender
