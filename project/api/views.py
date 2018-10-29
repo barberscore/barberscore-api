@@ -23,7 +23,6 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 
 # Local
-from .backends import CoalesceFilterBackend
 from .filtersets import AssignmentFilterset
 from .filtersets import ConventionFilterset
 from .filtersets import MemberFilterset
@@ -106,8 +105,6 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     serializer_class = AppearanceSerializer
     filterset_class = None
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -176,8 +173,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     serializer_class = AssignmentSerializer
     filterset_class = AssignmentFilterset
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -224,8 +219,6 @@ class AwardViewSet(viewsets.ModelViewSet):
     ).order_by('status', 'name')
     serializer_class = AwardSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -271,8 +264,6 @@ class ChartViewSet(viewsets.ModelViewSet):
     ).order_by('status', 'title')
     serializer_class = ChartSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -331,8 +322,6 @@ class ContestViewSet(viewsets.ModelViewSet):
     serializer_class = ContestSerializer
     filterset_class = None
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -378,8 +367,6 @@ class ContenderViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = ContenderSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -397,8 +384,6 @@ class ContestantViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = ContestantSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -448,8 +433,6 @@ class ConventionViewSet(viewsets.ModelViewSet):
     serializer_class = ConventionSerializer
     filterset_class = ConventionFilterset
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -497,8 +480,6 @@ class CompetitorViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = CompetitorSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -573,8 +554,6 @@ class EntryViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = EntrySerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -662,8 +641,6 @@ class GridViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = GridSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -680,8 +657,6 @@ class GrantorViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = GrantorSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -706,8 +681,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     ).distinct()
     serializer_class = GroupSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -786,8 +759,6 @@ class MemberViewSet(viewsets.ModelViewSet):
     serializer_class = MemberSerializer
     filterset_class = MemberFilterset
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -831,8 +802,6 @@ class OfficeViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = OfficeSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -852,8 +821,6 @@ class OfficerViewSet(viewsets.ModelViewSet):
     serializer_class = OfficerSerializer
     filterset_class = OfficerFilterset
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -899,8 +866,6 @@ class OutcomeViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = OutcomeSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -919,8 +884,6 @@ class PanelistViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = PanelistSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -941,8 +904,6 @@ class PersonViewSet(viewsets.ModelViewSet):
     ).order_by('id')
     serializer_class = PersonSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -989,8 +950,6 @@ class RepertoryViewSet(viewsets.ModelViewSet):
     serializer_class = RepertorySerializer
     filterset_class = None
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -1040,8 +999,6 @@ class RoundViewSet(viewsets.ModelViewSet):
     serializer_class = RoundSerializer
     filterset_class = RoundFilterset
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -1336,8 +1293,6 @@ class ScoreViewSet(viewsets.ModelViewSet):
     serializer_class = ScoreSerializer
     filterset_class = ScoreFilterset
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -1359,8 +1314,6 @@ class SessionViewSet(viewsets.ModelViewSet):
     serializer_class = SessionSerializer
     filterset_class = SessionFilterset
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -1610,8 +1563,6 @@ class SongViewSet(viewsets.ModelViewSet):
     serializer_class = SongSerializer
     filterset_class = None
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -1629,8 +1580,6 @@ class VenueViewSet(viewsets.ModelViewSet):
     ).order_by('name')
     serializer_class = VenueSerializer
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
@@ -1648,8 +1597,6 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     filterset_class = UserFilterset
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     # filterset_fields = {
@@ -1701,8 +1648,6 @@ class StateLogViewSet(viewsets.ModelViewSet):
     serializer_class = StateLogSerializer
     filterset_class = StateLogFilterset
     filter_backends = [
-        # OrderingFilter,
-        CoalesceFilterBackend,
         DjangoFilterBackend,
     ]
     permission_classes = [
