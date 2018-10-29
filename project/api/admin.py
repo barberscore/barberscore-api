@@ -32,6 +32,7 @@ from .inlines import AppearanceInline
 from .inlines import AssignmentInline
 from .inlines import AwardInline
 from .inlines import CompetitorInline
+from .inlines import ContenderInline
 from .inlines import ContestantInline
 from .inlines import ContestInline
 from .inlines import ConventionInline
@@ -1316,6 +1317,10 @@ class OutcomeAdmin(admin.ModelAdmin):
         'num',
         'name',
         'legacy_name',
+    ]
+
+    inlines = [
+        ContenderInline,
     ]
 
     list_filter = (
