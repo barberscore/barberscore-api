@@ -77,7 +77,7 @@ class Outcome(TimeStampedModel):
     def get_name(self):
         Competitor = apps.get_model('api.competitor')
         Score = apps.get_model('api.score')
-        if self.round.num < self.contest.award.rounds:
+        if self.round.num < self.contest.award.num_rounds:
             return "(Result not yet determined)"
         if self.contest.award.level == self.contest.award.LEVEL.deferred:
             return "(Result determined post-contest)"
@@ -124,7 +124,7 @@ class Outcome(TimeStampedModel):
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__kind=Score.KIND.official,
-                    appearances__round__num__lte=self.contest.award.rounds,
+                    appearances__round__num__lte=self.contest.award.num_rounds,
                 ),
             ),
             sng=Sum(
@@ -132,7 +132,7 @@ class Outcome(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__kind=Score.KIND.official,
                     appearances__songs__scores__category=Score.CATEGORY.singing,
-                    appearances__round__num__lte=self.contest.award.rounds,
+                    appearances__round__num__lte=self.contest.award.num_rounds,
                 ),
             ),
             per=Sum(
@@ -140,7 +140,7 @@ class Outcome(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__kind=Score.KIND.official,
                     appearances__songs__scores__category=Score.CATEGORY.performance,
-                    appearances__round__num__lte=self.contest.award.rounds,
+                    appearances__round__num__lte=self.contest.award.num_rounds,
                 ),
             ),
         ).order_by(

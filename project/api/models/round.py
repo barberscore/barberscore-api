@@ -629,7 +629,7 @@ class Round(TimeStampedModel):
             not self.appearances.exclude(status=self.appearances.model.STATUS.verified),
             not self.session.contests.filter(
                 award__level=Award.LEVEL.manual,
-                award__rounds=self.num,
+                award__num_rounds=self.num,
                 group__isnull=True,
             ),
         ])

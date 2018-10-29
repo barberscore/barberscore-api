@@ -102,7 +102,7 @@ class Award(TimeStampedModel):
         choices=SEASON,
     )
 
-    rounds = models.IntegerField(
+    num_rounds = models.IntegerField(
         help_text="""Number of rounds to determine the championship""",
     )
 

@@ -404,7 +404,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'level',
         'season',
-        'rounds',
+        'num_rounds',
         'parent',
         ('threshold', 'minimum', 'advance', 'spots',),
         'description',

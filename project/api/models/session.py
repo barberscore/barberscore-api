@@ -801,7 +801,7 @@ class Session(TimeStampedModel):
             # Set is_multi=True if they are competiting for at least
             # one multi-round award.
             is_multi = bool(entry.contestants.filter(
-                contest__award__rounds__gt=1,
+                contest__award__num_rounds__gt=1,
                 status__gt=0,
             ))
             # Create the contesting legend

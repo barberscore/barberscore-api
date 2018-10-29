@@ -379,7 +379,7 @@ class Command(BaseCommand):
         international_quartet_championship = AwardFactory(
             name='International Quartet Championship',
             group=international,
-            rounds=1,
+            num_rounds=3,
             level=Award.LEVEL.championship,
             kind=Award.KIND.quartet,
             season=Award.SEASON.summer,
@@ -387,7 +387,7 @@ class Command(BaseCommand):
         international_chorus_championship = AwardFactory(
             name='International Chorus Championship',
             group=international,
-            rounds=1,
+            num_rounds=1,
             level=Award.LEVEL.championship,
             kind=Award.KIND.chorus,
             season=Award.SEASON.summer,
@@ -395,14 +395,14 @@ class Command(BaseCommand):
         district_alpha_quartet_championship = AwardFactory(
             name='District Alpha Quartet Championship',
             group=district_alpha,
-            rounds=2,
+            num_rounds=2,
             level=Award.LEVEL.championship,
             season=Award.SEASON.fall,
         )
         district_alpha_international_quartet_championship_qualifier = AwardFactory(
             name='District Alpha International Quartet Championship Qualifier',
             group=district_alpha,
-            rounds=2,
+            num_rounds=2,
             parent=international_quartet_championship,
             level=Award.LEVEL.qualifier,
             season=Award.SEASON.spring,
@@ -412,7 +412,7 @@ class Command(BaseCommand):
         district_alpha_international_chorus_championship_qualifier = AwardFactory(
             name='District Alpha International Chorus Championship Qualifier',
             group=district_alpha,
-            rounds=1,
+            num_rounds=1,
             parent=international_chorus_championship,
             level=Award.LEVEL.qualifier,
             season=Award.SEASON.fall,
@@ -422,7 +422,7 @@ class Command(BaseCommand):
         international_senior_quartet_championship = AwardFactory(
             name='International Senior Quartet Championship',
             group=international,
-            rounds=1,
+            num_rounds=1,
             level=Award.LEVEL.championship,
             kind=Award.KIND.quartet,
             season=Award.SEASON.midwinter,
