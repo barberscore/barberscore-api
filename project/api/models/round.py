@@ -242,14 +242,14 @@ class Round(TimeStampedModel):
     def get_oss(self):
         Panelist = apps.get_model('api.panelist')
         Score = apps.get_model('api.score')
-        scored = self.appearances.filter(
+        participants = self.appearances.filter(
             Q(draw__isnull=True) | Q(draw=0),
             competitor__is_private=False,
         ).exclude(
             num=0,
         ).values_list('competitor', flat=True)
         competitors = self.session.competitors.filter(
-            pk__in=scored,
+            pk__in=participants,
         ).select_related(
             'group',
             'entry',
@@ -308,6 +308,7 @@ class Round(TimeStampedModel):
                 round__num__lte=self.num,
             )
 
+
         # Eval Only
         privates = self.session.competitors.filter(
             appearances__round=self,
@@ -360,6 +361,7 @@ class Round(TimeStampedModel):
         context = {
             'round': self,
             'competitors': competitors,
+            'participants': participants,
             'privates': privates,
             'advancers': advancers,
             'mt': mt,
