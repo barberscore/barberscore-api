@@ -191,34 +191,34 @@ class JoinManager(Manager):
             )
         return t
 
-class SubscriptionManager(Manager):
-    def update_users(self, cursor=None):
-        # Get base
-        subscriptions = self.select_related(
-            'human',
-        ).filter(
-            items_editable=True,
-        ).order_by(
-            'modified',
-        )
-        if cursor:
-            subscriptions = subscriptions.filter(
-                modified__gt=cursor,
-            )
-        else:
-            # Else clear logs
-            ss = StateLog.objects.filter(
-                content_type__model='user',
-                users__mc_pk__isnull=False,
-            )
-            ss.delete()
-        t = subscriptions.count()
-        # Creating/Update Persons
-        User = apps.get_model('api.user')
-        queue = django_rq.get_queue('low')
-        for subscription in subscriptions:
-            queue.enqueue(
-                User.objects.update_or_create_from_subscription,
-                subscription,
-            )
-        return t
+# class SubscriptionManager(Manager):
+#     def update_users(self, cursor=None):
+#         # Get base
+#         subscriptions = self.select_related(
+#             'human',
+#         ).filter(
+#             items_editable=True,
+#         ).order_by(
+#             'modified',
+#         )
+#         if cursor:
+#             subscriptions = subscriptions.filter(
+#                 modified__gt=cursor,
+#             )
+#         else:
+#             # Else clear logs
+#             ss = StateLog.objects.filter(
+#                 content_type__model='user',
+#                 users__mc_pk__isnull=False,
+#             )
+#             ss.delete()
+#         t = subscriptions.count()
+#         # Creating/Update Persons
+#         User = apps.get_model('api.user')
+#         queue = django_rq.get_queue('low')
+#         for subscription in subscriptions:
+#             queue.enqueue(
+#                 User.objects.update_or_create_from_subscription,
+#                 subscription,
+#             )
+#         return t

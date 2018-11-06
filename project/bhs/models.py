@@ -14,7 +14,7 @@ from bhs.managers import HumanManager
 from bhs.managers import JoinManager
 from bhs.managers import RoleManager
 from bhs.managers import StructureManager
-from bhs.managers import SubscriptionManager
+# from bhs.managers import SubscriptionManager
 
 
 class Human(models.Model):
@@ -139,20 +139,20 @@ class Human(models.Model):
         Person = apps.get_model('api.person')
         return Person.objects.update_or_create_from_human(self)
 
-    def update_user(self):
-        Subscription = apps.get_model('bhs.subscription')
-        User = apps.get_model('api.user')
-        queue = django_rq.get_queue('low')
-        try:
-            subscription = self.subscriptions.filter(
-                items_editable=True,
-            ).latest('modified')
-            queue.enqueue(
-                User.objects.update_or_create_from_subscription,
-                subscription,
-            )
-        except Subscription.DoesNotExist:
-            pass
+    # def update_user(self):
+    #     Subscription = apps.get_model('bhs.subscription')
+    #     User = apps.get_model('api.user')
+    #     queue = django_rq.get_queue('low')
+    #     try:
+    #         subscription = self.subscriptions.filter(
+    #             items_editable=True,
+    #         ).latest('modified')
+    #         queue.enqueue(
+    #             User.objects.update_or_create_from_subscription,
+    #             subscription,
+    #         )
+    #     except Subscription.DoesNotExist:
+    #         pass
 
     class Meta:
         managed=False
@@ -430,7 +430,7 @@ class Subscription(models.Model):
         editable=False,
     )
 
-    objects = SubscriptionManager()
+    # objects = SubscriptionManager()
 
     # FKs
     human = models.ForeignKey(

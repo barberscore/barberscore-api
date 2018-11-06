@@ -122,7 +122,7 @@ def test_officer_endpoint_list(admin_api_client, officer, django_assert_num_quer
 
 
 def test_outcome_endpoint_list(admin_api_client, outcome, django_assert_num_queries):
-    with django_assert_num_queries(4):
+    with django_assert_num_queries(5):
         path = reverse('outcome-list')
         response = admin_api_client.get(path)
         assert response.status_code == status.HTTP_200_OK
@@ -299,7 +299,7 @@ def test_officer_endpoint_detail(admin_api_client, officer, django_assert_num_qu
 
 
 def test_outcome_endpoint_detail(admin_api_client, outcome, django_assert_num_queries):
-    with django_assert_num_queries(2):
+    with django_assert_num_queries(3):
         path = reverse('outcome-detail', args=(str(outcome.id),))
         response = admin_api_client.get(path)
         assert response.status_code == status.HTTP_200_OK
