@@ -209,13 +209,6 @@ class Convention(TimeStampedModel):
 
     # Convention Transition Conditions
     def can_activate(self):
-        if any([
-            not self.open_date,
-            not self.close_date,
-            not self.start_date,
-            not self.close_date,
-        ]):
-            return False
         return all([
             self.open_date,
             self.close_date,
