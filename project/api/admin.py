@@ -1856,7 +1856,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
                 'email',
                 'bhs_id',
                 'person',
-                'current_through',
                 'is_mc',
                 'is_staff',
                 'created',

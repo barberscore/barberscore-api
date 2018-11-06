@@ -249,7 +249,6 @@ class Song(TimeStampedModel):
     def get_asterisks(self):
         """Check to see if the score produces a category variance (asterisk)"""
         asterisks = []
-        scores = self.scores.all()
         categories = self.scores.filter(
             kind=self.scores.model.KIND.official,
         ).values(
@@ -258,13 +257,16 @@ class Song(TimeStampedModel):
             avg=Avg('points'),
         )
         for category in categories:
-            is_asterisk = [
-                abs(score.points - category['avg']) > 5
-                for score in scores
-                if score.category == category['category'] and score.kind == score.KIND.official
-            ][0]
-            if is_asterisk:
-                asterisks.append(category['category'])
+            category_scores = self.scores.filter(
+                category=category['category'],
+                kind=self.scores.model.KIND.official,
+            )
+            for score in category_scores:
+                is_asterisk = abs(score.points - category['avg']) > 5
+                if is_asterisk:
+                    asterisks.append(category['category'])
+                    continue
+        asterisks = list(set(asterisks))
         return asterisks
 
     def get_dixons(self):
@@ -322,7 +324,9 @@ class Song(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_read_permission(request):
-        return True
+        return any([
+            request.user.is_round_manager,
+        ])
 
     @allow_staff_or_superuser
     @authenticated_users

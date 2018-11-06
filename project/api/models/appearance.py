@@ -365,7 +365,9 @@ class Appearance(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_read_permission(request):
-        return True
+        return any([
+            request.user.is_round_manager,
+        ])
 
     @allow_staff_or_superuser
     @authenticated_users

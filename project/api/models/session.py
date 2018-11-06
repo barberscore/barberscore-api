@@ -281,7 +281,7 @@ class Session(TimeStampedModel):
                 status__gt=0,
             )
             expiring_count = members.filter(
-                person__user__current_through__lte=self.convention.close_date,
+                person__current_through__lte=self.convention.close_date,
             ).count()
             participants = entry.participants
             awards_list = []

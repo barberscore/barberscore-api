@@ -320,6 +320,7 @@ class PersonFactory(DjangoModelFactory):
     description = ''
     notes = ''
     bhs_id = Sequence(lambda x: '1{0:05d}'.format(x))
+    current_through = '2018-12-31'
 
     class Meta:
         model = Person
@@ -412,7 +413,6 @@ class UserFactory(DjangoModelFactory):
     name = Faker('name')
     status = User.STATUS.active
     password = PostGenerationMethodCall('set_password', 'password')
-    current_through = '2018-12-31'
     is_staff = False
 
     class Meta:

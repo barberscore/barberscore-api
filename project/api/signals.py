@@ -19,7 +19,7 @@ from .models import Person
 from .models import User
 
 
-@receiver(post_save, sender=User)
+# @receiver(post_save, sender=User)
 def user_post_save(sender, instance, created, **kwargs):
     if not instance.is_staff:
         if created:
@@ -35,7 +35,7 @@ def user_post_save(sender, instance, created, **kwargs):
             )
     return
 
-@receiver(pre_delete, sender=User)
+# @receiver(pre_delete, sender=User)
 def user_pre_delete(sender, instance, **kwargs):
     if not instance.is_staff:
         queue = django_rq.get_queue('low')

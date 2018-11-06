@@ -410,7 +410,7 @@ class Group(TimeStampedModel):
             bhs_id = member.person.bhs_id
             first_name = member.person.first_name
             last_name = member.person.last_name
-            expiration = member.person.user.current_through
+            expiration = member.person.current_through
             status = member.person.get_status_display()
             row = [
                 bhs_id,

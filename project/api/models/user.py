@@ -281,10 +281,6 @@ class User(AbstractBaseUser):
         status = self.get_status_display()
         name = self.name.strip()
         bhs_id = self.bhs_id
-        if self.current_through:
-            current_through = self.current_through.isoformat()
-        else:
-            current_through = None
         payload = {
             'email': email,
             'email_verified': True,
@@ -293,7 +289,6 @@ class User(AbstractBaseUser):
                 'status': status,
                 'name': name,
                 'bhs_id': bhs_id,
-                'current_through': current_through,
             }
         }
         if self.username.startswith('auth0|'):
