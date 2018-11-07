@@ -276,10 +276,10 @@ class Structure(models.Model):
         Group.objects.update_or_create_from_structure(self),
         joins = self.get_joins()
         for join in joins:
-                Member.objects.update_or_create_from_join(join)
+            Member.objects.update_or_create_from_join(join)
         roles = self.get_roles()
         for role in roles:
-                Officer.objects.update_or_create_from_role(role)
+            Officer.objects.update_or_create_from_role(role)
         return
 
 
