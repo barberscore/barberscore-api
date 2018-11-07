@@ -63,36 +63,37 @@ class User(AbstractBaseUser):
         editable=True,
     )
 
-    name = models.CharField(
-        max_length=100,
-        editable=True,
-    )
+    # name = models.CharField(
+    #     max_length=100,
+    #     editable=True,
+    # )
 
-    email = LowerEmailField(
-        max_length=100,
-        unique=True,
-        editable=True,
-    )
+    # email = LowerEmailField(
+    #     max_length=100,
+    #     null=True,
+    #     unique=True,
+    #     editable=True,
+    # )
 
-    bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-        unique=True,
-    )
+    # bhs_id = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     unique=True,
+    # )
 
-    current_through = models.DateField(
-        null=True,
-        blank=True,
-        editable=True,
-    )
+    # current_through = models.DateField(
+    #     null=True,
+    #     blank=True,
+    #     editable=True,
+    # )
 
-    mc_pk = models.CharField(
-        null=True,
-        blank=True,
-        max_length=36,
-        unique=True,
-        db_index=True,
-    )
+    # mc_pk = models.CharField(
+    #     null=True,
+    #     blank=True,
+    #     max_length=36,
+    #     unique=True,
+    #     db_index=True,
+    # )
 
     is_staff = models.BooleanField(
         default=False,
@@ -234,36 +235,11 @@ class User(AbstractBaseUser):
     # User Internals
     def __str__(self):
         if self.is_staff:
-            return self.name
-        if self.bhs_id:
-            suffix = "[{0}]".format(self.bhs_id)
-        else:
-            suffix = "[No BHS ID]"
-        full = "{0} {1}".format(
-            self.name,
-            suffix,
-        )
-        return " ".join(full.split())
+            return self.username
+        return str(self.id)
 
     def clean(self):
-        if self.is_staff:
-            return
-        if not self.person:
-            raise ValidationError(
-                {'person': 'Non-staff user accounts must have Person attached.'}
-            )
-        if self.email != self.person.email:
-            raise ValidationError(
-                {'email': 'Email does not match person'}
-            )
-        if self.name != self.person.common_name:
-            raise ValidationError(
-                {'name': 'Name does not match person'}
-            )
-        if self.bhs_id != self.person.bhs_id:
-            raise ValidationError(
-                {'bhs_id': 'BHS ID does not match person'}
-            )
+        pass
 
     def has_perm(self, perm, obj=None):
         return self.is_staff

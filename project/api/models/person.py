@@ -251,11 +251,11 @@ class Person(TimeStampedModel):
         db_index=True,
     )
 
-    current_through = models.DateField(
-        null=True,
-        blank=True,
-        editable=True,
-    )
+    # current_through = models.DateField(
+    #     null=True,
+    #     blank=True,
+    #     editable=True,
+    # )
 
     # Relations
     # tracker = FieldTracker(
@@ -329,6 +329,16 @@ class Person(TimeStampedModel):
             first,
             self.last_name[0].upper(),
         )
+
+    @cached_property
+    def current_through(self):
+        try:
+            current_through = self.members.get(
+                group__bhs_id=1,
+            ).end_date
+        except:
+            current_through = None
+        return current_through
 
     # Internals
     objects = PersonManager()

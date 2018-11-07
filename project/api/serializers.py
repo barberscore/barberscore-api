@@ -747,8 +747,6 @@ class UserSerializer(serializers.ModelSerializer):
             'url',
             'status',
             'username',
-            'email',
-            'name',
             'is_staff',
             'person',
             'is_convention_manager',

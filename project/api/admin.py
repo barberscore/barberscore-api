@@ -1825,12 +1825,9 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
     ]
     list_display = [
         'username',
-        'name',
-        'email',
-        'bhs_id',
+        'person',
         'status',
         'is_mc',
-        'mc_pk',
     ]
     list_select_related = [
         'person',
@@ -1851,10 +1848,7 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
             'fields': (
                 'id',
                 'username',
-                'name',
                 'status',
-                'email',
-                'bhs_id',
                 'person',
                 'is_mc',
                 'is_staff',
@@ -1878,23 +1872,21 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
             'classes': ('wide',),
             'fields': (
                 'person',
-                'name',
-                'email',
-                'bhs_id',
             )
         }),
     )
     search_fields = [
         'username',
-        'name',
-        'bhs_id',
-        'email',
+        'person__name',
+        'person__bhs_id',
+        'person__email',
     ]
     inlines = [
         StateLogInline,
     ]
     ordering = (
-        'name',
+        'person__last_name',
+        'person__first_name',
     )
     filter_horizontal = ()
     readonly_fields = [
