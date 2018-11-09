@@ -15,7 +15,6 @@ from .models import Role
 from .models import Status
 from .models import Structure
 from .models import Subscription
-from .models import Flatmembership
 
 admin.site.disable_action('delete_selected')
 
@@ -470,7 +469,3 @@ class JoinAdmin(ReadOnlyAdmin):
         # 'membership__structure__name',
         # 'membership__structure__bhs_id',
     ]
-
-@admin.register(Flatmembership)
-class FlatmembershipAdmin(admin.ModelAdmin):
-    pass

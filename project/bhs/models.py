@@ -2,20 +2,12 @@
 
 # Third-Party
 import django_rq
-import uuid
-from django.contrib.contenttypes.fields import GenericRelation
-from django_fsm_log.models import StateLog
-from django_fsm_log.decorators import fsm_log_by
-from django_fsm_log.decorators import fsm_log_description
-from django_fsm import transition
 
 # Django
 from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.functional import cached_property
-from django_fsm import FSMIntegerField
-from model_utils import Choices
 
 # First-Party
 from bhs.managers import HumanManager
@@ -615,69 +607,3 @@ class Join(models.Model):
         db_table = 'vwSubscriptions_Memberships'
         verbose_name = 'Join'
         verbose_name_plural = 'Joins'
-
-
-
-class Flatmembership(models.Model):
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    # FKs
-    structure = models.ForeignKey(
-        'Structure',
-        related_name='flatmemberships',
-        on_delete=models.CASCADE,
-    )
-
-    human = models.ForeignKey(
-        'Human',
-        related_name='flatmemberships',
-        on_delete=models.CASCADE,
-    )
-
-    # Relations
-    statelogs = GenericRelation(
-        StateLog,
-        related_query_name='flatmemberships',
-    )
-    class Meta:
-        unique_together = (
-            ('structure', 'human',),
-        )
-
-    def __str__(self):
-        return str(self.id)
-
-    def clean(self):
-        pass
-
-    # Transitions
-    @fsm_log_by
-    @fsm_log_description
-    @transition(field=status, source='*', target=STATUS.active)
-    def activate(self, description=None, *args, **kwargs):
-        """Activate the Member."""
-        return
-
-    @fsm_log_by
-    @fsm_log_description
-    @transition(field=status, source='*', target=STATUS.inactive)
-    def deactivate(self, description=None, *args, **kwargs):
-        """Deactivate the Member."""
-        return
