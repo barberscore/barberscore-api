@@ -45,55 +45,11 @@ class User(AbstractBaseUser):
         editable=False,
     )
 
-    STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.active,
-    )
-
     username = models.CharField(
         max_length=100,
         unique=True,
         editable=True,
     )
-
-    # name = models.CharField(
-    #     max_length=100,
-    #     editable=True,
-    # )
-
-    # email = LowerEmailField(
-    #     max_length=100,
-    #     null=True,
-    #     unique=True,
-    #     editable=True,
-    # )
-
-    # bhs_id = models.IntegerField(
-    #     null=True,
-    #     blank=True,
-    #     unique=True,
-    # )
-
-    # current_through = models.DateField(
-    #     null=True,
-    #     blank=True,
-    #     editable=True,
-    # )
-
-    # mc_pk = models.CharField(
-    #     null=True,
-    #     blank=True,
-    #     max_length=36,
-    #     unique=True,
-    #     db_index=True,
-    # )
 
     is_staff = models.BooleanField(
         default=False,
@@ -117,12 +73,6 @@ class User(AbstractBaseUser):
         blank=True,
     )
 
-    # Relations
-    statelogs = GenericRelation(
-        StateLog,
-        related_query_name='users',
-    )
-
     objects = UserManager()
 
     @cached_property
@@ -133,7 +83,11 @@ class User(AbstractBaseUser):
     @cached_property
     def is_active(self):
         """Proxy status."""
-        return bool(self.status >= 0)
+        if self.is_staff:
+            return True
+        if self.person:
+            return bool(self.person.status > 0)
+        return False
 
     @cached_property
     def is_superuser(self):
@@ -252,11 +206,11 @@ class User(AbstractBaseUser):
         if self.is_staff:
             raise ValueError('Staff should not have accounts')
         auth0 = get_auth0()
-        email = self.email.lower()
+        email = self.person.email.lower()
         pk = str(self.id)
         status = self.get_status_display()
-        name = self.name.strip()
-        bhs_id = self.bhs_id
+        name = self.person.common_name
+        bhs_id = self.person.bhs_id
         payload = {
             'email': email,
             'email_verified': True,
@@ -276,23 +230,8 @@ class User(AbstractBaseUser):
                     self.save()
                 raise
             created = False
-        elif self.username.startswith('orphan|'):
-            payload['connection'] = 'Default'
-            payload['password'] = get_random_string()
-            try:
-                account = auth0.users.create(payload)
-            except Auth0Error as e:
-                if e.message == 'The user already exists.':
-                    accounts = auth0.users_by_email.search_users_by_email(self.email)
-                    account = accounts[0]
-                    self.username = account['user_id']
-                    self.save()
-                    created = False
-                    return account, created
-                raise
-            created = True
         else:
-            ValueError("Unknown Username type")
+            raise ValueError("Unknown Username type")
         return account, created
 
     def delete_account(self):
@@ -300,38 +239,6 @@ class User(AbstractBaseUser):
         # Delete Auth0
         result = auth0.users.delete(self.username)
         return result
-
-    def get_or_create_person(self):
-        Person = apps.get_model('api.person')
-        auth0 = get_auth0()
-        account = auth0.users.get(self.username)
-        email = account['email'].lower()
-        person, created = Person.objects.get_or_create(email=email)
-        return person, created
-
-    def unlink_user_account(self):
-        client = get_auth0()
-        user_id = self.username.partition('|')[2]
-        client.users.unlink_user_account(
-            self.account_id,
-            'auth0',
-            user_id,
-        )
-        return
-
-    def relink_user_account(self):
-        client = get_auth0()
-        user_id = self.account_id.partition('|')[2]
-        payload = {
-            'provider': 'email',
-            'user_id': user_id,
-        }
-        client.users.link_user_account(
-            self.username,
-            payload,
-        )
-        return
-
 
     # User Permissions
     @staticmethod
@@ -357,18 +264,3 @@ class User(AbstractBaseUser):
         if request.user == self:
             return True
         return False
-
-    # User Transitions
-    @fsm_log_by
-    @fsm_log_description
-    @transition(field=status, source='*', target=STATUS.active)
-    def activate(self, description=None, *args, **kwargs):
-        # Should deactive AUTH0
-        return
-
-    @fsm_log_by
-    @fsm_log_description
-    @transition(field=status, source='*', target=STATUS.inactive)
-    def deactivate(self, description=None, *args, **kwargs):
-        # Should deactive AUTH0
-        return

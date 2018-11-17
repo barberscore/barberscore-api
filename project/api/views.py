@@ -1592,8 +1592,6 @@ class VenueViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.select_related(
         'person',
-    ).prefetch_related(
-        'statelogs',
     ).order_by('id')
     serializer_class = UserSerializer
     filterset_class = UserFilterset
@@ -1610,34 +1608,6 @@ class UserViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "user"
-
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
 
 
 class StateLogViewSet(viewsets.ModelViewSet):

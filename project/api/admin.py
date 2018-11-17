@@ -1817,26 +1817,20 @@ class VenueAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(User)
-class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
+class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-    fsm_field = [
-        'status',
-    ]
     list_display = [
         'username',
         'person',
-        'status',
         'is_mc',
     ]
     list_select_related = [
         'person',
     ]
-
     autocomplete_fields = [
         'person',
     ]
-
     list_filter = (
         'status',
         'is_staff',
@@ -1848,9 +1842,9 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
             'fields': (
                 'id',
                 'username',
-                'status',
                 'person',
                 'is_mc',
+                'is_active',
                 'is_staff',
                 'created',
                 'modified',
@@ -1880,9 +1874,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
         'person__name',
         'person__bhs_id',
         'person__email',
-    ]
-    inlines = [
-        StateLogInline,
     ]
     ordering = (
         'person__last_name',
