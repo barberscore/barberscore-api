@@ -593,13 +593,25 @@ class UserManager(BaseUserManager):
                 )
         return i
 
-    def create_user(self, username=None, **kwargs):
+    def create_user(self, person, **kwargs):
         pk = uuid.uuid4()
-        if not username:
-            username = "orphan|{0}".format(str(pk))
+        auth0 = get_auth0()
+        password = self.make_random_password()
+        payload = {
+            'connection': 'Default',
+            'email': person.email,
+            'email_verified': True,
+            'password': password,
+            'app_metadata': {
+                'name': person.common_name,
+            }
+        }
+        account = auth0.users.create(payload)
+        username = account['user_id']
         user = self.model(
             id=pk,
             username=username,
+            person=person,
             **kwargs
         )
         user.set_unusable_password()

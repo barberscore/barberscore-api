@@ -188,9 +188,7 @@ class User(AbstractBaseUser):
 
     # User Internals
     def __str__(self):
-        if self.is_staff:
-            return self.username
-        return str(self.id)
+        return self.username
 
     def clean(self):
         pass
@@ -207,31 +205,16 @@ class User(AbstractBaseUser):
             raise ValueError('Staff should not have accounts')
         auth0 = get_auth0()
         email = self.person.email.lower()
-        pk = str(self.id)
-        status = self.get_status_display()
         name = self.person.common_name
-        bhs_id = self.person.bhs_id
         payload = {
             'email': email,
             'email_verified': True,
             'app_metadata': {
-                'pk': pk,
-                'status': status,
                 'name': name,
-                'bhs_id': bhs_id,
             }
         }
-        if self.username.startswith('auth0|'):
-            try:
-                account = auth0.users.update(self.username, payload)
-            except Auth0Error as e:
-                if e.message == 'The user does not exist.':
-                    self.status = self.STATUS.new
-                    self.save()
-                raise
-            created = False
-        else:
-            raise ValueError("Unknown Username type")
+        account = auth0.users.update(self.username, payload)
+        created = False
         return account, created
 
     def delete_account(self):

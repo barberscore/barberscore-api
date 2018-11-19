@@ -21,7 +21,9 @@ from .models import User
 
 
 @receiver(post_save, sender=Person)
-def person_post_save(sender, instance, **kwargs):
+def person_post_save(sender, instance, created, **kwargs):
+    if created:
+        User.objects.create_user(person=instance)
     if instance.user and instance.tracker.has_changed('email'):
         queue = django_rq.get_queue('low')
         queue.enqueue(
