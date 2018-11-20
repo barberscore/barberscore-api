@@ -1832,7 +1832,6 @@ class UserAdmin(BaseUserAdmin):
         'person',
     ]
     list_filter = (
-        'status',
         'is_staff',
         MCUserListFilter,
     )
@@ -1844,7 +1843,6 @@ class UserAdmin(BaseUserAdmin):
                 'username',
                 'person',
                 'is_mc',
-                'is_active',
                 'is_staff',
                 'created',
                 'modified',

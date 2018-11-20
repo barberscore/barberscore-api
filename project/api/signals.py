@@ -22,9 +22,10 @@ from .models import User
 
 @receiver(post_save, sender=Person)
 def person_post_save(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.email:
         User.objects.create_user(person=instance)
-    if instance.user and instance.tracker.has_changed('email'):
+    user = getattr(instance, 'user', None)
+    if user and instance.tracker.has_changed('email'):
         queue = django_rq.get_queue('low')
         queue.enqueue(
             instance.user.update_or_create_account()
