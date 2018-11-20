@@ -1869,7 +1869,8 @@ class UserAdmin(BaseUserAdmin):
     )
     search_fields = [
         'username',
-        'person__name',
+        'person__first_name',
+        'person__last_name',
         'person__bhs_id',
         'person__email',
     ]

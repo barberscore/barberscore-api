@@ -200,7 +200,7 @@ class User(AbstractBaseUser):
         return self.is_staff
 
     # Methods
-    def update_or_create_account(self):
+    def update_account(self):
         if self.is_staff:
             raise ValueError('Staff should not have accounts')
         auth0 = get_auth0()
@@ -214,8 +214,7 @@ class User(AbstractBaseUser):
             }
         }
         account = auth0.users.update(self.username, payload)
-        created = False
-        return account, created
+        return account
 
     def delete_account(self):
         auth0 = get_auth0()

@@ -28,7 +28,7 @@ def person_post_save(sender, instance, created, **kwargs):
     if user and instance.tracker.has_changed('email'):
         queue = django_rq.get_queue('low')
         queue.enqueue(
-            instance.user.update_or_create_account()
+            instance.user.update_account()
         )
     return
 
