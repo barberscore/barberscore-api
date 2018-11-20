@@ -347,8 +347,7 @@ class Person(TimeStampedModel):
         resource_name = "person"
 
     def clean(self):
-        if self.email == '':
-            raise ValidationError("Email must be null, not blank")
+        pass
 
     def __str__(self):
         return self.nomen
