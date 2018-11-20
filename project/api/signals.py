@@ -29,11 +29,11 @@ def person_post_save(sender, instance, created, **kwargs):
         queue = django_rq.get_queue('low')
         if instance.email:
             queue.enqueue(
-                instance.user.update_account,
+                instance.user.update_account
             )
         else:
             queue.enqueue(
-                instance.user.delete_account,
+                instance.user.delete_account
             )
     return
 
