@@ -28,9 +28,11 @@ def person_post_save(sender, instance, created, **kwargs):
     if user and instance.tracker.has_changed('email'):
         queue = django_rq.get_queue('low')
         if instance.email:
-            queue.enqueue(
-                instance.user.update_account
-            )
+            instance.user.update_account()
+            # Can't pickle with FieldTracker
+            # queue.enqueue(
+            #     instance.user.update_account
+            # )
         else:
             queue.enqueue(
                 instance.user.delete_account
