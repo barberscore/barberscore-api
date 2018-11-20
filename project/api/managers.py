@@ -554,24 +554,10 @@ class PersonManager(Manager):
             'is_deceased': is_deceased,
         }
         # Update or create
-        try:
-            person, created = self.update_or_create(
-                mc_pk=mc_pk,
-                defaults=defaults,
-            )
-        except IntegrityError as e:
-            # Need to delete old offending record
-            if "api_person_bhs_id_key" in str(e.args):
-                old = self.get(
-                    bhs_id=bhs_id,
-                )
-                old.delete()
-                person, created = self.update_or_create(
-                    mc_pk=mc_pk,
-                    defaults=defaults,
-                )
-            else:
-                raise e
+        person, created = self.update_or_create(
+            mc_pk=mc_pk,
+            defaults=defaults,
+        )
         return person, created
 
 
