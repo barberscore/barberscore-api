@@ -567,7 +567,7 @@ class UserManager(BaseUserManager):
         queue = django_rq.get_queue('low')
         accounts = get_accounts()
         users = list(self.filter(
-            username__startswith='auth0|',
+            is_staff=False,
         ).values_list('username', flat=True))
         i = 0
         for account in accounts:
