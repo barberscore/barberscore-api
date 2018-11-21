@@ -213,6 +213,7 @@ class GroupManager(Manager):
             'website': website,
             'facebook': facebook,
             'twitter': twitter,
+            'parent': parent,
             'code': code,
             'bhs_id': bhs_id,
         }
@@ -236,22 +237,6 @@ class GroupManager(Manager):
                 )
             else:
                 raise e
-
-        # Set parent on create only
-        if created and parent:
-            group.parent = parent
-            parent_code = parent.code
-            divs = [
-                'MAD',
-                'FWD',
-                'EVG',
-                'LOL',
-                'NED',
-                'SWD',
-            ]
-            if parent_code in divs or kind != self.model.KIND.quartet:
-                group.status = self.model.STATUS.new
-            group.save()
         return group, created
 
     def sort_tree(self):
@@ -266,13 +251,6 @@ class GroupManager(Manager):
             child.tree_sort = i
             with disable_auto_indexing(model=self.model):
                 child.save()
-            for grandchild in child.children.filter(
-                kind=self.model.KIND.division,
-            ).order_by('kind', 'name'):
-                i += 1
-                grandchild.tree_sort = i
-                with disable_auto_indexing(model=self.model):
-                    grandchild.save()
         orgs = self.filter(
             kind__in=[
                 self.model.KIND.chapter,
@@ -327,7 +305,6 @@ class GroupManager(Manager):
             'Kind',
             'Organization',
             'District',
-            'Division',
             'Chapter',
             'Senior?',
             'BHS ID',
@@ -345,7 +322,6 @@ class GroupManager(Manager):
             kind = group.get_kind_display()
             organization = group.international
             district = group.district
-            division = group.division
             chapter = group.chapter
             is_senior = group.is_senior
             bhs_id = group.bhs_id
@@ -357,7 +333,6 @@ class GroupManager(Manager):
                 kind,
                 organization,
                 district,
-                division,
                 chapter,
                 is_senior,
                 bhs_id,

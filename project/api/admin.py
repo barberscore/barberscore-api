@@ -14,11 +14,9 @@ from .filters import AwardQualifierLevelFilter
 from .filters import ConventionGroupListFilter
 from .filters import ConventionStatusListFilter
 from .filters import DistrictListFilter
-from .filters import DivisionListFilter
 from .filters import GroupListFilter
 from .filters import MCListFilter
 from .filters import MCUserListFilter
-from .filters import OrphanListFilter
 from .filters import RoundGroupListFilter
 from .filters import RoundLegacyOssListFilter
 from .filters import SessionConventionStatusListFilter
@@ -932,7 +930,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_senior',
         ('bhs_id', 'mc_pk', 'code',),
         'parent',
-        ('international', 'district', 'division', 'chapter',),
+        ('international', 'district', 'chapter',),
         'location',
         'email',
         'phone',
@@ -947,13 +945,11 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
-        OrphanListFilter,
         MCListFilter,
         'kind',
         'divizion',
         'gender',
         DistrictListFilter,
-        DivisionListFilter,
     ]
 
     search_fields = [
@@ -981,7 +977,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_mc',
         'international',
         'district',
-        'division',
         'chapter',
         'created',
         'modified',
@@ -1021,12 +1016,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'Affiliate': [
             OfficerInline,
             GroupInline,
-            StateLogInline,
-        ],
-        'Division': [
-            AwardInline,
-            ActiveChapterInline,
-            ActiveQuartetInline,
             StateLogInline,
         ],
         'Chapter': [

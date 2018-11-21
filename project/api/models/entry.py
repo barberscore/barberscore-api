@@ -381,16 +381,7 @@ class Entry(TimeStampedModel):
                 status=self.contestants.model.STATUS.excluded,
                 contest=contest,
             )
-        has_divisions = bool(
-            self.session.convention.group.children.filter(
-                kind=self.session.convention.group.KIND.division,
-                status=self.session.convention.group.STATUS.active,
-            )
-        )
-        if has_divisions:
-            self.representing = self.group.division
-        else:
-            self.representing = self.group.district
+        self.representing = self.group.district
         if self.group.kind == self.group.KIND.quartet:
             members = self.group.members.filter(
                 status__gt=0,
