@@ -115,17 +115,6 @@ def test_entry_endpoint(admin_api_client, entry, django_assert_max_num_queries):
         assert response.status_code == status.HTTP_200_OK
 
 
-def test_grantor_endpoint(admin_api_client, grantor, django_assert_max_num_queries):
-    with django_assert_max_num_queries(10):
-        path = reverse('grantor-list')
-        response = admin_api_client.get(path)
-        assert response.status_code == status.HTTP_200_OK
-    with django_assert_max_num_queries(10):
-        path = reverse('grantor-detail', args=(str(grantor.id),))
-        response = admin_api_client.get(path)
-        assert response.status_code == status.HTTP_200_OK
-
-
 def test_grid_endpoint(admin_api_client, grid, django_assert_max_num_queries):
     with django_assert_max_num_queries(10):
         path = reverse('grid-list')

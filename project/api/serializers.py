@@ -17,7 +17,6 @@ from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grantor
 from .models import Grid
 from .models import Group
 from .models import Member
@@ -289,7 +288,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'group',
             'assignments',
             'sessions',
-            'grantors',
             'permissions',
         )
 
@@ -350,21 +348,6 @@ class EntrySerializer(serializers.ModelSerializer):
         # if data['is_private'] and data['contestants']:
         #     raise serializers.ValidationError("Can not be private and compete for an award.")
         return data
-
-
-class GrantorSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Grantor
-        fields = (
-            'id',
-            'url',
-            'status',
-            'group',
-            'convention',
-            'permissions',
-        )
 
 
 class GridSerializer(serializers.ModelSerializer):

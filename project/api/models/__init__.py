@@ -11,7 +11,6 @@ from .contestant import Contestant
 from .contender import Contender
 from .convention import Convention
 from .entry import Entry
-from .grantor import Grantor
 from .grid import Grid
 from .group import Group
 from .member import Member

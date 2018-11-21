@@ -217,7 +217,6 @@ class Convention(TimeStampedModel):
             self.open_date < self.close_date,
             self.close_date < self.start_date,
             self.start_date <= self.end_date,
-            self.grantors.count() > 0,
             self.sessions.count() > 0,
         ])
 

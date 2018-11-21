@@ -13,7 +13,6 @@ from .views import ContestantViewSet
 from .views import ContestViewSet
 from .views import ConventionViewSet
 from .views import EntryViewSet
-from .views import GrantorViewSet
 from .views import GridViewSet
 from .views import GroupViewSet
 from .views import MemberViewSet
@@ -45,8 +44,6 @@ router.register(r'contestant', ContestantViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'competitor', CompetitorViewSet)
 router.register(r'entry', EntryViewSet)
-router.register(r'grantor', GrantorViewSet)
-router.register(r'grid', GridViewSet)
 router.register(r'group', GroupViewSet)
 router.register(r'member', MemberViewSet)
 router.register(r'office', OfficeViewSet)

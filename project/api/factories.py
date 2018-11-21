@@ -32,7 +32,6 @@ from api.models import Contender
 from api.models import Contestant
 from api.models import Convention
 from api.models import Entry
-from api.models import Grantor
 from api.models import Grid
 from api.models import Group
 from api.models import Member
@@ -188,15 +187,6 @@ class EntryFactory(DjangoModelFactory):
 
     class Meta:
         model = Entry
-
-
-class GrantorFactory(DjangoModelFactory):
-    status = Grantor.STATUS.new
-    convention = SubFactory('api.factories.ConventionFactory')
-    group = SubFactory('api.factories.GroupFactory')
-
-    class Meta:
-        model = Grantor
 
 
 class GridFactory(DjangoModelFactory):

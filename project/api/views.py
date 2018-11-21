@@ -42,7 +42,6 @@ from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grantor
 from .models import Grid
 from .models import Group
 from .models import Member
@@ -72,7 +71,6 @@ from .serializers import ContestantSerializer
 from .serializers import ContestSerializer
 from .serializers import ConventionSerializer
 from .serializers import EntrySerializer
-from .serializers import GrantorSerializer
 from .serializers import GridSerializer
 from .serializers import GroupSerializer
 from .serializers import MemberSerializer
@@ -427,7 +425,6 @@ class ConventionViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'sessions',
         'assignments',
-        'grantors',
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = ConventionSerializer
@@ -647,22 +644,6 @@ class GridViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "grid"
-
-
-class GrantorViewSet(viewsets.ModelViewSet):
-    queryset = Grantor.objects.select_related(
-        'group',
-        'convention',
-    ).prefetch_related(
-    ).order_by('id')
-    serializer_class = GrantorSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "grantor"
 
 
 class GroupViewSet(viewsets.ModelViewSet):

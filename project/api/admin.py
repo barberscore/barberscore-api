@@ -35,7 +35,6 @@ from .inlines import ContestantInline
 from .inlines import ContestInline
 from .inlines import ConventionInline
 from .inlines import EntryInline
-from .inlines import GrantorInline
 from .inlines import GridInline
 from .inlines import GroupInline
 from .inlines import MemberInline
@@ -59,7 +58,6 @@ from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grantor
 from .models import Grid
 from .models import Group
 from .models import Member
@@ -689,7 +687,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         AssignmentInline,
         SessionInline,
-        GrantorInline,
     ]
 
     readonly_fields = (
@@ -843,27 +840,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     ordering = (
     )
-
-
-@admin.register(Grantor)
-class GrantorAdmin(admin.ModelAdmin):
-    save_on_top = True
-    fields = [
-        'status',
-        'group',
-        'convention',
-    ]
-    list_display = [
-        'group',
-        'convention',
-    ]
-
-    readonly_fields = [
-    ]
-    autocomplete_fields = [
-        'group',
-        'convention',
-    ]
 
 
 @admin.register(Grid)
