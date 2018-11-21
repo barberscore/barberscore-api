@@ -352,7 +352,7 @@ class Group(TimeStampedModel):
         default=False,
     )
 
-    DIVIZION = Choices(
+    DIVISION = Choices(
         (10, 'evgd1', 'EVG Division I'),
         (20, 'evgd2', 'EVG Division II'),
         (30, 'evgd3', 'EVG Division III'),
@@ -384,8 +384,8 @@ class Group(TimeStampedModel):
         (290, 'swdsw', 'SWD Southwest'),
     )
 
-    divizion = models.IntegerField(
-        choices=DIVIZION,
+    division = models.IntegerField(
+        choices=DIVISION,
         null=True,
         blank=True,
     )

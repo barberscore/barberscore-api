@@ -389,7 +389,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'kind',
             'gender',
             'is_senior',
-            'divizion',
+            'division',
             'code',
             'start_date',
             'end_date',
