@@ -109,6 +109,7 @@ class RoleManager(Manager):
         flats = roles.values(
             'structure',
             'human',
+            'name',
         ).distinct()
         return flats
 
