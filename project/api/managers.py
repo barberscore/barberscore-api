@@ -57,8 +57,6 @@ class AwardManager(Manager):
             'gender', #Male, mixed
             F('age').asc(nulls_first=True), # Null, Senior, Youth
             'level', #Championship, qualifier
-            F('size').asc(nulls_first=True), # Platueaus
-            F('scope').asc(nulls_first=True), # Platueaus
             'name', # alpha
         )
         i = 0
