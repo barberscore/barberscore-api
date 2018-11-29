@@ -8,7 +8,6 @@ import maya
 # Third-Party
 import django_rq
 from algoliasearch_django.decorators import disable_auto_indexing
-from dictdiffer import diff
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
 
