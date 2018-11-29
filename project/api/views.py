@@ -42,7 +42,6 @@ from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grantor
 from .models import Grid
 from .models import Group
 from .models import Member
@@ -72,7 +71,6 @@ from .serializers import ContestantSerializer
 from .serializers import ContestSerializer
 from .serializers import ConventionSerializer
 from .serializers import EntrySerializer
-from .serializers import GrantorSerializer
 from .serializers import GridSerializer
 from .serializers import GroupSerializer
 from .serializers import MemberSerializer
@@ -427,7 +425,6 @@ class ConventionViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'sessions',
         'assignments',
-        'grantors',
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = ConventionSerializer
@@ -647,22 +644,6 @@ class GridViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "grid"
-
-
-class GrantorViewSet(viewsets.ModelViewSet):
-    queryset = Grantor.objects.select_related(
-        'group',
-        'convention',
-    ).prefetch_related(
-    ).order_by('id')
-    serializer_class = GrantorSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "grantor"
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -1592,8 +1573,6 @@ class VenueViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.select_related(
         'person',
-    ).prefetch_related(
-        'statelogs',
     ).order_by('id')
     serializer_class = UserSerializer
     filterset_class = UserFilterset
@@ -1610,34 +1589,6 @@ class UserViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "user"
-
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
 
 
 class StateLogViewSet(viewsets.ModelViewSet):

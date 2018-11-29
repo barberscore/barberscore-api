@@ -178,21 +178,6 @@ def test_entry_endpoint(anon_api_client, entry):
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_grantor_endpoint(anon_api_client, grantor):
-    path = reverse('grantor-list')
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.post(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    path = reverse('grantor-detail', args=(str(grantor.id),))
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.patch(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.delete(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-
 def test_grid_endpoint(anon_api_client, grid):
     path = reverse('grid-list')
     response = anon_api_client.get(path)

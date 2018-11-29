@@ -17,7 +17,6 @@ from api.factories import ContestantFactory
 from api.factories import ContestFactory
 from api.factories import ConventionFactory
 from api.factories import EntryFactory
-from api.factories import GrantorFactory
 from api.factories import GridFactory
 from api.factories import GroupFactory
 from api.factories import MemberFactory
@@ -121,11 +120,6 @@ def competitor():
 @pytest.fixture
 def entry():
     return EntryFactory()
-
-
-@pytest.fixture
-def grantor():
-    return GrantorFactory()
 
 
 @pytest.fixture

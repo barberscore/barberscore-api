@@ -96,15 +96,6 @@ def test_entry_endpoint(user_api_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_grantor_endpoint(user_api_client, grantor):
-    path = reverse('grantor-list')
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('grantor-detail', args=(str(grantor.id),))
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_grid_endpoint(user_api_client, grid):
     path = reverse('grid-list')
     response = user_api_client.get(path)

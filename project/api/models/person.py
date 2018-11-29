@@ -251,18 +251,18 @@ class Person(TimeStampedModel):
         db_index=True,
     )
 
-    current_through = models.DateField(
-        null=True,
-        blank=True,
-        editable=True,
-    )
+    # current_through = models.DateField(
+    #     null=True,
+    #     blank=True,
+    #     editable=True,
+    # )
 
     # Relations
-    # tracker = FieldTracker(
-    #     fields=[
-    #         'email',
-    #     ],
-    # )
+    tracker = FieldTracker(
+        fields=[
+            'email',
+        ],
+    )
 
     statelogs = GenericRelation(
         StateLog,
@@ -330,6 +330,16 @@ class Person(TimeStampedModel):
             self.last_name[0].upper(),
         )
 
+    @cached_property
+    def current_through(self):
+        try:
+            current_through = self.members.get(
+                group__bhs_id=1,
+            ).end_date
+        except:
+            current_through = None
+        return current_through
+
     # Internals
     objects = PersonManager()
 
@@ -337,8 +347,7 @@ class Person(TimeStampedModel):
         resource_name = "person"
 
     def clean(self):
-        if self.email == '':
-            raise ValidationError("Email must be null, not blank")
+        pass
 
     def __str__(self):
         return self.nomen

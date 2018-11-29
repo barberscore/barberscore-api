@@ -49,9 +49,6 @@ class Office(TimeStampedModel):
             (12, 'noncomp', "Noncompetitive"),
             (13, 'affiliate', "Affiliate"),
         ]),
-        ('Division', [
-            (21, 'division', "Division"),
-        ]),
         ('Group', [
             (32, 'chapter', "Chapter"),
             (41, 'quartet', "Quartet"),

@@ -17,7 +17,6 @@ from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grantor
 from .models import Grid
 from .models import Group
 from .models import Member
@@ -289,7 +288,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'group',
             'assignments',
             'sessions',
-            'grantors',
             'permissions',
         )
 
@@ -352,21 +350,6 @@ class EntrySerializer(serializers.ModelSerializer):
         return data
 
 
-class GrantorSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Grantor
-        fields = (
-            'id',
-            'url',
-            'status',
-            'group',
-            'convention',
-            'permissions',
-        )
-
-
 class GridSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
@@ -406,6 +389,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'kind',
             'gender',
             'is_senior',
+            'division',
             'code',
             'start_date',
             'end_date',
@@ -420,7 +404,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'bhs_id',
             'international',
             'district',
-            'division',
             'chapter',
             'tree_sort',
             'parent',
@@ -745,10 +728,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'url',
-            'status',
             'username',
-            'email',
-            'name',
+            'is_active',
             'is_staff',
             'person',
             'is_convention_manager',

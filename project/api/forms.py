@@ -19,10 +19,6 @@ class UserCreationForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         pk = uuid.uuid4()
-        user.username = "orphan|{0}".format(str(pk))
-        user.name = self.cleaned_data['name']
-        user.email = self.cleaned_data['email']
-        user.bhs_id = self.cleaned_data['bhs_id']
         user.set_unusable_password()
         if commit:
             user.save()

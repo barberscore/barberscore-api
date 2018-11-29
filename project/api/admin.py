@@ -14,11 +14,9 @@ from .filters import AwardQualifierLevelFilter
 from .filters import ConventionGroupListFilter
 from .filters import ConventionStatusListFilter
 from .filters import DistrictListFilter
-from .filters import DivisionListFilter
 from .filters import GroupListFilter
 from .filters import MCListFilter
 from .filters import MCUserListFilter
-from .filters import OrphanListFilter
 from .filters import RoundGroupListFilter
 from .filters import RoundLegacyOssListFilter
 from .filters import SessionConventionStatusListFilter
@@ -37,7 +35,6 @@ from .inlines import ContestantInline
 from .inlines import ContestInline
 from .inlines import ConventionInline
 from .inlines import EntryInline
-from .inlines import GrantorInline
 from .inlines import GridInline
 from .inlines import GroupInline
 from .inlines import MemberInline
@@ -61,7 +58,6 @@ from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grantor
 from .models import Grid
 from .models import Group
 from .models import Member
@@ -401,8 +397,9 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'group',
         'kind',
-        'age',
         'gender',
+        'division',
+        'age',
         'level',
         'season',
         'num_rounds',
@@ -417,6 +414,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'size',
         # 'scope',
         'group',
+        'division',
         'kind',
         'age',
         'gender',
@@ -441,6 +439,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'level',
         AwardQualifierLevelFilter,
+        'division',
         'age',
         'gender',
         'season',
@@ -688,7 +687,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         AssignmentInline,
         SessionInline,
-        GrantorInline,
     ]
 
     readonly_fields = (
@@ -844,27 +842,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
 
-@admin.register(Grantor)
-class GrantorAdmin(admin.ModelAdmin):
-    save_on_top = True
-    fields = [
-        'status',
-        'group',
-        'convention',
-    ]
-    list_display = [
-        'group',
-        'convention',
-    ]
-
-    readonly_fields = [
-    ]
-    autocomplete_fields = [
-        'group',
-        'convention',
-    ]
-
-
 @admin.register(Grid)
 class GridAdmin(admin.ModelAdmin):
     save_on_top = True
@@ -925,10 +902,11 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'kind',
         'gender',
+        'division',
         'is_senior',
         ('bhs_id', 'mc_pk', 'code',),
         'parent',
-        ('international', 'district', 'division', 'chapter',),
+        ('international', 'district', 'chapter',),
         'location',
         'email',
         'phone',
@@ -943,12 +921,11 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
-        OrphanListFilter,
         MCListFilter,
         'kind',
         'gender',
+        'division',
         DistrictListFilter,
-        DivisionListFilter,
     ]
 
     search_fields = [
@@ -961,6 +938,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         'kind',
         'gender',
+        'division',
         'parent',
         'bhs_id',
         'code',
@@ -975,7 +953,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_mc',
         'international',
         'district',
-        'division',
         'chapter',
         'created',
         'modified',
@@ -1015,12 +992,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'Affiliate': [
             OfficerInline,
             GroupInline,
-            StateLogInline,
-        ],
-        'Division': [
-            AwardInline,
-            ActiveChapterInline,
-            ActiveQuartetInline,
             StateLogInline,
         ],
         'Chapter': [
@@ -1817,31 +1788,21 @@ class VenueAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(User)
-class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
+class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-    fsm_field = [
-        'status',
-    ]
     list_display = [
         'username',
-        'name',
-        'email',
-        'bhs_id',
-        'status',
+        'person',
         'is_mc',
-        'mc_pk',
     ]
     list_select_related = [
         'person',
     ]
-
     autocomplete_fields = [
         'person',
     ]
-
     list_filter = (
-        'status',
         'is_staff',
         MCUserListFilter,
     )
@@ -1851,10 +1812,6 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
             'fields': (
                 'id',
                 'username',
-                'name',
-                'status',
-                'email',
-                'bhs_id',
                 'person',
                 'is_mc',
                 'is_staff',
@@ -1878,23 +1835,19 @@ class UserAdmin(FSMTransitionMixin, BaseUserAdmin):
             'classes': ('wide',),
             'fields': (
                 'person',
-                'name',
-                'email',
-                'bhs_id',
             )
         }),
     )
     search_fields = [
         'username',
-        'name',
-        'bhs_id',
-        'email',
-    ]
-    inlines = [
-        StateLogInline,
+        'person__first_name',
+        'person__last_name',
+        'person__bhs_id',
+        'person__email',
     ]
     ordering = (
-        'name',
+        'person__last_name',
+        'person__first_name',
     )
     filter_horizontal = ()
     readonly_fields = [

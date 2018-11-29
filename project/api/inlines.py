@@ -12,7 +12,6 @@ from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grantor
 from .models import Grid
 from .models import Group
 from .models import Member
@@ -324,23 +323,6 @@ class EntryInline(admin.TabularInline):
     ordering = [
         'group__name',
         'session__convention__year',
-    ]
-    show_change_link = True
-    extra = 0
-    classes = [
-        'collapse',
-    ]
-
-
-class GrantorInline(admin.TabularInline):
-    model = Grantor
-    fields = [
-        'convention',
-        'group',
-    ]
-    autocomplete_fields = [
-        'convention',
-        'group',
     ]
     show_change_link = True
     extra = 0

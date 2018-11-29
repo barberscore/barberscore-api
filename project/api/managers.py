@@ -213,6 +213,7 @@ class GroupManager(Manager):
             'website': website,
             'facebook': facebook,
             'twitter': twitter,
+            'parent': parent,
             'code': code,
             'bhs_id': bhs_id,
         }
@@ -236,22 +237,6 @@ class GroupManager(Manager):
                 )
             else:
                 raise e
-
-        # Set parent on create only
-        if created and parent:
-            group.parent = parent
-            parent_code = parent.code
-            divs = [
-                'MAD',
-                'FWD',
-                'EVG',
-                'LOL',
-                'NED',
-                'SWD',
-            ]
-            if parent_code in divs or kind != self.model.KIND.quartet:
-                group.status = self.model.STATUS.new
-            group.save()
         return group, created
 
     def sort_tree(self):
@@ -266,13 +251,6 @@ class GroupManager(Manager):
             child.tree_sort = i
             with disable_auto_indexing(model=self.model):
                 child.save()
-            for grandchild in child.children.filter(
-                kind=self.model.KIND.division,
-            ).order_by('kind', 'name'):
-                i += 1
-                grandchild.tree_sort = i
-                with disable_auto_indexing(model=self.model):
-                    grandchild.save()
         orgs = self.filter(
             kind__in=[
                 self.model.KIND.chapter,
@@ -327,7 +305,6 @@ class GroupManager(Manager):
             'Kind',
             'Organization',
             'District',
-            'Division',
             'Chapter',
             'Senior?',
             'BHS ID',
@@ -345,7 +322,6 @@ class GroupManager(Manager):
             kind = group.get_kind_display()
             organization = group.international
             district = group.district
-            division = group.division
             chapter = group.chapter
             is_senior = group.is_senior
             bhs_id = group.bhs_id
@@ -357,7 +333,6 @@ class GroupManager(Manager):
                 kind,
                 organization,
                 district,
-                division,
                 chapter,
                 is_senior,
                 bhs_id,
@@ -554,101 +529,20 @@ class PersonManager(Manager):
             'is_deceased': is_deceased,
         }
         # Update or create
-        try:
-            person, created = self.update_or_create(
-                mc_pk=mc_pk,
-                defaults=defaults,
-            )
-        except IntegrityError as e:
-            # Need to delete old offending record
-            if "api_person_bhs_id_key" in str(e.args):
-                old = self.get(
-                    bhs_id=bhs_id,
-                )
-                old.delete()
-                person, created = self.update_or_create(
-                    mc_pk=mc_pk,
-                    defaults=defaults,
-                )
-            else:
-                raise e
+        person, created = self.update_or_create(
+            mc_pk=mc_pk,
+            defaults=defaults,
+        )
         return person, created
 
 
 class UserManager(BaseUserManager):
-    # def update_or_create_from_subscription(self, subscription):
-    #     # Clean
-    #     mc_pk = str(subscription.id)
-    #     human = subscription.human
-    #     current_through = subscription.current_through
-
-    #     status = getattr(
-    #         self.model.STATUS,
-    #         subscription.status,
-    #         self.model.STATUS.inactive,
-    #     )
-
-    #     Person = apps.get_model('api.person')
-    #     person, created = Person.objects.update_or_create_from_human(human)
-    #     name = person.common_name
-    #     email = person.email
-    #     bhs_id = person.bhs_id
-    #     if not email:
-    #         return
-    #     defaults = {
-    #         'mc_pk': mc_pk,
-    #         'status': status,
-    #         'name': name,
-    #         'email': email,
-    #         'bhs_id': bhs_id,
-    #         'current_through': current_through,
-    #         'person': person,
-    #     }
-
-    #     # Update or create
-    #     try:
-    #         user = self.get(
-    #             person=person,
-    #         )
-    #         for key, value in defaults.items():
-    #             setattr(user, key, value)
-    #         created = False
-    #     except self.model.DoesNotExist:
-    #         try:
-    #             user = self.create_user(
-    #                 **defaults,
-    #             )
-    #         except IntegrityError as e:
-    #             # Need to delete old offending record
-    #             if "api_user_mc_pk_key" in str(e.args):
-    #                 old = self.get(
-    #                     mc_pk=mc_pk,
-    #                 )
-    #                 old.delete()
-    #                 user = self.create_user(
-    #                     **defaults,
-    #                 )
-    #             elif "api_user_email_key" in str(e.args):
-    #                 old = self.get(
-    #                     email=email,
-    #                 )
-    #                 old.delete()
-    #                 user = self.create_user(
-    #                     **defaults,
-    #                 )
-    #             else:
-    #                 raise
-    #         created = True
-    #     user.save()
-    #     return user, created
-
-
     def delete_orphans(self):
         auth0 = get_auth0()
         queue = django_rq.get_queue('low')
         accounts = get_accounts()
         users = list(self.filter(
-            username__startswith='auth0|',
+            is_staff=False,
         ).values_list('username', flat=True))
         i = 0
         for account in accounts:
@@ -660,13 +554,25 @@ class UserManager(BaseUserManager):
                 )
         return i
 
-    def create_user(self, username=None, **kwargs):
+    def create_user(self, person, **kwargs):
         pk = uuid.uuid4()
-        if not username:
-            username = "orphan|{0}".format(str(pk))
+        auth0 = get_auth0()
+        password = self.make_random_password()
+        payload = {
+            'connection': 'Default',
+            'email': person.email,
+            'email_verified': True,
+            'password': password,
+            'app_metadata': {
+                'name': person.common_name,
+            }
+        }
+        account = auth0.users.create(payload)
+        username = account['user_id']
         user = self.model(
             id=pk,
             username=username,
+            person=person,
             **kwargs
         )
         user.set_unusable_password()

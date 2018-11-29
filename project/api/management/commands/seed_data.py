@@ -12,7 +12,6 @@ from api.factories import ContestantFactory
 from api.factories import ContestFactory
 from api.factories import ConventionFactory
 from api.factories import EntryFactory
-from api.factories import GrantorFactory
 from api.factories import GroupFactory
 from api.factories import MemberFactory
 from api.factories import OfficeFactory
@@ -35,7 +34,6 @@ from api.models import Contest
 from api.models import Contestant
 from api.models import Convention
 from api.models import Entry
-from api.models import Grantor
 from api.models import Group
 from api.models import Member
 from api.models import Office
@@ -435,29 +433,17 @@ class Command(BaseCommand):
             panel=3,
             season=Convention.SEASON.midwinter,
         )
-        GrantorFactory(
-            group=international,
-            convention=international_midwinter_convention,
-        )
         district_alpha_fall_convention = ConventionFactory(
             name='District Alpha Fall Convention',
             group=district_alpha,
             panel=3,
             season=Convention.SEASON.fall,
         )
-        GrantorFactory(
-            group=district_alpha,
-            convention=district_alpha_fall_convention,
-        )
         district_alpha_spring_convention = ConventionFactory(
             name='District Alpha Spring Convention',
             group=district_alpha,
             panel=3,
             season=Convention.SEASON.spring,
-        )
-        GrantorFactory(
-            group=district_alpha,
-            convention=district_alpha_spring_convention,
         )
         # Create assignments
         AssignmentFactory(

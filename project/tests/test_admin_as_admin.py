@@ -96,15 +96,6 @@ def test_entry_admin(admin_django_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_grantor_admin(admin_django_client, grantor):
-    path = reverse('admin:api_grantor_changelist')
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_grantor_change', args=(str(grantor.id),))
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_grid_admin(admin_django_client, grid):
     path = reverse('admin:api_grid_changelist')
     response = admin_django_client.get(path)

@@ -32,7 +32,6 @@ from api.models import Contender
 from api.models import Contestant
 from api.models import Convention
 from api.models import Entry
-from api.models import Grantor
 from api.models import Grid
 from api.models import Group
 from api.models import Member
@@ -190,15 +189,6 @@ class EntryFactory(DjangoModelFactory):
         model = Entry
 
 
-class GrantorFactory(DjangoModelFactory):
-    status = Grantor.STATUS.new
-    convention = SubFactory('api.factories.ConventionFactory')
-    group = SubFactory('api.factories.GroupFactory')
-
-    class Meta:
-        model = Grantor
-
-
 class GridFactory(DjangoModelFactory):
     status = Grid.STATUS.new
     round = SubFactory('api.factories.RoundFactory')
@@ -301,7 +291,7 @@ class PanelistFactory(DjangoModelFactory):
         model = Panelist
 
 
-@mute_signals(post_save)
+@mute_signals(pre_delete, post_save)
 class PersonFactory(DjangoModelFactory):
     # name = Faker('name_male')
     first_name = Faker('first_name_male')
@@ -314,13 +304,12 @@ class PersonFactory(DjangoModelFactory):
     website = ''
     facebook = ''
     twitter = ''
-    email = LazyAttribute(lambda x: '{0}@barberscore.com'.format(x.bhs_id))
+    email = None
     phone = ''
     image = ''
     description = ''
     notes = ''
     bhs_id = Sequence(lambda x: '1{0:05d}'.format(x))
-    current_through = '2018-12-31'
 
     class Meta:
         model = Person
@@ -409,9 +398,6 @@ class VenueFactory(DjangoModelFactory):
 @mute_signals(pre_delete, post_save)
 class UserFactory(DjangoModelFactory):
     username = Faker('uuid4')
-    email = Faker('email')
-    name = Faker('name')
-    status = User.STATUS.active
     password = PostGenerationMethodCall('set_password', 'password')
     is_staff = False
 

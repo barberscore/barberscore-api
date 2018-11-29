@@ -109,9 +109,9 @@ class RoleManager(Manager):
         flats = roles.values(
             'structure',
             'human',
+            'name',
         ).distinct()
         return flats
-
 
     def get_role_from_flat(self, flat):
         return self.filter(
@@ -126,7 +126,6 @@ class RoleManager(Manager):
         role = self.get_role_from_flat(flat)
         officer, created = Officer.objects.update_or_create_from_role(role)
         return officer, created
-
 
     def update_officers(self, cursor=None):
         # Get base

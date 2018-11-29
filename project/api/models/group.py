@@ -153,9 +153,6 @@ class Group(TimeStampedModel):
             (12, 'noncomp', "Noncompetitive"),
             (13, 'affiliate', "Affiliate"),
         ]),
-        ('Division', [
-            (21, 'division', "Division"),
-        ]),
         ('Chapter', [
             (30, 'chapter', "Chapter"),
         ]),
@@ -343,13 +340,6 @@ class Group(TimeStampedModel):
         max_length=255,
     )
 
-    division = models.TextField(
-        help_text="""
-            The denormalized division group.""",
-        blank=True,
-        max_length=255,
-    )
-
     chapter = models.TextField(
         help_text="""
             The denormalized chapter group.""",
@@ -360,6 +350,44 @@ class Group(TimeStampedModel):
     is_senior = models.BooleanField(
         help_text="""Qualifies as a Senior Group.  This is set once, at creation.  If the group 'ages' into Senior status that needs to be edited manually here.""",
         default=False,
+    )
+
+    DIVISION = Choices(
+        (10, 'evgd1', 'EVG Division I'),
+        (20, 'evgd2', 'EVG Division II'),
+        (30, 'evgd3', 'EVG Division III'),
+        (40, 'evgd4', 'EVG Division IV'),
+        (50, 'evgd5', 'EVG Division V'),
+        (60, 'fwdaz', 'FWD Arizona'),
+        (70, 'fwdne', 'FWD Northeast'),
+        (80, 'fwdnw', 'FWD Northwest'),
+        (90, 'fwdse', 'FWD Southeast'),
+        (100, 'fwdsw', 'FWD Southwest'),
+        (110, 'lol10l', 'LOL 10000 Lakes'),
+        (120, 'lolone', 'LOL Division One'),
+        (130, 'lolnp', 'LOL Northern Plains'),
+        (140, 'lolpkr', 'LOL Packerland'),
+        (150, 'lolsw', 'LOL Southwest'),
+        (160, 'madatl', 'MAD Atlantic'),
+        (170, 'madcen', 'MAD Central'),
+        (180, 'madnth', 'MAD Northern'),
+        (190, 'madsth', 'MAD Southern'),
+        (200, 'madwst', 'MAD Western'),
+        (210, 'nedgp', 'NED Granite and Pine'),
+        (220, 'nedmtn', 'NED Mountain'),
+        (230, 'nedpat', 'NED Patriot'),
+        (240, 'nedsun', 'NED Sunrise'),
+        (250, 'nedyke', 'NED Yankee'),
+        (260, 'swdne', 'SWD Northeast'),
+        (270, 'swdnw', 'SWD Northwest'),
+        (280, 'swdse', 'SWD Southeast'),
+        (290, 'swdsw', 'SWD Southwest'),
+    )
+
+    division = models.IntegerField(
+        choices=DIVISION,
+        null=True,
+        blank=True,
     )
 
     # Relations
@@ -461,18 +489,12 @@ class Group(TimeStampedModel):
                 if self.parent.kind != self.KIND.international:
                     raise ValidationError("Districts must have International parent.")
             if self.kind in [
-                self.KIND.division,
-            ]:
-                if self.parent.kind != self.KIND.district:
-                    raise ValidationError("Divisions must have District parent.")
-            if self.kind in [
                 self.KIND.chapter,
             ]:
                 if self.parent.kind not in [
                     self.KIND.district,
-                    self.KIND.division,
                 ]:
-                    raise ValidationError("Chapter must have District or Division parent.")
+                    raise ValidationError("Chapter must have District parent.")
             if self.kind in [
                 self.KIND.chorus,
             ]:
@@ -485,9 +507,8 @@ class Group(TimeStampedModel):
             ]:
                 if self.parent.kind not in [
                     self.KIND.district,
-                    self.KIND.division,
                 ]:
-                    raise ValidationError("Quartet must have District or Division parent.")
+                    raise ValidationError("Quartet must have District parent.")
         return
 
     # Methods
@@ -496,7 +517,6 @@ class Group(TimeStampedModel):
         if not parent:
             self.international = ""
             self.district = ""
-            self.division = ""
             self.chapter = ""
         else:
             international = parent
@@ -523,16 +543,6 @@ class Group(TimeStampedModel):
                     self.district = ""
             else:
                 self.district = ""
-            division = parent
-            if division.kind >= self.KIND.division:
-                try:
-                    while division.kind != self.KIND.division:
-                        division = division.parent
-                    self.division = division.name
-                except AttributeError:
-                    self.division = ""
-            else:
-                self.division = ""
             chapter = parent
             if chapter.kind >= self.KIND.chapter:
                 try:

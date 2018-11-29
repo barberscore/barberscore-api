@@ -574,7 +574,7 @@ class Session(TimeStampedModel):
                 person__email__isnull=False,
                 group__status__gt=0,
                 group__kind=self.kind,
-                group__parent__grantors__convention=self.convention,
+                group__parent=self.convention.group,
             ).distinct()
         else:
             officers = Officer.objects.filter(
@@ -582,7 +582,7 @@ class Session(TimeStampedModel):
                 person__email__isnull=False,
                 group__status__gt=0,
                 group__kind=self.kind,
-                group__parent__parent__grantors__convention=self.convention,
+                group__parent__parent=self.convention.group,
             ).distinct()
 
         bcc = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
@@ -638,7 +638,6 @@ class Session(TimeStampedModel):
     # Session Conditions
     def can_build(self):
         return all([
-            self.convention.grantors.count() > 0,
             self.num_rounds,
         ])
 
@@ -676,22 +675,20 @@ class Session(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         """Build session contests."""
-        grantors = self.convention.grantors.order_by('group__tree_sort')
         i = 0
-        for grantor in grantors:
-            # Get all the active awards for the grantors
-            awards = grantor.group.awards.filter(
-                status=grantor.group.awards.model.STATUS.active,
-                kind=self.kind,
-                season=self.convention.season,
-            ).order_by('tree_sort')
-            for award in awards:
-                # Create contests for each active award.
-                # Could also do some logic here for more precision
-                self.contests.create(
-                    status=self.contests.model.STATUS.included,
-                    award=award,
-                )
+        # Get all the active awards for the convention group
+        awards = self.convention.group.awards.filter(
+            status=self.convention.group.awards.model.STATUS.active,
+            kind=self.kind,
+            season=self.convention.season,
+        ).order_by('tree_sort')
+        for award in awards:
+            # Create contests for each active award.
+            # Could also do some logic here for more precision
+            self.contests.create(
+                status=self.contests.model.STATUS.included,
+                award=award,
+            )
         # Create the rounds for the session, along with default # spots
         for i in range(self.num_rounds):
             num = i + 1

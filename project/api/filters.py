@@ -22,35 +22,6 @@ class AwardQualifierLevelFilter(admin.SimpleListFilter):
             )
 
 
-class OrphanListFilter(admin.SimpleListFilter):
-    title = 'orphan'
-    parameter_name = 'is_orphan'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('Yes', 'Yes'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'Yes':
-            return queryset.filter(
-                kind__in=[
-                    Group.KIND.quartet,
-                    Group.KIND.chorus,
-                    Group.KIND.chapter,
-                ],
-                parent__code__in=[
-                    'EVG',
-                    'FWD',
-                    'LOL',
-                    'MAD',
-                    'NED',
-                    'SWD',
-                ],
-                # status=Group.STATUS.active,
-            )
-
-
 class RoundLegacyOssListFilter(admin.SimpleListFilter):
     title = 'Legacy OSS'
     parameter_name = 'is_legacy_oss'
@@ -197,33 +168,13 @@ class DistrictListFilter(admin.SimpleListFilter):
         return queryset
 
 
-class DivisionListFilter(admin.SimpleListFilter):
-    title = 'division'
-    parameter_name = 'division'
-
-    def lookups(self, request, model_admin):
-        divisions = Group.objects.filter(
-            kind=Group.KIND.division,
-            status=Group.STATUS.active,
-        ).order_by(
-            'tree_sort',
-        ).values_list('name', 'name')
-        return divisions
-
-    def queryset(self, request, queryset):
-        division = request.GET.get('division')
-        if division:
-            return queryset.filter(division=division)
-        return queryset
-
-
 class GroupListFilter(admin.SimpleListFilter):
     title = ('group')
     parameter_name = 'group'
 
     def lookups(self, request, model_admin):
         orgs = Group.objects.filter(
-            kind__lte=Group.KIND.division,
+            kind__lte=Group.KIND.chorus,
         ).values_list('id', 'code')
         return orgs
 
@@ -240,7 +191,7 @@ class ParentGroupListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         orgs = Group.objects.filter(
-            kind__lte=Group.KIND.division,
+            kind__lte=Group.KIND.district,
         ).values_list('id', 'code')
         return orgs
 
