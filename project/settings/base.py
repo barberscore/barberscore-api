@@ -140,17 +140,17 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 RQ_QUEUES = {
     'default': {
         'URL': get_env_variable("REDIS_URL"),
-        'ASYNC': True,
+        'ASYNC': False,
         'DEFAULT_TIMEOUT': 300,
     },
     'high': {
         'URL': get_env_variable("REDIS_URL"),
-        'ASYNC': True,
+        'ASYNC': False,
         'DEFAULT_TIMEOUT': 300,
     },
     'low': {
         'URL': get_env_variable("REDIS_URL"),
-        'ASYNC': True,
+        'ASYNC': False,
         'DEFAULT_TIMEOUT': 300,
     },
 }
