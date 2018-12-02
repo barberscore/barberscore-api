@@ -139,16 +139,13 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 # RQ
 RQ_QUEUES = {
     'default': {
-        'USE_REDIS_CACHE': 'default',
         'ASYNC': True,
         'DEFAULT_TIMEOUT': 300,
     },
     'high': {
-        'USE_REDIS_CACHE': 'default',
         'ASYNC': True,
     },
     'low': {
-        'USE_REDIS_CACHE': 'default',
         'ASYNC': True,
     },
 }
