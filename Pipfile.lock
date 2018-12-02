@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9446b2102fcc306c3b90080c42a8765e512375a214f5caf7072308314c1b704a"
+            "sha256": "bf11eba8f0446e9754afb6a3bfde9ef202eccbde046b46fe59700871eb24a84c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -96,10 +96,10 @@
         },
         "certifi": {
             "hashes": [
-                "sha256:339dc09518b07e2fa7eda5450740925974815557727d6bd35d319c1524a04a4c",
-                "sha256:6d58c986d22b038c8c0df30d639f23a3e6d172a05c3583e766f4c0b785c0986a"
+                "sha256:47f9c83ef4c0c621eaef743f133f09fa8a74a9b75f037e8624f83bd1b6626cb7",
+                "sha256:993f830721089fef441cdfeb4b2c8c9df86f0c63239f06bd025a76a7daddb033"
             ],
-            "version": "==2018.10.15"
+            "version": "==2018.11.29"
         },
         "cffi": {
             "hashes": [
@@ -274,11 +274,11 @@
         },
         "django-redis": {
             "hashes": [
-                "sha256:af0b393864e91228dd30d8c85b5c44d670b5524cb161b7f9e41acc98b6e5ace7",
-                "sha256:f46115577063d00a890867c6964ba096057f07cb756e78e0503b89cd18e4e083"
+                "sha256:15b47faef6aefaa3f47135a2aeb67372da300e4a4cf06809c66ab392686a2155",
+                "sha256:a90343c33a816073b735f0bed878eaeec4f83b75fcc0dce2432189b8ea130424"
             ],
             "index": "pypi",
-            "version": "==4.10.0"
+            "version": "==4.9.0"
         },
         "django-rq": {
             "hashes": [
@@ -625,10 +625,10 @@
         },
         "pyjwt": {
             "hashes": [
-                "sha256:30b1380ff43b55441283cc2b2676b755cca45693ae3097325dea01f3d110628c",
-                "sha256:4ee413b357d53fd3fb44704577afac88e72e878716116270d722723d65b42176"
+                "sha256:00414bfef802aaecd8cc0d5258b6cb87bd8f553c2986c2c5f29b19dd5633aeb7",
+                "sha256:ddec8409c57e9d371c6006e388f91daf3b0b43bdf9fcbf99451fb7cf5ce0a86d"
             ],
-            "version": "==1.6.4"
+            "version": "==1.7.0"
         },
         "pypdf2": {
             "hashes": [
