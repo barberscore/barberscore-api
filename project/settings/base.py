@@ -135,23 +135,21 @@ CACHES = {
 
 # Sessions
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 # RQ
 RQ_QUEUES = {
     'default': {
-        'URL': get_env_variable("REDIS_URL"),
+        'USE_REDIS_CACHE': 'default',
         'ASYNC': False,
-        'DEFAULT_TIMEOUT': 300,
     },
     'high': {
-        'URL': get_env_variable("REDIS_URL"),
+        'USE_REDIS_CACHE': 'default',
         'ASYNC': False,
-        'DEFAULT_TIMEOUT': 300,
     },
     'low': {
-        'URL': get_env_variable("REDIS_URL"),
+        'USE_REDIS_CACHE': 'default',
         'ASYNC': False,
-        'DEFAULT_TIMEOUT': 300,
     },
 }
 RQ_SHOW_ADMIN_LINK = True
