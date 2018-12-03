@@ -59,7 +59,7 @@ class Officer(TimeStampedModel):
         null=True,
         blank=True,
         max_length=36,
-        unique=True,
+        unique=False,
         db_index=True,
     )
 
@@ -97,9 +97,10 @@ class Officer(TimeStampedModel):
 
     # Internals
     class Meta:
-        unique_together = (
-            ('group', 'person', 'office'),
-        )
+        pass
+        # unique_together = (
+        #     ('group', 'person', 'office'),
+        # )
 
     class JSONAPIMeta:
         resource_name = "officer"
@@ -108,6 +109,7 @@ class Officer(TimeStampedModel):
         return str(self.id)
 
     def clean(self):
+        pass
         # if all([
         #     self.status == self.STATUS.active,
         #     self.person.status == self.person.STATUS.inactive,
@@ -115,15 +117,15 @@ class Officer(TimeStampedModel):
         #     raise ValidationError({
         #         'status': 'Can not be active when person is inactive',
         #     })
-        if self.end_date:
-            if all([
-                self.status == self.STATUS.active,
-                self.end_date < now().date(),
+        # if self.end_date:
+        #     if all([
+        #         self.status == self.STATUS.active,
+        #         self.end_date < now().date(),
 
-            ]):
-                raise ValidationError({
-                    'status': 'Can not be active with a passed end date',
-                })
+        #     ]):
+        #         raise ValidationError({
+        #             'status': 'Can not be active with a passed end date',
+        #         })
     # Permissions
     @staticmethod
     @allow_staff_or_superuser
