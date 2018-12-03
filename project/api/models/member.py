@@ -163,7 +163,7 @@ class Member(TimeStampedModel):
         null=True,
         blank=True,
         max_length=36,
-        unique=True,
+        unique=False,
         db_index=True,
     )
 
