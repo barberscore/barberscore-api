@@ -141,7 +141,7 @@ SESSION_CACHE_ALIAS = "default"
 RQ_QUEUES = {
     'default': {
         'USE_REDIS_CACHE': 'default',
-        'ASYNC': True,
+        'ASYNC': False,
     },
     'high': {
         'USE_REDIS_CACHE': 'default',
