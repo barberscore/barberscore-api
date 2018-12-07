@@ -280,9 +280,10 @@ class Session(TimeStampedModel):
             members = entry.group.members.filter(
                 status__gt=0,
             )
-            expiring_count = members.filter(
-                person__current_through__lte=self.convention.close_date,
-            ).count()
+            # expiring_count = members.filter(
+            #     person__current_through__lte=self.convention.close_date,
+            # ).count()
+            expiring_count = None
             participants = entry.participants
             awards_list = []
             contestants = entry.contestants.filter(
