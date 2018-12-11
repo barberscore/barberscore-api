@@ -189,6 +189,10 @@ class Structure(models.Model):
         choices=KIND,
         db_column='object_type',
     )
+    category = models.CharField(
+        max_length=255,
+        editable=False,
+    )
     bhs_id = models.IntegerField(
         editable=False,
         unique=True,

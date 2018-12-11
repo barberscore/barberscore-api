@@ -122,6 +122,7 @@ class StructureAdmin(ReadOnlyAdmin):
         'id',
         'name',
         'kind',
+        'category',
         'bhs_id',
         'preferred_name',
         'chapter_code',
@@ -142,6 +143,7 @@ class StructureAdmin(ReadOnlyAdmin):
         '__str__',
         'name',
         'kind',
+        'category',
         'bhs_id',
         'preferred_name',
         'chapter_code',
@@ -159,6 +161,7 @@ class StructureAdmin(ReadOnlyAdmin):
         'id',
         'name',
         'kind',
+        'category',
         'bhs_id',
         'preferred_name',
         'chapter_code',
@@ -177,6 +180,7 @@ class StructureAdmin(ReadOnlyAdmin):
 
     list_filter = [
         'kind',
+        'category',
         'status',
     ]
     search_fields = [
