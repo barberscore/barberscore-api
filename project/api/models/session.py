@@ -645,6 +645,7 @@ class Session(TimeStampedModel):
     def can_open(self):
         Contest = apps.get_model('api.contest')
         return all([
+            self.convention.open_date <= datetime.date.today(),
             self.contests.filter(status=Contest.STATUS.included),
         ])
 
