@@ -114,7 +114,7 @@ class GroupManager(Manager):
         chorus_name = structure.chorus_name
         status = structure.status.name
         kind = structure.kind
-        gender = structure.category
+        category = structure.category
         start_date = structure.established_date
         email = structure.email
         phone = structure.phone
@@ -144,14 +144,12 @@ class GroupManager(Manager):
                 'organization', 'international'
             )
         )
-        gender = getattr(
-            self.model.GENDER,
-            gender.replace(
-                'men', 'male'
-            ).replace(
-                'women', 'female'
-            )
-        )
+        gender_map = {
+            'men': self.model.GENDER.male,
+            'women': self.model.GENDER.female,
+            'mixed': self.model.GENDER.mixed,
+        }
+        gender = gender_map.get(category, self.model.GENDER.male)
         if email:
             email = email.strip().lower()
             try:
