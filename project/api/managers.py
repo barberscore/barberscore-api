@@ -114,6 +114,7 @@ class GroupManager(Manager):
         chorus_name = structure.chorus_name
         status = structure.status.name
         kind = structure.kind
+        gender = structure.sex
         start_date = structure.established_date
         email = structure.email
         phone = structure.phone
@@ -141,6 +142,14 @@ class GroupManager(Manager):
                 'group', 'noncomp'
             ).replace(
                 'organization', 'international'
+            )
+        )
+        gender = getattr(
+            self.model.GENDER,
+            gender.replace(
+                'men', 'male'
+            ).replace(
+                'women', 'female'
             )
         )
         if email:
@@ -204,6 +213,7 @@ class GroupManager(Manager):
             'name': name,
             'status': status,
             'kind': kind,
+            'gender': gender,
             'start_date': start_date,
             'email': email,
             'phone': phone,
