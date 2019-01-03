@@ -373,6 +373,7 @@ class Round(TimeStampedModel):
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
+            # page_size='Legal',
             orientation='Portrait',
             margin_top='5mm',
             margin_bottom='5mm',
