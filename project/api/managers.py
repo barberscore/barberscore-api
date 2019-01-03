@@ -114,7 +114,7 @@ class GroupManager(Manager):
         chorus_name = structure.chorus_name
         status = structure.status.name
         kind = structure.kind
-        gender = structure.sex
+        gender = structure.category
         start_date = structure.established_date
         email = structure.email
         phone = structure.phone
