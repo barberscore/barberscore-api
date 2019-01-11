@@ -92,50 +92,6 @@ class Score(TimeStampedModel):
         blank=True,
     )
 
-    original = models.IntegerField(
-        help_text="""
-            The original score (before revision).""",
-        null=True,
-        blank=True,
-        validators=[
-            MaxValueValidator(
-                100,
-                message='Points must be between 0 - 100',
-            ),
-            MinValueValidator(
-                0,
-                message='Points must be between 0 - 100',
-            ),
-        ]
-    )
-
-    VIOLATION = Choices(
-        (10, 'general', 'General'),
-    )
-
-    violation = FSMIntegerField(
-        choices=VIOLATION,
-        null=True,
-        blank=True,
-    )
-
-    penalty = models.IntegerField(
-        help_text="""
-            The penalty (0-100)""",
-        null=True,
-        blank=True,
-        validators=[
-            MaxValueValidator(
-                100,
-                message='Points must be between 0 - 100',
-            ),
-            MinValueValidator(
-                0,
-                message='Points must be between 0 - 100',
-            ),
-        ]
-    )
-
     # FKs
     song = models.ForeignKey(
         'Song',

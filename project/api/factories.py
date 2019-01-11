@@ -340,9 +340,6 @@ class ScoreFactory(DjangoModelFactory):
     kind = Score.KIND.official
     num = 1
     points = FuzzyInteger(50, 90)
-    original = None
-    violation = None
-    penalty = None
     song = SubFactory('api.factories.SongFactory')
     panelist = None
 
