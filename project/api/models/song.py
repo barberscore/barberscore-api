@@ -70,6 +70,19 @@ class Song(TimeStampedModel):
         blank=True,
     )
 
+    PENALTY = Choices(
+        (10, 'one', 'One',),
+        (20, 'two', 'Two',),
+    )
+
+    penalties = ArrayField(
+        base_field=models.IntegerField(
+            choices=PENALTY,
+        ),
+        default=list,
+        blank=True,
+    )
+
     stats = JSONField(
         null=True,
         blank=True,

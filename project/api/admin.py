@@ -1699,6 +1699,7 @@ class SongAdmin(admin.ModelAdmin):
         'chart',
         'legacy_chart',
         'num',
+        'penalties',
         'tot_points',
         'tot_score',
         'mus_points',

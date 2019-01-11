@@ -677,6 +677,7 @@ class SongSerializer(serializers.ModelSerializer):
             'status',
             'legacy_chart',
             'num',
+            'penalties',
             'rank',
             'mus_points',
             'per_points',
