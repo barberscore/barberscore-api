@@ -71,8 +71,11 @@ class Song(TimeStampedModel):
     )
 
     PENALTY = Choices(
-        (10, 'one', 'One',),
-        (20, 'two', 'Two',),
+        (10, 'patriotic', 'Primarily Patriotic Intent',),
+        (20, 'religious', 'Primarily Religious Intent',),
+        (30, 'accompaniment', 'Instrumental Accompaniment',),
+        (40, 'texture', 'Chorus Exceeding 4-Part Texture',),
+        (50, 'enhancement', 'Sound Equipment or Electronic Enhancement',),
     )
 
     penalties = ArrayField(
