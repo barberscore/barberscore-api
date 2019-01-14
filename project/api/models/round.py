@@ -242,6 +242,7 @@ class Round(TimeStampedModel):
     def get_oss(self):
         Panelist = apps.get_model('api.panelist')
         Score = apps.get_model('api.score')
+        Song = apps.get_model('api.song')
         participants = self.appearances.filter(
             Q(draw__isnull=True) | Q(draw=0),
             competitor__is_private=False,
@@ -308,6 +309,20 @@ class Round(TimeStampedModel):
                 round__num__lte=self.num,
             )
 
+        # Penalties
+        array = Song.objects.filter(
+            appearance__round=self,
+            penalties__len__gt=0,
+            appearance__competitor__is_private=False,
+        ).distinct().values_list('penalties', flat=True)
+        penalties_map = {
+            10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
+            30: "‡ Score(s) penalized due to violation of Article IX.A.2 of the BHS Contest Rules.",
+            40: "✠ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
+            50: "✶ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules.",
+        }
+        penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
+
 
         # Eval Only
         privates = self.session.competitors.filter(
@@ -367,6 +382,7 @@ class Round(TimeStampedModel):
             'mt': mt,
             'panelists': panelists,
             'outcomes': outcomes,
+            'penalties': penalties,
             'is_multi': is_multi,
         }
         rendered = render_to_string('round/oss.html', context)

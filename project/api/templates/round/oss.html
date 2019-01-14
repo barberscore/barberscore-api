@@ -119,10 +119,27 @@
                       <span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>
                     {% endif %}
                     {% for song in appearance.songs.all|dictsort:'num' %}
+                      &nbsp;&nbsp;&nbsp;&nbsp;
+                      {% if song.penalties %}
+                        {% for penalty in song.penalties %}
+                          {% if penalty == 10 %}
+                            &dagger;
+                          {% endif %}
+                          {% if penalty == 30 %}
+                            &ddagger;
+                          {% endif %}
+                          {% if penalty == 40 %}
+                            &malt;
+                          {% endif %}
+                          {% if penalty == 50 %}
+                            &sext;
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
                       {% if song.chart %}
-                        &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
+                        {{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
                       {% else %}
-                        &nbsp;&nbsp;&nbsp;&nbsp;{{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
+                        {{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
                       {% endif %}
                     {% endfor %}
                   {% endfor %}
@@ -200,11 +217,14 @@
             </ul>
           </div>
         {% endif %}
-        {%if round.footnotes %}
+        {%if round.footnotes or penalties%}
           <div>
             <h5>Footnotes</h5>
             <p>
-              {{round.footnotes}}
+              {%if round.footnotes %}{{round.footnotes}}<br>{%endif%}
+              {% for penalty in penalties %}
+                {{penalty}}<br>
+              {% endfor %}
             </p>
           </div>
         {% endif %}
