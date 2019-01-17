@@ -212,6 +212,9 @@ class StructureAdmin(ReadOnlyAdmin):
         'chapter': [
             RoleInline,
         ],
+        'chorus': [
+            RoleInline,
+        ],
         'quartet': [
             RoleInline,
             JoinInline,
