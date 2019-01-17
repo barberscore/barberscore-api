@@ -164,6 +164,7 @@ class Structure(models.Model):
     DISTRICT = 'district'
     ORGANIZATION = 'organization'
     QUARTET = 'quartet'
+    CHORUS = 'chorus'
     GROUP = 'group'
 
     KIND = [
@@ -171,6 +172,7 @@ class Structure(models.Model):
         (DISTRICT, 'District'),
         (GROUP, 'Group'),
         (CHAPTER, 'Chapter'),
+        (CHORUS, 'Chorus'),
         (QUARTET, 'Quartet'),
     ]
 
