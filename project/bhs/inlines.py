@@ -12,6 +12,29 @@ from .models import Structure
 from .models import Subscription
 
 
+class StructureInline(admin.TabularInline):
+    model = Structure
+    fields = [
+        'name',
+        'kind',
+        'category',
+        'bhs_id',
+    ]
+    readonly_fields = [
+        'name',
+        'kind',
+        'category',
+        'bhs_id',
+    ]
+    show_change_link = True
+    extra = 0
+    # classes = [
+    #     'collapse',
+    # ]
+    max_num = 0
+    can_delete = False
+
+
 class SubscriptionInline(admin.TabularInline):
     model = Subscription
     fields = [

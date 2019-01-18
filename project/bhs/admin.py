@@ -8,6 +8,7 @@ from .inlines import JoinInline
 from .inlines import MembershipInline
 from .inlines import RoleInline
 from .inlines import SubscriptionInline
+from .inlines import StructureInline
 from .models import Human
 from .models import Join
 from .models import Membership
@@ -211,6 +212,7 @@ class StructureAdmin(ReadOnlyAdmin):
         ],
         'chapter': [
             RoleInline,
+            StructureInline,
         ],
         'chorus': [
             RoleInline,
