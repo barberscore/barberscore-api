@@ -265,6 +265,7 @@ class Group(TimeStampedModel):
     bhs_id = models.IntegerField(
         blank=True,
         null=True,
+        unique=True,
     )
 
     notes = models.TextField(
