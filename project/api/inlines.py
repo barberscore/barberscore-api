@@ -65,7 +65,8 @@ class ActiveChorusInline(admin.TabularInline):
         # 'code',
         # 'kind',
         'gender',
-        # 'status',
+        'status',
+        'mc_pk',
     ]
     fk_name = 'parent'
     ordering = [
@@ -75,7 +76,7 @@ class ActiveChorusInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
-    verbose_name_plural = 'Active Choruses'
+    verbose_name_plural = 'All Choruses'
     readonly_fields = [
         'status',
     ]
@@ -84,7 +85,6 @@ class ActiveChorusInline(admin.TabularInline):
         """Alter the queryset to return no existing entries."""
         qs = super().get_queryset(request)
         qs = qs.filter(
-            status__gt=0,
             kind=Group.KIND.chorus,
         )
         return qs
