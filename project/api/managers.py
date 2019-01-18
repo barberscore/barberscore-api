@@ -170,8 +170,6 @@ class GroupManager(Manager):
             # If the name has not been assigned, use preferred. Otherwise, call unknown.
             if not name:
                 name = preferred_name if preferred_name else 'UNKNOWN'
-        elif kind == self.model.KIND.chorus:
-            name = chorus_name if chorus_name else 'UNKNOWN'
         else:
             name = name if name else 'UNKNOWN'
 
