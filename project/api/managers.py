@@ -111,7 +111,6 @@ class GroupManager(Manager):
         mc_pk = str(structure.id)
         raw_name = structure.name
         preferred_name = structure.preferred_name
-        chorus_name = structure.chorus_name
         status = structure.status.name
         kind = structure.kind
         category = structure.category
@@ -133,12 +132,9 @@ class GroupManager(Manager):
         # Transform
         name = raw_name.strip() if raw_name else ''
         preferred_name = "{0} (NAME APPROVAL PENDING)".format(preferred_name) if preferred_name else ''
-        chorus_name = chorus_name.strip() if chorus_name else ''
         kind = getattr(
             self.model.KIND,
             kind.replace(
-                'chapter', 'chorus'
-            ).replace(
                 'group', 'noncomp'
             ).replace(
                 'organization', 'international'

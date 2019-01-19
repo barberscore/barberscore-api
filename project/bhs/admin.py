@@ -127,7 +127,6 @@ class StructureAdmin(ReadOnlyAdmin):
         'bhs_id',
         'preferred_name',
         'chapter_code',
-        'chorus_name',
         'phone',
         'email',
         'website',
@@ -148,7 +147,6 @@ class StructureAdmin(ReadOnlyAdmin):
         'bhs_id',
         'preferred_name',
         'chapter_code',
-        'chorus_name',
         'phone',
         'email',
         'established_date',
@@ -166,7 +164,6 @@ class StructureAdmin(ReadOnlyAdmin):
         'bhs_id',
         'preferred_name',
         'chapter_code',
-        'chorus_name',
         'phone',
         'email',
         'website',
@@ -186,10 +183,8 @@ class StructureAdmin(ReadOnlyAdmin):
     ]
     search_fields = [
         'name',
-        'chorus_name',
         'bhs_id',
         'chapter_code',
-        'chorus_name',
     ]
 
     list_select_related = [
