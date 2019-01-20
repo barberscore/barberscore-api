@@ -78,6 +78,9 @@ class Repertory(TimeStampedModel):
     def has_read_permission(request):
         return any([
             request.user.is_group_manager,
+            request.user.is_session_manager,
+            request.user.is_round_manager,
+            request.user.is_chart_manager,
         ])
 
     @allow_staff_or_superuser
