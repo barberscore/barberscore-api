@@ -350,7 +350,7 @@ class MemberManager(Manager):
     def update_or_create_from_join(self, join):
         # Ignore rows without approval flow
         if not join.paid:
-            return
+            return None, False
 
         # Extract
         mc_pk = str(join.id)
