@@ -323,6 +323,7 @@ class GroupManager(Manager):
             district = group.district
             chapter = group.chapter
             is_senior = group.is_senior
+            is_youth = group.is_youth
             bhs_id = group.bhs_id
             code = group.code
             status = group.get_status_display()
@@ -334,6 +335,7 @@ class GroupManager(Manager):
                 district,
                 chapter,
                 is_senior,
+                is_youth,
                 bhs_id,
                 code,
                 status,

@@ -903,7 +903,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'gender',
         'division',
-        'is_senior',
+        ('is_senior', 'is_youth',),
         ('bhs_id', 'mc_pk', 'code',),
         'parent',
         ('international', 'district', 'chapter',),

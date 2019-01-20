@@ -97,6 +97,7 @@ class ActiveQuartetInline(admin.TabularInline):
         'parent',
         'bhs_id',
         'is_senior',
+        'is_youth',
         'gender',
         # 'status',
     ]

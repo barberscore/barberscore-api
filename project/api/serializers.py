@@ -389,6 +389,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'kind',
             'gender',
             'is_senior',
+            'is_youth',
             'division',
             'code',
             'start_date',

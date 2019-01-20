@@ -350,7 +350,12 @@ class Group(TimeStampedModel):
     )
 
     is_senior = models.BooleanField(
-        help_text="""Qualifies as a Senior Group.  This is set once, at creation.  If the group 'ages' into Senior status that needs to be edited manually here.""",
+        help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
+        default=False,
+    )
+
+    is_youth = models.BooleanField(
+        help_text="""Qualifies as a Youth Group.  Must be set manually.""",
         default=False,
     )
 
