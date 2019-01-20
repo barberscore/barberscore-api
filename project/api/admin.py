@@ -1014,6 +1014,14 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             CompetitorInline,
             StateLogInline,
         ],
+        'VLQ': [
+            OfficerInline,
+            MemberInline,
+            RepertoryInline,
+            EntryInline,
+            CompetitorInline,
+            StateLogInline,
+        ],
     }
 
     def get_inline_instances(self, request, obj=None):
