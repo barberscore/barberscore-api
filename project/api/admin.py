@@ -924,6 +924,8 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         MCListFilter,
         'kind',
         'gender',
+        'is_senior',
+        'is_youth',
         'division',
         DistrictListFilter,
     ]
@@ -938,6 +940,8 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         'kind',
         'gender',
+        'is_senior',
+        'is_youth',
         'division',
         'parent',
         'bhs_id',
