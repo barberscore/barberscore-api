@@ -357,7 +357,7 @@ class MemberManager(Manager):
         structure = str(join.structure.id)
         human = str(join.subscription.human.id)
         start_date = join.established_date
-        end_date = join.subscription.current_through
+        end_date = join.inactive_date
         part = join.vocal_part
 
         # Transform
