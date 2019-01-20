@@ -930,7 +930,6 @@ class RepertoryViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = RepertorySerializer
-    filterset_class = None
     filter_backends = [
         DjangoFilterBackend,
     ]
