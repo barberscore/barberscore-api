@@ -159,6 +159,7 @@ class Group(TimeStampedModel):
         ('Group', [
             (32, 'chorus', "Chorus"),
             (41, 'quartet', "Quartet"),
+            (46, 'vlq', "VLQ"),
         ]),
     )
 
