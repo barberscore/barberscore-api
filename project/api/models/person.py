@@ -22,6 +22,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.functional import cached_property
+from django.utils.timezone import now
 
 # First-Party
 from api.fields import LowerEmailField
@@ -339,6 +340,15 @@ class Person(TimeStampedModel):
         except:
             current_through = None
         return current_through
+
+    @cached_property
+    def current_status(self):
+        today = now().date()
+        if self.current_through:
+            if self.current_through >= today:
+                return True
+            return False
+        return True
 
     # Internals
     objects = PersonManager()

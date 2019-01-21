@@ -558,6 +558,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'description',
             'bhs_id',
             'current_through',
+            'current_status',
             'full_name',
             'common_name',
             'sort_name',
