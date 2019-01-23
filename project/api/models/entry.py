@@ -319,19 +319,7 @@ class Entry(TimeStampedModel):
 
     # Entry Transition Conditions
     def can_build_entry(self):
-        divs = [
-            'MAD',
-            'FWD',
-            'SWD',
-            'LOL',
-            'NED',
-            'SWD',
-        ]
-        code = getattr(self.group.parent, 'code', None)
-        return all([
-            code,
-            code not in divs,
-        ])
+        return True
 
     def can_invite_entry(self):
         return all([
