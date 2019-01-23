@@ -32,6 +32,7 @@ ipython = "==6.5.0"
 mysqlclient = "*"
 openpyxl = "*"
 pillow = "*"
+pydf = "*"
 python-pdf = "*"
 ranking = "*"
 raven = "*"
@@ -55,7 +56,6 @@ pydocstyle = "*"
 pylint = "*"
 pytest = "*"
 pytest-django = "*"
-pydf = {editable = true,git = "https://github.com/tutorcruncher/pydf.git",ref = "upgrade-binary"}
 
 [requires]
 python_version = "3.7"
