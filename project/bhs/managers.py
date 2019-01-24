@@ -181,7 +181,7 @@ class JoinManager(Manager):
         queue = django_rq.get_queue('low')
         for join in joins:
             queue.enqueue(
-                Member.objects.update_or_create_from_join(join),
+                Member.objects.update_or_create_from_join,
                 join,
             )
         return t
