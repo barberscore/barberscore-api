@@ -143,7 +143,9 @@ class RoleManager(Manager):
 
 class JoinManager(Manager):
     def get_flats(self, cursor=None):
-        joins = self.select_related(
+        joins = self.filter(
+            paid__isnull=False,
+        ).select_related(
             'structure',
             'subscription',
             'subscription__human',
@@ -159,24 +161,19 @@ class JoinManager(Manager):
         return flats
 
     def get_join_from_flat(self, flat):
-        try:
-            join = self.filter(
-                **flat,
-                paid=True,
-            ).latest(
-                'modified',
-                '-inactive_date',
-            )
-        except self.model.DoesNotExist:
-            join = None
+        join = self.filter(
+            **flat,
+        ).latest(
+            'modified',
+            '-inactive_date',
+        )
         return join
 
     def update_or_create_member_from_flat(self, flat):
         Member = apps.get_model('api.member')
         join = self.get_join_from_flat(flat)
-        if join:
-            member, created = Member.objects.update_or_create_from_join(join)
-            return member, created
+        member, created = Member.objects.update_or_create_from_join(join)
+        return member, created
 
     def update_members(self, cursor=None):
         flats = self.get_flats(cursor)

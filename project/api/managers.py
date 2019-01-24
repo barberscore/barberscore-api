@@ -350,14 +350,14 @@ class MemberManager(Manager):
     def update_or_create_from_join(self, join):
         # Ignore rows without approval flow
         if not join.paid:
-            return None, False
+            raise ValueError('Join not paid')
 
         # Extract
         mc_pk = str(join.id)
         structure = str(join.structure.id)
         human = str(join.subscription.human.id)
         start_date = join.established_date
-        end_date = join.inactive_date
+        end_date = join.subscription.current_through
         part = join.vocal_part
 
         # Transform
