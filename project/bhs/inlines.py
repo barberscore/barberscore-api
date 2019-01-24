@@ -69,6 +69,7 @@ class JoinInline(admin.TabularInline):
         'vocal_part',
         'inactive_date',
         'status',
+        'paid',
     ]
     readonly_fields = [
         '__str__',
@@ -79,6 +80,7 @@ class JoinInline(admin.TabularInline):
         'vocal_part',
         'inactive_date',
         'status',
+        'paid',
     ]
     show_change_link = True
     extra = 0
