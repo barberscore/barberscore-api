@@ -142,48 +142,47 @@ class RoleManager(Manager):
 
 
 class JoinManager(Manager):
-    def get_flats(self, cursor=None):
-        joins = self.filter(
-            paid__isnull=False,
+    def update_members(self, cursor=None):
+        # Get all records as values
+        qs = self.filter(
+            paid=True,
         ).select_related(
             'structure',
             'subscription',
             'subscription__human',
         )
         if cursor:
-            joins = joins.filter(
+            qs = qs.filter(
                 modified__gt=cursor,
             )
-        flats = joins.values(
+        rows = qs.values(
             'structure',
             'subscription__human',
         ).distinct()
-        return flats
-
-    def get_join_from_flat(self, flat):
-        join = self.filter(
-            **flat,
-        ).latest(
-            'modified',
-            '-inactive_date',
-        )
-        return join
-
-    def update_or_create_member_from_flat(self, flat):
+        # Flatten records -- EXPENSIVE!
+        flats = []
+        for row in rows:
+            try:
+                flat = self.filter(
+                    **row,
+                    paid=True,
+                ).latest(
+                    'modified',
+                    '-inactive_date',
+                )
+            except self.model.DoesNotExist:
+                continue
+            flats.append(flat)
+        # Only keep unique records
+        joins = list(set(flats))
+        t = len(joins)
+        # Create/Update From Flattened unique joins
         Member = apps.get_model('api.member')
-        join = self.get_join_from_flat(flat)
-        member, created = Member.objects.update_or_create_from_join(join)
-        return member, created
-
-    def update_members(self, cursor=None):
-        flats = self.get_flats(cursor)
-        t = flats.count()
-        # Creating/Update From Flattened Record
         queue = django_rq.get_queue('low')
-        for flat in flats:
+        for join in joins:
             queue.enqueue(
-                self.update_or_create_member_from_flat,
-                flat,
+                Member.objects.update_or_create_from_join(join),
+                join,
             )
         return t
 
