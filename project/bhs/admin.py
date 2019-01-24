@@ -416,6 +416,7 @@ class JoinAdmin(ReadOnlyAdmin):
     fields = [
         'id',
         'status',
+        'paid',
         'vocal_part',
         'subscription',
         'membership',
@@ -429,6 +430,7 @@ class JoinAdmin(ReadOnlyAdmin):
     list_display = [
         'id',
         'status',
+        'paid',
         'subscription',
         'membership',
         'vocal_part',
@@ -446,6 +448,7 @@ class JoinAdmin(ReadOnlyAdmin):
     readonly_fields = [
         'id',
         'status',
+        'paid',
         'subscription',
         'membership',
         'vocal_part',
@@ -461,6 +464,8 @@ class JoinAdmin(ReadOnlyAdmin):
     ]
 
     list_filter = [
+        'status',
+        'paid',
         'vocal_part',
         'structure__kind',
         'inactive_reason',
