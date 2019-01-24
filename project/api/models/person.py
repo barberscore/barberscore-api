@@ -12,7 +12,6 @@ from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
-from model_utils import FieldTracker
 from model_utils.models import TimeStampedModel
 
 # Django
@@ -259,12 +258,6 @@ class Person(TimeStampedModel):
     # )
 
     # Relations
-    tracker = FieldTracker(
-        fields=[
-            'email',
-        ],
-    )
-
     statelogs = GenericRelation(
         StateLog,
         related_query_name='persons',

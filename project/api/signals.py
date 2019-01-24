@@ -14,11 +14,11 @@ def person_post_save(sender, instance, created, **kwargs):
     if created and instance.email:
         User.objects.create_user(person=instance)
     user = getattr(instance, 'user', None)
-    if user and instance.tracker.has_changed('email'):
-        if instance.email:
-            instance.user.update_account()
-        else:
-            instance.user.delete_account()
+    # if user and instance.tracker.has_changed('email'):
+    #     if instance.email:
+    #         instance.user.update_account()
+    #     else:
+    #         instance.user.delete_account()
     return
 
 
