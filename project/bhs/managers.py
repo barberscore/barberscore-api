@@ -155,28 +155,15 @@ class JoinManager(Manager):
             qs = qs.filter(
                 modified__gt=cursor,
             )
-        rows = qs.values(
+        joins = qs.values(
             'structure',
             'subscription__human',
+        ).order_by(
+            'modified',
+            '-inactive_date',
         ).distinct()
-        # Flatten records -- EXPENSIVE!
-        flats = []
-        for row in rows:
-            try:
-                flat = self.filter(
-                    **row,
-                    paid=True,
-                ).latest(
-                    'modified',
-                    '-inactive_date',
-                )
-            except self.model.DoesNotExist:
-                continue
-            flats.append(flat)
-        # Only keep unique records
-        joins = list(set(flats))
-        t = len(joins)
-        # Create/Update From Flattened unique joins
+        t = joins.count()
+        # Creates race condition on multi-worker
         Member = apps.get_model('api.member')
         queue = django_rq.get_queue('low')
         for join in joins:
