@@ -33,6 +33,7 @@ from django.utils.timezone import now
 # First-Party
 from api.tasks import get_accounts
 from api.tasks import get_auth0
+from api.importers import check_member
 
 log = logging.getLogger(__name__)
 
@@ -419,7 +420,8 @@ class MemberManager(Manager):
         queue = django_rq.get_queue('low')
         for member in members:
             queue.enqueue(
-                member.clean
+                check_member,
+                member,
             )
         return
 

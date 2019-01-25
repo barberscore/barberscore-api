@@ -6,9 +6,11 @@ from datetime import datetime
 import requests
 
 # Django
+from django.apps import apps
 from django.db import IntegrityError
 from django.utils import dateparse
 from django.utils import encoding
+from django.core.exceptions import ValidationError
 
 # Local
 from .models import Appearance
@@ -42,6 +44,23 @@ def download(url, file_name):
         response = requests.get(url)
         # write to file
         file.write(response.content)
+
+
+def check_member(member):
+    if not member.mc_pk:
+        raise RuntimeError("Not an MC entity.")
+    Join = apps.get_model('bhs.join')
+    join = Join.objects.filter(
+        structure__id=member.group.mc_pk,
+        subscription__human__id=member.person.mc_pk,
+        paid=True,
+    ).latest(
+        'modified',
+        '-inactive_date',
+    )
+    if member.mc_pk != join.id:
+        raise ValidationError("BHS mismatch")
+    return "OK"
 
 
 def print_headers(path):

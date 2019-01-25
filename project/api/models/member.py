@@ -207,19 +207,7 @@ class Member(TimeStampedModel):
         return str(self.id)
 
     def clean(self):
-        if self.mc_pk:
-            Join = apps.get_model('bhs.join')
-            join = Join.objects.filter(
-                structure__id=self.group.mc_pk,
-                subscription__human__id=self.person.mc_pk,
-                paid=True,
-            ).latest(
-                'modified',
-                '-inactive_date',
-            )
-            if self.mc_pk != join.id:
-                raise ValidationError("BHS mismatch")
-
+        return
 
     # Permissions
     @staticmethod
