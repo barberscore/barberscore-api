@@ -411,6 +411,18 @@ class MemberManager(Manager):
         )
         return member, created
 
+    def clean_members(self):
+        members = self.select_related(
+            'group',
+            'person',
+        )
+        queue = django_rq.get_queue('low')
+        for member in members:
+            queue.enqueue(
+                member.clean
+            )
+        return
+
 
 class OfficerManager(Manager):
     def update_or_create_from_role(self, role):
