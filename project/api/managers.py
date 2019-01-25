@@ -413,7 +413,9 @@ class MemberManager(Manager):
         return member, created
 
     def clean_members(self):
-        members = self.select_related(
+        members = self.filter(
+            mc_pk__isnull=False,
+        ).select_related(
             'group',
             'person',
         )
