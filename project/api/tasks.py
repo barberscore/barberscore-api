@@ -38,6 +38,7 @@ def check_member(member):
     if not member.mc_pk:
         raise RuntimeError("Not an MC entity.")
     Join = apps.get_model('bhs.join')
+    Member = apps.get_model('api.member')
     try:
         join = Join.objects.filter(
             structure__id=member.group.mc_pk,
@@ -48,11 +49,10 @@ def check_member(member):
             '-inactive_date',
         )
     except Join.DoesNotExist:
-        member.mc_pk = None
-        member.save()
-        return "Orphaned"
+        member.delete()
+        return "Deleted Orphan"
     if member.mc_pk != join.id:
-        raise ValidationError("BHS mismatch")
+        return Member.objects.update_or_create_from_join(join)
     return "OK"
 
 
