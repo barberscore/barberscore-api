@@ -414,7 +414,6 @@ class MemberManager(Manager):
 
     def check_members(self):
         members = self.filter(
-            mc_pk__isnull=True,
             group__mc_pk__isnull=False,
         ).select_related(
             'group',
