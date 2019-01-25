@@ -21,6 +21,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils.functional import cached_property
 from django.utils.timezone import now
+from django.apps import apps
 
 # First-Party
 from api.managers import MemberManager
@@ -206,22 +207,19 @@ class Member(TimeStampedModel):
         return str(self.id)
 
     def clean(self):
-        # if all([
-        #     self.status == self.STATUS.active,
-        #     self.person.status == self.person.STATUS.inactive,
-        # ]):
-        #     raise ValidationError({
-        #         'status': 'Can not be active when person is inactive',
-        #     })
-        if self.end_date:
-            if all([
-                self.status == self.STATUS.active,
-                self.end_date < now().date(),
+        if self.mc_pk:
+            Join = apps.get_model('bhs.join')
+            join = Join.objects.filter(
+                structure__id=self.group.mc_pk,
+                subscription__human__id=self.person.mc_pk,
+                paid=True,
+            ).latest(
+                'modified',
+                '-inactive_date',
+            )
+            if self.mc_pk != join.id:
+                raise ValidationError("BHS mismatch")
 
-            ]):
-                raise ValidationError({
-                    'status': 'Can not be active with a passed end date',
-                })
 
     # Permissions
     @staticmethod
