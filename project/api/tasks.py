@@ -35,7 +35,7 @@ log = logging.getLogger(__name__)
 
 
 def check_member(member):
-    if not member.mc_pk:
+    if not member.group.mc_pk:
         raise RuntimeError("Not an MC entity.")
     Join = apps.get_model('bhs.join')
     Member = apps.get_model('api.member')
@@ -51,9 +51,9 @@ def check_member(member):
     except Join.DoesNotExist:
         member.delete()
         return "Deleted Orphan"
-    if member.mc_pk != join.id:
-        return Member.objects.update_or_create_from_join(join)
-    return "OK"
+    if member.mc_pk == join.id:
+        return "OK"
+    return Member.objects.update_or_create_from_join(join)
 
 
 def get_auth0():

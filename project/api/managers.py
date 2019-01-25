@@ -412,9 +412,10 @@ class MemberManager(Manager):
         )
         return member, created
 
-    def clean_members(self):
+    def check_members(self):
         members = self.filter(
-            mc_pk__isnull=False,
+            mc_pk__isnull=True,
+            group__mc_pk__isnull=False,
         ).select_related(
             'group',
             'person',
