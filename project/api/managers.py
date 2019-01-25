@@ -33,7 +33,7 @@ from django.utils.timezone import now
 # First-Party
 from api.tasks import get_accounts
 from api.tasks import get_auth0
-from api.importers import check_member
+from api.tasks import check_member
 
 log = logging.getLogger(__name__)
 
