@@ -49,10 +49,9 @@ def check_member(member):
             '-inactive_date',
         )
     except Join.DoesNotExist:
+        gone = str(member)
         member.delete()
-        return "Deleted Orphan"
-    if member.mc_pk == join.id:
-        return "OK"
+        return gone, "Deleted"
     return Member.objects.update_or_create_from_join(join)
 
 
