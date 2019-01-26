@@ -567,6 +567,7 @@ class Round(TimeStampedModel):
         if not panelists:
             raise RuntimeError("No panelists for {0}".format(self))
         tos = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email) for panelist in panelists]
+        ccs = []
         context = {'round': self}
         rendered = render_to_string('sa.txt', context)
         subject = "[Barberscore] {0} {1} {2} SA".format(
