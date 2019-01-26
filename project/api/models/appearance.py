@@ -479,6 +479,9 @@ class Appearance(TimeStampedModel):
                 )
         else:
             variance = None
+        for song in self.songs.all():
+            song.calculate()
+            song.save()
         self.calculate()
         self.competitor.calculate()
         self.competitor.save()
