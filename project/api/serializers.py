@@ -419,6 +419,11 @@ class GroupSerializer(serializers.ModelSerializer):
             'permissions',
         ]
 
+    # def to_representation(self, instance):
+    #     if instance.kind <= 30:
+    #         self.fields.pop('members')
+    #     return super().to_representation(instance)
+
 
 class MemberSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
