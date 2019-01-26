@@ -370,7 +370,7 @@ class Competitor(TimeStampedModel):
         if not officers:
             raise RuntimeError("No officers for {0}".format(self.group))
         tos = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
-        ccs = ["David Mills <proclamation56@gmail.com>"]
+        ccs = []
         if self.group.kind == self.group.KIND.quartet:
             members = self.group.members.filter(
                 status__gt=0,
@@ -389,28 +389,19 @@ class Competitor(TimeStampedModel):
             self.session.convention.name,
             self.session.get_kind_display(),
         )
-        # email = EmailMessage(
-        #     subject=subject,
-        #     body=rendered,
-        #     from_email='Barberscore <admin@barberscore.com>',
-        #     to=tos,
-        #     cc=ccs,
-        # )
         email = EmailMessage(
             subject=subject,
             body=rendered,
             from_email='Barberscore <admin@barberscore.com>',
-            to=[
-                'dbinetti@gmail.com',
-                'proclamation56@gmail.com',
-                'chris.buechler@verizon.net',
-            ],
+            to=tos,
+            cc=ccs,
         )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(
             email.send
         )
         return result
+
 
     # Competitor Transition Conditions
 

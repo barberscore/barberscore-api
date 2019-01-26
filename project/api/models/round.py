@@ -574,22 +574,12 @@ class Round(TimeStampedModel):
             self.session.get_kind_display(),
             self.get_kind_display(),
         )
-        # email = EmailMessage(
-        #     subject=subject,
-        #     body=rendered,
-        #     from_email='Barberscore <admin@barberscore.com>',
-        #     to=tos,
-        #     cc=ccs,
-        # )
         email = EmailMessage(
             subject=subject,
             body=rendered,
             from_email='Barberscore <admin@barberscore.com>',
-            to=[
-                'dbinetti@gmail.com',
-                'proclamation56@gmail.com',
-                'chris.buechler@verizon.net',
-            ],
+            to=tos,
+            cc=ccs,
         )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(
