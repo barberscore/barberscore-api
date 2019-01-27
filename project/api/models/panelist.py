@@ -2,6 +2,7 @@
 # Standard Library
 import logging
 import uuid
+import pydf
 
 # Third-Party
 from django_fsm_log.models import StateLog
@@ -16,6 +17,9 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.functional import cached_property
+from django.template.loader import render_to_string
+from django.core.files.base import ContentFile
+from django.utils.text import slugify
 
 log = logging.getLogger(__name__)
 
@@ -171,3 +175,75 @@ class Panelist(TimeStampedModel):
                 self.round.status < self.round.STATUS.started,
             ]),
         ])
+
+    def get_jsa(self):
+        appearances = self.round.appearances.order_by(
+            '-num',
+        ).prefetch_related(
+            'songs',
+        )
+        scores = self.scores.select_related(
+            'song',
+        ).order_by(
+            'song__num',
+        )
+        context = {
+            'panelist': self,
+            'appearances': appearances,
+            'scores': scores,
+        }
+        rendered = render_to_string('jsa.html', context)
+        file = pydf.generate_pdf(rendered)
+        content = ContentFile(file)
+        return content
+
+    def save_jsa(self):
+        content = self.get_jsa()
+        self.refresh_from_db()
+        self.jsa.save(
+            "{0}-jsa".format(
+                slugify(self.person.name),
+            ),
+            content,
+        )
+
+
+    def queue_jsa(self):
+        officers = self.group.officers.filter(
+            status__gt=0,
+            person__email__isnull=False,
+        )
+        if not officers:
+            raise RuntimeError("No officers for {0}".format(self.group))
+        tos = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
+        ccs = []
+        if self.group.kind == self.group.KIND.quartet:
+            members = self.group.members.filter(
+                status__gt=0,
+                person__email__isnull=False,
+            ).exclude(
+                person__officers__in=officers,
+            ).distinct()
+            for member in members:
+                ccs.append(
+                    "{0} <{1}>".format(member.person.common_name, member.person.email)
+                )
+        context = {'competitor': self}
+        rendered = render_to_string('csa.txt', context)
+        subject = "[Barberscore] {0} {1} {2} Session CSA".format(
+            self.group.name,
+            self.session.convention.name,
+            self.session.get_kind_display(),
+        )
+        email = EmailMessage(
+            subject=subject,
+            body=rendered,
+            from_email='Barberscore <admin@barberscore.com>',
+            to=tos,
+            cc=ccs,
+        )
+        queue = django_rq.get_queue('high')
+        result = queue.enqueue(
+            email.send
+        )
+        return result

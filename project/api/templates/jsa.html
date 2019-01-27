@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <style type="text/css">
+      body {
+        font-family: 'Encode Sans Condensed', sans-serif;
+        font-size: 12pt;
+        font-weight: 300;
+      }
+      .small_logo {
+          max-height: 100px;
+          max-width: 200px;
+      }
+      .picture_logo {
+          weight: 200px;
+      }
+      .well {
+        width: 500px;
+      }
+      .group_image {
+          height: 200px;
+          padding-top: 10px;
+          padding-bottom: 10px;
+      }
+      .bolder {
+        font-weight: 700;
+      }
+      section {
+          padding-top: 10px;
+          padding-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='container-fluid'>
+      <section>
+        <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
+          {% if panelist.round.session.convention.image %}<img class='pull-right small_logo' src="{{panelist.round.session.convention.image.url}}">{% endif %}
+        <h3>
+          Panelist Scoring Analysis
+        </h3>
+        <h4>
+          {{panelist.round.session.get_kind_display}} {{panelist.round.get_kind_display}}<br>
+          {{panelist.round.session.convention.name}}
+        </h4>
+        <h5>
+          {% if panelist.round.session.convention.venue and panelist.round.session.convention.start_date %}
+            {{panelist.round.session.convention.venue.city|default:"(Unknown City)"}}, {{panelist.round.session.convention.venue.state|default:"(Unknown State)"}};
+            {{panelist.round.session.convention.start_date|date:"F j, Y"}} - {{panelist.round.session.convention.end_date|date:"F j, Y"}}
+          {% else %}
+            (Unknown Venue and Dates)
+          {% endif %}
+        </h5>
+      </section>
+      <section>
+        <div class='row'>
+          <div class='pull-right'>
+          {%if panelist.person.image %}
+            <img class='group_image img-thumbnail' src="{{panelist.person.image.url}}">
+          {% else %}
+            <img class='group_image img-thumbnail' src="https://barberscore-api.herokuapp.com/static/api/no_image_available.jpg">
+          {% endif %}
+          </div>
+          <div class='well'>
+            <h3><strong>{{panelist.person.name}}</strong></h3><br>
+            <strong>Points:  {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong><br><br>
+            {% if competitor.group.get_kind_display == 'Chorus' %}
+              Director(s): {{ competitor.entry.participants|default:"(Unknown)" }}
+            {% else %}
+              Members: {{ competitor.entry.participants|default:"(Unknown)"  }}
+            {% endif %}
+        </div>
+        </div>
+      </section>
+      <section>
+        <div class='table-responsive'>
+          <table class='table'>
+            <thead>
+              <tr>
+                <th>Songs</th>
+                <th class='text-right'>MUS</th>s
+                <th class='text-right'>PER</th>
+                <th class='text-right'>SNG</th>
+                <th class='text-right'>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <strong>Total</strong><br>
+                  {% for appearance in appearances.all|dictsort:'round__kind'  %}
+                    <span class='bolder'>{{appearance.round.get_kind_display}}</span><br>
+                    {% for song in appearance.songs.all|dictsort:'num' %}
+                      {% if song.chart %}
+                        {{song.chart.title|truncatewords_html:10|safe|default:"(Song not included in contestant repertory)"}}<br>
+                      {% else %}
+                        {{song.legacy_chart|truncatewords_html:10|safe|default:"(Song not included in contestant repertory)"}}<br>
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-right'>
+                  <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong><br>
+                  {% for appearance in appearances.all|dictsort:'round__kind' %}
+                    <span class='bolder'>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</span><br>
+                    {% for song in appearance.songs.all|dictsort:'num' %}
+                      {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-right'>
+                  <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong><br>
+                  {% for appearance in appearances.all|dictsort:'round__kind' %}
+                    <span class='bolder'>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</span><br>
+                    {% for song in appearance.songs.all|dictsort:'num' %}
+                      {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-right'>
+                  <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong><br>
+                  {% for appearance in appearances.all|dictsort:'round__kind'  %}
+                    <span class='bolder'>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</span><br>
+                    {% for song in appearance.songs.all|dictsort:'num' %}
+                      {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-right'>
+                  <strong>{{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong><br>
+                  {% for appearance in appearances.all|dictsort:'round__kind'  %}
+                    <span class='bolder'>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</span><br>
+                    {% for song in appearance.songs.all|dictsort:'num' %}
+                      {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section>
+        <div class='table-responsive'>
+          {% regroup panelists by person as panelist_tuple %}
+          <table class='table'>
+            <thead>
+              <tr>
+                <th>Songs</th>
+                {% for item in panelist_tuple %}
+                  <th class='text-right'>{{item.grouper.initials}}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for song in songs %}
+                <tr>
+                  <td>
+                    {% if song.chart %}
+                      {{song.chart.title|truncatewords_html:10|safe|default:"(Song not included in contestant repertory)"}}<br>
+                    {% else %}
+                      {{song.legacy_chart|truncatewords_html:10|safe|default:"(Song not included in contestant repertory)"}}<br>
+                    {% endif %}
+                  </td>
+                  {% for item in panelist_tuple %}
+                    {% for score in song.scores.all %}
+                      {% if score.panelist.person == item.grouper %}
+                        <td class='text-right {{score.panelist.row_class}}'>
+                          {{score.points}}<br>
+                        </td>
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      {% comment %}
+      <section>
+        <h4>Assignments</h4>
+          <ul class='list-unstyled'>
+            {% for assignment in assignments %}
+              <li>{{assignment.designation}}: {{assignment.judge.person.common_name}}</li>
+            {% endfor %}
+          </ul>
+      </section>
+      {% endcomment %}
+      <section>
+        {% regroup panelists by get_category_display as panelist_list %}
+        <table class='table'>
+          <thead>
+            <tr>
+              <th>Music</th>
+              <th>Performance</th>
+              <th>Singing</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                {% for item in panelist_list %}
+                  {% if item.grouper == 'Music' %}
+                      {% for panelist in item.list %}
+                        {{panelist.person.common_name}}<br>
+                      {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              </td>
+              <td>
+                {% for item in panelist_list %}
+                  {% if item.grouper == 'Performance' %}
+                      {% for panelist in item.list %}
+                        {{panelist.person.common_name}}<br>
+                      {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              </td>
+              <td>
+                {% for item in panelist_list %}
+                  {% if item.grouper == 'Singing' %}
+                      {% for panelist in item.list %}
+                        {{panelist.person.common_name}}<br>
+                      {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </div>
+  </body>
+</html>
+
+
+
