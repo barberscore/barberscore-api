@@ -732,6 +732,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('is_private', 'is_multi',),
         ('tot_points', 'mus_points', 'per_points', 'sng_points',),
         ('tot_score', 'mus_score', 'per_score', 'sng_score',),
+        ('tot_rank', 'mus_rank', 'per_rank', 'sng_rank',),
     )
 
     list_display = (
