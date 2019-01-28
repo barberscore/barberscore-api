@@ -35,13 +35,13 @@ pillow = "*"
 pydf = {git = "https://github.com/barberscore/pydf.git"}
 python-pdf = "*"
 ranking = "*"
-raven = "*"
 redis = "*"
 requests = "*"
 rq = "*"
 whitenoise = "*"
 maya = "*"
 "pypdf2" = "*"
+sentry-sdk = "*"
 
 [dev-packages]
 "autopep8" = "*"

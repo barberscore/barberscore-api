@@ -23,13 +23,6 @@ DATABASE_ROUTERS = [
 # Email
 EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
 
-# Sentry
-RAVEN_CONFIG = {
-    'environment': 'staging',
-    'dsn': get_env_variable("SENTRY_DSN"),
-    'release': 'foo',
-}
-
 # Logging
 LOGGING = {
     'version': 1,
@@ -60,34 +53,11 @@ LOGGING = {
             ],
             'propagate': False,
         },
-        'raven': {
-            'level': 'DEBUG',
-            'handlers': [
-                'console'
-            ],
-            'propagate': False,
-        },
-        'sentry.errors': {
-            'level': 'DEBUG',
-            'handlers': [
-                'console'
-            ],
-            'propagate': False,
-        },
     },
     'handlers': {
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
         },
-        'sentry': {
-            'level': 'ERROR',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-            'tags': {'custom-tag': 'x'},
-        },
     },
 }
-
-INSTALLED_APPS += [
-    'raven.contrib.django.raven_compat',
-]

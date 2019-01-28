@@ -1,6 +1,9 @@
 
 # Local
 from .base import *
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.rq import RqIntegration
 
 # Core
 DEBUG = False
@@ -32,11 +35,15 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # Sentry
-RAVEN_CONFIG = {
-    'environment': 'production',
-    'dsn': get_env_variable("SENTRY_DSN"),
-    'release': get_env_variable("HEROKU_SLUG_DESCRIPTION"),
-}
+
+sentry_sdk.init(
+    dsn=get_env_variable("SENTRY_DSN"),
+    integrations=[
+        DjangoIntegration(),
+        RqIntegration(),
+    ],
+    send_default_pii=True,
+)
 
 # Logging
 LOGGING = {
@@ -74,34 +81,11 @@ LOGGING = {
             ],
             'propagate': False,
         },
-        'raven': {
-            'level': 'DEBUG',
-            'handlers': [
-                'console'
-            ],
-            'propagate': False,
-        },
-        'sentry.errors': {
-            'level': 'DEBUG',
-            'handlers': [
-                'console'
-            ],
-            'propagate': False,
-        },
     },
     'handlers': {
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
         },
-        'sentry': {
-            'level': 'ERROR',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-            'tags': {'custom-tag': 'x'},
-        },
     },
 }
-
-INSTALLED_APPS += [
-    'raven.contrib.django.raven_compat',
-]
