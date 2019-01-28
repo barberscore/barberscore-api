@@ -85,6 +85,7 @@ class Round(TimeStampedModel):
     )
 
     oss = models.FileField(
+        max_length=200,
         null=True,
         blank=True,
     )
