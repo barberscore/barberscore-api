@@ -16,10 +16,7 @@ from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from openpyxl.writer.excel import save_virtual_workbook
-from ranking import ORDINAL
-from ranking import Ranking
 from openpyxl import Workbook
-from openpyxl.writer.excel import save_virtual_workbook
 from django.utils.text import slugify
 # Django
 from django.apps import apps
@@ -146,43 +143,48 @@ class Session(TimeStampedModel):
 
     # Methods
     def rank(self):
+        # Get raw queryset
         competitors = self.competitors.filter(
             is_private=False,
-            status__gt=0,
-        ).distinct().order_by('-tot_points')
-        points = [x.tot_points for x in competitors]
-        ranked = Ranking(points, strategy=ORDINAL, start=1)
-        for competitor in competitors:
-            competitor.tot_rank = ranked.rank(competitor.tot_points)
+            # status__gt=0,
+        ).distinct()
+        # Ranking algo
+        tot_competitors = competitors.order_by(
+            '-tot_points',
+            '-sng_points',
+            '-per_points',
+            'group__name',
+        )
+        for index, competitor in enumerate(tot_competitors):
+            competitor.tot_rank = index + 1
             competitor.save()
-        competitors = self.competitors.filter(
-            is_private=False,
-            status__gt=0,
-        ).distinct().order_by('-mus_points')
-        points = [x.mus_points for x in competitors]
-        ranked = Ranking(points, start=1)
-        for competitor in competitors:
-            competitor.mus_rank = ranked.rank(competitor.mus_points)
+        # SNG only
+        sng_competitors = competitors.order_by(
+            '-sng_points',
+            'group__name',
+        )
+        for index, competitor in enumerate(sng_competitors):
+            competitor.sng_rank = index + 1
             competitor.save()
-        competitors = self.competitors.filter(
-            is_private=False,
-            status__gt=0,
-        ).distinct().order_by('-per_points')
-        points = [x.per_points for x in competitors]
-        ranked = Ranking(points, start=1)
-        for competitor in competitors:
-            competitor.per_rank = ranked.rank(competitor.per_points)
+        # MUS only
+        mus_competitors = competitors.order_by(
+            '-mus_points',
+            'group__name',
+        )
+        for index, competitor in enumerate(mus_competitors):
+            competitor.mus_rank = index + 1
             competitor.save()
-        competitors = self.competitors.filter(
-            is_private=False,
-            status__gt=0,
-        ).distinct().order_by('-sng_points')
-        points = [x.sng_points for x in competitors]
-        ranked = Ranking(points, start=1)
-        for competitor in competitors:
-            competitor.sng_rank = ranked.rank(competitor.sng_points)
+        # PER only
+        per_competitors = competitors.order_by(
+            '-per_points',
+            'group__name',
+        )
+        for index, competitor in enumerate(per_competitors):
+            competitor.per_rank = index + 1
             competitor.save()
         return
+
+
 
     def get_legacy(self):
         Entry = apps.get_model('api.entry')

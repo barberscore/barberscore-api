@@ -17,8 +17,6 @@ from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from PyPDF2 import PdfFileMerger
-from ranking import ORDINAL
-from ranking import Ranking
 from django.core.mail import EmailMessage
 from django.db.models import Sum, Max
 # Django
@@ -138,84 +136,45 @@ class Round(TimeStampedModel):
 
     # Methods
     def rank(self):
+        # Get raw queryset
         appearances = self.appearances.filter(
             competitor__is_private=False,
-            competitor__status__gt=0,
-        ).distinct().order_by('-tot_points')
-        points = [x.tot_points for x in appearances]
-        ranked = Ranking(points, strategy=ORDINAL, start=1)
-        for appearance in appearances:
-            appearance.tot_rank = ranked.rank(appearance.tot_points)
+            # competitor__status__gt=0,
+        ).distinct()
+        # Ranking algo
+        tot_appearances = appearances.order_by(
+            '-tot_points',
+            '-sng_points',
+            '-per_points',
+            'competitor__group__name',
+        )
+        for index, appearance in enumerate(tot_appearances):
+            appearance.tot_rank = index + 1
             appearance.save()
-        appearances = self.appearances.filter(
-            competitor__is_private=False,
-            competitor__status__gt=0,
-        ).distinct().order_by('-mus_points')
-        points = [x.mus_points for x in appearances]
-        ranked = Ranking(points, start=1)
-        for appearance in appearances:
-            appearance.mus_rank = ranked.rank(appearance.mus_points)
+        # SNG only
+        sng_appearances = appearances.order_by(
+            '-sng_points',
+            'competitor__group__name',
+        )
+        for index, appearance in enumerate(sng_appearances):
+            appearance.sng_rank = index + 1
             appearance.save()
-        appearances = self.appearances.filter(
-            competitor__is_private=False,
-            competitor__status__gt=0,
-        ).distinct().order_by('-per_points')
-        points = [x.per_points for x in appearances]
-        ranked = Ranking(points, start=1)
-        for appearance in appearances:
-            appearance.per_rank = ranked.rank(appearance.per_points)
+        # MUS only
+        mus_appearances = appearances.order_by(
+            '-mus_points',
+            'competitor__group__name',
+        )
+        for index, appearance in enumerate(mus_appearances):
+            appearance.mus_rank = index + 1
             appearance.save()
-        appearances = self.appearances.filter(
-            competitor__is_private=False,
-            competitor__status__gt=0,
-        ).distinct().order_by('-sng_points')
-        points = [x.sng_points for x in appearances]
-        ranked = Ranking(points, start=1)
-        for appearance in appearances:
-            appearance.sng_rank = ranked.rank(appearance.sng_points)
+        # PER only
+        per_appearances = appearances.order_by(
+            '-per_points',
+            'competitor__group__name',
+        )
+        for index, appearance in enumerate(per_appearances):
+            appearance.per_rank = index + 1
             appearance.save()
-        # Songs ranked relative to Round
-        Song = apps.get_model('api.song')
-        songs = Song.objects.filter(
-            appearance__round=self,
-            appearance__competitor__is_private=False,
-            appearance__competitor__status__gt=0,
-        ).distinct().order_by('-tot_points')
-        points = [x.tot_points for x in songs]
-        ranked = Ranking(points, strategy=ORDINAL, start=1)
-        for song in songs:
-            song.tot_rank = ranked.rank(song.tot_points)
-            song.save()
-        songs = Song.objects.filter(
-            appearance__round=self,
-            appearance__competitor__is_private=False,
-            appearance__competitor__status__gt=0,
-        ).distinct().order_by('-mus_points')
-        points = [x.mus_points for x in songs]
-        ranked = Ranking(points, start=1)
-        for song in songs:
-            song.mus_rank = ranked.rank(song.mus_points)
-            song.save()
-        songs = Song.objects.filter(
-            appearance__round=self,
-            appearance__competitor__is_private=False,
-            appearance__competitor__status__gt=0,
-        ).distinct().order_by('-per_points')
-        points = [x.per_points for x in songs]
-        ranked = Ranking(points, start=1)
-        for song in songs:
-            song.per_rank = ranked.rank(song.per_points)
-            song.save()
-        songs = Song.objects.filter(
-            appearance__round=self,
-            appearance__competitor__is_private=False,
-            appearance__competitor__status__gt=0,
-        ).distinct().order_by('-sng_points')
-        points = [x.sng_points for x in songs]
-        ranked = Ranking(points, start=1)
-        for song in songs:
-            song.sng_rank = ranked.rank(song.sng_points)
-            song.save()
         return
 
     def create_grids(self, onstage, duration, start, finish):

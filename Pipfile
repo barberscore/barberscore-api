@@ -34,7 +34,6 @@ openpyxl = "*"
 pillow = "*"
 pydf = {git = "https://github.com/barberscore/pydf.git"}
 python-pdf = "*"
-ranking = "*"
 redis = "*"
 requests = "*"
 rq = "*"
