@@ -48,7 +48,6 @@ class Convention(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-30, 'test', 'Test',),
         (-25, 'manual', 'Manual',),
         (-20, 'incomplete', 'Incomplete',),
         (-15, 'imported', 'Imported',),
@@ -209,16 +208,18 @@ class Convention(TimeStampedModel):
 
     # Convention Transition Conditions
     def can_activate(self):
-        return all([
-            self.open_date,
-            self.close_date,
-            self.start_date,
-            self.end_date,
-            self.open_date < self.close_date,
-            self.close_date < self.start_date,
-            self.start_date <= self.end_date,
-            self.sessions.count() > 0,
-        ])
+        if self.status == self.STATUS.new:
+            return all([
+                self.open_date,
+                self.close_date,
+                self.start_date,
+                self.end_date,
+                self.open_date < self.close_date,
+                self.close_date < self.start_date,
+                self.start_date <= self.end_date,
+                self.sessions.count() > 0,
+            ])
+        return False
 
     def can_deactivate(self):
         return all([
