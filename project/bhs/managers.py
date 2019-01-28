@@ -144,7 +144,7 @@ class RoleManager(Manager):
 class JoinManager(Manager):
     def update_members(self, cursor=None):
         # Get all records as values
-        qs = self.filter(
+        joins = self.filter(
             paid=True,
         ).select_related(
             'structure',
@@ -152,16 +152,9 @@ class JoinManager(Manager):
             'subscription__human',
         )
         if cursor:
-            qs = qs.filter(
+            joins = joins.filter(
                 modified__gt=cursor,
             )
-        joins = qs.values(
-            'structure',
-            'subscription__human',
-        ).order_by(
-            'modified',
-            '-inactive_date',
-        ).distinct()
         t = joins.count()
         # Creates race condition on multi-worker
         Member = apps.get_model('api.member')

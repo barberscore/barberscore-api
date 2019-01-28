@@ -80,8 +80,8 @@ class Command(BaseCommand):
         self.stdout.write("Queued {0} officers.".format(t))
 
         # Sync Members
-        # t = Join.objects.update_members(cursor=cursor)
-        # self.stdout.write("Queued {0} members.".format(t))
+        t = Join.objects.update_members(cursor=cursor)
+        self.stdout.write("Queued {0} members.".format(t))
 
         # Sync Subscriptions
         # t = Subscription.objects.update_users(cursor=cursor)
