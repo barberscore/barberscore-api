@@ -500,7 +500,7 @@ class Session(TimeStampedModel):
             'contests': contests,
             'is_multi': False,
         }
-        rendered = render_to_string('oss.html', context)
+        rendered = render_to_string('session/oss.html', context)
         file = pydf.generate_pdf(
             rendered,
             page_size='Legal',
