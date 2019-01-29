@@ -47,6 +47,13 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    legacy_venue = models.CharField(
+        max_length=255,
+        unique=True,
+        null=True,
+        blank=True,
+    )
+
     STATUS = Choices(
         (-25, 'manual', 'Manual',),
         (-20, 'incomplete', 'Incomplete',),

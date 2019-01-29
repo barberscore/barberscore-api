@@ -661,13 +661,21 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         'name',
-        'id',
+        # 'venue',
+        'legacy_venue',
         'start_date',
         'end_date',
         'year',
         'season',
         'status',
     )
+
+    list_editable = [
+        # 'venue',
+        'legacy_venue',
+        'start_date',
+        'end_date',
+    ]
 
     list_filter = (
         'status',
