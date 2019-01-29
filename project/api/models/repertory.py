@@ -76,27 +76,27 @@ class Repertory(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_read_permission(request):
-        return True
-        # return any([
-        #     request.user.is_group_manager,
-        #     request.user.is_session_manager,
-        #     request.user.is_round_manager,
-        #     request.user.is_chart_manager,
-        # ])
+        return any([
+            True,
+            request.user.is_group_manager,
+            request.user.is_session_manager,
+            request.user.is_round_manager,
+            request.user.is_chart_manager,
+        ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return True
-        # return any([
-        #     # self.group.officers.filter(
-        #     #     person__user=request.user,
-        #     #     status__gt=0,
-        #     # ),
-        #     request.user.is_session_manager,
-        #     request.user.is_round_manager,
-        #     request.user.is_chart_manager,
-        # ])
+        return any([
+            True,
+            self.group.officers.filter(
+                person__user=request.user,
+                status__gt=0,
+            ),
+            request.user.is_session_manager,
+            request.user.is_round_manager,
+            request.user.is_chart_manager,
+        ])
 
     @staticmethod
     @allow_staff_or_superuser
