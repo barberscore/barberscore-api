@@ -573,13 +573,14 @@ class PersonManager(Manager):
 class UserManager(BaseUserManager):
     def check_accounts(self):
         accounts = get_accounts()
+        i = len(accounts)
         queue = django_rq.get_queue('low')
         for account in accounts:
             queue.enqueue(
                 check_account,
                 account,
             )
-        return
+        return i
 
     def delete_orphans(self):
         auth0 = get_auth0()

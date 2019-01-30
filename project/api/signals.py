@@ -13,14 +13,18 @@ from .models import User
 
 @receiver(post_save, sender=Person)
 def person_post_save(sender, instance, created, **kwargs):
+    queue = django_rq.get_queue('low')
     if created and instance.email:
-        User.objects.create_user(person=instance)
-    # user = getattr(instance, 'user', None)
-    # if user and instance.tracker.has_changed('email'):
-    #     if instance.email:
-    #         instance.user.update_account()
-    #     else:
-    #         instance.user.delete_account()
+        queue.enqueue(
+            User.objects.create_user,
+            instance,
+        )
+    elif not created and instance.email:
+        queue.enqueue(
+            instance.user.update_account
+        )
+    elif not created and not instance.email:
+        instance.user.delete()
     return
 
 
