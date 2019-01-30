@@ -218,9 +218,10 @@ class User(AbstractBaseUser):
 
     def delete_account(self):
         auth0 = get_auth0()
+        username = self.username
         # Delete Auth0
-        result = auth0.users.delete(self.username)
-        return result
+        auth0.users.delete(username)
+        return "Deleted: {0}".format(username)
 
     # User Permissions
     @staticmethod
