@@ -66,7 +66,7 @@ def check_officer(officer):
             human__id=officer.person.mc_pk,
         ).latest(
             'modified',
-            '-inactive_date',
+            'created',
         )
     except Role.DoesNotExist:
         gone = str(officer)
