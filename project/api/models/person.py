@@ -330,7 +330,7 @@ class Person(TimeStampedModel):
             current_through = self.members.get(
                 group__bhs_id=1,
             ).end_date
-        except:
+        except self.members.model.DoesNotExist:
             current_through = None
         return current_through
 
