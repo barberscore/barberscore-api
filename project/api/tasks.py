@@ -44,6 +44,11 @@ def check_account(account):
         auth0 = get_auth0()
         auth0.users.delete(account[0])
         return "Deleted: {0}".format(account[0])
+    # Delete accounts with no valid email
+    if not user.person.email:
+        auth0 = get_auth0()
+        auth0.users.delete(account[0])
+        return "Deleted: {0}".format(account[0])
     # Ensure sync
     check = any([
         user.person.email != account[1],
