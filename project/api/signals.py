@@ -1,3 +1,5 @@
+import django_rq
+
 # Django
 from django.db.models.signals import pre_delete
 from django.db.models.signals import post_save
@@ -25,5 +27,8 @@ def person_post_save(sender, instance, created, **kwargs):
 @receiver(pre_delete, sender=User)
 def user_pre_delete(sender, instance, **kwargs):
     if not instance.is_staff:
-        instance.delete_account
+        queue = django_rq.get_queue('low')
+        queue.enqueue(
+            instance.delete_account
+        )
     return
