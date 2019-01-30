@@ -224,15 +224,16 @@ class Competitor(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_read_permission(request):
-        return True
-        # return any([
-        #     request.user.is_round_manager,
-        # ])
+        return any([
+            True,
+            request.user.is_round_manager,
+        ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
         return any([
+            True,
             self.session.convention.assignments.filter(
                 person__user=request.user,
                 status__gt=0,

@@ -57,7 +57,7 @@ def test_competitor_endpoint(user_api_client, competitor):
     assert response.status_code == status.HTTP_200_OK
     path = reverse('competitor-detail', args=(str(competitor.id),))
     response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == status.HTTP_200_OK
 
 
 def test_contest_endpoint(user_api_client, contest):
