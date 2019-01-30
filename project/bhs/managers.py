@@ -97,7 +97,7 @@ class StructureManager(Manager):
 
 
 class RoleManager(Manager):
-    def get_flats(self, cursor=None):
+    def update_officers(self, cursor=None):
         roles = self.select_related(
             'structure',
             'human',
@@ -106,37 +106,14 @@ class RoleManager(Manager):
             roles = roles.filter(
                 modified__gt=cursor,
             )
-        flats = roles.values(
-            'structure',
-            'human',
-            'name',
-        ).distinct()
-        return flats
-
-    def get_role_from_flat(self, flat):
-        return self.filter(
-            **flat,
-        ).latest(
-            'modified',
-            'created',
-        )
-
-    def update_or_create_officer_from_flat(self, flat):
+        t = roles.count()
+        # Creates race condition on multi-worker
         Officer = apps.get_model('api.officer')
-        role = self.get_role_from_flat(flat)
-        officer, created = Officer.objects.update_or_create_from_role(role)
-        return officer, created
-
-    def update_officers(self, cursor=None):
-        # Get base
-        flats = self.get_flats(cursor)
-        t = flats.count()
-        # Creating/Update From Flattened Record
         queue = django_rq.get_queue('low')
-        for flat in flats:
+        for role in roles:
             queue.enqueue(
-                self.update_or_create_officer_from_flat,
-                flat,
+                Officer.objects.update_or_create_from_role,
+                role,
             )
         return t
 

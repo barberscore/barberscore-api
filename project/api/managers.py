@@ -34,6 +34,7 @@ from django.utils.timezone import now
 from api.tasks import get_accounts
 from api.tasks import get_auth0
 from api.tasks import check_member
+from api.tasks import check_officer
 
 log = logging.getLogger(__name__)
 
@@ -472,6 +473,21 @@ class OfficerManager(Manager):
             defaults=defaults,
         )
         return officer, created
+
+    def check_officers(self):
+        officers = self.filter(
+            group__mc_pk__isnull=False,
+        ).select_related(
+            'group',
+            'person',
+        )
+        queue = django_rq.get_queue('low')
+        for officer in officers:
+            queue.enqueue(
+                check_officer,
+                officer,
+            )
+        return
 
 
 class PersonManager(Manager):

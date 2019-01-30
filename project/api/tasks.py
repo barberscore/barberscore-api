@@ -55,6 +55,26 @@ def check_member(member):
     return Member.objects.update_or_create_from_join(join)
 
 
+def check_officer(officer):
+    if not officer.group.mc_pk:
+        raise RuntimeError("Not an MC entity.")
+    Role = apps.get_model('bhs.role')
+    Officer = apps.get_model('api.officer')
+    try:
+        role = Role.objects.filter(
+            structure__id=officer.group.mc_pk,
+            human__id=officer.person.mc_pk,
+        ).latest(
+            'modified',
+            '-inactive_date',
+        )
+    except Role.DoesNotExist:
+        gone = str(officer)
+        officer.delete()
+        return gone, "Deleted"
+    return Officer.objects.update_or_create_from_role(role)
+
+
 def get_auth0():
     auth0_api_access_token = cache.get('auth0_api_access_token')
     if not auth0_api_access_token:
