@@ -151,7 +151,7 @@ class Score(TimeStampedModel):
                 self.song.appearance.competitor.status == self.song.appearance.competitor.STATUS.finished,
             ]),
             all([
-                self.panelist.person == request.user,
+                getattr(getattr(self.panelist, 'person', None), 'user', None) == request.user,
             ]),
             all([
                 self.song.appearance.competitor.group.officers.filter(
