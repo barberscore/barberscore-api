@@ -14,6 +14,7 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 # Django
+from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
@@ -81,15 +82,18 @@ class Repertory(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
+        Assignment = apps.get_model('api.assignment')
         return any([
             True,
             self.group.officers.filter(
                 person__user=request.user,
                 status__gt=0,
             ),
-            request.user.is_session_manager,
-            request.user.is_round_manager,
-            request.user.is_chart_manager,
+            self.group.competitors.filter(
+                session__convention__assignments__person__user=request.user,
+                session__convention__assignments__status__gt=0,
+                session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
+            )
         ])
 
     @staticmethod

@@ -24,7 +24,11 @@ from django.utils.text import slugify
 
 # Local
 from .filterbackends import AppearanceFilterBackend
+from .filterbackends import CompetitorFilterBackend
+from .filterbackends import OutcomeFilterBackend
+from .filterbackends import RepertoryFilterBackend
 from .filterbackends import ScoreFilterBackend
+from .filterbackends import SongFilterBackend
 from .filtersets import AssignmentFilterset
 from .filtersets import ConventionFilterset
 from .filtersets import MemberFilterset
@@ -481,6 +485,7 @@ class CompetitorViewSet(viewsets.ModelViewSet):
     serializer_class = CompetitorSerializer
     filter_backends = [
         DjangoFilterBackend,
+        CompetitorFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -852,6 +857,7 @@ class OutcomeViewSet(viewsets.ModelViewSet):
     serializer_class = OutcomeSerializer
     filter_backends = [
         DjangoFilterBackend,
+        OutcomeFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -971,6 +977,7 @@ class RepertoryViewSet(viewsets.ModelViewSet):
     serializer_class = RepertorySerializer
     filter_backends = [
         DjangoFilterBackend,
+        RepertoryFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -1585,6 +1592,7 @@ class SongViewSet(viewsets.ModelViewSet):
     filterset_class = None
     filter_backends = [
         DjangoFilterBackend,
+        SongFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
