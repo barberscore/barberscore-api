@@ -71,7 +71,7 @@ def check_account(account):
 
 
 def create_or_update_account_from_person(person):
-    user = getattr(person, 'user')
+    user = getattr(person, 'user', None)
     if user:
         if user.is_staff:
             raise ValueError('Staff should not have accounts')
