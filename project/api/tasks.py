@@ -55,9 +55,76 @@ def check_account(account):
         user.person.common_name != account[2],
     ])
     if check:
-        user.update_account()
+        auth0 = get_auth0()
+        email = user.person.email.lower()
+        name = user.person.common_name
+        payload = {
+            'email': email,
+            'email_verified': True,
+            'app_metadata': {
+                'name': name,
+            }
+        }
+        auth0.users.update(user.username, payload)
         return "Updated: {0}".format(account[0])
     return "Skipped: {0}".format(account[0])
+
+
+def create_or_update_account_from_person(person):
+    if person.user:
+        if person.user.is_staff:
+            raise ValueError('Staff should not have accounts')
+        auth0 = get_auth0()
+        email = person.email.lower()
+        name = person.common_name
+        payload = {
+            'email': email,
+            'email_verified': True,
+            'app_metadata': {
+                'name': name,
+            }
+        }
+        account = auth0.users.update(person.user.username, payload)
+        created = False
+    else:
+        auth0 = get_auth0()
+        password = get_random_string()
+        email = person.email.lower()
+        name = person.common_name
+        payload = {
+            'connection': 'Default',
+            'email': email,
+            'email_verified': True,
+            'password': password,
+            'app_metadata': {
+                'name': name,
+            }
+        }
+        account = auth0.users.create(payload)
+        created = True
+    return account, created
+
+
+def delete_account_from_person(person):
+    auth0 = get_auth0()
+    username = person.user.username
+    # Delete Auth0
+    auth0.users.delete(username)
+    return "Deleted: {0}".format(username)
+
+
+def person_post_save_handler(person):
+    User = apps.get_model('api.user')
+    if person.email:
+        account, created = create_or_update_account_from_person(person)
+        if created:
+            User.objects.create_user(
+                username=account['user_id'],
+                person=person,
+            )
+    else:
+        delete_account_from_person(person)
+    return
 
 
 def check_member(member):

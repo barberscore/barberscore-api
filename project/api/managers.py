@@ -599,23 +599,8 @@ class UserManager(BaseUserManager):
                 )
         return i
 
-    def create_user(self, person, **kwargs):
-        pk = uuid.uuid4()
-        auth0 = get_auth0()
-        password = self.make_random_password()
-        payload = {
-            'connection': 'Default',
-            'email': person.email,
-            'email_verified': True,
-            'password': password,
-            'app_metadata': {
-                'name': person.common_name,
-            }
-        }
-        account = auth0.users.create(payload)
-        username = account['user_id']
+    def create_user(self, username, person, **kwargs):
         user = self.model(
-            id=pk,
             username=username,
             person=person,
             **kwargs

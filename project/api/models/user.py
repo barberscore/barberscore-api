@@ -199,30 +199,6 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return self.is_staff
 
-    # Methods
-    def update_account(self):
-        if self.is_staff:
-            raise ValueError('Staff should not have accounts')
-        auth0 = get_auth0()
-        email = self.person.email.lower()
-        name = self.person.common_name
-        payload = {
-            'email': email,
-            'email_verified': True,
-            'app_metadata': {
-                'name': name,
-            }
-        }
-        account = auth0.users.update(self.username, payload)
-        return account
-
-    def delete_account(self):
-        auth0 = get_auth0()
-        username = self.username
-        # Delete Auth0
-        auth0.users.delete(username)
-        return "Deleted: {0}".format(username)
-
     # User Permissions
     @staticmethod
     @allow_staff_or_superuser

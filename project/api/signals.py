@@ -9,22 +9,15 @@ from django.dispatch import receiver
 from .models import Person
 from .models import User
 
+from .tasks import person_post_save_handler
 
 
 @receiver(post_save, sender=Person)
 def person_post_save(sender, instance, created, **kwargs):
     queue = django_rq.get_queue('low')
-    if created and instance.email:
-        queue.enqueue(
-            User.objects.create_user,
-            instance,
-        )
-    elif not created and instance.email:
-        queue.enqueue(
-            instance.user.update_account
-        )
-    elif not created and not instance.email:
-        instance.user.delete()
+    queue.enqueue(
+        person_post_save_handler(instance)
+    )
     return
 
 
