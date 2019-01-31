@@ -33,6 +33,32 @@ from django.utils.timezone import localdate
 
 log = logging.getLogger(__name__)
 
+def check_account(account):
+    User = apps.get_model('api.user')
+    try:
+        user = User.objects.get(
+            username=account[0],
+        )
+    except User.DoesNotExist:
+        # Delete orphan
+        auth0 = get_auth0()
+        auth0.users.delete(account[0])
+        return "Deleted: {0}".format(account[0])
+    # Delete accounts with no valid email
+    if not user.person.email:
+        auth0 = get_auth0()
+        auth0.users.delete(account[0])
+        return "Deleted: {0}".format(account[0])
+    # Ensure sync
+    check = any([
+        user.person.email != account[1],
+        user.person.common_name != account[2],
+    ])
+    if check:
+        user.update_account()
+        return "Updated: {0}".format(account[0])
+    return "Skipped: {0}".format(account[0])
+
 
 def check_member(member):
     if not member.group.mc_pk:

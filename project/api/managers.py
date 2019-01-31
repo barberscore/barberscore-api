@@ -35,6 +35,7 @@ from api.tasks import get_accounts
 from api.tasks import get_auth0
 from api.tasks import check_member
 from api.tasks import check_officer
+from api.tasks import check_account
 
 log = logging.getLogger(__name__)
 
@@ -570,6 +571,17 @@ class PersonManager(Manager):
 
 
 class UserManager(BaseUserManager):
+    def check_accounts(self):
+        accounts = get_accounts()
+        i = len(accounts)
+        queue = django_rq.get_queue('low')
+        for account in accounts:
+            queue.enqueue(
+                check_account,
+                account,
+            )
+        return i
+
     def delete_orphans(self):
         auth0 = get_auth0()
         queue = django_rq.get_queue('low')
