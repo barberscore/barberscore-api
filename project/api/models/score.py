@@ -11,13 +11,12 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 # Django
-from django.apps import apps as api_apps
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Min, Max, Count, Avg
 
-config = api_apps.get_app_config('api')
+from django.apps import apps
 
 log = logging.getLogger(__name__)
 
@@ -137,29 +136,34 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
+        Competitor = apps.get_model('api.competitor')
+        competitor = getattr(self.song.appearance, 'competitor', None)
+        if competitor:
+            competitor_checks = any([
+                all([
+                    self.song.appearance.round.panelists.filter(
+                        person__user=request.user,
+                        status__gt=0,
+                    ),
+                    self.song.appearance.competitor.status == Competitor.STATUS.finished,
+                ]),
+                all([
+                    self.song.appearance.competitor.group.officers.filter(
+                        person__user=request.user,
+                        status__gt=0,
+                    ),
+                    self.song.appearance.competitor.status == Competitor.STATUS.finished,
+                ]),
+            ])
+        else:
+            competitor_checks = False
         return any([
             self.song.appearance.round.session.convention.assignments.filter(
                 person__user=request.user,
                 status__gt=0,
                 category__lte=10,
             ),
-            all([
-                self.song.appearance.round.panelists.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-                self.song.appearance.competitor.status == self.song.appearance.competitor.STATUS.finished,
-            ]),
-            all([
-                getattr(getattr(self.panelist, 'person', None), 'user', None) == request.user,
-            ]),
-            all([
-                self.song.appearance.competitor.group.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-                self.song.appearance.competitor.status == self.song.appearance.competitor.STATUS.finished,
-            ]),
+            competitor_checks,
         ])
 
     @staticmethod

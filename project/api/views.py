@@ -23,6 +23,8 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 
 # Local
+from .filterbackends import AppearanceFilterBackend
+from .filterbackends import ScoreFilterBackend
 from .filtersets import AssignmentFilterset
 from .filtersets import ConventionFilterset
 from .filtersets import MemberFilterset
@@ -104,6 +106,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     filterset_class = None
     filter_backends = [
         DjangoFilterBackend,
+        AppearanceFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -1311,6 +1314,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     filterset_class = ScoreFilterset
     filter_backends = [
         DjangoFilterBackend,
+        ScoreFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
