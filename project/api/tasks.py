@@ -83,7 +83,9 @@ def check_member(member):
 
 def check_officer(officer):
     if not officer.group.mc_pk:
-        raise RuntimeError("Not an MC entity.")
+        raise RuntimeError("Not an MC group.")
+    if not officer.office.mc_pk:
+        raise RuntimeError("Not an MC office.")
     Role = apps.get_model('bhs.role')
     Officer = apps.get_model('api.officer')
     try:
