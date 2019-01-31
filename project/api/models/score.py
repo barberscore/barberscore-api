@@ -132,11 +132,7 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_read_permission(request):
-        return any([
-            request.user.is_session_manager,
-            request.user.is_round_manager,
-            request.user.is_scoring_manager,
-        ])
+        return True
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -153,6 +149,9 @@ class Score(TimeStampedModel):
                     status__gt=0,
                 ),
                 self.song.appearance.competitor.status == self.song.appearance.competitor.STATUS.finished,
+            ]),
+            all([
+                self.panelist.person == request.user,
             ]),
             all([
                 self.song.appearance.competitor.group.officers.filter(
