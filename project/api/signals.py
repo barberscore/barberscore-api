@@ -16,7 +16,8 @@ from .tasks import person_post_save_handler
 def person_post_save(sender, instance, created, **kwargs):
     queue = django_rq.get_queue('low')
     queue.enqueue(
-        person_post_save_handler(instance)
+        person_post_save_handler,
+        instance,
     )
     return
 
