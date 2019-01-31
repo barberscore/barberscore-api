@@ -71,8 +71,9 @@ def check_account(account):
 
 
 def create_or_update_account_from_person(person):
-    if person.user:
-        if person.user.is_staff:
+    user = getattr(person, 'user')
+    if user:
+        if user.is_staff:
             raise ValueError('Staff should not have accounts')
         auth0 = get_auth0()
         email = person.email.lower()
@@ -84,7 +85,7 @@ def create_or_update_account_from_person(person):
                 'name': name,
             }
         }
-        account = auth0.users.update(person.user.username, payload)
+        account = auth0.users.update(user.username, payload)
         created = False
     else:
         auth0 = get_auth0()
