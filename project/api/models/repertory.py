@@ -84,7 +84,6 @@ class Repertory(TimeStampedModel):
     def has_object_read_permission(self, request):
         Assignment = apps.get_model('api.assignment')
         return any([
-            True,
             self.group.officers.filter(
                 person__user=request.user,
                 status__gt=0,

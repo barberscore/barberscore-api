@@ -137,33 +137,31 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         Competitor = apps.get_model('api.competitor')
-        competitor = getattr(self.song.appearance, 'competitor', None)
-        if competitor:
-            competitor_checks = any([
-                all([
-                    self.song.appearance.round.panelists.filter(
-                        person__user=request.user,
-                        status__gt=0,
-                    ),
-                    self.song.appearance.competitor.status == Competitor.STATUS.finished,
-                ]),
-                all([
-                    self.song.appearance.competitor.group.officers.filter(
-                        person__user=request.user,
-                        status__gt=0,
-                    ),
-                    self.song.appearance.competitor.status == Competitor.STATUS.finished,
-                ]),
-            ])
-        else:
-            competitor_checks = False
+        if not self.song.appearance.competitor:
+            return False
+        if not self.panelist.person:
+            return False
         return any([
             self.song.appearance.round.session.convention.assignments.filter(
                 person__user=request.user,
                 status__gt=0,
                 category__lte=10,
             ),
-            competitor_checks,
+            self.panelist.person.user == request.user,
+            all([
+                self.song.appearance.round.panelists.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                ),
+                self.song.appearance.competitor.status == Competitor.STATUS.finished,
+            ]),
+            all([
+                self.song.appearance.competitor.group.officers.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                ),
+                self.song.appearance.competitor.status == Competitor.STATUS.finished,
+            ]),
         ])
 
     @staticmethod

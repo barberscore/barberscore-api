@@ -100,18 +100,23 @@ class ScoreFilterBackend(DRYPermissionFiltersBase):
             return queryset
         queryset = queryset.filter(
             Q(
-                song__appearance__competitor__group__members__person__user=request.user,
-                song__appearance__competitor__group__members__status__gt=0,
-                song__appearance__competitor__status__gt=Competitor.STATUS.finished,
+                song__appearance__round__session__convention__assignments__person__user=request.user,
+                song__appearance__round__session__convention__assignments__status__gt=0,
+                song__appearance__round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
             ) |
             Q(
                 panelist__person__user=request.user,
                 panelist__status__gt=0,
             ) |
             Q(
-                song__appearance__round__session__convention__assignments__person__user=request.user,
-                song__appearance__round__session__convention__assignments__status__gt=0,
-                song__appearance__round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
+                song__appearance__round__panelists__person__user=request.user,
+                song__appearance__round__panelists__status__gt=0,
+                song__appearance__competitor__status__gt=Competitor.STATUS.finished,
+            ) |
+            Q(
+                song__appearance__competitor__group__officers__person__user=request.user,
+                song__appearance__competitor__group__officers__status__gt=0,
+                song__appearance__competitor__status__gt=Competitor.STATUS.finished,
             )
         ).distinct()
         return queryset
