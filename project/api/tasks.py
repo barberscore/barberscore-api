@@ -107,8 +107,11 @@ def create_or_update_account_from_person(person):
 
 
 def delete_account_from_person(person):
+    user = getattr(person, 'user', None)
+    if not user:
+        return "No user for person"
     auth0 = get_auth0()
-    username = person.user.username
+    username = user.username
     # Delete Auth0
     auth0.users.delete(username)
     return "Deleted: {0}".format(username)
