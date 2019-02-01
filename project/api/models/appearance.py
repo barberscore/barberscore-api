@@ -2,6 +2,8 @@
 # Standard Library
 import uuid
 import pydf
+from builtins import round as rnd
+
 from random import randint
 
 # Third-Party
@@ -197,6 +199,13 @@ class Appearance(TimeStampedModel):
                     {'competitor': 'Competitor kind must match session'}
                 )
 
+    def save(self, *args, **kwargs):
+        # Save all scores as single-digit
+        self.mus_score = rnd(self.mus_score, 1)
+        self.per_score = rnd(self.per_score, 1)
+        self.sng_score = rnd(self.sng_score, 1)
+        self.tot_score = rnd(self.tot_score, 1)
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = [
