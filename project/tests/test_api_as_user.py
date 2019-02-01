@@ -57,7 +57,7 @@ def test_competitor_endpoint(user_api_client, competitor):
     assert response.status_code == status.HTTP_200_OK
     path = reverse('competitor-detail', args=(str(competitor.id),))
     response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 def test_contest_endpoint(user_api_client, contest):
@@ -174,7 +174,7 @@ def test_repertory_endpoint(user_api_client, repertory):
     assert response.status_code == status.HTTP_200_OK
     path = reverse('repertory-detail', args=(str(repertory.id),))
     response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 def test_round_endpoint(user_api_client, round):

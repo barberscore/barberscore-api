@@ -222,10 +222,14 @@ class Competitor(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         # Save all scores as single-digit
-        self.mus_score = rnd(self.mus_score, 1)
-        self.per_score = rnd(self.per_score, 1)
-        self.sng_score = rnd(self.sng_score, 1)
-        self.tot_score = rnd(self.tot_score, 1)
+        if self.mus_score:
+            self.mus_score = rnd(self.mus_score, 1)
+        if self.per_score:
+            self.per_score = rnd(self.per_score, 1)
+        if self.sng_score:
+            self.sng_score = rnd(self.sng_score, 1)
+        if self.tot_score:
+            self.tot_score = rnd(self.tot_score, 1)
         super().save(*args, **kwargs)
 
     # Competitor Permissions

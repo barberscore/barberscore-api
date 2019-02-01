@@ -139,6 +139,8 @@ class Score(TimeStampedModel):
         Competitor = apps.get_model('api.competitor')
         if not self.song.appearance.competitor:
             return False
+        if not self.panelist:
+            return False
         if not self.panelist.person:
             return False
         return any([
