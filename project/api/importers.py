@@ -53,6 +53,67 @@ def print_headers(path):
         for key, value in enumerate(rows[0]):
             print(key, value)
 
+from openpyxl import Workbook
+from api.models import *
+
+ss = Song.objects.filter(
+    appearance__round__session__convention__year=2014,
+).order_by(
+    'appearance__round__session__convention__name',
+    'appearance__round__session',
+    'appearance__round',
+    'appearance__num',
+    'num',
+)
+wb = Workbook()
+ws = wb.active
+fieldnames = [
+    'Year',
+    'Season',
+    'District Code',
+    'Convention',
+    'Session',
+    'Round',
+    'Panelists',
+    'Appearance Num',
+    'Group Name',
+    'Song Num',
+    'Chart Title',
+    'MUS Points',
+    'PER Points',
+    'SNG Points',
+    'TOT Points',
+    'MUS Score',
+    'PER Score',
+    'SNG Score',
+    'TOT Score',
+]
+ws.append(fieldnames)
+for s in ss:
+    row = [
+        s.appearance.round.session.convention.year,
+        s.appearance.round.session.convention.get_season_display(),
+        s.appearance.round.session.convention.group.code,
+        s.appearance.round.session.convention.name,
+        s.appearance.round.session.get_kind_display(),
+        s.appearance.round.get_kind_display(),
+        s.appearance.round.panelists.filter(kind=10).count(),
+        s.appearance.num,
+        s.appearance.legacy_group,
+        s.num,
+        s.legacy_chart,
+        s.mus_points,
+        s.per_points,
+        s.sng_points,
+        s.tot_points,
+        s.mus_score,
+        s.per_score,
+        s.sng_score,
+        s.tot_score,
+    ]
+    ws.append(row)
+
+
 def import_flat(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
