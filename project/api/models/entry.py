@@ -283,7 +283,8 @@ class Entry(TimeStampedModel):
         ccs = []
         assignments = self.session.convention.assignments.filter(
             category__lt=10,
-        ).exclude(person__email=None)
+            person__email__isnull=False
+        )
         tos = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
         ccs = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
         if self.group.kind == self.group.KIND.quartet:
