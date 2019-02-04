@@ -1013,7 +1013,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ],
         'Chorus': [
             OfficerInline,
-            # MemberInline,
+            MemberInline,
             RepertoryInline,
             # EntryInline,
             CompetitorInline,
