@@ -48,7 +48,7 @@ class NoGroupMembersJSONRenderer(JSONRenderer):
     # pass
     @classmethod
     def extract_relationships(cls, fields, resource, resource_instance):
-        if resource_instance._meta.model_name == 'group' and resource_instance.kind <= 32:
+        if resource_instance._meta.model_name == 'group' and resource_instance.kind <= 30:
             try:
                 fields.pop('members')
             except KeyError:

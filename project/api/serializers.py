@@ -48,6 +48,9 @@ class StateLogSerializer(serializers.ModelSerializer):
 
 class AppearanceSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    included_serializers = {
+        'songs': 'api.serializers.SongSerializer',
+    }
 
     class Meta:
         model = Appearance
@@ -81,9 +84,19 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'permissions',
         )
 
+    class JSONAPIMeta:
+        included_resources = [
+            'songs',
+        ]
+
+
 
 class AssignmentSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    # included_serializers = {
+    #     'person': 'api.serializers.PersonSerializer',
+    #     'convention': 'api.serializers.ConventionSerializer',
+    # }
 
     class Meta:
         model = Assignment
@@ -98,6 +111,11 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'permissions',
         )
 
+    # class JSONAPIMeta:
+    #     included_resources = [
+    #         'convention',
+    #         'person',
+    #     ]
 
 class AwardSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
@@ -159,6 +177,9 @@ class ChartSerializer(serializers.ModelSerializer):
 
 class CompetitorSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    included_serializers = {
+        'appearances': 'api.serializers.AppearanceSerializer',
+    }
 
     class Meta:
         model = Competitor
@@ -189,9 +210,18 @@ class CompetitorSerializer(serializers.ModelSerializer):
             'permissions',
         )
 
+    class JSONAPIMeta:
+        included_resources = [
+            'appearances',
+        ]
+
+
 
 class ContestSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    included_serializers = {
+        'contestants': 'api.serializers.ContestantSerializer',
+    }
 
     class Meta:
         model = Contest
@@ -207,6 +237,11 @@ class ContestSerializer(serializers.ModelSerializer):
             'contestants',
             'permissions',
         )
+
+    class JSONAPIMeta:
+        included_resources = [
+            'contestants',
+        ]
 
 
 class ContenderSerializer(serializers.ModelSerializer):
@@ -266,6 +301,12 @@ class ContestantSerializer(serializers.ModelSerializer):
 
 class ConventionSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    included_serializers = {
+        'sessions': 'api.serializers.SessionSerializer',
+        'assignments': 'api.serializers.AssignmentSerializer',
+        'venue': 'api.serializers.VenueSerializer',
+        # 'person': 'api.serializers.PersonSerializer',
+    }
 
     class Meta:
         model = Convention
@@ -291,6 +332,14 @@ class ConventionSerializer(serializers.ModelSerializer):
             'permissions',
         )
 
+    class JSONAPIMeta:
+        included_resources = [
+            'sessions',
+            'assignments',
+            # 'assignments.person',
+        ]
+
+
     def validate(self, data):
         return data
 
@@ -304,6 +353,11 @@ class EntrySerializer(serializers.ModelSerializer):
     # )
     # logs = StateLogSerializer(many=True)
     statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    included_serializers = {
+        'contestants': 'api.serializers.ContestantSerializer',
+        'statelogs': 'api.serializers.StateLogSerializer',
+        'group': 'api.serializers.GroupSerializer',
+    }
 
     class Meta:
         model = Entry
@@ -343,6 +397,12 @@ class EntrySerializer(serializers.ModelSerializer):
             'statelogs',
         )
 
+    class JSONAPIMeta:
+        included_resources = [
+            'appearances',
+            'contestants',
+        ]
+
     def validate(self, data):
         """Check that the start is before the stop."""
         # if data['is_private'] and data['contestants']:
@@ -378,6 +438,13 @@ class GridSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    included_serializers = {
+        'repertories': 'api.serializers.RepertorySerializer',
+        'members': 'api.serializers.MemberSerializer',
+        'officers': 'api.serializers.OfficerSerializer',
+        'competitors': 'api.serializers.CompetitorSerializer',
+        'entries': 'api.serializers.EntrySerializer',
+    }
 
     class Meta:
         model = Group
@@ -417,6 +484,15 @@ class GroupSerializer(serializers.ModelSerializer):
             'officers',
             'repertories',
             'permissions',
+        ]
+
+    class JSONAPIMeta:
+        included_resources = [
+            'repertories',
+            'members',
+            'officers',
+            'competitors',
+            'entries',
         ]
 
     # def to_representation(self, instance):
@@ -516,6 +592,9 @@ class OutcomeSerializer(serializers.ModelSerializer):
 
 class PanelistSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    # included_serializers = {
+    #     'scores': 'api.serializers.ScoreSerializer',
+    # }
 
     class Meta:
         model = Panelist
@@ -532,9 +611,19 @@ class PanelistSerializer(serializers.ModelSerializer):
             'permissions',
         )
 
+    # class JSONAPIMeta:
+    #     included_resources = [
+    #         'scores',
+    #     ]
 
 class PersonSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    included_serializers = {
+        'assignments': 'api.serializers.AssignmentSerializer',
+        'members': 'api.serializers.MemberSerializer',
+        'officers': 'api.serializers.OfficerSerializer',
+        'panelists': 'api.serializers.PanelistSerializer',
+    }
 
     class Meta:
         model = Person
@@ -580,6 +669,14 @@ class PersonSerializer(serializers.ModelSerializer):
             'sort_name',
         ]
 
+    class JSONAPIMeta:
+        included_resources = [
+            'assignments',
+            'members',
+            'officers',
+            'panelists',
+        ]
+
 
 class RepertorySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
@@ -605,6 +702,12 @@ class RepertorySerializer(serializers.ModelSerializer):
 
 class RoundSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    included_serializers = {
+        'appearances': 'api.serializers.AppearanceSerializer',
+        'members': 'api.serializers.MemberSerializer',
+        'grids': 'api.serializers.GridSerializer',
+        'outcomes': 'api.serializers.OutcomeSerializer',
+    }
 
     class Meta:
         model = Round
@@ -626,6 +729,14 @@ class RoundSerializer(serializers.ModelSerializer):
             'outcomes',
             'permissions',
         )
+
+    class JSONAPIMeta:
+        included_resources = [
+            'appearances',
+            'members',
+            'grids',
+            'outcomes',
+        ]
 
 
 class ScoreSerializer(serializers.ModelSerializer):
@@ -650,6 +761,12 @@ class ScoreSerializer(serializers.ModelSerializer):
 class SessionSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
+    included_serializers = {
+        'contests': 'api.serializers.ContestSerializer',
+        'entries': 'api.serializers.EntrySerializer',
+        'rounds': 'api.serializers.RoundSerializer',
+    }
+
     class Meta:
         model = Session
         fields = (
@@ -672,9 +789,19 @@ class SessionSerializer(serializers.ModelSerializer):
             'permissions',
         )
 
+    class JSONAPIMeta:
+        included_resources = [
+            'contests',
+            'entries',
+            'rounds',
+        ]
+
 
 class SongSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    # included_serializers = {
+    #     'scores': 'api.serializers.ScoreSerializer',
+    # }
 
     class Meta:
         model = Song
@@ -703,6 +830,11 @@ class SongSerializer(serializers.ModelSerializer):
             'scores',
             'permissions',
         )
+
+    # class JSONAPIMeta:
+    #     included_resources = [
+    #         'scores',
+    #     ]
 
 
 class VenueSerializer(serializers.ModelSerializer):

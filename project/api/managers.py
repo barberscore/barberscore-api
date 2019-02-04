@@ -239,6 +239,22 @@ class GroupManager(Manager):
                 )
             else:
                 raise e
+        # Create sentinels for choruses
+        if created and group.kind == group.KIND.chorus:
+            Office = apps.get_model('api.office')
+            Officer = apps.get_model('api.officer')
+            office = Office.objects.get(
+                name="Chorus Manager",
+            )
+            officers = group.parent.officers.filter(
+                status__gt=0,
+            )
+            for officer in officers:
+                Officer.objects.get_or_create(
+                    office=office,
+                    person=officer.person,
+                    group=officer.group,
+                )
         return group, created
 
     def sort_tree(self):
