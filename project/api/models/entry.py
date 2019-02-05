@@ -285,8 +285,8 @@ class Entry(TimeStampedModel):
             category__lt=10,
             person__email__isnull=False
         )
-        to = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
-        cc = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
+        to = ["{0} <{1}>".format(officer.person.common_name.replace(",",""), officer.person.email) for officer in officers]
+        cc = ["{0} <{1}>".format(assignment.person.common_name.replace(",",""), assignment.person.email) for assignment in assignments]
         if self.group.kind == self.group.KIND.quartet:
             members = self.group.members.filter(
                 status__gt=0,
@@ -295,8 +295,8 @@ class Entry(TimeStampedModel):
                 person__officers__in=officers,
             ).distinct()
             for member in members:
-                ccs.append(
-                    "{0} <{1}>".format(member.person.common_name, member.person.email)
+                cc.append(
+                    "{0} <{1}>".format(member.person.common_name.replace(",",""), member.person.email)
                 )
         rendered = render_to_string(template, context)
         subject = "[Barberscore] {0} {1} {2} Session".format(

@@ -536,7 +536,7 @@ class Session(TimeStampedModel):
             status=self.convention.assignments.model.STATUS.active,
             person__email__isnull=False,
         )
-        to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
+        to = ["{0} <{1}>".format(assignment.person.common_name.replace(",",""), assignment.person.email) for assignment in assignments]
         to = list(set(to))
         email = EmailMessage(
             subject=subject,
@@ -591,7 +591,7 @@ class Session(TimeStampedModel):
                 group__parent__parent=self.convention.group,
             ).distinct()
 
-        bcc = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
+        bcc = ["{0} <{1}>".format(officer.person.common_name.replace(",",""), officer.person.email) for officer in officers]
         # Ensure uniqueness
         to = list(set(to))
         bcc = list(set(bcc))

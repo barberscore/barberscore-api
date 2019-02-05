@@ -527,7 +527,6 @@ class Round(TimeStampedModel):
         if not panelists:
             raise RuntimeError("No panelists for {0}".format(self))
         to = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email) for panelist in panelists]
-        cc = []
         context = {'round': self}
         rendered = render_to_string('sa.txt', context)
         subject = "[Barberscore] {0} {1} {2} SA".format(
@@ -543,7 +542,6 @@ class Round(TimeStampedModel):
             body=rendered,
             from_email='Barberscore <admin@barberscore.com>',
             to=to,
-            cc=cc,
         )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(

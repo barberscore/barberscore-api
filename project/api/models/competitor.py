@@ -380,7 +380,7 @@ class Competitor(TimeStampedModel):
         )
         if not officers:
             raise RuntimeError("No officers for {0}".format(self.group))
-        to = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
+        to = ["{0} <{1}>".format(officer.person.common_name.replace(",",""), officer.person.email) for officer in officers]
         cc = []
         if self.group.kind == self.group.KIND.quartet:
             members = self.group.members.filter(
@@ -390,8 +390,8 @@ class Competitor(TimeStampedModel):
                 person__officers__in=officers,
             ).distinct()
             for member in members:
-                ccs.append(
-                    "{0} <{1}>".format(member.person.common_name, member.person.email)
+                cc.append(
+                    "{0} <{1}>".format(member.person.common_name.replace(",",""), member.person.email)
                 )
         # Ensure uniqueness
         to = list(set(to))
