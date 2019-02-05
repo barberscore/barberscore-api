@@ -534,8 +534,10 @@ class Session(TimeStampedModel):
         assignments = self.convention.assignments.filter(
             category__lte=self.convention.assignments.model.CATEGORY.ca,
             status=self.convention.assignments.model.STATUS.active,
-        ).exclude(person__email=None)
+            person__email__isnull=False,
+        )
         to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
+        to = list(set(to))
         email = EmailMessage(
             subject=subject,
             body=body,
@@ -566,7 +568,8 @@ class Session(TimeStampedModel):
         assignments = self.convention.assignments.filter(
             category__lte=self.convention.assignments.model.CATEGORY.ca,
             status=self.convention.assignments.model.STATUS.active,
-        ).exclude(person__email=None)
+            person__email__isnull=False,
+        )
         to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
 
         # Start with base officers
@@ -589,6 +592,9 @@ class Session(TimeStampedModel):
             ).distinct()
 
         bcc = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
+        # Ensure uniqueness
+        to = list(set(to))
+        bcc = list(set(bcc))
         email = EmailMessage(
             subject=subject,
             body=body,
