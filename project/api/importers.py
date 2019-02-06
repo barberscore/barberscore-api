@@ -53,6 +53,157 @@ def print_headers(path):
         for key, value in enumerate(rows[0]):
             print(key, value)
 
+from openpyxl import Workbook
+from api.models import *
+
+ss = Song.objects.filter(
+    appearance__round__session__convention__year=2014,
+).order_by(
+    'appearance__round__session__convention__year',
+    'appearance__round__session__convention__season',
+    'appearance__round__session__convention__group__code',
+    'appearance__round__session__kind',
+    'appearance__round__num',
+    'appearance__num',
+    'num',
+)
+wb = Workbook()
+ws = wb.active
+fieldnames = [
+    'Year',
+    'Season',
+    'District Code',
+    'Convention',
+    'Session',
+    'Round',
+    'Panel Size',
+    'Panelists',
+    'Appearance Num',
+    'Group Name',
+    'Group Gender',
+    'Song Num',
+    'Chart Title',
+    'MUS Points',
+    'PER Points',
+    'SNG Points',
+    'TOT Points',
+    'MUS Score',
+    'PER Score',
+    'SNG Score',
+    'TOT Score',
+    'Penalties',
+]
+ws.append(fieldnames)
+for s in ss:
+    panelists = s.appearance.round.panelists.filter(
+        kind=10
+    ).order_by(
+        'legacy_name',
+    )
+    try:
+        gender = s.appearance.competitor.group.get_gender_display()
+    except AttributeError:
+        gender = "(Unknown)"
+    try:
+        panelist_list = "; ".join((panelists.values_list('legacy_name', flat=True)))
+    except TypeError:
+        panelist_list = "(Unknown)"
+    row = [
+        s.appearance.round.session.convention.year,
+        s.appearance.round.session.convention.get_season_display(),
+        s.appearance.round.session.convention.group.code,
+        s.appearance.round.session.convention.name,
+        s.appearance.round.session.get_kind_display(),
+        s.appearance.round.get_kind_display(),
+        panelists.count(),
+        panelist_list,
+        s.appearance.num,
+        s.appearance.legacy_group,
+        gender,
+        s.num,
+        s.legacy_chart,
+        s.mus_points,
+        s.per_points,
+        s.sng_points,
+        s.tot_points,
+        s.mus_score,
+        s.per_score,
+        s.sng_score,
+        s.tot_score,
+        "; ".join(s.penalties),
+    ]
+    ws.append(row)
+
+from openpyxl import Workbook
+from api.models import *
+
+ss = Score.objects.filter(
+    song__appearance__round__session__convention__year=2014,
+    song__appearance__round__session__convention__season=Convention.SEASON.summer,
+).order_by(
+    'song__appearance__round__session__convention__year',
+    'song__appearance__round__session__convention__season',
+    'song__appearance__round__session__convention__group__code',
+    'song__appearance__round__session__kind',
+    'song__appearance__round__num',
+    'song__appearance__num',
+    'song__num',
+    'num',
+)
+wb = Workbook()
+ws = wb.active
+fieldnames = [
+    'Year',
+    'Season',
+    'District Code',
+    'Convention',
+    'Session',
+    'Round',
+    'Panel Size',
+    'Appearance Num',
+    'Group Name',
+    'Group Gender',
+    'Song Num',
+    'Chart Title',
+    'Penalties',
+    'Panelist Num',
+    'Panelist Name',
+    'Category',
+    'Points',
+]
+ws.append(fieldnames)
+for s in ss:
+    panelists = s.song.appearance.round.panelists.filter(
+        kind=10
+    ).order_by(
+        'legacy_name',
+    )
+    try:
+        gender = s.song.appearance.competitor.group.get_gender_display()
+    except AttributeError:
+        gender = "(Unknown)"
+    pens = "; ".join(s.song.penalties)
+    row = [
+        s.song.appearance.round.session.convention.year,
+        s.song.appearance.round.session.convention.get_season_display(),
+        s.song.appearance.round.session.convention.group.code,
+        s.song.appearance.round.session.convention.name,
+        s.song.appearance.round.session.get_kind_display(),
+        s.song.appearance.round.get_kind_display(),
+        panelists.count(),
+        s.song.appearance.num,
+        s.song.appearance.legacy_group,
+        gender,
+        s.song.num,
+        s.song.legacy_chart,
+        pens,
+        s.num,
+        s.legacy_panelist,
+        s.get_category_display(),
+        s.points,
+    ]
+    ws.append(row)
+
 def import_flat(path):
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)

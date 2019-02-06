@@ -526,8 +526,7 @@ class Round(TimeStampedModel):
         )
         if not panelists:
             raise RuntimeError("No panelists for {0}".format(self))
-        tos = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email) for panelist in panelists]
-        ccs = []
+        to = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email) for panelist in panelists]
         context = {'round': self}
         rendered = render_to_string('sa.txt', context)
         subject = "[Barberscore] {0} {1} {2} SA".format(
@@ -535,12 +534,14 @@ class Round(TimeStampedModel):
             self.session.get_kind_display(),
             self.get_kind_display(),
         )
+        # Ensure uniqueness
+        to = list(set(to))
+        cc = list(set(cc))
         email = EmailMessage(
             subject=subject,
             body=rendered,
             from_email='Barberscore <admin@barberscore.com>',
-            to=tos,
-            cc=ccs,
+            to=to,
         )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(
