@@ -280,13 +280,12 @@ class Entry(TimeStampedModel):
         )
         if not officers:
             raise RuntimeError("No officers for {0}".format(self.group))
-        cc = []
+        ccs = []
         assignments = self.session.convention.assignments.filter(
             category__lt=10,
-            person__email__isnull=False
-        )
-        to = ["{0} <{1}>".format(officer.person.common_name.replace(",",""), officer.person.email) for officer in officers]
-        cc = ["{0} <{1}>".format(assignment.person.common_name.replace(",",""), assignment.person.email) for assignment in assignments]
+        ).exclude(person__email=None)
+        tos = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
+        ccs = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
         if self.group.kind == self.group.KIND.quartet:
             members = self.group.members.filter(
                 status__gt=0,
@@ -295,8 +294,8 @@ class Entry(TimeStampedModel):
                 person__officers__in=officers,
             ).distinct()
             for member in members:
-                cc.append(
-                    "{0} <{1}>".format(member.person.common_name.replace(",",""), member.person.email)
+                ccs.append(
+                    "{0} <{1}>".format(member.person.common_name, member.person.email)
                 )
         rendered = render_to_string(template, context)
         subject = "[Barberscore] {0} {1} {2} Session".format(
@@ -304,15 +303,12 @@ class Entry(TimeStampedModel):
             self.session.convention.name,
             self.session.get_kind_display(),
         )
-        # Ensure uniqueness
-        to = list(set(to))
-        cc = list(set(cc))
         email = EmailMessage(
             subject=subject,
             body=rendered,
             from_email='Barberscore <admin@barberscore.com>',
-            to=to,
-            cc=cc,
+            to=tos,
+            cc=ccs,
         )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(

@@ -343,15 +343,6 @@ class Person(TimeStampedModel):
             return False
         return True
 
-    @cached_property
-    def current_district(self):
-        return bool(
-            self.members.filter(
-                group__kind=11, # hardcoded for convenience
-                status__gt=0,
-            )
-        )
-
     # Internals
     objects = PersonManager()
 
