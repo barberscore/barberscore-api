@@ -213,8 +213,8 @@ class Panelist(TimeStampedModel):
         )
         if not officers:
             raise RuntimeError("No officers for {0}".format(self.group))
-        tos = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
-        ccs = []
+        to = ["{0} <{1}>".format(officer.person.common_name.replace(",",""), officer.person.email) for officer in officers]
+        cc = []
         if self.group.kind == self.group.KIND.quartet:
             members = self.group.members.filter(
                 status__gt=0,
@@ -223,8 +223,8 @@ class Panelist(TimeStampedModel):
                 person__officers__in=officers,
             ).distinct()
             for member in members:
-                ccs.append(
-                    "{0} <{1}>".format(member.person.common_name, member.person.email)
+                cc.append(
+                    "{0} <{1}>".format(member.person.common_name.replace(",",""), member.person.email)
                 )
         context = {'competitor': self}
         rendered = render_to_string('csa.txt', context)
@@ -233,12 +233,15 @@ class Panelist(TimeStampedModel):
             self.session.convention.name,
             self.session.get_kind_display(),
         )
+        # Ensure uniqueness
+        to = list(set(to))
+        cc = list(set(cc))
         email = EmailMessage(
             subject=subject,
             body=rendered,
             from_email='Barberscore <admin@barberscore.com>',
-            to=tos,
-            cc=ccs,
+            to=to,
+            cc=cc,
         )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(

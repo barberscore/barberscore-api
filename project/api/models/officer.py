@@ -97,10 +97,9 @@ class Officer(TimeStampedModel):
 
     # Internals
     class Meta:
-        pass
-        # unique_together = (
-        #     ('group', 'person', 'office'),
-        # )
+        unique_together = (
+            ('group', 'person', 'office'),
+        )
 
     class JSONAPIMeta:
         resource_name = "officer"
