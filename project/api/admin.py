@@ -1345,6 +1345,7 @@ class PanelistAdmin(admin.ModelAdmin):
         'kind',
         'round',
         'person',
+        'legacy_num',
         'legacy_name',
         'category',
     ]
@@ -1355,6 +1356,7 @@ class PanelistAdmin(admin.ModelAdmin):
         'kind',
         'category',
         'person',
+        'legacy_num',
         'legacy_name',
         'round',
     ]

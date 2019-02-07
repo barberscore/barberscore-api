@@ -585,6 +585,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'contest',
             'num',
             'name',
+            'legacy_num',
             'legacy_name',
             'permissions',
         )

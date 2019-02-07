@@ -171,7 +171,6 @@ class Complete(models.Model):
 
     panelist = models.OneToOneField(
         'Panelist',
-        related_name='completes',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,

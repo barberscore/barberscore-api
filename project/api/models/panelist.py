@@ -75,6 +75,11 @@ class Panelist(TimeStampedModel):
         blank=True,
     )
 
+    legacy_num = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     legacy_name = models.CharField(
         max_length=255,
         null=True,
