@@ -212,6 +212,8 @@ def send_email(subject, body, to, cc=None, bcc=None):
         cc = list(set(cc))
     if bcc:
         bcc = list(set(bcc))
+    cc = [x for x in cc if x not in to]
+    bcc = [x for x in bcc if x not in to]
     email = EmailMessage(
         subject=subject,
         body=body,
@@ -221,4 +223,3 @@ def send_email(subject, body, to, cc=None, bcc=None):
         bcc=bcc,
     )
     return email.send()
-
