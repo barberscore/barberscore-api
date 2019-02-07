@@ -172,6 +172,11 @@ class GroupManager(Manager):
         else:
             name = name if name else 'UNKNOWN'
 
+        # Re-construct dangling article
+        if name.endswith(", The"):
+            parsed = name.partition(", The")
+            name = "The {0}".format(parsed[0])
+
         # Clean website
         try:
             validate_url(website)
