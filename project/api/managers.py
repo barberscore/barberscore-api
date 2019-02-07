@@ -239,8 +239,8 @@ class GroupManager(Manager):
                 )
             else:
                 raise e
-        # Create sentinels for choruses
-        if created and group.kind == group.KIND.chorus:
+        # Create sentinels on every update
+        if group.kind == group.KIND.chorus:
             Office = apps.get_model('api.office')
             Officer = apps.get_model('api.officer')
             office = Office.objects.get(
