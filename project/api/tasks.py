@@ -214,7 +214,7 @@ def send_email(subject, body, to, cc=None, bcc=None):
         bcc = list(set(bcc))
     email = EmailMessage(
         subject=subject,
-        body=rendered,
+        body=body,
         from_email='Barberscore <admin@barberscore.com>',
         to=to,
         cc=cc,

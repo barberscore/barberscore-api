@@ -299,7 +299,7 @@ class Entry(TimeStampedModel):
                 cc.append(
                     "{0} <{1}>".format(member.person.common_name.replace(",",""), member.person.email)
                 )
-        rendered = render_to_string(template, context)
+        body = render_to_string(template, context)
         subject = "[Barberscore] {0} {1} {2} Session".format(
             self.group.name,
             self.session.convention.name,
@@ -309,7 +309,7 @@ class Entry(TimeStampedModel):
         result = queue.enqueue(
             send_email,
             subject=subject,
-            body=rendered,
+            body=body,
             to=to,
             cc=cc,
         )

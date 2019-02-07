@@ -540,7 +540,7 @@ class Session(TimeStampedModel):
         to = ["{0} <{1}>".format(assignment.person.common_name.replace(",",""), assignment.person.email) for assignment in assignments]
         queue = django_rq.get_queue('high')
         result = queue.enqueue(
-            send_mail,
+            send_email,
             subject=subject,
             body=body,
             to=to,

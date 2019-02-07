@@ -529,7 +529,7 @@ class Round(TimeStampedModel):
             raise RuntimeError("No panelists for {0}".format(self))
         to = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email) for panelist in panelists]
         context = {'round': self}
-        rendered = render_to_string('sa.txt', context)
+        body = render_to_string('sa.txt', context)
         subject = "[Barberscore] {0} {1} {2} SA".format(
             self.session.convention.name,
             self.session.get_kind_display(),
@@ -540,7 +540,7 @@ class Round(TimeStampedModel):
         result = queue.enqueue(
             send_email,
             subject=subject,
-            body=rendered,
+            body=body,
             to=to,
         )
         return result

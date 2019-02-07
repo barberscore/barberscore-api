@@ -21,6 +21,10 @@ from django.template.loader import render_to_string
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
 
+import django_rq
+from api.tasks import send_email
+
+
 log = logging.getLogger(__name__)
 
 
@@ -227,7 +231,7 @@ class Panelist(TimeStampedModel):
                     "{0} <{1}>".format(member.person.common_name.replace(",",""), member.person.email)
                 )
         context = {'competitor': self}
-        rendered = render_to_string('csa.txt', context)
+        body = render_to_string('csa.txt', context)
         subject = "[Barberscore] {0} {1} {2} Session CSA".format(
             self.group.name,
             self.session.convention.name,
@@ -237,7 +241,7 @@ class Panelist(TimeStampedModel):
         result = queue.enqueue(
             send_email,
             subject=subject,
-            body=rendered,
+            body=body,
             to=to,
             cc=cc,
         )

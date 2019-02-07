@@ -397,7 +397,7 @@ class Competitor(TimeStampedModel):
         to = list(set(to))
         cc = list(set(cc))
         context = {'competitor': self}
-        rendered = render_to_string('csa.txt', context)
+        body = render_to_string('csa.txt', context)
         subject = "[Barberscore] {0} {1} {2} Session CSA".format(
             self.group.name,
             self.session.convention.name,
@@ -407,7 +407,7 @@ class Competitor(TimeStampedModel):
         result = queue.enqueue(
             send_email,
             subject=subject,
-            body=rendered,
+            body=body,
             to=to,
             cc=cc,
         )
