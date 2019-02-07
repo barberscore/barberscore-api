@@ -210,10 +210,10 @@ def send_email(subject, body, to, cc=None, bcc=None):
     to = list(set(to))
     if cc:
         cc = list(set(cc))
+        cc = [x for x in cc if x not in to]
     if bcc:
         bcc = list(set(bcc))
-    cc = [x for x in cc if x not in to]
-    bcc = [x for x in bcc if x not in to]
+        bcc = [x for x in bcc if x not in to]
     email = EmailMessage(
         subject=subject,
         body=body,
