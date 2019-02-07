@@ -24,9 +24,10 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
-from django.core.mail import EmailMessage
 from django.db import models
 from django.template.loader import render_to_string
+
+from api.tasks import send_email
 
 log = logging.getLogger(__name__)
 
@@ -537,16 +538,12 @@ class Session(TimeStampedModel):
             person__email__isnull=False,
         )
         to = ["{0} <{1}>".format(assignment.person.common_name.replace(",",""), assignment.person.email) for assignment in assignments]
-        to = list(set(to))
-        email = EmailMessage(
-            subject=subject,
-            body=body,
-            from_email='Barberscore <admin@barberscore.com>',
-            to=to,
-        )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(
-            email.send
+            send_mail,
+            subject=subject,
+            body=body,
+            to=to,
         )
         return result
 
@@ -592,19 +589,13 @@ class Session(TimeStampedModel):
             ).distinct()
 
         bcc = ["{0} <{1}>".format(officer.person.common_name.replace(",",""), officer.person.email) for officer in officers]
-        # Ensure uniqueness
-        to = list(set(to))
-        bcc = list(set(bcc))
-        email = EmailMessage(
-            subject=subject,
-            body=body,
-            from_email='Barberscore <admin@barberscore.com>',
-            to=to,
-            bcc=bcc,
-        )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(
-            email.send
+            send_email,
+            subject=subject,
+            body=body,
+            to=to,
+            bcc=bcc,
         )
         return result
 

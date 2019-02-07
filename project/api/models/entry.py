@@ -19,7 +19,8 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
+
+from api.tasks import send_email
 
 log = logging.getLogger(__name__)
 
@@ -304,19 +305,13 @@ class Entry(TimeStampedModel):
             self.session.convention.name,
             self.session.get_kind_display(),
         )
-        # Ensure uniqueness
-        to = list(set(to))
-        cc = list(set(cc))
-        email = EmailMessage(
-            subject=subject,
-            body=rendered,
-            from_email='Barberscore <admin@barberscore.com>',
-            to=to,
-            cc=cc,
-        )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(
-            email.send
+            send_email,
+            subject=subject,
+            body=rendered,
+            to=to,
+            cc=cc,
         )
         return result
 

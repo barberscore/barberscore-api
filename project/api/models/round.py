@@ -17,7 +17,6 @@ from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from PyPDF2 import PdfFileMerger
-from django.core.mail import EmailMessage
 from django.db.models import Sum, Max
 # Django
 from django.apps import apps
@@ -29,6 +28,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
+
+from api.tasks import send_email
 
 log = logging.getLogger(__name__)
 
@@ -535,17 +536,12 @@ class Round(TimeStampedModel):
             self.get_kind_display(),
         )
         # Ensure uniqueness
-        to = list(set(to))
-        cc = list(set(cc))
-        email = EmailMessage(
-            subject=subject,
-            body=rendered,
-            from_email='Barberscore <admin@barberscore.com>',
-            to=to,
-        )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(
-            email.send
+            send_email,
+            subject=subject,
+            body=rendered,
+            to=to,
         )
         return result
 

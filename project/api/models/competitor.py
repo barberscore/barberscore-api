@@ -25,11 +25,11 @@ from django.db.models import Avg
 from django.db.models import Q
 from django.db.models import Sum
 from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
 from django.utils.text import slugify
 
 # First-Party
 from api.fields import UploadPath
+from api.tasks import send_mail
 
 log = logging.getLogger(__name__)
 
@@ -403,16 +403,13 @@ class Competitor(TimeStampedModel):
             self.session.convention.name,
             self.session.get_kind_display(),
         )
-        email = EmailMessage(
-            subject=subject,
-            body=rendered,
-            from_email='Barberscore <admin@barberscore.com>',
-            to=to,
-            cc=cc,
-        )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(
-            email.send
+            send_email,
+            subject=subject,
+            body=rendered,
+            to=to,
+            cc=cc,
         )
         return result
 

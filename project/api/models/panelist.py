@@ -233,18 +233,12 @@ class Panelist(TimeStampedModel):
             self.session.convention.name,
             self.session.get_kind_display(),
         )
-        # Ensure uniqueness
-        to = list(set(to))
-        cc = list(set(cc))
-        email = EmailMessage(
-            subject=subject,
-            body=rendered,
-            from_email='Barberscore <admin@barberscore.com>',
-            to=to,
-            cc=cc,
-        )
         queue = django_rq.get_queue('high')
         result = queue.enqueue(
-            email.send
+            send_email,
+            subject=subject,
+            body=rendered,
+            to=to,
+            cc=cc,
         )
         return result
