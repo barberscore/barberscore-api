@@ -53,8 +53,8 @@ class Song(TimeStampedModel):
 
     legacy_chart = models.CharField(
         max_length=255,
+        null=True,
         blank=True,
-        default='',
     )
 
     asterisks = ArrayField(
