@@ -29,7 +29,7 @@ from django.utils.text import slugify
 
 # First-Party
 from api.fields import UploadPath
-from api.tasks import send_mail
+from api.tasks import send_email
 
 log = logging.getLogger(__name__)
 
