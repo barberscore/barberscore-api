@@ -19,14 +19,14 @@ class Selection(models.Model):
         blank=True,
     )
 
-    season_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
     year = models.IntegerField(
         null=True,
         blank=True,
+    )
+
+    season_raw = models.CharField(
+        blank=True,
+        max_length=255,
     )
 
     district_raw = models.CharField(
@@ -77,7 +77,6 @@ class Selection(models.Model):
         (46, 'vlq', "VLQ"),
     )
 
-
     session_kind = models.IntegerField(
         null=True,
         blank=True,
@@ -115,10 +114,12 @@ class Selection(models.Model):
         blank=True,
         max_length=255,
     )
+
     totals = models.IntegerField(
         null=True,
         blank=True,
     )
+
     points = ArrayField(
         base_field=models.IntegerField(
             null=True,
@@ -127,6 +128,7 @@ class Selection(models.Model):
         null=True,
         blank=True,
     )
+
     num_sessions = models.IntegerField(
         null=True,
         blank=True,
@@ -153,6 +155,7 @@ class Selection(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
     convention = models.ForeignKey(
         'Convention',
         related_name='selections',
@@ -160,6 +163,7 @@ class Selection(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
     session = models.ForeignKey(
         'Session',
         related_name='selections',
@@ -167,6 +171,7 @@ class Selection(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
     round = models.ForeignKey(
         'Round',
         related_name='selections',
@@ -174,6 +179,7 @@ class Selection(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
     appearance = models.ForeignKey(
         'Appearance',
         related_name='selections',
@@ -181,6 +187,7 @@ class Selection(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
     group = models.ForeignKey(
         'Group',
         related_name='selections',

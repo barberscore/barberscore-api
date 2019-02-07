@@ -82,7 +82,6 @@ class Complete(models.Model):
         (46, 'vlq', "VLQ"),
     )
 
-
     session_kind = models.IntegerField(
         null=True,
         blank=True,
@@ -116,6 +115,7 @@ class Complete(models.Model):
         null=True,
         blank=True,
     )
+
     points = ArrayField(
         base_field=models.IntegerField(
             null=True,
@@ -124,6 +124,7 @@ class Complete(models.Model):
         null=True,
         blank=True,
     )
+
     num_sessions = models.IntegerField(
         null=True,
         blank=True,
@@ -151,6 +152,7 @@ class Complete(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
     session = models.ForeignKey(
         'Session',
         related_name='completes',
@@ -158,6 +160,7 @@ class Complete(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
     round = models.ForeignKey(
         'Round',
         related_name='completes',
@@ -165,6 +168,7 @@ class Complete(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
     panelist = models.OneToOneField(
         'Panelist',
         related_name='completes',
@@ -172,6 +176,7 @@ class Complete(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
     person = models.ForeignKey(
         'Person',
         related_name='completes',
@@ -179,6 +184,7 @@ class Complete(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
     class Meta:
         unique_together = (
             (
