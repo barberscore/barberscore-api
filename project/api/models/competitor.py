@@ -217,7 +217,7 @@ class Competitor(TimeStampedModel):
     def __str__(self):
         return "{0} {1}".format(
             self.session,
-            self.group.name,
+            self.group,
         )
 
     def save(self, *args, **kwargs):
