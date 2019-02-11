@@ -189,6 +189,7 @@ class Competitor(TimeStampedModel):
         'Group',
         related_name='competitors',
         on_delete=models.CASCADE,
+        null=True,
     )
 
     entry = models.OneToOneField(
