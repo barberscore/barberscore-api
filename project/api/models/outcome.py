@@ -48,6 +48,11 @@ class Outcome(TimeStampedModel):
         blank=True,
     )
 
+    legacy_num = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
     legacy_name = models.CharField(
         max_length=1024,
         null=True,
