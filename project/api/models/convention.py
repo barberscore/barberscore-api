@@ -184,6 +184,10 @@ class Convention(TimeStampedModel):
             raise ValidationError(
                 {'group': 'Owning group must be at least district'}
             )
+        if not self.venue and not self.legacy_venue:
+            raise ValidationError(
+                {'venue': 'Convention must have either venue or legacy venue.'}
+            )
 
     # Convention Permissions
     @staticmethod
