@@ -128,7 +128,6 @@ class AppearanceInline(admin.TabularInline):
     model = Appearance
     fields = [
         'competitor',
-        'legacy_group',
         'status',
         'num',
         'draw',
@@ -465,11 +464,9 @@ class PanelistInline(admin.TabularInline):
         'status',
         'category',
         'kind',
-        'person',
-        'legacy_num',
-        'legacy_name',
-        'round',
         'num',
+        'person',
+        'round',
     ]
     readonly_fields = [
         'status',
@@ -479,10 +476,7 @@ class PanelistInline(admin.TabularInline):
         'round',
     ]
     ordering = (
-        'category',
-        'kind',
-        'person__last_name',
-        'person__first_name',
+        'num',
     )
     extra = 0
     show_change_link = True

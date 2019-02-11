@@ -281,7 +281,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'actual_start',
         'actual_finish',
-        ('competitor', 'legacy_group',),
+        'competitor',
         'round',
         'num',
         'draw',
@@ -1345,8 +1345,6 @@ class PanelistAdmin(admin.ModelAdmin):
         'kind',
         'round',
         'person',
-        'legacy_num',
-        'legacy_name',
         'category',
     ]
 
@@ -1356,8 +1354,6 @@ class PanelistAdmin(admin.ModelAdmin):
         'kind',
         'category',
         'person',
-        'legacy_num',
-        'legacy_name',
         'round',
     ]
 
@@ -1605,7 +1601,6 @@ class ScoreAdmin(admin.ModelAdmin):
         # 'status',
         'song',
         'panelist',
-        'legacy_panelist',
         'category',
         'kind',
         'points',
