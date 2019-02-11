@@ -133,10 +133,8 @@ class CompleteAdmin(admin.ModelAdmin):
         'row',
         # 'mark',
         # 'convention_raw',
-        'convention',
         'session_raw',
         'session_kind',
-        'session',
         # 'round_raw',
         # 'round_kind',
         # 'id',
@@ -172,13 +170,6 @@ class CompleteAdmin(admin.ModelAdmin):
     )
     readonly_fields = [
         'id',
-    ]
-    autocomplete_fields = [
-        'convention',
-        'session',
-        'round',
-        'panelist',
-        'person',
     ]
     search_fields = [
         'round',

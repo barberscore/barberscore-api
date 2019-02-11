@@ -4,6 +4,7 @@ from django.contrib.postgres.fields import ArrayField
 from model_utils import Choices
 
 class Complete(models.Model):
+    """LCD: Panelist"""
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -145,52 +146,7 @@ class Complete(models.Model):
         blank=True,
     )
 
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='completes',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    session = models.ForeignKey(
-        'Session',
-        related_name='completes',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    round = models.ForeignKey(
-        'Round',
-        related_name='completes',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     panelist = models.OneToOneField(
         'Panelist',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
-
-    person = models.ForeignKey(
-        'Person',
-        related_name='completes',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    class Meta:
-        unique_together = (
-            (
-                'convention',
-                'session',
-                'round',
-                'panelist',
-                'person',
-            ),
-        )
