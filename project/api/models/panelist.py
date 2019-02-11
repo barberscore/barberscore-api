@@ -129,7 +129,10 @@ class Panelist(TimeStampedModel):
         resource_name = "panelist"
 
     def __str__(self):
-        return str(self.id)
+        return "{0} {1}".format(
+            self.round,
+            self.num,
+        )
 
     def clean(self):
         if self.kind > self.KIND.practice:
