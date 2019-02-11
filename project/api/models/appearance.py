@@ -89,10 +89,9 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    legacy_group = models.CharField(
-        max_length=255,
-        blank=True,
+    legacy_num = models.IntegerField(
         null=True,
+        blank=True,
     )
 
     # Privates
