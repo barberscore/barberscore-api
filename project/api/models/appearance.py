@@ -214,7 +214,7 @@ class Appearance(TimeStampedModel):
             'num',
         ]
         unique_together = (
-            ('round', 'num',),
+            ('round', 'num', 'competitor'),
         )
 
     class JSONAPIMeta:
