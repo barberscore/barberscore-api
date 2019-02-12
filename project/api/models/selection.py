@@ -195,6 +195,15 @@ class Selection(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
+    competitor = models.ForeignKey(
+        'Competitor',
+        related_name='selections',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     class Meta:
         unique_together = (
             (
