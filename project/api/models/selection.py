@@ -151,9 +151,7 @@ class Selection(models.Model):
 
     song = models.OneToOneField(
         'Song',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
 
     convention = models.ForeignKey(
