@@ -211,8 +211,6 @@ class SelectionAdmin(admin.ModelAdmin):
         # 'session_raw',
         # 'session_kind',
         # 'session',
-        'appearance',
-        'appearance_num',
         'song',
         'song_num',
         # 'round_kind',
@@ -240,10 +238,6 @@ class SelectionAdmin(admin.ModelAdmin):
         'round_kind',
     ]
     list_select_related = [
-        'convention',
-        'session',
-        'round',
-        'appearance',
         'song',
     ]
     list_editable = [
@@ -262,7 +256,7 @@ class SelectionAdmin(admin.ModelAdmin):
         'song',
     ]
     search_fields = [
-        'round',
+        'song',
     ]
 
 @admin.register(Appearance)
