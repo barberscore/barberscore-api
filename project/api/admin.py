@@ -120,6 +120,7 @@ class CompleteAdmin(admin.ModelAdmin):
         'convention_name',
         'session_kind',
         'round_kind',
+        'category_kind',
         'panelist_name',
         'panelist_num',
         'points',
