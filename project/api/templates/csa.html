@@ -46,12 +46,7 @@
           {{competitor.session.convention.name}}
         </h4>
         <h5>
-          {% if competitor.session.convention.venue and competitor.session.convention.start_date %}
-            {{competitor.session.convention.venue.city|default:"(Unknown City)"}}, {{competitor.session.convention.venue.state|default:"(Unknown State)"}};
-            {{competitor.session.convention.start_date|date:"F j, Y"}} - {{competitor.session.convention.end_date|date:"F j, Y"}}
-          {% else %}
-            (Unknown Venue and Dates)
-          {% endif %}
+          {{competitor.session.convention.location}}; {{competitor.session.convention.start_date|date:"F j, Y"}} - {{competitor.session.convention.end_date|date:"F j, Y"}}
         </h5>
       </section>
       <section>

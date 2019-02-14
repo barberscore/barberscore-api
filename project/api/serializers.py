@@ -300,6 +300,7 @@ class ContestantSerializer(serializers.ModelSerializer):
 
 
 class ConventionSerializer(serializers.ModelSerializer):
+    timezone = TimezoneField(allow_null=True)
     permissions = DRYPermissionsField()
     included_serializers = {
         'sessions': 'api.serializers.SessionSerializer',
@@ -323,6 +324,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'start_date',
             'end_date',
             'location',
+            'timezone',
             'image',
             'description',
             'venue',

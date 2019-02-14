@@ -64,7 +64,7 @@
         Scoring Analysis {{round.session.convention.name}} {{round.session.get_kind_display}} {{round.get_kind_display}}
       </h3>
       <h4>
-        {{round.session.convention.venue.city|default:"(Unknown City)"}}, {{round.session.convention.venue.state|default:"(Unknown State)"}}; {{round.date|date:"F j, Y"|default:"(Unknown Date)"}}
+        {{round.session.convention.location}}; {{round.session.convention.start_date|date:"F j, Y"}} - {{round.session.convention.end_date|date:"F j, Y"}}
       </h4>
     </section>
     <section>

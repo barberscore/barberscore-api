@@ -650,7 +650,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         'location',
         'timezone',
-        'legacy_venue',
         'start_date',
         'end_date',
         'year',
@@ -659,8 +658,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_editable = [
-        # 'venue',
-        'legacy_venue',
+        'location',
         'start_date',
         'end_date',
     ]
@@ -1576,7 +1574,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
             # hide MyInline in the add view
             if isinstance(inline, GridInline):
                 try:
-                    timezone.activate(obj.session.convention.venue.timezone)
+                    timezone.activate(obj.session.convention.timezone)
                 except AttributeError:
                     pass
             yield inline.get_formset(request, obj), inline

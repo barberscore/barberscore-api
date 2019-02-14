@@ -135,7 +135,8 @@ class ConventionFactory(DjangoModelFactory):
     close_date = datetime.date(2017, 6, 30)
     start_date = datetime.date(2017, 7, 1)
     end_date = datetime.date(2017, 7, 8)
-    location = Faker('city')
+    location = "Nashville, TN"
+    timezone = 'US/Central'
     venue = SubFactory('api.factories.VenueFactory')
     group = SubFactory('api.factories.GroupFactory')
 

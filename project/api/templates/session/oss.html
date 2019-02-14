@@ -54,12 +54,7 @@
             {{round.session.convention.name}}
           </h4>
           <h5>
-            {% if round.session.convention.venue and round.session.convention.start_date %}
-              {{round.session.convention.venue.city|default:"(Unknown City)"}}, {{round.session.convention.venue.state|default:"(Unknown State)"}};
-              {{round.session.convention.start_date|date:"F j, Y"}} - {{round.session.convention.end_date|date:"F j, Y"}}
-            {% else %}
-              (Unknown Venue and Dates)
-            {% endif %}
+            {{round.session.convention.location}}; {{round.session.convention.start_date|date:"F j, Y"}} - {{round.session.convention.end_date|date:"F j, Y"}}
           </h5>
         </div>
       {% else %}
@@ -71,12 +66,7 @@
             {{session.convention.name}}
           </h4>
           <h5>
-            {% if round.session.convention.venue and round.session.convention.start_date %}
-              {{round.session.convention.venue.city|default:"(Unknown City)"}}, {{round.session.convention.venue.state|default:"(Unknown State)"}};
-              {{round.session.convention.start_date|date:"F j, Y"}} - {{round.session.convention.end_date|date:"F j, Y"}}
-            {% else %}
-              (Unknown Venue and Dates)
-            {% endif %}
+            {{round.session.convention.location}}; {{round.session.convention.start_date|date:"F j, Y"}} - {{round.session.convention.end_date|date:"F j, Y"}}
           </h5>
         </div>
       {% endif %}
