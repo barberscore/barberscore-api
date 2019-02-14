@@ -115,19 +115,15 @@ class CompleteAdmin(admin.ModelAdmin):
         'convention_raw',
         'session_raw',
         'round_raw',
+        'category_raw',
         'season_kind',
         'convention_name',
         'session_kind',
         'round_kind',
-        'category',
         'panelist_name',
         'panelist_num',
         'points',
-        'convention',
-        'session',
-        'round',
         'panelist',
-        'person',
     ]
     list_display = [
         'row',
@@ -157,13 +153,11 @@ class CompleteAdmin(admin.ModelAdmin):
         'session_kind',
         'round_kind',
         'district_code',
-        'category',
     ]
     ordering = (
         'year',
         'district_code',
         'season_kind',
-        'convention__name',
         'session_kind',
         'round_kind',
         'panelist_num',
@@ -173,6 +167,9 @@ class CompleteAdmin(admin.ModelAdmin):
     ]
     search_fields = [
         'round',
+    ]
+    autocomplete_fields = [
+        'panelist',
     ]
 
 @admin.register(Selection)

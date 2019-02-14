@@ -73,6 +73,11 @@ class Complete(models.Model):
         max_length=255,
     )
 
+    category_raw = models.CharField(
+        blank=True,
+        max_length=255,
+    )
+
     SESSION_KIND = Choices(
         (32, 'chorus', "Chorus"),
         (41, 'quartet', "Quartet"),
@@ -101,9 +106,16 @@ class Complete(models.Model):
         choices=ROUND_KIND
     )
 
-    category = models.CharField(
+    CATEGORY_KIND = Choices(
+        (30, 'mus', 'Music'),
+        (40, 'per', 'Performance'),
+        (50, 'sng', 'Singing'),
+    )
+
+    category_kind = models.IntegerField(
+        null=True,
         blank=True,
-        max_length=255,
+        choices=CATEGORY_KIND
     )
 
     panelist_name = models.CharField(

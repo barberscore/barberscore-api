@@ -460,16 +460,22 @@ def import_complete(path):
             'Rubin,Dave': 'Rubin,David',
             'Treptow,Richard': 'Treptow,Trep',
         }
+        season_map = {
+            'Spring': Convention.SEASON.spring,
+            'Summer':Convention.SEASON.summer,
+            'Midwinter':Convention.SEASON.midwinter,
+            'Fall':Convention.SEASON.fall,
+        }
         for row in rows:
             # Get variables
             rw = int(row[0])
             year = int(row[1])
-            season = str(row[2].strip() if row[2] else "")
-            district = str(row[3].strip() if row[3] else "")
+            season_raw = str(row[2].strip() if row[2] else "")
+            district_raw = str(row[3].strip() if row[3] else "")
             convention_raw = str(row[4].strip() if row[4] else "")
             session_raw = str(row[5].strip() if row[5] else "")
             round_raw = str(row[6].strip() if row[6] else "")
-            category = str(row[7].strip() if row[7] else "")
+            category_raw = str(row[7].strip() if row[7] else "")
             panelist_name = row[8].strip() if row[8] else None
             panelist_name = panelist_map.get(panelist_name, panelist_name)
             points = []
@@ -486,12 +492,12 @@ def import_complete(path):
             Complete.objects.create(
                 row=rw,
                 year=year,
-                season=season,
-                district=district,
+                season_raw=season_raw,
+                district_raw=district_raw,
                 convention_raw=convention_raw,
                 session_raw=session_raw,
                 round_raw=round_raw,
-                category=category,
+                category_raw=category_raw,
                 panelist_name=panelist_name,
                 points=points,
             )
@@ -502,8 +508,8 @@ def import_complete(path):
     for f in fs:
         round = " ".join([
             str(f.year),
-            f.season,
-            f.district,
+            f.season_raw,
+            f.district_raw,
             f.convention_raw,
             f.session_raw,
             f.round_raw,
