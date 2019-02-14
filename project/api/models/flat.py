@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from django.core.exceptions import ValidationError
 
 class Flat(models.Model):
     id = models.UUIDField(
@@ -27,3 +28,7 @@ class Flat(models.Model):
         unique_together = (
             ('complete', 'selection', 'score'),
         )
+
+    def clean(self):
+        if self.complete.panelist.round != self.selection.song.appearance.round:
+            raise ValidationError('Rounds do not match')
