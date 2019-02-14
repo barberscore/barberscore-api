@@ -98,24 +98,15 @@ class Score(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    # person = models.ForeignKey(
-    #     'Person',
-    #     related_name='scores',
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     blank=True,
-    # )
-
     panelist = models.ForeignKey(
         'Panelist',
         related_name='scores',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.CASCADE,
     )
 
     class Meta:
         unique_together = (
+            ('song', 'panelist',),
             ('song', 'num',),
         )
 
