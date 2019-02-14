@@ -13,6 +13,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from timezone_field import TimeZoneField
 
 # Django
 from django.apps import apps as api_apps
@@ -122,7 +123,16 @@ class Convention(TimeStampedModel):
     )
 
     location = models.CharField(
+        help_text="""
+            The location in the form "City, State".""",
         max_length=255,
+        blank=True,
+    )
+
+    timezone = TimeZoneField(
+        help_text="""
+            The local timezone of the convention.""",
+        null=True,
         blank=True,
     )
 

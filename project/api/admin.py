@@ -638,6 +638,8 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'season',
         'panel',
         'image',
+        'location',
+        'timezone',
         'venue',
         ('open_date', 'close_date',),
         ('start_date', 'end_date',),
@@ -646,7 +648,8 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         'name',
-        # 'venue',
+        'location',
+        'timezone',
         'legacy_venue',
         'start_date',
         'end_date',
