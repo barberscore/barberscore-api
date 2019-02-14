@@ -151,5 +151,7 @@ class Selection(models.Model):
 
     song = models.OneToOneField(
         'Song',
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
