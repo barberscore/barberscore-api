@@ -126,14 +126,11 @@ class Convention(TimeStampedModel):
         help_text="""
             The location in the form "City, State".""",
         max_length=255,
-        blank=True,
     )
 
     timezone = TimeZoneField(
         help_text="""
             The local timezone of the convention.""",
-        null=True,
-        blank=True,
     )
 
     image = models.ImageField(
