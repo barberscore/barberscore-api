@@ -257,6 +257,8 @@ def import_flat(path):
         season_map = {
             'Fall': Convention.SEASON.fall,
             'Spring': Convention.SEASON.spring,
+            'Summer': Convention.SEASON.summer,
+            'Midwinter': Convention.SEASON.midwinter,
         }
 
         session_map = {
