@@ -138,6 +138,17 @@ class Complete(models.Model):
         blank=True,
     )
 
+    slips = ArrayField(
+        ArrayField(
+            base_field=models.IntegerField(
+                null=True,
+                blank=True,
+            ),
+        ),
+        null=True,
+        blank=True,
+    )
+
     num_sessions = models.IntegerField(
         null=True,
         blank=True,
