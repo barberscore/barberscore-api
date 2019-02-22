@@ -134,6 +134,8 @@ class Score(TimeStampedModel):
             return False
         if not self.panelist.person:
             return False
+        if not getattr(self.panelist.person, 'user', False):
+            return False
         return any([
             self.song.appearance.round.session.convention.assignments.filter(
                 person__user=request.user,

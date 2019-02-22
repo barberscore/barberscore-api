@@ -342,7 +342,7 @@ class ScoreFactory(DjangoModelFactory):
     num = 1
     points = FuzzyInteger(50, 90)
     song = SubFactory('api.factories.SongFactory')
-    panelist = None
+    panelist = SubFactory('api.factories.PanelistFactory')
 
     class Meta:
         model = Score
