@@ -48,6 +48,13 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    legacy_event = models.CharField(
+        max_length=255,
+        unique=True,
+        null=True,
+        blank=True,
+    )
+
     legacy_venue = models.CharField(
         max_length=255,
         null=True,

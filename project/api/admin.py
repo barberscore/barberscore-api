@@ -637,6 +637,8 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = (
         'id',
         'name',
+        'legacy_name',
+        'legacy_event',
         'status',
         'group',
         'year',
