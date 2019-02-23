@@ -87,6 +87,9 @@ class MemberFilterset(FilterSet):
             'group__kind': [
                 'gt',
             ],
+            'group__parent__kind': [
+                'gt',
+            ],
         }
 
 
