@@ -35,6 +35,7 @@ from .inlines import ContestantInline
 from .inlines import ContestInline
 from .inlines import ConventionInline
 from .inlines import EntryInline
+from .inlines import FlatInline
 from .inlines import GridInline
 from .inlines import GroupInline
 from .inlines import MemberInline
@@ -172,6 +173,9 @@ class CompleteAdmin(admin.ModelAdmin):
     autocomplete_fields = [
         'panelist',
     ]
+    inlines = [
+        # FlatInline,
+    ]
 
 @admin.register(Selection)
 class SelectionAdmin(admin.ModelAdmin):
@@ -255,6 +259,9 @@ class SelectionAdmin(admin.ModelAdmin):
     ]
     search_fields = [
         'song',
+    ]
+    inlines = [
+        # FlatInline,
     ]
 
 @admin.register(Appearance)
@@ -1330,6 +1337,7 @@ class PanelistAdmin(admin.ModelAdmin):
         'round',
         'person',
         'category',
+        'complete',
     ]
 
     list_display = [
@@ -1362,9 +1370,11 @@ class PanelistAdmin(admin.ModelAdmin):
     autocomplete_fields = [
         'round',
         'person',
+        # 'complete',
     ]
 
     readonly_fields = [
+        'complete',
     ]
 
 
@@ -1547,7 +1557,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
-        # 'session',
         # 'kind',
     ]
 
@@ -1710,6 +1719,7 @@ class SongAdmin(admin.ModelAdmin):
         'per_score',
         'sng_points',
         'sng_score',
+        'selection',
 
 
         # 'title',
@@ -1739,6 +1749,7 @@ class SongAdmin(admin.ModelAdmin):
     readonly_fields = (
         'id',
         'stats',
+        'selection',
     )
 
     autocomplete_fields = [

@@ -13,6 +13,7 @@ from .models import Contestant
 from .models import Convention
 from .models import Entry
 from .models import Grid
+from .models import Flat
 from .models import Group
 from .models import Member
 from .models import Officer
@@ -331,6 +332,24 @@ class EntryInline(admin.TabularInline):
     ]
 
 
+class FlatInline(admin.TabularInline):
+    model = Flat
+    fields = [
+        'selection',
+        'complete',
+        'score',
+    ]
+    extra = 0
+    show_change_link = True
+    classes = [
+        'collapse',
+    ]
+    autocomplete_fields = [
+        'selection',
+        'complete',
+    ]
+
+
 class GridInline(admin.TabularInline):
     model = Grid
     fields = [
@@ -518,7 +537,7 @@ class ScoreInline(admin.TabularInline):
         'category',
         'kind',
         'points',
-        # 'complete',
+        'flat',
     ]
     autocomplete_fields = [
         'song',
@@ -528,7 +547,7 @@ class ScoreInline(admin.TabularInline):
         'category',
         'panelist__person__common_name',
         'status',
-        # 'complete',
+        'flat',
     ]
     ordering = (
         'num',
