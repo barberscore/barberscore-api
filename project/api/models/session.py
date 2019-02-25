@@ -112,6 +112,12 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    old_oss = models.FileField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
     # FKs
     convention = models.ForeignKey(
         'Convention',
@@ -526,6 +532,127 @@ class Session(TimeStampedModel):
         self.refresh_from_db()
         self.oss.save(
             "{0}-oss".format(
+                slugify(self),
+            ),
+            content,
+        )
+
+    def get_old_oss(self):
+        Competitor = apps.get_model('api.competitor')
+        Contest = apps.get_model('api.contest')
+        Panelist = apps.get_model('api.panelist')
+        Contestant = apps.get_model('api.contestant')
+        competitors = self.competitors.filter(
+            status=Competitor.STATUS.finished,
+            is_private=False,
+        ).select_related(
+            'group',
+            'entry',
+        ).prefetch_related(
+            'entry__contestants',
+            'entry__contestants__contest',
+            'appearances',
+            'appearances__round',
+            'appearances__songs',
+            'appearances__songs__chart',
+            'appearances__songs__scores',
+            'appearances__songs__scores__panelist',
+            'appearances__songs__scores__panelist__person',
+        ).order_by(
+            '-tot_points',
+            '-sng_points',
+            '-per_points',
+            'group__name',
+        )
+        # Eval Only
+        privates = self.competitors.filter(
+            status=Competitor.STATUS.finished,
+            is_private=True,
+        ).select_related(
+            'group',
+            'entry',
+        ).order_by(
+            'group__name',
+        )
+        privates = privates.values_list('group__name', flat=True)
+        contests = self.contests.filter(
+            num__isnull=False,
+        ).select_related(
+            'award',
+            'group',
+        ).distinct(
+        ).order_by(
+            'num',
+        )
+        # MonkeyPatch qualifiers
+        for contest in contests:
+            if contest.award.level != contest.award.LEVEL.deferred:
+                if contest.award.level == contest.award.LEVEL.qualifier:
+                    threshold = contest.award.threshold
+                    if threshold:
+                        qualifiers = contest.contestants.filter(
+                            status__gt=0,
+                            entry__competitor__tot_score__gte=threshold,
+                            entry__is_private=False,
+                        ).distinct(
+                        ).order_by(
+                            'entry__group__name',
+                        ).values_list(
+                            'entry__group__name',
+                            flat=True,
+                        )
+                        if qualifiers:
+                            contest.detail = ", ".join(
+                                qualifiers.values_list('entry__group__name', flat=True)
+                            )
+                        else:
+                            contest.detail = "(No qualifiers)"
+                else:
+                    if contest.group:
+                        contest.detail = str(contest.group.name)
+                    else:
+                        contest.detail = "(No recipient)"
+            else:
+                contest.detail = "(Result determined post-contest)"
+        panelists = Panelist.objects.filter(
+            round__session=self,
+            kind=Panelist.KIND.official,
+            category__gte=Panelist.CATEGORY.ca,
+        ).distinct(
+            'category',
+            'person__last_name',
+            'person__first_name',
+        ).order_by(
+            'category',
+            'person__last_name',
+            'person__first_name',
+        )
+        rounds = self.rounds.order_by('kind')
+        context = {
+            'session': self,
+            'competitors': competitors,
+            'privates': privates,
+            'panelists': panelists,
+            'contests': contests,
+            'rounds': rounds,
+            'is_multi': False,
+        }
+        rendered = render_to_string('session/old_oss.html', context)
+        file = pydf.generate_pdf(
+            rendered,
+            page_size='Letter',
+            orientation='Portrait',
+            margin_top='5mm',
+            margin_bottom='5mm',
+        )
+        content = ContentFile(file)
+        return content
+
+    def save_old_oss(self):
+        content = self.get_old_oss()
+        self.refresh_from_db()
+        self.old_oss.save(
+            "{0}-old-oss".format(
                 slugify(self),
             ),
             content,
