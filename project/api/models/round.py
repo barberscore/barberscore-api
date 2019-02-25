@@ -229,7 +229,7 @@ class Round(TimeStampedModel):
             tot=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__kind=Score.KIND.official,
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__round__num__lte=self.num,
                     appearances__num__gt=0,
                 ),
@@ -237,8 +237,8 @@ class Round(TimeStampedModel):
             sng=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__kind=Score.KIND.official,
-                    appearances__songs__scores__category=Score.CATEGORY.singing,
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
                     appearances__round__num__lte=self.num,
                     appearances__num__gt=0,
                 ),
@@ -246,8 +246,8 @@ class Round(TimeStampedModel):
             per=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__kind=Score.KIND.official,
-                    appearances__songs__scores__category=Score.CATEGORY.performance,
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
                     appearances__round__num__lte=self.num,
                     appearances__num__gt=0,
                 ),

@@ -282,14 +282,15 @@ class Competitor(TimeStampedModel):
     # Competitor Methods
     def calculate(self):
         Score = apps.get_model('api.score')
+        Panelist = apps.get_model('api.panelist')
         tot = Sum('points')
-        mus = Sum('points', filter=Q(category=Score.CATEGORY.music))
-        per = Sum('points', filter=Q(category=Score.CATEGORY.performance))
-        sng = Sum('points', filter=Q(category=Score.CATEGORY.singing))
+        mus = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.music))
+        per = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.performance))
+        sng = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.singing))
         officials = Score.objects.filter(
             song__appearance__competitor=self,
             song__appearance__num__gt=0,
-            kind=Score.KIND.official,
+            panelist__kind=Panelist.KIND.official,
         ).distinct(
         ).annotate(
             tot=tot,
@@ -302,19 +303,19 @@ class Competitor(TimeStampedModel):
             avg=Avg('points'),
         )
         mus = officials.filter(
-            category=Score.CATEGORY.music,
+            panelist__category=Panelist.CATEGORY.music,
         ).aggregate(
             sum=Sum('points'),
             avg=Avg('points'),
         )
         per = officials.filter(
-            category=Score.CATEGORY.performance,
+            panelist__category=Panelist.CATEGORY.performance,
         ).aggregate(
             sum=Sum('points'),
             avg=Avg('points'),
         )
         sng = officials.filter(
-            category=Score.CATEGORY.singing,
+            panelist__category=Panelist.CATEGORY.singing,
         ).aggregate(
             sum=Sum('points'),
             avg=Avg('points'),

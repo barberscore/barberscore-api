@@ -82,6 +82,7 @@ class Outcome(TimeStampedModel):
     def get_name(self):
         Competitor = apps.get_model('api.competitor')
         Score = apps.get_model('api.score')
+        Panelist = apps.get_model('api.panelist')
         if self.round.num < self.contest.award.num_rounds:
             return "(Result not yet determined)"
         if self.contest.award.level == self.contest.award.LEVEL.deferred:
@@ -128,23 +129,23 @@ class Outcome(TimeStampedModel):
             tot=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__kind=Score.KIND.official,
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__round__num__lte=self.contest.award.num_rounds,
                 ),
             ),
             sng=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__kind=Score.KIND.official,
-                    appearances__songs__scores__category=Score.CATEGORY.singing,
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
                     appearances__round__num__lte=self.contest.award.num_rounds,
                 ),
             ),
             per=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__kind=Score.KIND.official,
-                    appearances__songs__scores__category=Score.CATEGORY.performance,
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
                     appearances__round__num__lte=self.contest.award.num_rounds,
                 ),
             ),
