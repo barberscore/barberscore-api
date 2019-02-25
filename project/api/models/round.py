@@ -861,5 +861,5 @@ class Round(TimeStampedModel):
             finisher.competitor.save()
         # for panelist in panelists:
         #     panelist.queue_sa()
-        self.queue_sa()
+        # self.queue_sa()
         return

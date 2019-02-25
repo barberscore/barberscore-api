@@ -440,7 +440,7 @@ class Competitor(TimeStampedModel):
         target=STATUS.finished,
     )
     def finish(self, *args, **kwargs):
-        self.queue_csa()
+        # self.queue_csa()
         return
 
     @fsm_log_by
