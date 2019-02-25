@@ -532,10 +532,7 @@ class ScoreInline(admin.TabularInline):
     model = Score
     fields = [
         'song',
-        'num',
         'panelist__person__common_name',
-        'category',
-        'kind',
         'points',
         'flat',
     ]
@@ -544,13 +541,12 @@ class ScoreInline(admin.TabularInline):
     ]
     readonly_fields = [
         'song',
-        'category',
         'panelist__person__common_name',
         'status',
         'flat',
     ]
     ordering = (
-        'num',
+        'panelist__num',
     )
     show_change_link = True
     extra = 0

@@ -337,9 +337,6 @@ class RoundFactory(DjangoModelFactory):
 
 class ScoreFactory(DjangoModelFactory):
     status = Score.STATUS.new
-    category = Score.CATEGORY.music
-    kind = Score.KIND.official
-    num = 1
     points = FuzzyInteger(50, 90)
     song = SubFactory('api.factories.SongFactory')
     panelist = SubFactory('api.factories.PanelistFactory')

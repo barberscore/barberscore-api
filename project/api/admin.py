@@ -1597,8 +1597,6 @@ class ScoreAdmin(admin.ModelAdmin):
         # 'status',
         'song',
         'panelist',
-        'category',
-        'kind',
         'points',
     ]
 
