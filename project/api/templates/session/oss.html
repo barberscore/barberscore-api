@@ -62,11 +62,11 @@
           <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
           {% if session.convention.image %}<img class='pull-right small_logo' src="{{session.convention.image.url}}">{% endif %}
           <h4>
-            Official Scoring Summary {{session.get_kind_display}} Full Results;
+            Official Scoring Summary {{session.get_kind_display}} Full Results<br>
             {{session.convention.name}}
           </h4>
           <h5>
-            {{round.session.convention.location}}; {{round.session.convention.start_date|date:"F j, Y"}} - {{round.session.convention.end_date|date:"F j, Y"}}
+            {{session.convention.location}}; {{session.convention.start_date|date:"F j, Y"}} - {{session.convention.end_date|date:"F j, Y"}}
           </h5>
         </div>
       {% endif %}
