@@ -101,11 +101,13 @@ class Session(TimeStampedModel):
     )
 
     oss = models.FileField(
+        max_length=255,
         null=True,
         blank=True,
     )
 
     sa = models.FileField(
+        max_length=255,
         null=True,
         blank=True,
     )

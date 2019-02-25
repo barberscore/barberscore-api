@@ -86,20 +86,23 @@ class Round(TimeStampedModel):
     )
 
     oss = models.FileField(
-        max_length=200,
+        max_length=255,
         null=True,
         blank=True,
     )
     sa = models.FileField(
+        max_length=255,
         null=True,
         blank=True,
     )
     legacy_oss = models.FileField(
+        max_length=255,
         null=True,
         blank=True,
     )
 
     legacy_sa = models.FileField(
+        max_length=255,
         null=True,
         blank=True,
     )

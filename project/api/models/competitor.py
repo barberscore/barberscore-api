@@ -180,6 +180,7 @@ class Competitor(TimeStampedModel):
     )
 
     csa = models.FileField(
+        max_length=255,
         null=True,
         blank=True,
     )
