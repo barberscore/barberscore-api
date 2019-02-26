@@ -133,6 +133,7 @@ class AppearanceInline(admin.TabularInline):
         'num',
         'draw',
         'tot_points',
+        'tot_rank',
     ]
     readonly_fields = [
         'competitor',
@@ -344,7 +345,7 @@ class FlatInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
-    autocomplete_fields = [
+    raw_id_fields = [
         'selection',
         'complete',
     ]

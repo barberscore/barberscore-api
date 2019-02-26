@@ -276,6 +276,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'num',
         'draw',
         'pos',
+        'tot_rank',
         ('mus_points', 'per_points', 'sng_points', 'tot_points',),
         ('mus_score', 'per_score', 'sng_score', 'tot_score',),
         'variance_report',

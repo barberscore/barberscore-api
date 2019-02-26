@@ -166,6 +166,11 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    run_points = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     # Appearance FKs
     round = models.ForeignKey(
         'Round',
