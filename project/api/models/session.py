@@ -343,12 +343,12 @@ class Session(TimeStampedModel):
                 cs = Group.objects.filter(
                     members__person__in=persons,
                     members__status__gt=0,
-                    kind=Group.KIND.chorus,
+                    kind=Group.KIND.chapter,
                 ).distinct(
                 ).order_by(
-                    'parent__name',
+                    'name',
                 ).values_list(
-                    'parent__name',
+                    'name',
                     flat=True
                 )
                 chapters = "\n".join(cs)
