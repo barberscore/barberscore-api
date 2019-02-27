@@ -78,10 +78,16 @@ class Command(BaseCommand):
         # Sync Officers
         t = Role.objects.update_officers(cursor=cursor)
         self.stdout.write("Queued {0} officers.".format(t))
+        if not cursor:
+            t = Role.objects.delete_orphans()
+            self.stdout.write("Deleted {0} officer orphans.".format(t))
 
         # Sync Members
         t = Join.objects.update_members(cursor=cursor)
         self.stdout.write("Queued {0} members.".format(t))
+        if not cursor:
+            t = Join.objects.delete_orphans()
+            self.stdout.write("Deleted {0} member orphans.".format(t))
 
         # Sync Subscriptions
         # t = Subscription.objects.update_users(cursor=cursor)

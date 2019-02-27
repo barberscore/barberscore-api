@@ -39,8 +39,7 @@ class HumanManager(Manager):
 
     def delete_orphans(self):
         # Get base
-        humans = self.all()
-        humans = list(humans.values_list('id', flat=True))
+        humans = list(self.values_list('id', flat=True))
         # Delete Orphans
         Person = apps.get_model('api.person')
         orphans = Person.objects.filter(
@@ -82,8 +81,7 @@ class StructureManager(Manager):
 
     def delete_orphans(self):
         # Get base
-        structures = self.all()
-        structures = list(structures.values_list('id', flat=True))
+        structures = list(self.values_list('id', flat=True))
         # Delete Orphans
         Group = apps.get_model('api.group')
         orphans = Group.objects.filter(
@@ -117,6 +115,20 @@ class RoleManager(Manager):
             )
         return t
 
+    def delete_orphans(self):
+        # Get base
+        roles = list(self.values_list('id', flat=True))
+        # Delete Orphans
+        Officer = apps.get_model('api.officer')
+        orphans = Officer.objects.filter(
+            mc_pk__isnull=False,
+        ).exclude(
+            mc_pk__in=roles,
+        )
+        t = orphans.count()
+        orphans.delete()
+        return t
+
 
 class JoinManager(Manager):
     def update_members(self, cursor=None):
@@ -142,6 +154,22 @@ class JoinManager(Manager):
                 join,
             )
         return t
+
+    def delete_orphans(self):
+        # Get base
+        joins = list(self.values_list('id', flat=True))
+        # Delete Orphans
+        Member = apps.get_model('api.member')
+        orphans = Member.objects.filter(
+            mc_pk__isnull=False,
+        ).exclude(
+            mc_pk__in=joins,
+        )
+        t = orphans.count()
+        orphans.delete()
+        return t
+
+
 
 # class SubscriptionManager(Manager):
 #     def update_users(self, cursor=None):
