@@ -311,7 +311,6 @@ class Structure(models.Model):
         return joins
 
     def get_roles(self):
-        Officer = apps.get_model('api.officer')
         pairs = self.roles.select_related(
             'human',
         ).values_list(
