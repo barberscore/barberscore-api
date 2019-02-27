@@ -298,16 +298,19 @@ class Structure(models.Model):
         ).distinct()
         joins = []
         for human in humans:
-            join = self.joins.select_related(
-                'subscription',
-                'subscription__human',
-            ).filter(
-                paid=True,
-                subscription__human__id=human,
-            ).latest(
-                'modified',
-                '-inactive_date',
-            )
+            try:
+                join = self.joins.select_related(
+                    'subscription',
+                    'subscription__human',
+                ).filter(
+                    paid=True,
+                    subscription__human__id=human,
+                ).latest(
+                    'modified',
+                    '-inactive_date',
+                )
+            except self.joins.model.DoesNotExist:
+                continue
             joins.append(join)
         return joins
 
