@@ -302,6 +302,7 @@ class Structure(models.Model):
                 'subscription',
                 'subscription__human',
             ).filter(
+                paid=True,
                 subscription__human__id=human,
             ).latest(
                 'modified',
