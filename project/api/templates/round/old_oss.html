@@ -76,6 +76,8 @@
               <th class='text-right col-md-1'>MUS</th>
               <th class='text-right col-md-1'>PER</th>
               <th class='text-right col-md-1'>SNG</th>
+              <th class='text-right col-md-1'>Subt</th>
+              <th class='text-right col-md-1'>Prev</th>
               <th class='text-right col-md-1'>Total</th>
               <th class='text-right col-md-1'>Avg</th>
               {% if round.session.get_kind_display == 'Chorus' %}
@@ -120,7 +122,17 @@
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  {{appearance.tot_points}}
+                  {% if appearance.run_points %}
+                    {{appearance.tot_points}}
+                  {% endif %}
+                </td>
+                <td class='text-right'>
+                  {% if appearance.run_points %}
+                    {{appearance.run_points}}
+                  {% endif %}
+                </td>
+                <td class='text-right'>
+                  {{appearance.calc_total}}
                 </td>
                 <td class='text-right'>
                   {{appearance.tot_score|floatformat:1}}

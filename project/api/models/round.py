@@ -393,6 +393,15 @@ class Round(TimeStampedModel):
             '-per_points',
             'competitor__group__name',
         )
+        # MonkeyPatch running total
+        for appearance in appearances:
+            if not appearance.run_points:
+                appearance.calc_total = appearance.tot_points
+            else:
+                try:
+                    appearance.calc_total = appearance.run_points + appearance.tot_points
+                except TypeError:
+                    appearance.calc_total = None
         # Eval Only
         privates = self.appearances.filter(
             competitor__is_private=True,
