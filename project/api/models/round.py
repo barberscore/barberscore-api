@@ -393,6 +393,7 @@ class Round(TimeStampedModel):
             '-per_points',
             'competitor__group__name',
         )
+        comps = appearances.values_list('competitor__id', flat=True)
         # MonkeyPatch running total
         for appearance in appearances:
             if not appearance.run_points:
@@ -402,6 +403,38 @@ class Round(TimeStampedModel):
                     appearance.calc_total = appearance.run_points + appearance.tot_points
                 except TypeError:
                     appearance.calc_total = None
+        rounds = self.session.rounds.filter(kind__gt=self.kind)
+        for rnd in rounds:
+            aps = rnd.appearances.filter(
+                competitor__id__in=comps,
+            ).exclude(
+                num=0,
+            ).select_related(
+                'competitor__group',
+            ).prefetch_related(
+                'round',
+                'songs',
+                'songs__chart',
+                'songs__scores',
+                'songs__scores__panelist',
+                'songs__scores__panelist__person',
+                'contenders',
+                'contenders__outcome',
+            ).order_by(
+                '-tot_points',
+                '-sng_points',
+                '-per_points',
+                'competitor__group__name',
+            )
+            for appearance in aps:
+                if not appearance.run_points:
+                    appearance.calc_total = appearance.tot_points
+                else:
+                    try:
+                        appearance.calc_total = appearance.run_points + appearance.tot_points
+                    except TypeError:
+                        appearance.calc_total = None
+            rnd.aps = aps
         # Eval Only
         privates = self.appearances.filter(
             competitor__is_private=True,
@@ -470,6 +503,7 @@ class Round(TimeStampedModel):
         context = {
             'round': self,
             'appearances': appearances,
+            'rounds': rounds,
             'privates': privates,
             'panelists': panelists,
             'contests': contests,
