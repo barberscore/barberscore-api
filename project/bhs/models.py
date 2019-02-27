@@ -279,7 +279,7 @@ class Structure(models.Model):
         Group = apps.get_model('api.group')
         Member = apps.get_model('api.member')
         Officer = apps.get_model('api.officer')
-        Group.objects.update_or_create_from_structure(self),
+        Group.objects.update_or_create_from_structure(self)
         joins = self.get_joins()
         for join in joins:
             Member.objects.update_or_create_from_join(join)
@@ -290,14 +290,12 @@ class Structure(models.Model):
 
 
     def get_joins(self):
-        Member = apps.get_model('api.member')
         humans = self.joins.select_related(
             'subscription__human',
         ).values_list(
             'subscription__human',
             flat=True,
         ).distinct()
-        t = humans.count()
         joins = []
         for human in humans:
             join = self.joins.select_related(
