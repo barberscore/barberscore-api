@@ -45,28 +45,28 @@ class Score(TimeStampedModel):
         default=STATUS.new,
     )
 
-    CATEGORY = Choices(
-        (30, 'music', 'Music'),
-        (40, 'performance', 'Performance'),
-        (50, 'singing', 'Singing'),
-    )
+    # CATEGORY = Choices(
+    #     (30, 'music', 'Music'),
+    #     (40, 'performance', 'Performance'),
+    #     (50, 'singing', 'Singing'),
+    # )
 
-    category = models.IntegerField(
-        choices=CATEGORY,
-    )
+    # category = models.IntegerField(
+    #     choices=CATEGORY,
+    # )
 
-    KIND = Choices(
-        (10, 'official', 'Official'),
-        (20, 'practice', 'Practice'),
-        (30, 'composite', 'Composite'),
-    )
+    # KIND = Choices(
+    #     (10, 'official', 'Official'),
+    #     (20, 'practice', 'Practice'),
+    #     (30, 'composite', 'Composite'),
+    # )
 
-    kind = models.IntegerField(
-        choices=KIND,
-    )
+    # kind = models.IntegerField(
+    #     choices=KIND,
+    # )
 
-    num = models.IntegerField(
-    )
+    # num = models.IntegerField(
+    # )
 
     points = models.IntegerField(
         help_text="""
@@ -107,7 +107,6 @@ class Score(TimeStampedModel):
     class Meta:
         unique_together = (
             ('song', 'panelist',),
-            ('song', 'num',),
         )
 
     class JSONAPIMeta:

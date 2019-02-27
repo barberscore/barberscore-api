@@ -86,20 +86,28 @@ class Round(TimeStampedModel):
     )
 
     oss = models.FileField(
-        max_length=200,
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+    old_oss = models.FileField(
+        max_length=255,
         null=True,
         blank=True,
     )
     sa = models.FileField(
+        max_length=255,
         null=True,
         blank=True,
     )
     legacy_oss = models.FileField(
+        max_length=255,
         null=True,
         blank=True,
     )
 
     legacy_sa = models.FileField(
+        max_length=255,
         null=True,
         blank=True,
     )
@@ -229,7 +237,7 @@ class Round(TimeStampedModel):
             tot=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__kind=Score.KIND.official,
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__round__num__lte=self.num,
                     appearances__num__gt=0,
                 ),
@@ -237,8 +245,8 @@ class Round(TimeStampedModel):
             sng=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__kind=Score.KIND.official,
-                    appearances__songs__scores__category=Score.CATEGORY.singing,
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
                     appearances__round__num__lte=self.num,
                     appearances__num__gt=0,
                 ),
@@ -246,8 +254,8 @@ class Round(TimeStampedModel):
             per=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__kind=Score.KIND.official,
-                    appearances__songs__scores__category=Score.CATEGORY.performance,
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
                     appearances__round__num__lte=self.num,
                     appearances__num__gt=0,
                 ),
@@ -357,6 +365,129 @@ class Round(TimeStampedModel):
         )
         content = ContentFile(file)
         return content
+
+    def get_old_oss(self):
+        # Competitor = apps.get_model('api.competitor')
+        # Contest = apps.get_model('api.contest')
+        Panelist = apps.get_model('api.panelist')
+        # Contestant = apps.get_model('api.contestant')
+        appearances = self.appearances.filter(
+            Q(draw=0) | Q(draw__isnull=True),
+            competitor__is_private=False,
+        ).exclude(
+            num=0,
+        ).select_related(
+            'competitor__group',
+        ).prefetch_related(
+            'round',
+            'songs',
+            'songs__chart',
+            'songs__scores',
+            'songs__scores__panelist',
+            'songs__scores__panelist__person',
+            'contenders',
+            'contenders__outcome',
+        ).order_by(
+            '-tot_points',
+            '-sng_points',
+            '-per_points',
+            'competitor__group__name',
+        )
+        # Eval Only
+        privates = self.appearances.filter(
+            competitor__is_private=True,
+        ).select_related(
+            'competitor__group',
+        ).order_by(
+            'competitor__group__name',
+        )
+        privates = privates.values_list('competitor__group__name', flat=True).distinct()
+        contests = self.session.contests.filter(
+            num__isnull=False,
+        ).select_related(
+            'award',
+            'group',
+        ).distinct(
+        ).order_by(
+            'num',
+        )
+        # # MonkeyPatch qualifiers
+        for contest in contests:
+            if contest.award.level != contest.award.LEVEL.deferred:
+                if contest.award.level == contest.award.LEVEL.qualifier:
+                    threshold = contest.award.threshold
+                    if threshold:
+                        qualifiers = contest.contestants.filter(
+                            status__gt=0,
+                            entry__competitor__tot_score__gte=threshold,
+                            entry__is_private=False,
+                        ).distinct(
+                        ).order_by(
+                            'entry__group__name',
+                        ).values_list(
+                            'entry__group__name',
+                            flat=True,
+                        )
+                        if qualifiers:
+                            contest.detail = ", ".join(
+                                qualifiers.values_list('entry__group__name', flat=True)
+                            )
+                        else:
+                            contest.detail = "(No qualifiers)"
+                else:
+                    if contest.group:
+                        contest.detail = str(contest.group.name)
+                    else:
+                        contest.detail = "(No recipient)"
+            else:
+                contest.detail = "(Result determined post-contest)"
+        panelists = self.panelists.filter(
+            kind=Panelist.KIND.official,
+            category__gte=Panelist.CATEGORY.ca,
+        ).distinct(
+            'category',
+            'person__last_name',
+            'person__first_name',
+        ).order_by(
+            'category',
+            'person__last_name',
+            'person__first_name',
+        )
+        outcomes = self.outcomes.order_by('num')
+        advancers = self.appearances.filter(
+            draw__gt=0,
+        ).order_by('draw')
+        mt = self.appearances.filter(draw=0).first()
+        context = {
+            'round': self,
+            'appearances': appearances,
+            'privates': privates,
+            'panelists': panelists,
+            'contests': contests,
+            'outcomes': outcomes,
+            'advancers': advancers,
+            'mt': mt,
+        }
+        rendered = render_to_string('round/old_oss.html', context)
+        file = pydf.generate_pdf(
+            rendered,
+            page_size='Letter',
+            orientation='Portrait',
+            margin_top='5mm',
+            margin_bottom='5mm',
+        )
+        content = ContentFile(file)
+        return content
+
+    def save_old_oss(self):
+        content = self.get_old_oss()
+        self.refresh_from_db()
+        self.old_oss.save(
+            "{0}-old-oss".format(
+                slugify(self),
+            ),
+            content,
+        )
 
     def get_sa(self):
         Panelist = apps.get_model('api.panelist')
@@ -861,5 +992,5 @@ class Round(TimeStampedModel):
             finisher.competitor.save()
         # for panelist in panelists:
         #     panelist.queue_sa()
-        self.queue_sa()
+        # self.queue_sa()
         return

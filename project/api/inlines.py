@@ -133,6 +133,7 @@ class AppearanceInline(admin.TabularInline):
         'num',
         'draw',
         'tot_points',
+        'tot_rank',
     ]
     readonly_fields = [
         'competitor',
@@ -344,7 +345,7 @@ class FlatInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
-    autocomplete_fields = [
+    raw_id_fields = [
         'selection',
         'complete',
     ]
@@ -532,10 +533,7 @@ class ScoreInline(admin.TabularInline):
     model = Score
     fields = [
         'song',
-        'num',
         'panelist__person__common_name',
-        'category',
-        'kind',
         'points',
         'flat',
     ]
@@ -544,13 +542,12 @@ class ScoreInline(admin.TabularInline):
     ]
     readonly_fields = [
         'song',
-        'category',
         'panelist__person__common_name',
         'status',
         'flat',
     ]
     ordering = (
-        'num',
+        'panelist__num',
     )
     show_change_link = True
     extra = 0

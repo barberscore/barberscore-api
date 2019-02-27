@@ -161,6 +161,12 @@ class Appearance(TimeStampedModel):
     )
 
     variance_report = models.FileField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    run_points = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -233,7 +239,7 @@ class Appearance(TimeStampedModel):
         Panelist = apps.get_model('api.panelist')
         songs = self.songs.order_by('num')
         scores = Score.objects.filter(
-            kind=Score.KIND.official,
+            panelist__kind=Panelist.KIND.official,
             song__in=songs,
         ).order_by(
             'category',
@@ -311,13 +317,14 @@ class Appearance(TimeStampedModel):
 
     def calculate(self):
         Score = apps.get_model('api.score')
+        Panelist = apps.get_model('api.panelist')
         tot = Sum('points')
-        mus = Sum('points', filter=Q(category=Score.CATEGORY.music))
-        per = Sum('points', filter=Q(category=Score.CATEGORY.performance))
-        sng = Sum('points', filter=Q(category=Score.CATEGORY.singing))
+        mus = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.music))
+        per = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.performance))
+        sng = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.singing))
         officials = Score.objects.filter(
             song__appearance=self,
-            kind=Score.KIND.official,
+            panelist__kind=Panelist.KIND.official,
         ).annotate(
             tot=tot,
             mus=mus,
@@ -329,19 +336,19 @@ class Appearance(TimeStampedModel):
             avg=Avg('points'),
         )
         mus = officials.filter(
-            category=Score.CATEGORY.music,
+            panelist__category=Panelist.CATEGORY.music,
         ).aggregate(
             sum=Sum('points'),
             avg=Avg('points'),
         )
         per = officials.filter(
-            category=Score.CATEGORY.performance,
+            panelist__category=Panelist.CATEGORY.performance,
         ).aggregate(
             sum=Sum('points'),
             avg=Avg('points'),
         )
         sng = officials.filter(
-            category=Score.CATEGORY.singing,
+            panelist__category=Panelist.CATEGORY.singing,
         ).aggregate(
             sum=Sum('points'),
             avg=Avg('points'),

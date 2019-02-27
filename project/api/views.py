@@ -15,7 +15,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
+from rest_framework.renderers import TemplateHTMLRenderer
 # Django
 from django.core.files.base import ContentFile
 from django.db.models import Sum
@@ -1245,6 +1245,39 @@ class RoundViewSet(viewsets.ModelViewSet):
         # return Response(
         #     pdf,
         #     template_name='oss.html',
+        # )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            # TemplateHTMLRenderer,
+            PDFRenderer,
+        ],
+        permission_classes=[AllowAny],
+    )
+    def ossold(self, request, pk=None):
+        round = Round.objects.select_related(
+        ).get(pk=pk)
+        pdf = round.get_old_oss()
+        file_name = '{0}-oss-old'.format(
+            slugify(
+                "{0} {1} {2} Round".format(
+                    round.session.convention.name,
+                    round.session.get_kind_display(),
+                    round.get_kind_display(),
+                )
+            )
+        )
+        # return Response(
+        #     pdf,
+        #     template_name='round/old_oss.html',
         # )
         return PDFResponse(
             pdf,
