@@ -135,24 +135,66 @@ class Human(models.Model):
             self.bhs_id,
         )
 
-    def update_person(self):
+    def update_bs(self):
         Person = apps.get_model('api.person')
-        return Person.objects.update_or_create_from_human(self)
+        Member = apps.get_model('api.member')
+        Officer = apps.get_model('api.officer')
+        Person.objects.update_or_create_from_human(self)
+        joins = self.get_joins()
+        for join in joins:
+            Member.objects.update_or_create_from_join(join)
+        roles = self.get_roles()
+        for role in roles:
+            Officer.objects.update_or_create_from_role(role)
+        return
 
-    # def update_user(self):
-    #     Subscription = apps.get_model('bhs.subscription')
-    #     User = apps.get_model('api.user')
-    #     queue = django_rq.get_queue('low')
-    #     try:
-    #         subscription = self.subscriptions.filter(
-    #             items_editable=True,
-    #         ).latest('modified')
-    #         queue.enqueue(
-    #             User.objects.update_or_create_from_subscription,
-    #             subscription,
-    #         )
-    #     except Subscription.DoesNotExist:
-    #         pass
+    def get_joins(self):
+        Join = apps.get_model('bhs.join')
+        structures = self.subscriptions.prefetch_related(
+            'joins__structure',
+        ).values_list(
+            'joins__structure',
+            flat=True,
+        ).distinct()
+        joins = []
+        for structure in structures:
+            try:
+                join = Join.objects.select_related(
+                    'subscription__human',
+                    'structure',
+                ).filter(
+                    paid=True,
+                    subscription__human=self,
+                    structure__id=structure,
+                ).latest(
+                    'modified',
+                    '-inactive_date',
+                )
+            except Join.DoesNotExist:
+                continue
+            joins.append(join)
+        return joins
+
+    def get_roles(self):
+        pairs = self.roles.select_related(
+            'structure',
+        ).values_list(
+            'structure',
+            'name',
+        ).distinct()
+        roles = []
+        for structure, name in pairs:
+            role = self.roles.select_related(
+                'structure',
+            ).filter(
+                structure__id=structure,
+                name=name,
+            ).latest(
+                'modified',
+                '-end_date',
+            )
+            roles.append(role)
+        return roles
 
     class Meta:
         managed=False
