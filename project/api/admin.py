@@ -1,7 +1,7 @@
 # Third-Party
 from django_fsm_log.admin import StateLogInline
 from fsm_admin.mixins import FSMTransitionMixin
-
+from django.utils.html import format_html
 # Django
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -1530,10 +1530,14 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         '__str__',
         'status',
-        'oss',
-        'legacy_oss',
-        'legacy_sa',
+        'show_old_oss',
+        # 'oss',
+        # 'legacy_oss',
+        # 'legacy_sa',
     ]
+    def show_old_oss(self, obj):
+        return format_html("<a href='http://localhost:8000/api/round/{id}/ossold' target='_blank'>link</a>", id=obj.id)
+    show_old_oss.short_description = "Legacy-Style OSS"
 
     list_filter = [
         RoundLegacyOssListFilter,

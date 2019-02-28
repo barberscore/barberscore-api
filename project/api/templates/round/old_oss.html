@@ -22,10 +22,6 @@
       h5 {
         margin: 2px;
       }
-      li {
-        font-size: 8pt;
-        font-weight: 200;
-      }
 
       .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td
       {
@@ -51,22 +47,18 @@
   </head>
   <body>
     <div class='container-fluid'>
-      <div class='row'>
-        <h5>
-          OFFICIAL SCORING SUMMARY {{round.session.convention.name}}<br>
-          {{round.session.convention.group.name}} District, {{round.session.get_kind_display}} {{round.get_kind_display}}, {{round.session.convention.location}} {{round.session.convention.start_date|date:"F j, Y"}}
-        </h5>
-        <p>
-          <ul class='list-inline'>
-            Contest Legend:
-            {% for contest in contests %}
-              <li>{{contest.num}}={{contest.award.name}}</li>
-            {% empty %}
-            (Contests Unksnown)
-            {% endfor %}
-          </ul>
-        </p>
-      </div>
+      <h5>
+        OFFICIAL SCORING SUMMARY {{round.session.convention.name}}<br>
+        {{round.session.convention.group.name}} District, {{round.session.get_kind_display}} {{round.get_kind_display}}, {{round.session.convention.location}} {{round.session.convention.start_date|date:"F j, Y"}}
+      </h5>
+      <ul class='list-inline'>
+        Contest Legend:
+        {% for contest in contests %}
+          <li>{{contest.num}}={{contest.award.name}}</li>
+        {% empty %}
+        (Contests Unknown)
+        {% endfor %}
+      </ul>
       <div class='row'>
         <table class='table table-condensed table-striped'>
           <thead>
@@ -90,10 +82,10 @@
               <tr class='pbi_avoid'>
                 <td>
                     {% if appearance.competitor.group.get_kind_display == 'Chorus' %}
-                      <strong>{{appearance.tot_rank|default:""}}&nbsp;{{appearance.competitor.group.parent.name|truncatechars_html:25}}</strong><br>
+                      <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.competitor.group.parent.name|truncatechars_html:25}}</strong><br>
                       {{appearance.competitor.group.name|truncatechars_html:25}} ({{appearance.competitor.contesting|default:"Unknown"}})<br>
                     {% else %}
-                      <strong>{{appearance.tot_rank|default:""}}&nbsp;{{appearance.competitor.group.name|truncatechars_html:25}}</strong><br>
+                      <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.competitor.group.name|truncatechars_html:25}}</strong><br>
                       ({{appearance.competitor.contesting|default:"Unknown"}})<br>
                     {% endif %}
                 </td>
@@ -135,7 +127,7 @@
                   {{appearance.calc_total}}
                 </td>
                 <td class='text-right'>
-                  {{appearance.tot_score|floatformat:1}}
+                  {{appearance.competitor.tot_score|floatformat:1}}
                 </td>
                 {% if round.session.get_kind_display == 'Chorus' %}
                   <td class='text-right'>
@@ -171,10 +163,10 @@
                 <tr class='pbi_avoid'>
                   <td>
                       {% if appearance.competitor.group.get_kind_display == 'Chorus' %}
-                        <strong>{{appearance.tot_rank|default:""}}&nbsp;{{appearance.competitor.group.parent.name|truncatechars_html:25}}</strong><br>
+                        <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.competitor.group.parent.name|truncatechars_html:25}}</strong><br>
                         {{appearance.competitor.group.name|truncatechars_html:25}} ({{appearance.competitor.contesting|default:"Unknown"}})<br>
                       {% else %}
-                        <strong>{{appearance.tot_rank|default:""}}&nbsp;{{appearance.competitor.group.name|truncatechars_html:25}}</strong><br>
+                        <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.competitor.group.name|truncatechars_html:25}}</strong><br>
                         ({{appearance.competitor.contesting|default:"Unknown"}})<br>
                       {% endif %}
                   </td>
@@ -213,7 +205,11 @@
                     {% endif %}
                   </td>
                   <td class='text-right'>
-                    {{appearance.calc_total}}
+                    {% if appearance.run_points %}
+                      {{appearance.calc_total}}
+                    {% else %}
+                      {{appearance.tot_points}}
+                    {% endif %}
                   </td>
                   <td class='text-right'>
                     {{appearance.tot_score|floatformat:1}}
@@ -327,7 +323,7 @@
             <h5>Draw</h5>
             <p>
               {% for advancer in advancers %}
-                <span class='text-nowrap'><strong>{{advancer.draw}}</strong> {{advancer.competitor.group.name}}&nbsp;</span>
+                <span class='text-nowrap'><strong>{{advancer.draw}}.</strong> {{advancer.competitor.group.name}}&nbsp;</span>
               {% endfor %}
               {% if mt %}<span class='text-nowrap'><strong>MT</strong> {{mt.competitor.group.name}}&nbsp;</span>{% endif %}
             </p>

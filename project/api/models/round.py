@@ -388,9 +388,9 @@ class Round(TimeStampedModel):
             'contenders',
             'contenders__outcome',
         ).order_by(
-            '-tot_points',
-            '-sng_points',
-            '-per_points',
+            '-competitor__tot_points',
+            '-competitor__sng_points',
+            '-competitor__per_points',
             'competitor__group__name',
         )
         comps = appearances.values_list('competitor__id', flat=True)
@@ -500,6 +500,7 @@ class Round(TimeStampedModel):
             draw__gt=0,
         ).order_by('draw')
         mt = self.appearances.filter(draw=0).first()
+        adds_add = len(advancers)
         context = {
             'round': self,
             'appearances': appearances,
@@ -509,6 +510,7 @@ class Round(TimeStampedModel):
             'contests': contests,
             'outcomes': outcomes,
             'advancers': advancers,
+            'adds_add': adds_add,
             'mt': mt,
         }
         rendered = render_to_string('round/old_oss.html', context)
