@@ -273,7 +273,6 @@ class Session(TimeStampedModel):
                 Entry.STATUS.approved,
             ]
         ).order_by('draw')
-        expiring_count = 0
         for entry in entries:
             oa = entry.draw
             group_name = entry.group.name
@@ -292,10 +291,7 @@ class Session(TimeStampedModel):
             members = entry.group.members.filter(
                 status__gt=0,
             )
-            # expiring_count = members.filter(
-            #     person__current_through__lte=self.convention.close_date,
-            # ).count()
-            # expiring_count = None
+            expiring_count = 0
             for member in members:
                 try:
                     if member.person.current_through <= self.convention.close_date:
