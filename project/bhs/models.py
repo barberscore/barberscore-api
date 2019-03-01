@@ -15,6 +15,11 @@ from bhs.managers import JoinManager
 from bhs.managers import RoleManager
 from bhs.managers import StructureManager
 # from bhs.managers import SubscriptionManager
+from model_utils import Choices
+
+from bhs.fields import McEmailField
+from bhs.fields import McVoicePartField
+from bhs.fields import McGenderField
 
 
 class Human(models.Model):
@@ -41,7 +46,7 @@ class Human(models.Model):
         editable=False,
         db_column='preferred_name',
     )
-    email = models.CharField(
+    email = McEmailField(
         max_length=255,
         unique=True,
         editable=False,
@@ -73,13 +78,25 @@ class Human(models.Model):
         null=False,
         db_column='legacy_id',
     )
+    SEX = Choices(
+        ('male', 'Male'),
+        ('female', 'Female'),
+    )
     sex = models.CharField(
         max_length=255,
         editable=False,
+        choices=SEX,
     )
-    primary_voice_part = models.CharField(
+    PART = Choices(
+        ('tenor', 'Tenor'),
+        ('lead', 'Lead'),
+        ('baritone', 'Baritone'),
+        ('bass', 'Bass'),
+    )
+    primary_voice_part = McVoicePartField(
         max_length=255,
         editable=False,
+        choices=PART,
     )
 
     created = models.DateTimeField(
@@ -209,22 +226,6 @@ class Human(models.Model):
 
 
 class Structure(models.Model):
-    CHAPTER = 'chapter'
-    DISTRICT = 'district'
-    ORGANIZATION = 'organization'
-    QUARTET = 'quartet'
-    CHORUS = 'chorus'
-    GROUP = 'group'
-
-    KIND = [
-        (ORGANIZATION, 'Organization'),
-        (DISTRICT, 'District'),
-        (GROUP, 'Group'),
-        (CHAPTER, 'Chapter'),
-        (CHORUS, 'Chorus'),
-        (QUARTET, 'Quartet'),
-    ]
-
     id = models.CharField(
         primary_key=True,
         max_length=255,
@@ -234,15 +235,30 @@ class Structure(models.Model):
         max_length=255,
         editable=False,
     )
+    KIND = Choices(
+        ('organization', 'Organization'),
+        ('district', 'District'),
+        ('group', 'Group'),
+        ('chapter', 'Chapter'),
+        ('chorus', 'Chorus'),
+        ('quartet', 'Quartet'),
+    )
     kind = models.CharField(
         max_length=255,
         editable=False,
         choices=KIND,
         db_column='object_type',
     )
-    category = models.CharField(
+    GENDER = Choices(
+        ('men', 'Male'),
+        ('women', 'Female'),
+        ('mixed', 'Mixed'),
+    )
+    gender = models.CharField(
         max_length=255,
         editable=False,
+        choices=GENDER,
+        db_column='category'
     )
     bhs_id = models.IntegerField(
         editable=False,
@@ -586,6 +602,13 @@ class Role(models.Model):
             self.structure,
         )
 
+    def clean(self):
+        if self.name.partition(" ")[0].lower() != self.structure.kind:
+            raise ValidationError({
+                'name': 'Role name does not match structure type.',
+            })
+
+
     class Meta:
         managed=False
         db_table = 'vwOfficers'
@@ -603,9 +626,16 @@ class Join(models.Model):
     paid = models.BooleanField(
         editable=False,
     )
-    vocal_part = models.CharField(
+    PART = Choices(
+        ('tenor', 'Tenor'),
+        ('lead', 'Lead'),
+        ('baritone', 'Baritone'),
+        ('bass', 'Bass'),
+    )
+    vocal_part = McVoicePartField(
         max_length=255,
         editable=False,
+        choices=PART,
     )
     established_date = models.DateField(
         db_column='created',

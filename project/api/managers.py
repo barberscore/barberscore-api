@@ -116,7 +116,7 @@ class GroupManager(Manager):
         preferred_name = structure.preferred_name
         status = structure.status.name
         kind = structure.kind
-        category = structure.category
+        gender = structure.gender
         start_date = structure.established_date
         email = structure.email
         phone = structure.phone
@@ -148,7 +148,7 @@ class GroupManager(Manager):
             'women': self.model.GENDER.female,
             'mixed': self.model.GENDER.mixed,
         }
-        gender = gender_map.get(category, self.model.GENDER.male)
+        gender = gender_map.get(gender, self.model.GENDER.male)
         if email:
             email = email.strip().lower()
             try:

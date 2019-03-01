@@ -1004,6 +1004,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ],
         'Chapter': [
             ActiveChorusInline,
+            OfficerInline,
             StateLogInline,
         ],
         'Chorus': [

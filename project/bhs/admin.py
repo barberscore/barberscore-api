@@ -53,6 +53,7 @@ class HumanAdmin(ReadOnlyAdmin):
         'primary_voice_part',
         'created',
         'modified',
+        'deleted',
     ]
 
     list_display = [
@@ -72,6 +73,7 @@ class HumanAdmin(ReadOnlyAdmin):
         'primary_voice_part',
         'created',
         'modified',
+        'deleted',
     ]
 
     readonly_fields = [
@@ -91,6 +93,7 @@ class HumanAdmin(ReadOnlyAdmin):
         'primary_voice_part',
         'created',
         'modified',
+        'deleted',
     ]
 
     list_filter = [
@@ -123,7 +126,7 @@ class StructureAdmin(ReadOnlyAdmin):
         'id',
         'name',
         'kind',
-        'category',
+        'gender',
         'bhs_id',
         'preferred_name',
         'chapter_code',
@@ -143,7 +146,7 @@ class StructureAdmin(ReadOnlyAdmin):
         '__str__',
         'name',
         'kind',
-        'category',
+        'gender',
         'bhs_id',
         'preferred_name',
         'chapter_code',
@@ -160,7 +163,7 @@ class StructureAdmin(ReadOnlyAdmin):
         'id',
         'name',
         'kind',
-        'category',
+        'gender',
         'bhs_id',
         'preferred_name',
         'chapter_code',
@@ -178,8 +181,7 @@ class StructureAdmin(ReadOnlyAdmin):
 
     list_filter = [
         'kind',
-        'category',
-        'status',
+        'gender',
     ]
     search_fields = [
         'name',
@@ -239,7 +241,7 @@ class StructureAdmin(ReadOnlyAdmin):
             yield inline.get_formset(request, obj)
 
 
-@admin.register(Membership)
+# @admin.register(Membership)
 class MembershipAdmin(ReadOnlyAdmin):
     fields = [
         'structure',
@@ -307,7 +309,7 @@ class MembershipAdmin(ReadOnlyAdmin):
 #     ]
 
 
-@admin.register(Subscription)
+# @admin.register(Subscription)
 class SubscriptionAdmin(ReadOnlyAdmin):
     fields = [
         '__str__',
@@ -468,7 +470,6 @@ class JoinAdmin(ReadOnlyAdmin):
         'paid',
         'vocal_part',
         'structure__kind',
-        'inactive_reason',
         'inactive_date',
     ]
 
