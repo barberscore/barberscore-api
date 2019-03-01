@@ -241,7 +241,7 @@ class StructureAdmin(ReadOnlyAdmin):
             yield inline.get_formset(request, obj)
 
 
-# @admin.register(Membership)
+@admin.register(Membership)
 class MembershipAdmin(ReadOnlyAdmin):
     fields = [
         'structure',
@@ -309,7 +309,7 @@ class MembershipAdmin(ReadOnlyAdmin):
 #     ]
 
 
-# @admin.register(Subscription)
+@admin.register(Subscription)
 class SubscriptionAdmin(ReadOnlyAdmin):
     fields = [
         '__str__',
