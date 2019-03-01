@@ -890,7 +890,7 @@ class Session(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.closed, STATUS.verified],
+        source=[STATUS.closed],
         target=STATUS.verified,
         conditions=[],
     )
