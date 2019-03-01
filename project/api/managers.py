@@ -375,6 +375,8 @@ class MemberManager(Manager):
         # Ignore rows without approval flow
         if not join.paid:
             raise ValueError('Join not paid')
+        if join.deleted:
+            raise ValueError('Join was deleted')
 
         # Extract
         mc_pk = str(join.id)

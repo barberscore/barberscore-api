@@ -93,6 +93,12 @@ class Human(models.Model):
         editable=False,
     )
 
+    deleted = models.DateTimeField(
+        db_column='deleted',
+        null=True,
+        editable=False,
+    )
+
     objects = HumanManager()
 
     # Properties
@@ -164,6 +170,7 @@ class Human(models.Model):
                     'structure',
                 ).filter(
                     paid=True,
+                    deleted__isnull=True,
                     subscription__human=self,
                     structure__id=structure,
                 ).latest(
@@ -287,6 +294,12 @@ class Structure(models.Model):
         db_column='updated',
         editable=False,
     )
+    deleted = models.DateTimeField(
+        db_column='deleted',
+        null=True,
+        editable=False,
+    )
+
     # FKs
     status = models.ForeignKey(
         'Status',
@@ -346,6 +359,7 @@ class Structure(models.Model):
                     'subscription__human',
                 ).filter(
                     paid=True,
+                    deleted__isnull=True,
                     subscription__human__id=human,
                 ).latest(
                     'modified',
@@ -423,6 +437,11 @@ class Membership(models.Model):
         db_column='modified',
         editable=False,
     )
+    deleted = models.DateTimeField(
+        db_column='deleted',
+        editable=False,
+    )
+
     # FKs
     structure = models.ForeignKey(
         'Structure',
@@ -475,6 +494,11 @@ class Subscription(models.Model):
     )
     modified = models.DateTimeField(
         db_column='updated',
+        null=True,
+        editable=False,
+    )
+    deleted = models.DateTimeField(
+        db_column='deleted',
         null=True,
         editable=False,
     )
@@ -605,6 +629,11 @@ class Join(models.Model):
     )
     modified = models.DateTimeField(
         db_column='modified',
+        null=True,
+        editable=False,
+    )
+    deleted = models.DateTimeField(
+        db_column='deleted',
         null=True,
         editable=False,
     )

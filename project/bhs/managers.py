@@ -135,6 +135,7 @@ class JoinManager(Manager):
         # Get all records as values
         joins = self.filter(
             paid=True,
+            deleted__isnull=True,
         ).select_related(
             'structure',
             'subscription',

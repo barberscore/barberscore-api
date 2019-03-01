@@ -142,6 +142,7 @@ def check_member(member):
             structure__id=member.group.mc_pk,
             subscription__human__id=member.person.mc_pk,
             paid=True,
+            deleted__isnull=True,
         ).latest(
             'modified',
             '-inactive_date',
