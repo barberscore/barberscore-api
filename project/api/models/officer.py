@@ -108,23 +108,11 @@ class Officer(TimeStampedModel):
         return str(self.id)
 
     def clean(self):
-        pass
-        # if all([
-        #     self.status == self.STATUS.active,
-        #     self.person.status == self.person.STATUS.inactive,
-        # ]):
-        #     raise ValidationError({
-        #         'status': 'Can not be active when person is inactive',
-        #     })
-        # if self.end_date:
-        #     if all([
-        #         self.status == self.STATUS.active,
-        #         self.end_date < now().date(),
+        if self.office.kind != self.group.kind:
+            raise ValidationError({
+                'office': 'Office does not match Group Type.',
+            })
 
-        #     ]):
-        #         raise ValidationError({
-        #             'status': 'Can not be active with a passed end date',
-        #         })
     # Permissions
     @staticmethod
     @allow_staff_or_superuser
