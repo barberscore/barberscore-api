@@ -427,6 +427,7 @@ class JoinAdmin(ReadOnlyAdmin):
         'inactive_reason',
         'created',
         'modified',
+        'deleted',
     ]
 
     list_display = [
@@ -441,6 +442,7 @@ class JoinAdmin(ReadOnlyAdmin):
         'established_date',
         'created',
         'modified',
+        'deleted',
     ]
 
     list_select_related = [
@@ -459,6 +461,7 @@ class JoinAdmin(ReadOnlyAdmin):
         'established_date',
         'created',
         'modified',
+        'deleted',
     ]
 
     list_display_links = [
