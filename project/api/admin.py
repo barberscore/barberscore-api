@@ -7,6 +7,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group as AuthGroup
 from django.utils import timezone
+from django.contrib import messages
+from django.apps import apps
 
 # Local
 from .filters import AppearanceConventionStatusListFilter
@@ -103,6 +105,7 @@ class FlatAdmin(admin.ModelAdmin):
         'score',
     ]
 
+
 @admin.register(Complete)
 class CompleteAdmin(admin.ModelAdmin):
 
@@ -176,6 +179,7 @@ class CompleteAdmin(admin.ModelAdmin):
     inlines = [
         # FlatInline,
     ]
+
 
 @admin.register(Selection)
 class SelectionAdmin(admin.ModelAdmin):
@@ -263,6 +267,7 @@ class SelectionAdmin(admin.ModelAdmin):
     inlines = [
         # FlatInline,
     ]
+
 
 @admin.register(Appearance)
 class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
@@ -977,6 +982,10 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'tree_sort',
     ]
 
+    actions = [
+        'update_from_mc',
+    ]
+
     INLINES = {
         'International': [
             AwardInline,
@@ -1058,6 +1067,37 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
+
+    def update_from_mc(self, request, queryset):
+        Structure = apps.get_model('bhs.structure')
+        i = 0
+        for obj in queryset:
+            try:
+                structure = Structure.objects.get(
+                    id=obj.mc_pk
+                )
+            except Structure.DoesNotExist:
+                self.message_user(
+                    request,
+                    "{0} is not registered with Member Center".format(
+                        obj.name,
+                    ),
+                    level=messages.ERROR,
+                )
+                continue
+            structure.update_bs()
+            i += 1
+        if i == 1:
+            message = "{0} group was updated.".format(i)
+        elif i > 1:
+            message = "{0} groups were updated.".format(i)
+        elif i == 0:
+            return
+        self.message_user(
+            request,
+            message,
+        )
+    update_from_mc.short_description = "Update from Member Center"
 
 
 @admin.register(Member)
@@ -1468,10 +1508,45 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     # readonly_fields = [
     #     'common_name',
     # ]
+    actions = [
+        'update_from_mc',
+    ]
+
     def is_mc(self, instance):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
+
+    def update_from_mc(self, request, queryset):
+        Human = apps.get_model('bhs.human')
+        i = 0
+        for obj in queryset:
+            try:
+                human = Human.objects.get(
+                    id=obj.mc_pk
+                )
+            except Human.DoesNotExist:
+                self.message_user(
+                    request,
+                    "{0} is not registered with Member Center".format(
+                        obj.common_name,
+                    ),
+                    level=messages.ERROR,
+                )
+                continue
+            human.update_bs()
+            i += 1
+        if i == 1:
+            message = "{0} person was updated.".format(i)
+        elif i > 1:
+            message = "{0} persons were updated.".format(i)
+        elif i == 0:
+            return
+        self.message_user(
+            request,
+            message,
+        )
+    update_from_mc.short_description = "Update from Member Center"
 
 
 @admin.register(Repertory)
