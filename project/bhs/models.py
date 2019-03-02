@@ -347,6 +347,8 @@ class Structure(models.Model):
 
 
     def update_bs(self):
+        if self.kind not in [self.KIND.chorus, self.KIND.quartet,]:
+            raise ValueError("Only choruses and quartets may be updated")
         Group = apps.get_model('api.group')
         Member = apps.get_model('api.member')
         Officer = apps.get_model('api.officer')
