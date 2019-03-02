@@ -17,13 +17,13 @@ class StructureInline(admin.TabularInline):
     fields = [
         'name',
         'kind',
-        'category',
+        'gender',
         'bhs_id',
     ]
     readonly_fields = [
         'name',
         'kind',
-        'category',
+        'gender',
         'bhs_id',
     ]
     show_change_link = True
