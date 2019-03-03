@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group as AuthGroup
 from django.utils import timezone
 from django.contrib import messages
 from django.apps import apps
-
+from django.conf import settings
 # Local
 from .filters import AppearanceConventionStatusListFilter
 from .filters import AwardQualifierLevelFilter
@@ -1280,7 +1280,7 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = [
         'person',
-        'office__code',
+        'office',
         'group',
         'is_mc',
         'status',
@@ -1613,7 +1613,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'legacy_sa',
     ]
     def show_old_oss(self, obj):
-        return format_html("<a href='http://localhost:8000/api/round/{id}/ossold' target='_blank'>link</a>", id=obj.id)
+        return format_html("<a href='{base}/api/round/{id}/ossold' target='_blank'>link</a>", base=settings.HOST_NAME, id=obj.id)
     show_old_oss.short_description = "Legacy-Style OSS"
 
     list_filter = [
