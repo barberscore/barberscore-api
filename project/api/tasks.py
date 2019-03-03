@@ -212,13 +212,12 @@ def send_email(subject, body, to, cc=None, bcc=None):
     if cc:
         cc = list(set(cc))
         cc = [x for x in cc if x not in to]
+        cc = [x.replace(",", "") for x in cc]
     if bcc:
         bcc = list(set(bcc))
         bcc = [x for x in bcc if x not in to]
-    # Strip commas
-    to = [x.replace(",","") for x in to]
-    cc = [x.replace(",","") for x in cc]
-    bcc = [x.replace(",","") for x in bcc]
+        bcc = [x.replace(",", "") for x in bcc]
+    to = [x.replace(",", "") for x in to]
     email = EmailMessage(
         subject=subject,
         body=body,
