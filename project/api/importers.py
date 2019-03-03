@@ -1839,86 +1839,63 @@ def create_db_chart(path):
             )
 
 
-
 def import_judge_roster(path):
+    code_map = {
+        'Certified': {
+            'ADM': 230,
+            'SNG': 240,
+            'PER': 250,
+            'MUS': 260,
+        },
+        'Candidate': {
+            'ADM': 270,
+            'SNG': 280,
+            'PER': 290,
+            'MUS': 295,
+        }
+    }
+    ex = []
     with open(path) as f:
         reader = csv.reader(f, skipinitialspace=True)
         rows = [row for row in reader]
         for row in rows:
-            try:
-                person = Person.objects.get(
-                    bhs_id=int(row[1]),
-                )
-            except Person.DoesNotExist:
-                log.error('Can not find person for {0} {1}'.format(row[2], row[1]))
-                continue
-            spouse = row[2].partition("(")[2].partition(")")[0]
-            address = "{0}; {1}".format(row[3], row[4])
-            email = row[5]
-            home_phone = row[7].partition("h")[2]
-            work_phone = row[8].partition("w")[2]
-            cell_phone = row[9].partition("c")[2]
-            airports = []
-            if row[11]:
-                airports.append(row[11])
-            if row[12]:
-                airports.append(row[12])
-            if row[13]:
-                airports.append(row[13])
-            if row[14]:
-                airports.append(row[14])
-            person.spouse = spouse
-            person.address = address
-            person.email = email
-            person.home_phone = home_phone
-            person.work_phone = work_phone
-            person.cell_phone = cell_phone
-            person.airports = airports
+            bhs_id = int(row[0])
+            ex.append(bhs_id)
+            person = Person.objects.get(
+                bhs_id=bhs_id,
+            )
+            district = row[4].strip()
+            category = row[5].strip()
+            state = row[6].strip()
+            email = row[7].strip().lower()
+            location = "{0}, {1}".format(row[8], row[9])
+            person.district = district
+            if person.email != email:
+                print('email mismatch: {0}'.format(person))
+            person.location = location
             person.save()
-            try:
-                district = Entity.objects.get(
-                    code=row[10],
-                    kind__in=[
-                        Entity.KIND.district,
-                        Entity.KIND.affiliate,
-                    ]
-                )
-            except Entity.DoesNotExist:
-                log.error('Can not find district for {0} {1}'.format(row[2], row[1]))
-                continue
-            status = row[15]
-            if status == 'Certified':
-                status = 10
-            else:
-                status = 0
-            category = row[0]
-            if category == 'MUS':
-                office = Office.objects.get(name='Society C&J Music Judge')
-            elif category == 'PER':
-                office = Office.objects.get(name='Society C&J Performance Judge')
-            elif category == 'SNG':
-                office = Office.objects.get(name='Society C&J Singing Judge')
-            elif category == 'ADM':
-                office = Office.objects.get(name='Society C&J Administrator')
-            elif category == 'DRCJ':
-                continue
-            else:
-                log.error("Can't find category for {0}".format(row[0]))
-            try:
-                yos = int(row[6])
-            except ValueError:
-                yos = 0
-            year = 2017 - yos
-            start_date = datetime(year, 7, 1)
-            officer = {
-                'person': person,
-                'office': office,
-                'entity': district,
-                'start_date': start_date,
-                'status': status,
-            }
-            Officer.objects.create(**officer)
-
+            code = code_map[state][category]
+            office = Office.objects.get(
+                kind=1,
+                code=code,
+            )
+            group = Group.objects.get(bhs_id=1)
+            officer, _ = Officer.objects.get_or_create(
+                office=office,
+                person=person,
+                group=group,
+            )
+            officer.activate()
+            officer.save()
+    js = Officer.objects.filter(
+        office__code__range=[230,295]
+    ).exclude(
+        person__bhs_id__in=ex,
+    ).distinct()
+    for j in js:
+        print(j.person.common_name)
+        j.deactivate()
+        j.save()
 
 def import_db_offices(path):
     with open(path) as f:

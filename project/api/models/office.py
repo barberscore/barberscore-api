@@ -77,10 +77,6 @@ class Office(TimeStampedModel):
             (150, 'scjc_sng', "SCJC SNG"),
             (160, 'scjc_chart', "SCJC Chart"),
             (170, 'scjc_admin', "SCJC Admin"),
-        ]),
-        ('District', [
-            (210, 'drcj', "DRCJ"),
-            (220, 'drcj_asst', "DRCJ Assistant"),
             (230, 'judge_ca', "JUDGE CA"),
             (240, 'judge_mus', "JUDGE MUS"),
             (250, 'judge_per', "JUDGE PER"),
@@ -90,12 +86,20 @@ class Office(TimeStampedModel):
             (290, 'candidate_per', "CANDIDATE PER"),
             (295, 'candidate_sng', "CANDIDATE SNG"),
         ]),
-        ('Group', [
-            (310, 'chap_pres', "CPRES"),
-            (320, 'chap_sec', "CSEC"),
-            (320, 'chap_dir', "CDIR"),
-            (340, 'chap_asst', "CASS"),
-            (350, 'chap_man', "CMAN"),
+        ('District', [
+            (210, 'drcj', "DRCJ"),
+            (220, 'drcj_asst', "DRCJ Assistant"),
+        ]),
+        ('Chapter', [
+            (310, 'chapter_pres', "CPRES"),
+            (320, 'chapter_sec', "CSEC"),
+        ]),
+        ('Chorus', [
+            (330, 'chorus_dir', "KDIR"),
+            (340, 'chorus_asst', "KASS"),
+            (350, 'chorus_man', "KMAN"),
+        ]),
+        ('Quartet', [
             (410, 'quartet_admin', "QADM"),
         ]),
     )
