@@ -215,6 +215,10 @@ def send_email(subject, body, to, cc=None, bcc=None):
     if bcc:
         bcc = list(set(bcc))
         bcc = [x for x in bcc if x not in to]
+    # Strip commas
+    to = [x.replace(",","") for x in to]
+    cc = [x.replace(",","") for x in cc]
+    bcc = [x.replace(",","") for x in bcc]
     email = EmailMessage(
         subject=subject,
         body=body,

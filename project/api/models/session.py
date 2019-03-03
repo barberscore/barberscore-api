@@ -720,7 +720,7 @@ class Session(TimeStampedModel):
                 group__parent__parent=self.convention.group,
             ).distinct()
 
-        bcc = ["{0} <{1}>".format(officer.person.common_name.replace(",",""), officer.person.email) for officer in officers]
+        bcc = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
         queue = django_rq.get_queue('high')
         result = queue.enqueue(
             send_email,
