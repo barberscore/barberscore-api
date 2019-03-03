@@ -1439,6 +1439,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'spouse',
         'location',
+        'district',
         'website',
         'facebook',
         'twitter',

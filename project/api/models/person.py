@@ -124,6 +124,13 @@ class Person(TimeStampedModel):
         blank=True,
     )
 
+    district = models.CharField(
+        help_text="""
+            District (used primarily for judges.)""",
+        max_length=10,
+        blank=True,
+    )
+
     is_deceased = models.BooleanField(
         default=False,
     )
