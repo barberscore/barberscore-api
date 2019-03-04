@@ -519,6 +519,23 @@ class Group(TimeStampedModel):
                     self.KIND.district,
                 ]:
                     raise ValidationError("Chapter must have District parent.")
+                if self.division and not self.parent.is_divided:
+                        raise ValidationError("Non-divisionals should not have divisions.")
+                if not self.division and self.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
+                        raise ValidationError("Divisionals should have divisions.")
+                if self.division:
+                    if self.parent.code == 'EVG' and not 10 <= self.division <= 50:
+                            raise ValidationError("Division must be within EVG.")
+                    elif self.parent.code == 'FWD' and not 60 <= self.division <= 100:
+                            raise ValidationError("Division must be within FWD.")
+                    elif self.parent.code == 'LOL' and not 110 <= self.division <= 150:
+                            raise ValidationError("Division must be within LOL.")
+                    elif self.parent.code == 'MAD' and not 160 <= self.division <= 200:
+                            raise ValidationError("Division must be within MAD.")
+                    elif self.parent.code == 'NED' and not 210 <= self.division <= 250:
+                            raise ValidationError("Division must be within NED.")
+                    elif self.parent.code == 'SWD' and not 260 <= self.division <= 290:
+                            raise ValidationError("Division must be within SWD.")
             if self.kind in [
                 self.KIND.chorus,
             ]:
@@ -526,6 +543,23 @@ class Group(TimeStampedModel):
                     self.KIND.chapter,
                 ]:
                     raise ValidationError("Chorus must have Chapter parent.")
+                if self.division and not self.parent.parent.is_divided:
+                        raise ValidationError("Non-divisionals should not have divisions.")
+                if not self.division and self.parent.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
+                        raise ValidationError("Divisionals should have divisions.")
+                if self.division:
+                    if self.parent.parent.code == 'EVG' and not 10 <= self.division <= 50:
+                            raise ValidationError("Division must be within EVG.")
+                    elif self.parent.parent.code == 'FWD' and not 60 <= self.division <= 100:
+                            raise ValidationError("Division must be within FWD.")
+                    elif self.parent.parent.code == 'LOL' and not 110 <= self.division <= 150:
+                            raise ValidationError("Division must be within LOL.")
+                    elif self.parent.parent.code == 'MAD' and not 160 <= self.division <= 200:
+                            raise ValidationError("Division must be within MAD.")
+                    elif self.parent.parent.code == 'NED' and not 210 <= self.division <= 250:
+                            raise ValidationError("Division must be within NED.")
+                    elif self.parent.parent.code == 'SWD' and not 260 <= self.division <= 290:
+                            raise ValidationError("Division must be within SWD.")
             if self.kind in [
                 self.KIND.quartet,
             ]:
@@ -533,7 +567,23 @@ class Group(TimeStampedModel):
                     self.KIND.district,
                 ]:
                     raise ValidationError("Quartet must have District parent.")
-
+                if self.division and not self.parent.is_divided:
+                        raise ValidationError("Non-divisionals should not have divisions.")
+                if not self.division and self.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
+                        raise ValidationError("Divisionals should have divisions.")
+                if self.division:
+                    if self.parent.code == 'EVG' and not 10 <= self.division <= 50:
+                            raise ValidationError("Division must be within EVG.")
+                    elif self.parent.code == 'FWD' and not 60 <= self.division <= 100:
+                            raise ValidationError("Division must be within FWD.")
+                    elif self.parent.code == 'LOL' and not 110 <= self.division <= 150:
+                            raise ValidationError("Division must be within LOL.")
+                    elif self.parent.code == 'MAD' and not 160 <= self.division <= 200:
+                            raise ValidationError("Division must be within MAD.")
+                    elif self.parent.code == 'NED' and not 210 <= self.division <= 250:
+                            raise ValidationError("Division must be within NED.")
+                    elif self.parent.code == 'SWD' and not 260 <= self.division <= 290:
+                            raise ValidationError("Division must be within SWD.")
         return
 
     # Methods
