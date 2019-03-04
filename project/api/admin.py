@@ -647,7 +647,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'legacy_selection',
         'legacy_complete',
         'status',
-        'group',
+        ('group', 'divisions'),
         'year',
         'season',
         'panel',

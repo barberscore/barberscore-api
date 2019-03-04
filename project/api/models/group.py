@@ -387,11 +387,11 @@ class Group(TimeStampedModel):
             (150, 'lolsw', 'LOL Southwest'),
         ]),
         ('MAD', [
-            (160, 'madatl', 'MAD Atlantic'),
+            # (160, 'madatl', 'MAD Atlantic'),
             (170, 'madcen', 'MAD Central'),
             (180, 'madnth', 'MAD Northern'),
             (190, 'madsth', 'MAD Southern'),
-            (200, 'madwst', 'MAD Western'),
+            # (200, 'madwst', 'MAD Western'),
         ]),
         ('NED', [
             (210, 'nedgp', 'NED Granite and Pine'),
