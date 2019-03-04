@@ -359,36 +359,53 @@ class Group(TimeStampedModel):
         default=False,
     )
 
+    is_divided = models.BooleanField(
+        help_text="""This district has divisions.""",
+        default=False,
+    )
+
     DIVISION = Choices(
-        (10, 'evgd1', 'EVG Division I'),
-        (20, 'evgd2', 'EVG Division II'),
-        (30, 'evgd3', 'EVG Division III'),
-        (40, 'evgd4', 'EVG Division IV'),
-        (50, 'evgd5', 'EVG Division V'),
-        (60, 'fwdaz', 'FWD Arizona'),
-        (70, 'fwdne', 'FWD Northeast'),
-        (80, 'fwdnw', 'FWD Northwest'),
-        (90, 'fwdse', 'FWD Southeast'),
-        (100, 'fwdsw', 'FWD Southwest'),
-        (110, 'lol10l', 'LOL 10000 Lakes'),
-        (120, 'lolone', 'LOL Division One'),
-        (130, 'lolnp', 'LOL Northern Plains'),
-        (140, 'lolpkr', 'LOL Packerland'),
-        (150, 'lolsw', 'LOL Southwest'),
-        (160, 'madatl', 'MAD Atlantic'),
-        (170, 'madcen', 'MAD Central'),
-        (180, 'madnth', 'MAD Northern'),
-        (190, 'madsth', 'MAD Southern'),
-        (200, 'madwst', 'MAD Western'),
-        (210, 'nedgp', 'NED Granite and Pine'),
-        (220, 'nedmtn', 'NED Mountain'),
-        (230, 'nedpat', 'NED Patriot'),
-        (240, 'nedsun', 'NED Sunrise'),
-        (250, 'nedyke', 'NED Yankee'),
-        (260, 'swdne', 'SWD Northeast'),
-        (270, 'swdnw', 'SWD Northwest'),
-        (280, 'swdse', 'SWD Southeast'),
-        (290, 'swdsw', 'SWD Southwest'),
+        ('EVG', [
+            (10, 'evgd1', 'EVG Division I'),
+            (20, 'evgd2', 'EVG Division II'),
+            (30, 'evgd3', 'EVG Division III'),
+            (40, 'evgd4', 'EVG Division IV'),
+            (50, 'evgd5', 'EVG Division V'),
+        ]),
+        ('FWD', [
+            (60, 'fwdaz', 'FWD Arizona'),
+            (70, 'fwdne', 'FWD Northeast'),
+            (80, 'fwdnw', 'FWD Northwest'),
+            (90, 'fwdse', 'FWD Southeast'),
+            (100, 'fwdsw', 'FWD Southwest'),
+        ]),
+        ('LOL', [
+            (110, 'lol10l', 'LOL 10000 Lakes'),
+            (120, 'lolone', 'LOL Division One'),
+            (130, 'lolnp', 'LOL Northern Plains'),
+            (140, 'lolpkr', 'LOL Packerland'),
+            (150, 'lolsw', 'LOL Southwest'),
+        ]),
+        ('MAD', [
+            (160, 'madatl', 'MAD Atlantic'),
+            (170, 'madcen', 'MAD Central'),
+            (180, 'madnth', 'MAD Northern'),
+            (190, 'madsth', 'MAD Southern'),
+            (200, 'madwst', 'MAD Western'),
+        ]),
+        ('NED', [
+            (210, 'nedgp', 'NED Granite and Pine'),
+            (220, 'nedmtn', 'NED Mountain'),
+            (230, 'nedpat', 'NED Patriot'),
+            (240, 'nedsun', 'NED Sunrise'),
+            (250, 'nedyke', 'NED Yankee'),
+        ]),
+        ('SWD', [
+            (260, 'swdne', 'SWD Northeast'),
+            (270, 'swdnw', 'SWD Northwest'),
+            (280, 'swdse', 'SWD Southeast'),
+            (290, 'swdsw', 'SWD Southwest'),
+        ]),
     )
 
     division = models.IntegerField(
@@ -516,6 +533,7 @@ class Group(TimeStampedModel):
                     self.KIND.district,
                 ]:
                     raise ValidationError("Quartet must have District parent.")
+
         return
 
     # Methods
