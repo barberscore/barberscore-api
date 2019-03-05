@@ -710,7 +710,7 @@ class Session(TimeStampedModel):
                 group__status__gt=0,
                 group__kind=self.kind,
                 group__parent=self.convention.group,
-            ).distinct()
+            )
         else:
             officers = Officer.objects.filter(
                 status__gt=0,
@@ -718,7 +718,13 @@ class Session(TimeStampedModel):
                 group__status__gt=0,
                 group__kind=self.kind,
                 group__parent__parent=self.convention.group,
-            ).distinct()
+            )
+        if self.convention.divisions:
+            officers = officers.filter(
+                group__division__in=self.convention.divisions,
+            )
+        officers = officers.distinct()
+
 
         bcc = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
         queue = django_rq.get_queue('high')
