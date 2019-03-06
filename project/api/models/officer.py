@@ -114,7 +114,7 @@ class Officer(TimeStampedModel):
                     'office': 'Office does not match Group Type.',
                 })
         else:
-            if self.group.kind != self.office.KIND.chorus_man:
+            if self.office.code != self.office.CODE.chorus_man:
                 raise ValidationError({
                     'office': 'VLQ officers must be Chorus Managers.',
                 })
