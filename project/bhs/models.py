@@ -260,6 +260,56 @@ class Structure(models.Model):
         choices=GENDER,
         db_column='category'
     )
+    DIVISION = Choices(
+        ('EVG', [
+            'EVG Division I',
+            'EVG Division II',
+            'EVG Division III',
+            'EVG Division IV',
+            'EVG Division V',
+        ]),
+        ('FWD', [
+            'FWD Arizona',
+            'FWD Northeast',
+            'FWD Northwest',
+            'FWD Southeast',
+            'FWD Southwest',
+        ]),
+        ('LOL', [
+            'LOL 10000 Lakes',
+            'LOL Division One',
+            'LOL Northern Plains',
+            'LOL Packerland',
+            'LOL Southwest',
+        ]),
+        ('MAD', [
+            # (160, 'madatl', 'MAD Atlantic'),
+            'MAD Central',
+            'MAD Northern',
+            'MAD Southern',
+            # (200, 'madwst', 'MAD Western'),
+        ]),
+        ('NED', [
+            'NED Granite and Pine',
+            'NED Mountain',
+            'NED Patriot',
+            'NED Sunrise',
+            'NED Yankee',
+        ]),
+        ('SWD', [
+            'SWD Northeast',
+            'SWD Northwest',
+            'SWD Southeast',
+            'SWD Southwest',
+        ]),
+    )
+    division = models.CharField(
+        max_length=255,
+        editable=False,
+        null=True,
+        db_column='division',
+        choices=DIVISION,
+    )
     bhs_id = models.IntegerField(
         editable=False,
         unique=True,

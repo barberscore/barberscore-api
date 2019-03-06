@@ -127,6 +127,7 @@ class StructureAdmin(ReadOnlyAdmin):
         'name',
         'kind',
         'gender',
+        'division',
         'bhs_id',
         'preferred_name',
         'chapter_code',
@@ -164,6 +165,7 @@ class StructureAdmin(ReadOnlyAdmin):
         'name',
         'kind',
         'gender',
+        'division',
         'bhs_id',
         'preferred_name',
         'chapter_code',
@@ -182,6 +184,7 @@ class StructureAdmin(ReadOnlyAdmin):
     list_filter = [
         'kind',
         'gender',
+        'division',
     ]
     search_fields = [
         'name',
