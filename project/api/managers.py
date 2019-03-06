@@ -117,6 +117,7 @@ class GroupManager(Manager):
         status = structure.status.name
         kind = structure.kind
         gender = structure.gender
+        division = structure.division
         start_date = structure.established_date
         email = structure.email
         phone = structure.phone
@@ -131,7 +132,6 @@ class GroupManager(Manager):
         except self.model.DoesNotExist:
             parent = None
         code = structure.chapter_code
-
         # Transform
         name = raw_name.strip() if raw_name else ''
         preferred_name = "{0} (NAME APPROVAL PENDING)".format(preferred_name) if preferred_name else ''
@@ -149,6 +149,36 @@ class GroupManager(Manager):
             'mixed': self.model.GENDER.mixed,
         }
         gender = gender_map.get(gender, self.model.GENDER.male)
+        division_map: {
+            'EVG Division I': 10,
+            'EVG Division II': 20,
+            'EVG Division III': 30,
+            'EVG Division IV': 40,
+            'EVG Division V': 50,
+            'FWD Arizona': 60,
+            'FWD Northeast': 70,
+            'FWD Northwest': 80,
+            'FWD Southeast': 90,
+            'FWD Southwest': 100,
+            'LOL 10000 Lakes': 110,
+            'LOL Division One': 120,
+            'LOL Northern Plains': 130,
+            'LOL Packerland': 140,
+            'LOL Southwest': 150,
+            'MAD Central': 170,
+            'MAD Northern': 180,
+            'MAD Southern': 190,
+            'NED Granite and Pine': 210,
+            'NED Mountain': 220,
+            'NED Patriot': 230,
+            'NED Sunrise': 240,
+            'NED Yankee': 250,
+            'SWD Northeast': 260,
+            'SWD Northwest': 270,
+            'SWD Southeast': 280,
+            'SWD Southwest': 290,
+        }
+        division = division_map.get(division, None)
         if email:
             email = email.strip().lower()
             try:
@@ -209,11 +239,13 @@ class GroupManager(Manager):
         if str(bhs_id) in self.model.AIC:
             status = getattr(self.model.STATUS, 'aic')
             name = self.model.AIC[str(bhs_id)]
+
         defaults = {
             'name': name,
             'status': status,
             'kind': kind,
             'gender': gender,
+            'division': division,
             'start_date': start_date,
             'email': email,
             'phone': phone,
