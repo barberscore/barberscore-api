@@ -220,7 +220,7 @@ class Session(TimeStampedModel):
             if group_type == 'Quartet':
                 contestant_id = entry.group.bhs_id
             elif group_type == 'Chorus':
-                contestant_id = entry.group.parent.code
+                contestant_id = entry.group.code
             else:
                 raise RuntimeError("Improper Entity Type")
             i = 1
