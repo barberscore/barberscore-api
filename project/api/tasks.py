@@ -132,6 +132,14 @@ def person_post_save_handler(person):
     return
 
 
+def user_post_delete_handler(user):
+    if user.is_staff:
+        return
+    auth0 = get_auth0()
+    auth0.users.delete(user.username)
+    return "Deleted: {0}".format(user.username)
+
+
 def check_member(member):
     if not member.group.mc_pk:
         raise RuntimeError("Not an MC entity.")
