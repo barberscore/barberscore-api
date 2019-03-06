@@ -502,9 +502,6 @@ class Group(TimeStampedModel):
             if self.kind == self.KIND.international:
                 if self.parent:
                     raise ValidationError("Toplevel must be Root")
-            else:
-                if not self.parent:
-                    raise ValidationError("Non-Root must have parent")
             if self.kind in [
                 self.KIND.district,
                 self.KIND.noncomp,
