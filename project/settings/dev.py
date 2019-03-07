@@ -56,7 +56,6 @@ LOGGING = {
         'importer': {
             'handlers': [
                 'console',
-                'logfile',
             ],
             'level': 'DEBUG',
         },
@@ -78,14 +77,6 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
-        },
-        'logfile': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'dev.log'),
-            'maxBytes': 5000000,
-            'backupCount': 10,
-            'formatter': 'standard',
         },
     },
     'formatters': {
