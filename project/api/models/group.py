@@ -560,7 +560,7 @@ class Group(TimeStampedModel):
                             raise ValidationError("Division must be within SWD.")
             if self.kind in [
                 self.KIND.quartet,
-            ]:
+            ] and self.parent:
                 if self.parent.kind not in [
                     self.KIND.district,
                 ]:
