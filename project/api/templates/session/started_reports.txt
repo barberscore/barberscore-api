@@ -1,0 +1,16 @@
+The {{session.convention.name|safe}} {{session.get_kind_display}} Session
+has now been Started!
+
+Starting the Session represents the official handoff between the DRCJ and the CAs --
+the Session Manager (entries, contests, etc.) has been locked and any new changes
+must take place in the Round Manager (appearances, outcomes, etc.)
+
+Attached to this email are the FINAL versions of the DRCJ, Legacy, and Group Admin
+contact reports; CAs using the legacy system should update to these files since
+Group Admins may have made changes to their repertory since the last download!
+These are the only files guaranteed to be accurate and up-to-date.
+
+If you have any other questions please reach out to David Mills or Chris Buechler.
+Otherwise, thank you to the DRCJ and good luck to the CAs!
+
+NOTE: This is not SPAM. Please do not report this email as SPAM.

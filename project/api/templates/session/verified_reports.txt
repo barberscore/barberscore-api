@@ -1,0 +1,18 @@
+The {{session.convention.name|safe}} {{session.get_kind_display}} Session has now been Verified!
+
+Verification means the initial draw has been set, and the following reports are now available:
+
+Legacy Program Export: {{host_name|safe}}/api/session/{{session.id}}/legacy
+
+DRCJ Report: {{host_name|safe}}/api/session/{{session.id}}/drcj
+
+Group Admins Email Report: {{host_name|safe}}/api/session/{{session.id}}/contact
+
+
+These reports are kept up to date on the server; to get the latest copy just download
+a fresh version from the website (or these links).  Final versions of these reports
+will be made available once the Session has officially Started.
+
+Thanks!
+
+NOTE: This is not SPAM. Please do not report this email as SPAM.

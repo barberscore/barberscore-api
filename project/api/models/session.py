@@ -26,6 +26,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.db import models
 from django.template.loader import render_to_string
+from cloudinary_storage.storage import RawMediaCloudinaryStorage
 
 from api.tasks import send_email
 
@@ -116,6 +117,27 @@ class Session(TimeStampedModel):
         max_length=255,
         null=True,
         blank=True,
+    )
+
+    legacy_report = models.FileField(
+        max_length=255,
+        null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
+    )
+
+    drcj_report = models.FileField(
+        max_length=255,
+        null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
+    )
+
+    contact_report = models.FileField(
+        max_length=255,
+        null=True,
+        blank=True,
+        storage=RawMediaCloudinaryStorage(),
     )
 
     # FKs
@@ -654,11 +676,10 @@ class Session(TimeStampedModel):
             content,
         )
 
-    def queue_reports(self):
+    def queue_reports(self, template):
         subject = "[Barberscore] {0} Session Reports".format(
             self,
         )
-        template = 'session/Reports.txt'
         context = {
             'session': self,
             'host_name': settings.HOST_NAME,
@@ -670,12 +691,32 @@ class Session(TimeStampedModel):
             person__email__isnull=False,
         )
         to = ["{0} <{1}>".format(assignment.person.common_name.replace(",",""), assignment.person.email) for assignment in assignments]
+        attachments = []
+        if self.legacy_report:
+            attachments.append((
+                slugify("{0} session legacy report FINAL.xlsx".format(self)),
+                self.legacy_report.file,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ))
+        if self.drcj_report:
+            attachments.append((
+                slugify("{0} session drcj report FINAL.xlsx".format(self)),
+                self.drcj_report.file,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ))
+        if self.contact_report:
+            attachments.append((
+                slugify("{0} session contact report FINAL.xlsx".format(self)),
+                self.contact_report.file,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ))
         queue = django_rq.get_queue('high')
         result = queue.enqueue(
             send_email,
             subject=subject,
             body=body,
             to=to,
+            attachments=attachments,
         )
         return result
 
@@ -902,7 +943,7 @@ class Session(TimeStampedModel):
     )
     def verify(self, *args, **kwargs):
         """Make draw public."""
-        self.queue_reports()
+        self.queue_reports(template='session/verified_reports.txt')
         self.queue_notifications(template='session/verified.txt')
         return
 
@@ -915,10 +956,12 @@ class Session(TimeStampedModel):
     )
     def start(self, *args, **kwargs):
         """Button up session and transfer to CA."""
+
         # Number Contests  Only include contested.
         contests = self.contests.filter(
             status__gt=0,
             contestants__status__gt=0,
+            num__isnull=True,  # For indempotence
         ).distinct(
         ).order_by(
             'award__tree_sort',
@@ -955,7 +998,7 @@ class Session(TimeStampedModel):
             else:
                 contesting = ""
             # Create and start competitor
-            competitor = self.competitors.create(
+            competitor, created = self.competitors.get_or_create(
                 entry=entry,
                 group=entry.group,
                 is_multi=is_multi,
@@ -964,11 +1007,34 @@ class Session(TimeStampedModel):
                 representing=entry.representing,
                 contesting=contesting,
             )
-            competitor.start()
-            # notify entrants  TODO Maybe competitor.start()?
-            competitor.save()
+            if created:
+                competitor.start()
+                # notify entrants  TODO Maybe competitor.start()?
+                competitor.save()
+        # Save final reports
+        content = self.get_drcj()
+        self.drcj_report.save(
+            slugify(
+                '{0} Session DRCJ Report FINAL'.format(self)
+            ),
+            content=content,
+        )
+        content = self.get_legacy()
+        self.legacy_report.save(
+            slugify(
+                '{0} Session Legacy Report FINAL'.format(self)
+            ),
+            content=content,
+        )
+        content = self.get_contact()
+        self.contact_report.save(
+            slugify(
+                '{0} Session Contact Report FINAL'.format(self)
+            ),
+            content=content,
+        )
         #  Create and send the reports
-        self.queue_reports()
+        self.queue_reports(template='session/started_reports.txt')
         return
 
     @fsm_log_by

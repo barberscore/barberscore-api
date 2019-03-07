@@ -1,4 +1,3 @@
-
 # Standard Library
 import csv
 import logging
@@ -214,7 +213,7 @@ def get_accounts(path='barberscore.csv'):
         return rows
 
 
-def send_email(subject, body, to, cc=None, bcc=None):
+def send_email(subject, body, to, cc=None, bcc=None, attachments=None):
     # Clean as necessary
     to = list(set(to))
     if cc:
@@ -234,4 +233,8 @@ def send_email(subject, body, to, cc=None, bcc=None):
         cc=cc,
         bcc=bcc,
     )
+    if attachments:
+        for attachment in attachments:
+            with attachment[1].open() as f:
+                email.attach(attachment[0], f.read(), attachment[2])
     return email.send()
