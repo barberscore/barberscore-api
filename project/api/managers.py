@@ -149,7 +149,7 @@ class GroupManager(Manager):
             'mixed': self.model.GENDER.mixed,
         }
         gender = gender_map.get(gender, self.model.GENDER.male)
-        division_map: {
+        division_map = {
             'EVG Division I': 10,
             'EVG Division II': 20,
             'EVG Division III': 30,
