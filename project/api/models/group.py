@@ -535,11 +535,12 @@ class Group(TimeStampedModel):
                             raise ValidationError("Division must be within SWD.")
             if self.kind in [
                 self.KIND.chorus,
+                self.KIND.vlq,
             ]:
                 if self.parent.kind not in [
                     self.KIND.chapter,
                 ]:
-                    raise ValidationError("Chorus must have Chapter parent.")
+                    raise ValidationError("Chorus/VLQ must have Chapter parent.")
                 if self.division and not self.parent.parent.is_divided:
                         raise ValidationError("Non-divisionals should not have divisions.")
                 if not self.division and self.parent.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
