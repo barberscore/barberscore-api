@@ -289,16 +289,16 @@ class Song(TimeStampedModel):
         """Check to see if the score produces a category variance (asterisk)"""
         asterisks = []
         categories = self.scores.filter(
-            kind=self.scores.model.KIND.official,
+            panelist__kind=10,
         ).values(
-            'category',
+            'panelist__category',
         ).annotate(
             avg=Avg('points'),
         )
         for category in categories:
             category_scores = self.scores.filter(
-                category=category['category'],
-                kind=self.scores.model.KIND.official,
+                panelist__category=category['panelist__category'],
+                panelist__kind=10,
             )
             for score in category_scores:
                 is_asterisk = abs(score.points - category['avg']) > 5
@@ -319,7 +319,7 @@ class Song(TimeStampedModel):
             '15': .338,
         }
         scores = self.scores.filter(
-            kind=self.scores.model.KIND.official,
+            panelist__kind=0,
         )
         aggregates = scores.aggregate(
             max=Max('points'),

@@ -439,7 +439,7 @@ class Appearance(TimeStampedModel):
     def build(self, *args, **kwargs):
         Grid = apps.get_model('api.grid')
         Panelist = apps.get_model('api.panelist')
-        grid, created = Grid.objects.get_or_create(
+        grid, _ = Grid.objects.get_or_create(
             round=self.round,
             num=self.num,
         )
@@ -455,10 +455,7 @@ class Appearance(TimeStampedModel):
             )
             for panelist in panelists:
                 song.scores.create(
-                    category=panelist.category,
-                    kind=panelist.kind,
                     panelist=panelist,
-                    num=panelist.num,
                 )
             i += 1
         return
