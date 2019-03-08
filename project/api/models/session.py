@@ -694,19 +694,19 @@ class Session(TimeStampedModel):
         attachments = []
         if self.legacy_report:
             attachments.append((
-                slugify("{0} session legacy report FINAL.xlsx".format(self)),
+                slugify("{0} session legacy report FINAL".format(self)),
                 self.legacy_report.file,
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ))
         if self.drcj_report:
             attachments.append((
-                slugify("{0} session drcj report FINAL.xlsx".format(self)),
+                slugify("{0} session drcj report FINAL".format(self)),
                 self.drcj_report.file,
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ))
         if self.contact_report:
             attachments.append((
-                slugify("{0} session contact report FINAL.xlsx".format(self)),
+                slugify("{0} session contact report FINAL".format(self)),
                 self.contact_report.file,
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ))
