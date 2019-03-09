@@ -86,7 +86,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            'songs',
+            # 'songs',
         ]
 
 
@@ -212,7 +212,7 @@ class CompetitorSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            'appearances',
+            # 'appearances',
         ]
 
 
@@ -240,7 +240,7 @@ class ContestSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            'contestants',
+            # 'contestants',
         ]
 
 
@@ -401,8 +401,8 @@ class EntrySerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            'appearances',
-            'contestants',
+            # 'appearances',
+            # 'contestants',
         ]
 
     def validate(self, data):
@@ -490,11 +490,11 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            'repertories',
-            'members',
-            'officers',
-            'competitors',
-            'entries',
+            # 'repertories',
+            # 'members',
+            # 'officers',
+            # 'competitors',
+            # 'entries',
         ]
 
     # def to_representation(self, instance):
@@ -675,10 +675,10 @@ class PersonSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            'assignments',
-            'members',
-            'officers',
-            'panelists',
+            # 'assignments',
+            # 'members',
+            # 'officers',
+            # 'panelists',
         ]
 
 
@@ -736,10 +736,10 @@ class RoundSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            'appearances',
-            'members',
-            'grids',
-            'outcomes',
+            # 'appearances',
+            # 'members',
+            # 'grids',
+            # 'outcomes',
         ]
 
 
@@ -792,9 +792,9 @@ class SessionSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            'contests',
-            'entries',
-            'rounds',
+            # 'contests',
+            # 'entries',
+            # 'rounds',
         ]
 
 
