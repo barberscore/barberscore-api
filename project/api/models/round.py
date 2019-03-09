@@ -939,8 +939,8 @@ class Round(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.verified, conditions=[can_verify,])
     def verify(self, *args, **kwargs):
         # Run rankings.
-        self.rank()
-        self.session.rank()
+        # self.rank()
+        # self.session.rank()
 
         # No next round.
         if self.kind == self.KIND.finals:
