@@ -936,8 +936,9 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.verified, conditions=[can_verify,])
+    @transition(field=status, source=[STATUS.started], target=STATUS.verified, conditions=[can_verify,])
     def verify(self, *args, **kwargs):
+        return
         # Run rankings.
         # self.rank()
         # self.session.rank()
