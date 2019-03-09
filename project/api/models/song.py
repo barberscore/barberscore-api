@@ -303,7 +303,7 @@ class Song(TimeStampedModel):
             for score in category_scores:
                 is_asterisk = abs(score.points - category['avg']) > 5
                 if is_asterisk:
-                    asterisks.append(category['category'])
+                    asterisks.append(category['panelist__category'])
                     continue
         asterisks = list(set(asterisks))
         return asterisks
