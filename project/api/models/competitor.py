@@ -15,6 +15,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from django.contrib.postgres.fields import ArrayField
 
 # Django
 from django.apps import apps
@@ -95,6 +96,16 @@ class Competitor(TimeStampedModel):
         max_length=255,
         blank=True,
         default='',
+    )
+
+    contesting_migrate = ArrayField(
+        help_text='Award numbers contestanting',
+        base_field=models.IntegerField(
+            null=True,
+            blank=True,
+        ),
+        null=True,
+        blank=True,
     )
 
     pos = models.IntegerField(
