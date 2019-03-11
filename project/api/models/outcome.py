@@ -131,29 +131,26 @@ class Outcome(TimeStampedModel):
     def get_name(self):
         Competitor = apps.get_model('api.competitor')
         Panelist = apps.get_model('api.panelist')
-        if self.round.num < self.contest.award.num_rounds:
+        if self.round.num < self.num_rounds:
             return "(Result not yet determined)"
-        if self.contest.award.level == self.contest.award.LEVEL.deferred:
+        if self.level == self.LEVEL.deferred:
             return "(Result determined post-contest)"
-        if self.contest.award.level == self.contest.award.LEVEL.qualifier:
-            threshold = self.contest.award.threshold
-            qualifiers = self.contest.contestants.filter(
-                status__gt=0,
-                entry__competitor__tot_score__gte=threshold,
-                entry__is_private=False,
+        if self.level == self.LEVEL.qualifier:
+            threshold = self.threshold
+            num = [self.num]
+            qualifiers = self.round.appearances.filter(
+                competitor__tot_score__gte=threshold,
+                competitor__contesting__contains=num,
             ).distinct(
             ).order_by(
-                'entry__group__name',
-            ).values_list(
-                'entry__group__name',
-                flat=True,
-            )
+                'competitor__group__name',
+            ).values_list('competitor__group__name', flat=True)
             if qualifiers:
                 return ", ".join(
-                    qualifiers.values_list('entry__group__name', flat=True)
+                    qualifiers
                 )
             return "(No qualifiers)"
-        if self.contest.award.level == self.contest.award.LEVEL.manual:
+        if self.level == self.LEVEL.manual:
             return "MUST SELECT WINNER MANUALLY"
         # Rest are championship and representative
         # First, get all advancers
