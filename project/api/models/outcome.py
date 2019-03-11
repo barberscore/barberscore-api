@@ -48,6 +48,57 @@ class Outcome(TimeStampedModel):
         blank=True,
     )
 
+    LEVEL = Choices(
+        (10, 'championship', "Championship"),
+        (30, 'qualifier', "Qualifier"),
+        (45, 'representative', "Representative"),
+        (50, 'deferred', "Deferred"),
+        (60, 'manual', "Manual"),
+        (70, 'raw', "Improved - Raw"),
+        (80, 'standard', "Improved - Standard"),
+    )
+
+    level = models.IntegerField(
+        choices=LEVEL,
+        null=True,
+    )
+
+    num_rounds = models.IntegerField(
+        help_text="""Number of rounds to determine the championship""",
+        null=True,
+    )
+
+    threshold = models.FloatField(
+        help_text="""
+            The score threshold for automatic qualification (if any.)
+        """,
+        null=True,
+        blank=True,
+    )
+
+    minimum = models.FloatField(
+        help_text="""
+            The minimum score required for qualification (if any.)
+        """,
+        null=True,
+        blank=True,
+    )
+
+    advance = models.FloatField(
+        help_text="""
+            The score threshold to advance to next round (if any) in
+            multi-round qualification.
+        """,
+        null=True,
+        blank=True,
+    )
+
+    spots = models.IntegerField(
+        help_text="""Number of top spots which qualify""",
+        null=True,
+        blank=True,
+    )
+
     legacy_num = models.IntegerField(
         blank=True,
         null=True,
@@ -81,7 +132,6 @@ class Outcome(TimeStampedModel):
     # Methods
     def get_name(self):
         Competitor = apps.get_model('api.competitor')
-        Score = apps.get_model('api.score')
         Panelist = apps.get_model('api.panelist')
         if self.round.num < self.contest.award.num_rounds:
             return "(Result not yet determined)"
