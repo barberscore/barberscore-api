@@ -992,11 +992,7 @@ class Session(TimeStampedModel):
                 'contest__num',
                 flat=True,
             )
-            contestants = [str(x) for x in contestants]
-            if contestants:
-                contesting = ",".join(contestants)
-            else:
-                contesting = ""
+            contesting = list(contesants)
             # Create and start competitor
             competitor, created = self.competitors.get_or_create(
                 entry=entry,

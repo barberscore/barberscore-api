@@ -276,6 +276,11 @@ class OfficerFactory(DjangoModelFactory):
 class OutcomeFactory(DjangoModelFactory):
     round = SubFactory('api.factories.RoundFactory')
     contest = SubFactory('api.factories.ContestFactory')
+    level = Award.LEVEL.championship
+    num_rounds = 3
+    threshold = None
+    minimum = None
+    advance = None
 
     class Meta:
         model = Outcome

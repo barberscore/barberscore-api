@@ -91,14 +91,7 @@ class Competitor(TimeStampedModel):
         default='',
     )
 
-    contesting = models.CharField(
-        help_text='Award numbers contestanting',
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
-    contesting_migrate = ArrayField(
+    contesting = ArrayField(
         help_text='Award numbers contestanting',
         base_field=models.IntegerField(
             null=True,
