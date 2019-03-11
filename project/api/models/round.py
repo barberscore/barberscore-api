@@ -886,11 +886,19 @@ class Round(TimeStampedModel):
         # Create the Outcomes
         contests = self.session.contests.filter(
             num__isnull=False,
+        ).select_related(
+            'award',
         ).distinct()
         for contest in contests:
             self.outcomes.create(
                 num=contest.num,
                 contest=contest,
+                level=contest.award.level,
+                num_rounds=contest.award.num_rounds,
+                threshold=contest.award.threshold,
+                advance=contest.award.advance,
+                minimum=contest.award.minimum,
+                spots=contest.award.spots,
             )
         return
 

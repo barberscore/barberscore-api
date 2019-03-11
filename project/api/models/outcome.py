@@ -60,12 +60,10 @@ class Outcome(TimeStampedModel):
 
     level = models.IntegerField(
         choices=LEVEL,
-        null=True,
     )
 
     num_rounds = models.IntegerField(
         help_text="""Number of rounds to determine the championship""",
-        null=True,
     )
 
     threshold = models.FloatField(
