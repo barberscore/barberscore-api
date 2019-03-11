@@ -91,15 +91,15 @@ class Competitor(TimeStampedModel):
         default='',
     )
 
-    contesting = ArrayField(
-        help_text='Award numbers contestanting',
-        base_field=models.IntegerField(
-            null=True,
-            blank=True,
-        ),
-        null=True,
-        blank=True,
-    )
+    # contesting = ArrayField(
+    #     help_text='Award numbers contestanting',
+    #     base_field=models.IntegerField(
+    #         null=True,
+    #         blank=True,
+    #     ),
+    #     null=True,
+    #     blank=True,
+    # )
 
     pos = models.IntegerField(
         help_text='Actual Participants-on-Stage',
