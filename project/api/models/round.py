@@ -278,6 +278,16 @@ class Round(TimeStampedModel):
                 round__num__lte=self.num,
             )
 
+        # Monkeypatch Contesting
+        for competitor in competitors:
+            contesting__filtered = []
+            outcomes = self.outcomes.values_list('num', flat=True)
+            for con in competitor.contesting:
+                if con in outcomes:
+                    contesting__filtered.append(con)
+            competitor.contesting__filtered = contesting__filtered
+
+
         # Penalties
         array = Song.objects.filter(
             appearance__round=self,
