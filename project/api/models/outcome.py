@@ -129,10 +129,7 @@ class Outcome(TimeStampedModel):
 
     # Methods
     def get_name(self):
-        Competitor = apps.get_model('api.competitor')
         Panelist = apps.get_model('api.panelist')
-        if self.round.num < self.num_rounds:
-            return "(Result not yet determined)"
         if self.level == self.LEVEL.deferred:
             return "(Result determined post-contest)"
         if self.level == self.LEVEL.qualifier:
@@ -146,36 +143,31 @@ class Outcome(TimeStampedModel):
                 'competitor__group__name',
             ).values_list('competitor__group__name', flat=True)
             if qualifiers:
-                return ", ".join(
-                    qualifiers
-                )
+                return ", ".join(qualifiers)
             return "(No qualifiers)"
         if self.level == self.LEVEL.manual:
             return "MUST SELECT WINNER MANUALLY"
-        # Rest are championship and representative
-        # First, get all advancers
-        advancers = self.round.appearances.filter(
+
+        # Rest are championship/representative
+
+        # Only announce winner if all competitors for this award are done.
+        num = [self.num]
+        continuing = self.round.appearances.filter(
             draw__gt=0,
-        ).values_list('competitor__entry', flat=True)
-        # Check to see if they are in the contestants for this award.
-        continuing = self.contest.contestants.filter(
-            status__gt=0,
-            entry__in=advancers,
+            competitor__contesting__contains=num,
         )
         if continuing:
-            # Wait to announce
             return "(Result announced following Finals)"
 
-        winner = Competitor.objects.filter(
-            entry__contestants__contest=self.contest,
-            entry__contestants__status__gt=0,
+        # Otherwise, return the actual winner.
+        winner = self.round.session.competitors.filter(
+            contesting__contains=num,
         ).distinct(
         ).annotate(
             tot=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__num__lte=self.contest.award.num_rounds,
                 ),
             ),
             sng=Sum(
@@ -183,7 +175,6 @@ class Outcome(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    appearances__round__num__lte=self.contest.award.num_rounds,
                 ),
             ),
             per=Sum(
@@ -191,7 +182,6 @@ class Outcome(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    appearances__round__num__lte=self.contest.award.num_rounds,
                 ),
             ),
         ).order_by(
