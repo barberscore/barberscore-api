@@ -490,7 +490,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            # 'repertories',
+            'repertories',
             # 'members',
             # 'officers',
             # 'competitors',
