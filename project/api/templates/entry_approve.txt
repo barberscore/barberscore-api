@@ -22,13 +22,14 @@ You are entered for the following contests/awards:
     Not competing for any awards. (Score/Eval only)
 {% endfor %}
 {% endif %}
-{% if entry.group.kind == entry.group.KIND.chorus %}
+{% if entry.group.kind == entry.group.KIND.quartet %}
+Members (TLBrBs): {{entry.participants|safe|default:"(No Members Specified)"}}
+
+{% else %}
 Director(s): {{entry.participants|safe|default:"(No Director Specified)"}}
 
 Estimated Participants-on-Stage:  {{entry.pos|default:"(No Estimate Provided)"}}
 
-{% else %}
-Members (TLBrBs): {{entry.participants|safe|default:"(No Members Specified)"}}
 
 {% endif %}
 Additional Notes/Requests:
@@ -37,7 +38,7 @@ Additional Notes/Requests:
 
 
 Now that your submission is APPROVED, you can no longer edit your entry information.
-If you need to make any changes, you will need to contact your DRCJ directly (cc'd on this message). 
+If you need to make any changes, you will need to contact your DRCJ directly (cc'd on this message).
 However (if you wish to withdraw), go to your Entry and click the red "Withdraw" button
 on the bottom of the page. Please note that if you scratch and then wish to re-enter,
 you'll need to contact your DRCJ directly for approval (cc'd on this message).
