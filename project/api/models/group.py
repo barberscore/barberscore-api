@@ -476,6 +476,15 @@ class Group(TimeStampedModel):
         content = ContentFile(file)
         return content
 
+    def refresh(self):
+        Structure = apps.get_model('api.member')
+        try:
+            s = Structure.objects.get(id=self.mc_pk)
+        except Structure.DoesNotExist:
+            return ValueError("Structure does not exist")
+        s.update_bs()
+        return
+
 
     def is_active(self):
         # For Algolia indexing
