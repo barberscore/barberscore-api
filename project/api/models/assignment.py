@@ -40,7 +40,7 @@ class Assignment(TimeStampedModel):
     status = FSMIntegerField(
         help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
-        default=STATUS.new,
+        default=STATUS.active,
     )
 
     KIND = Choices(
