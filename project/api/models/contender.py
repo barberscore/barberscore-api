@@ -164,6 +164,6 @@ class Contender(TimeStampedModel):
                     status__gt=0,
                     category__lte=10,
                 ),
-                # self.contest.session.status < self.contest.session.STATUS.started,
+                # self.contest.session.status < self.contest.session.STATUS.packaged,
             ]),
         ])

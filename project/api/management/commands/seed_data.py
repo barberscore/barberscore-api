@@ -856,13 +856,13 @@ class Command(BaseCommand):
         district_alpha_fall_convention_chorus_session.save()
 
         # Start sessions
-        international_midwinter_convention_quartet_session.start()
+        international_midwinter_convention_quartet_session.package()
         international_midwinter_convention_quartet_session.save()
-        district_alpha_spring_convention_quartet_session.start()
+        district_alpha_spring_convention_quartet_session.package()
         district_alpha_spring_convention_quartet_session.save()
-        district_alpha_fall_convention_quartet_session.start()
+        district_alpha_fall_convention_quartet_session.package()
         district_alpha_fall_convention_quartet_session.save()
-        district_alpha_fall_convention_chorus_session.start()
+        district_alpha_fall_convention_chorus_session.package()
         district_alpha_fall_convention_chorus_session.save()
 
         # CA BREAKPOINT

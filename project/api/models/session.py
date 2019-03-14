@@ -46,7 +46,7 @@ class Session(TimeStampedModel):
         (4, 'opened', 'Opened',),
         (8, 'closed', 'Closed',),
         (10, 'verified', 'Verified',),
-        (20, 'started', 'Started',),
+        (20, 'packaged', 'Packaged',),
         (30, 'finished', 'Finished',),
     )
 
@@ -951,10 +951,10 @@ class Session(TimeStampedModel):
     @transition(
         field=status,
         source=STATUS.verified,
-        target=STATUS.started,
+        target=STATUS.packaged,
         conditions=[],
     )
-    def start(self, *args, **kwargs):
+    def package(self, *args, **kwargs):
         """Button up session and transfer to CA."""
 
         # Number Contests  Only include contested.
@@ -1036,7 +1036,7 @@ class Session(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.started, STATUS.finished],
+        source=[STATUS.packaged, STATUS.finished],
         target=STATUS.finished,
         conditions=[can_finish],
     )

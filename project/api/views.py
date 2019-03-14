@@ -1447,10 +1447,10 @@ class SessionViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True)
-    def start(self, request, pk=None, **kwargs):
+    def package(self, request, pk=None, **kwargs):
         object = self.get_object()
         try:
-            object.start(by=self.request.user)
+            object.package(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
                 {'status': 'Transition conditions not met.'},

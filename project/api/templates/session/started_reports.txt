@@ -1,7 +1,7 @@
 The {{session.convention.name|safe}} {{session.get_kind_display}} Session
-has now been Started!
+has now been Packaged!
 
-Starting the Session represents the official handoff between the DRCJ and the CAs --
+Packaging the Session represents the official handoff between the DRCJ and the CAs --
 the Session Manager (entries, contests, etc.) has been locked and any new changes
 must take place in the Round Manager (appearances, outcomes, etc.)
 
