@@ -258,12 +258,14 @@ class Appearance(TimeStampedModel):
             variances.extend(song.dixons)
             variances.extend(song.asterisks)
         variances = list(set(variances))
+        off_points = scores.aggregate(sum=Sum('points'))['sum']
         context = {
             'appearance': self,
             'songs': songs,
             'scores': scores,
             'panelists': panelists,
             'variances': variances,
+            'off_points': off_points,
         }
         rendered = render_to_string('variance.html', context)
         pdf = pydf.generate_pdf(rendered, enable_smart_shrinking=False)
