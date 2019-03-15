@@ -224,6 +224,9 @@ JSON_API_FORMAT_FIELD_NAMES = 'dasherize'
 JSON_API_FORMAT_TYPES = 'dasherize'
 JSON_API_PLURALIZE_TYPES = False
 
+# Phone Number
+PHONENUMBER_DB_FORMAT = 'E164'
+
 # Applications
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -243,6 +246,8 @@ INSTALLED_APPS = [
     'django_fsm',
     'django_fsm_log',
     'fsm_admin',
+    'phonenumber_field',
     'api',
     'bhs',
+    'mem',
 ]
