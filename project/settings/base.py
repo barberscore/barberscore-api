@@ -226,6 +226,7 @@ JSON_API_PLURALIZE_TYPES = False
 
 # Phone Number
 PHONENUMBER_DB_FORMAT = 'E164'
+PHONENUMBER_DEFAULT_REGION = 'US'
 
 # Applications
 INSTALLED_APPS = [
@@ -247,6 +248,7 @@ INSTALLED_APPS = [
     'django_fsm_log',
     'fsm_admin',
     'phonenumber_field',
+    'reversion',
     'api',
     'bhs',
     'mem',

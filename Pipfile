@@ -41,6 +41,9 @@ whitenoise = "*"
 maya = "*"
 "pypdf2" = "*"
 sentry-sdk = "*"
+django-phonenumber-field = "*"
+phonenumberslite = "*"
+django-reversion = "*"
 
 [dev-packages]
 "autopep8" = "*"
@@ -55,8 +58,6 @@ pydocstyle = "*"
 pylint = "*"
 pytest = "*"
 pytest-django = "*"
-django-phonenumber-field = "*"
-phonenumberslite = "*"
 
 [requires]
 python_version = "3.7"

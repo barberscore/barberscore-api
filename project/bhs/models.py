@@ -99,6 +99,10 @@ class Human(models.Model):
         choices=PART,
     )
 
+    mon = models.IntegerField(
+        editable=False,
+        db_column='trusted_mon',
+    )
     created = models.DateTimeField(
         db_column='created',
         null=False,
