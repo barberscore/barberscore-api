@@ -129,6 +129,9 @@ class Person(TimeStampedModel):
     class Meta:
         pass
 
+    class JSONAPIMeta:
+        resource_name = "person"
+
     # Transitions
     @fsm_log_by
     @transition(
