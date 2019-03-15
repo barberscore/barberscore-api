@@ -9,7 +9,10 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        ('prefix', 'first_name', 'middle_name', 'last_name', 'nick_name', 'suffix'),
+        'prefix',
+        ('first_name', 'middle_name', 'last_name',),
+        'suffix',
+        'nick_name',
         'email',
         ('birth_date', 'is_deceased'),
         ('home_phone', 'cell_phone', 'work_phone'),

@@ -45,20 +45,27 @@ class PersonManager(Manager):
                 email = None
         else:
             email = None
-        try:
-            validate_international_phonenumber(home_phone)
-        except ValidationError:
-            home_phone = ""
-        try:
-            validate_international_phonenumber(cell_phone)
-        except ValidationError:
-            cell_phone = ""
-        try:
-            validate_international_phonenumber(work_phone)
-        except ValidationError:
-            work_phone = ""
+        if home_phone:
+            try:
+                validate_international_phonenumber(home_phone)
+            except ValidationError:
+                home_phone = ""
         else:
-            email = None
+            home_phone = ""
+        if cell_phone:
+            try:
+                validate_international_phonenumber(cell_phone)
+            except ValidationError:
+                cell_phone = ""
+        else:
+            cell_phone = ""
+        if work_phone:
+            try:
+                validate_international_phonenumber(work_phone)
+            except ValidationError:
+                work_phone = ""
+        else:
+            work_phone = ""
         if gender:
             gender = getattr(self.model.GENDER, gender.casefold(), None)
         else:

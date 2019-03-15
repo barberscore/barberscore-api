@@ -5,6 +5,9 @@ from model_utils import Choices
 from django_fsm import FSMIntegerField
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import MaxValueValidator
+from django_fsm import transition
+from django_fsm_log.decorators import fsm_log_by
+
 from .validators import validate_bhs_id
 from .validators import validate_birth_date
 from .managers import PersonManager
@@ -16,7 +19,7 @@ class Person(TimeStampedModel):
         editable=False,
     )
     STATUS = Choices(
-        (-20, 'new', 'Expelled'),
+        (-20, 'expelled', 'Expelled'),
         (-10, 'suspended', 'Suspended'),
         (0, 'new', 'New'),
         (10, 'active', 'Active'),
@@ -125,3 +128,31 @@ class Person(TimeStampedModel):
 
     class Meta:
         pass
+
+    # Transitions
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.new, STATUS.suspended],
+        target=STATUS.active,
+    )
+    def activate(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.active],
+        target=STATUS.expelled,
+    )
+    def expel(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.active],
+        target=STATUS.suspended,
+    )
+    def suspend(self, *args, **kwargs):
+        return
