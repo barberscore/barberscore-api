@@ -17,7 +17,7 @@ from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from PyPDF2 import PdfFileMerger
-from django.db.models import Sum, Max
+from django.db.models import Sum, Max, Avg
 # Django
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
@@ -896,6 +896,7 @@ class Round(TimeStampedModel):
         # Create the Outcomes
         contests = self.session.contests.filter(
             num__isnull=False,
+            award__num_rounds=self.num,
         ).select_related(
             'award',
         ).distinct()
@@ -954,9 +955,8 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.started], target=STATUS.verified, conditions=[can_verify,])
+    @transition(field=status, source=[STATUS.started, STATUS.verified], target=STATUS.verified, conditions=[can_verify,])
     def verify(self, *args, **kwargs):
-        return
         # Run rankings.
         # self.rank()
         # self.session.rank()
@@ -973,20 +973,29 @@ class Round(TimeStampedModel):
         # Get spots available
         spots = self.spots
 
-        # Get all multi competitors.
-        multis = self.session.competitors.filter(
-            status__gt=0,
-            is_multi=True,
+        # Get all multi appearances and annotate average.
+        multis = self.appearances.filter(
+            competitor__status__gt=0,
+            competitor__is_multi=True,
+        ).annotate(
+            avg=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=10,
+                )
+            )
         )
         if spots:
             # All those above 73.0 advance automatically
             automatics = multis.filter(
-                tot_score__gte=73.0,
+                avg__gte=73.0,
             )
+            # start list of the advancers, as IDs
+            advancers = [x.id for x in automatics]
+            # Figure out remaining spots
             cnt = automatics.count()
-            # create list of advancers
-            advancers = [a.id for a in automatics]
             diff = spots - cnt
+            # If there are additionl remaining spots, add them up to available
             if diff > 0:
                 adds = multis.exclude(
                     id__in=advancers,
@@ -1005,7 +1014,7 @@ class Round(TimeStampedModel):
 
         # Get advancers and draw
         appearances = self.appearances.filter(
-            competitor__id__in=advancers,
+            id__in=advancers,
         ).order_by('?')
         i = 1
         for appearance in appearances:
