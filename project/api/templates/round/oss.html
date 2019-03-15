@@ -78,9 +78,6 @@
                 <td>
                   <h4>
                     <strong>
-                      {% if round.kind == 1 %}
-                        {{competitor.tot_rank|default:""}}
-                      {% endif %}
                       {{competitor.group.name}}
                     </strong>
                   </h4>
@@ -94,7 +91,7 @@
                     {% endif %}
                     {% if competitor.max > 1 %}
                       {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
-                        {{appearance.round.get_kind_display}} Rank: {{appearance.tot_rank}}<br>
+                        {{appearance.round.get_kind_display}}<br>
                       {% endfor %}
                     {% endif %}
                   </div>
