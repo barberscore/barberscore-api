@@ -319,7 +319,7 @@ class Song(TimeStampedModel):
             '15': .338,
         }
         scores = self.scores.filter(
-            panelist__kind=0,
+            panelist__kind=10,
         )
         aggregates = scores.aggregate(
             max=Max('points'),
