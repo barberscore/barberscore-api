@@ -203,7 +203,8 @@ class Outcome(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('round', 'contest',)
+            ('round', 'contest',),
+            ('round', 'award',)
         )
 
     class JSONAPIMeta:
