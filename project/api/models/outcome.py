@@ -121,6 +121,13 @@ class Outcome(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    award = models.ForeignKey(
+        'Award',
+        related_name='outcomes',
+        on_delete=models.CASCADE,
+        null=True,
+    )
+
     # Relations
     statelogs = GenericRelation(
         StateLog,
