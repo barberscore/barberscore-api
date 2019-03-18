@@ -205,7 +205,6 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'id',
             'num',
             'competitor',
-            'draw',
             'actual_start',
             'actual_finish',
             'pos',
@@ -247,58 +246,33 @@ class RoundSerializer(serializers.ModelSerializer):
 
 class SessionSerializer(serializers.ModelSerializer):
 
+    rounds = RoundSerializer(read_only=True, many=True)
 
     class Meta:
         model = Session
         fields = (
             'id',
-            'url',
-            'status',
-            'kind',
-            'is_invitational',
-            'footnotes',
-            'description',
-            'notes',
-            'oss',
-            'sa',
-            'legacy_report',
-            'drcj_report',
-            'contact_report',
-            'num_rounds',
-            'competitors',
-            'convention',
-            'contests',
-            'entries',
+            'get_kind_display',
             'rounds',
-            'permissions',
         )
 
 class ConventionSerializer(serializers.ModelSerializer):
-    # timezone = TimezoneField(allow_null=True)
+
+    sessions = SessionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Convention
         fields = (
             'id',
-            'url',
             'name',
-            'status',
-            'season',
-            'panel',
+            'get_season_display',
             'year',
             'open_date',
             'close_date',
             'start_date',
             'end_date',
             'location',
-            'timezone',
-            'image',
-            'description',
-            'venue',
-            'group',
-            'assignments',
             'sessions',
-            'permissions',
         )
 
 
@@ -337,8 +311,3 @@ class AwardSerializer(serializers.ModelSerializer):
             'contests',
             'permissions',
         )
-
-
-
-
-
