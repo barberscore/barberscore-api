@@ -584,7 +584,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'url',
             'status',
             'round',
-            'contest',
+            'award',
             'num',
             'name',
             'legacy_num',

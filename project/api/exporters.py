@@ -133,7 +133,7 @@ class ContenderSerializer(serializers.ModelSerializer):
         )
 
 class OutcomeSerializer(serializers.ModelSerializer):
-    award_name = serializers.SerializerMethodField()
+    award = serializers.StringRelatedField(read_only=True, many=False)
 
     class Meta:
         model = Outcome
@@ -141,12 +141,8 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'id',
             'num',
             'name',
-            'award_name',
+            'award',
         )
-
-    def get_award_name(self, obj):
-        return "{0}".format(obj.contest.award.name)
-
 
 class GroupSerializer(serializers.ModelSerializer):
 

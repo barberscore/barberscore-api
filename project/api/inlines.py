@@ -462,10 +462,10 @@ class OutcomeInline(admin.TabularInline):
         'name',
         'legacy_name',
         'round',
-        'contest',
+        'award',
     ]
     autocomplete_fields = [
-        'contest',
+        'award',
         'round',
     ]
     ordering = (

@@ -857,7 +857,7 @@ class OfficerViewSet(viewsets.ModelViewSet):
 class OutcomeViewSet(viewsets.ModelViewSet):
     queryset = Outcome.objects.select_related(
         'round',
-        'contest',
+        'award',
     ).prefetch_related(
         'contenders',
         'statelogs',
