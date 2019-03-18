@@ -127,11 +127,11 @@ def test_grid_endpoint(admin_api_client, grid, django_assert_max_num_queries):
 
 
 def test_group_endpoint(admin_api_client, group, django_assert_max_num_queries):
-    with django_assert_max_num_queries(12):
+    with django_assert_max_num_queries(14):
         path = reverse('group-list')
         response = admin_api_client.get(path)
         assert response.status_code == status.HTTP_200_OK
-    with django_assert_max_num_queries(10):
+    with django_assert_max_num_queries(14):
         path = reverse('group-detail', args=(str(group.id),))
         response = admin_api_client.get(path)
         assert response.status_code == status.HTTP_200_OK

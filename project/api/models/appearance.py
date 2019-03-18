@@ -18,6 +18,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from django.contrib.postgres.fields import ArrayField
 
 # Django
 from django.apps import apps
@@ -85,6 +86,40 @@ class Appearance(TimeStampedModel):
 
     pos = models.IntegerField(
         help_text='Actual Participants-on-Stage',
+        null=True,
+        blank=True,
+    )
+
+    is_private = models.BooleanField(
+        help_text="""Copied from entry.""",
+        default=False,
+    )
+
+    is_multi = models.BooleanField(
+        help_text="""If the competitor is contesting a multi-round award.""",
+        default=False,
+    )
+
+    participants = models.CharField(
+        help_text='Director(s) or Members (listed TLBB)',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    representing = models.CharField(
+        help_text='Representing entity',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    contesting = ArrayField(
+        help_text='Award numbers contestanting',
+        base_field=models.IntegerField(
+            null=True,
+            blank=True,
+        ),
         null=True,
         blank=True,
     )
@@ -186,9 +221,8 @@ class Appearance(TimeStampedModel):
 
     group = models.ForeignKey(
         'Group',
-        related_name='group',
+        related_name='appearances',
         on_delete=models.CASCADE,
-        null=True,
     )
 
     # Relations
@@ -203,11 +237,10 @@ class Appearance(TimeStampedModel):
 
     # Appearance Internals
     def clean(self):
-        if self.competitor:
-            if self.competitor.group.kind != self.round.session.kind:
-                raise ValidationError(
-                    {'competitor': 'Competitor kind must match session'}
-                )
+        if self.group.kind != self.round.session.kind:
+            raise ValidationError(
+                {'group': 'Group kind must match session'}
+            )
 
     def save(self, *args, **kwargs):
         # Save all scores as single-digit
@@ -229,6 +262,7 @@ class Appearance(TimeStampedModel):
         unique_together = (
             ('round', 'competitor'),
             ('round', 'num'),
+            ('round', 'group'),
         )
 
     class JSONAPIMeta:
@@ -236,7 +270,7 @@ class Appearance(TimeStampedModel):
 
     def __str__(self):
         return "{0} {1}".format(
-            str(self.competitor),
+            str(self.group),
             str(self.round),
         )
 
@@ -283,15 +317,15 @@ class Appearance(TimeStampedModel):
     def mock(self):
         # Mock Appearance
         Chart = apps.get_model('api.chart')
-        prelim = self.competitor.entry.prelim
-        if self.competitor.group.kind == self.competitor.group.KIND.chorus:
-            pos = self.competitor.group.members.filter(
-                status=self.competitor.group.members.model.STATUS.active,
+        prelim = None
+        if self.group.kind == self.group.KIND.chorus:
+            pos = self.group.members.filter(
+                status=self.group.members.model.STATUS.active,
             ).count()
             self.pos = pos
         if not prelim:
-            average = self.competitor.group.competitors.filter(
-                status=self.competitor.group.competitors.model.STATUS.finished,
+            average = self.group.competitors.filter(
+                status=self.group.competitors.model.STATUS.finished,
             ).aggregate(avg=Avg('tot_score'))['avg']
             if average:
                 prelim = average
@@ -431,7 +465,7 @@ class Appearance(TimeStampedModel):
     # Appearance Conditions
     def can_verify(self):
         try:
-            if self.competitor.group.kind == self.competitor.group.KIND.chorus and not self.pos:
+            if self.group.kind == self.group.KIND.chorus and not self.pos:
                 is_pos = False
             else:
                 is_pos = True
@@ -495,7 +529,7 @@ class Appearance(TimeStampedModel):
                 content = self.get_variance()
                 self.variance_report.save(
                     "{0}-variance-report".format(
-                        slugify(self.competitor.group.name),
+                        slugify(self.group.name),
                     ),
                     content,
                 )
@@ -505,9 +539,9 @@ class Appearance(TimeStampedModel):
             song.calculate()
             song.save()
         self.calculate()
-        self.competitor.calculate()
-        self.competitor.save()
-        django_rq.enqueue(
-            self.competitor.save_csa,
-        )
+        # self.competitor.calculate()
+        # self.competitor.save()
+        # django_rq.enqueue(
+        #     self.competitor.save_csa,
+        # )
         return self.STATUS.variance if variance else self.STATUS.verified
