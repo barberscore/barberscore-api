@@ -184,6 +184,13 @@ class Appearance(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    group = models.ForeignKey(
+        'Group',
+        related_name='group',
+        on_delete=models.CASCADE,
+        null=True,
+    )
+
     # Relations
     statelogs = GenericRelation(
         StateLog,
