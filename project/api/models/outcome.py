@@ -115,17 +115,10 @@ class Outcome(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='outcomes',
-        on_delete=models.CASCADE,
-    )
-
     award = models.ForeignKey(
         'Award',
         related_name='outcomes',
         on_delete=models.CASCADE,
-        null=True,
     )
 
     # Relations
@@ -203,7 +196,6 @@ class Outcome(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('round', 'contest',),
             ('round', 'award',)
         )
 

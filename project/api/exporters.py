@@ -80,8 +80,8 @@ class ChartSerializer(serializers.ModelSerializer):
 class SongSerializer(serializers.ModelSerializer):
 
     scores = ScoreSerializer(read_only=True, many=True)
-    # chart = ChartSerializer(read_only=True, many=False)
-    chart = serializers.StringRelatedField(read_only=True, many=False)
+    chart = ChartSerializer(read_only=True, many=False)
+    # chart = serializers.StringRelatedField(read_only=True, many=False)
 
     class Meta:
         model = Song
@@ -132,8 +132,19 @@ class ContenderSerializer(serializers.ModelSerializer):
             'permissions',
         )
 
+class AwardSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Award
+        fields = (
+            'id',
+            'name',
+        )
+
+
 class OutcomeSerializer(serializers.ModelSerializer):
-    award = serializers.StringRelatedField(read_only=True, many=False)
+    # award = serializers.StringRelatedField(read_only=True, many=False)
+    award = AwardSerializer(read_only=True, many=False)
 
     class Meta:
         model = Outcome
@@ -269,41 +280,4 @@ class ConventionSerializer(serializers.ModelSerializer):
             'end_date',
             'location',
             'sessions',
-        )
-
-
-
-
-
-class AwardSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Award
-        fields = (
-            'id',
-            'url',
-            'name',
-            'status',
-            'kind',
-            'gender',
-            'level',
-            'season',
-            'num_rounds',
-            'threshold',
-            'minimum',
-            'advance',
-            'spots',
-            'description',
-            'notes',
-            'age',
-            'size',
-            'size_range',
-            'scope',
-            'scope_range',
-            'tree_sort',
-            'group',
-            'parent',
-            'children',
-            'contests',
-            'permissions',
         )
