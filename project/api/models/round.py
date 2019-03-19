@@ -857,73 +857,13 @@ class Round(TimeStampedModel):
                 category=assignment.category,
                 person=assignment.person,
             )
-        # Create the appearances
-        Grid = apps.get_model('api.grid')
-        Competitor = apps.get_model('api.competitor')
-        # If the first round, populate from competitors
-        if self.num == 1:
-            competitors = self.session.competitors.filter(
-                draw__isnull=False,
-            ).select_related('group')
-            for competitor in competitors:
-                contesting = competitor.entry.contestants.filter(
-                    status__gt=0,
-                    contest__award__num_rounds=self.num,
-                ).order_by(
-                    'contest__num',
-                ).values_list('contest__num', flat=True)
-                contesting = []
-                appearance = self.appearances.create(
-                    group=competitor.group,
-                    num=competitor.draw,
-                    is_multi=competitor.is_multi,
-                    is_private=competitor.is_private,
-                    participants=competitor.participants,
-                    representing=competitor.representing,
-                    contesting=contesting,
-                )
-        # Otherwise, populate from prior round
-        else:
-            prior_round = self.session.rounds.get(num=self.num - 1)
-            prior_appearances = prior_round.appearances.filter(
-                draw__isnull=False,
-            ).select_related('group')
-            for prior_appearance in prior_appearances:
-                competitor = Competitor.objects.get(
-                    session=self.session,
-                    group=prior_appearance.group,
-                )
-                contesting = competitor.contestants.filter(
-                    status__gt=0,
-                    num_rounds=self.num,
-                ).order_by(
-                    'contest__num',
-                ).values_list('contest__num', flat=True)
-                appearance = self.appearances.create(
-                    group=competitor.group,
-                    num=prior_appearance.draw,
-                    is_multi=competitor.is_multi,
-                    is_private=competitor.is_private,
-                    participants=competitor.participants,
-                    representing=competitor.representing,
-                    contesting=contesting,
-                )
-        # Create the grids
-        defaults = {
-            'appearance': appearance,
-        }
-        Grid.objects.update_or_create(
-            round=self,
-            num=item.draw,
-            defaults=defaults,
-        )
         # Create the Outcomes
-        contests = self.session.contests.filter(
+        contests = self.session.contests.select_related(
+            'award',
+        ).filter(
             num__isnull=False,
             award__num_rounds=self.num,
-        ).select_related(
-            'award',
-        ).distinct()
+        )
         for contest in contests:
             self.outcomes.create(
                 num=contest.num,
@@ -935,6 +875,65 @@ class Round(TimeStampedModel):
                 minimum=contest.award.minimum,
                 spots=contest.award.spots,
             )
+        # Create the appearances
+        Grid = apps.get_model('api.grid')
+        # Determine prior rounds
+        if self.num == 1:
+            prior_round = None
+        else:
+            prior_round = self.session.rounds.get(num=self.num - 1)
+        # If the first round, populate from competitors
+        if not prior_round:
+            competitors = self.session.competitors.select_related(
+                'group',
+            ).filter(
+                draw__isnull=False,
+            )
+        # Otherwise, populate from prior round
+        else:
+            groups = prior_round.appearances.select_related(
+                'group',
+            ).filter(
+                draw__isnull=False,
+            ).values_list(
+                'group',
+                flat=True,
+            )
+            competitors = self.session.competitors.select_related(
+                'group',
+            ).filter(
+                is_multi=True,
+                group__in=groups,
+            )
+        for competitor in competitors:
+            if not prior_round:
+                draw = competitor.draw
+            else:
+                draw = prior_round.appearances.get(
+                    group=competitor.group,
+                ).draw
+            outcomes = self.outcomes.filter(
+                num__in=competitor.contesting,
+            )
+            contesting = [x.num for x in outcomes]
+            appearance = self.appearances.create(
+                group=competitor.group,
+                num=draw,
+                is_multi=competitor.is_multi,
+                is_private=competitor.is_private,
+                participants=competitor.participants,
+                representing=competitor.representing,
+                contesting=contesting,
+            )
+        # Create the grids
+        defaults = {
+            'appearance': appearance,
+        }
+        Grid.objects.update_or_create(
+            round=self,
+            num=draw,
+            defaults=defaults,
+        )
         return
 
 

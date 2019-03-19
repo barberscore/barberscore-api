@@ -206,6 +206,11 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    run_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
     # Appearance FKs
     round = models.ForeignKey(
         'Round',
@@ -389,6 +394,15 @@ class Appearance(TimeStampedModel):
             sum=Sum('points'),
             avg=Avg('points'),
         )
+        run = Score.objects.filter(
+            song__appearance__round__session=self.round.session,
+            song__appearance__group=self.group,
+            panelist__kind=Panelist.KIND.official,
+        ).aggregate(
+            sum=Sum('points'),
+            avg=Avg('points'),
+        )
+
         self.tot_points = tot['sum']
         self.tot_score = tot['avg']
         self.mus_points = mus['sum']
@@ -397,6 +411,8 @@ class Appearance(TimeStampedModel):
         self.per_score = per['avg']
         self.sng_points = sng['sum']
         self.sng_score = sng['avg']
+        self.run_points = run['sum']
+        self.run_score = run['avg']
 
     def check_variance(self):
         variance = False
@@ -516,6 +532,7 @@ class Appearance(TimeStampedModel):
         conditions=[can_verify],
     )
     def verify(self, *args, **kwargs):
+        # Check for variance on finish.  If no variance will return None
         if self.status == self.STATUS.finished:
             variance = self.check_variance()
             if variance:
@@ -526,11 +543,9 @@ class Appearance(TimeStampedModel):
                     ),
                     content,
                 )
+        # Variance is only checked once so return None if not finishing
         else:
             variance = None
-        for song in self.songs.all():
-            song.calculate()
-            song.save()
         self.calculate()
         # self.competitor.calculate()
         # self.competitor.save()
