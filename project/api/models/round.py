@@ -778,14 +778,9 @@ class Round(TimeStampedModel):
         ])
 
     def can_finish(self):
-        Award = apps.get_model('api.award')
-        Appearance = apps.get_model('api.appearance')
         return all([
-            not self.appearances.exclude(status=Appearance.STATUS.verified),
-            not self.session.contests.filter(
-                award__level=Award.LEVEL.manual,
-                award__num_rounds=self.num,
-                group__isnull=True,
+            not self.outcomes.filter(
+                name='MUST ENTER WINNER MANUALLY',
             ),
         ])
 
@@ -980,62 +975,52 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.started, STATUS.verified], target=STATUS.verified, conditions=[can_verify,])
     def verify(self, *args, **kwargs):
-        # Run rankings.
-        # self.rank()
-        # self.session.rank()
+        # Run outcomes
+        outcomes = self.outcomes.all()
+        for outcome in outcomes:
+            outcome.name = outcome.get_name()
+            outcome.save()
 
-        # No next round.
+        # If there is no next round simply return
         if self.kind == self.KIND.finals:
-            # Run outcomes
-            outcomes = self.outcomes.all()
-            for outcome in outcomes:
-                outcome.name = outcome.get_name()
-                outcome.save()
             return
 
-        # Get spots available
+        # Otherwise, get spots available
         spots = self.spots
 
-        # Get all multi appearances and annotate average.
+        # Get all appearances eligible to advance
         multis = self.appearances.filter(
-            competitor__status__gt=0,
-            competitor__is_multi=True,
-        ).annotate(
-            avg=Avg(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=10,
-                )
-            )
+            is_multi=True,
         )
+        # If spots are constricted, find those who advance
         if spots:
-            # All those above 73.0 advance automatically
+            # All those above 73.0 advance automatically, regardless of spots available
             automatics = multis.filter(
-                avg__gte=73.0,
+                run_score__gte=73.0,
             )
-            # start list of the advancers, as IDs
+            # generate list of the advancers, as appearance IDs
             advancers = [x.id for x in automatics]
             # Figure out remaining spots
             cnt = automatics.count()
             diff = spots - cnt
+            print(spots, cnt, diff)
             # If there are additionl remaining spots, add them up to available
             if diff > 0:
                 adds = multis.exclude(
                     id__in=advancers,
                 ).order_by(
-                    '-tot_points',
-                    '-sng_points',
-                    '-per_points',
+                    '-run_points',
                 )[:diff]
                 for a in adds:
                     advancers.append(a.id)
+        # Otherwise, advance all
         else:
             advancers = [a.id for a in multis]
 
         # Reset draw
         self.appearances.update(draw=None)
 
-        # Get advancers and draw
+        # Randomize the advancers and set the initial draw
         appearances = self.appearances.filter(
             id__in=advancers,
         ).order_by('?')
@@ -1044,50 +1029,45 @@ class Round(TimeStampedModel):
             appearance.draw = i
             appearance.save()
             i += 1
-        # create MT
+        # create Mic Tester at draw 0
         mt = self.appearances.filter(
             draw=None,
-            competitor__is_multi=True,
+            is_multi=True,
         ).order_by(
-            '-tot_points',
-            '-sng_points',
-            '-per_points',
+            '-run_points',
         ).first()
         if mt:
             mt.draw = 0
             mt.save()
-
-        # Run Outcomes
-        outcomes = self.outcomes.all()
-        for outcome in outcomes:
-            outcome.name = outcome.get_name()
-            outcome.save()
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.verified], target=STATUS.finished)
+    @transition(field=status, source=[STATUS.verified], target=STATUS.finished, conditions=[can_finish])
     def finish(self, *args, **kwargs):
-        content = self.get_oss()
-        self.oss.save(
-            slugify(
-                '{0} oss'.format(self)
-            ),
-            content=content,
-        )
-        content = self.get_sa()
-        self.sa.save(
-            slugify(
-                '{0} sa'.format(self)
-            ),
-            content=content,
-        )
+        # content = self.get_oss()
+        # self.oss.save(
+        #     slugify(
+        #         '{0} oss'.format(self)
+        #     ),
+        #     content=content,
+        # )
+        # content = self.get_sa()
+        # self.sa.save(
+        #     slugify(
+        #         '{0} sa'.format(self)
+        #     ),
+        #     content=content,
+        # )
         finishers = self.appearances.filter(
             Q(draw=0) | Q(draw__isnull=True),
+        ).values_list('group', flat=True)
+        competitors = self.session.competitors.filter(
+            group__id__in=finishers,
         )
-        panelists = self.panelists.all()
-        for finisher in finishers:
-            finisher.competitor.finish()
-            finisher.competitor.save()
+        for competitor in competitors:
+            competitor.finish()
+            competitor.save()
+        # panelists = self.panelists.all()
         # for panelist in panelists:
         #     panelist.queue_sa()
         # self.queue_sa()
