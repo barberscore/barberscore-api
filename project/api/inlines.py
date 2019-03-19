@@ -128,15 +128,14 @@ class ActiveQuartetInline(admin.TabularInline):
 class AppearanceInline(admin.TabularInline):
     model = Appearance
     fields = [
-        'competitor',
+        'group',
         'status',
         'num',
         'draw',
-        'tot_points',
-        'tot_rank',
+        'is_multi',
     ]
     readonly_fields = [
-        'competitor',
+        'group',
         'status',
     ]
     ordering = (
@@ -285,8 +284,7 @@ class CompetitorInline(admin.TabularInline):
         'status',
         'session',
         'group',
-        'tot_score',
-        'tot_rank',
+        'is_multi',
     ]
     readonly_fields = [
         'status',

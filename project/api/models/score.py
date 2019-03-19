@@ -127,8 +127,6 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         Competitor = apps.get_model('api.competitor')
-        if not self.song.appearance.competitor:
-            return False
         if not self.panelist:
             return False
         if not self.panelist.person:
@@ -147,14 +145,18 @@ class Score(TimeStampedModel):
                     person__user=request.user,
                     status__gt=0,
                 ),
-                self.song.appearance.competitor.status == Competitor.STATUS.finished,
+                self.song.appearance.round.session.competitors.filter(
+                    status=Competitor.STATUS.finished,
+                ),
             ]),
             all([
-                self.song.appearance.competitor.group.officers.filter(
+                self.song.appearance.group.officers.filter(
                     person__user=request.user,
                     status__gt=0,
                 ),
-                self.song.appearance.competitor.status == Competitor.STATUS.finished,
+                self.song.appearance.round.session.competitors.filter(
+                    status=Competitor.STATUS.finished,
+                ),
             ]),
         ])
 

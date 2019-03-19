@@ -276,7 +276,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'actual_start',
         'actual_finish',
-        'competitor',
+        'group',
         'round',
         'num',
         'draw',
@@ -288,7 +288,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     list_display = [
         'status',
-        'competitor',
+        'group',
         'round',
         'num',
         'draw',
@@ -296,11 +296,9 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
     ]
     list_select_related = [
-        'competitor',
-        'competitor__group',
-        'competitor__session',
-        'competitor__session__convention',
+        'group',
         'round__session',
+        'round__session__convention',
     ]
     list_filter = [
         AppearanceConventionStatusListFilter,
@@ -314,21 +312,21 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     save_on_top = True
     autocomplete_fields = [
-        'competitor',
+        'group',
         'round',
     ]
     readonly_fields = [
         'id',
     ]
     search_fields = [
-        'competitor__group__name',
+        'group__name',
         'round__session__convention__name',
     ]
     inlines = [
         SongInline,
     ]
     ordering = (
-        'competitor',
+        'group__name',
     )
 
 
@@ -760,7 +758,6 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        AppearanceInline,
         StateLogInline,
         # GridInline,
         # ContestantInline,

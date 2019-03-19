@@ -293,7 +293,7 @@ class Competitor(TimeStampedModel):
         per = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.performance))
         sng = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.singing))
         officials = Score.objects.filter(
-            song__appearance__competitor=self,
+            song__appearance__round__session__competitors__in=self,
             song__appearance__num__gt=0,
             panelist__kind=Panelist.KIND.official,
         ).distinct(
@@ -355,7 +355,7 @@ class Competitor(TimeStampedModel):
         songs = Song.objects.select_related(
             'chart',
         ).filter(
-            appearance__competitor=self,
+            appearance__round__session__competitors__in=self,
         ).prefetch_related(
             'scores',
             'scores__panelist__person',

@@ -100,7 +100,7 @@ log = logging.getLogger(__name__)
 class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
         'round',
-        'competitor',
+        'group',
         'grid',
     ).prefetch_related(
         'songs',
@@ -479,7 +479,6 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         'group',
         'entry',
     ).prefetch_related(
-        'appearances',
         'statelogs',
     ).order_by('id')
     serializer_class = CompetitorSerializer
@@ -661,6 +660,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         'children',
         'awards',
         'competitors',
+        'appearances',
         'conventions',
         'entries',
         'members',
@@ -1132,16 +1132,16 @@ class RoundViewSet(viewsets.ModelViewSet):
         appearances = round.appearances.filter(
             draw__gt=0,
         ).select_related(
-            'competitor__group',
+            'group',
         ).order_by(
             'draw',
         )
         mt = round.appearances.filter(
             draw=0,
         ).select_related(
-            'competitor__group',
+            'group',
         ).order_by(
-            'competitor__group__name',
+            'group__name',
         ).first()
         outcomes = round.outcomes.order_by(
             '-contest__num',

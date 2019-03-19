@@ -133,6 +133,8 @@ class Outcome(TimeStampedModel):
         if self.level == self.LEVEL.deferred:
             return "(Result determined post-contest)"
         if self.level == self.LEVEL.qualifier:
+            # Fix!
+            return "MUST SELECT WINNERS MANUALLY"
             threshold = self.threshold
             num = [self.num]
             qualifiers = self.round.appearances.filter(
@@ -140,8 +142,8 @@ class Outcome(TimeStampedModel):
                 competitor__contesting__contains=num,
             ).distinct(
             ).order_by(
-                'competitor__group__name',
-            ).values_list('competitor__group__name', flat=True)
+                'group__name',
+            ).values_list('group__name', flat=True)
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No qualifiers)"

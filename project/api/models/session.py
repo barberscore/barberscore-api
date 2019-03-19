@@ -976,7 +976,12 @@ class Session(TimeStampedModel):
         entries = self.entries.filter(
             status=self.entries.model.STATUS.approved,
         )
+        z = 0
         for entry in entries:
+            # TODO - MT hack
+            if entry.is_mt:
+                entry.draw = z
+                z -= 1
             # Set is_multi=True if they are competiting for at least
             # one multi-round award.
             is_multi = bool(entry.contestants.filter(
@@ -997,6 +1002,7 @@ class Session(TimeStampedModel):
             competitor, created = self.competitors.get_or_create(
                 entry=entry,
                 group=entry.group,
+                draw=entry.draw,
                 is_multi=is_multi,
                 is_private=entry.is_private,
                 participants=entry.participants,

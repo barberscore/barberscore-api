@@ -213,12 +213,6 @@ class Appearance(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    competitor = models.ForeignKey(
-        'Competitor',
-        related_name='appearances',
-        on_delete=models.CASCADE,
-    )
-
     group = models.ForeignKey(
         'Group',
         related_name='appearances',
@@ -260,7 +254,6 @@ class Appearance(TimeStampedModel):
             'num',
         ]
         unique_together = (
-            ('round', 'competitor'),
             ('round', 'num'),
             ('round', 'group'),
         )
