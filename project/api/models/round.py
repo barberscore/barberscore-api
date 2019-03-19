@@ -903,10 +903,15 @@ class Round(TimeStampedModel):
         for competitor in competitors:
             if not prior_round:
                 draw = competitor.draw
+                run_points = None
+                run_score = None
             else:
-                draw = prior_round.appearances.get(
+                prior_appearance = prior_round.appearances.get(
                     group=competitor.group,
-                ).draw
+                )
+                draw = prior_appearance.draw
+                run_points = prior_appearance.run_points
+                run_score = prior_appearance.run_score
             outcomes = self.outcomes.filter(
                 num__in=competitor.contesting,
             )
@@ -918,6 +923,8 @@ class Round(TimeStampedModel):
                 is_private=competitor.is_private,
                 participants=competitor.participants,
                 representing=competitor.representing,
+                run_points=run_points,
+                run_score=run_score,
                 contesting=contesting,
             )
         # Create the grids
