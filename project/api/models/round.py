@@ -210,36 +210,25 @@ class Round(TimeStampedModel):
 
     def get_oss(self):
         Panelist = apps.get_model('api.panelist')
-        Score = apps.get_model('api.score')
         Song = apps.get_model('api.song')
-        participants = self.appearances.filter(
-            Q(draw__isnull=True) | Q(draw=0),
+        Group = apps.get_model('api.group')
+
+        # Score Block
+        group_ids = self.appearances.filter(
             is_private=False,
+        ).exclude(
+            draw__gt=0,
         ).exclude(
             num=0,
         ).values_list('group', flat=True)
-        competitors = self.session.competitors.filter(
-            group__in=participants,
-        ).select_related(
-            'group',
-            'entry',
-        ).prefetch_related(
-            'entry__contestants',
-            'entry__contestants__contest',
-            'appearances',
-            'appearances__round',
-            'appearances__songs',
-            'appearances__songs__chart',
-            'appearances__songs__scores',
-            'appearances__songs__scores__panelist',
-            'appearances__songs__scores__panelist__person',
+        groups = Group.objects.filter(
+            id__in=group_ids,
         ).annotate(
             tot=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__num__lte=self.num,
-                    appearances__num__gt=0,
+                    appearances__round=self,
                 ),
             ),
             sng=Sum(
@@ -247,8 +236,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    appearances__round__num__lte=self.num,
-                    appearances__num__gt=0,
+                    appearances__round=self,
                 ),
             ),
             per=Sum(
@@ -256,39 +244,48 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    appearances__round__num__lte=self.num,
-                    appearances__num__gt=0,
+                    appearances__round=self,
                 ),
             ),
-            max=Max(
-                'appearances__round__num',
+            run_tot=Sum(
+                'appearances__songs__scores__points',
                 filter=Q(
-                    appearances__num__gt=0,
-                )
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__round__session=self.session,
+                ),
+            ),
+            run_sng=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__round__session=self.session,
+                ),
+            ),
+            run_per=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__round__session=self.session,
+                ),
             ),
         ).order_by(
-            '-tot',
-            '-sng',
-            '-per',
+            '-run_tot',
+            '-run_sng',
+            '-run_per',
         )
 
-        # Monkeypatch Semis Only
-        for competitor in competitors:
-            competitor.appearances__filtered = competitor.appearances.filter(
-                round__num__lte=self.num,
+        # Monkeypatch
+        for group in groups:
+            source = self.appearances.get(
+                group=group,
             )
+            group.contesting = source.contesting
+            group.representing = source.representing
+            group.participants = source.participants
 
-        # Monkeypatch Contesting
-        for competitor in competitors:
-            contesting__filtered = []
-            outcomes = self.outcomes.values_list('num', flat=True)
-            for con in competitor.contesting:
-                if con in outcomes:
-                    contesting__filtered.append(con)
-            competitor.contesting__filtered = contesting__filtered
-
-
-        # Penalties
+        # Penalties Block
         array = Song.objects.filter(
             appearance__round=self,
             penalties__len__gt=0,
@@ -302,67 +299,90 @@ class Round(TimeStampedModel):
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
-
-        # Eval Only
-        privates = self.session.competitors.filter(
-            appearances__round=self,
+        # Eval Only Block
+        privates = self.appearances.filter(
             is_private=True,
-        ).select_related(
-            'group',
-            'entry',
+        ).exclude(
+            num=0,
         ).order_by(
             'group__name',
-        )
-        privates = privates.values_list('group__name', flat=True)
+        ).values_list('group__name', flat=True)
+
+        # Draw Block
         if self.kind != self.KIND.finals:
+            # Get advancers
             advancers = self.appearances.filter(
                 draw__gt=0,
             ).select_related(
-                'competitor__group',
+                'group',
             ).order_by(
                 'draw',
+            ).values_list(
+                'draw',
+                'group__name',
             )
-            mt = self.appearances.filter(
+            advancers = list(advancers)
+            mt = self.appearances.get(
                 draw=0,
-            ).select_related(
-                'competitor__group',
-            ).order_by(
-                'draw',
-            ).first()
+            ).group.name
+            advancers.append(('MT', mt))
         else:
             advancers = None
-            mt = None
-        panelists = self.panelists.select_related(
+
+        # Panelist Block
+        panelists_raw = self.panelists.select_related(
             'person',
         ).filter(
             kind=Panelist.KIND.official,
             category__gte=Panelist.CATEGORY.ca,
         ).order_by(
-            'category',
-            'person__last_name',
-            'person__first_name',
-        )
-        outcomes = self.outcomes.select_related(
-            'round',
-            'contest',
-            'contest__award',
-        ).order_by(
             'num',
         )
-        is_multi = all([
-            self.session.rounds.count() > 1,
-        ])
+        categories_map = {
+            10: 'CA',
+            30: 'MUS',
+            40: 'PER',
+            50: 'SNG',
+        }
+        panelists = []
+        for key, value in categories_map.items():
+            sections = panelists_raw.filter(
+                category=key,
+            ).select_related(
+                'person',
+            ).order_by(
+                'num',
+            )
+            persons = [x.person.common_name for x in sections]
+            names = ", ".join(persons)
+            panelists.append((value, names))
+
+
+        # Outcome Block
+        items = self.outcomes.order_by(
+            'num',
+        ).values_list(
+            'num',
+            'award__name',
+            'name',
+        )
+        outcomes = []
+        for item in items:
+            outcomes.append(
+                (
+                    "{0}) {1}".format(item[0], item[1]),
+                    item[2],
+                )
+            )
+
         context = {
             'round': self,
-            'competitors': competitors,
-            'participants': participants,
+            'groups': groups,
+            'penalties': penalties,
             'privates': privates,
             'advancers': advancers,
-            'mt': mt,
             'panelists': panelists,
             'outcomes': outcomes,
-            'penalties': penalties,
-            'is_multi': is_multi,
         }
         rendered = render_to_string('round/oss.html', context)
         file = pydf.generate_pdf(

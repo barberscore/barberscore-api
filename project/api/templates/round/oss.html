@@ -1,4 +1,3 @@
-{% load category_code %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -73,21 +72,27 @@
             </tr>
           </thead>
           <tbody>
-            {% for competitor in competitors %}
+            {% for group in groups %}
               <tr class='pbi_avoid'>
                 <td>
                   <h4>
                     <strong>
-                      {{competitor.group.name}}
+                      {{group.name}}
                     </strong>
                   </h4>
                   <div class='smaller-font'>
-                    {% if competitor.group.get_kind_display == 'Chorus' %}
-                      {{competitor.group.parent.name|truncatechars_html:"50"}} [{{competitor.representing|default:"Unknown"}}] {% if competitor.contesting__filtered %} (Contesting: {{competitor.contesting__filtered|default:"None"}}){% endif %}<br>
-                      Dir(s): {{competitor.participants|default:"(No Director Specified)"}}<br>
+                    {% if group.get_kind_display == 'Chorus' %}
+                      {{group.parent.name|truncatechars_html:"50"}} [{{group.representing|default:"Unknown"}}]
+                      {% if group.contesting %}
+                        (Contesting: {{group.contesting|default:"None"}})
+                      {% endif %}<br>
+                      Dir(s): {{group.participants|default:"(No Director Specified)"}}<br>
                     {% else %}
-                      {{competitor.representing|default:"(Unknown)"}} {% if competitor.contesting__filtered %} (Contesting: {{competitor.contesting__filtered|default:"None"}}){% endif %}<br>
-                      {{competitor.participants|default:"(No Members Specified)"}}<br>
+                      {{group.representing|default:"(Unknown)"}}
+                      {% if group.contesting %}
+                        (Contesting: {{group.contesting|default:"None"}})
+                      {% endif %}<br>
+                      {{group.participants|default:"(No Members Specified)"}}<br>
                     {% endif %}
                     {% if competitor.max > 1 %}
                       {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
@@ -96,7 +101,7 @@
                     {% endif %}
                   </div>
                 </td>
-                <td>
+                {# <td>
                   {% if competitor.max > 1 %}
                     <strong>Total: {{competitor.tot_points}} Points</strong><br>
                   {% endif %}
@@ -171,7 +176,7 @@
                         {{song.tot_score|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
-                </td>
+                </td> #}
               </tr>
             {% endfor %}
           </tbody>
@@ -180,10 +185,10 @@
           {% if round.kind == 1 %}
             Competitors are listed above in order by total points.<br>
           {% else %}
-            Competitors not advancing to the finals (or competing only for single-round awards) are listed above in order by total score.<br>
+            Competitors not advancing to the finals (or competing only for single-round awards) are listed above in order by total points.<br>
           {% endif %}
           {% if privates %}
-            The following groups sang for Evaluation-Only: {{privates|join:", "}}
+            The following groups sang for Evaluation-Only: {{privates}}
           {% endif %}
         </p>
       <div class='row'>
@@ -192,10 +197,9 @@
           <div>
             <h5>Draw</h5>
             <p>
-              {% for advancer in advancers %}
-                <span class='text-nowrap'><strong>{{advancer.draw}}</strong> {{advancer.competitor.group.name}}&nbsp;</span>
+              {% for draw, group in advancers %}
+                <span class='text-nowrap'><strong>{{draw}}:</strong>&nbsp;{{group}}&nbsp;&nbsp;</span>
               {% endfor %}
-              {% if mt %}<span class='text-nowrap'><strong>MT</strong> {{mt.competitor.group.name}}&nbsp;</span>{% endif %}
             </p>
           </div>
         {% endif %}
@@ -203,8 +207,8 @@
           <div>
             <h5>Awards</h5>
             <ul class='list-unstyled'>
-              {% for outcome in outcomes %}
-                <li><strong>{{outcome.num}}) {{outcome.award.name}}:</strong> {{outcome.name}}</li>
+              {% for award, winner in outcomes %}
+                <li><strong>{{award}}:</strong>&nbsp;{{winner}}</li>
               {% endfor %}
             </ul>
           </div>
