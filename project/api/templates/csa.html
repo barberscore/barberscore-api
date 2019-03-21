@@ -70,72 +70,66 @@
         </div>
       </section>
       <section>
-        <div class='table-responsive'>
-          <table class='table'>
-            <thead>
-              <tr>
-                <th>Songs</th>
-                <th class='text-right'>MUS</th>
-                <th class='text-right'>PER</th>
-                <th class='text-right'>SNG</th>
-                <th class='text-right'>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
+        <table class='table table-condensed table-striped'>
+          <thead>
+            <tr>
+              <th class='col-md-6'>Songs</th>
+              <th class='text-right col-md-1'>MUS</th>
+              <th class='text-right col-md-1'>PER</th>
+              <th class='text-right col-md-1'>SNG</th>
+              <th class='text-right col-md-1'>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr class='pbi_avoid'>
                 <td>
-                  <strong>Total</strong><br>
-                  {% for appearance in appearances.all|dictsort:'round__kind'  %}
-                    <span class='bolder'>{{appearance.round.get_kind_display}}</span><br>
-                    {% for song in appearance.songs.all|dictsort:'num' %}
-                      {% if song.chart %}
-                        {{song.chart.title|truncatewords_html:10|safe|default:"(Song not included in contestant repertory)"}}<br>
-                      {% else %}
-                        {{song.legacy_chart|truncatewords_html:10|safe|default:"(Song not included in contestant repertory)"}}<br>
-                      {% endif %}
+                  <strong>Total: {{group.tot_points}} Points</strong> {{group.appearances_count}}<br>
+                  {% for appearance in group.appearances_patched %}
+                      {% if group.max > 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
+                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{competitor.mus_points}} ({{competitor.mus_score|floatformat:1}})</strong><br>
-                  {% for appearance in appearances.all|dictsort:'round__kind' %}
-                    <span class='bolder'>{{appearance.mus_points}} ({{appearance.mus_score|floatformat:1}})</span><br>
-                    {% for song in appearance.songs.all|dictsort:'num' %}
-                      {{song.mus_points}} ({{song.mus_score|floatformat:1}})<br>
+                  <strong>{{group.mus_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max > 1 %}<span class='bolder'>{{appearance.mus_score|floatformat:1}}</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
+                        {{song.mus_score|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{competitor.per_points}} ({{competitor.per_score|floatformat:1}})</strong><br>
-                  {% for appearance in appearances.all|dictsort:'round__kind' %}
-                    <span class='bolder'>{{appearance.per_points}} ({{appearance.per_score|floatformat:1}})</span><br>
-                    {% for song in appearance.songs.all|dictsort:'num' %}
-                      {{song.per_points}} ({{song.per_score|floatformat:1}})<br>
+                  <strong>{{group.per_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max > 1 %}<span class='bolder'>{{appearance.per_score|floatformat:1}}</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
+                        {{song.per_score|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{competitor.sng_points}} ({{competitor.sng_score|floatformat:1}})</strong><br>
-                  {% for appearance in appearances.all|dictsort:'round__kind'  %}
-                    <span class='bolder'>{{appearance.sng_points}} ({{appearance.sng_score|floatformat:1}})</span><br>
-                    {% for song in appearance.songs.all|dictsort:'num' %}
-                      {{song.sng_points}} ({{song.sng_score|floatformat:1}})<br>
+                  <strong>{{group.sng_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max > 1 %}<span class='bolder'>{{appearance.sng_score|floatformat:1}}</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
+                        {{song.sng_score|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}})</strong><br>
-                  {% for appearance in appearances.all|dictsort:'round__kind'  %}
-                    <span class='bolder'>{{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}})</span><br>
-                    {% for song in appearance.songs.all|dictsort:'num' %}
-                      {{song.tot_points}} ({{song.tot_score|floatformat:1}})<br>
+                  <strong>{{group.tot_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max > 1 %}<span class='bolder'>{{appearance.tot_score|floatformat:1}}</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
+                        {{song.tot_score|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
               </tr>
-            </tbody>
-          </table>
-        </div>
+          </tbody>
+        </table>
       </section>
       <section>
         <div class='table-responsive'>

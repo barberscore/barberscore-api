@@ -326,6 +326,8 @@ class Competitor(TimeStampedModel):
         Panelist = apps.get_model('api.panelist')
         Member = apps.get_model('api.member')
         Song = apps.get_model('api.song')
+
+        # Panelist Block
         panelists = Panelist.objects.filter(
             kind=Panelist.KIND.official,
             round__session=self.session,
@@ -335,24 +337,107 @@ class Competitor(TimeStampedModel):
             'category',
             'person__last_name',
         )
-        appearances = self.appearances.order_by(
-            '-num',
+
+        # Appearancers Block
+        group = self.group
+        appearances = group.appearances.filter(
+            group=group,
+            round__session=self.session,
+            num__gt=0,
         ).prefetch_related(
-            'songs',
-        )
-        songs = Song.objects.select_related(
-            'chart',
-        ).filter(
-            appearance__round__session__competitors__in=self,
-        ).prefetch_related(
-            'scores',
-            'scores__panelist__person',
+            'songs__scores',
+            'songs__scores__panelist',
         ).order_by(
-            '-appearance__round__num',
-            'num',
+            'round__kind',
+        ).annotate(
+            tot_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            tot_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            mus_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            per_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
         )
+        for appearance in appearances:
+            songs = appearance.songs.prefetch_related(
+                'scores',
+                'scores__panelist',
+            ).order_by(
+                'num',
+            ).annotate(
+                tot_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                mus_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.music,
+                    ),
+                ),
+                per_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.performance,
+                    ),
+                ),
+                sng_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.singing,
+                    ),
+                ),
+            )
+            for song in songs:
+                penalties_map = {
+                    10: "†",
+                    30: "‡",
+                    40: "✠",
+                    50: "✶",
+                }
+                items = " ".join([penalties_map[x] for x in song.penalties])
+                song.penalties_patched = items
+            appearance.songs_patched = songs
+        group.appearances_patched = appearances
+
+
+        panelists = None
+        appearances = None
+        songs = None
         context = {
             'competitor': self,
+            'group': group,
             'panelists': panelists,
             'appearances': appearances,
             'songs': songs,

@@ -728,7 +728,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session',
         'group',
         'entry',
-        'rank',
+        # 'rank',
         'representing',
         'participants',
         'contesting',

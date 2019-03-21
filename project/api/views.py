@@ -548,6 +548,36 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            # TemplateHTMLRenderer,
+            PDFRenderer,
+        ],
+        permission_classes=[AllowAny],
+    )
+    def csadraft(self, request, pk=None):
+        competitor = Competitor.objects.get(pk=pk)
+        pdf = competitor.get_csa()
+        file_name = '{0}-csa'.format(
+            slugify(
+                "{0} CSA".format(
+                    competitor,
+                )
+            )
+        )
+        # return Response(
+        #     pdf,
+        #     template_name='oss.html',
+        # )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+
 class EntryViewSet(viewsets.ModelViewSet):
     queryset = Entry.objects.select_related(
         'session',
