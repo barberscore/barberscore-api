@@ -1402,34 +1402,34 @@ class Round(TimeStampedModel):
         spots = self.spots
 
         # Get all multi appearances and annotate average.
-        multis = self.session.competitors.filter(
+        multis = self.appearances.filter(
             status__gt=0,
             is_multi=True,
         ).annotate(
             avg=Avg(
-                'appearances__songs__scores__points',
+                'songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__kind=Panelist.KIND.official,
                 )
             ),
             tot_points=Sum(
-                'appearances__songs__scores__points',
+                'songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__kind=Panelist.KIND.official,
                 )
             ),
             sng_points=Sum(
-                'appearances__songs__scores__points',
+                'songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
                 )
             ),
             per_points=Sum(
-                'appearances__songs__scores__points',
+                'songs__scores__points',
                 filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
                 )
             ),
         )
@@ -1464,7 +1464,7 @@ class Round(TimeStampedModel):
 
         # Randomize the advancers and set the initial draw
         appearances = self.appearances.filter(
-            competitor__id__in=advancers,
+            id__in=advancers,
         ).order_by('?')
         i = 1
         for appearance in appearances:
@@ -1474,7 +1474,7 @@ class Round(TimeStampedModel):
         # create Mic Tester at draw 0
         mt = self.appearances.filter(
             draw=None,
-            competitor__is_multi=True,
+            is_multi=True,
         ).annotate(
             tot_points=Sum(
                 'songs__scores__points',
