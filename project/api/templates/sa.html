@@ -52,23 +52,43 @@
       </div>
     <section>
       <table class='table table-condensed'>
+        {% comment %}
         <colgroup>
           <col span=3>
           <col span=1 class='col-warning'>
+          {% for person in persons %}
+            {% if person.category_patched == 'Music' %}
+              <col span=1 class='col-warning'>
+            {% endif %}
+          {% endfor %}
           <col span=1 class='col-success'>
+          {% for person in persons %}
+            {% if person.category_patched == 'Performance' %}
+              <col span=1 class='col-success'>
+            {% endif %}
+          {% endfor %}
           <col span=1 class='col-info'>
           {% for person in persons %}
-            <col span=1 class={{person.rowClass}}>
+            {% if person.category_patched == 'Singing' %}
+              <col span=1 class='col-info'>
+            {% endif %}
           {% endfor %}
         </colgroup>
+        {% endcomment %}
         <thead>
           <th>Competitor</th>
           <th>Songs</th>
           <th class='text-right'>TOT</th>
           <th class='text-right'>MUS</th>
+          {% for person in persons_music %}
+            <th class='text-right'>{{person.initials}}</th>
+          {% endfor %}
           <th class='text-right'>PER</th>
+          {% for person in persons_performance %}
+            <th class='text-right'>{{person.initials}}</th>
+          {% endfor %}
           <th class='text-right'>SNG</th>
-          {% for person in persons %}
+          {% for person in persons_singing %}
             <th class='text-right'>{{person.initials}}</th>
           {% endfor %}
         </thead>
@@ -107,6 +127,13 @@
                   {% endfor %}
                 {% endfor %}
               </td>
+              {% for col in group.music_patched %}
+                <td class='text-right'>
+                  {% for score in col %}
+                    {{score.points}}<br>
+                  {% endfor %}
+                </td>
+              {% endfor %}
               <td class='text-right'>
                 {% for appearance in group.appearances_patched %}
                   {% for song in appearance.songs_patched %}
@@ -114,6 +141,13 @@
                   {% endfor %}
                 {% endfor %}
               </td>
+              {% for col in group.performance_patched %}
+                <td class='text-right'>
+                  {% for score in col %}
+                    {{score.points}}<br>
+                  {% endfor %}
+                </td>
+              {% endfor %}
               <td class='text-right'>
                 {% for appearance in group.appearances_patched %}
                   {% for song in appearance.songs_patched %}
@@ -121,10 +155,10 @@
                   {% endfor %}
                 {% endfor %}
               </td>
-              {% for col in group.scores_patched %}
+              {% for col in group.singing_patched %}
                 <td class='text-right'>
                   {% for score in col %}
-                    {{score}}<br>
+                    {{score.points}}<br>
                   {% endfor %}
                 </td>
               {% endfor %}

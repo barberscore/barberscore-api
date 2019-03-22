@@ -806,28 +806,27 @@ class Round(TimeStampedModel):
         ).order_by(
             'panelists__num',
         ).distinct()
-        class_map = {
-            Panelist.CATEGORY.music: 'col-warning',
-            Panelist.CATEGORY.performance: 'col-success',
-            Panelist.CATEGORY.singing: 'col-info',
-        }
+
+        persons_music = persons.filter(
+            panelists__category=Panelist.CATEGORY.music,
+            panelists__round__session=self.session,
+        ).order_by(
+            'panelists__num',
+        ).distinct()
+        persons_performance = persons.filter(
+            panelists__category=Panelist.CATEGORY.performance,
+            panelists__round__session=self.session,
+        ).order_by(
+            'panelists__num',
+        ).distinct()
+        persons_singing = persons.filter(
+            panelists__category=Panelist.CATEGORY.singing,
+            panelists__round__session=self.session,
+        ).order_by(
+            'panelists__num',
+        ).distinct()
 
         # Monkeypatching
-        for person in persons:
-            instance = Panelist.objects.filter(
-                person=person,
-                round__session=self.session,
-                category__gt=Panelist.CATEGORY.ca,
-                kind__in=[
-                    Panelist.KIND.official,
-                    Panelist.KIND.practice
-                ]
-            ).last()
-            person.category_patched = instance.get_category_display()
-            person.kind_patched = instance.get_kind_display()
-            person.num_patched = instance.num
-            person.rowClass = class_map[instance.category]
-
         for group in groups:
             # Populate the group block
             source = self.appearances.get(
@@ -837,20 +836,53 @@ class Round(TimeStampedModel):
             group.representing = source.representing
             group.participants = source.participants
             full = []
-            for person in persons:
+            for person in persons_music:
                 item = []
                 scores = Score.objects.filter(
                     panelist__person=person,
                     panelist__round__session=self.session,
+                    panelist__category=Panelist.CATEGORY.music,
+                    song__appearance__group=group,
+                ).order_by(
+                    'panelist__round__kind',
+                    'song__num',
+                ).distinct()
+                for score in scores:
+                    item.append(score)
+                full.append(item)
+            group.music_patched = full
+            full = []
+            for person in persons_performance:
+                item = []
+                scores = Score.objects.filter(
+                    panelist__person=person,
+                    panelist__round__session=self.session,
+                    panelist__category=Panelist.CATEGORY.performance,
                     song__appearance__group=group,
                 ).order_by(
                     'panelist__round__kind',
                     'song__num',
                 )
                 for score in scores:
-                    item.append(score.points)
+                    item.append(score)
                 full.append(item)
-            group.scores_patched = full
+            group.performance_patched = full
+            full = []
+            for person in persons_singing:
+                item = []
+                scores = Score.objects.filter(
+                    panelist__person=person,
+                    panelist__round__session=self.session,
+                    panelist__category=Panelist.CATEGORY.singing,
+                    song__appearance__group=group,
+                ).order_by(
+                    'panelist__round__kind',
+                    'song__num',
+                )
+                for score in scores:
+                    item.append(score)
+                full.append(item)
+            group.singing_patched = full
             appearances = group.appearances.filter(
                 group=group,
                 round__session=self.session,
@@ -1059,6 +1091,9 @@ class Round(TimeStampedModel):
             'round': self,
             'groups': groups,
             'persons': persons,
+            'persons_music': persons_music,
+            'persons_performance': persons_performance,
+            'persons_singing': persons_singing,
         }
         rendered = render_to_string('sa.html', context)
         file = pydf.generate_pdf(
