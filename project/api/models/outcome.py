@@ -14,7 +14,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, Avg
 
 log = logging.getLogger(__name__)
 
@@ -135,13 +135,20 @@ class Outcome(TimeStampedModel):
         if self.level == self.LEVEL.qualifier:
             threshold = self.threshold
             num = [self.num]
-            qualifiers = self.round.appearances.filter(
-                competitor__tot_score__gte=threshold,
-                competitor__contesting__contains=num,
-            ).distinct(
+            qualifiers = self.round.session.competitors.filter(
+                contesting__contains=num,
+            ).annotate(
+                avg=Avg(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    )
+                ),
+            ).filter(
+                avg__gte=threshold,
             ).order_by(
-                'competitor__group__name',
-            ).values_list('competitor__group__name', flat=True)
+                'group__name',
+            ).values_list('group__name', flat=True)
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No qualifiers)"
