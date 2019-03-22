@@ -827,6 +827,12 @@ class Round(TimeStampedModel):
         ).distinct()
 
         # Monkeypatching
+        stdevs = {
+            'tot': [],
+            'mus': [],
+            'per': [],
+            'sng': [],
+        }
         for group in groups:
             # Populate the group block
             source = self.appearances.get(
@@ -850,6 +856,11 @@ class Round(TimeStampedModel):
                 for score in scores:
                     item.append(score)
                 full.append(item)
+                if scores.filter(
+                    panelist__round__session=self.session,
+                    panelist__kind=Panelist.KIND.practice,
+                ):
+                    person.practice = True
             group.music_patched = full
             full = []
             for person in persons_performance:
@@ -866,6 +877,11 @@ class Round(TimeStampedModel):
                 for score in scores:
                     item.append(score)
                 full.append(item)
+                if scores.filter(
+                    panelist__round__session=self.session,
+                    panelist__kind=Panelist.KIND.practice,
+                ):
+                    person.practice = True
             group.performance_patched = full
             full = []
             for person in persons_singing:
@@ -882,6 +898,11 @@ class Round(TimeStampedModel):
                 for score in scores:
                     item.append(score)
                 full.append(item)
+                if scores.filter(
+                    panelist__round__session=self.session,
+                    panelist__kind=Panelist.KIND.practice,
+                ):
+                    person.practice = True
             group.singing_patched = full
             appearances = group.appearances.filter(
                 group=group,
@@ -1017,6 +1038,10 @@ class Round(TimeStampedModel):
                     ),
                 )
                 for song in songs:
+                    stdevs['tot'].append(song.tot_dev)
+                    stdevs['mus'].append(song.mus_dev)
+                    stdevs['per'].append(song.per_dev)
+                    stdevs['sng'].append(song.sng_dev)
                     penalties_map = {
                         10: "†",
                         30: "‡",
@@ -1025,68 +1050,21 @@ class Round(TimeStampedModel):
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
+                    if 30 in song.asterisks or 30 in song.dixons:
+                        song.mus_variance = True
+                    if 40 in song.asterisks or 40 in song.dixons:
+                        song.per_variance = True
+                    if 50 in song.asterisks or 50 in song.dixons:
+                        song.sng_variance = True
                 appearance.songs_patched = songs
                 appearance.round_patched = appearance.round.get_kind_display().replace('Semi-Finals', 'Semis ')
             group.appearances_patched = appearances
-        # Panelist = apps.get_model('api.panelist')
-        # panelists = self.panelists.filter(
-        #     kind__in=[
-        #         Panelist.KIND.official,
-        #         Panelist.KIND.practice,
-        #     ],
-        #     category__gt=Panelist.CATEGORY.ca,
-        # ).select_related(
-        #     'person',
-        # ).distinct(
-        # ).order_by(
-        #     'category',
-        #     'kind',
-        #     'person__last_name',
-        #     'person__nick_name',
-        #     'person__first_name',
-        # )
-        # mo_count = panelists.filter(
-        #     category=Panelist.CATEGORY.music,
-        #     kind=Panelist.KIND.official,
-        # ).count()
-        # po_count = panelists.filter(
-        #     category=Panelist.CATEGORY.performance,
-        #     kind=Panelist.KIND.official,
-        # ).count()
-        # so_count = panelists.filter(
-        #     category=Panelist.CATEGORY.singing,
-        #     kind=Panelist.KIND.official,
-        # ).count()
-        # mp_count = panelists.filter(
-        #     category=Panelist.CATEGORY.music,
-        #     kind=Panelist.KIND.practice,
-        # ).count()
-        # pp_count = panelists.filter(
-        #     category=Panelist.CATEGORY.performance,
-        #     kind=Panelist.KIND.practice,
-        # ).count()
-        # sp_count = panelists.filter(
-        #     category=Panelist.CATEGORY.singing,
-        #     kind=Panelist.KIND.practice,
-        # ).count()
-        # competitors = self.session.competitors.filter(
-        #     Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
-        #     appearances__round=self,
-        # ).select_related(
-        #     'group',
-        # ).prefetch_related(
-        #     'appearances',
-        #     'appearances__songs',
-        #     'appearances__songs__scores',
-        #     'appearances__songs__scores__panelist',
-        #     'appearances__songs__scores__panelist__person',
-        # ).order_by(
-        #     '-tot_points',
-        #     '-sng_points',
-        #     '-mus_points',
-        #     '-per_points',
-        #     'group__name',
-        # )
+
+        # Stats
+        stats = {}
+        for key, value in stdevs.items():
+            stats[key] = sum(value) / len(value)
+
         context = {
             'round': self,
             'groups': groups,
@@ -1094,6 +1072,7 @@ class Round(TimeStampedModel):
             'persons_music': persons_music,
             'persons_performance': persons_performance,
             'persons_singing': persons_singing,
+            'stats': stats,
         }
         rendered = render_to_string('sa.html', context)
         file = pydf.generate_pdf(

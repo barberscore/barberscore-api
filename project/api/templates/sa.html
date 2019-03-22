@@ -34,6 +34,10 @@
       .col-info {
         background-color: #d9edf7;
       }
+      .b-right {
+        border-right: 1px solid gray;
+        border-left: 1px solid gray;
+      }
     </style>
   </head>
   <body>
@@ -52,44 +56,48 @@
       </div>
     <section>
       <table class='table table-condensed'>
-        {% comment %}
         <colgroup>
           <col span=3>
-          <col span=1 class='col-warning'>
-          {% for person in persons %}
-            {% if person.category_patched == 'Music' %}
-              <col span=1 class='col-warning'>
-            {% endif %}
+          <col span=1 class='col-warning b-right'>
+          {% for person in persons_music %}
+            <col span=1 class='col-warning'>
           {% endfor %}
-          <col span=1 class='col-success'>
-          {% for person in persons %}
-            {% if person.category_patched == 'Performance' %}
-              <col span=1 class='col-success'>
-            {% endif %}
+          <col span=1 class='col-success b-right'>
+          {% for person in persons_performance %}
+            <col span=1 class='col-success'>
           {% endfor %}
-          <col span=1 class='col-info'>
-          {% for person in persons %}
-            {% if person.category_patched == 'Singing' %}
-              <col span=1 class='col-info'>
-            {% endif %}
+          <col span=1 class='col-info b-right'>
+          {% for person in persons_singing %}
+            <col span=1 class='col-info'>
           {% endfor %}
         </colgroup>
-        {% endcomment %}
         <thead>
           <th>Competitor</th>
           <th>Songs</th>
-          <th class='text-right'>TOT</th>
-          <th class='text-right'>MUS</th>
+          <th class='text-center'>TOT</th>
+          <th class='text-center'>MUS</th>
           {% for person in persons_music %}
-            <th class='text-right'>{{person.initials}}</th>
+            {% if person.practice %}
+              <th class='text-right'><em>{{person.initials}}</em></th>
+                {% else %}
+              <th class='text-right'>{{person.initials}}</th>
+            {% endif %}
           {% endfor %}
-          <th class='text-right'>PER</th>
+          <th class='text-center'>PER</th>
           {% for person in persons_performance %}
-            <th class='text-right'>{{person.initials}}</th>
+            {% if person.practice %}
+              <th class='text-right'><em>{{person.initials}}</em></th>
+                {% else %}
+              <th class='text-right'>{{person.initials}}</th>
+            {% endif %}
           {% endfor %}
-          <th class='text-right'>SNG</th>
+          <th class='text-center'>SNG</th>
           {% for person in persons_singing %}
-            <th class='text-right'>{{person.initials}}</th>
+            {% if person.practice %}
+              <th class='text-right'><em>{{person.initials}}</em></th>
+                {% else %}
+              <th class='text-right'>{{person.initials}}</th>
+            {% endif %}
           {% endfor %}
         </thead>
         <tbody>
@@ -123,42 +131,66 @@
               <td class='text-right'>
                 {% for appearance in group.appearances_patched %}
                   {% for song in appearance.songs_patched %}
-                    {{song.mus_points}}&nbsp;({{song.mus_score|floatformat:1}})&nbsp;{{song.mus_dev|floatformat:1}}<br>
+                    {% if song.mus_variance %}
+                      <strong>{{song.mus_points}}&nbsp;({{song.mus_score|floatformat:1}})&nbsp;{{song.mus_dev|floatformat:1}}<br></strong>
+                    {% else %}
+                      {{song.mus_points}}&nbsp;({{song.mus_score|floatformat:1}})&nbsp;{{song.mus_dev|floatformat:1}}<br>
+                    {% endif %}
                   {% endfor %}
                 {% endfor %}
               </td>
               {% for col in group.music_patched %}
                 <td class='text-right'>
                   {% for score in col %}
-                    {{score.points}}<br>
+                    {% if score.panelist.kind == 20 %}
+                      <em>{{score.points}}</em><br>
+                    {% else %}
+                      {{score.points}}<br>
+                    {% endif %}
                   {% endfor %}
                 </td>
               {% endfor %}
               <td class='text-right'>
                 {% for appearance in group.appearances_patched %}
                   {% for song in appearance.songs_patched %}
-                    {{song.per_points}}&nbsp;({{song.per_score|floatformat:1}})&nbsp;{{song.per_dev|floatformat:1}}<br>
+                    {% if song.per_variance %}
+                      <strong>{{song.per_points}}&nbsp;({{song.per_score|floatformat:1}})&nbsp;{{song.per_dev|floatformat:1}}<br></strong>
+                    {% else %}
+                      {{song.per_points}}&nbsp;({{song.per_score|floatformat:1}})&nbsp;{{song.per_dev|floatformat:1}}<br>
+                    {% endif %}
                   {% endfor %}
                 {% endfor %}
               </td>
               {% for col in group.performance_patched %}
                 <td class='text-right'>
                   {% for score in col %}
-                    {{score.points}}<br>
+                    {% if score.panelist.kind == 20 %}
+                      <em>{{score.points}}</em><br>
+                    {% else %}
+                      {{score.points}}<br>
+                    {% endif %}
                   {% endfor %}
                 </td>
               {% endfor %}
               <td class='text-right'>
                 {% for appearance in group.appearances_patched %}
                   {% for song in appearance.songs_patched %}
-                    {{song.sng_points}}&nbsp;({{song.sng_score|floatformat:1}})&nbsp;{{song.sng_dev|floatformat:1}}<br>
+                    {% if song.sng_variance %}
+                      <strong>{{song.sng_points}}&nbsp;({{song.sng_score|floatformat:1}})&nbsp;{{song.sng_dev|floatformat:1}}<br></strong>
+                    {% else %}
+                      {{song.sng_points}}&nbsp;({{song.sng_score|floatformat:1}})&nbsp;{{song.sng_dev|floatformat:1}}<br>
+                    {% endif %}
                   {% endfor %}
                 {% endfor %}
               </td>
               {% for col in group.singing_patched %}
                 <td class='text-right'>
                   {% for score in col %}
-                    {{score.points}}<br>
+                    {% if score.panelist.kind == 20 %}
+                      <em>{{score.points}}</em><br>
+                    {% else %}
+                      {{score.points}}<br>
+                    {% endif %}
                   {% endfor %}
                 </td>
               {% endfor %}
@@ -169,11 +201,56 @@
     </section>
     <section>
       <div class='row'>
-        <div class='pull-right'>
-          <ul class='list-inline'>
-            Scoring Panel:
-            {% for person in persons %}
-              <li>{{person.common_name}}</li>
+        {% comment %}
+        <div class='col-xs-1'>
+          <ul class='list-unstyled'>
+            Overall StDev Average:
+            <li><strong>TOT</strong>:&nbsp;{{stats.tot|floatformat:1}}</li>
+            <li><strong>MUS</strong>:&nbsp;{{stats.mus|floatformat:1}}</li>
+            <li><strong>PER</strong>:&nbsp;{{stats.per|floatformat:1}}</li>
+            <li><strong>SNG</strong>:&nbsp;{{stats.sng|floatformat:1}}</li>
+          </ul>
+        </div>
+        {% endcomment %}
+        <div class='col-xs-3'>
+          Total (Average StDev {{stats.tot|floatformat:1}})<br>
+          Original Variances in <strong>Bold</strong>.<br>
+          Practice Judges in <em>Italics</em>.<br>
+        </div>
+
+        <div class='col-xs-3'>
+          <ul class='list-unstyled'>
+            Music (Average StDev {{stats.mus|floatformat:1}}):
+            {% for person in persons_music %}
+              {% if person.practice %}
+                <li><em>{{person.common_name}}</em></li>
+              {% else %}
+                <li>{{person.common_name}}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+        <div class='col-xs-3'>
+          <ul class='list-unstyled'>
+            Performance (Average StDev {{stats.per|floatformat:1}}):
+            {% for person in persons_performance %}
+              {% if person.practice %}
+                <li><em>{{person.common_name}}</em></li>
+              {% else %}
+                <li>{{person.common_name}}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+        <div class='col-xs-3'>
+          <ul class='list-unstyled'>
+            Singing (Average StDev {{stats.sng|floatformat:1}}):
+            {% for person in persons_singing %}
+              {% if person.practice %}
+                <li><em>{{person.common_name}}</em></li>
+              {% else %}
+                <li>{{person.common_name}}</li>
+              {% endif %}
             {% endfor %}
           </ul>
         </div>
