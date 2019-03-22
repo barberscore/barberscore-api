@@ -255,35 +255,6 @@ class Song(TimeStampedModel):
         self.sng_points = sng['sum']
         self.sng_score = sng['avg']
 
-    def get_stats(self):
-        stats = {}
-        totals = self.scores.filter(
-            kind=self.scores.model.KIND.official,
-        ).aggregate(
-            avg=Avg('points'),
-            sum=Sum('points'),
-            dev=StdDev('points'),
-        )
-        stats['tot'] = totals
-        category_map = {
-            30: 'mus',
-            40: 'per',
-            50: 'sng',
-        }
-        categories = self.scores.filter(
-            kind=self.scores.model.KIND.official,
-        ).values(
-            'category',
-        ).annotate(
-            avg=Avg('points'),
-            sum=Sum('points'),
-            dev=StdDev('points'),
-        )
-        for category in categories:
-            name = category_map[category.pop('category')]
-            stats[name] = category
-        return stats
-
     # Methods
     def get_asterisks(self):
         """Check to see if the score produces a category variance (asterisk)"""

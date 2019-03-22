@@ -18,7 +18,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import ArrayField, JSONField
 
 # Django
 from django.apps import apps
@@ -130,6 +130,11 @@ class Appearance(TimeStampedModel):
     )
 
     # Privates
+    stats = JSONField(
+        null=True,
+        blank=True,
+    )
+
     rank = models.IntegerField(
         null=True,
         blank=True,
