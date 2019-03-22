@@ -101,72 +101,6 @@ class Song(TimeStampedModel):
         blank=True,
     )
 
-    # Privates
-    rank = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    mus_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    per_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    sng_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    tot_points = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    mus_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    per_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    sng_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    tot_score = models.FloatField(
-        null=True,
-        blank=True,
-    )
-
-    mus_rank = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    per_rank = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    sng_rank = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    tot_rank = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
     # FKs
     appearance = models.ForeignKey(
         'Appearance',
@@ -194,18 +128,6 @@ class Song(TimeStampedModel):
 
     def __str__(self):
         return str(self.id)
-
-    def save(self, *args, **kwargs):
-        # Save all scores as single-digit
-        if self.mus_score:
-            self.mus_score = rnd(self.mus_score, 1)
-        if self.per_score:
-            self.per_score = rnd(self.per_score, 1)
-        if self.sng_score:
-            self.sng_score = rnd(self.sng_score, 1)
-        if self.tot_score:
-            self.tot_score = rnd(self.tot_score, 1)
-        super().save(*args, **kwargs)
 
     # Methods
     def calculate(self):
@@ -246,14 +168,6 @@ class Song(TimeStampedModel):
             sum=Sum('points'),
             avg=Avg('points'),
         )
-        self.tot_points = tot['sum']
-        self.tot_score = tot['avg']
-        self.mus_points = mus['sum']
-        self.mus_score = mus['avg']
-        self.per_points = per['sum']
-        self.per_score = per['avg']
-        self.sng_points = sng['sum']
-        self.sng_score = sng['avg']
 
     # Methods
     def get_asterisks(self):

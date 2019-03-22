@@ -132,8 +132,7 @@ class AppearanceInline(admin.TabularInline):
         'status',
         'num',
         'draw',
-        'tot_points',
-        'tot_rank',
+        'stats',
     ]
     readonly_fields = [
         'competitor',
@@ -285,8 +284,7 @@ class CompetitorInline(admin.TabularInline):
         'status',
         'session',
         'group',
-        'tot_score',
-        'tot_rank',
+        'stats',
     ]
     readonly_fields = [
         'status',

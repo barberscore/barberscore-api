@@ -145,48 +145,6 @@ class Round(TimeStampedModel):
         )
 
     # Methods
-    def rank(self):
-        # Get raw queryset
-        appearances = self.appearances.filter(
-            competitor__is_private=False,
-            # competitor__status__gt=0,
-        ).distinct()
-        # Ranking algo
-        tot_appearances = appearances.order_by(
-            '-tot_points',
-            '-sng_points',
-            '-per_points',
-            'competitor__group__name',
-        )
-        for index, appearance in enumerate(tot_appearances):
-            appearance.tot_rank = index + 1
-            appearance.save()
-        # SNG only
-        sng_appearances = appearances.order_by(
-            '-sng_points',
-            'competitor__group__name',
-        )
-        for index, appearance in enumerate(sng_appearances):
-            appearance.sng_rank = index + 1
-            appearance.save()
-        # MUS only
-        mus_appearances = appearances.order_by(
-            '-mus_points',
-            'competitor__group__name',
-        )
-        for index, appearance in enumerate(mus_appearances):
-            appearance.mus_rank = index + 1
-            appearance.save()
-        # PER only
-        per_appearances = appearances.order_by(
-            '-per_points',
-            'competitor__group__name',
-        )
-        for index, appearance in enumerate(per_appearances):
-            appearance.per_rank = index + 1
-            appearance.save()
-        return
-
     def create_grids(self, onstage, duration, start, finish):
         venue = self.session.convention.venue
         timezone = venue.timezone.zone
@@ -808,20 +766,7 @@ class Round(TimeStampedModel):
             appearance__in=appearances,
         )
         grids.update(appearance=None)
-        competitors.update(
-            mus_points=None,
-            mus_rank=None,
-            mus_score=None,
-            per_points=None,
-            per_rank=None,
-            per_score=None,
-            sng_points=None,
-            sng_rank=None,
-            sng_score=None,
-            tot_points=None,
-            tot_rank=None,
-            tot_score=None,
-        )
+        competitors.update(stats=None)
         panelists.delete()
         outcomes.delete()
         appearances.delete()
@@ -957,10 +902,6 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.started, STATUS.verified], target=STATUS.verified, conditions=[can_verify,])
     def verify(self, *args, **kwargs):
-        # Run rankings.
-        # self.rank()
-        # self.session.rank()
-
         # No next round.
         if self.kind == self.KIND.finals:
             # Run outcomes

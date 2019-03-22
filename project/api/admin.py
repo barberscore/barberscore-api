@@ -281,9 +281,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'num',
         'draw',
         'pos',
-        'tot_rank',
-        ('mus_points', 'per_points', 'sng_points', 'tot_points',),
-        ('mus_score', 'per_score', 'sng_score', 'tot_score',),
+        'stats',
         'variance_report',
     ]
     list_display = [
@@ -292,7 +290,6 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'round',
         'num',
         'draw',
-        'tot_score',
         'status',
     ]
     list_select_related = [
@@ -319,6 +316,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     readonly_fields = [
         'id',
+        'stats',
     ]
     search_fields = [
         'competitor__group__name',
@@ -730,7 +728,6 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session',
         'group',
         'entry',
-        'rank',
         'representing',
         'participants',
         'contesting',
@@ -738,17 +735,13 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'image',
         'csa',
         ('is_private', 'is_multi',),
-        ('tot_points', 'mus_points', 'per_points', 'sng_points',),
-        ('tot_score', 'mus_score', 'per_score', 'sng_score',),
-        ('tot_rank', 'mus_rank', 'per_rank', 'sng_rank',),
+        'stats',
     )
 
     list_display = (
         'status',
         'group',
         'session',
-        'tot_score',
-        'tot_points',
     )
 
     list_filter = [
@@ -779,6 +772,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = (
         'id',
+        'stats',
     )
 
     save_on_top = True
@@ -804,11 +798,8 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'prelim',
         'seed',
         'participants',
-        'rank',
         'description',
         'notes',
-        ('mus_points', 'per_points', 'sng_points', 'tot_points',),
-        ('mus_score', 'per_score', 'sng_score', 'tot_score',),
     )
 
     list_display = (
@@ -1798,17 +1789,7 @@ class SongAdmin(admin.ModelAdmin):
         'legacy_chart',
         'num',
         'penalties',
-        'tot_points',
-        'tot_score',
-        'mus_points',
-        'mus_score',
-        'per_points',
-        'per_score',
-        'sng_points',
-        'sng_score',
         'selection',
-
-
         # 'title',
     ]
 
@@ -1816,8 +1797,6 @@ class SongAdmin(admin.ModelAdmin):
         'id',
         'appearance',
         'num',
-        'tot_points',
-        'tot_score',
     )
 
     # list_filter = (

@@ -122,14 +122,6 @@ def print_headers(path):
 #         gender,
 #         s.num,
 #         s.legacy_chart,
-#         s.mus_points,
-#         s.per_points,
-#         s.sng_points,
-#         s.tot_points,
-#         s.mus_score,
-#         s.per_score,
-#         s.sng_score,
-#         s.tot_score,
 #         "; ".join(s.penalties),
 #     ]
 #     ws.append(row)
@@ -2739,53 +2731,6 @@ def import_db_divisions(path):
 #             category=Assignment.CATEGORY.music,
 #         ).count()
 #         session.save()
-#     return
-
-
-# def denormalize(convention):
-#     for session in convention.sessions.all():
-#         for entry in session.entries.all():
-#             for appearance in entry.appearances.all():
-#                 for song in appearance.songs.all():
-#                     song.calculate()
-#                     song.save()
-#                 appearance.calculate()
-#                 appearance.save()
-#             entry.calculate()
-#             entry.save()
-#         for contest in session.contests.all():
-#             contest.rank()
-#             contest.save()
-#     return
-
-
-# def rank(convention):
-#     for session in convention.sessions.all():
-#         session.rank()
-#         session.save()
-#         for contest in session.contests.all():
-#             contest.rank()
-#             contest.save()
-#         for round in session.rounds.all():
-#             round.rank()
-#             round.save()
-#     return
-
-
-# def calculate(convention):
-#     for session in convention.sessions.all():
-#         for entry in session.entries.all():
-#             for appearance in entry.appearances.all():
-#                 for song in appearance.songs.all():
-#                     song.calculate()
-#                     song.save()
-#                 appearance.calculate()
-#                 appearance.save()
-#             entry.calculate()
-#             entry.save()
-#             for contestant in entry.contestants.all():
-#                 contestant.calculate()
-#                 contestant.save()
 #     return
 
 

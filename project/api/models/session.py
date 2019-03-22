@@ -173,50 +173,6 @@ class Session(TimeStampedModel):
         pass
 
     # Methods
-    def rank(self):
-        # Get raw queryset
-        competitors = self.competitors.filter(
-            is_private=False,
-            # status__gt=0,
-        ).distinct()
-        # Ranking algo
-        tot_competitors = competitors.order_by(
-            '-tot_points',
-            '-sng_points',
-            '-per_points',
-            'group__name',
-        )
-        for index, competitor in enumerate(tot_competitors):
-            competitor.tot_rank = index + 1
-            competitor.save()
-        # SNG only
-        sng_competitors = competitors.order_by(
-            '-sng_points',
-            'group__name',
-        )
-        for index, competitor in enumerate(sng_competitors):
-            competitor.sng_rank = index + 1
-            competitor.save()
-        # MUS only
-        mus_competitors = competitors.order_by(
-            '-mus_points',
-            'group__name',
-        )
-        for index, competitor in enumerate(mus_competitors):
-            competitor.mus_rank = index + 1
-            competitor.save()
-        # PER only
-        per_competitors = competitors.order_by(
-            '-per_points',
-            'group__name',
-        )
-        for index, competitor in enumerate(per_competitors):
-            competitor.per_rank = index + 1
-            competitor.save()
-        return
-
-
-
     def get_legacy(self):
         Entry = apps.get_model('api.entry')
         wb = Workbook()
