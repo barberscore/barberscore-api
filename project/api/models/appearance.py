@@ -252,13 +252,7 @@ class Appearance(TimeStampedModel):
             ).count()
             self.pos = pos
         if not prelim:
-            average = self.group.competitors.filter(
-                status=self.group.competitors.model.STATUS.finished,
-            ).aggregate(avg=Avg('tot_score'))['avg']
-            if average:
-                prelim = average
-            else:
-                prelim = randint(65, 80)
+            prelim = randint(65, 80)
         songs = self.songs.all()
         for song in songs:
             song.chart = Chart.objects.filter(
