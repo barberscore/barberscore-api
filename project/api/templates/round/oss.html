@@ -1,4 +1,3 @@
-{% load category_code %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -73,101 +72,71 @@
             </tr>
           </thead>
           <tbody>
-            {% for competitor in competitors %}
+            {% for group in groups %}
               <tr class='pbi_avoid'>
                 <td>
                   <h4>
                     <strong>
-                      {{competitor.group.name}}
+                      {{group.name}}
                     </strong>
                   </h4>
                   <div class='smaller-font'>
-                    {% if competitor.group.get_kind_display == 'Chorus' %}
-                      {{competitor.group.parent.name|truncatechars_html:"50"}} [{{competitor.representing|default:"Unknown"}}] {% if competitor.contesting__filtered %} (Contesting: {{competitor.contesting__filtered|default:"None"}}){% endif %}<br>
-                      Dir(s): {{competitor.participants|default:"(No Director Specified)"}}<br>
+                    {% if group.get_kind_display == 'Chorus' %}
+                      {{group.parent.name|truncatechars_html:"50"}}
+                      {% if group.contesting %}
+                        ({{group.contesting|join:", "}})
+                      {% endif %}<br>
+                      Dir(s): {{group.participants|default:"(No Director Specified)"}}<br>
                     {% else %}
-                      {{competitor.representing|default:"(Unknown)"}} {% if competitor.contesting__filtered %} (Contesting: {{competitor.contesting__filtered|default:"None"}}){% endif %}<br>
-                      {{competitor.participants|default:"(No Members Specified)"}}<br>
-                    {% endif %}
-                    {% if competitor.max > 1 %}
-                      {% for appearance in competitor.appearances.all|dictsort:"round__kind" %}
-                        {{appearance.round.get_kind_display}}<br>
-                      {% endfor %}
+                      {{group.representing|default:"(Unknown)"}}
+                      {% if group.contesting %}
+                        ({{group.contesting|join:", "}})
+                      {% endif %}<br>
+                      {{group.participants|default:"(No Members Specified)"}}<br>
                     {% endif %}
                   </div>
                 </td>
                 <td>
-                  {% if competitor.max > 1 %}
-                    <strong>Total: {{competitor.tot_points}} Points</strong><br>
-                  {% endif %}
-                  {% for appearance in competitor.appearances__filtered.all|dictsort:"round__kind" %}
-                    {% if competitor.max == 1 %}
-                      <strong>Total: {{competitor.tot_points}} Points</strong>
-                      {% if competitor.group.get_kind_display == 'Chorus' %}
-                        &nbsp;(OnStage: {{appearance.pos|default:"N/A"}})
-                      {% endif %}
-                      <br>
-                    {% else %}
-                      <span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>
-                    {% endif %}
-                    {% for song in appearance.songs.all|dictsort:'num' %}
-                      &nbsp;&nbsp;&nbsp;&nbsp;
-                      {% if song.penalties %}
-                        {% for penalty in song.penalties %}
-                          {% if penalty == 10 %}
-                            &dagger;
-                          {% endif %}
-                          {% if penalty == 30 %}
-                            &ddagger;
-                          {% endif %}
-                          {% if penalty == 40 %}
-                            &malt;
-                          {% endif %}
-                          {% if penalty == 50 %}
-                            &sext;
-                          {% endif %}
-                        {% endfor %}
-                      {% endif %}
-                      {% if song.chart %}
-                        {{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
-                      {% else %}
-                        {{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
-                      {% endif %}
+                  <strong>Total: {{group.tot_points}} Points</strong> {{group.appearances_count}}<br>
+                  {% for appearance in group.appearances_patched %}
+                      {% if group.max > 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
+                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{competitor.mus_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances__filtered.all|dictsort:"round__kind" %}
-                    {% if round.num != 1 %}<span class='bolder'>{{ appearance.mus_score|floatformat:1}}</span><br>{% endif %}
-                    {% for song in appearance.songs.all|dictsort:'num' %}
+                  <strong>{{group.mus_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max > 1 %}<span class='bolder'>{{appearance.mus_score|floatformat:1}}</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
                         {{song.mus_score|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{competitor.per_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances__filtered.all|dictsort:"round__kind" %}
-                    {% if round.num != 1 %}<span class='bolder'>{{ appearance.per_score|floatformat:1}}</span><br>{% endif %}
-                    {% for song in appearance.songs.all|dictsort:'num' %}
+                  <strong>{{group.per_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max > 1 %}<span class='bolder'>{{appearance.per_score|floatformat:1}}</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
                         {{song.per_score|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{competitor.sng_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances__filtered.all|dictsort:"round__kind" %}
-                    {% if round.num != 1 %}<span class='bolder'>{{ appearance.sng_score|floatformat:1}}</span><br>{% endif %}
-                    {% for song in appearance.songs.all|dictsort:'num' %}
+                  <strong>{{group.sng_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max > 1 %}<span class='bolder'>{{appearance.sng_score|floatformat:1}}</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
                         {{song.sng_score|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{competitor.tot_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances__filtered.all|dictsort:"round__kind" %}
-                    {% if round.num != 1 %}<span class='bolder'>{{ appearance.tot_score|floatformat:1}}</span><br>{% endif %}
-                    {% for song in appearance.songs.all|dictsort:'num' %}
+                  <strong>{{group.tot_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max > 1 %}<span class='bolder'>{{appearance.tot_score|floatformat:1}}</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
                         {{song.tot_score|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
@@ -180,7 +149,7 @@
           {% if round.kind == 1 %}
             Competitors are listed above in order by total points.<br>
           {% else %}
-            Competitors not advancing to the finals (or competing only for single-round awards) are listed above in order by total score.<br>
+            Competitors not advancing are listed above in order by total points.<br>
           {% endif %}
           {% if privates %}
             The following groups sang for Evaluation-Only: {{privates|join:", "}}
@@ -192,10 +161,9 @@
           <div>
             <h5>Draw</h5>
             <p>
-              {% for advancer in advancers %}
-                <span class='text-nowrap'><strong>{{advancer.draw}}</strong> {{advancer.competitor.group.name}}&nbsp;</span>
+              {% for draw, group in advancers %}
+                <span class='text-nowrap'><strong>{{draw}}:</strong>&nbsp;{{group}}&nbsp;&nbsp;</span>
               {% endfor %}
-              {% if mt %}<span class='text-nowrap'><strong>MT</strong> {{mt.competitor.group.name}}&nbsp;</span>{% endif %}
             </p>
           </div>
         {% endif %}
@@ -203,8 +171,8 @@
           <div>
             <h5>Awards</h5>
             <ul class='list-unstyled'>
-              {% for outcome in outcomes %}
-                <li><strong>{{outcome.num}}) {{outcome.award.name}}:</strong> {{outcome.name}}</li>
+              {% for award, winner in outcomes %}
+                <li><strong>{{award}}:</strong>&nbsp;&nbsp;{{winner}}</li>
               {% endfor %}
             </ul>
           </div>
@@ -224,14 +192,9 @@
         <div class='col-xs-4'>
           <h5>Official Panel</h5>
           {% if panelists %}
-            {% regroup panelists by category as panelist_tuple %}
             <ul class='list-unstyled'>
-              {% for item in panelist_tuple %}
-                <li><strong>{{item.grouper|shortcat}}:</strong>
-                  {% for panelist in item.list %}
-                    {{panelist.person.common_name}}{% if forloop.last %}{% else %},{% endif %}
-                  {% endfor %}
-                </li>
+              {% for category, person in panelists %}
+                <li><strong>{{category}}:</strong>&nbsp;&nbsp;{{person}}</li>
               {% endfor %}
             </ul>
           {% else %}

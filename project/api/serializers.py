@@ -64,9 +64,10 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'actual_finish',
             'pos',
             'stats',
+            'contesting',
             'variance_report',
             'round',
-            'competitor',
+            'group',
             'grid',
             'songs',
             'permissions',
@@ -165,9 +166,7 @@ class ChartSerializer(serializers.ModelSerializer):
 
 class CompetitorSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    included_serializers = {
-        'appearances': 'api.serializers.AppearanceSerializer',
-    }
+
 
     class Meta:
         model = Competitor
@@ -182,7 +181,6 @@ class CompetitorSerializer(serializers.ModelSerializer):
             'session',
             'group',
             'entry',
-            'appearances',
             'permissions',
         )
 

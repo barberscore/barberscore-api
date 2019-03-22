@@ -101,7 +101,7 @@ def print_headers(path):
 #         'legacy_name',
 #     )
 #     try:
-#         gender = s.appearance.competitor.group.get_gender_display()
+#         gender = s.appearance.group.get_gender_display()
 #     except AttributeError:
 #         gender = "(Unknown)"
 #     try:
@@ -171,7 +171,7 @@ def print_headers(path):
 #         'legacy_name',
 #     )
 #     try:
-#         gender = s.song.appearance.competitor.group.get_gender_display()
+#         gender = s.song.appearance.group.get_gender_display()
 #     except AttributeError:
 #         gender = "(Unknown)"
 #     pens = "; ".join(s.song.penalties)

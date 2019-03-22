@@ -146,6 +146,7 @@ disable=print-statement,
         invalid-name,
         useless-return,
         too-few-public-methods,
+        redefined-builtin,
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

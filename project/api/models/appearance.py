@@ -129,7 +129,6 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    # Privates
     stats = JSONField(
         null=True,
         blank=True,
@@ -146,15 +145,14 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    run_score = models.FloatField(
+        null=True,
+        blank=True,
+    )
+
     # Appearance FKs
     round = models.ForeignKey(
         'Round',
-        related_name='appearances',
-        on_delete=models.CASCADE,
-    )
-
-    competitor = models.ForeignKey(
-        'Competitor',
         related_name='appearances',
         on_delete=models.CASCADE,
     )
@@ -188,7 +186,6 @@ class Appearance(TimeStampedModel):
             'num',
         ]
         unique_together = (
-            ('round', 'competitor'),
             ('round', 'num'),
             ('round', 'group'),
         )
@@ -437,6 +434,7 @@ class Appearance(TimeStampedModel):
         conditions=[can_verify],
     )
     def verify(self, *args, **kwargs):
+        # Check for variance on finish.  If no variance will return None
         if self.status == self.STATUS.finished:
             variance = self.check_variance()
             if variance:
@@ -447,11 +445,9 @@ class Appearance(TimeStampedModel):
                     ),
                     content,
                 )
+        # Variance is only checked once so return None if not finishing
         else:
             variance = None
-        for song in self.songs.all():
-            song.calculate()
-            song.save()
         self.calculate()
         # self.competitor.calculate()
         # self.competitor.save()

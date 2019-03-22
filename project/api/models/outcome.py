@@ -132,6 +132,8 @@ class Outcome(TimeStampedModel):
         Panelist = apps.get_model('api.panelist')
         if self.level == self.LEVEL.deferred:
             return "(Result determined post-contest)"
+        if self.level in [self.LEVEL.manual, self.LEVEL.raw, self.LEVEL.standard]:
+            return "MUST ENTER WINNER MANUALLY"
         if self.level == self.LEVEL.qualifier:
             threshold = self.threshold
             num = [self.num]
@@ -152,53 +154,17 @@ class Outcome(TimeStampedModel):
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No qualifiers)"
-        if self.level == self.LEVEL.manual:
-            return "MUST SELECT WINNER MANUALLY"
-
-        # Rest are championship/representative
-
-        # Only announce winner if all competitors for this award are done.
-        num = [self.num]
-        continuing = self.round.appearances.filter(
-            draw__gt=0,
-            competitor__contesting__contains=num,
-        )
-        if continuing:
-            return "(Result announced following Finals)"
-
-        # Otherwise, return the actual winner.
-        winner = self.round.session.competitors.filter(
-            contesting__contains=num,
-        ).distinct(
-        ).annotate(
-            tot=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                ),
-            ),
-            sng=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                ),
-            ),
-            per=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                ),
-            ),
-        ).order_by(
-            '-tot',
-            '-sng',
-            '-per',
-        ).first()
-        if winner:
-            return str(winner.group.name)
-        return "(No Recipient)"
+        if self.level in [self.LEVEL.championship, self.LEVEL.representative]:
+            num = [self.num]
+            winner = self.round.appearances.filter(
+                contesting__contains=num,
+            ).earliest(
+                '-run_points',
+            )
+            if winner:
+                return str(winner.group.name)
+            return "(No Recipient)"
+        raise RuntimeError("Level mismatch")
 
     # Internals
     class Meta:

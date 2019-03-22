@@ -167,7 +167,7 @@ class CompetitorSerializer(serializers.ModelSerializer):
 
 
 class AppearanceSerializer(serializers.ModelSerializer):
-    competitor = CompetitorSerializer(read_only=True, many=False)
+    group = GroupSerializer(read_only=True, many=False)
     songs = SongSerializer(read_only=True, many=True)
 
     class Meta:
@@ -175,7 +175,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'num',
-            'competitor',
+            'group',
             'actual_start',
             'actual_finish',
             'pos',

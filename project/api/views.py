@@ -100,7 +100,7 @@ log = logging.getLogger(__name__)
 class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
         'round',
-        'competitor',
+        'group',
         'grid',
     ).prefetch_related(
         'songs',
@@ -479,7 +479,6 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         'group',
         'entry',
     ).prefetch_related(
-        'appearances',
         'statelogs',
     ).order_by('id')
     serializer_class = CompetitorSerializer
@@ -547,6 +546,36 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
+
+
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            # TemplateHTMLRenderer,
+            PDFRenderer,
+        ],
+        permission_classes=[AllowAny],
+    )
+    def csadraft(self, request, pk=None):
+        competitor = Competitor.objects.get(pk=pk)
+        pdf = competitor.get_csa()
+        file_name = '{0}-csa'.format(
+            slugify(
+                "{0} CSA".format(
+                    competitor,
+                )
+            )
+        )
+        # return Response(
+        #     pdf,
+        #     template_name='oss.html',
+        # )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
 
 
 class EntryViewSet(viewsets.ModelViewSet):
@@ -661,6 +690,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         'children',
         'awards',
         'competitors',
+        'appearances',
         'conventions',
         'entries',
         'members',
@@ -1132,16 +1162,16 @@ class RoundViewSet(viewsets.ModelViewSet):
         appearances = round.appearances.filter(
             draw__gt=0,
         ).select_related(
-            'competitor__group',
+            'group',
         ).order_by(
             'draw',
         )
         mt = round.appearances.filter(
             draw=0,
         ).select_related(
-            'competitor__group',
+            'group',
         ).order_by(
-            'competitor__group__name',
+            'group__name',
         ).first()
         outcomes = round.outcomes.order_by(
             '-contest__num',
