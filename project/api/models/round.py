@@ -828,6 +828,7 @@ class Round(TimeStampedModel):
                 num = prior_appearance.draw
             appearance = self.appearances.create(
                 competitor=competitor,
+                group=competitor.group,
                 num=num,
             )
             defaults = {
@@ -848,7 +849,7 @@ class Round(TimeStampedModel):
         for contest in contests:
             self.outcomes.create(
                 num=contest.num,
-                contest=contest,
+                award=contest.award,
                 level=contest.award.level,
                 num_rounds=contest.award.num_rounds,
                 threshold=contest.award.threshold,
