@@ -156,10 +156,33 @@ class Outcome(TimeStampedModel):
             return "(No qualifiers)"
         if self.level in [self.LEVEL.championship, self.LEVEL.representative]:
             num = [self.num]
-            winner = self.round.appearances.filter(
+            winner = self.round.session.competitors.filter(
                 contesting__contains=num,
+            ).annotate(
+                tot=Sum(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    )
+                ),
+                sng=Avg(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    )
+                ),
+                per=Avg(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    )
+                ),
             ).earliest(
-                '-run_points',
+                '-tot',
+                '-sng',
+                '-per',
             )
             if winner:
                 return str(winner.group.name)

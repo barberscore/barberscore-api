@@ -1236,8 +1236,11 @@ class Round(TimeStampedModel):
         conditions=[can_build],
     )
     def build(self, *args, **kwargs):
+        # Reset for indempodence
+        self.reset()
+
+        # Create the default panelists
         Assignment = apps.get_model('api.assignment')
-        # Create the panel (CAs and Judges)
         assignments = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
             kind__in=[
@@ -1258,43 +1261,7 @@ class Round(TimeStampedModel):
                 category=assignment.category,
                 person=assignment.person,
             )
-        # Create the appearances
-        Grid = apps.get_model('api.grid')
-        if self.num == 1:
-            competitors = self.session.competitors.filter(
-                status__gt=0,
-            ).distinct()
-        else:
-            prior_round = self.session.rounds.get(num=self.num - 1)
-            appearances = prior_round.appearances.filter(
-                draw__isnull=False,
-            ).distinct()
-            competitors = [a.competitor for a in appearances]
-        for competitor in competitors:
-            # If the first round, create the OA from the competitor draw
-            if self.num == 1:
-                num = competitor.entry.draw
-                if competitor.entry.is_mt:
-                    num = 0
-            # Otherwise take draw from appearance
-            else:
-                prior_appearance = prior_round.appearances.get(
-                    competitor=competitor,
-                )
-                num = prior_appearance.draw
-            appearance = self.appearances.create(
-                competitor=competitor,
-                group=competitor.group,
-                num=num,
-            )
-            defaults = {
-                'appearance': appearance,
-            }
-            Grid.objects.update_or_create(
-                round=self,
-                num=num,
-                defaults=defaults,
-            )
+
         # Create the Outcomes
         contests = self.session.contests.select_related(
             'award',
@@ -1313,7 +1280,8 @@ class Round(TimeStampedModel):
                 minimum=contest.award.minimum,
                 spots=contest.award.spots,
             )
-        # Create the appearances
+
+        # Create the Appearances
         Grid = apps.get_model('api.grid')
         # Determine prior rounds
         if self.num == 1:
@@ -1346,15 +1314,11 @@ class Round(TimeStampedModel):
         for competitor in competitors:
             if not prior_round:
                 draw = competitor.draw
-                run_points = None
-                run_score = None
             else:
                 prior_appearance = prior_round.appearances.get(
                     group=competitor.group,
                 )
                 draw = prior_appearance.draw
-                run_points = prior_appearance.run_points
-                run_score = prior_appearance.run_score
             outcomes = self.outcomes.filter(
                 num__in=competitor.contesting,
             )
@@ -1366,19 +1330,17 @@ class Round(TimeStampedModel):
                 is_private=competitor.is_private,
                 participants=competitor.participants,
                 representing=competitor.representing,
-                run_points=run_points,
-                run_score=run_score,
                 contesting=contesting,
             )
-        # Create the grids
-        defaults = {
-            'appearance': appearance,
-        }
-        Grid.objects.update_or_create(
-            round=self,
-            num=draw,
-            defaults=defaults,
-        )
+            # Create the grids
+            defaults = {
+                'appearance': appearance,
+            }
+            Grid.objects.update_or_create(
+                round=self,
+                num=draw,
+                defaults=defaults,
+            )
         return
 
 
@@ -1475,20 +1437,21 @@ class Round(TimeStampedModel):
         if spots:
             # All those above 73.0 advance automatically, regardless of spots available
             automatics = multis.filter(
-                run_score__gte=73.0,
+                avg__gte=73.0,
             )
             # generate list of the advancers, as appearance IDs
             advancers = [x.id for x in automatics]
             # Figure out remaining spots
             cnt = automatics.count()
             diff = spots - cnt
-            print(spots, cnt, diff)
             # If there are additionl remaining spots, add them up to available
             if diff > 0:
                 adds = multis.exclude(
                     id__in=advancers,
                 ).order_by(
-                    '-run_points',
+                    '-tot_points',
+                    '-sng_points',
+                    '-per_points',
                 )[:diff]
                 for a in adds:
                     advancers.append(a.id)
@@ -1534,7 +1497,9 @@ class Round(TimeStampedModel):
                 )
             ),
         ).order_by(
-            '-run_points',
+            '-tot_points',
+            '-sng_points',
+            '-per_points',
         ).first()
         if mt:
             mt.draw = 0
