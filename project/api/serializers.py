@@ -62,6 +62,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'draw',
             'actual_start',
             'actual_finish',
+            'is_multi',
             'pos',
             'stats',
             'contesting',
