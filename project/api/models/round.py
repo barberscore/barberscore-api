@@ -903,6 +903,7 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.started, STATUS.verified], target=STATUS.verified, conditions=[can_verify,])
     def verify(self, *args, **kwargs):
+        Panelist = apps.get_model('api.panelist')
         # No next round.
         if self.kind == self.KIND.finals:
             # Run outcomes
@@ -916,16 +917,36 @@ class Round(TimeStampedModel):
         spots = self.spots
 
         # Get all multi appearances and annotate average.
-        multis = self.appearances.filter(
-            competitor__status__gt=0,
-            competitor__is_multi=True,
+        multis = self.session.competitors.filter(
+            status__gt=0,
+            is_multi=True,
         ).annotate(
             avg=Avg(
-                'songs__scores__points',
+                'appearances__songs__scores__points',
                 filter=Q(
-                    songs__scores__panelist__kind=10,
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                 )
-            )
+            ),
+            tot_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                )
+            ),
+            sng_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                )
+            ),
+            per_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                )
+            ),
         )
         if spots:
             # All those above 73.0 advance automatically
@@ -956,7 +977,7 @@ class Round(TimeStampedModel):
 
         # Get advancers and draw
         appearances = self.appearances.filter(
-            id__in=advancers,
+            competitor__id__in=advancers,
         ).order_by('?')
         i = 1
         for appearance in appearances:
@@ -967,6 +988,27 @@ class Round(TimeStampedModel):
         mt = self.appearances.filter(
             draw=None,
             competitor__is_multi=True,
+        ).annotate(
+            tot_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                )
+            ),
+            sng_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                )
+            ),
+            per_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                )
+            ),
         ).order_by(
             '-tot_points',
             '-sng_points',
