@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
 # Django
 from django.core.files.base import ContentFile
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.template.loader import render_to_string
 from django.utils.text import slugify
 
@@ -1174,7 +1174,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             'group__name',
         ).first()
         outcomes = round.outcomes.order_by(
-            '-contest__num',
+            '-num',
         )
         if round.kind == round.KIND.finals:
             competitors = round.session.competitors.filter(
@@ -1184,6 +1184,13 @@ class RoundViewSet(viewsets.ModelViewSet):
                 ],
             ).select_related(
                 'group',
+            ).annotate(
+                tot_points=Sum(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
             ).order_by(
                 '-tot_points',
             )[:5]
