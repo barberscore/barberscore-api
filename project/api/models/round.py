@@ -1325,6 +1325,7 @@ class Round(TimeStampedModel):
             contesting = [x.num for x in outcomes]
             appearance = self.appearances.create(
                 group=competitor.group,
+                competitor=competitor,
                 num=draw,
                 is_multi=competitor.is_multi,
                 is_private=competitor.is_private,
