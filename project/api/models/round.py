@@ -275,7 +275,7 @@ class Round(TimeStampedModel):
             source = self.appearances.get(
                 group=group,
             )
-            group.contesting = source.contesting
+            group.contesting = sorted(source.contesting)
             group.representing = source.representing
             group.participants = source.participants
             appearances = group.appearances.filter(
