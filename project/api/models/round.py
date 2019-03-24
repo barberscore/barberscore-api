@@ -1510,20 +1510,20 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.verified], target=STATUS.finished, conditions=[can_finish])
     def finish(self, *args, **kwargs):
-        # content = self.get_oss()
-        # self.oss.save(
-        #     slugify(
-        #         '{0} oss'.format(self)
-        #     ),
-        #     content=content,
-        # )
-        # content = self.get_sa()
-        # self.sa.save(
-        #     slugify(
-        #         '{0} sa'.format(self)
-        #     ),
-        #     content=content,
-        # )
+        content = self.get_oss()
+        self.oss.save(
+            slugify(
+                '{0} oss'.format(self)
+            ),
+            content=content,
+        )
+        content = self.get_sa()
+        self.sa.save(
+            slugify(
+                '{0} sa'.format(self)
+            ),
+            content=content,
+        )
         finishers = self.appearances.filter(
             Q(draw=0) | Q(draw__isnull=True),
         ).values_list('group', flat=True)
