@@ -276,7 +276,6 @@ class Round(TimeStampedModel):
                 group=group,
             )
             group.contesting = sorted(source.contesting)
-            group.participants = source.participants
             appearances = group.appearances.filter(
                 group=group,
                 round__session=self.session,
@@ -796,7 +795,6 @@ class Round(TimeStampedModel):
                 group=group,
             )
             group.contesting = source.contesting
-            group.participants = source.participants
             full = []
             for person in persons_music:
                 item = []
@@ -1330,7 +1328,6 @@ class Round(TimeStampedModel):
                 competitor=competitor,
                 num=draw,
                 is_private=competitor.is_private,
-                participants=competitor.participants,
                 contesting=contesting,
             )
             # Create the grids

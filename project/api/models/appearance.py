@@ -95,13 +95,6 @@ class Appearance(TimeStampedModel):
         default=False,
     )
 
-    participants = models.CharField(
-        help_text='Director(s) or Members (listed TLBB)',
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
     contesting = ArrayField(
         help_text='Award numbers contestanting',
         base_field=models.IntegerField(
