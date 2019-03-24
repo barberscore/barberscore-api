@@ -930,25 +930,15 @@ class PanelistViewSet(viewsets.ModelViewSet):
         permission_classes=[AllowAny],
     )
     def jsadraft(self, request, pk=None):
-        panelist = Panelist.objects.select_related(
-            'round',
-            'person',
-        ).get(pk=pk)
+        panelist = Panelist.objects.get(pk=pk)
         pdf = panelist.get_jsa()
         file_name = '{0}-jsa'.format(
             slugify(
-                "{0} {1} {2} {3}".format(
-                    panelist.round.session.convention.name,
-                    panelist.round.session.get_kind_display(),
-                    panelist.round.get_kind_display(),
-                    panelist.num,
+                "{0}".format(
+                    panelist
                 )
             )
         )
-        # return Response(
-        #     pdf,
-        #     template_name='oss.html',
-        # )
         return PDFResponse(
             pdf,
             file_name=file_name,

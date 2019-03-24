@@ -20,6 +20,8 @@ from django.utils.functional import cached_property
 from django.template.loader import render_to_string
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
+from django.db.models import Avg, StdDev, Q
+
 
 import django_rq
 from api.tasks import send_email
@@ -187,20 +189,54 @@ class Panelist(TimeStampedModel):
         ])
 
     def get_jsa(self):
-        appearances = self.round.appearances.order_by(
-            '-num',
-        ).prefetch_related(
+
+        appearances = self.round.appearances.prefetch_related(
             'songs',
-        )
-        scores = self.scores.select_related(
-            'song',
         ).order_by(
-            'song__num',
+            '-num',
         )
+
+        # Monkeypatching
+        class_map = {
+            Panelist.CATEGORY.music: 'badge badge-warning mono-font',
+            Panelist.CATEGORY.performance: 'badge badge-success mono-font',
+            Panelist.CATEGORY.singing: 'badge badge-info mono-font',
+        }
+        for appearance in appearances:
+            songs = appearance.songs.order_by(
+                'num',
+            ).annotate(
+                avg=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                dev=StdDev(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+            )
+            appearance.songs_patched = songs
+            for song in songs:
+                scores = song.scores.filter(
+                    panelist__kind=Panelist.KIND.official,
+                ).order_by('points')
+                out = []
+                for score in scores:
+                    if score.points == 0:
+                        score.points = "00"
+                    span_class = class_map[score.panelist.category]
+                    if score.panelist == self:
+                        span_class = "{0} black-font".format(span_class)
+                    out.append((score.points, span_class))
+                song.scores_patched = out
+
         context = {
             'panelist': self,
             'appearances': appearances,
-            'scores': scores,
         }
         rendered = render_to_string('jsa.html', context)
         file = pydf.generate_pdf(rendered)
