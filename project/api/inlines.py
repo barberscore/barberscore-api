@@ -133,7 +133,6 @@ class AppearanceInline(admin.TabularInline):
         'num',
         'draw',
         'stats',
-        'is_single',
     ]
     readonly_fields = [
         'group',

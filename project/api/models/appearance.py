@@ -95,11 +95,6 @@ class Appearance(TimeStampedModel):
         default=False,
     )
 
-    is_single = models.BooleanField(
-        help_text="""Single-round contestant""",
-        default=False,
-    )
-
     participants = models.CharField(
         help_text='Director(s) or Members (listed TLBB)',
         max_length=255,
