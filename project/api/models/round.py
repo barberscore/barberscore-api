@@ -1308,7 +1308,7 @@ class Round(TimeStampedModel):
             competitors = self.session.competitors.select_related(
                 'group',
             ).filter(
-                is_multi=True,
+                is_single=False,
                 group__in=groups,
             )
         for competitor in competitors:
@@ -1327,7 +1327,7 @@ class Round(TimeStampedModel):
                 group=competitor.group,
                 competitor=competitor,
                 num=draw,
-                is_multi=competitor.is_multi,
+                is_single=competitor.is_single,
                 is_private=competitor.is_private,
                 participants=competitor.participants,
                 representing=competitor.representing,
@@ -1405,7 +1405,7 @@ class Round(TimeStampedModel):
         # Get all multi appearances and annotate average.
         multis = self.appearances.filter(
             status__gt=0,
-            is_multi=True,
+            is_single=False,
         ).annotate(
             avg=Avg(
                 'songs__scores__points',
@@ -1475,7 +1475,7 @@ class Round(TimeStampedModel):
         # create Mic Tester at draw 0
         mt = self.appearances.filter(
             draw=None,
-            is_multi=True,
+            is_single=False,
         ).annotate(
             tot_points=Sum(
                 'songs__scores__points',

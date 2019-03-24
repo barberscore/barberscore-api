@@ -394,7 +394,6 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'age',
         'level',
         'season',
-        'num_rounds',
         'is_single',
         'parent',
         ('threshold', 'minimum', 'advance', 'spots',),
@@ -734,7 +733,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'draw',
         'image',
         'csa',
-        ('is_private', 'is_multi', 'is_single',),
+        ('is_private', 'is_single',),
         'stats',
     )
 

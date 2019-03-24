@@ -66,11 +66,6 @@ class Competitor(TimeStampedModel):
         default=False,
     )
 
-    is_multi = models.BooleanField(
-        help_text="""If the competitor is contesting a multi-round award.""",
-        default=False,
-    )
-
     is_single = models.BooleanField(
         help_text="""Single-round competitor""",
         default=False,

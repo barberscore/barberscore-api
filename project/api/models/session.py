@@ -488,7 +488,7 @@ class Session(TimeStampedModel):
             'privates': privates,
             'panelists': panelists,
             'contests': contests,
-            'is_multi': False,
+            'is_single': True,
         }
         rendered = render_to_string('session/oss.html', context)
         file = pydf.generate_pdf(
@@ -609,7 +609,7 @@ class Session(TimeStampedModel):
             'panelists': panelists,
             'contests': contests,
             'rounds': rounds,
-            'is_multi': False,
+            'is_single': True,
         }
         rendered = render_to_string('session/old_oss.html', context)
         file = pydf.generate_pdf(
@@ -938,10 +938,10 @@ class Session(TimeStampedModel):
             if entry.is_mt:
                 entry.draw = z
                 z -= 1
-            # Set is_multi=True if they are competiting for at least
-            # one multi-round award.
-            is_multi = bool(entry.contestants.filter(
-                contest__award__num_rounds__gt=1,
+            # Set is_single=True if they are only competiting for
+            # single-round awards.
+            is_single = not bool(entry.contestants.filter(
+                contest__award__is_single=False,
                 status__gt=0,
             ))
             # Create the contesting legend
@@ -959,7 +959,7 @@ class Session(TimeStampedModel):
                 entry=entry,
                 group=entry.group,
                 draw=entry.draw,
-                is_multi=is_multi,
+                is_single=is_single,
                 is_private=entry.is_private,
                 participants=entry.participants,
                 representing=entry.representing,

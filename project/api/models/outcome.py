@@ -62,10 +62,6 @@ class Outcome(TimeStampedModel):
         choices=LEVEL,
     )
 
-    num_rounds = models.IntegerField(
-        help_text="""Number of rounds to determine the championship""",
-    )
-
     threshold = models.FloatField(
         help_text="""
             The score threshold for automatic qualification (if any.)

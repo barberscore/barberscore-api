@@ -77,7 +77,7 @@ class AwardFactory(DjangoModelFactory):
     kind = Award.KIND.quartet
     level = Award.LEVEL.championship
     season = Award.SEASON.summer
-    num_rounds = 3
+    is_single = False
     threshold = None
     minimum = None
     advance = None
@@ -277,7 +277,6 @@ class OutcomeFactory(DjangoModelFactory):
     round = SubFactory('api.factories.RoundFactory')
     award = SubFactory('api.factories.AwardFactory')
     level = Award.LEVEL.championship
-    num_rounds = 3
     threshold = None
     minimum = None
     advance = None

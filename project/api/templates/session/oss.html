@@ -104,11 +104,11 @@
                 </td>
                 <td>
                   {% if round.num == 1 %}
-                    {% if is_multi %}
+                    {% if is_single %}
                       {% if competitor.group.get_kind_display == 'Chorus' %}
-                        <strong>Total</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.appearances.first.pos|default:'N/A'}})</span><br>
+                        <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.appearances.first.pos|default:'N/A'}})</span><br>
                       {% else %}
-                        <strong>Total Points: {{competitor.tot_points}}</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
+                        {% if competitor.tot_points %}<strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;{{competitor.tot_score|floatformat:1}}<br>{% endif %}
                       {% endif %}
                       {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
                         {% if song.chart %}
@@ -119,9 +119,9 @@
                       {% endfor %}
                     {% else %}
                       {% if competitor.group.get_kind_display == 'Chorus' %}
-                        <strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.appearances.first.pos|default:'N/A'}})</span><br>
+                        <strong>Total</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}}, OnStage: {{competitor.appearances.first.pos|default:'N/A'}})</span><br>
                       {% else %}
-                        {% if competitor.tot_points %}<strong>Total: &nbsp;{{competitor.tot_points}} Points</strong>&nbsp;{{competitor.tot_score|floatformat:1}}<br>{% endif %}
+                        <strong>Total Points: {{competitor.tot_points}}</strong>&nbsp;<span class='smaller-font'>(OA: {{competitor.appearances.first.num}})</span><br>
                       {% endif %}
                       {% for song in competitor.appearances.first.songs.all|dictsort:'num' %}
                         {% if song.chart %}

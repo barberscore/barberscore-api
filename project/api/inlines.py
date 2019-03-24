@@ -133,7 +133,6 @@ class AppearanceInline(admin.TabularInline):
         'num',
         'draw',
         'stats',
-        'is_multi',
         'is_single',
     ]
     readonly_fields = [
@@ -287,7 +286,6 @@ class CompetitorInline(admin.TabularInline):
         'session',
         'group',
         'stats',
-        'is_multi',
         'is_single',
     ]
     readonly_fields = [
