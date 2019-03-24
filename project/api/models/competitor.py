@@ -71,6 +71,11 @@ class Competitor(TimeStampedModel):
         default=False,
     )
 
+    is_single = models.BooleanField(
+        help_text="""Single-round competitor""",
+        default=False,
+    )
+
     participants = models.CharField(
         help_text='Director(s) or Members (listed TLBB)',
         max_length=255,

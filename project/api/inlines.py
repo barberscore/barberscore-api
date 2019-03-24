@@ -134,6 +134,7 @@ class AppearanceInline(admin.TabularInline):
         'draw',
         'stats',
         'is_multi',
+        'is_single',
     ]
     readonly_fields = [
         'group',
@@ -287,6 +288,7 @@ class CompetitorInline(admin.TabularInline):
         'group',
         'stats',
         'is_multi',
+        'is_single',
     ]
     readonly_fields = [
         'status',
