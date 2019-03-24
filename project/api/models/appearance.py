@@ -102,13 +102,6 @@ class Appearance(TimeStampedModel):
         default='',
     )
 
-    representing = models.CharField(
-        help_text='Representing entity',
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
     contesting = ArrayField(
         help_text='Award numbers contestanting',
         base_field=models.IntegerField(
