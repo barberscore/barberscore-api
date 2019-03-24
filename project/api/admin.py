@@ -144,7 +144,6 @@ class CompleteAdmin(admin.ModelAdmin):
         # 'panelist_name',
         # 'person',
         # 'num_appearances',
-        # 'num_rounds',
         # 'num_panelists',
         # 'points',
         # 'convention',

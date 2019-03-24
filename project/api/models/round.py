@@ -1263,18 +1263,22 @@ class Round(TimeStampedModel):
             )
 
         # Create the Outcomes
+        if self.num == 1:
+            is_single = True
+        else:
+            is_single = False
         contests = self.session.contests.select_related(
             'award',
         ).filter(
             num__isnull=False,
-            award__num_rounds=self.num,
+            award__is_single=is_single,
         )
         for contest in contests:
             self.outcomes.create(
                 num=contest.num,
                 award=contest.award,
                 level=contest.award.level,
-                num_rounds=contest.award.num_rounds,
+                is_single=contest.award.is_single,
                 threshold=contest.award.threshold,
                 advance=contest.award.advance,
                 minimum=contest.award.minimum,

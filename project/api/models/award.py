@@ -102,10 +102,6 @@ class Award(TimeStampedModel):
         choices=SEASON,
     )
 
-    num_rounds = models.IntegerField(
-        help_text="""Number of rounds to determine the championship""",
-    )
-
     is_single = models.BooleanField(
         help_text="""Single-round award""",
         default=False,

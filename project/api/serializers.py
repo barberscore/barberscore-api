@@ -122,7 +122,6 @@ class AwardSerializer(serializers.ModelSerializer):
             'gender',
             'level',
             'season',
-            'num_rounds',
             'is_single',
             'threshold',
             'minimum',

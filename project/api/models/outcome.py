@@ -62,6 +62,11 @@ class Outcome(TimeStampedModel):
         choices=LEVEL,
     )
 
+    is_single = models.BooleanField(
+        help_text="""Single-round award""",
+        default=False,
+    )
+
     threshold = models.FloatField(
         help_text="""
             The score threshold for automatic qualification (if any.)
