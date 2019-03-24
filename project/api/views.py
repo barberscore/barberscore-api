@@ -1555,39 +1555,6 @@ class SessionViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(
-        methods=['get'],
-        detail=True,
-        renderer_classes=[
-            # TemplateHTMLRenderer,
-            PDFRenderer,
-        ],
-        permission_classes=[AllowAny],
-    )
-    def ossdraft(self, request, pk=None):
-        session = Session.objects.select_related(
-            'convention',
-            'convention__venue',
-        ).get(pk=pk)
-        pdf = session.get_oss()
-        file_name = '{0}-oss'.format(
-            slugify(
-                "{0} {1} Session".format(
-                    session.convention.name,
-                    session.get_kind_display(),
-                )
-            )
-        )
-        # return Response(
-        #     pdf,
-        #     template_name='oss.html',
-        # )
-        return PDFResponse(
-            pdf,
-            file_name=file_name,
-            status=status.HTTP_200_OK
-        )
-
 
     @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
     def sadraft(self, request, pk=None):

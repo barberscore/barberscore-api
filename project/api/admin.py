@@ -1712,7 +1712,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'convention',
         'kind',
         'oss',
-        'old_oss',
         'legacy_report',
         'drcj_report',
         'contact_report',
