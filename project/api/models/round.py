@@ -167,31 +167,26 @@ class Round(TimeStampedModel):
 
 
     def get_oss(self):
-        Appearance = apps.get_model('api.appearance')
+        Competitor = apps.get_model('api.competitor')
         Panelist = apps.get_model('api.panelist')
         Song = apps.get_model('api.song')
-        Group = apps.get_model('api.group')
 
         # Score Block
-        group_ids = self.appearances.filter(
+        competitor_ids = self.appearances.filter(
             competitor__is_private=False,
         ).exclude(
+            # Don't include advancers on OSS
             draw__gt=0,
         ).exclude(
-            num=0,
-        ).values_list('group', flat=True)
-        groups = Group.objects.filter(
-            id__in=group_ids,
-        ).prefetch_related(
-            'appearances__songs__scores',
-            'appearances__songs__scores__panelist',
-            'appearances__round__session',
-            'appearances__round',
+            # Don't include mic testers on OSS
+            num__lte=0,
+        ).values_list('competitor__id', flat=True)
+        competitors = Competitor.objects.filter(
+            id__in=competitor_ids,
         ).annotate(
-            max=Max(
+            max_round=Max(
                 'appearances__round__num',
                 filter=Q(
-                    appearances__round__session=self.session,
                     appearances__num__gt=0,
                 ),
             ),
@@ -200,8 +195,8 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__round__session=self.session,
-                    appearances__round__num__lte=self.num,
-                    appearances__num__gt=0,
+                    # appearances__round__num__lte=self.num,
+                    # appearances__num__gt=0,
                 ),
             ),
             sng_points=Sum(
@@ -270,15 +265,8 @@ class Round(TimeStampedModel):
         )
 
         # Monkeypatching
-        for group in groups:
-            # Populate the group block
-            source = self.appearances.get(
-                group=group,
-            )
-            group.contesting = sorted(source.competitor.contesting)
-            appearances = group.appearances.filter(
-                group=group,
-                round__session=self.session,
+        for competitor in competitors:
+            appearances = competitor.appearances.filter(
                 num__gt=0,
             ).prefetch_related(
                 'songs__scores',
@@ -365,14 +353,20 @@ class Round(TimeStampedModel):
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
                 appearance.songs_patched = songs
-            group.appearances_patched = appearances
+            contesting = self.outcomes.filter(
+                num__in=competitor.contesting,
+            ).values_list('num', flat=True)
+            competitor.contesting_patched = list(contesting)
+            pos = competitor.appearances.get(round__num=1).pos
+            competitor.pos_patched = pos
+            competitor.appearances_patched = appearances
 
 
         # Penalties Block
         array = Song.objects.filter(
             appearance__round=self,
             penalties__len__gt=0,
-            competitor__appearance__is_private=False,
+            appearance__competitor__is_private=False,
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
             10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
@@ -391,6 +385,7 @@ class Round(TimeStampedModel):
             'group__name',
         ).values_list('group__name', flat=True)
         privates = list(privates)
+
         # Draw Block
         if self.kind != self.KIND.finals:
             # Get advancers
@@ -460,7 +455,7 @@ class Round(TimeStampedModel):
 
         context = {
             'round': self,
-            'groups': groups,
+            'competitors': competitors,
             'penalties': penalties,
             'privates': privates,
             'advancers': advancers,
@@ -468,10 +463,15 @@ class Round(TimeStampedModel):
             'outcomes': outcomes,
         }
         rendered = render_to_string('round/oss.html', context)
+
+        if competitors.count() > 8:
+            page_size = 'Legal'
+        else:
+            page_size = 'Letter'
+
         file = pydf.generate_pdf(
             rendered,
-            page_size='Letter',
-            # page_size='Legal',
+            page_size=page_size,
             orientation='Portrait',
             margin_top='5mm',
             margin_bottom='5mm',
