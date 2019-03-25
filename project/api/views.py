@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
 # Django
 from django.core.files.base import ContentFile
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, Avg
 from django.template.loader import render_to_string
 from django.utils.text import slugify
 
