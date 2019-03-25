@@ -95,12 +95,6 @@ class Competitor(TimeStampedModel):
         blank=True,
     )
 
-    pos = models.IntegerField(
-        help_text='Actual Participants-on-Stage',
-        null=True,
-        blank=True,
-    )
-
     draw = models.IntegerField(
         null=True,
         blank=True,
