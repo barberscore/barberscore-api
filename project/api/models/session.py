@@ -692,12 +692,14 @@ class Session(TimeStampedModel):
             if entry.is_mt:
                 entry.draw = z
                 z -= 1
-            # Set is_single=True if they are only competiting for
-            # single-round awards.
-            is_single = not bool(entry.contestants.filter(
-                contest__award__is_single=False,
-                status__gt=0,
-            ))
+            # Set is_single=True if they are only in single-round contests
+            is_single = bool(
+                entry.contestants.filter(
+                    status__gt=0,
+                ).exclude(
+                    contest__award__is_single=True,
+                )
+            )
             # Create the contesting legend
             contestants = entry.contestants.filter(
                 status=entry.contestants.model.STATUS.included,
