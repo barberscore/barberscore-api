@@ -81,11 +81,11 @@
             {% for appearance in appearances %}
               <tr class='pbi_avoid'>
                 <td>
-                    {% if appearance.group.get_kind_display == 'Chorus' %}
-                      <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.group.parent.name|truncatechars_html:25}}</strong><br>
-                      {{appearance.group.name|truncatechars_html:25}} ({{appearance.competitor.contesting|default:"Unknown"}})<br>
+                    {% if appearance.competitor.group.get_kind_display == 'Chorus' %}
+                      <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.competitor.group.parent.name|truncatechars_html:25}}</strong><br>
+                      {{appearance.competitor.group.name|truncatechars_html:25}} ({{appearance.competitor.contesting|default:"Unknown"}})<br>
                     {% else %}
-                      <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.group.name|truncatechars_html:25}}</strong><br>
+                      <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.competitor.group.name|truncatechars_html:25}}</strong><br>
                       ({{appearance.competitor.contesting|default:"Unknown"}})<br>
                     {% endif %}
                 </td>
@@ -162,11 +162,11 @@
               {% for appearance in round.aps.all %}
                 <tr class='pbi_avoid'>
                   <td>
-                      {% if appearance.group.get_kind_display == 'Chorus' %}
-                        <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.group.parent.name|truncatechars_html:25}}</strong><br>
-                        {{appearance.group.name|truncatechars_html:25}} ({{appearance.competitor.contesting|default:"Unknown"}})<br>
+                      {% if appearance.competitor.group.get_kind_display == 'Chorus' %}
+                        <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.competitor.group.parent.name|truncatechars_html:25}}</strong><br>
+                        {{appearance.competitor.group.name|truncatechars_html:25}} ({{appearance.competitor.contesting|default:"Unknown"}})<br>
                       {% else %}
-                        <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.group.name|truncatechars_html:25}}</strong><br>
+                        <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.competitor.group.name|truncatechars_html:25}}</strong><br>
                         ({{appearance.competitor.contesting|default:"Unknown"}})<br>
                       {% endif %}
                   </td>

@@ -173,6 +173,7 @@ class CompetitorSerializer(serializers.ModelSerializer):
             'url',
             'status',
             'is_single',
+            'contesting',
             'stats',
             'csa',
             'session',

@@ -79,7 +79,7 @@
           <h2>Draw</h2>
           <ul class='list-unstyled'>
               {% for appearance in appearances %}
-                  <li>{{appearance.draw}}: {{appearance.group.name}}</li>
+                  <li>{{appearance.draw}}: {{appearance.competitor.group.name}}</li>
               {% endfor %}
               {% if mt %}
                 <li>MT: {{mt.competitor.group.name}}

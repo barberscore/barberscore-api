@@ -475,7 +475,7 @@ class Competitor(TimeStampedModel):
         initials = [x.person.initials for x in panelists]
         songs = Song.objects.filter(
             appearance__round__session=self.session,
-            appearance__group=self.group,
+            appearance__competitor__group=self.group,
         ).order_by(
             'appearance__round__kind',
             'num',
@@ -507,7 +507,7 @@ class Competitor(TimeStampedModel):
 
         # Penalties Block
         array = Song.objects.filter(
-            appearance__group=self.group,
+            appearance__competitor__group=self.group,
             penalties__len__gt=0,
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {

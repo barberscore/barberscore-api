@@ -144,7 +144,7 @@ class Appearance(TimeStampedModel):
 
     # Appearance Internals
     def clean(self):
-        if self.group.kind != self.round.session.kind:
+        if self.competitor.group.kind != self.round.session.kind:
             raise ValidationError(
                 {'group': 'Group kind must match session'}
             )
@@ -211,9 +211,9 @@ class Appearance(TimeStampedModel):
         # Mock Appearance
         Chart = apps.get_model('api.chart')
         prelim = None
-        if self.group.kind == self.group.KIND.chorus:
-            pos = self.group.members.filter(
-                status=self.group.members.model.STATUS.active,
+        if self.competitor.group.kind == self.competitor.group.KIND.chorus:
+            pos = self.competitor.group.members.filter(
+                status=self.competitor.group.members.model.STATUS.active,
             ).count()
             self.pos = pos
         if not prelim:
@@ -344,7 +344,7 @@ class Appearance(TimeStampedModel):
     # Appearance Conditions
     def can_verify(self):
         try:
-            if self.group.kind == self.group.KIND.chorus and not self.pos:
+            if self.competitor.group.kind == self.competitor.group.KIND.chorus and not self.pos:
                 is_pos = False
             else:
                 is_pos = True
@@ -409,7 +409,7 @@ class Appearance(TimeStampedModel):
                 content = self.get_variance()
                 self.variance_report.save(
                     "{0}-variance-report".format(
-                        slugify(self.group.name),
+                        slugify(self.competitor.group.name),
                     ),
                     content,
                 )

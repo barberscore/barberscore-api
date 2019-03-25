@@ -150,7 +150,7 @@ class Score(TimeStampedModel):
                 ),
             ]),
             all([
-                self.song.appearance.group.officers.filter(
+                self.song.appearance.competitor.group.officers.filter(
                     person__user=request.user,
                     status__gt=0,
                 ),

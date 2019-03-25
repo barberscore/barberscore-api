@@ -807,7 +807,7 @@ class Round(TimeStampedModel):
                     panelist__person=person,
                     panelist__round__session=self.session,
                     panelist__category=Panelist.CATEGORY.music,
-                    song__appearance__group=group,
+                    song__appearance__competitor__group=group,
                 ).order_by(
                     'panelist__round__kind',
                     'song__num',
@@ -828,7 +828,7 @@ class Round(TimeStampedModel):
                     panelist__person=person,
                     panelist__round__session=self.session,
                     panelist__category=Panelist.CATEGORY.performance,
-                    song__appearance__group=group,
+                    song__appearance__competitor__group=group,
                 ).order_by(
                     'panelist__round__kind',
                     'song__num',
@@ -849,7 +849,7 @@ class Round(TimeStampedModel):
                     panelist__person=person,
                     panelist__round__session=self.session,
                     panelist__category=Panelist.CATEGORY.singing,
-                    song__appearance__group=group,
+                    song__appearance__competitor__group=group,
                 ).order_by(
                     'panelist__round__kind',
                     'song__num',

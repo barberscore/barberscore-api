@@ -80,11 +80,11 @@
               {% for appearance in round.appearances.all|dictsortreversed:'tot_points' %}
                 <tr class='pbi_avoid'>
                   <td>
-                      {% if appearance.group.get_kind_display == 'Chorus' %}
-                        <strong>{{appearance.competitor.tot_rank|default:""}} {{appearance.group.parent.name|truncatechars_html:25}}</strong><br>
-                        {{appearance.group.name|truncatechars_html:25}} ({{appearance.competitor.contesting|default:"Unknown"}})<br>
+                      {% if appearance.competitor.group.get_kind_display == 'Chorus' %}
+                        <strong>{{appearance.competitor.tot_rank|default:""}} {{appearance.competitor.group.parent.name|truncatechars_html:25}}</strong><br>
+                        {{appearance.competitor.group.name|truncatechars_html:25}} ({{appearance.competitor.contesting|default:"Unknown"}})<br>
                       {% else %}
-                        <strong>{{appearance.competitor.tot_rank|default:""}}{{appearance.group.name|truncatechars_html:25}}</strong>
+                        <strong>{{appearance.competitor.tot_rank|default:""}}{{appearance.competitor.group.name|truncatechars_html:25}}</strong>
                         ({{appearance.competitor.contesting|default:"Unknown"}})<br>
                       {% endif %}
                   </td>
