@@ -275,7 +275,7 @@ class Round(TimeStampedModel):
             source = self.appearances.get(
                 group=group,
             )
-            group.contesting = sorted(source.contesting)
+            group.contesting = sorted(source.competitor.contesting)
             appearances = group.appearances.filter(
                 group=group,
                 round__session=self.session,
@@ -793,7 +793,7 @@ class Round(TimeStampedModel):
             source = self.appearances.get(
                 group=group,
             )
-            group.contesting = source.contesting
+            group.contesting = source.competitor.contesting
             full = []
             for person in persons_music:
                 item = []
@@ -1318,15 +1318,10 @@ class Round(TimeStampedModel):
                     group=competitor.group,
                 )
                 draw = prior_appearance.draw
-            outcomes = self.outcomes.filter(
-                num__in=competitor.contesting,
-            )
-            contesting = [x.num for x in outcomes]
             appearance = self.appearances.create(
                 group=competitor.group,
                 competitor=competitor,
                 num=draw,
-                contesting=contesting,
             )
             # Create the grids
             defaults = {

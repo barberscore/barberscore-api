@@ -92,16 +92,6 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    contesting = ArrayField(
-        help_text='Award numbers contestanting',
-        base_field=models.IntegerField(
-            null=True,
-            blank=True,
-        ),
-        null=True,
-        blank=True,
-    )
-
     legacy_num = models.IntegerField(
         null=True,
         blank=True,

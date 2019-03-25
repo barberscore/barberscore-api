@@ -64,7 +64,6 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'actual_finish',
             'pos',
             'stats',
-            'contesting',
             'variance_report',
             'round',
             'group',
