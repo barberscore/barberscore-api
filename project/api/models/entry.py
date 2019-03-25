@@ -303,11 +303,7 @@ class Entry(TimeStampedModel):
                 contest=contest,
             )
         self.representing = self.group.district
-        if self.group.kind == self.group.KIND.quartet:
-            members = self.group.members.filter(
-                status__gt=0,
-            ).order_by('part')
-            self.participants = ", ".join([m.person.common_name for m in members])
+        self.participants = self.group.participants
         return
 
     @fsm_log_by
