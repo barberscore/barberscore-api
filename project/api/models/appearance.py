@@ -63,23 +63,25 @@ class Appearance(TimeStampedModel):
     )
 
     num = models.IntegerField(
+        help_text="""The order of appearance for this round.""",
     )
 
     draw = models.IntegerField(
+        help_text="""The draw for the next round.""",
         null=True,
         blank=True,
     )
 
     actual_start = models.DateTimeField(
         help_text="""
-            The actual appearance window.""",
+            The actual appearance datetime.""",
         null=True,
         blank=True,
     )
 
     actual_finish = models.DateTimeField(
         help_text="""
-            The actual appearance window.""",
+            The actual appearance datetime.""",
         null=True,
         blank=True,
     )
