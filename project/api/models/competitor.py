@@ -96,6 +96,7 @@ class Competitor(TimeStampedModel):
     )
 
     draw = models.IntegerField(
+        help_text='The initial draw',
         null=True,
         blank=True,
     )
