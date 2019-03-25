@@ -13,7 +13,6 @@ from .models import Award
 from .models import Chart
 from .models import Competitor
 from .models import Contest
-from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
@@ -215,22 +214,6 @@ class ContestSerializer(serializers.ModelSerializer):
         included_resources = [
             # 'contestants',
         ]
-
-
-class ContenderSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Contender
-        fields = (
-            'id',
-            'url',
-            'status',
-            'stats',
-            'appearance',
-            'outcome',
-            'permissions',
-        )
 
 
 class ContestantSerializer(serializers.ModelSerializer):

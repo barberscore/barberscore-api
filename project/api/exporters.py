@@ -6,7 +6,6 @@ from .models import Award
 from .models import Chart
 from .models import Competitor
 from .models import Contest
-from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
@@ -94,19 +93,6 @@ class SongSerializer(serializers.ModelSerializer):
             'scores',
         )
 
-
-class ContenderSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Contender
-        fields = (
-            'id',
-            'url',
-            'status',
-            'appearance',
-            'outcome',
-            'permissions',
-        )
 
 class AwardSerializer(serializers.ModelSerializer):
 

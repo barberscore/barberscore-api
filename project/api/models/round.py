@@ -498,8 +498,6 @@ class Round(TimeStampedModel):
             'songs__scores',
             'songs__scores__panelist',
             'songs__scores__panelist__person',
-            'contenders',
-            'contenders__outcome',
         ).order_by(
             '-competitor__tot_points',
             '-competitor__sng_points',
@@ -531,8 +529,6 @@ class Round(TimeStampedModel):
                 'songs__scores',
                 'songs__scores__panelist',
                 'songs__scores__panelist__person',
-                'contenders',
-                'contenders__outcome',
             ).order_by(
                 '-tot_points',
                 '-sng_points',

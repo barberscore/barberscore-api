@@ -32,7 +32,6 @@ from .inlines import AppearanceInline
 from .inlines import AssignmentInline
 from .inlines import AwardInline
 from .inlines import CompetitorInline
-from .inlines import ContenderInline
 from .inlines import ContestantInline
 from .inlines import ContestInline
 from .inlines import ConventionInline
@@ -57,7 +56,6 @@ from .models import Flat
 from .models import Complete
 from .models import Competitor
 from .models import Contest
-from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
@@ -568,38 +566,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     search_fields = [
         'award__name',
     ]
-
-
-@admin.register(Contender)
-class ContenderAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    fields = [
-        'status',
-        'appearance',
-        'outcome',
-    ]
-
-    list_filter = (
-        'status',
-    )
-
-    readonly_fields = [
-    ]
-
-    autocomplete_fields = [
-        'appearance',
-        'outcome',
-    ]
-
-    search_fields = [
-        'id',
-    ]
-
-    ordering = (
-    )
 
 
 @admin.register(Contestant)
@@ -1334,10 +1300,6 @@ class OutcomeAdmin(admin.ModelAdmin):
         'num',
         'name',
         'legacy_name',
-    ]
-
-    inlines = [
-        ContenderInline,
     ]
 
     list_filter = (
