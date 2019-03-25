@@ -382,8 +382,8 @@ class Round(TimeStampedModel):
         ).exclude(
             num=0,
         ).order_by(
-            'group__name',
-        ).values_list('group__name', flat=True)
+            'competitor__group__name',
+        ).values_list('competitor__group__name', flat=True)
         privates = list(privates)
 
         # Draw Block

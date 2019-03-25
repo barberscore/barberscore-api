@@ -1131,16 +1131,16 @@ class RoundViewSet(viewsets.ModelViewSet):
         appearances = round.appearances.filter(
             draw__gt=0,
         ).select_related(
-            'group',
+            'competitor',
         ).order_by(
             'draw',
         )
         mt = round.appearances.filter(
             draw=0,
         ).select_related(
-            'group',
+            'competitor',
         ).order_by(
-            'group__name',
+            'competitor__group__name',
         ).first()
         outcomes = round.outcomes.order_by(
             '-num',
@@ -1155,6 +1155,12 @@ class RoundViewSet(viewsets.ModelViewSet):
                 'group',
             ).annotate(
                 tot_points=Sum(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                tot_score=Avg(
                     'appearances__songs__scores__points',
                     filter=Q(
                         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
