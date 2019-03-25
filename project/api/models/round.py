@@ -174,7 +174,7 @@ class Round(TimeStampedModel):
 
         # Score Block
         group_ids = self.appearances.filter(
-            is_private=False,
+            competitor__is_private=False,
         ).exclude(
             draw__gt=0,
         ).exclude(
@@ -372,7 +372,7 @@ class Round(TimeStampedModel):
         array = Song.objects.filter(
             appearance__round=self,
             penalties__len__gt=0,
-            appearance__is_private=False,
+            competitor__appearance__is_private=False,
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
             10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
@@ -384,7 +384,7 @@ class Round(TimeStampedModel):
 
         # Eval Only Block
         privates = self.appearances.filter(
-            is_private=True,
+            competitor__is_private=True,
         ).exclude(
             num=0,
         ).order_by(
@@ -656,7 +656,6 @@ class Round(TimeStampedModel):
 
         # Score Block
         group_ids = self.appearances.filter(
-            is_private=False,
         ).exclude(
             draw__gt=0,
         ).exclude(
@@ -1327,7 +1326,6 @@ class Round(TimeStampedModel):
                 group=competitor.group,
                 competitor=competitor,
                 num=draw,
-                is_private=competitor.is_private,
                 contesting=contesting,
             )
             # Create the grids

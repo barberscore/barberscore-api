@@ -250,7 +250,7 @@ class Session(TimeStampedModel):
             group_name = entry.group.name
             representing = entry.representing
             evaluation = entry.is_evaluation
-            private = entry.is_private
+            is_private = entry.is_private
             bhs_id = entry.group.bhs_id
             repertory_count = entry.group.repertories.filter(
                 status__gt=0,
@@ -330,7 +330,7 @@ class Session(TimeStampedModel):
                 group_name,
                 representing,
                 evaluation,
-                private,
+                is_private,
                 bhs_id,
                 group_status,
                 repertory_count,

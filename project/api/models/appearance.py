@@ -92,11 +92,6 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    is_private = models.BooleanField(
-        help_text="""Copied from entry.""",
-        default=False,
-    )
-
     contesting = ArrayField(
         help_text='Award numbers contestanting',
         base_field=models.IntegerField(
