@@ -912,6 +912,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'twitter',
         'image',
         'description',
+        'participants',
         'notes',
         ('created', 'modified',),
     ]

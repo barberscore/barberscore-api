@@ -263,6 +263,13 @@ class Group(TimeStampedModel):
         max_length=1000,
     )
 
+    participants = models.CharField(
+        help_text='Director(s) or Members (listed TLBB)',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
     bhs_id = models.IntegerField(
         blank=True,
         null=True,
