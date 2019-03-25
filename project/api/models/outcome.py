@@ -48,51 +48,6 @@ class Outcome(TimeStampedModel):
         blank=True,
     )
 
-    LEVEL = Choices(
-        (10, 'championship', "Championship"),
-        (30, 'qualifier', "Qualifier"),
-        (45, 'representative', "Representative"),
-        (50, 'deferred', "Deferred"),
-        (60, 'manual', "Manual"),
-        (70, 'raw', "Improved - Raw"),
-        (80, 'standard', "Improved - Standard"),
-    )
-
-    level = models.IntegerField(
-        choices=LEVEL,
-    )
-
-    threshold = models.FloatField(
-        help_text="""
-            The score threshold for automatic qualification (if any.)
-        """,
-        null=True,
-        blank=True,
-    )
-
-    minimum = models.FloatField(
-        help_text="""
-            The minimum score required for qualification (if any.)
-        """,
-        null=True,
-        blank=True,
-    )
-
-    advance = models.FloatField(
-        help_text="""
-            The score threshold to advance to next round (if any) in
-            multi-round qualification.
-        """,
-        null=True,
-        blank=True,
-    )
-
-    spots = models.IntegerField(
-        help_text="""Number of top spots which qualify""",
-        null=True,
-        blank=True,
-    )
-
     legacy_num = models.IntegerField(
         blank=True,
         null=True,
@@ -126,12 +81,14 @@ class Outcome(TimeStampedModel):
     # Methods
     def get_name(self):
         Panelist = apps.get_model('api.panelist')
-        if self.level == self.LEVEL.deferred:
+        if self.round.kind != self.round.KIND.finals and not self.award.is_single:
+            return "(Result determined in Finals)"
+        if self.award.level == self.award.LEVEL.deferred:
             return "(Result determined post-contest)"
-        if self.level in [self.LEVEL.manual, self.LEVEL.raw, self.LEVEL.standard]:
+        if self.award.level in [self.award.LEVEL.manual, self.award.LEVEL.raw, self.award.LEVEL.standard]:
             return "MUST ENTER WINNER MANUALLY"
-        if self.level == self.LEVEL.qualifier:
-            threshold = self.threshold
+        if self.award.level == self.award.LEVEL.qualifier:
+            threshold = self.award.threshold
             num = [self.num]
             qualifiers = self.round.session.competitors.filter(
                 contesting__contains=num,
@@ -149,8 +106,8 @@ class Outcome(TimeStampedModel):
             ).values_list('group__name', flat=True)
             if qualifiers:
                 return ", ".join(qualifiers)
-            return "(No qualifiers)"
-        if self.level in [self.LEVEL.championship, self.LEVEL.representative]:
+            return "(No Qualifiers)"
+        if self.award.level in [self.award.LEVEL.championship, self.award.LEVEL.representative]:
             num = [self.num]
             winner = self.round.session.competitors.filter(
                 contesting__contains=num,
