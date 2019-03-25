@@ -128,7 +128,8 @@ class Appearance(TimeStampedModel):
     group = models.ForeignKey(
         'Group',
         related_name='appearances',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
     )
 
     competitor = models.ForeignKey(
@@ -162,7 +163,6 @@ class Appearance(TimeStampedModel):
         ]
         unique_together = (
             ('round', 'num'),
-            ('round', 'group'),
         )
 
     class JSONAPIMeta:

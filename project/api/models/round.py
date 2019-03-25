@@ -479,6 +479,16 @@ class Round(TimeStampedModel):
         content = ContentFile(file)
         return content
 
+    def save_oss(self):
+        content = self.get_oss()
+        self.refresh_from_db()
+        self.oss.save(
+            "{0}-oss".format(
+                slugify(self),
+            ),
+            content,
+        )
+
     def get_old_oss(self):
         # Competitor = apps.get_model('api.competitor')
         # Contest = apps.get_model('api.contest')
@@ -1064,16 +1074,6 @@ class Round(TimeStampedModel):
         content = ContentFile(data)
         return content
 
-    def save_oss(self):
-        content = self.get_oss()
-        self.refresh_from_db()
-        self.oss.save(
-            "{0}-oss".format(
-                slugify(self),
-            ),
-            content,
-        )
-
     def get_sung(self):
         Song = apps.get_model('api.song')
         appearances = self.appearances.filter(
@@ -1206,14 +1206,8 @@ class Round(TimeStampedModel):
         panelists = self.panelists.all()
         appearances = self.appearances.all()
         outcomes = self.outcomes.all()
-        competitors = self.session.competitors.filter(
-            status=self.session.competitors.model.STATUS.started,
-        )
-        grids = Grid.objects.filter(
-            appearance__in=appearances,
-        )
+        grids = self.grids.all()
         grids.update(appearance=None)
-        competitors.update(stats=None)
         panelists.delete()
         outcomes.delete()
         appearances.delete()
@@ -1254,68 +1248,50 @@ class Round(TimeStampedModel):
             )
 
         # Create the Outcomes
-        if self.num == 1:
-            is_single = True
-        else:
-            is_single = False
         contests = self.session.contests.select_related(
             'award',
         ).filter(
             num__isnull=False,
-            award__is_single=is_single,
         )
+        if self.num > 1:
+            contests = contests.exclude(award__is_single=True)
         for contest in contests:
             self.outcomes.create(
                 num=contest.num,
                 award=contest.award,
-                level=contest.award.level,
-                is_single=contest.award.is_single,
-                threshold=contest.award.threshold,
-                advance=contest.award.advance,
-                minimum=contest.award.minimum,
-                spots=contest.award.spots,
             )
 
         # Create the Appearances
         Grid = apps.get_model('api.grid')
+
         # Determine prior rounds
         if self.num == 1:
             prior_round = None
         else:
             prior_round = self.session.rounds.get(num=self.num - 1)
+
+
         # If the first round, populate from competitors
         if not prior_round:
-            competitors = self.session.competitors.select_related(
-                'group',
-            ).filter(
-                draw__isnull=False,
+            competitors = self.session.competitors.filter(
+                status__gt=0,
             )
         # Otherwise, populate from prior round
         else:
-            groups = prior_round.appearances.select_related(
-                'group',
-            ).filter(
+            competitors = self.session.competitors.filter(
+                appearances__round=self,
                 draw__isnull=False,
-            ).values_list(
-                'group',
-                flat=True,
-            )
-            competitors = self.session.competitors.select_related(
-                'group',
-            ).filter(
-                is_single=False,
-                group__in=groups,
-            )
+            ).distinct()
+
         for competitor in competitors:
             if not prior_round:
                 draw = competitor.draw
             else:
                 prior_appearance = prior_round.appearances.get(
-                    group=competitor.group,
+                    competitor=competitor,
                 )
                 draw = prior_appearance.draw
             appearance = self.appearances.create(
-                group=competitor.group,
                 competitor=competitor,
                 num=draw,
             )
@@ -1390,7 +1366,6 @@ class Round(TimeStampedModel):
 
         # Get all multi appearances and annotate average.
         multis = self.appearances.filter(
-            status__gt=0,
             competitor__is_single=False,
         ).annotate(
             avg=Avg(
@@ -1510,12 +1485,15 @@ class Round(TimeStampedModel):
             ),
             content=content,
         )
-        finishers = self.appearances.filter(
-            Q(draw=0) | Q(draw__isnull=True),
-        ).values_list('group', flat=True)
-        competitors = self.session.competitors.filter(
-            group__id__in=finishers,
-        )
+        if self.kind == self.KIND.finals:
+            competitors = self.session.competitors.filter(
+                status__gt=0,
+            )
+        else:
+            competitors = self.session.competitors.filter(
+                appearances__round=self,
+                draw__isnull=True,
+            ).distinct()
         for competitor in competitors:
             competitor.finish()
             competitor.save()
