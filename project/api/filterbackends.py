@@ -114,8 +114,8 @@ class ScoreFilterBackend(DRYPermissionFiltersBase):
                 song__appearance__round__session__competitors__status__gt=Competitor.STATUS.finished,
             ) |
             Q(
-                song__appearance__group__officers__person__user=request.user,
-                song__appearance__group__officers__status__gt=0,
+                song__appearance__competitor__group__officers__person__user=request.user,
+                song__appearance__competitor__group__officers__status__gt=0,
                 song__appearance__round__session__competitors__status__gt=Competitor.STATUS.finished,
             )
         ).distinct()

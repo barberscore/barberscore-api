@@ -273,7 +273,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'actual_start',
         'actual_finish',
-        'group',
+        'competitor',
         'round',
         'num',
         'draw',
@@ -283,14 +283,14 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     list_display = [
         'status',
-        'group',
+        'competitor',
         'round',
         'num',
         'draw',
         'status',
     ]
     list_select_related = [
-        'group',
+        'competitor',
         'round__session',
         'round__session__convention',
     ]
@@ -306,7 +306,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     save_on_top = True
     autocomplete_fields = [
-        'group',
+        'competitor',
         'round',
     ]
     readonly_fields = [
@@ -314,14 +314,14 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'stats',
     ]
     search_fields = [
-        'group__name',
+        'competitor__group__name',
         'round__session__convention__name',
     ]
     inlines = [
         SongInline,
     ]
     ordering = (
-        'group__name',
+        'competitor__group__name',
     )
 
 

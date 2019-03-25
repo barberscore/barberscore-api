@@ -54,7 +54,7 @@ class AppearanceFactory(DjangoModelFactory):
     actual_start = None
     actual_finish = None
     round = SubFactory('api.factories.RoundFactory')
-    group = SubFactory('api.factories.GroupFactory')
+    competitor = SubFactory('api.factories.CompetitorFactory')
 
     class Meta:
         model = Appearance

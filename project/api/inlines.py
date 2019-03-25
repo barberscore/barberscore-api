@@ -127,14 +127,14 @@ class ActiveQuartetInline(admin.TabularInline):
 class AppearanceInline(admin.TabularInline):
     model = Appearance
     fields = [
-        'group',
+        'competitor',
         'status',
         'num',
         'draw',
         'stats',
     ]
     readonly_fields = [
-        'group',
+        'competitor',
         'status',
     ]
     ordering = (

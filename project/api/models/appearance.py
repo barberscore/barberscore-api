@@ -125,13 +125,6 @@ class Appearance(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    group = models.ForeignKey(
-        'Group',
-        related_name='appearances',
-        on_delete=models.SET_NULL,
-        null=True,
-    )
-
     competitor = models.ForeignKey(
         'Competitor',
         related_name='appearances',
@@ -170,7 +163,7 @@ class Appearance(TimeStampedModel):
 
     def __str__(self):
         return "{0} {1}".format(
-            str(self.group),
+            str(self.competitor.group),
             str(self.round),
         )
 

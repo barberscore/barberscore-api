@@ -98,7 +98,7 @@ log = logging.getLogger(__name__)
 class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
         'round',
-        'group',
+        'competitor',
         'grid',
     ).prefetch_related(
         'songs',
@@ -671,7 +671,6 @@ class GroupViewSet(viewsets.ModelViewSet):
         'children',
         'awards',
         'competitors',
-        'appearances',
         'conventions',
         'entries',
         'members',
