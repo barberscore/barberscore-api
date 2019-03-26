@@ -1013,25 +1013,25 @@ class Round(TimeStampedModel):
             content,
         )
 
-    def get_csa(self):
-        competitors = self.session.competitors.filter(
-            Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
-            appearances__round=self,
-        ).order_by(
-            'group__name',
-        )
-        merger = PdfFileMerger()
-        for competitor in competitors:
-            try:
-                file = ContentFile(competitor.csa.read())
-            except ValueError:
-                file = competitor.get_csa()
-            merger.append(file, import_bookmarks=False)
-        stream = BytesIO()
-        merger.write(stream)
-        data = stream.getvalue()
-        content = ContentFile(data)
-        return content
+    # def get_csa(self):
+    #     competitors = self.session.competitors.filter(
+    #         Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
+    #         appearances__round=self,
+    #     ).order_by(
+    #         'group__name',
+    #     )
+    #     merger = PdfFileMerger()
+    #     for competitor in competitors:
+    #         try:
+    #             file = ContentFile(competitor.csa.read())
+    #         except ValueError:
+    #             file = competitor.get_csa()
+    #         merger.append(file, import_bookmarks=False)
+    #     stream = BytesIO()
+    #     merger.write(stream)
+    #     data = stream.getvalue()
+    #     content = ContentFile(data)
+    #     return content
 
     def get_sung(self):
         Song = apps.get_model('api.song')

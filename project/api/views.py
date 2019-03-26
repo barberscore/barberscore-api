@@ -190,9 +190,12 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
     )
-    def variancedraft(self, request, pk=None):
+    def variance(self, request, pk=None):
         appearance = Appearance.objects.get(pk=pk)
-        pdf = appearance.get_variance()
+        if appearance.variance_report:
+            pdf = appearance.variance_report.file
+        else:
+            pdf = appearance.get_variance()
         file_name = '{0}-oss'.format(
             slugify("{0} Variance Report".format(appearance))
         )
@@ -581,9 +584,12 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
     )
-    def csadraft(self, request, pk=None):
+    def csa(self, request, pk=None):
         competitor = Competitor.objects.get(pk=pk)
-        pdf = competitor.get_csa()
+        if competitor.csa:
+            pdf = competitor.csa.file
+        else:
+            pdf = competitor.get_csa()
         file_name = '{0}-csa'.format(
             slugify(
                 "{0} CSA".format(
@@ -954,10 +960,13 @@ class PanelistViewSet(viewsets.ModelViewSet):
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
     )
-    def jsadraft(self, request, pk=None):
+    def psa(self, request, pk=None):
         panelist = Panelist.objects.get(pk=pk)
-        pdf = panelist.get_jsa()
-        file_name = '{0}-jsa'.format(
+        if panelist.psa:
+            pdf = panelist.psa.file
+        else:
+            pdf = panelist.get_psa()
+        file_name = '{0}-psa'.format(
             slugify(
                 "{0}".format(
                     panelist
@@ -1179,45 +1188,16 @@ class RoundViewSet(viewsets.ModelViewSet):
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
     )
-    def csadraft(self, request, pk=None):
+    def oss(self, request, pk=None):
         round = Round.objects.select_related(
             'session',
             'session__convention',
             'session__convention__venue',
         ).get(pk=pk)
-        pdf = round.get_csa()
-        file_name = '{0}-csa'.format(
-            slugify(
-                "{0} {1} {2} Round".format(
-                    round.session.convention.name,
-                    round.session.get_kind_display(),
-                    round.get_kind_display(),
-                )
-            )
-        )
-        return PDFResponse(
-            pdf,
-            file_name=file_name,
-            status=status.HTTP_200_OK
-        )
-
-
-    @action(
-        methods=['get'],
-        detail=True,
-        renderer_classes=[
-            PDFRenderer,
-        ],
-        permission_classes=[DRYPermissions],
-        content_negotiation_class=IgnoreClientContentNegotiation,
-    )
-    def ossdraft(self, request, pk=None):
-        round = Round.objects.select_related(
-            'session',
-            'session__convention',
-            'session__convention__venue',
-        ).get(pk=pk)
-        pdf = round.get_oss()
+        if round.oss:
+            pdf = round.oss.file
+        else:
+            pdf = round.get_oss()
         file_name = '{0}-oss'.format(
             slugify(
                 "{0} {1} {2} Round".format(
@@ -1246,7 +1226,10 @@ class RoundViewSet(viewsets.ModelViewSet):
     def ossold(self, request, pk=None):
         round = Round.objects.select_related(
         ).get(pk=pk)
-        pdf = round.get_old_oss()
+        if round.old_oss:
+            pdf = round.old_oss.file
+        else:
+            pdf = round.get_old_oss()
         file_name = '{0}-oss-old'.format(
             slugify(
                 "{0} {1} {2} Round".format(
@@ -1300,13 +1283,16 @@ class RoundViewSet(viewsets.ModelViewSet):
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
     )
-    def sadraft(self, request, pk=None):
+    def sa(self, request, pk=None):
         round = Round.objects.select_related(
             'session',
             'session__convention',
             'session__convention__venue',
         ).get(pk=pk)
-        pdf = round.get_sa()
+        if round.sa:
+            pdf = round.sa.file
+        else:
+            pdf = round.get_sa()
         file_name = '{0}-sa'.format(
             slugify(
                 "{0} {1} {2} Round".format(
@@ -1332,7 +1318,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
     )
-    def announcementsdraft(self, request, pk=None):
+    def announcements(self, request, pk=None):
         round = Round.objects.select_related(
         ).get(pk=pk)
         pdf = round.get_announcements()
@@ -1483,7 +1469,10 @@ class SessionViewSet(viewsets.ModelViewSet):
     )
     def legacy(self, request, pk=None):
         session = Session.objects.get(pk=pk)
-        xlsx = session.get_legacy()
+        if session.legacy_report:
+            xlsx = session.legacy_report.file
+        else:
+            xlsx = session.get_legacy()
         file_name = '{0}-legacy'.format(
             slugify(
                 "{0} {1} Session".format(
@@ -1507,7 +1496,10 @@ class SessionViewSet(viewsets.ModelViewSet):
     )
     def drcj(self, request, pk=None):
         session = Session.objects.get(pk=pk)
-        xlsx = session.get_drcj()
+        if session.drcj_report:
+            xlsx = session.drcj_report.file
+        else:
+            xlsx = session.get_drcj()
         file_name = '{0}-drcj'.format(
             slugify(
                 "{0} {1} Session".format(
@@ -1531,7 +1523,10 @@ class SessionViewSet(viewsets.ModelViewSet):
     )
     def contact(self, request, pk=None):
         session = Session.objects.get(pk=pk)
-        xlsx = session.get_contact()
+        if session.contact_report:
+            xlsx = session.contact_report.file
+        else:
+            xlsx = session.get_contact()
         file_name = '{0}-contact'.format(
             slugify(
                 "{0} {1} Session".format(
