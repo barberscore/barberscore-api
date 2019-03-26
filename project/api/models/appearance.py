@@ -171,10 +171,19 @@ class Appearance(TimeStampedModel):
     def get_variance(self):
         Score = apps.get_model('api.score')
         Panelist = apps.get_model('api.panelist')
-        songs = self.songs.order_by('num')
+
+        # Songs Block
+        songs = self.songs.annotate(
+            tot_score=Avg(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+        ).order_by('num')
         scores = Score.objects.filter(
             panelist__kind=Panelist.KIND.official,
-            song__in=songs,
+            song__appearance=self,
         ).order_by(
             'category',
             'panelist__person__last_name',
@@ -192,14 +201,14 @@ class Appearance(TimeStampedModel):
             variances.extend(song.dixons)
             variances.extend(song.asterisks)
         variances = list(set(variances))
-        off_points = scores.aggregate(sum=Sum('points'))['sum']
+        tot_points = scores.aggregate(sum=Sum('points'))['sum']
         context = {
             'appearance': self,
             'songs': songs,
             'scores': scores,
             'panelists': panelists,
             'variances': variances,
-            'off_points': off_points,
+            'tot_points': tot_points,
         }
         rendered = render_to_string('variance.html', context)
         pdf = pydf.generate_pdf(rendered, enable_smart_shrinking=False)
@@ -285,9 +294,10 @@ class Appearance(TimeStampedModel):
         )
 
     def check_variance(self):
+        # Set flag
         variance = False
+        # Run checks for all songs and save.
         for song in self.songs.all():
-            song.calculate()
             asterisks = song.get_asterisks()
             if asterisks:
                 song.asterisks = asterisks
@@ -296,7 +306,8 @@ class Appearance(TimeStampedModel):
             if dixons:
                 song.dixons = dixons
                 variance = True
-            song.save()
+            if variance:
+                song.save()
         return variance
 
 
@@ -397,29 +408,24 @@ class Appearance(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.finished, STATUS.verified, STATUS.variance],
+        source=[STATUS.finished, STATUS.variance],
         target=RETURN_VALUE(STATUS.variance, STATUS.verified,),
         conditions=[can_verify],
     )
     def verify(self, *args, **kwargs):
-        # Check for variance on finish.  If no variance will return None
+        # Check for variance on finish.
         if self.status == self.STATUS.finished:
             variance = self.check_variance()
             if variance:
+                # Run variance report and save file.
                 content = self.get_variance()
                 self.variance_report.save(
                     "{0}-variance-report".format(
-                        slugify(self.competitor.group.name),
+                        slugify(self),
                     ),
                     content,
                 )
-        # Variance is only checked once so return None if not finishing
+        # Variance is only checked once.
         else:
-            variance = None
-        self.calculate()
-        # self.competitor.calculate()
-        # self.competitor.save()
-        # django_rq.enqueue(
-        #     self.competitor.save_csa,
-        # )
+            variance = False
         return self.STATUS.variance if variance else self.STATUS.verified

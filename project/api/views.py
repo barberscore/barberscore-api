@@ -166,6 +166,27 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            PDFRenderer,
+        ],
+        permission_classes=[AllowAny],
+    )
+    def variancedraft(self, request, pk=None):
+        appearance = Appearance.objects.get(pk=pk)
+        pdf = appearance.get_variance()
+        file_name = '{0}-oss'.format(
+            slugify("{0} Variance Report".format(appearance))
+        )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
         'convention',

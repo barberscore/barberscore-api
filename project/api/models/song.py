@@ -130,49 +130,15 @@ class Song(TimeStampedModel):
         return str(self.id)
 
     # Methods
-    def calculate(self):
-        Panelist = apps.get_model('api.panelist')
-        Score = apps.get_model('api.score')
-        tot = Sum('points')
-        mus = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.music))
-        per = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.performance))
-        sng = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.singing))
-        officials = Score.objects.filter(
-            song=self,
-            panelist__kind=Panelist.KIND.official,
-        ).annotate(
-            tot=tot,
-            mus=mus,
-            per=per,
-            sng=sng,
-        )
-        tot = officials.aggregate(
-            sum=Sum('points'),
-            avg=Avg('points'),
-        )
-        mus = officials.filter(
-            panelist__category=Panelist.CATEGORY.music,
-        ).aggregate(
-            sum=Sum('points'),
-            avg=Avg('points'),
-        )
-        per = officials.filter(
-            panelist__category=Panelist.CATEGORY.performance,
-        ).aggregate(
-            sum=Sum('points'),
-            avg=Avg('points'),
-        )
-        sng = officials.filter(
-            panelist__category=Panelist.CATEGORY.singing,
-        ).aggregate(
-            sum=Sum('points'),
-            avg=Avg('points'),
-        )
-
-    # Methods
     def get_asterisks(self):
-        """Check to see if the score produces a category variance (asterisk)"""
+        """
+        Check to see if the song produces a category variance (asterisk)
+
+        Returns a list of categories that produced an asterisk.
+        """
+        # Set Flag
         asterisks = []
+        # Get Averages by category
         categories = self.scores.filter(
             panelist__kind=10,
         ).values(
@@ -194,8 +160,14 @@ class Song(TimeStampedModel):
         return asterisks
 
     def get_dixons(self):
-        # Dixon's Q Test
+        """
+        Check to see if the song produces a spread error (Dixon's Q)
+
+        Returns a list of categories that produced a Dixon's Q.
+        """
+        # Set flag
         output = []
+        # Confidence thresholds
         confidence = {
             '3': 0.941,
             '6': .56,
@@ -203,28 +175,35 @@ class Song(TimeStampedModel):
             '12': .437,
             '15': .338,
         }
+        # Only use official scores.
         scores = self.scores.filter(
             panelist__kind=10,
         )
+        # Get the totals
         aggregates = scores.aggregate(
+            cnt=Count('id'),
             max=Max('points'),
             min=Min('points'),
-            cnt=Count('id'),
             spread=Max('points') - Min('points'),
         )
+        # Check for validity.
+        if aggregates['cnt'] < 3:
+            return RuntimeError('Panel too small error')
         # Bypass to avoid division by zero
         if not aggregates['spread']:
             return output
-        if aggregates['cnt'] < 3:
-            return RuntimeError('Panel too small error')
+        # Order the scores
         ascending = scores.order_by('points')
         descending = scores.order_by('-points')
+        # Separate check for single-panel
         if aggregates['cnt'] == '3':
             if abs(ascending[0].points - ascending[1].points) >= 10:
                 output.append(ascending[0].panelist.category)
             if abs(descending[0].points - descending[1].points) >= 10:
                 output.append(descending[0].panelist.category)
             return output
+
+        # Otherwise, run the checks, both ascending and descending
         critical = confidence[str(aggregates['cnt'])]
         ascending_distance = abs(ascending[0].points - ascending[1].points)
         ascending_q = ascending_distance / aggregates['spread']
@@ -236,12 +215,6 @@ class Song(TimeStampedModel):
             output.append(descending[0].panelist.category)
         return output
 
-    def get_variance(self):
-        variance = any([
-            self.get_asterisks(),
-            self.get_dixons(),
-        ])
-        return variance
 
     # Permissions
     @staticmethod
