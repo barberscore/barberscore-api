@@ -451,7 +451,7 @@ class Round(TimeStampedModel):
             'panelists': panelists,
             'outcomes': outcomes,
         }
-        rendered = render_to_string('round/oss.html', context)
+        rendered = render_to_string('reports/oss.html', context)
 
         if competitors.count() > 8:
             page_size = 'Legal'
@@ -621,7 +621,7 @@ class Round(TimeStampedModel):
             'adds_add': adds_add,
             'mt': mt,
         }
-        rendered = render_to_string('round/old_oss.html', context)
+        rendered = render_to_string('reports/old_oss.html', context)
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
@@ -992,7 +992,7 @@ class Round(TimeStampedModel):
             'persons_singing': sng_persons,
             'stats': stats,
         }
-        rendered = render_to_string('sa.html', context)
+        rendered = render_to_string('reports/sa.html', context)
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
@@ -1133,7 +1133,7 @@ class Round(TimeStampedModel):
             'competitors': competitors,
             'pos': pos,
         }
-        rendered = render_to_string('announcements.html', context)
+        rendered = render_to_string('reports/announcements.html', context)
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
@@ -1153,7 +1153,7 @@ class Round(TimeStampedModel):
             raise RuntimeError("No panelists for {0}".format(self))
         to = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email) for panelist in panelists]
         context = {'round': self}
-        body = render_to_string('sa.txt', context)
+        body = render_to_string('reports/round_sa.txt', context)
         subject = "[Barberscore] {0} {1} {2} SA".format(
             self.session.convention.name,
             self.session.get_kind_display(),

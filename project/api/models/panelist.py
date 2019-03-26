@@ -238,7 +238,7 @@ class Panelist(TimeStampedModel):
             'panelist': self,
             'appearances': appearances,
         }
-        rendered = render_to_string('jsa.html', context)
+        rendered = render_to_string('reports/jsa.html', context)
         file = pydf.generate_pdf(rendered)
         content = ContentFile(file)
         return content
@@ -252,41 +252,3 @@ class Panelist(TimeStampedModel):
             ),
             content,
         )
-
-
-    def queue_jsa(self):
-        officers = self.group.officers.filter(
-            status__gt=0,
-            person__email__isnull=False,
-        )
-        if not officers:
-            raise RuntimeError("No officers for {0}".format(self.group))
-        to = ["{0} <{1}>".format(officer.person.common_name.replace(",",""), officer.person.email) for officer in officers]
-        cc = []
-        if self.group.kind == self.group.KIND.quartet:
-            members = self.group.members.filter(
-                status__gt=0,
-                person__email__isnull=False,
-            ).exclude(
-                person__officers__in=officers,
-            ).distinct()
-            for member in members:
-                cc.append(
-                    "{0} <{1}>".format(member.person.common_name.replace(",",""), member.person.email)
-                )
-        context = {'competitor': self}
-        body = render_to_string('csa.txt', context)
-        subject = "[Barberscore] {0} {1} {2} Session CSA".format(
-            self.group.name,
-            self.session.convention.name,
-            self.session.get_kind_display(),
-        )
-        queue = django_rq.get_queue('high')
-        result = queue.enqueue(
-            send_email,
-            subject=subject,
-            body=body,
-            to=to,
-            cc=cc,
-        )
-        return result

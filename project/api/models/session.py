@@ -606,7 +606,7 @@ class Session(TimeStampedModel):
     def open(self, *args, **kwargs):
         """Make session available for entry."""
         # Send notification for all public contests
-        self.queue_notifications(template='session/opened.txt')
+        self.queue_notifications(template='emails/session_open.txt')
         return
 
     @fsm_log_by
@@ -641,7 +641,7 @@ class Session(TimeStampedModel):
             entry.save()
             i += 1
         # Notify for all public contests
-        self.queue_notifications(template='session/closed.txt')
+        self.queue_notifications(template='emails/session_close.txt')
         return
 
     @fsm_log_by
@@ -653,8 +653,8 @@ class Session(TimeStampedModel):
     )
     def verify(self, *args, **kwargs):
         """Make draw public."""
-        self.queue_reports(template='session/verified_reports.txt')
-        self.queue_notifications(template='session/verified.txt')
+        self.queue_reports(template='emails/session_verified_reports.txt')
+        self.queue_notifications(template='emails/session_verify.txt')
         return
 
     @fsm_log_by
@@ -748,7 +748,7 @@ class Session(TimeStampedModel):
             content=content,
         )
         #  Create and send the reports
-        self.queue_reports(template='session/started_reports.txt')
+        self.queue_reports(template='emails/session_package.txt')
         return
 
     @fsm_log_by

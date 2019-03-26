@@ -317,7 +317,7 @@ class Entry(TimeStampedModel):
     )
     def invite(self, *args, **kwargs):
         context = {'entry': self}
-        self.queue_notification('entry_invite.txt', context)
+        self.queue_notification('emails/entry_invite.txt', context)
         return
 
     @fsm_log_by
@@ -345,7 +345,7 @@ class Entry(TimeStampedModel):
             contestant.exclude()
             contestant.save()
         context = {'entry': self}
-        self.queue_notification('entry_withdraw.txt', context)
+        self.queue_notification('emails/entry_withdraw.txt', context)
         return
 
     @fsm_log_by
@@ -367,7 +367,7 @@ class Entry(TimeStampedModel):
             'entry': self,
             'contestants': contestants,
         }
-        self.queue_notification('entry_submit.txt', context)
+        self.queue_notification('emails/entry_submit.txt', context)
         return
 
     @fsm_log_by
@@ -399,5 +399,5 @@ class Entry(TimeStampedModel):
             'contestants': contestants,
             'members': members,
         }
-        self.queue_notification('entry_approve.txt', context)
+        self.queue_notification('emails/entry_approve.txt', context)
         return

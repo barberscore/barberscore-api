@@ -509,7 +509,7 @@ class Competitor(TimeStampedModel):
             'categories': categories,
             'penalties': penalties,
         }
-        rendered = render_to_string('csa.html', context)
+        rendered = render_to_string('reports/csa.html', context)
         file = pydf.generate_pdf(rendered)
         content = ContentFile(file)
         return content
@@ -549,7 +549,7 @@ class Competitor(TimeStampedModel):
         to = list(set(to))
         cc = list(set(cc))
         context = {'competitor': self}
-        body = render_to_string('csa.txt', context)
+        body = render_to_string('emails/competitor_csa.txt', context)
         subject = "[Barberscore] {0} {1} {2} Session CSA".format(
             self.group.name,
             self.session.convention.name,

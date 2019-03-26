@@ -15,7 +15,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.renderers import TemplateHTMLRenderer
+
 # Django
 from django.core.files.base import ContentFile
 from django.db.models import Sum, Q, Avg
@@ -554,7 +554,6 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         methods=['get'],
         detail=True,
         renderer_classes=[
-            # TemplateHTMLRenderer,
             PDFRenderer,
         ],
         permission_classes=[AllowAny],
@@ -569,10 +568,6 @@ class CompetitorViewSet(viewsets.ModelViewSet):
                 )
             )
         )
-        # return Response(
-        #     pdf,
-        #     template_name='oss.html',
-        # )
         return PDFResponse(
             pdf,
             file_name=file_name,
@@ -924,7 +919,6 @@ class PanelistViewSet(viewsets.ModelViewSet):
         methods=['get'],
         detail=True,
         renderer_classes=[
-            # TemplateHTMLRenderer,
             PDFRenderer,
         ],
         permission_classes=[AllowAny],
@@ -1150,7 +1144,6 @@ class RoundViewSet(viewsets.ModelViewSet):
         methods=['get'],
         detail=True,
         renderer_classes=[
-            # TemplateHTMLRenderer,
             PDFRenderer,
         ],
         permission_classes=[AllowAny],
@@ -1171,10 +1164,6 @@ class RoundViewSet(viewsets.ModelViewSet):
                 )
             )
         )
-        # return Response(
-        #     pdf,
-        #     template_name='oss.html',
-        # )
         return PDFResponse(
             pdf,
             file_name=file_name,
@@ -1186,7 +1175,6 @@ class RoundViewSet(viewsets.ModelViewSet):
         methods=['get'],
         detail=True,
         renderer_classes=[
-            # TemplateHTMLRenderer,
             PDFRenderer,
         ],
         permission_classes=[AllowAny],
@@ -1207,10 +1195,6 @@ class RoundViewSet(viewsets.ModelViewSet):
                 )
             )
         )
-        # return Response(
-        #     pdf,
-        #     template_name='oss.html',
-        # )
         return PDFResponse(
             pdf,
             file_name=file_name,
@@ -1222,7 +1206,6 @@ class RoundViewSet(viewsets.ModelViewSet):
         methods=['get'],
         detail=True,
         renderer_classes=[
-            # TemplateHTMLRenderer,
             PDFRenderer,
         ],
         permission_classes=[AllowAny],
@@ -1240,10 +1223,6 @@ class RoundViewSet(viewsets.ModelViewSet):
                 )
             )
         )
-        # return Response(
-        #     pdf,
-        #     template_name='round/old_oss.html',
-        # )
         return PDFResponse(
             pdf,
             file_name=file_name,
@@ -1255,7 +1234,6 @@ class RoundViewSet(viewsets.ModelViewSet):
         methods=['get'],
         detail=True,
         renderer_classes=[
-            # TemplateHTMLRenderer,
             PDFRenderer,
         ],
         permission_classes=[AllowAny],
@@ -1274,10 +1252,6 @@ class RoundViewSet(viewsets.ModelViewSet):
                 )
             )
         )
-        # return Response(
-        #     pdf,
-        #     template_name='oss.html',
-        # )
         return PDFResponse(
             pdf,
             file_name=file_name,
@@ -1285,7 +1259,12 @@ class RoundViewSet(viewsets.ModelViewSet):
         )
 
 
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[PDFRenderer],
+        permission_classes=[AllowAny],
+    )
     def sadraft(self, request, pk=None):
         round = Round.objects.select_related(
             'session',
@@ -1509,66 +1488,6 @@ class SessionViewSet(viewsets.ModelViewSet):
         )
         return XLSXResponse(
             xlsx,
-            file_name=file_name,
-            status=status.HTTP_200_OK
-        )
-
-
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
-    def sadraft(self, request, pk=None):
-        session = Session.objects.get(pk=pk)
-        panelists = Panelist.objects.filter(
-            kind__in=[
-                Panelist.KIND.official,
-                Panelist.KIND.practice,
-            ],
-            scores__song__appearance__round__session=session,
-        ).select_related(
-            'person',
-        ).distinct(
-        ).order_by(
-            'category',
-            'person__last_name',
-        )
-        competitors = session.competitors.filter(
-            status=Competitor.STATUS.finished,
-        ).select_related(
-            'group',
-        ).prefetch_related(
-            'appearances',
-            'appearances__songs',
-            'appearances__songs__scores',
-            'appearances__songs__scores__panelist',
-            'appearances__songs__scores__panelist__person',
-        ).order_by(
-            '-tot_points',
-            '-sng_points',
-            '-per_points',
-            'group__name',
-        )
-        context = {
-            'session': session,
-            'panelists': panelists,
-            'competitors': competitors,
-        }
-        rendered = render_to_string('sa.html', context)
-        file = pydf.generate_pdf(
-            rendered,
-            page_size='Letter',
-            orientation='Landscape',
-        )
-        content = ContentFile(file)
-        pdf = content
-        file_name = '{0}-sa'.format(
-            slugify(
-                "{0} {1} Session".format(
-                    session.convention.name,
-                    session.get_kind_display(),
-                )
-            )
-        )
-        return PDFResponse(
-            pdf,
             file_name=file_name,
             status=status.HTTP_200_OK
         )
