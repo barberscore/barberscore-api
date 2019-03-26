@@ -1050,7 +1050,7 @@ class Round(TimeStampedModel):
             sungs = []
             for song in songs:
                 try:
-                    title = song.chart.nomen
+                    title = song.chart.title
                 except AttributeError:
                     title = "Unknown (Not in Repertory)"
                 row = "{0} Song {1}: {2}".format(
