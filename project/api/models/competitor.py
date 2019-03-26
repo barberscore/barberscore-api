@@ -201,48 +201,8 @@ class Competitor(TimeStampedModel):
             ]),
         ])
 
-    # Competitor Methods
-    def calculate(self):
-        Score = apps.get_model('api.score')
-        Panelist = apps.get_model('api.panelist')
-        tot = Sum('points')
-        mus = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.music))
-        per = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.performance))
-        sng = Sum('points', filter=Q(panelist__category=Panelist.CATEGORY.singing))
-        officials = Score.objects.filter(
-            song__appearance__round__session__competitors__in=self,
-            song__appearance__num__gt=0,
-            panelist__kind=Panelist.KIND.official,
-        ).distinct(
-        ).annotate(
-            tot=tot,
-            mus=mus,
-            per=per,
-            sng=sng,
-        )
-        tot = officials.aggregate(
-            sum=Sum('points'),
-            avg=Avg('points'),
-        )
-        mus = officials.filter(
-            panelist__category=Panelist.CATEGORY.music,
-        ).aggregate(
-            sum=Sum('points'),
-            avg=Avg('points'),
-        )
-        per = officials.filter(
-            panelist__category=Panelist.CATEGORY.performance,
-        ).aggregate(
-            sum=Sum('points'),
-            avg=Avg('points'),
-        )
-        sng = officials.filter(
-            panelist__category=Panelist.CATEGORY.singing,
-        ).aggregate(
-            sum=Sum('points'),
-            avg=Avg('points'),
-        )
 
+    # Competitor Methods
     def get_csa(self):
         Panelist = apps.get_model('api.panelist')
         Song = apps.get_model('api.song')
