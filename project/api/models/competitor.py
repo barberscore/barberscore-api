@@ -245,92 +245,76 @@ class Competitor(TimeStampedModel):
 
     def get_csa(self):
         Panelist = apps.get_model('api.panelist')
-        Member = apps.get_model('api.member')
         Song = apps.get_model('api.song')
-        Group = apps.get_model('api.group')
+        Score = apps.get_model('api.score')
 
         # Appearancers Block
-        group = self.group
-        group_aggregates = group.appearances.filter(
-            round__session=self.session,
+        scores = Score.objects.filter(
+            song__appearance__competitor=self,
         ).aggregate(
+            tot_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__kind=Panelist.KIND.official,
+                )
+            ),
+            mus_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__kind=Panelist.KIND.official,
+                    panelist__category=Panelist.CATEGORY.music,
+                )
+            ),
+            per_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__kind=Panelist.KIND.official,
+                    panelist__category=Panelist.CATEGORY.performance,
+                )
+            ),
+            sng_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__kind=Panelist.KIND.official,
+                    panelist__category=Panelist.CATEGORY.singing,
+                )
+            ),
+            tot_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__kind=Panelist.KIND.official,
+                )
+            ),
+            mus_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__kind=Panelist.KIND.official,
+                    panelist__category=Panelist.CATEGORY.music,
+                )
+            ),
+            per_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__kind=Panelist.KIND.official,
+                    panelist__category=Panelist.CATEGORY.performance,
+                )
+            ),
+            sng_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__kind=Panelist.KIND.official,
+                    panelist__category=Panelist.CATEGORY.singing,
+                )
+            ),
+        )
+        appearances = self.appearances.filter(
+        ).annotate(
             max=Max(
                 'round__num',
                 filter=Q(
-                    round__session=self.session,
+                    num__gt=0,
                 ),
             ),
-            tot_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    round__session=self.session,
-                ),
-            ),
-            mus_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.music,
-                    round__session=self.session,
-                ),
-            ),
-            per_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    round__session=self.session,
-                ),
-            ),
-            sng_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    round__session=self.session,
-                ),
-            ),
-            tot_score=Avg(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    round__session=self.session,
-                ),
-            ),
-            mus_score=Avg(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.music,
-                    round__session=self.session,
-                ),
-            ),
-            per_score=Avg(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    round__session=self.session,
-                ),
-            ),
-            sng_score=Avg(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    round__session=self.session,
-                ),
-            ),
-        )
-        appearances = group.appearances.filter(
-            round__session=self.session,
-        ).prefetch_related(
-            'songs__scores',
-            'songs__scores__panelist',
-        ).order_by(
-            'round__kind',
-        ).annotate(
             tot_points=Sum(
                 'songs__scores__points',
                 filter=Q(
@@ -386,8 +370,7 @@ class Competitor(TimeStampedModel):
                 ),
             ),
         )
-        for key, value in group_aggregates.items():
-            setattr(group, key, value)
+
         for appearance in appearances:
             songs = appearance.songs.prefetch_related(
                 'scores',
@@ -460,7 +443,8 @@ class Competitor(TimeStampedModel):
                 items = " ".join([penalties_map[x] for x in song.penalties])
                 song.penalties_patched = items
             appearance.songs_patched = songs
-        group.appearances_patched = appearances
+        self.scores_patched = scores
+        self.appearances_patched = appearances
 
         # Panelists
         panelists = Panelist.objects.filter(
@@ -520,7 +504,6 @@ class Competitor(TimeStampedModel):
 
         context = {
             'competitor': self,
-            'group': group,
             'initials': initials,
             'songs': songs,
             'categories': categories,

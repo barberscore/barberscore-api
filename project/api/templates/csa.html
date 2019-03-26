@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:100,200,300,400,500,600,700,800,900" rel="stylesheet">
     <style type="text/css">
       body {
@@ -16,9 +16,6 @@
       .picture_logo {
           weight: 200px;
       }
-      .well {
-        width: 500px;
-      }
       .group_image {
           height: 200px;
           padding-top: 10px;
@@ -28,16 +25,19 @@
         font-weight: 500;
       }
       section {
-          padding-top: 10px;
-          padding-bottom: 10px;
+          padding-top: 20px;
+          padding-bottom: 20px;
+      }
+      .right-out {
+          margin-right: 100px;
       }
     </style>
   </head>
   <body>
-    <div class='container-fluid'>
+    <div class='container'>
       <section>
-        <img class='pull-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
-          {% if competitor.session.convention.image %}<img class='pull-right small_logo' src="{{competitor.session.convention.image.url}}">{% endif %}
+        <img class='float-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
+          {% if competitor.session.convention.image %}<img class='float-right small_logo' src="{{competitor.session.convention.image.url}}">{% endif %}
         <h3>
           Competitor Scoring Analysis
         </h3>
@@ -50,31 +50,29 @@
         </h5>
       </section>
       <section>
-        <div class='row'>
-          <div class='pull-right'>
-          {%if competitor.group.image %}
-            <img class='group_image img-thumbnail' src="{{competitor.group.image.url}}">
-          {% else %}
-            <img class='group_image img-thumbnail' src="https://barberscore-api.herokuapp.com/static/api/no_image_available.jpg">
+        <div class='float-right'>
+        {%if competitor.group.image %}
+          <img class='group_image img-thumbnail' src="{{competitor.group.image.url}}">
+        {% else %}
+          <img class='group_image img-thumbnail' src="https://barberscore-api.herokuapp.com/static/api/no_image_available.jpg">
+        {% endif %}
+        </div>
+        <div>
+          <h3>
+            <strong>{{competitor.group.name}}</strong>
+          </h3>
+          {% if competitor.group.get_kind_display != 'Quartet' %}
+            <h4>
+              {{competitor.group.parent.name}}
+            </h4>
           {% endif %}
-          </div>
-          <div class='well'>
-            <h3>
-              <strong>{{group.name}}</strong>
-            </h3>
-            {% if group.get_kind_display != 'Quartet' %}
-              <h4>
-                {{group.parent.name}}
-              </h4>
-            {% endif %}
-            <strong>Points:  {{group.tot_points}} ({{group.tot_score|floatformat:1}})</strong><br><br>
-            {% if group.get_kind_display != 'Quartet' %}
-              Director(s): {{ competitor.participants|default:"(Unknown)" }}<br>
-            {% else %}
-              Members: {{ competitor.participants|default:"(Unknown)"  }}<br>
-            {% endif %}
-            Representing: {{competitor.representing}}
-          </div>
+          <strong>Points:  {{competitor.scores_patched.tot_points}} ({{competitor.scores_patched.tot_score|floatformat:1}})</strong><br><br>
+          {% if competitor.group.get_kind_display != 'Quartet' %}
+            Director(s): {{ competitor.participants|default:"(Unknown)" }}<br>
+          {% else %}
+            Members: {{ competitor.participants|default:"(Unknown)"  }}<br>
+          {% endif %}
+          Representing: {{competitor.representing}}
         </div>
       </section>
       <section>
@@ -95,44 +93,44 @@
               <tr class='pbi_avoid'>
                 <td>
                   <strong>Total</strong><br>
-                  {% for appearance in group.appearances_patched %}
-                      {% if group.max > 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}</span><br>{% endif %}
+                  {% for appearance in competitor.appearances_patched %}
+                      {% if competitor.max > 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
                       &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.title|safe|default:"(Song not included in contestant repertory)"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{group.mus_points}}&nbsp;({{group.mus_score|floatformat:1}})</strong><br>
-                  {% for appearance in group.appearances_patched %}
-                    {% if group.max > 1 %}<span class='bolder'>{{appearance.mus_points}}&nbsp;({{appearance.mus_score|floatformat:1}})</span><br>{% endif %}
+                  <strong>{{competitor.scores_patched.mus_points}}&nbsp;({{competitor.scores_patched.mus_score|floatformat:1}})</strong><br>
+                  {% for appearance in competitor.appearances_patched %}
+                    {% if competitor.max > 1 %}<span class='bolder'>{{appearance.mus_points}}&nbsp;({{appearance.mus_score|floatformat:1}})</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
                       {{song.mus_points}}&nbsp;({{song.mus_score|floatformat:1}})<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{group.per_points}}&nbsp;({{group.per_score|floatformat:1}})</strong><br>
-                  {% for appearance in group.appearances_patched %}
-                    {% if group.max > 1 %}<span class='bolder'>{{appearance.per_points}}&nbsp;({{appearance.per_score|floatformat:1}})</span><br>{% endif %}
+                  <strong>{{competitor.scores_patched.per_points}}&nbsp;({{competitor.scores_patched.per_score|floatformat:1}})</strong><br>
+                  {% for appearance in competitor.appearances_patched %}
+                    {% if competitor.max > 1 %}<span class='bolder'>{{appearance.per_points}}&nbsp;({{appearance.per_score|floatformat:1}})</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
                       {{song.per_points}}&nbsp;({{song.per_score|floatformat:1}})<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{group.sng_points}}&nbsp;({{group.sng_score|floatformat:1}})</strong><br>
-                  {% for appearance in group.appearances_patched %}
-                    {% if group.max > 1 %}<span class='bolder'>{{appearance.sng_points}}&nbsp;({{appearance.sng_score|floatformat:1}})</span><br>{% endif %}
+                  <strong>{{competitor.scores_patched.sng_points}}&nbsp;({{competitor.scores_patched.sng_score|floatformat:1}})</strong><br>
+                  {% for appearance in competitor.appearances_patched %}
+                    {% if competitor.max > 1 %}<span class='bolder'>{{appearance.sng_points}}&nbsp;({{appearance.sng_score|floatformat:1}})</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
                       {{song.sng_points}}&nbsp;({{song.sng_score|floatformat:1}})<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{group.tot_points}}&nbsp;({{group.tot_score|floatformat:1}})</strong><br>
-                  {% for appearance in group.appearances_patched %}
-                    {% if group.max > 1 %}<span class='bolder'>{{appearance.tot_points}}&nbsp;({{appearance.tot_score|floatformat:1}})</span><br>{% endif %}
+                  <strong>{{competitor.scores_patched.tot_points}}&nbsp;({{competitor.scores_patched.tot_score|floatformat:1}})</strong><br>
+                  {% for appearance in competitor.appearances_patched %}
+                    {% if competitor.max > 1 %}<span class='bolder'>{{appearance.tot_points}}&nbsp;({{appearance.tot_score|floatformat:1}})</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
                       {{song.tot_points}}&nbsp;({{song.tot_score|floatformat:1}})<br>
                     {% endfor %}
@@ -175,18 +173,16 @@
         <h3>
           Panel
         </h3>
-        <div class='row'>
-          {% for category, persons in categories.items %}
-            <div class='col-xs-4'>
-              <strong>{{category}}</strong>
-              <ul class='list-unstyled'>
-              {% for person in persons %}
-                <li>{{person}}</li>
-              {% endfor %}
-              </ul>
-            </div>
-          {% endfor %}
-        </div>
+        {% for category, persons in categories.items %}
+          <div class='float-left right-out'>
+            <strong>{{category}}</strong>
+            <ul class='list-unstyled'>
+            {% for person in persons %}
+              <li>{{person}}</li>
+            {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
       </section>
       <section>
         {% if penalties %}
@@ -201,7 +197,6 @@
         {% endif %}
       </section>
     </div>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </body>
 </html>
 
