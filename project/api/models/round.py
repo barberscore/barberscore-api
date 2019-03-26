@@ -1076,6 +1076,75 @@ class Round(TimeStampedModel):
         content = ContentFile(file)
         return content
 
+    def get_announcements(self):
+        Panelist = apps.get_model('api.panelist')
+        Competitor = apps.get_model('api.competitor')
+        appearances = self.appearances.filter(
+            draw__gt=0,
+        ).select_related(
+            'competitor',
+        ).order_by(
+            'draw',
+        )
+        mt = self.appearances.filter(
+            draw=0,
+        ).select_related(
+            'competitor',
+        ).order_by(
+            'competitor__group__name',
+        ).first()
+        outcomes = self.outcomes.order_by(
+            '-num',
+        )
+        if self.kind == self.KIND.finals:
+            competitors = self.session.competitors.filter(
+                status__in=[
+                    Competitor.STATUS.finished,
+                    Competitor.STATUS.started,
+                ],
+            ).select_related(
+                'group',
+            ).annotate(
+                tot_points=Sum(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                tot_score=Avg(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+            ).order_by(
+                '-tot_points',
+            )[:5]
+        else:
+            competitors = None
+        if competitors:
+            competitors = reversed(competitors)
+        pos = self.appearances.aggregate(sum=Sum('pos'))['sum']
+        context = {
+            'round': self,
+            'appearances': appearances,
+            'mt': mt,
+            'outcomes': outcomes,
+            'competitors': competitors,
+            'pos': pos,
+        }
+        rendered = render_to_string('announcements.html', context)
+        file = pydf.generate_pdf(
+            rendered,
+            page_size='Letter',
+            orientation='Portrait',
+            margin_top='5mm',
+            margin_bottom='5mm',
+        )
+        content = ContentFile(file)
+        return content
+
+
     def queue_sa(self):
         panelists = self.panelists.filter(
             person__email__isnull=False,

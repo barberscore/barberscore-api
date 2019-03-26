@@ -1125,82 +1125,6 @@ class RoundViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-    @action(methods=['get'], detail=True, renderer_classes=[PDFRenderer], permission_classes=[AllowAny])
-    def announcements(self, request, pk=None):
-        round = Round.objects.get(pk=pk)
-        appearances = round.appearances.filter(
-            draw__gt=0,
-        ).select_related(
-            'competitor',
-        ).order_by(
-            'draw',
-        )
-        mt = round.appearances.filter(
-            draw=0,
-        ).select_related(
-            'competitor',
-        ).order_by(
-            'competitor__group__name',
-        ).first()
-        outcomes = round.outcomes.order_by(
-            '-num',
-        )
-        if round.kind == round.KIND.finals:
-            competitors = round.session.competitors.filter(
-                status__in=[
-                    Competitor.STATUS.finished,
-                    Competitor.STATUS.started,
-                ],
-            ).select_related(
-                'group',
-            ).annotate(
-                tot_points=Sum(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    ),
-                ),
-                tot_score=Avg(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    ),
-                ),
-            ).order_by(
-                '-tot_points',
-            )[:5]
-        else:
-            competitors = None
-        if competitors:
-            competitors = reversed(competitors)
-        pos = round.appearances.aggregate(sum=Sum('pos'))['sum']
-        context = {
-            'round': round,
-            'appearances': appearances,
-            'mt': mt,
-            'outcomes': outcomes,
-            'competitors': competitors,
-            'pos': pos,
-        }
-        rendered = render_to_string('announcements.html', context)
-        file = pydf.generate_pdf(rendered)
-        content = ContentFile(file)
-        pdf = content
-        file_name = '{0}-announcements'.format(
-            slugify(
-                "{0} {1} {2} Announcements".format(
-                    round.session.convention.name,
-                    round.session.get_kind_display(),
-                    round.get_kind_display(),
-                )
-            )
-        )
-        return PDFResponse(
-            pdf,
-            file_name=file_name,
-            status=status.HTTP_200_OK
-        )
-
     @action(
         methods=['get'],
         detail=True,
@@ -1351,6 +1275,34 @@ class RoundViewSet(viewsets.ModelViewSet):
         file_name = '{0}-sa'.format(
             slugify(
                 "{0} {1} {2} Round".format(
+                    round.session.convention.name,
+                    round.session.get_kind_display(),
+                    round.get_kind_display(),
+                )
+            )
+        )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            PDFRenderer,
+        ],
+        permission_classes=[AllowAny],
+    )
+    def announcementsdraft(self, request, pk=None):
+        round = Round.objects.select_related(
+        ).get(pk=pk)
+        pdf = round.get_announcements()
+        file_name = '{0}-announcements'.format(
+            slugify(
+                "{0} {1} {2} Round Announcements".format(
                     round.session.convention.name,
                     round.session.get_kind_display(),
                     round.get_kind_display(),
