@@ -524,8 +524,7 @@ class Competitor(TimeStampedModel):
             content,
         )
 
-
-    def queue_csa(self):
+    def queue_notification(self, template, context=None):
         officers = self.group.officers.filter(
             status__gt=0,
             person__email__isnull=False,
@@ -548,9 +547,8 @@ class Competitor(TimeStampedModel):
         # Ensure uniqueness
         to = list(set(to))
         cc = list(set(cc))
-        context = {'competitor': self}
-        body = render_to_string('emails/competitor_csa.txt', context)
-        subject = "[Barberscore] {0} {1} {2} Session CSA".format(
+        body = render_to_string(template, context)
+        subject = "[Barberscore] {0} {1} {2} Session Notification".format(
             self.group.name,
             self.session.convention.name,
             self.session.get_kind_display(),
@@ -586,7 +584,8 @@ class Competitor(TimeStampedModel):
         target=STATUS.finished,
     )
     def finish(self, *args, **kwargs):
-        # self.queue_csa()
+        context = {'competitor': self}
+        # self.queue_notification('emails/competitor_csa.txt', context)
         return
 
     @fsm_log_by

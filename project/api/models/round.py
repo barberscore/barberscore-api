@@ -1145,15 +1145,14 @@ class Round(TimeStampedModel):
         return content
 
 
-    def queue_sa(self):
+    def queue_notification(self, template, context=None):
         panelists = self.panelists.filter(
             person__email__isnull=False,
         )
         if not panelists:
             raise RuntimeError("No panelists for {0}".format(self))
         to = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email) for panelist in panelists]
-        context = {'round': self}
-        body = render_to_string('reports/round_sa.txt', context)
+        body = render_to_string(template, context)
         subject = "[Barberscore] {0} {1} {2} SA".format(
             self.session.convention.name,
             self.session.get_kind_display(),
@@ -1525,8 +1524,6 @@ class Round(TimeStampedModel):
         for competitor in competitors:
             competitor.finish()
             competitor.save()
-        # panelists = self.panelists.all()
-        # for panelist in panelists:
-        #     panelist.queue_sa()
-        # self.queue_sa()
+        # context = {'round': self}
+        # self.queue_notification('emails/competitor_csa.txt', context)
         return
