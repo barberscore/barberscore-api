@@ -95,6 +95,21 @@ from .serializers import VenueSerializer
 log = logging.getLogger(__name__)
 
 
+from rest_framework.negotiation import BaseContentNegotiation
+
+class IgnoreClientContentNegotiation(BaseContentNegotiation):
+    def select_parser(self, request, parsers):
+        """
+        Select the first parser in the `.parser_classes` list.
+        """
+        return parsers[0]
+
+    def select_renderer(self, request, renderers, format_suffix):
+        """
+        Select the first renderer in the `.renderer_classes` list.
+        """
+        return (renderers[0], renderers[0].media_type)
+
 class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
         'round',
@@ -172,7 +187,8 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         renderer_classes=[
             PDFRenderer,
         ],
-        permission_classes=[AllowAny],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
     )
     def variancedraft(self, request, pk=None):
         appearance = Appearance.objects.get(pk=pk)
@@ -323,7 +339,13 @@ class ChartViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=False, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
+    @action(
+        methods=['get'],
+        detail=False,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
     def report(self, request):
         xlsx = Chart.objects.get_report()
         file_name = 'chart-report'
@@ -556,7 +578,8 @@ class CompetitorViewSet(viewsets.ModelViewSet):
         renderer_classes=[
             PDFRenderer,
         ],
-        permission_classes=[AllowAny],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
     )
     def csadraft(self, request, pk=None):
         competitor = Competitor.objects.get(pk=pk)
@@ -739,7 +762,13 @@ class GroupViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
     def roster(self, request, pk=None):
         group = Group.objects.get(pk=pk)
         xlsx = group.get_roster()
@@ -760,7 +789,8 @@ class GroupViewSet(viewsets.ModelViewSet):
         methods=['get'],
         detail=False,
         renderer_classes=[XLSXRenderer],
-        permission_classes=[AllowAny],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
     )
     def quartets(self, request):
         xlsx = Group.objects.get_quartets()
@@ -921,7 +951,8 @@ class PanelistViewSet(viewsets.ModelViewSet):
         renderer_classes=[
             PDFRenderer,
         ],
-        permission_classes=[AllowAny],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
     )
     def jsadraft(self, request, pk=None):
         panelist = Panelist.objects.get(pk=pk)
@@ -1034,7 +1065,6 @@ class RepertoryViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
-
 class RoundViewSet(viewsets.ModelViewSet):
     queryset = Round.objects.select_related(
         'session',
@@ -1146,7 +1176,8 @@ class RoundViewSet(viewsets.ModelViewSet):
         renderer_classes=[
             PDFRenderer,
         ],
-        permission_classes=[AllowAny],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
     )
     def csadraft(self, request, pk=None):
         round = Round.objects.select_related(
@@ -1177,7 +1208,8 @@ class RoundViewSet(viewsets.ModelViewSet):
         renderer_classes=[
             PDFRenderer,
         ],
-        permission_classes=[AllowAny],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
     )
     def ossdraft(self, request, pk=None):
         round = Round.objects.select_related(
@@ -1208,7 +1240,8 @@ class RoundViewSet(viewsets.ModelViewSet):
         renderer_classes=[
             PDFRenderer,
         ],
-        permission_classes=[AllowAny],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
     )
     def ossold(self, request, pk=None):
         round = Round.objects.select_related(
@@ -1236,7 +1269,8 @@ class RoundViewSet(viewsets.ModelViewSet):
         renderer_classes=[
             PDFRenderer,
         ],
-        permission_classes=[AllowAny],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
     )
     def sung(self, request, pk=None):
         round = Round.objects.prefetch_related(
@@ -1263,7 +1297,8 @@ class RoundViewSet(viewsets.ModelViewSet):
         methods=['get'],
         detail=True,
         renderer_classes=[PDFRenderer],
-        permission_classes=[AllowAny],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
     )
     def sadraft(self, request, pk=None):
         round = Round.objects.select_related(
@@ -1294,7 +1329,8 @@ class RoundViewSet(viewsets.ModelViewSet):
         renderer_classes=[
             PDFRenderer,
         ],
-        permission_classes=[AllowAny],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
     )
     def announcementsdraft(self, request, pk=None):
         round = Round.objects.select_related(
@@ -1438,7 +1474,13 @@ class SessionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
     def legacy(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         xlsx = session.get_legacy()
@@ -1456,7 +1498,13 @@ class SessionViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
     def drcj(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         xlsx = session.get_drcj()
@@ -1474,7 +1522,13 @@ class SessionViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(methods=['get'], detail=True, renderer_classes=[XLSXRenderer], permission_classes=[AllowAny])
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
     def contact(self, request, pk=None):
         session = Session.objects.get(pk=pk)
         xlsx = session.get_contact()
