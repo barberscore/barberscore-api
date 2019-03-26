@@ -77,6 +77,12 @@ class Panelist(TimeStampedModel):
         blank=True,
     )
 
+    psa = models.FileField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
     legacy_num = models.IntegerField(
         null=True,
         blank=True,
@@ -188,7 +194,7 @@ class Panelist(TimeStampedModel):
             ]),
         ])
 
-    def get_jsa(self):
+    def get_psa(self):
 
         appearances = self.round.appearances.prefetch_related(
             'songs',
@@ -238,16 +244,16 @@ class Panelist(TimeStampedModel):
             'panelist': self,
             'appearances': appearances,
         }
-        rendered = render_to_string('reports/jsa.html', context)
+        rendered = render_to_string('reports/psa.html', context)
         file = pydf.generate_pdf(rendered)
         content = ContentFile(file)
         return content
 
-    def save_jsa(self):
-        content = self.get_jsa()
+    def save_psa(self):
+        content = self.get_psa()
         self.refresh_from_db()
-        self.jsa.save(
-            "{0}-jsa".format(
+        self.psa.save(
+            "{0}-psa".format(
                 slugify(self.person.name),
             ),
             content,

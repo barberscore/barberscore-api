@@ -1333,6 +1333,7 @@ class PanelistAdmin(admin.ModelAdmin):
         'round',
         'person',
         'category',
+        'psa',
         'complete',
     ]
 
