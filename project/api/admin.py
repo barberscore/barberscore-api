@@ -1560,7 +1560,8 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         '__str__',
         'status',
-        'show_old_oss',
+        # 'oss',
+        'sa',
         # 'oss',
         # 'legacy_oss',
         # 'legacy_sa',
@@ -1570,7 +1571,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     show_old_oss.short_description = "Legacy-Style OSS"
 
     list_filter = [
-        RoundLegacyOssListFilter,
+        # RoundLegacyOssListFilter,
         SessionConventionStatusListFilter,
         'status',
         'kind',
