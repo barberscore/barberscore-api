@@ -381,18 +381,21 @@ class Round(TimeStampedModel):
             advancers = self.appearances.filter(
                 draw__gt=0,
             ).select_related(
-                'group',
+                'competitor__group',
             ).order_by(
                 'draw',
             ).values_list(
                 'draw',
-                'group__name',
+                'competitor__group__name',
             )
             advancers = list(advancers)
-            mt = self.appearances.get(
-                draw=0,
-            ).group.name
-            advancers.append(('MT', mt))
+            try:
+                mt = self.appearances.get(
+                    draw=0,
+                ).competitor.group.name
+                advancers.append(('MT', mt))
+            except self.appearances.model.DoesNotExist:
+                pass
         else:
             advancers = None
 

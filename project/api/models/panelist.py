@@ -254,7 +254,7 @@ class Panelist(TimeStampedModel):
         self.refresh_from_db()
         self.psa.save(
             "{0}-psa".format(
-                slugify(self.person.name),
+                slugify(self),
             ),
             content,
         )
