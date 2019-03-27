@@ -648,28 +648,20 @@ class Round(TimeStampedModel):
     def get_sa(self):
 
         Panelist = apps.get_model('api.panelist')
-        Score = apps.get_model('api.score')
+        Song = apps.get_model('api.song')
         Competitor = apps.get_model('api.competitor')
         Person = apps.get_model('api.person')
 
         # Score Block
-        competitor_ids = self.appearances.filter(
-            competitor__is_private=False,
-        ).exclude(
+        competitor_ids = self.appearances.exclude(
             # Don't include advancers on OSS
             draw__gt=0,
-        ).exclude(
-            # Don't include mic testers on OSS
-            num__lte=0,
         ).values_list('competitor__id', flat=True)
         competitors = Competitor.objects.filter(
             id__in=competitor_ids,
         ).annotate(
             max_round=Max(
                 'appearances__round__num',
-                filter=Q(
-                    appearances__num__gt=0,
-                ),
             ),
             tot_points=Sum(
                 'appearances__songs__scores__points',
@@ -811,7 +803,6 @@ class Round(TimeStampedModel):
             # Populate the group block
             appearances = competitor.appearances.filter(
                 round__session=self.session,
-                num__gt=0,
             ).annotate(
                 tot_points=Sum(
                     'songs__scores__points',
@@ -861,9 +852,7 @@ class Round(TimeStampedModel):
                     ),
                 ),
             ).order_by(
-                '-tot_points',
-                '-sng_points',
-                '-per_points',
+                'round__kind',
             )
             for appearance in appearances:
                 songs = appearance.songs.prefetch_related(
@@ -927,12 +916,6 @@ class Round(TimeStampedModel):
                         ),
                     ),
                 )
-                stats = songs.aggregate(
-                    tot=Avg('tot_dev'),
-                    mus=Avg('mus_dev'),
-                    per=Avg('per_dev'),
-                    sng=Avg('sng_dev'),
-                )
                 for song in songs:
                     penalties_map = {
                         10: "†",
@@ -985,6 +968,43 @@ class Round(TimeStampedModel):
                 appearance.songs_patched = songs
             competitor.appearances_patched = appearances
 
+        # Build stats
+        stats = Song.objects.filter(
+            appearance__round=self,
+        ).annotate(
+            tot_dev=StdDev(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            mus_dev=StdDev(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                    scores__panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            per_dev=StdDev(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                    scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_dev=StdDev(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                    scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+        ).aggregate(
+            tot=Avg('tot_dev'),
+            mus=Avg('mus_dev'),
+            per=Avg('per_dev'),
+            sng=Avg('sng_dev'),
+        )
 
         context = {
             'round': self,
