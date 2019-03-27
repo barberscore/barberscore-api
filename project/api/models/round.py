@@ -1065,7 +1065,7 @@ class Round(TimeStampedModel):
             'appearances': appearances,
             'round': self,
         }
-        rendered = render_to_string('sung.html', context)
+        rendered = render_to_string('reports/sung.html', context)
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
