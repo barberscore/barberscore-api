@@ -212,6 +212,12 @@ class Competitor(TimeStampedModel):
         scores = Score.objects.filter(
             song__appearance__competitor=self,
         ).aggregate(
+            max=Max(
+                'song__appearance__round__num',
+                filter=Q(
+                    song__appearance__round__num__gt=0,
+                ),
+            ),
             tot_points=Sum(
                 'points',
                 filter=Q(
@@ -269,12 +275,6 @@ class Competitor(TimeStampedModel):
         )
         appearances = self.appearances.filter(
         ).annotate(
-            max=Max(
-                'round__num',
-                filter=Q(
-                    num__gt=0,
-                ),
-            ),
             tot_points=Sum(
                 'songs__scores__points',
                 filter=Q(
