@@ -1340,11 +1340,11 @@ class PanelistAdmin(admin.ModelAdmin):
 
     list_display = [
         'num',
-        'status',
         'kind',
         'category',
         'person',
         'round',
+        'psa',
     ]
 
     list_editable = [
