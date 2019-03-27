@@ -706,6 +706,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'group',
         'session',
+        'csa',
     )
 
     list_filter = [
