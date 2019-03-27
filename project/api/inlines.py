@@ -436,8 +436,8 @@ class OfficerInline(admin.TabularInline):
 class OutcomeInline(admin.TabularInline):
     model = Outcome
     fields = [
+        'num',
         'name',
-        'legacy_name',
         'round',
         'award',
     ]
