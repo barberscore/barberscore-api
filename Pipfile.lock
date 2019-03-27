@@ -278,11 +278,11 @@
         },
         "django-phonenumber-field": {
             "hashes": [
-                "sha256:495ab0ffa1fead08f917ad24e1c01bdf91d1b35efa29a888ae0157c7771f159e",
-                "sha256:ca572c54009e5162d1bdc97a3b0256d439d1a01d0689f50247a319e764690a40"
+                "sha256:1318c09f4e4c1caed8b9351d0e49b0d41a2e68ca323b8930fe1562b632629ab1",
+                "sha256:b2d1e9899809b92e07af5484e50c5c79364070fffbf13a1da117ecf0553e8157"
             ],
             "index": "pypi",
-            "version": "==2.3.0"
+            "version": "==2.3.1"
         },
         "django-redis": {
             "hashes": [
