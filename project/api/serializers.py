@@ -390,6 +390,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'phone',
             'image',
             'description',
+            'participants',
             'bhs_id',
             'international',
             'district',

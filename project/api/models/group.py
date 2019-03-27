@@ -695,7 +695,7 @@ class Group(TimeStampedModel):
                     status__gt=0,
                 ),
                 self.status > 0,
-                self.mc_pk == None,
+                # self.mc_pk == None,
             ])
         ])
 
