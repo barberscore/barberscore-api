@@ -590,12 +590,10 @@ class CompetitorViewSet(viewsets.ModelViewSet):
             pdf = competitor.csa.file
         else:
             pdf = competitor.get_csa()
-        file_name = '{0}-csa'.format(
-            slugify(
-                "{0} CSA".format(
-                    competitor,
-                )
-            )
+        file_name = '{0} {1} Session {2} CSA'.format(
+            competitor.session.convention.name,
+            competitor.session.get_kind_display(),
+            competitor.group.name,
         )
         return PDFResponse(
             pdf,
@@ -966,12 +964,11 @@ class PanelistViewSet(viewsets.ModelViewSet):
             pdf = panelist.psa.file
         else:
             pdf = panelist.get_psa()
-        file_name = '{0}-psa'.format(
-            slugify(
-                "{0}".format(
-                    panelist
-                )
-            )
+        file_name = '{0} {1} {2} {3} PSA'.format(
+            panelist.round.session.convention.name,
+            panelist.round.session.get_kind_display(),
+            panelist.round.get_kind_display(),
+            panelist.person.common_name,
         )
         return PDFResponse(
             pdf,
@@ -1198,14 +1195,10 @@ class RoundViewSet(viewsets.ModelViewSet):
             pdf = round.oss.file
         else:
             pdf = round.get_oss()
-        file_name = '{0}-oss'.format(
-            slugify(
-                "{0} {1} {2} Round".format(
-                    round.session.convention.name,
-                    round.session.get_kind_display(),
-                    round.get_kind_display(),
-                )
-            )
+        file_name = '{0} {1} {2} OSS'.format(
+            round.session.convention.name,
+            round.session.get_kind_display(),
+            round.get_kind_display(),
         )
         return PDFResponse(
             pdf,
@@ -1230,14 +1223,10 @@ class RoundViewSet(viewsets.ModelViewSet):
             pdf = round.legacy_oss.file
         else:
             pdf = round.get_legacy_oss()
-        file_name = '{0}-'.format(
-            slugify(
-                "{0} {1} {2} Round".format(
-                    round.session.convention.name,
-                    round.session.get_kind_display(),
-                    round.get_kind_display(),
-                )
-            )
+        file_name = '{0} {1} {2} Legacy OSS'.format(
+            round.session.convention.name,
+            round.session.get_kind_display(),
+            round.get_kind_display(),
         )
         return PDFResponse(
             pdf,
@@ -1260,14 +1249,10 @@ class RoundViewSet(viewsets.ModelViewSet):
             'appearances',
         ).get(pk=pk)
         pdf = round.get_titles()
-        file_name = '{0}-titles-report'.format(
-            slugify(
-                "{0} {1} {2} Round".format(
-                    round.session.convention.name,
-                    round.session.get_kind_display(),
-                    round.get_kind_display(),
-                )
-            )
+        file_name = '{0} {1} {2} Titles Report'.format(
+            round.session.convention.name,
+            round.session.get_kind_display(),
+            round.get_kind_display(),
         )
         return PDFResponse(
             pdf,
@@ -1293,14 +1278,10 @@ class RoundViewSet(viewsets.ModelViewSet):
             pdf = round.sa.file
         else:
             pdf = round.get_sa()
-        file_name = '{0}-sa'.format(
-            slugify(
-                "{0} {1} {2} Round".format(
-                    round.session.convention.name,
-                    round.session.get_kind_display(),
-                    round.get_kind_display(),
-                )
-            )
+        file_name = '{0} {1} {2} SA'.format(
+            round.session.convention.name,
+            round.session.get_kind_display(),
+            round.get_kind_display(),
         )
         return PDFResponse(
             pdf,
@@ -1322,14 +1303,10 @@ class RoundViewSet(viewsets.ModelViewSet):
         round = Round.objects.select_related(
         ).get(pk=pk)
         pdf = round.get_announcements()
-        file_name = '{0}-announcements'.format(
-            slugify(
-                "{0} {1} {2} Round Announcements".format(
-                    round.session.convention.name,
-                    round.session.get_kind_display(),
-                    round.get_kind_display(),
-                )
-            )
+        file_name = '{0} {1} {2} Announcements'.format(
+            round.session.convention.name,
+            round.session.get_kind_display(),
+            round.get_kind_display(),
         )
         return PDFResponse(
             pdf,
@@ -1473,13 +1450,9 @@ class SessionViewSet(viewsets.ModelViewSet):
             xlsx = session.legacy_report.file
         else:
             xlsx = session.get_legacy()
-        file_name = '{0}-legacy'.format(
-            slugify(
-                "{0} {1} Session".format(
-                    session.convention.name,
-                    session.get_kind_display(),
-                )
-            )
+        file_name = '{0} {1} Session Legacy Report'.format(
+            session.convention.name,
+            session.get_kind_display(),
         )
         return XLSXResponse(
             xlsx,
@@ -1500,13 +1473,9 @@ class SessionViewSet(viewsets.ModelViewSet):
             xlsx = session.drcj_report.file
         else:
             xlsx = session.get_drcj()
-        file_name = '{0}-drcj'.format(
-            slugify(
-                "{0} {1} Session".format(
-                    session.convention.name,
-                    session.get_kind_display(),
-                )
-            )
+        file_name = '{0} {1} Session DRCJ Report'.format(
+            session.convention.name,
+            session.get_kind_display(),
         )
         return XLSXResponse(
             xlsx,
@@ -1527,13 +1496,9 @@ class SessionViewSet(viewsets.ModelViewSet):
             xlsx = session.contact_report.file
         else:
             xlsx = session.get_contact()
-        file_name = '{0}-contact'.format(
-            slugify(
-                "{0} {1} Session".format(
-                    session.convention.name,
-                    session.get_kind_display(),
-                )
-            )
+        file_name = '{0} {1} Session Contact Report'.format(
+            session.convention.name,
+            session.get_kind_display()
         )
         return XLSXResponse(
             xlsx,
