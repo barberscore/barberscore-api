@@ -161,7 +161,6 @@ class ConventionFactory(DjangoModelFactory):
 
 class CompetitorFactory(DjangoModelFactory):
     status = Competitor.STATUS.new
-    image = ''
     session = SubFactory('api.factories.SessionFactory')
     group = SubFactory('api.factories.GroupFactory')
 
