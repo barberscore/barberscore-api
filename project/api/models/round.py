@@ -475,7 +475,6 @@ class Round(TimeStampedModel):
 
 
     def get_sa(self):
-
         Panelist = apps.get_model('api.panelist')
         Song = apps.get_model('api.song')
         Competitor = apps.get_model('api.competitor')
@@ -486,7 +485,11 @@ class Round(TimeStampedModel):
             # Don't include advancers on SA
             draw__gt=0,
         ).values_list('competitor__id', flat=True)
-        competitors = Competitor.objects.filter(
+        competitors = Competitor.objects.prefetch_related(
+            'appearances',
+            'appearances__songs__scores',
+            'appearances__songs__scores__panelist',
+        ).filter(
             id__in=competitor_ids,
         ).annotate(
             tot_points=Sum(
@@ -612,6 +615,9 @@ class Round(TimeStampedModel):
             # Populate the group block
             appearances = competitor.appearances.filter(
                 round__session=self.session,
+            ).prefetch_related(
+                'songs__scores',
+                'songs__scores__panelist',
             ).annotate(
                 tot_points=Sum(
                     'songs__scores__points',
@@ -778,7 +784,11 @@ class Round(TimeStampedModel):
             competitor.appearances_patched = appearances
 
         # Build stats
-        stats = Song.objects.filter(
+        stats = Song.objects.select_related(
+            'appearance__round',
+        ).prefetch_related(
+            'scores__panelist__kind',
+        ).filter(
             appearance__round=self,
         ).annotate(
             tot_dev=StdDev(

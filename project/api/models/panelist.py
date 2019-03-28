@@ -203,6 +203,9 @@ class Panelist(TimeStampedModel):
         ).values_list('competitor__id', flat=True)
         competitors = Competitor.objects.filter(
             id__in=competitor_ids,
+        ).prefetch_related(
+            'appearances__songs__scores',
+            'appearances__songs__scores__panelist',
         ).annotate(
             tot_points=Sum(
                 'appearances__songs__scores__points',
@@ -240,6 +243,9 @@ class Panelist(TimeStampedModel):
             for appearance in appearances:
                 songs = appearance.songs.order_by(
                     'num',
+                ).prefetch_related(
+                    'scores',
+                    'scores__panelist',
                 ).annotate(
                     avg=Avg(
                         'scores__points',
@@ -256,7 +262,9 @@ class Panelist(TimeStampedModel):
                 )
                 appearance.songs_patched = songs
                 for song in songs:
-                    scores = song.scores.filter(
+                    scores = song.scores.select_related(
+                        'panelist',
+                    ).filter(
                         panelist__kind=Panelist.KIND.official,
                     ).order_by('points')
                     out = []

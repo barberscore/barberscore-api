@@ -209,7 +209,11 @@ class Competitor(TimeStampedModel):
         Score = apps.get_model('api.score')
 
         # Appearancers Block
-        scores = Score.objects.filter(
+        scores = Score.objects.select_related(
+            'song__appearance__competitor',
+            'song__appearance__round',
+            'panelist',
+        ).filter(
             song__appearance__competitor=self,
         ).aggregate(
             max=Max(
@@ -273,7 +277,10 @@ class Competitor(TimeStampedModel):
                 )
             ),
         )
-        appearances = self.appearances.filter(
+        appearances = self.appearances.prefetch_related(
+            'songs__scores',
+            'songs__scores__panelist',
+        ).filter(
         ).annotate(
             tot_points=Sum(
                 'songs__scores__points',
