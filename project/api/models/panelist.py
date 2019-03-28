@@ -80,7 +80,6 @@ class Panelist(TimeStampedModel):
 
     psa = models.FileField(
         upload_to=FileUploadPath(),
-        null=True,
         blank=True,
     )
 

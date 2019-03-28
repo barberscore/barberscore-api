@@ -105,7 +105,6 @@ class Appearance(TimeStampedModel):
 
     variance_report = models.FileField(
         upload_to=FileUploadPath(),
-        null=True,
         blank=True,
     )
 

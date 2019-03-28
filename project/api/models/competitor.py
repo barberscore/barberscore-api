@@ -115,7 +115,6 @@ class Competitor(TimeStampedModel):
 
     csa = models.FileField(
         upload_to=FileUploadPath(),
-        null=True,
         blank=True,
     )
 

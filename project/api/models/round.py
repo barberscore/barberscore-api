@@ -89,28 +89,23 @@ class Round(TimeStampedModel):
 
     oss = models.FileField(
         upload_to=FileUploadPath(),
-        null=True,
         blank=True,
     )
     old_oss = models.FileField(
         upload_to=FileUploadPath(),
-        null=True,
         blank=True,
     )
     sa = models.FileField(
         upload_to=FileUploadPath(),
-        null=True,
         blank=True,
     )
     legacy_oss = models.FileField(
         upload_to=FileUploadPath(),
-        null=True,
         blank=True,
     )
 
     legacy_sa = models.FileField(
         upload_to=FileUploadPath(),
-        null=True,
         blank=True,
     )
 
