@@ -22,29 +22,6 @@ class AwardQualifierLevelFilter(admin.SimpleListFilter):
             )
 
 
-class RoundLegacyOssListFilter(admin.SimpleListFilter):
-    title = 'Legacy OSS'
-    parameter_name = 'is_legacy_oss'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('Yes', 'Yes'),
-            ('No', 'No'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'Yes':
-            return queryset.filter(
-                session__convention__status=Convention.STATUS.imported,
-                legacy_oss__isnull=False,
-            )
-        if self.value() == 'No':
-            return queryset.filter(
-                session__convention__status=Convention.STATUS.imported,
-                legacy_oss__isnull=True,
-            )
-
-
 class MCListFilter(admin.SimpleListFilter):
     title = 'Member Center'
     parameter_name = 'is_mc'

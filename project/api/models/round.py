@@ -99,15 +99,6 @@ class Round(TimeStampedModel):
         upload_to=FileUploadPath(),
         blank=True,
     )
-    legacy_oss = models.FileField(
-        upload_to=FileUploadPath(),
-        blank=True,
-    )
-
-    legacy_sa = models.FileField(
-        upload_to=FileUploadPath(),
-        blank=True,
-    )
 
     # FKs
     session = models.ForeignKey(

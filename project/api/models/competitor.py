@@ -28,7 +28,6 @@ from django.utils.text import slugify
 from django.db.models import Sum, Max, Avg
 
 # First-Party
-from api.fields import ImageUploadPath
 from api.fields import FileUploadPath
 from api.tasks import send_email
 
@@ -54,12 +53,6 @@ class Competitor(TimeStampedModel):
         help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
-    )
-
-    image = models.ImageField(
-        upload_to=ImageUploadPath(),
-        null=True,
-        blank=True,
     )
 
     is_private = models.BooleanField(

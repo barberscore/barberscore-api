@@ -20,7 +20,6 @@ from .filters import GroupListFilter
 from .filters import MCListFilter
 from .filters import MCUserListFilter
 from .filters import RoundGroupListFilter
-from .filters import RoundLegacyOssListFilter
 from .filters import SessionConventionStatusListFilter
 from .filters import SessionGroupListFilter
 from .forms import UserChangeForm
@@ -697,7 +696,6 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'participants',
         'contesting',
         # 'draw',
-        'image',
         'csa',
         ('is_private', 'is_single',),
         'stats',
@@ -1551,8 +1549,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        'legacy_oss',
-        'legacy_sa',
         'oss',
         'sa',
         ('session', 'kind', 'num', 'spots',),
@@ -1564,17 +1560,11 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         '__str__',
         'status',
         'oss',
-        # 'sa',
-        # 'oss',
-        # 'legacy_oss',
-        # 'legacy_sa',
+        'sa',
     ]
-    def show_old_oss(self, obj):
-        return format_html("<a href='{base}/api/round/{id}/ossold' target='_blank'>link</a>", base=settings.HOST_NAME, id=obj.id)
-    show_old_oss.short_description = "Legacy-Style OSS"
+
 
     list_filter = [
-        # RoundLegacyOssListFilter,
         SessionConventionStatusListFilter,
         'status',
         'kind',
@@ -1599,8 +1589,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
-        'legacy_oss',
-        'legacy_sa',
         'oss',
         'sa',
     ]
