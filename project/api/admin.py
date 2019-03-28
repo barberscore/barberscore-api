@@ -1683,7 +1683,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'convention',
         'kind',
-        'oss',
         'legacy_report',
         'drcj_report',
         'contact_report',
@@ -1719,8 +1718,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
-        'oss',
-        'sa',
         'legacy_report',
         'drcj_report',
         'contact_report',

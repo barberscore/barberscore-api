@@ -180,6 +180,10 @@ class Round(TimeStampedModel):
         ).values_list('competitor__id', flat=True)
         competitors = Competitor.objects.filter(
             id__in=competitor_ids,
+        ).prefetch_related(
+            'appearances',
+            'appearances__songs__scores',
+            'appearances__songs__scores__panelist',
         ).annotate(
             max_round=Max(
                 'appearances__round__num',
@@ -339,7 +343,10 @@ class Round(TimeStampedModel):
 
 
         # Penalties Block
-        array = Song.objects.filter(
+        array = Song.objects.select_related(
+            'appearance__round',
+            'appearance__competitor',
+        ).filter(
             appearance__round=self,
             penalties__len__gt=0,
             appearance__competitor__is_private=False,
@@ -353,7 +360,9 @@ class Round(TimeStampedModel):
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
         # Eval Only Block
-        privates = self.appearances.filter(
+        privates = self.appearances.prefetch_related(
+            'competitor',
+        ).filter(
             competitor__is_private=True,
         ).exclude(
             num=0,
@@ -416,7 +425,9 @@ class Round(TimeStampedModel):
 
 
         # Outcome Block
-        items = self.outcomes.order_by(
+        items = self.outcomes.select_related(
+            'award',
+        ).order_by(
             'num',
         ).values_list(
             'num',
@@ -461,165 +472,6 @@ class Round(TimeStampedModel):
     def save_oss(self):
         content = self.get_oss()
         self.oss.save("oss", content)
-
-
-    def get_old_oss(self):
-        # Competitor = apps.get_model('api.competitor')
-        # Contest = apps.get_model('api.contest')
-        Panelist = apps.get_model('api.panelist')
-        # Contestant = apps.get_model('api.contestant')
-        appearances = self.appearances.filter(
-            Q(draw=0) | Q(draw__isnull=True),
-            competitor__is_private=False,
-        ).exclude(
-            num=0,
-        ).select_related(
-            'competitor__group',
-        ).prefetch_related(
-            'round',
-            'songs',
-            'songs__chart',
-            'songs__scores',
-            'songs__scores__panelist',
-            'songs__scores__panelist__person',
-        ).order_by(
-            '-competitor__tot_points',
-            '-competitor__sng_points',
-            '-competitor__per_points',
-            'competitor__group__name',
-        )
-        comps = appearances.values_list('competitor__id', flat=True)
-        # MonkeyPatch running total
-        for appearance in appearances:
-            if not appearance.run_points:
-                appearance.calc_total = appearance.tot_points
-            else:
-                try:
-                    appearance.calc_total = appearance.run_points + appearance.tot_points
-                except TypeError:
-                    appearance.calc_total = None
-        rounds = self.session.rounds.filter(kind__gt=self.kind)
-        for rnd in rounds:
-            aps = rnd.appearances.filter(
-                competitor__id__in=comps,
-            ).exclude(
-                num=0,
-            ).select_related(
-                'competitor__group',
-            ).prefetch_related(
-                'round',
-                'songs',
-                'songs__chart',
-                'songs__scores',
-                'songs__scores__panelist',
-                'songs__scores__panelist__person',
-            ).order_by(
-                '-tot_points',
-                '-sng_points',
-                '-per_points',
-                'competitor__group__name',
-            )
-            for appearance in aps:
-                if not appearance.run_points:
-                    appearance.calc_total = appearance.tot_points
-                else:
-                    try:
-                        appearance.calc_total = appearance.run_points + appearance.tot_points
-                    except TypeError:
-                        appearance.calc_total = None
-            rnd.aps = aps
-        # Eval Only
-        privates = self.appearances.filter(
-            competitor__is_private=True,
-        ).select_related(
-            'competitor__group',
-        ).order_by(
-            'competitor__group__name',
-        ).values_list('competitor__group__name', flat=True)
-        privates = list(privates)
-        contests = self.session.contests.filter(
-            num__isnull=False,
-        ).select_related(
-            'award',
-            'group',
-        ).distinct(
-        ).order_by(
-            'num',
-        )
-        # # MonkeyPatch qualifiers
-        for contest in contests:
-            if contest.award.level != contest.award.LEVEL.deferred:
-                if contest.award.level == contest.award.LEVEL.qualifier:
-                    threshold = contest.award.threshold
-                    if threshold:
-                        qualifiers = contest.contestants.filter(
-                            status__gt=0,
-                            entry__competitor__tot_score__gte=threshold,
-                            entry__is_private=False,
-                        ).distinct(
-                        ).order_by(
-                            'entry__group__name',
-                        ).values_list(
-                            'entry__group__name',
-                            flat=True,
-                        )
-                        if qualifiers:
-                            contest.detail = ", ".join(
-                                qualifiers.values_list('entry__group__name', flat=True)
-                            )
-                        else:
-                            contest.detail = "(No qualifiers)"
-                else:
-                    if contest.group:
-                        contest.detail = str(contest.group.name)
-                    else:
-                        contest.detail = "(No recipient)"
-            else:
-                contest.detail = "(Result determined post-contest)"
-        panelists = self.panelists.filter(
-            kind=Panelist.KIND.official,
-            category__gte=Panelist.CATEGORY.ca,
-        ).distinct(
-            'category',
-            'person__last_name',
-            'person__first_name',
-        ).order_by(
-            'category',
-            'person__last_name',
-            'person__first_name',
-        )
-        outcomes = self.outcomes.order_by('num')
-        advancers = self.appearances.filter(
-            draw__gt=0,
-        ).order_by('draw')
-        mt = self.appearances.filter(draw=0).first()
-        adds_add = len(advancers)
-        context = {
-            'round': self,
-            'appearances': appearances,
-            'rounds': rounds,
-            'privates': privates,
-            'panelists': panelists,
-            'contests': contests,
-            'outcomes': outcomes,
-            'advancers': advancers,
-            'adds_add': adds_add,
-            'mt': mt,
-        }
-        rendered = render_to_string('reports/old_oss.html', context)
-        file = pydf.generate_pdf(
-            rendered,
-            page_size='Letter',
-            orientation='Portrait',
-            margin_top='5mm',
-            margin_bottom='5mm',
-        )
-        content = ContentFile(file)
-        return content
-
-    def save_old_oss(self):
-        content = self.get_old_oss()
-        self.old_oss.save('old_oss', content)
 
 
     def get_sa(self):
@@ -986,6 +838,165 @@ class Round(TimeStampedModel):
     def save_sa(self):
         content = self.get_sa()
         self.sa.save('sa', content)
+
+
+    def get_old_oss(self):
+        # Competitor = apps.get_model('api.competitor')
+        # Contest = apps.get_model('api.contest')
+        Panelist = apps.get_model('api.panelist')
+        # Contestant = apps.get_model('api.contestant')
+        appearances = self.appearances.filter(
+            Q(draw=0) | Q(draw__isnull=True),
+            competitor__is_private=False,
+        ).exclude(
+            num=0,
+        ).select_related(
+            'competitor__group',
+        ).prefetch_related(
+            'round',
+            'songs',
+            'songs__chart',
+            'songs__scores',
+            'songs__scores__panelist',
+            'songs__scores__panelist__person',
+        ).order_by(
+            '-competitor__tot_points',
+            '-competitor__sng_points',
+            '-competitor__per_points',
+            'competitor__group__name',
+        )
+        comps = appearances.values_list('competitor__id', flat=True)
+        # MonkeyPatch running total
+        for appearance in appearances:
+            if not appearance.run_points:
+                appearance.calc_total = appearance.tot_points
+            else:
+                try:
+                    appearance.calc_total = appearance.run_points + appearance.tot_points
+                except TypeError:
+                    appearance.calc_total = None
+        rounds = self.session.rounds.filter(kind__gt=self.kind)
+        for rnd in rounds:
+            aps = rnd.appearances.filter(
+                competitor__id__in=comps,
+            ).exclude(
+                num=0,
+            ).select_related(
+                'competitor__group',
+            ).prefetch_related(
+                'round',
+                'songs',
+                'songs__chart',
+                'songs__scores',
+                'songs__scores__panelist',
+                'songs__scores__panelist__person',
+            ).order_by(
+                '-tot_points',
+                '-sng_points',
+                '-per_points',
+                'competitor__group__name',
+            )
+            for appearance in aps:
+                if not appearance.run_points:
+                    appearance.calc_total = appearance.tot_points
+                else:
+                    try:
+                        appearance.calc_total = appearance.run_points + appearance.tot_points
+                    except TypeError:
+                        appearance.calc_total = None
+            rnd.aps = aps
+        # Eval Only
+        privates = self.appearances.filter(
+            competitor__is_private=True,
+        ).select_related(
+            'competitor__group',
+        ).order_by(
+            'competitor__group__name',
+        ).values_list('competitor__group__name', flat=True)
+        privates = list(privates)
+        contests = self.session.contests.filter(
+            num__isnull=False,
+        ).select_related(
+            'award',
+            'group',
+        ).distinct(
+        ).order_by(
+            'num',
+        )
+        # # MonkeyPatch qualifiers
+        for contest in contests:
+            if contest.award.level != contest.award.LEVEL.deferred:
+                if contest.award.level == contest.award.LEVEL.qualifier:
+                    threshold = contest.award.threshold
+                    if threshold:
+                        qualifiers = contest.contestants.filter(
+                            status__gt=0,
+                            entry__competitor__tot_score__gte=threshold,
+                            entry__is_private=False,
+                        ).distinct(
+                        ).order_by(
+                            'entry__group__name',
+                        ).values_list(
+                            'entry__group__name',
+                            flat=True,
+                        )
+                        if qualifiers:
+                            contest.detail = ", ".join(
+                                qualifiers.values_list('entry__group__name', flat=True)
+                            )
+                        else:
+                            contest.detail = "(No qualifiers)"
+                else:
+                    if contest.group:
+                        contest.detail = str(contest.group.name)
+                    else:
+                        contest.detail = "(No recipient)"
+            else:
+                contest.detail = "(Result determined post-contest)"
+        panelists = self.panelists.filter(
+            kind=Panelist.KIND.official,
+            category__gte=Panelist.CATEGORY.ca,
+        ).distinct(
+            'category',
+            'person__last_name',
+            'person__first_name',
+        ).order_by(
+            'category',
+            'person__last_name',
+            'person__first_name',
+        )
+        outcomes = self.outcomes.order_by('num')
+        advancers = self.appearances.filter(
+            draw__gt=0,
+        ).order_by('draw')
+        mt = self.appearances.filter(draw=0).first()
+        adds_add = len(advancers)
+        context = {
+            'round': self,
+            'appearances': appearances,
+            'rounds': rounds,
+            'privates': privates,
+            'panelists': panelists,
+            'contests': contests,
+            'outcomes': outcomes,
+            'advancers': advancers,
+            'adds_add': adds_add,
+            'mt': mt,
+        }
+        rendered = render_to_string('reports/old_oss.html', context)
+        file = pydf.generate_pdf(
+            rendered,
+            page_size='Letter',
+            orientation='Portrait',
+            margin_top='5mm',
+            margin_bottom='5mm',
+        )
+        content = ContentFile(file)
+        return content
+
+    def save_old_oss(self):
+        content = self.get_old_oss()
+        self.old_oss.save('old_oss', content)
 
 
     def get_sung(self):

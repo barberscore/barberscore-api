@@ -102,16 +102,6 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-    oss = models.FileField(
-        upload_to=FileUploadPath(),
-        blank=True,
-    )
-
-    sa = models.FileField(
-        upload_to=FileUploadPath(),
-        blank=True,
-    )
-
     legacy_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
