@@ -91,7 +91,7 @@ class Round(TimeStampedModel):
         upload_to=FileUploadPath(),
         blank=True,
     )
-    old_oss = models.FileField(
+    legacy_oss = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
     )
@@ -841,7 +841,7 @@ class Round(TimeStampedModel):
         self.sa.save('sa', content)
 
 
-    def get_old_oss(self):
+    def get_legacy_oss(self):
         # Competitor = apps.get_model('api.competitor')
         # Contest = apps.get_model('api.contest')
         Panelist = apps.get_model('api.panelist')
@@ -984,7 +984,7 @@ class Round(TimeStampedModel):
             'adds_add': adds_add,
             'mt': mt,
         }
-        rendered = render_to_string('reports/old_oss.html', context)
+        rendered = render_to_string('reports/legacy_oss.html', context)
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
@@ -995,9 +995,9 @@ class Round(TimeStampedModel):
         content = ContentFile(file)
         return content
 
-    def save_old_oss(self):
-        content = self.get_old_oss()
-        self.old_oss.save('old_oss', content)
+    def save_legacy_oss(self):
+        content = self.get_legacy_oss()
+        self.legacy_oss.save('legacy_oss', content)
 
 
     def get_sung(self):

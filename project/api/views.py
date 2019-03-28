@@ -1223,14 +1223,14 @@ class RoundViewSet(viewsets.ModelViewSet):
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
     )
-    def ossold(self, request, pk=None):
+    def legacyoss(self, request, pk=None):
         round = Round.objects.select_related(
         ).get(pk=pk)
-        if round.old_oss:
-            pdf = round.old_oss.file
+        if round.legacy_oss:
+            pdf = round.legacy_oss.file
         else:
-            pdf = round.get_old_oss()
-        file_name = '{0}-oss-old'.format(
+            pdf = round.get_legacy_oss()
+        file_name = '{0}-'.format(
             slugify(
                 "{0} {1} {2} Round".format(
                     round.session.convention.name,
