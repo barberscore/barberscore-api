@@ -20,7 +20,7 @@ from django.utils.functional import cached_property
 from django.template.loader import render_to_string
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
-from django.db.models import Avg, StdDev, Q
+from django.db.models import Avg, StdDev, Q, Max, Sum
 
 
 import django_rq
@@ -195,54 +195,84 @@ class Panelist(TimeStampedModel):
         ])
 
     def get_psa(self):
-
-        appearances = self.round.appearances.prefetch_related(
-            'songs',
+        Competitor = apps.get_model('api.competitor')
+        # Score block
+        competitor_ids = self.round.appearances.exclude(
+            # Don't include advancers on SA
+            draw__gt=0,
+        ).values_list('competitor__id', flat=True)
+        competitors = Competitor.objects.filter(
+            id__in=competitor_ids,
+        ).annotate(
+            tot_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            per_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
         ).order_by(
-            '-num',
+            '-tot_points',
+            '-sng_points',
+            '-per_points',
         )
-
         # Monkeypatching
         class_map = {
             Panelist.CATEGORY.music: 'badge badge-warning mono-font',
             Panelist.CATEGORY.performance: 'badge badge-success mono-font',
             Panelist.CATEGORY.singing: 'badge badge-info mono-font',
         }
-        for appearance in appearances:
-            songs = appearance.songs.order_by(
-                'num',
-            ).annotate(
-                avg=Avg(
-                    'scores__points',
-                    filter=Q(
-                        scores__panelist__kind=Panelist.KIND.official,
+        for competitor in competitors:
+            appearances = competitor.appearances.order_by('round__kind')
+            for appearance in appearances:
+                songs = appearance.songs.order_by(
+                    'num',
+                ).annotate(
+                    avg=Avg(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                        ),
                     ),
-                ),
-                dev=StdDev(
-                    'scores__points',
-                    filter=Q(
-                        scores__panelist__kind=Panelist.KIND.official,
+                    dev=StdDev(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                        ),
                     ),
-                ),
-            )
-            appearance.songs_patched = songs
-            for song in songs:
-                scores = song.scores.filter(
-                    panelist__kind=Panelist.KIND.official,
-                ).order_by('points')
-                out = []
-                for score in scores:
-                    if score.points == 0:
-                        score.points = "00"
-                    span_class = class_map[score.panelist.category]
-                    if score.panelist == self:
-                        span_class = "{0} black-font".format(span_class)
-                    out.append((score.points, span_class))
-                song.scores_patched = out
+                )
+                appearance.songs_patched = songs
+                for song in songs:
+                    scores = song.scores.filter(
+                        panelist__kind=Panelist.KIND.official,
+                    ).order_by('points')
+                    out = []
+                    for score in scores:
+                        if score.points == 0:
+                            score.points = "00"
+                        span_class = class_map[score.panelist.category]
+                        if score.panelist == self:
+                            span_class = "{0} black-font".format(span_class)
+                        out.append((score.points, span_class))
+                    song.scores_patched = out
+            competitor.appearances_patched = appearances
 
         context = {
             'panelist': self,
-            'appearances': appearances,
+            'competitors': competitors,
         }
         rendered = render_to_string('reports/psa.html', context)
         file = pydf.generate_pdf(rendered)

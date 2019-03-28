@@ -1351,7 +1351,8 @@ class PanelistAdmin(admin.ModelAdmin):
         'person',
     ]
     list_filter = (
-        'status',
+        AppearanceConventionStatusListFilter,
+        'round__status',
         'kind',
         'category',
     )
