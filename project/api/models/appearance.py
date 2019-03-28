@@ -33,6 +33,7 @@ from django.utils.timezone import now
 from django.template.loader import render_to_string
 from django.utils.text import slugify
 
+from api.fields import FileUploadPath
 
 class Appearance(TimeStampedModel):
     """
@@ -103,7 +104,7 @@ class Appearance(TimeStampedModel):
     )
 
     variance_report = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
     )
@@ -215,6 +216,10 @@ class Appearance(TimeStampedModel):
         content = ContentFile(pdf)
         return content
 
+
+    def save_variance(self):
+        content = self.get_variance()
+        self.variance_report.save("variance_report", content)
 
     def mock(self):
         # Mock Appearance
@@ -379,13 +384,7 @@ class Appearance(TimeStampedModel):
             variance = self.check_variance()
             if variance:
                 # Run variance report and save file.
-                content = self.get_variance()
-                self.variance_report.save(
-                    "{0}-variance-report".format(
-                        slugify(self),
-                    ),
-                    content,
-                )
+                self.save_variance()
         # Variance is only checked once.
         else:
             variance = False

@@ -31,6 +31,7 @@ from django.utils.text import slugify
 from django.db.models.functions import DenseRank
 
 from api.tasks import send_email
+from api.fields import FileUploadPath
 
 log = logging.getLogger(__name__)
 
@@ -87,28 +88,28 @@ class Round(TimeStampedModel):
     )
 
     oss = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
     )
     old_oss = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
     )
     sa = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
     )
     legacy_oss = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
     )
 
     legacy_sa = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
     )
@@ -464,13 +465,8 @@ class Round(TimeStampedModel):
 
     def save_oss(self):
         content = self.get_oss()
-        self.refresh_from_db()
-        self.oss.save(
-            "{0}-oss".format(
-                slugify(self),
-            ),
-            content,
-        )
+        self.oss.save("oss", content)
+
 
     def get_old_oss(self):
         # Competitor = apps.get_model('api.competitor')
@@ -628,13 +624,8 @@ class Round(TimeStampedModel):
 
     def save_old_oss(self):
         content = self.get_old_oss()
-        self.refresh_from_db()
-        self.old_oss.save(
-            "{0}-old-oss".format(
-                slugify(self),
-            ),
-            content,
-        )
+        self.old_oss.save('old_oss', content)
+
 
     def get_sa(self):
 
@@ -999,33 +990,8 @@ class Round(TimeStampedModel):
 
     def save_sa(self):
         content = self.get_sa()
-        self.refresh_from_db()
-        self.sa.save(
-            "{0}-sa".format(
-                slugify(self),
-            ),
-            content,
-        )
+        self.sa.save('sa', content)
 
-    # def get_csa(self):
-    #     competitors = self.session.competitors.filter(
-    #         Q(appearances__draw=0) | Q(appearances__draw__isnull=True),
-    #         appearances__round=self,
-    #     ).order_by(
-    #         'group__name',
-    #     )
-    #     merger = PdfFileMerger()
-    #     for competitor in competitors:
-    #         try:
-    #             file = ContentFile(competitor.csa.read())
-    #         except ValueError:
-    #             file = competitor.get_csa()
-    #         merger.append(file, import_bookmarks=False)
-    #     stream = BytesIO()
-    #     merger.write(stream)
-    #     data = stream.getvalue()
-    #     content = ContentFile(data)
-    #     return content
 
     def get_sung(self):
         Song = apps.get_model('api.song')

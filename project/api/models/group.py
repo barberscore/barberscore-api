@@ -29,7 +29,7 @@ from openpyxl.writer.excel import save_virtual_workbook
 
 # First-Party
 from api.fields import LowerEmailField
-from api.fields import UploadPath
+from api.fields import ImageUploadPath
 from api.managers import GroupManager
 
 log = logging.getLogger(__name__)
@@ -251,7 +251,7 @@ class Group(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=UploadPath(),
+        upload_to=ImageUploadPath(),
         null=True,
         blank=True,
     )

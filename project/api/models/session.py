@@ -29,6 +29,7 @@ from django.template.loader import render_to_string
 from cloudinary_storage.storage import RawMediaCloudinaryStorage
 
 from api.tasks import send_email
+from api.fields import FileUploadPath
 
 log = logging.getLogger(__name__)
 
@@ -102,33 +103,33 @@ class Session(TimeStampedModel):
     )
 
     oss = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
     )
 
     sa = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
     )
 
     legacy_report = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
         storage=RawMediaCloudinaryStorage(),
     )
 
     drcj_report = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
         storage=RawMediaCloudinaryStorage(),
     )
 
     contact_report = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
         storage=RawMediaCloudinaryStorage(),
@@ -212,6 +213,10 @@ class Session(TimeStampedModel):
         file = save_virtual_workbook(wb)
         content = ContentFile(file)
         return content
+
+    def save_legacy(self):
+        content = self.get_legacy()
+        self.legacy_report.save("legacy_report", content)
 
 
     def get_drcj(self):
@@ -349,6 +354,11 @@ class Session(TimeStampedModel):
         content = ContentFile(file)
         return content
 
+    def save_drcj(self):
+        content = self.get_drcj()
+        self.drcj_report.save("drcj_report", content)
+
+
     def get_contact(self):
         Entry = apps.get_model('api.entry')
         wb = Workbook()
@@ -384,6 +394,10 @@ class Session(TimeStampedModel):
         file = save_virtual_workbook(wb)
         content = ContentFile(file)
         return content
+
+    def save_contact(self):
+        content = self.get_contact()
+        self.contact_report.save("contact_report", content)
 
 
     def queue_reports(self, template):
@@ -726,27 +740,9 @@ class Session(TimeStampedModel):
                 # notify entrants  TODO Maybe competitor.start()?
                 competitor.save()
         # Save final reports
-        content = self.get_drcj()
-        self.drcj_report.save(
-            slugify(
-                '{0} Session DRCJ Report FINAL'.format(self)
-            ),
-            content=content,
-        )
-        content = self.get_legacy()
-        self.legacy_report.save(
-            slugify(
-                '{0} Session Legacy Report FINAL'.format(self)
-            ),
-            content=content,
-        )
-        content = self.get_contact()
-        self.contact_report.save(
-            slugify(
-                '{0} Session Contact Report FINAL'.format(self)
-            ),
-            content=content,
-        )
+        self.save_drcj()
+        self.save_legacy()
+        self.save_contact()
         #  Create and send the reports
         self.queue_reports(template='emails/session_package.txt')
         return

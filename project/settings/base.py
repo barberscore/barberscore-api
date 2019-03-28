@@ -75,7 +75,7 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 STATIC_URL = '/static/'
-MEDIA_URL = '/he0ndz4rv/'
+MEDIA_URL = '/api/'
 
 # Middleware
 MIDDLEWARE = [

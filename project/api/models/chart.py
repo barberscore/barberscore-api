@@ -19,7 +19,7 @@ from django.db import models
 from django.utils.functional import cached_property
 
 # First-Party
-from api.fields import UploadPath
+from api.fields import ImageUploadPath
 from api.managers import ChartManager
 
 log = logging.getLogger(__name__)
@@ -79,7 +79,7 @@ class Chart(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=UploadPath(),
+        upload_to=ImageUploadPath(),
         null=True,
         blank=True,
     )

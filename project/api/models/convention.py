@@ -23,7 +23,7 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
 # First-Party
-from api.fields import UploadPath
+from api.fields import ImageUploadPath
 
 config = api_apps.get_app_config('api')
 
@@ -147,7 +147,7 @@ class Convention(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=UploadPath(),
+        upload_to=ImageUploadPath(),
         null=True,
         blank=True,
     )

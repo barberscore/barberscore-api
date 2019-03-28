@@ -312,6 +312,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'id',
         'stats',
+        'variance_report',
     ]
     search_fields = [
         'competitor__group__name',
@@ -737,6 +738,7 @@ class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = (
         'id',
         'stats',
+        'csa',
     )
 
     save_on_top = True
@@ -1561,8 +1563,8 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         '__str__',
         'status',
-        # 'oss',
-        'sa',
+        'oss',
+        # 'sa',
         # 'oss',
         # 'legacy_oss',
         # 'legacy_sa',
@@ -1597,7 +1599,10 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
-        # 'kind',
+        'legacy_oss',
+        'legacy_sa',
+        'oss',
+        'sa',
     ]
 
     autocomplete_fields = [
@@ -1714,6 +1719,11 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
+        'oss',
+        'sa',
+        'legacy_report',
+        'drcj_report',
+        'contact_report',
     ]
 
     inlines = [

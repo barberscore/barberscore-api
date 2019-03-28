@@ -25,6 +25,7 @@ from django.db.models import Avg, StdDev, Q, Max, Sum
 
 import django_rq
 from api.tasks import send_email
+from api.fields import FileUploadPath
 
 
 log = logging.getLogger(__name__)
@@ -78,7 +79,7 @@ class Panelist(TimeStampedModel):
     )
 
     psa = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
     )
@@ -281,10 +282,4 @@ class Panelist(TimeStampedModel):
 
     def save_psa(self):
         content = self.get_psa()
-        self.refresh_from_db()
-        self.psa.save(
-            "{0}-psa".format(
-                slugify(self),
-            ),
-            content,
-        )
+        self.psa.save('psa', content)

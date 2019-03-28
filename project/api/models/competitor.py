@@ -28,7 +28,8 @@ from django.utils.text import slugify
 from django.db.models import Sum, Max, Avg
 
 # First-Party
-from api.fields import UploadPath
+from api.fields import ImageUploadPath
+from api.fields import FileUploadPath
 from api.tasks import send_email
 
 log = logging.getLogger(__name__)
@@ -56,7 +57,7 @@ class Competitor(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=UploadPath(),
+        upload_to=ImageUploadPath(),
         null=True,
         blank=True,
     )
@@ -113,7 +114,7 @@ class Competitor(TimeStampedModel):
     )
 
     csa = models.FileField(
-        max_length=255,
+        upload_to=FileUploadPath(),
         null=True,
         blank=True,
     )
@@ -476,13 +477,7 @@ class Competitor(TimeStampedModel):
 
     def save_csa(self):
         content = self.get_csa()
-        self.refresh_from_db()
-        self.csa.save(
-            "{0}-csa".format(
-                slugify(self.group.name),
-            ),
-            content,
-        )
+        self.csa.save('csa', content)
 
     def queue_notification(self, template, context=None):
         officers = self.group.officers.filter(

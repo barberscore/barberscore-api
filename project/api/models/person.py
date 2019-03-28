@@ -25,7 +25,7 @@ from django.utils.timezone import now
 
 # First-Party
 from api.fields import LowerEmailField
-from api.fields import UploadPath
+from api.fields import ImageUploadPath
 from api.managers import PersonManager
 
 log = logging.getLogger(__name__)
@@ -224,7 +224,7 @@ class Person(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=UploadPath(),
+        upload_to=ImageUploadPath(),
         null=True,
         blank=True,
     )
