@@ -12,7 +12,7 @@
         <strong>{{round}}</strong>
       </h3>
       <h4>
-        Songs Sung Report for those in Draw for Next Round
+        Titles Report for those in Draw for Next Round
       </h4>
     </section>
     <section>
@@ -20,8 +20,8 @@
         {% for appearance in appearances %}
           <li><strong>Draw {{appearance.draw}}: {{appearance.competitor.group.name}}</strong></li>
           <ul class='list-styled'>
-            {% for sung in appearance.sungs %}
-              <li>{{sung}}</li>
+            {% for item in appearance.titles %}
+              <li>{{item}}</li>
             {% endfor %}
           </ul>
         {% empty %}

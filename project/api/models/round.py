@@ -1000,7 +1000,7 @@ class Round(TimeStampedModel):
         self.legacy_oss.save('legacy_oss', content)
 
 
-    def get_sung(self):
+    def get_titles(self):
         Song = apps.get_model('api.song')
         appearances = self.appearances.filter(
             draw__gt=0,
@@ -1014,7 +1014,7 @@ class Round(TimeStampedModel):
                 'appearance__round__num',
                 'num',
             )
-            sungs = []
+            titles = []
             for song in songs:
                 try:
                     title = song.chart.title
@@ -1025,14 +1025,14 @@ class Round(TimeStampedModel):
                     song.num,
                     title,
                 )
-                sungs.append(row)
-            appearance.sungs = sungs
+                titles.append(row)
+            appearance.titles = titles
 
         context = {
             'appearances': appearances,
             'round': self,
         }
-        rendered = render_to_string('reports/sung.html', context)
+        rendered = render_to_string('reports/titles.html', context)
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',

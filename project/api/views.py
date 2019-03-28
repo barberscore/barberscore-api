@@ -1255,12 +1255,12 @@ class RoundViewSet(viewsets.ModelViewSet):
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
     )
-    def sung(self, request, pk=None):
+    def titles(self, request, pk=None):
         round = Round.objects.prefetch_related(
             'appearances',
         ).get(pk=pk)
-        pdf = round.get_sung()
-        file_name = '{0}-sung-report'.format(
+        pdf = round.get_titles()
+        file_name = '{0}-titles-report'.format(
             slugify(
                 "{0} {1} {2} Round".format(
                     round.session.convention.name,
