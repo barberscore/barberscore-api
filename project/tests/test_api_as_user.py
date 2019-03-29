@@ -78,6 +78,15 @@ def test_contestant_endpoint(user_api_client, contestant):
     assert response.status_code == status.HTTP_200_OK
 
 
+def test_contender_endpoint(user_api_client, contender):
+    path = reverse('contender-list')
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+    path = reverse('contender-detail', args=(str(contender.id),))
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
 def test_convention_endpoint(user_api_client, convention):
     path = reverse('convention-list')
     response = user_api_client.get(path)

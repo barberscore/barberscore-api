@@ -8,6 +8,7 @@ from .models import Assignment
 from .models import Award
 from .models import Competitor
 from .models import Contest
+from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
@@ -232,6 +233,27 @@ class ContestantInline(admin.TabularInline):
     autocomplete_fields = [
         'contest',
         'entry',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+
+
+class ContenderInline(admin.TabularInline):
+    model = Contender
+    fields = [
+        'appearance',
+        'outcome',
+        'status',
+    ]
+    readonly_fields = [
+        'status',
+    ]
+    autocomplete_fields = [
+        'appearance',
+        'outcome',
     ]
     show_change_link = True
     extra = 0

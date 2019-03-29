@@ -8,6 +8,7 @@ from .views import AssignmentViewSet
 from .views import AwardViewSet
 from .views import ChartViewSet
 from .views import CompetitorViewSet
+from .views import ContenderViewSet
 from .views import ContestantViewSet
 from .views import ContestViewSet
 from .views import ConventionViewSet
@@ -38,6 +39,7 @@ router.register(r'assignment', AssignmentViewSet)
 router.register(r'award', AwardViewSet, basename='award')
 router.register(r'chart', ChartViewSet)
 router.register(r'contest', ContestViewSet)
+router.register(r'contender', ContenderViewSet)
 router.register(r'contestant', ContestantViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'competitor', CompetitorViewSet)

@@ -44,6 +44,7 @@ from .models import Award
 from .models import Chart
 from .models import Competitor
 from .models import Contest
+from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
@@ -71,6 +72,7 @@ from .serializers import AssignmentSerializer
 from .serializers import AwardSerializer
 from .serializers import ChartSerializer
 from .serializers import CompetitorSerializer
+from .serializers import ContenderSerializer
 from .serializers import ContestantSerializer
 from .serializers import ContestSerializer
 from .serializers import ConventionSerializer
@@ -117,6 +119,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         'grid',
     ).prefetch_related(
         'songs',
+        # 'contenders',
         'statelogs',
     ).order_by('id')
     serializer_class = AppearanceSerializer
@@ -464,6 +467,51 @@ class ContestViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "contest"
+
+    @action(methods=['post'], detail=True)
+    def include(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.include(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def exclude(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.exclude(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+class ContenderViewSet(viewsets.ModelViewSet):
+    queryset = Contender.objects.select_related(
+        'appearance',
+        'outcome',
+    ).prefetch_related(
+        'statelogs',
+    ).order_by('id')
+    serializer_class = ContenderSerializer
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "contender"
 
     @action(methods=['post'], detail=True)
     def include(self, request, pk=None, **kwargs):
@@ -1005,6 +1053,7 @@ class OutcomeViewSet(viewsets.ModelViewSet):
         'round',
         'award',
     ).prefetch_related(
+        # 'contenders',
         'statelogs',
     ).order_by('id')
     serializer_class = OutcomeSerializer

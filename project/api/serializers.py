@@ -13,6 +13,7 @@ from .models import Award
 from .models import Chart
 from .models import Competitor
 from .models import Contest
+from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
@@ -49,6 +50,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
         'songs': 'api.serializers.SongSerializer',
+        # 'contenders': 'api.serializers.ContenderSerializer',
     }
 
     class Meta:
@@ -73,6 +75,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'group',
             'grid',
             'songs',
+            # 'contenders',
             'permissions',
         )
 
@@ -232,6 +235,21 @@ class ContestantSerializer(serializers.ModelSerializer):
             'status',
             'entry',
             'contest',
+            'permissions',
+        )
+
+
+class ContenderSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Contender
+        fields = (
+            'id',
+            'url',
+            'status',
+            'appearance',
+            'outcome',
             'permissions',
         )
 
@@ -499,6 +517,9 @@ class OfficerSerializer(serializers.ModelSerializer):
 
 class OutcomeSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    # included_serializers = {
+    #     'contenders': 'api.serializers.ContenderSerializer',
+    # }
 
     class Meta:
         model = Outcome
@@ -510,6 +531,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'award',
             'num',
             'name',
+            # 'contenders',
             'legacy_num',
             'legacy_name',
             'permissions',
