@@ -181,6 +181,66 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+    @action(methods=['post'], detail=True)
+    def complete(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.complete(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+    @action(methods=['post'], detail=True)
+    def advance(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.advance(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+    @action(methods=['post'], detail=True)
+    def scratch(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.scratch(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+    @action(methods=['post'], detail=True)
+    def disqualify(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.disqualify(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
     @action(
         methods=['get'],
         detail=True,
