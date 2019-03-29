@@ -1273,8 +1273,8 @@ class Round(TimeStampedModel):
         # Otherwise, populate from prior round
         else:
             competitors = self.session.competitors.filter(
-                appearances__round=self,
-                draw__isnull=False,
+                appearances__round=prior_round,
+                appearances__draw__isnull=False,
             ).distinct()
 
         for competitor in competitors:
@@ -1465,20 +1465,8 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.verified], target=STATUS.finished, conditions=[can_finish])
     def finish(self, *args, **kwargs):
-        content = self.get_oss()
-        self.oss.save(
-            slugify(
-                '{0} oss'.format(self)
-            ),
-            content=content,
-        )
-        content = self.get_sa()
-        self.sa.save(
-            slugify(
-                '{0} sa'.format(self)
-            ),
-            content=content,
-        )
+        self.save_oss()
+        self.save_sa()
         if self.kind == self.KIND.finals:
             competitors = self.session.competitors.filter(
                 status__gt=0,
