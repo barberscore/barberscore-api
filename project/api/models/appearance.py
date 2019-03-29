@@ -34,6 +34,7 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 
 from api.fields import FileUploadPath
+from api.tasks import send_email
 
 class Appearance(TimeStampedModel):
     """
@@ -312,6 +313,43 @@ class Appearance(TimeStampedModel):
             if variance:
                 song.save()
         return variance
+
+    def queue_notification(self, template, context=None):
+        officers = self.group.officers.filter(
+            status__gt=0,
+            person__email__isnull=False,
+        )
+        if not officers:
+            raise RuntimeError("No officers for {0}".format(self.group))
+        to = ["{0} <{1}>".format(officer.person.common_name.replace(",",""), officer.person.email) for officer in officers]
+        cc = []
+        if self.group.kind == self.group.KIND.quartet:
+            members = self.group.members.filter(
+                status__gt=0,
+                person__email__isnull=False,
+            ).exclude(
+                person__officers__in=officers,
+            ).distinct()
+            for member in members:
+                cc.append(
+                    "{0} <{1}>".format(member.person.common_name.replace(",",""), member.person.email)
+                )
+        # Ensure uniqueness
+        to = list(set(to))
+        cc = list(set(cc))
+        body = render_to_string(template, context)
+        subject = "[Barberscore] {0} Notification".format(
+            self.group.name,
+        )
+        queue = django_rq.get_queue('high')
+        result = queue.enqueue(
+            send_email,
+            subject=subject,
+            body=body,
+            to=to,
+            cc=cc,
+        )
+        return result
 
     # Appearance Permissions
     @staticmethod
