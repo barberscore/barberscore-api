@@ -255,7 +255,6 @@ class Appearance(TimeStampedModel):
         content = ContentFile(pdf)
         return content
 
-
     def save_variance(self):
         content = self.get_variance()
         self.variance_report.save("variance_report", content)
@@ -297,7 +296,6 @@ class Appearance(TimeStampedModel):
             self.verify()
             return
 
-
     def check_variance(self):
         # Set flag
         variance = False
@@ -314,7 +312,6 @@ class Appearance(TimeStampedModel):
             if variance:
                 song.save()
         return variance
-
 
     # Appearance Permissions
     @staticmethod
@@ -373,8 +370,13 @@ class Appearance(TimeStampedModel):
 
     # Appearance Transitions
     @fsm_log_by
-    @transition(field=status, source=[STATUS.new], target=STATUS.built)
+    @transition(
+        field=status,
+        source=[STATUS.new],
+        target=STATUS.built,
+    )
     def build(self, *args, **kwargs):
+        """Sets up the Appearance."""
         Grid = apps.get_model('api.grid')
         Panelist = apps.get_model('api.panelist')
         grid, _ = Grid.objects.get_or_create(
@@ -399,14 +401,24 @@ class Appearance(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.built], target=STATUS.started)
+    @transition(
+        field=status,
+        source=[STATUS.built],
+        target=STATUS.started,
+    )
     def start(self, *args, **kwargs):
+        """Indicates when they start singing."""
         self.actual_start = now()
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.started, STATUS.verified], target=STATUS.finished)
+    @transition(
+        field=status,
+        source=[STATUS.started],
+        target=STATUS.finished,
+    )
     def finish(self, *args, **kwargs):
+        """Indicates when they finish singing."""
         self.actual_finish = now()
         return
 
@@ -418,7 +430,7 @@ class Appearance(TimeStampedModel):
         conditions=[can_verify],
     )
     def verify(self, *args, **kwargs):
-        # Check for variance on finish.
+        # Checks for variance.  Returns Verified or Variance accordingly.
         if self.status == self.STATUS.finished:
             variance = self.check_variance()
             if variance:
@@ -428,3 +440,51 @@ class Appearance(TimeStampedModel):
         else:
             variance = False
         return self.STATUS.variance if variance else self.STATUS.verified
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.verified],
+        target=STATUS.completed,
+    )
+    def complete(self, *args, **kwargs):
+        # Completes the Group.
+        # Notify the group?
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.verified],
+        target=STATUS.advanced,
+    )
+    def advance(self, *args, **kwargs):
+        # Advances the Group.
+        # Notify the group?
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[
+            STATUS.new,
+            STATUS.built,
+        ],
+        target=STATUS.scratched,
+    )
+    def scratch(self, *args, **kwargs):
+        # Scratches the group.
+        # Notify the group?
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.disqualified,
+    )
+    def disqualify(self, *args, **kwargs):
+        # Disqualify the group.
+        # Notify the group?
+        return
+
