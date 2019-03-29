@@ -77,6 +77,40 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    is_private = models.BooleanField(
+        help_text="""Copied from entry.""",
+        default=False,
+    )
+
+    is_single = models.BooleanField(
+        help_text="""Single-round competitor""",
+        default=False,
+    )
+
+    participants = models.CharField(
+        help_text='Director(s) or Members (listed TLBB)',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    representing = models.CharField(
+        help_text='Representing entity',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    contesting = ArrayField(
+        help_text='Award numbers contestanting',
+        base_field=models.IntegerField(
+            null=True,
+            blank=True,
+        ),
+        null=True,
+        blank=True,
+    )
+
     actual_start = models.DateTimeField(
         help_text="""
             The actual appearance datetime.""",
@@ -112,6 +146,11 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    csa = models.FileField(
+        upload_to=FileUploadPath(),
+        blank=True,
+    )
+
     # Appearance FKs
     round = models.ForeignKey(
         'Round',
@@ -123,6 +162,14 @@ class Appearance(TimeStampedModel):
         'Group',
         related_name='appearances',
         on_delete=models.CASCADE,
+    )
+
+    entry = models.ForeignKey(
+        'Entry',
+        related_name='appearances',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     # Relations
