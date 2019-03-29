@@ -265,6 +265,33 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            PDFRenderer,
+        ],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
+    def csa(self, request, pk=None):
+        appearance = Appearance.objects.get(pk=pk)
+        if appearance.csa:
+            pdf = appearance.csa.file
+        else:
+            pdf = appearance.get_csa()
+        file_name = '{0} {1} Session {2} CSA'.format(
+            appearance.round.session.convention.name,
+            appearance.round.session.get_kind_display(),
+            appearance.group.name,
+        )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+
 
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(

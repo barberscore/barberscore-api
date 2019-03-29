@@ -28,10 +28,10 @@ from django.db import models
 from django.db.models import Avg
 from django.db.models import Q
 from django.db.models import Sum
+from django.db.models import Max
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.template.loader import render_to_string
-from django.utils.text import slugify
 
 from api.fields import FileUploadPath
 from api.tasks import send_email
@@ -264,9 +264,9 @@ class Appearance(TimeStampedModel):
         # Mock Appearance
         Chart = apps.get_model('api.chart')
         prelim = None
-        if self.competitor.group.kind == self.competitor.group.KIND.chorus:
-            pos = self.competitor.group.members.filter(
-                status=self.competitor.group.members.model.STATUS.active,
+        if self.group.kind == self.group.KIND.chorus:
+            pos = self.group.members.filter(
+                status=self.group.members.model.STATUS.active,
             ).count()
             self.pos = pos
         if not prelim:
@@ -314,6 +314,296 @@ class Appearance(TimeStampedModel):
                 song.save()
         return variance
 
+    def get_csa(self):
+        if self.status != self.STATUS.completed:
+            raise ValueError("Must be completed to generate CSA")
+        Panelist = apps.get_model('api.panelist')
+        Song = apps.get_model('api.song')
+        Score = apps.get_model('api.score')
+
+        # Appearancers Block
+        group = self.group
+        stats = Score.objects.select_related(
+            'song__appearance__group',
+            'song__appearance__round__session',
+            'song__appearance__round',
+            'panelist',
+        ).filter(
+            song__appearance__group=self.group,
+            song__appearance__round__session=self.round.session,
+            song__appearance__round__status=self.round.STATUS.finished,
+            song__appearance__round__num__lte=self.round.num,
+            panelist__kind=Panelist.KIND.official,
+        ).aggregate(
+            max=Max(
+                'song__appearance__round__num',
+            ),
+            tot_points=Sum(
+                'points',
+            ),
+            mus_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.music,
+                )
+            ),
+            per_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.performance,
+                )
+            ),
+            sng_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.singing,
+                )
+            ),
+            tot_score=Avg(
+                'points',
+            ),
+            mus_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.music,
+                )
+            ),
+            per_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.performance,
+                )
+            ),
+            sng_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.singing,
+                )
+            ),
+        )
+        appearances = Appearance.objects.select_related(
+            'group',
+            'round',
+            'round__session',
+        ).prefetch_related(
+            'songs__scores',
+            'songs__scores__panelist',
+        ).filter(
+            group=self.group,
+            round__session=self.round.session,
+            round__status=self.round.STATUS.finished,
+            round__num__lte=self.round.num,
+        ).annotate(
+            tot_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            mus_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            per_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+            tot_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            mus_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            per_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+        )
+
+        # Monkeypatch
+        for key, value in stats.items():
+            setattr(group, key, value)
+        for appearance in appearances:
+            songs = appearance.songs.prefetch_related(
+                'scores',
+                'scores__panelist',
+            ).order_by(
+                'num',
+            ).annotate(
+                tot_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                mus_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.music,
+                    ),
+                ),
+                per_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.performance,
+                    ),
+                ),
+                sng_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.singing,
+                    ),
+                ),
+                tot_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                mus_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.music,
+                    ),
+                ),
+                per_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.performance,
+                    ),
+                ),
+                sng_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.singing,
+                    ),
+                ),
+            )
+            for song in songs:
+                penalties_map = {
+                    10: "†",
+                    30: "‡",
+                    40: "✠",
+                    50: "✶",
+                }
+                items = " ".join([penalties_map[x] for x in song.penalties])
+                song.penalties_patched = items
+            appearance.songs_patched = songs
+        group.appearances_patched = appearances
+
+        # Panelists
+        panelists = Panelist.objects.select_related(
+            'person',
+        ).filter(
+            kind=Panelist.KIND.official,
+            round__session=self.round.session,
+            round__num=1,
+            category__gt=10,
+        ).order_by('num')
+
+
+        # Score Block
+        initials = [x.person.initials for x in panelists]
+        songs = Song.objects.filter(
+            appearance__round__session=self.round.session,
+            appearance__group=self.group,
+        ).order_by(
+            'appearance__round__kind',
+            'num',
+        )
+        for song in songs:
+            scores = song.scores.filter(
+                panelist__kind=Panelist.KIND.official,
+            ).order_by('panelist__num')
+            class_map = {
+                Panelist.CATEGORY.music: 'warning',
+                Panelist.CATEGORY.performance: 'success',
+                Panelist.CATEGORY.singing: 'info',
+            }
+            items = []
+            for score in scores:
+                items.append((score.points, class_map[score.panelist.category]))
+            song.scores_patched = items
+
+        # Category Block
+        categories = {
+            'Music': [],
+            'Performance': [],
+            'Singing': [],
+        }
+        # panelists from above
+        for panelist in panelists:
+            item = categories[panelist.get_category_display()]
+            item.append(panelist.person.common_name)
+
+        # Penalties Block
+        array = Song.objects.filter(
+            appearance__round__session=self.round.session,
+            appearance__group=self.group,
+            penalties__len__gt=0,
+        ).distinct().values_list('penalties', flat=True)
+        penalties_map = {
+            10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
+            30: "‡ Score(s) penalized due to violation of Article IX.A.2 of the BHS Contest Rules.",
+            40: "✠ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
+            50: "✶ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules.",
+        }
+        penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
+
+        context = {
+            'appearance': self,
+            'round': self.round,
+            'group': group,
+            'initials': initials,
+            'songs': songs,
+            'categories': categories,
+            'penalties': penalties,
+        }
+        rendered = render_to_string('reports/csa.html', context)
+        file = pydf.generate_pdf(rendered)
+        content = ContentFile(file)
+        return content
+
+    def save_csa(self):
+        content = self.get_csa()
+        self.csa.save('csa', content)
+
     def queue_notification(self, template, context=None):
         officers = self.group.officers.filter(
             status__gt=0,
@@ -350,6 +640,7 @@ class Appearance(TimeStampedModel):
             cc=cc,
         )
         return result
+
 
     # Appearance Permissions
     @staticmethod
@@ -395,7 +686,7 @@ class Appearance(TimeStampedModel):
     # Appearance Conditions
     def can_verify(self):
         try:
-            if self.competitor.group.kind == self.competitor.group.KIND.chorus and not self.pos:
+            if self.group.kind == self.group.KIND.chorus and not self.pos:
                 is_pos = False
             else:
                 is_pos = True
