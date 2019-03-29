@@ -126,7 +126,7 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        Competitor = apps.get_model('api.competitor')
+        Group = apps.get_model('api.group')
         if not self.panelist:
             return False
         if not self.panelist.person:
@@ -140,24 +140,24 @@ class Score(TimeStampedModel):
                 category__lte=10,
             ),
             self.panelist.person.user == request.user,
-            all([
-                self.song.appearance.round.panelists.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-                self.song.appearance.round.session.competitors.filter(
-                    status=Competitor.STATUS.finished,
-                ),
-            ]),
-            all([
-                self.song.appearance.competitor.group.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-                self.song.appearance.round.session.competitors.filter(
-                    status=Competitor.STATUS.finished,
-                ),
-            ]),
+            # Need this to be finished appearance
+
+            # all([
+            #     self.panelists.filter(
+            #         person__user=request.user,
+            #         status__gt=0,
+            #     ),
+            #     self.status == self.STATUS.finished,
+            # ]),
+            # all([
+            #     self.song.appearance.competitor.group.officers.filter(
+            #         person__user=request.user,
+            #         status__gt=0,
+            #     ),
+            #     self.song.appearance.round.session.competitors.filter(
+            #         status=Competitor.STATUS.finished,
+            #     ),
+            # ]),
         ])
 
     @staticmethod

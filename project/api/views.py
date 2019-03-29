@@ -113,7 +113,7 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
         'round',
-        'competitor',
+        'group',
         'grid',
     ).prefetch_related(
         'songs',
@@ -503,7 +503,6 @@ class ConventionViewSet(viewsets.ModelViewSet):
 class CompetitorViewSet(viewsets.ModelViewSet):
     queryset = Competitor.objects.select_related(
         'session',
-        'group',
         'entry',
     ).prefetch_related(
         'statelogs',
@@ -713,7 +712,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'children',
         'awards',
-        'competitors',
+        'appearances',
         'conventions',
         'entries',
         'members',
