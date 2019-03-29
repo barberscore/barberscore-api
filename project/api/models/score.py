@@ -126,7 +126,6 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        Group = apps.get_model('api.group')
         if not self.panelist:
             return False
         if not self.panelist.person:
@@ -134,30 +133,30 @@ class Score(TimeStampedModel):
         if not getattr(self.panelist.person, 'user', False):
             return False
         return any([
+            # Assigned DRCJs and CAs can always see
             self.song.appearance.round.session.convention.assignments.filter(
                 person__user=request.user,
                 status__gt=0,
                 category__lte=10,
             ),
+            # Panelists can see their own scores
             self.panelist.person.user == request.user,
-            # Need this to be finished appearance
-
-            # all([
-            #     self.panelists.filter(
-            #         person__user=request.user,
-            #         status__gt=0,
-            #     ),
-            #     self.status == self.STATUS.finished,
-            # ]),
-            # all([
-            #     self.song.appearance.competitor.group.officers.filter(
-            #         person__user=request.user,
-            #         status__gt=0,
-            #     ),
-            #     self.song.appearance.round.session.competitors.filter(
-            #         status=Competitor.STATUS.finished,
-            #     ),
-            # ]),
+            # Panelists can see others' scores if Appearance is complete.
+            all([
+                self.song.round.panelists.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                ),
+                self.song.appearance.status <= self.song.appearance.STATUS.completed
+            ]),
+            # Group members can see their own scores if complete.
+            all([
+                self.song.appearance.group.members.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                ),
+                self.song.appearance.status <= self.song.appearance.STATUS.completed
+            ]),
         ])
 
     @staticmethod
