@@ -200,7 +200,7 @@ class Appearance(TimeStampedModel):
             'variances': variances,
             'tot_points': tot_points,
         }
-        rendered = render_to_string('variance.html', context)
+        rendered = render_to_string('reports/variance.html', context)
         pdf = pydf.generate_pdf(rendered, enable_smart_shrinking=False)
         content = ContentFile(pdf)
         return content
