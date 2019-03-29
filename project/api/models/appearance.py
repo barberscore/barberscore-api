@@ -49,12 +49,16 @@ class Appearance(TimeStampedModel):
     )
 
     STATUS = Choices(
+        (-30, 'disqualified', 'Disqualified',),
+        (-20, 'scratched', 'Scratched',),
+        (-10, 'completed', 'Completed',),
         (0, 'new', 'New',),
         (7, 'built', 'Built',),
         (10, 'started', 'Started',),
         (20, 'finished', 'Finished',),
         (25, 'variance', 'Variance',),
         (30, 'verified', 'Verified',),
+        (40, 'advanced', 'Advanced',),
     )
 
     status = FSMIntegerField(
