@@ -709,7 +709,7 @@ class Session(TimeStampedModel):
             )
             contesting = list(contestants)
             # Create and start competitor
-            competitor, created = self.competitors.get_or_create(
+            appearance, created = self.competitors.get_or_create(
                 entry=entry,
                 group=entry.group,
                 draw=entry.draw,

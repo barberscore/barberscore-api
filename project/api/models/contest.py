@@ -148,24 +148,6 @@ class Contest(TimeStampedModel):
             ]),
         ])
 
-    # Methods
-    def get_group(self):
-        if self.award.level not in [
-            self.award.LEVEL.championship,
-            self.award.LEVEL.representative,
-        ]:
-            return
-        contestant = self.contestants.filter(
-            status__gt=0,
-        ).order_by(
-            '-entry__competitor__tot_points',
-            '-entry__competitor__sng_points',
-            '-entry__competitor__per_points',
-        ).first()
-        if contestant:
-            return contestant.entry.group
-        return
-
     # Transitions
     @fsm_log_by
     @transition(field=status, source=[STATUS.new, STATUS.excluded], target=STATUS.included)

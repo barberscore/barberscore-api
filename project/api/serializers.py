@@ -368,7 +368,6 @@ class GroupSerializer(serializers.ModelSerializer):
         'repertories': 'api.serializers.RepertorySerializer',
         'members': 'api.serializers.MemberSerializer',
         'officers': 'api.serializers.OfficerSerializer',
-        'competitors': 'api.serializers.CompetitorSerializer',
         'entries': 'api.serializers.EntrySerializer',
     }
 
@@ -404,7 +403,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'parent',
             'children',
             'awards',
-            'competitors',
             'conventions',
             'entries',
             'members',
