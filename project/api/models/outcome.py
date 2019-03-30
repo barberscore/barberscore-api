@@ -89,26 +89,35 @@ class Outcome(TimeStampedModel):
             return "MUST ENTER WINNER MANUALLY"
         if self.award.level == self.award.LEVEL.qualifier:
             threshold = self.award.threshold
-            num = [self.num]
-            qualifiers = self.round.session.competitors.filter(
-                contesting__contains=num,
-            ).annotate(
+            qualifiers = self.contenders.annotate(
                 avg=Avg(
-                    'appearances__songs__scores__points',
+                    'outcome__round__session__rounds__appearances__songs__scores__points',
                     filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    )
+                        outcome__round__session__rounds__appearances__songs__scores__points=Panelist.KIND.official,
+                        outcome__round__num__lte=self.round.num,
+                    ),
                 ),
             ).filter(
                 avg__gte=threshold,
             ).order_by(
-                'group__name',
-            ).values_list('group__name', flat=True)
+                'appearance__group__name',
+            ).values_list('appearance__group__name', flat=True)
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
         if self.award.level in [self.award.LEVEL.championship, self.award.LEVEL.representative]:
-            num = [self.num]
+            winner = self.contenders.annotate(
+                tot_points=Sum(
+                    'outcome__round__session__rounds__appearances__songs__scores__points',
+                    filter=Q(
+                        outcome__round__session__rounds__appearances__songs__scores__points=Panelist.KIND.official,
+                        outcome__round__num__lte=self.round.num,
+                    ),
+                ),
+            )
+
+
+
             winner = self.round.session.competitors.filter(
                 contesting__contains=num,
             ).annotate(
