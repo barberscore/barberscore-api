@@ -681,52 +681,11 @@ class Session(TimeStampedModel):
             contest.num = i
             contest.save()
 
-        # Build Competitor List
-        entries = self.entries.filter(
-            status=self.entries.model.STATUS.approved,
-        )
-        z = 0
-        for entry in entries:
-            # TODO - MT hack
-            if entry.is_mt:
-                entry.draw = z
-                z -= 1
-            # Set is_single=True if they are only in single-round contests
-            is_single = not bool(
-                entry.contestants.filter(
-                    status__gt=0,
-                    contest__award__is_single=False,
-                )
-            )
-            # Create the contesting legend
-            contestants = entry.contestants.filter(
-                status=entry.contestants.model.STATUS.included,
-            ).order_by(
-                'contest__num',
-            ).values_list(
-                'contest__num',
-                flat=True,
-            )
-            contesting = list(contestants)
-            # Create and start competitor
-            appearance, created = self.competitors.get_or_create(
-                entry=entry,
-                group=entry.group,
-                draw=entry.draw,
-                is_single=is_single,
-                is_private=entry.is_private,
-                participants=entry.participants,
-                representing=entry.representing,
-                contesting=contesting,
-            )
-            if created:
-                competitor.start()
-                # notify entrants  TODO Maybe competitor.start()?
-                competitor.save()
         # Save final reports
         self.save_drcj()
         self.save_legacy()
         self.save_contact()
+
         #  Create and send the reports
         self.queue_reports(template='emails/session_package.txt')
         return

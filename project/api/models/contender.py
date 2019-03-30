@@ -64,7 +64,7 @@ class Contender(TimeStampedModel):
     # Internals
     class Meta:
         ordering = (
-            'contest__num',
+            'outcome__num',
         )
         unique_together = (
             ('appearance', 'outcome',),

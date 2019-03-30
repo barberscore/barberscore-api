@@ -116,7 +116,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
         'round',
         'group',
-        'grid',
+        # 'grid',
     ).prefetch_related(
         'songs',
         # 'contenders',
@@ -828,7 +828,6 @@ class GridViewSet(viewsets.ModelViewSet):
     queryset = Grid.objects.select_related(
         'round',
         'venue',
-        'appearance',
     ).prefetch_related(
     ).order_by('id')
     serializer_class = GridSerializer

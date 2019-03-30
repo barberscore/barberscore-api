@@ -1196,12 +1196,9 @@ class Round(TimeStampedModel):
         target=STATUS.new,
     )
     def reset(self, *args, **kwargs):
-        Grid = apps.get_model('api.grid')
         panelists = self.panelists.all()
         appearances = self.appearances.all()
         outcomes = self.outcomes.all()
-        grids = self.grids.all()
-        grids.update(appearance=None)
         panelists.delete()
         outcomes.delete()
         appearances.delete()
@@ -1218,7 +1215,7 @@ class Round(TimeStampedModel):
         # Reset for indempodence
         self.reset()
 
-        # Create the default panelists
+        # Create Panelsists
         Assignment = apps.get_model('api.assignment')
         assignments = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
@@ -1241,7 +1238,7 @@ class Round(TimeStampedModel):
                 person=assignment.person,
             )
 
-        # Create the Outcomes
+        # Create Outcomes
         contests = self.session.contests.select_related(
             'award',
         ).filter(
@@ -1255,49 +1252,64 @@ class Round(TimeStampedModel):
                 award=contest.award,
             )
 
-        # Create the Appearances
-        Grid = apps.get_model('api.grid')
-
-        # Determine prior rounds
+        # Determine Prior Round
         if self.num == 1:
             prior_round = None
         else:
             prior_round = self.session.rounds.get(num=self.num - 1)
 
 
-        # If the first round, populate from competitors
+        # If the first round, populate from entries
         if not prior_round:
-            competitors = self.session.competitors.filter(
-                status__gt=0,
+
+            entries = self.session.entries.filter(
+                status=self.session.entries.model.STATUS.approved,
             )
+            z = 0
+            for entry in entries:
+                # TODO - MT hack
+                if entry.is_mt:
+                    entry.draw = z
+                    z -= 1
+                # Set is_single=True if they are only in single-round contests
+                is_single = not bool(
+                    entry.contestants.filter(
+                        status__gt=0,
+                        contest__award__is_single=False,
+                    )
+                )
+                # Create the contesting legend
+                contestants = entry.contestants.filter(
+                    status=entry.contestants.model.STATUS.included,
+                ).order_by(
+                    'contest__num',
+                ).values_list(
+                    'contest__num',
+                    flat=True,
+                )
+                contesting = list(contestants)
+                # Create and start competitor
+                appearance = self.appearances.create(
+                    entry=entry,
+                    group=entry.group,
+                    num=entry.draw,
+                    is_single=is_single,
+                    is_private=entry.is_private,
+                    participants=entry.participants,
+                    representing=entry.representing,
+                    contesting=contesting,
+                )
+                outcomes = self.outcomes.filter(
+                    num__in=contesting,
+                )
+                for outcome in outcomes:
+                    outcome.contenders.create(
+                        appearance=appearance,
+                    )
         # Otherwise, populate from prior round
         else:
-            competitors = self.session.competitors.filter(
-                appearances__round=prior_round,
-                appearances__draw__isnull=False,
-            ).distinct()
+            return
 
-        for competitor in competitors:
-            if not prior_round:
-                draw = competitor.draw
-            else:
-                prior_appearance = prior_round.appearances.get(
-                    competitor=competitor,
-                )
-                draw = prior_appearance.draw
-            appearance = self.appearances.create(
-                competitor=competitor,
-                num=draw,
-            )
-            # Create the grids
-            defaults = {
-                'appearance': appearance,
-            }
-            Grid.objects.update_or_create(
-                round=self,
-                num=draw,
-                defaults=defaults,
-            )
         return
 
 

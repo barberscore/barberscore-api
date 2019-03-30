@@ -619,6 +619,11 @@ class ContenderAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'outcome',
     ]
 
+    list_display = [
+        'id',
+    ]
+
+
     list_filter = (
         'status',
     )
@@ -857,7 +862,7 @@ class GridAdmin(admin.ModelAdmin):
         'start',
         'venue',
         'round',
-        'appearance',
+        # 'appearance',
         'renditions',
     ]
     list_display = [

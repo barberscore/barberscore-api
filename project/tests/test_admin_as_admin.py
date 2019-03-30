@@ -105,13 +105,13 @@ def test_entry_admin(admin_django_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_grid_admin(admin_django_client, grid):
-    path = reverse('admin:api_grid_changelist')
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_grid_change', args=(str(grid.id),))
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+# def test_grid_admin(admin_django_client, grid):
+#     path = reverse('admin:api_grid_changelist')
+#     response = admin_django_client.get(path)
+#     assert response.status_code == status.HTTP_200_OK
+#     path = reverse('admin:api_grid_change', args=(str(grid.id),))
+#     response = admin_django_client.get(path)
+#     assert response.status_code == status.HTTP_200_OK
 
 
 def test_group_admin(admin_django_client, group):

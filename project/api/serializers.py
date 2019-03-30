@@ -73,7 +73,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'variance_report',
             'round',
             'group',
-            'grid',
+            # 'grid',
             'songs',
             # 'contenders',
             'permissions',
