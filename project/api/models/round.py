@@ -1252,7 +1252,10 @@ class Round(TimeStampedModel):
                 award=contest.award,
             )
 
-        # Determine Prior Round
+        # Create Appearances
+
+        # Instantiate prior round
+        Appearance = apps.get_model('api.appearance')
         if self.num == 1:
             prior_round = None
         else:
@@ -1261,7 +1264,6 @@ class Round(TimeStampedModel):
 
         # If the first round, populate from entries
         if not prior_round:
-
             entries = self.session.entries.filter(
                 status=self.session.entries.model.STATUS.approved,
             )
@@ -1299,6 +1301,7 @@ class Round(TimeStampedModel):
                     representing=entry.representing,
                     contesting=contesting,
                 )
+                # Create contenders
                 outcomes = self.outcomes.filter(
                     num__in=contesting,
                 )
@@ -1308,8 +1311,28 @@ class Round(TimeStampedModel):
                     )
         # Otherwise, populate from prior round
         else:
-            return
-
+            prior_appearances = prior_round.appearances.filter(
+                status=Appearance.STATUS.advanced,
+            )
+            for prior_appearance in prior_appearances:
+                outcomes = self.outcomes.filter(
+                    num__in=prior_appearance.contesting,
+                ).order_by('num')
+                contesting = list(outcomes.values_list('num', flat=True))
+                appearance = self.appearances.create(
+                    entry=prior_appearance.entry,
+                    group=prior_appearance.group,
+                    num=prior_appearance.draw,
+                    is_single=prior_appearance.is_single,
+                    is_private=prior_appearance.is_private,
+                    participants=prior_appearance.participants,
+                    representing=prior_appearance.representing,
+                    contesting=contesting,
+                )
+                for outcome in outcomes:
+                    outcome.contenders.create(
+                        appearance=appearance,
+                    )
         return
 
 
