@@ -315,8 +315,6 @@ class Appearance(TimeStampedModel):
         return variance
 
     def get_csa(self):
-        if self.status != self.STATUS.completed:
-            raise ValueError("Must be completed to generate CSA")
         Panelist = apps.get_model('api.panelist')
         Song = apps.get_model('api.song')
         Score = apps.get_model('api.score')
@@ -331,8 +329,6 @@ class Appearance(TimeStampedModel):
         ).filter(
             song__appearance__group=self.group,
             song__appearance__round__session=self.round.session,
-            song__appearance__round__status=self.round.STATUS.finished,
-            song__appearance__round__num__lte=self.round.num,
             panelist__kind=Panelist.KIND.official,
         ).aggregate(
             max=Max(
@@ -391,8 +387,6 @@ class Appearance(TimeStampedModel):
         ).filter(
             group=self.group,
             round__session=self.round.session,
-            round__status=self.round.STATUS.finished,
-            round__num__lte=self.round.num,
         ).annotate(
             tot_points=Sum(
                 'songs__scores__points',

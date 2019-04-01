@@ -285,6 +285,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'contesting',
         'pos',
         'stats',
+        'csa',
         'variance_report',
     ]
     list_display = [
@@ -318,6 +319,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'id',
         'stats',
+        'csa',
         'variance_report',
     ]
     search_fields = [
