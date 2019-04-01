@@ -156,37 +156,40 @@ class Round(TimeStampedModel):
 
 
     def get_oss(self):
-        Competitor = apps.get_model('api.competitor')
+        Group = apps.get_model('api.group')
         Panelist = apps.get_model('api.panelist')
         Song = apps.get_model('api.song')
 
         # Score Block
-        competitor_ids = self.appearances.filter(
-            competitor__is_private=False,
+        group_ids = self.appearances.filter(
+            is_private=False,
         ).exclude(
             # Don't include advancers on OSS
             draw__gt=0,
         ).exclude(
             # Don't include mic testers on OSS
             num__lte=0,
-        ).values_list('competitor__id', flat=True)
-        competitors = Competitor.objects.filter(
-            id__in=competitor_ids,
+        ).values_list('group__id', flat=True)
+        groups = Group.objects.filter(
+            id__in=group_ids,
         ).prefetch_related(
             'appearances',
             'appearances__songs__scores',
             'appearances__songs__scores__panelist',
+            'appearances__round__session',
         ).annotate(
             max_round=Max(
                 'appearances__round__num',
                 filter=Q(
                     appearances__num__gt=0,
+                    appearances__round__session=self.session,
                 ),
             ),
             tot_points=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__round__session=self.session,
                 ),
             ),
             sng_points=Sum(
@@ -194,6 +197,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__round__session=self.session,
                 ),
             ),
             per_points=Sum(
@@ -201,12 +205,14 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__round__session=self.session,
                 ),
             ),
             tot_score=Avg(
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__round__session=self.session,
                 ),
             ),
             mus_score=Avg(
@@ -214,6 +220,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__round__session=self.session,
                 ),
             ),
             per_score=Avg(
@@ -221,6 +228,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__round__session=self.session,
                 ),
             ),
             sng_score=Avg(
@@ -228,6 +236,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__round__session=self.session,
                 ),
             ),
         ).order_by(
@@ -237,9 +246,10 @@ class Round(TimeStampedModel):
         )
 
         # Monkeypatching
-        for competitor in competitors:
-            appearances = competitor.appearances.filter(
+        for group in groups:
+            appearances = group.appearances.filter(
                 num__gt=0,
+                round__session=self.session,
             ).prefetch_related(
                 'songs__scores',
                 'songs__scores__panelist',
@@ -325,23 +335,22 @@ class Round(TimeStampedModel):
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
                 appearance.songs_patched = songs
-            contesting = self.outcomes.filter(
-                num__in=competitor.contesting,
-            ).values_list('num', flat=True)
-            competitor.contesting_patched = list(contesting)
-            pos = competitor.appearances.get(round__num=1).pos
-            competitor.pos_patched = pos
-            competitor.appearances_patched = appearances
+            recent = appearances.get(round__num=self.num)
+            group.contesting_patched = list(recent.contesting)
+            group.pos_patched = recent.pos
+            group.representing_patched = recent.representing
+            group.participants_patched = recent.participants
+            group.appearances_patched = appearances
 
 
         # Penalties Block
         array = Song.objects.select_related(
             'appearance__round',
-            'appearance__competitor',
+            'appearance__group',
         ).filter(
             appearance__round=self,
             penalties__len__gt=0,
-            appearance__competitor__is_private=False,
+            appearance__is_private=False,
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
             10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
@@ -353,14 +362,14 @@ class Round(TimeStampedModel):
 
         # Eval Only Block
         privates = self.appearances.prefetch_related(
-            'competitor',
+            'group',
         ).filter(
-            competitor__is_private=True,
+            is_private=True,
         ).exclude(
             num=0,
         ).order_by(
-            'competitor__group__name',
-        ).values_list('competitor__group__name', flat=True)
+            'group__name',
+        ).values_list('group__name', flat=True)
         privates = list(privates)
 
         # Draw Block
@@ -369,18 +378,18 @@ class Round(TimeStampedModel):
             advancers = self.appearances.filter(
                 draw__gt=0,
             ).select_related(
-                'competitor__group',
+                'group',
             ).order_by(
                 'draw',
             ).values_list(
                 'draw',
-                'competitor__group__name',
+                'group__name',
             )
             advancers = list(advancers)
             try:
                 mt = self.appearances.get(
                     draw=0,
-                ).competitor.group.name
+                ).group.name
                 advancers.append(('MT', mt))
             except self.appearances.model.DoesNotExist:
                 pass
@@ -437,7 +446,7 @@ class Round(TimeStampedModel):
 
         context = {
             'round': self,
-            'competitors': competitors,
+            'groups': groups,
             'penalties': penalties,
             'privates': privates,
             'advancers': advancers,
@@ -446,7 +455,7 @@ class Round(TimeStampedModel):
         }
         rendered = render_to_string('reports/oss.html', context)
 
-        if competitors.count() > 8:
+        if groups.count() > 8 and self.kind == self.KIND.finals:
             page_size = 'Legal'
         else:
             page_size = 'Letter'
