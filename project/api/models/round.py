@@ -1047,59 +1047,61 @@ class Round(TimeStampedModel):
 
     def get_announcements(self):
         Panelist = apps.get_model('api.panelist')
-        Competitor = apps.get_model('api.competitor')
+        Group = apps.get_model('api.group')
+        Appearance = apps.get_model('api.appearance')
         appearances = self.appearances.filter(
             draw__gt=0,
-        ).select_related(
-            'competitor',
         ).order_by(
             'draw',
         )
+        group_ids = appearances.values_list('group__id', flat=True)
         mt = self.appearances.filter(
             draw=0,
-        ).select_related(
-            'competitor',
-        ).order_by(
-            'competitor__group__name',
         ).first()
         outcomes = self.outcomes.order_by(
             '-num',
         )
         if self.kind == self.KIND.finals:
-            competitors = self.session.competitors.filter(
+            groups = Group.objects.filter(
+                appearances__round__session=self.session,
+            ).exclude(
                 status__in=[
-                    Competitor.STATUS.finished,
-                    Competitor.STATUS.started,
+                    Appearance.STATUS.disqualified,
+                    Appearance.STATUS.scratched,
                 ],
-            ).select_related(
-                'group',
+            ).prefetch_related(
+                'appearances__songs__scores',
+                'appearances__songs__scores__panelist',
+                'appearances__round__session',
             ).annotate(
                 tot_points=Sum(
                     'appearances__songs__scores__points',
                     filter=Q(
                         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                        appearances__round__session=self.session,
                     ),
                 ),
                 tot_score=Avg(
                     'appearances__songs__scores__points',
                     filter=Q(
                         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                        appearances__round__session=self.session,
                     ),
                 ),
             ).order_by(
                 '-tot_points',
             )[:5]
         else:
-            competitors = None
-        if competitors:
-            competitors = reversed(competitors)
+            groups = None
+        if groups:
+            groups = reversed(groups)
         pos = self.appearances.aggregate(sum=Sum('pos'))['sum']
         context = {
             'round': self,
             'appearances': appearances,
             'mt': mt,
             'outcomes': outcomes,
-            'competitors': competitors,
+            'groups': groups,
             'pos': pos,
         }
         rendered = render_to_string('reports/announcements.html', context)

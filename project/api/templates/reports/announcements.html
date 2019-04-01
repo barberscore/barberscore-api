@@ -51,22 +51,12 @@
                   <li>{{outcome.award.name}}: {{outcome.name}}</li>
               {% endfor %}
           </ul>
+          <br><br>
           <ul class='list-unstyled'>
-              {% for competitor in competitors %}
+              {% for group in groups %}
                   <li>
-                    With a score of {{competitor.tot_points}}, a {{competitor.tot_score|floatformat:1}}<br>
-                    <!-- {% if competitor.tot_rank == 1 %}
-                      the 2018 1st place gold medalist champion<br>
-                    {% elif competitor.tot_rank ==  2 %}
-                      the 2018 2nd place silver medalist chorus<br>
-                    {% elif competitor.tot_rank ==  3 %}
-                      the 2018 3rd place bronze medalist chorus<br>
-                    {% elif competitor.tot_rank ==  4 %}
-                      the 2018 4th place bronze medalist chorus<br>
-                    {% elif competitor.tot_rank ==  5 %}
-                      the 2018 5th place bronze medalist chorus<br>
-                    {% endif %}-->
-                    => {{competitor.group.name}}
+                    With a score of {{group.tot_points}}, a {{group.tot_score|floatformat:1}}<br>
+                    => {{group.name}}
                   </li><br>
               {% endfor %}
           </ul>
@@ -79,10 +69,10 @@
           <h2>Draw</h2>
           <ul class='list-unstyled'>
               {% for appearance in appearances %}
-                  <li>{{appearance.draw}}: {{appearance.competitor.group.name}}</li>
+                  <li>{{appearance.draw}}: {{appearance.group.name}}</li>
               {% endfor %}
               {% if mt %}
-                <li>MT: {{mt.competitor.group.name}}
+                <li>MT: {{mt.group.name}}
               {% endif %}
           </ul>
       </section>
