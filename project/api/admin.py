@@ -1368,6 +1368,10 @@ class OutcomeAdmin(admin.ModelAdmin):
         'id',
     ]
 
+    inlines = [
+        ContenderInline,
+    ]
+
 @admin.register(Panelist)
 class PanelistAdmin(admin.ModelAdmin):
     save_on_top = True

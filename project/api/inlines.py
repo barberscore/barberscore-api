@@ -139,7 +139,9 @@ class AppearanceInline(admin.TabularInline):
         'status',
     ]
     ordering = (
+        'draw',
         'num',
+        'group__name',
     )
     show_change_link = True
     extra = 0

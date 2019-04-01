@@ -47,8 +47,9 @@ class Round(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
         (20, 'started', 'Started',),
+        (25, 'finished', 'Finished',),
         (27, 'verified', 'Verified',),
-        (30, 'finished', 'Finished',),
+        (30, 'published', 'Published',),
     )
 
     status = FSMIntegerField(
@@ -1175,24 +1176,32 @@ class Round(TimeStampedModel):
     def can_build(self):
         return True
 
-    def can_verify(self):
+    def can_finish(self):
         Appearance = apps.get_model('api.appearance')
         return all([
             not self.appearances.exclude(status=Appearance.STATUS.verified),
         ])
 
-    def can_finish(self):
+    def can_verify(self):
         return all([
             not self.outcomes.filter(
                 name='MUST ENTER WINNER MANUALLY',
             ),
         ])
 
+    def can_publish(self):
+        return True
+
     # Round Transitions
     @fsm_log_by
     @transition(
         field=status,
-        source='*',
+        source=[
+            STATUS.new,
+            STATUS.built,
+            STATUS.started,
+            STATUS.finished,
+        ],
         target=STATUS.new,
     )
     def reset(self, *args, **kwargs):
@@ -1333,7 +1342,20 @@ class Round(TimeStampedModel):
                     outcome.contenders.create(
                         appearance=appearance,
                     )
-        return
+            mts = prior_round.appearances.filter(
+                draw__lte=0,
+            )
+            for mt in mts:
+                appearance = self.appearances.create(
+                    entry=mt.entry,
+                    group=mt.group,
+                    num=mt.draw,
+                    is_single=mt.is_single,
+                    is_private=mt.is_private,
+                    participants=mt.participants,
+                    representing=mt.representing,
+                    contesting=[],
+                )
 
 
     @fsm_log_by
@@ -1377,8 +1399,8 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.started, STATUS.verified], target=STATUS.verified, conditions=[can_verify,])
-    def verify(self, *args, **kwargs):
+    @transition(field=status, source=[STATUS.started], target=STATUS.finished, conditions=[can_finish,])
+    def finish(self, *args, **kwargs):
         Panelist = apps.get_model('api.panelist')
         # Run outcomes
         outcomes = self.outcomes.all()
@@ -1395,7 +1417,7 @@ class Round(TimeStampedModel):
 
         # Get all multi appearances and annotate average.
         multis = self.appearances.filter(
-            competitor__is_single=False,
+            is_single=False,
         ).annotate(
             avg=Avg(
                 'songs__scores__points',
@@ -1444,6 +1466,10 @@ class Round(TimeStampedModel):
                     '-sng_points',
                     '-per_points',
                 )[:diff]
+                try:
+                    mt = multis[diff:diff+1]
+                except IndexError:
+                    mt = None
                 for a in adds:
                     advancers.append(a.id)
         # Otherwise, advance all
@@ -1463,57 +1489,36 @@ class Round(TimeStampedModel):
             appearance.save()
             i += 1
         # create Mic Tester at draw 0
-        mt = self.appearances.filter(
-            draw=None,
-            competitor__is_single=False,
-        ).annotate(
-            tot_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                )
-            ),
-            sng_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                )
-            ),
-            per_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                )
-            ),
-        ).order_by(
-            '-tot_points',
-            '-sng_points',
-            '-per_points',
-        ).first()
         if mt:
+            mt = self.appearances.get(id=mt)
             mt.draw = 0
             mt.save()
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.verified], target=STATUS.finished, conditions=[can_finish])
-    def finish(self, *args, **kwargs):
-        self.save_oss()
-        self.save_sa()
-        if self.kind == self.KIND.finals:
-            competitors = self.session.competitors.filter(
-                status__gt=0,
-            )
-        else:
-            competitors = self.session.competitors.filter(
-                appearances__round=self,
-                draw__isnull=True,
-            ).distinct()
-        for competitor in competitors:
-            competitor.finish()
-            competitor.save()
-        # context = {'round': self}
-        # self.queue_notification('emails/competitor_csa.txt', context)
+    @transition(field=status, source=[STATUS.finished], target=STATUS.verified, conditions=[can_verify])
+    def verify(self, *args, **kwargs):
+        completed_appearances = self.appearances.exclude(
+            draw__gt=0,
+        )
+        for appearance in completed_appearances:
+            appearance.complete()
+            appearance.save()
+        advancing_appearances = self.appearances.filter(
+            draw__gt=0,
+        )
+        for appearance in advancing_appearances:
+            appearance.advance()
+            appearance.save()
+        panelists = self.panelists.all()
+        # for panelist in panelists:
+        #     panelist.save_psa()
+        # self.save_oss()
+        # self.save_sa()
+        return
+
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.verified], target=STATUS.published, conditions=[can_publish])
+    def publish(self, *args, **kwargs):
+        # Publish results!
         return

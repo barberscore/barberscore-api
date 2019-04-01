@@ -774,21 +774,20 @@ class Appearance(TimeStampedModel):
     @transition(
         field=status,
         source=[STATUS.verified],
-        target=STATUS.completed,
+        target=STATUS.advanced,
     )
-    def complete(self, *args, **kwargs):
-        # Completes the Group.
-        # Notify the group?
+    def advance(self, *args, **kwargs):
+        # Advances the Group.
         return
 
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.verified],
-        target=STATUS.advanced,
+        source=[STATUS.verified, STATUS.advanced],
+        target=STATUS.completed,
     )
-    def advance(self, *args, **kwargs):
-        # Advances the Group.
+    def complete(self, *args, **kwargs):
+        # Completes the Group.
         # Notify the group?
         return
 
