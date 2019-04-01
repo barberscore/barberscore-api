@@ -256,8 +256,11 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             pdf = appearance.variance_report.file
         else:
             pdf = appearance.get_variance()
-        file_name = '{0}-oss'.format(
-            slugify("{0} Variance Report".format(appearance))
+        file_name = '{0} {1} {2} {3} Variance Report'.format(
+            appearance.round.session.convention.name,
+            appearance.round.session.get_kind_display(),
+            appearance.round.get_kind_display(),
+            appearance.group.name,
         )
         return PDFResponse(
             pdf,
