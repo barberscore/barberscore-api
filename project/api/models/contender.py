@@ -105,19 +105,12 @@ class Contender(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.outcome.round.convention.assignments.filter(
+                self.outcome.round.session.convention.assignments.filter(
                     person__user=request.user,
                     status__gt=0,
                     category__lte=10,
                 ),
-                self.outcome.round.status < self.outcome.round.STATUS.packaged,
-            ]),
-            all([
-                self.appearance.group.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-                self.appearance.status < self.appearance.STATUS.approved,
+                self.outcome.round.status < self.outcome.round.STATUS.started,
             ]),
         ])
 

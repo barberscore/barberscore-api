@@ -496,7 +496,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'award',
             'num',
             'name',
-            # 'contenders',
+            'contenders',
             'legacy_num',
             'legacy_name',
             'permissions',

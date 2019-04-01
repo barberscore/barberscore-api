@@ -143,7 +143,7 @@ class Score(TimeStampedModel):
             self.panelist.person.user == request.user,
             # Panelists can see others' scores if Appearance is complete.
             all([
-                self.song.round.panelists.filter(
+                self.song.appearance.round.panelists.filter(
                     person__user=request.user,
                     status__gt=0,
                 ),
