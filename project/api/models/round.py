@@ -469,25 +469,27 @@ class Round(TimeStampedModel):
     def get_sa(self):
         Panelist = apps.get_model('api.panelist')
         Song = apps.get_model('api.song')
-        Competitor = apps.get_model('api.competitor')
+        Group = apps.get_model('api.group')
         Person = apps.get_model('api.person')
 
         # Score Block
-        competitor_ids = self.appearances.exclude(
+        group_ids = self.appearances.exclude(
             # Don't include advancers on SA
             draw__gt=0,
-        ).values_list('competitor__id', flat=True)
-        competitors = Competitor.objects.prefetch_related(
+        ).values_list('group__id', flat=True)
+        groups = Group.objects.prefetch_related(
             'appearances',
             'appearances__songs__scores',
             'appearances__songs__scores__panelist',
+            'appearances__round__session',
         ).filter(
-            id__in=competitor_ids,
+            id__in=group_ids,
         ).annotate(
             tot_points=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__round__session=self.session,
                 ),
             ),
             mus_points=Sum(
@@ -495,6 +497,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__round__session=self.session,
                 ),
             ),
             per_points=Sum(
@@ -502,6 +505,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__round__session=self.session,
                 ),
             ),
             sng_points=Sum(
@@ -509,12 +513,14 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__round__session=self.session,
                 ),
             ),
             tot_score=Avg(
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__round__session=self.session,
                 ),
             ),
             mus_score=Avg(
@@ -522,6 +528,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__round__session=self.session,
                 ),
             ),
             per_score=Avg(
@@ -529,6 +536,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__round__session=self.session,
                 ),
             ),
             sng_score=Avg(
@@ -536,6 +544,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__round__session=self.session,
                 ),
             ),
             tot_rank=Window(
@@ -603,9 +612,9 @@ class Round(TimeStampedModel):
             sng_persons.append((p.common_name, practice))
 
         # Monkeypatching
-        for competitor in competitors:
+        for group in groups:
             # Populate the group block
-            appearances = competitor.appearances.filter(
+            appearances = group.appearances.filter(
                 round__session=self.session,
             ).prefetch_related(
                 'songs__scores',
@@ -740,10 +749,7 @@ class Round(TimeStampedModel):
                     )
                     mus_scores = []
                     for m in music_scores:
-                        if abs(m.points - m.song.mus_score) > 5:
-                            diff = True
-                        else:
-                            diff = False
+                        diff = abs(m.points - m.song.mus_score) > 5
                         mus_scores.append((m.points, diff))
                     song.mus_scores = mus_scores
                     performance_scores = song.scores.filter(
@@ -753,10 +759,7 @@ class Round(TimeStampedModel):
                     )
                     per_scores = []
                     for m in performance_scores:
-                        if abs(m.points - m.song.per_score) > 5:
-                            diff = True
-                        else:
-                            diff = False
+                        diff = abs(m.points - m.song.per_score) > 5
                         per_scores.append((m.points, diff))
                     song.per_scores = per_scores
                     singing_scores = song.scores.filter(
@@ -766,14 +769,11 @@ class Round(TimeStampedModel):
                     )
                     sng_scores = []
                     for m in singing_scores:
-                        if abs(m.points - m.song.sng_score) > 5:
-                            diff = True
-                        else:
-                            diff = False
+                        diff = abs(m.points - m.song.sng_score) > 5
                         sng_scores.append((m.points, diff))
                     song.sng_scores = sng_scores
                 appearance.songs_patched = songs
-            competitor.appearances_patched = appearances
+            group.appearances_patched = appearances
 
         # Build stats
         stats = Song.objects.select_related(
@@ -819,7 +819,7 @@ class Round(TimeStampedModel):
 
         context = {
             'round': self,
-            'competitors': competitors,
+            'groups': groups,
             'persons': persons,
             'persons_music': mus_persons,
             'persons_performance': per_persons,

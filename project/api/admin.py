@@ -1639,8 +1639,8 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
-        'oss',
-        'sa',
+        # 'oss',
+        # 'sa',
     ]
 
     autocomplete_fields = [
