@@ -1010,7 +1010,8 @@ class Round(TimeStampedModel):
         )
         for appearance in appearances:
             songs = Song.objects.filter(
-                appearance__competitor=appearance.competitor,
+                appearance__group=appearance.group,
+                appearance__round__session=self.session,
             ).distinct().order_by(
                 'appearance__round__num',
                 'num',
@@ -1027,7 +1028,7 @@ class Round(TimeStampedModel):
                     title,
                 )
                 titles.append(row)
-            appearance.titles = titles
+            appearance.titles_patched = titles
 
         context = {
             'appearances': appearances,
