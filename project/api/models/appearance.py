@@ -145,11 +145,13 @@ class Appearance(TimeStampedModel):
     variance_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
+        default='',
     )
 
     csa = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
+        default='',
     )
 
     # Appearance FKs

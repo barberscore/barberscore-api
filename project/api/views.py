@@ -1175,10 +1175,10 @@ class RoundViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True)
-    def review(self, request, pk=None, **kwargs):
+    def finish(self, request, pk=None, **kwargs):
         object = self.get_object()
         try:
-            object.review(by=self.request.user)
+            object.finish(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
                 {'status': 'Transition conditions not met.'},
@@ -1203,10 +1203,10 @@ class RoundViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True)
-    def finish(self, request, pk=None, **kwargs):
+    def publish(self, request, pk=None, **kwargs):
         object = self.get_object()
         try:
-            object.finish(by=self.request.user)
+            object.publish(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
                 {'status': 'Transition conditions not met.'},
@@ -1215,7 +1215,6 @@ class RoundViewSet(viewsets.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
-
 
     @action(
         methods=['get'],

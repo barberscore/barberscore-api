@@ -105,18 +105,21 @@ class Session(TimeStampedModel):
     legacy_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
+        default='',
         storage=RawMediaCloudinaryStorage(),
     )
 
     drcj_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
+        default='',
         storage=RawMediaCloudinaryStorage(),
     )
 
     contact_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
+        default='',
         storage=RawMediaCloudinaryStorage(),
     )
 

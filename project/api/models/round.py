@@ -91,14 +91,17 @@ class Round(TimeStampedModel):
     oss = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
+        default='',
     )
     legacy_oss = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
+        default='',
     )
     sa = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
+        default='',
     )
 
     # FKs
@@ -1207,11 +1210,12 @@ class Round(TimeStampedModel):
         ])
 
     def can_verify(self):
-        return all([
-            not self.outcomes.filter(
-                name='MUST ENTER WINNER MANUALLY',
-            ),
-        ])
+        return True
+        # return all([
+        #     not self.outcomes.filter(
+        #         name='MUST ENTER WINNER MANUALLY',
+        #     ),
+        # ])
 
     def can_publish(self):
         return True
@@ -1534,7 +1538,7 @@ class Round(TimeStampedModel):
         for appearance in advancing_appearances:
             appearance.advance()
             appearance.save()
-        panelists = self.panelists.all()
+        # panelists = self.panelists.all()
         # for panelist in panelists:
         #     panelist.save_psa()
         # self.save_oss()

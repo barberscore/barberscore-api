@@ -81,6 +81,7 @@ class Panelist(TimeStampedModel):
     psa = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
+        default='',
     )
 
     legacy_num = models.IntegerField(
