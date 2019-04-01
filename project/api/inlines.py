@@ -6,7 +6,6 @@ from django.contrib import admin
 from .models import Appearance
 from .models import Assignment
 from .models import Award
-from .models import Competitor
 from .models import Contest
 from .models import Contender
 from .models import Contestant
@@ -272,33 +271,6 @@ class ConventionInline(admin.TabularInline):
     ]
     autocomplete_fields = [
         'group',
-    ]
-    show_change_link = True
-    extra = 0
-    classes = [
-        'collapse',
-    ]
-
-
-class CompetitorInline(admin.TabularInline):
-    model = Competitor
-    fields = [
-        'status',
-        'session',
-        'group',
-        'stats',
-        'is_single',
-    ]
-    readonly_fields = [
-        'status',
-        # 'seed',
-    ]
-    autocomplete_fields = [
-        'session',
-        'group',
-    ]
-    ordering = [
-        'group__name',
     ]
     show_change_link = True
     extra = 0

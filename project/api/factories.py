@@ -26,7 +26,6 @@ from api.models import Appearance
 from api.models import Assignment
 from api.models import Award
 from api.models import Chart
-from api.models import Competitor
 from api.models import Contest
 from api.models import Contender
 from api.models import Contestant
@@ -167,15 +166,6 @@ class ConventionFactory(DjangoModelFactory):
     #                 convention=self,
     #                 category=Assignment.CATEGORY.singing,
     #             )
-
-
-class CompetitorFactory(DjangoModelFactory):
-    status = Competitor.STATUS.new
-    session = SubFactory('api.factories.SessionFactory')
-    group = SubFactory('api.factories.GroupFactory')
-
-    class Meta:
-        model = Competitor
 
 
 class EntryFactory(DjangoModelFactory):

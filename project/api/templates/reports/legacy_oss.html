@@ -81,12 +81,12 @@
             {% for appearance in appearances %}
               <tr class='pbi_avoid'>
                 <td>
-                    {% if appearance.competitor.group.get_kind_display == 'Chorus' %}
-                      <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.competitor.group.parent.name|truncatechars_html:25}}</strong><br>
-                      {{appearance.competitor.group.name|truncatechars_html:25}} ({{appearance.competitor.contesting|default:"Unknown"}})<br>
+                    {% if appearance.group.get_kind_display == 'Chorus' %}
+                      <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.group.parent.name|truncatechars_html:25}}</strong><br>
+                      {{appearance.group.name|truncatechars_html:25}} ({{appearance.group.contesting|default:"Unknown"}})<br>
                     {% else %}
-                      <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.competitor.group.name|truncatechars_html:25}}</strong><br>
-                      ({{appearance.competitor.contesting|default:"Unknown"}})<br>
+                      <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.group.name|truncatechars_html:25}}</strong><br>
+                      ({{appearance.group.contesting|default:"Unknown"}})<br>
                     {% endif %}
                 </td>
                 <td>
@@ -127,7 +127,7 @@
                   {{appearance.calc_total}}
                 </td>
                 <td class='text-right'>
-                  {{appearance.competitor.tot_score|floatformat:1}}
+                  {{appearance.group.tot_score|floatformat:1}}
                 </td>
                 {% if round.session.get_kind_display == 'Chorus' %}
                   <td class='text-right'>
@@ -162,12 +162,12 @@
               {% for appearance in round.aps.all %}
                 <tr class='pbi_avoid'>
                   <td>
-                      {% if appearance.competitor.group.get_kind_display == 'Chorus' %}
-                        <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.competitor.group.parent.name|truncatechars_html:25}}</strong><br>
-                        {{appearance.competitor.group.name|truncatechars_html:25}} ({{appearance.competitor.contesting|default:"Unknown"}})<br>
+                      {% if appearance.group.get_kind_display == 'Chorus' %}
+                        <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.group.parent.name|truncatechars_html:25}}</strong><br>
+                        {{appearance.group.name|truncatechars_html:25}} ({{appearance.group.contesting|default:"Unknown"}})<br>
                       {% else %}
-                        <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.competitor.group.name|truncatechars_html:25}}</strong><br>
-                        ({{appearance.competitor.contesting|default:"Unknown"}})<br>
+                        <strong>{{forloop.counter|add:adds_add}}&nbsp;{{appearance.group.name|truncatechars_html:25}}</strong><br>
+                        ({{appearance.group.contesting|default:"Unknown"}})<br>
                       {% endif %}
                   </td>
                   <td>
@@ -323,9 +323,9 @@
             <h5>Draw</h5>
             <p>
               {% for advancer in advancers %}
-                <span class='text-nowrap'><strong>{{advancer.draw}}.</strong> {{advancer.competitor.group.name}}&nbsp;</span>
+                <span class='text-nowrap'><strong>{{advancer.draw}}.</strong> {{advancer.group.name}}&nbsp;</span>
               {% endfor %}
-              {% if mt %}<span class='text-nowrap'><strong>MT</strong> {{mt.competitor.group.name}}&nbsp;</span>{% endif %}
+              {% if mt %}<span class='text-nowrap'><strong>MT</strong> {{mt.group.name}}&nbsp;</span>{% endif %}
             </p>
           </div>
         {% endif %}

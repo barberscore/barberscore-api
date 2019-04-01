@@ -11,7 +11,6 @@ from .models import Appearance
 from .models import Assignment
 from .models import Award
 from .models import Chart
-from .models import Competitor
 from .models import Contest
 from .models import Contender
 from .models import Contestant
@@ -170,33 +169,6 @@ class ChartSerializer(serializers.ModelSerializer):
         )
 
 
-class CompetitorSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-
-    class Meta:
-        model = Competitor
-        fields = (
-            'id',
-            'url',
-            'status',
-            'is_single',
-            'contesting',
-            'stats',
-            # 'csa',
-            'session',
-            'group',
-            'entry',
-            'permissions',
-        )
-
-    class JSONAPIMeta:
-        included_resources = [
-            # 'appearances',
-        ]
-
-
-
 class ContestSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
@@ -303,11 +275,6 @@ class ConventionSerializer(serializers.ModelSerializer):
 
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    # competitor = serializers.PrimaryKeyRelatedField(
-    #     queryset=Competitor.objects.all(),
-    #     required=False,
-    #     allow_null=True,
-    # )
     # logs = StateLogSerializer(many=True)
     statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     included_serializers = {
@@ -335,7 +302,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'notes',
             'session',
             'group',
-            # 'competitor',
             'contestants',
             'permissions',
             'statelogs',
@@ -434,7 +400,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'repertories',
             # 'members',
             # 'officers',
-            # 'competitors',
             # 'entries',
         ]
 
@@ -728,7 +693,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'drcj_report',
             'contact_report',
             'num_rounds',
-            'competitors',
             'convention',
             'contests',
             'entries',

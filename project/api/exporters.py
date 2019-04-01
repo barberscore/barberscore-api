@@ -4,7 +4,6 @@ from .models import Appearance
 from .models import Assignment
 from .models import Award
 from .models import Chart
-from .models import Competitor
 from .models import Contest
 from .models import Contestant
 from .models import Convention
@@ -135,22 +134,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'get_division_display',
             'chapter',
         ]
-
-class CompetitorSerializer(serializers.ModelSerializer):
-    group = GroupSerializer(read_only=True, many=False)
-
-    class Meta:
-        model = Competitor
-        fields = (
-            'id',
-            'participants',
-            'representing',
-            'contesting',
-            'is_private',
-            'stats',
-            'group',
-        )
-
 
 class AppearanceSerializer(serializers.ModelSerializer):
     group = GroupSerializer(read_only=True, many=False)

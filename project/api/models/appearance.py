@@ -38,7 +38,7 @@ from api.tasks import send_email
 
 class Appearance(TimeStampedModel):
     """
-    An appearance of a competitor on stage.
+    An appearance of a group on stage.
 
     The Appearance is meant to be a private resource.
     """
@@ -84,7 +84,7 @@ class Appearance(TimeStampedModel):
     )
 
     is_single = models.BooleanField(
-        help_text="""Single-round competitor""",
+        help_text="""Single-round group""",
         default=False,
     )
 

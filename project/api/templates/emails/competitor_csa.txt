@@ -1,10 +1,10 @@
 Competitor Scoring Analysis
 
-Group: {{competitor.group.name|safe}}
-Total: {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}}%)
+Group: {{group.name|safe}}
+Total: {{tot_points}} ({{tot_score|floatformat:1}}%)
 
 
-{% for appearance in competitor.appearances.all|dictsort:'num' %}
+{% for appearance in group.appearances.all|dictsort:'num' %}
 {{ appearance.round.get_kind_display }} --> {{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}}%)
 {% for song in appearance.songs.all|dictsort:'num' %}
   Song {{forloop.counter}}: {{song.chart.title|safe|default:"Song Not In Repertory"}} --> {{song.tot_points}} ({{song.tot_score|floatformat:1}}%)
@@ -12,6 +12,6 @@ Total: {{competitor.tot_points}} ({{competitor.tot_score|floatformat:1}}%)
 {% endfor %}
 
 
-{% if competitor.csa %}
-CSA PDF: {{competitor.csa.url}}
+{% if csa %}
+CSA PDF: {{csa.url}}
 {% endif %}

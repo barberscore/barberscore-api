@@ -5,7 +5,6 @@ from .award import Award
 from .chart import Chart
 from .complete import Complete
 from .flat import Flat
-from .competitor import Competitor
 from .contest import Contest
 from .contender import Contender
 from .contestant import Contestant

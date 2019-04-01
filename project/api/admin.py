@@ -30,7 +30,6 @@ from .inlines import ActiveQuartetInline
 from .inlines import AppearanceInline
 from .inlines import AssignmentInline
 from .inlines import AwardInline
-from .inlines import CompetitorInline
 from .inlines import ContenderInline
 from .inlines import ContestantInline
 from .inlines import ContestInline
@@ -54,7 +53,6 @@ from .models import Award
 from .models import Chart
 from .models import Flat
 from .models import Complete
-from .models import Competitor
 from .models import Contest
 from .models import Contender
 from .models import Contestant
@@ -726,71 +724,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(Competitor)
-class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    fields = (
-        'id',
-        'status',
-        'session',
-        'group',
-        'entry',
-        'representing',
-        'participants',
-        'contesting',
-        # 'draw',
-        'csa',
-        ('is_private', 'is_single',),
-        'stats',
-    )
-
-    list_display = (
-        'status',
-        'group',
-        'session',
-        'csa',
-    )
-
-    list_filter = [
-        SessionConventionStatusListFilter,
-        'status',
-        'session__kind',
-        'session__convention__season',
-        'session__convention__year',
-    ]
-
-    inlines = [
-        StateLogInline,
-        # GridInline,
-        # ContestantInline,
-    ]
-
-    search_fields = [
-        'session__convention__name',
-        'group__name',
-    ]
-
-    autocomplete_fields = [
-        'session',
-        'group',
-        'entry'
-    ]
-
-    readonly_fields = (
-        'id',
-        'stats',
-        'csa',
-    )
-
-    save_on_top = True
-
-    ordering = (
-    )
-
-
 @admin.register(Entry)
 class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
@@ -1023,7 +956,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             # MemberInline,
             RepertoryInline,
             # EntryInline,
-            CompetitorInline,
             StateLogInline,
         ],
         'Quartet': [
@@ -1031,7 +963,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             MemberInline,
             RepertoryInline,
             EntryInline,
-            CompetitorInline,
             StateLogInline,
         ],
         'VLQ': [
@@ -1039,7 +970,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             MemberInline,
             RepertoryInline,
             EntryInline,
-            CompetitorInline,
             StateLogInline,
         ],
     }
@@ -1764,7 +1694,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         ContestInline,
         EntryInline,
-        CompetitorInline,
         RoundInline,
         StateLogInline,
     ]

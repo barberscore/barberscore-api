@@ -852,17 +852,16 @@ class Round(TimeStampedModel):
 
 
     def get_legacy_oss(self):
-        # Competitor = apps.get_model('api.competitor')
         # Contest = apps.get_model('api.contest')
         Panelist = apps.get_model('api.panelist')
         # Contestant = apps.get_model('api.contestant')
         appearances = self.appearances.filter(
             Q(draw=0) | Q(draw__isnull=True),
-            competitor__is_private=False,
+            is_private=False,
         ).exclude(
             num=0,
         ).select_related(
-            'competitor__group',
+            'group',
         ).prefetch_related(
             'round',
             'songs',
@@ -871,12 +870,12 @@ class Round(TimeStampedModel):
             'songs__scores__panelist',
             'songs__scores__panelist__person',
         ).order_by(
-            '-competitor__tot_points',
-            '-competitor__sng_points',
-            '-competitor__per_points',
-            'competitor__group__name',
+            '-tot_points',
+            '-sng_points',
+            '-per_points',
+            'group__name',
         )
-        comps = appearances.values_list('competitor__id', flat=True)
+        comps = appearances.values_list('group__id', flat=True)
         # MonkeyPatch running total
         for appearance in appearances:
             if not appearance.run_points:
@@ -889,11 +888,11 @@ class Round(TimeStampedModel):
         rounds = self.session.rounds.filter(kind__gt=self.kind)
         for rnd in rounds:
             aps = rnd.appearances.filter(
-                competitor__id__in=comps,
+                id__in=comps,
             ).exclude(
                 num=0,
             ).select_related(
-                'competitor__group',
+                'group',
             ).prefetch_related(
                 'round',
                 'songs',
@@ -905,7 +904,7 @@ class Round(TimeStampedModel):
                 '-tot_points',
                 '-sng_points',
                 '-per_points',
-                'competitor__group__name',
+                'group__name',
             )
             for appearance in aps:
                 if not appearance.run_points:
@@ -918,12 +917,12 @@ class Round(TimeStampedModel):
             rnd.aps = aps
         # Eval Only
         privates = self.appearances.filter(
-            competitor__is_private=True,
+            is_private=True,
         ).select_related(
-            'competitor__group',
+            'group',
         ).order_by(
-            'competitor__group__name',
-        ).values_list('competitor__group__name', flat=True)
+            'group__name',
+        ).values_list('group__name', flat=True)
         privates = list(privates)
         contests = self.session.contests.filter(
             num__isnull=False,
@@ -942,7 +941,7 @@ class Round(TimeStampedModel):
                     if threshold:
                         qualifiers = contest.contestants.filter(
                             status__gt=0,
-                            entry__competitor__tot_score__gte=threshold,
+                            entry__tot_score__gte=threshold,
                             entry__is_private=False,
                         ).distinct(
                         ).order_by(
@@ -1311,7 +1310,7 @@ class Round(TimeStampedModel):
                     flat=True,
                 )
                 contesting = list(contestants)
-                # Create and start competitor
+                # Create and start group
                 appearance = self.appearances.create(
                     entry=entry,
                     group=entry.group,

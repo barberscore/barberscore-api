@@ -60,17 +60,6 @@ def test_chart_endpoint(admin_api_client, chart, django_assert_max_num_queries):
         assert response.status_code == status.HTTP_200_OK
 
 
-def test_competitor_endpoint(admin_api_client, competitor, django_assert_max_num_queries):
-    with django_assert_max_num_queries(10):
-        path = reverse('competitor-list')
-        response = admin_api_client.get(path)
-        assert response.status_code == status.HTTP_200_OK
-    with django_assert_max_num_queries(10):
-        path = reverse('competitor-detail', args=(str(competitor.id),))
-        response = admin_api_client.get(path)
-        assert response.status_code == status.HTTP_200_OK
-
-
 def test_contest_endpoint(admin_api_client, contest, django_assert_max_num_queries):
     with django_assert_max_num_queries(10):
         path = reverse('contest-list')

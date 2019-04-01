@@ -12,7 +12,6 @@ from api.factories import AppearanceFactory
 from api.factories import AssignmentFactory
 from api.factories import AwardFactory
 from api.factories import ChartFactory
-from api.factories import CompetitorFactory
 from api.factories import ContenderFactory
 from api.factories import ContestantFactory
 from api.factories import ContestFactory
@@ -116,11 +115,6 @@ def contestant():
 @pytest.fixture
 def convention():
     return ConventionFactory()
-
-
-@pytest.fixture
-def competitor():
-    return CompetitorFactory()
 
 
 @pytest.fixture
