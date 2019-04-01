@@ -1147,6 +1147,19 @@ class Round(TimeStampedModel):
         )
         return result
 
+    def mock(self):
+        Appearance = apps.get_model('api.appearance')
+        if self.status != self.STATUS.started:
+            raise RuntimeError("Round not Started")
+        appearances = self.appearances.exclude(
+            status=Appearance.STATUS.verified,
+        )
+        for appearance in appearances:
+            appearance.mock()
+            appearance.save()
+        return
+
+
     # Permissions
     @staticmethod
     @allow_staff_or_superuser
