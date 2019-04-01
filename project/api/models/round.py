@@ -1192,7 +1192,7 @@ class Round(TimeStampedModel):
                     status__gt=0,
                     category=self.session.convention.assignments.model.CATEGORY.ca,
                 ),
-                self.status != self.STATUS.finished,
+                self.status != self.STATUS.published,
             ]),
         ])
 

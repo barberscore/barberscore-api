@@ -167,7 +167,7 @@ class Outcome(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         return any([
-            self.round.status == self.round.STATUS.finished,
+            self.round.status == self.round.STATUS.published,
             self.round.session.convention.assignments.filter(
                 person__user=request.user,
                 status__gt=0,
@@ -194,6 +194,6 @@ class Outcome(TimeStampedModel):
                     status__gt=0,
                     category__lte=10,
                 ),
-                self.round.status < self.round.STATUS.finished,
+                self.round.status < self.round.STATUS.published,
             ]),
         ])
