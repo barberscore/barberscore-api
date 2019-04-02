@@ -7,7 +7,7 @@ class AwardIndex(AlgoliaIndex):
     fields = [
         'name',
         'get_kind_display',
-            'get_gender_display',
+        'get_gender_display',
     ]
     settings = {
         'searchableAttributes': [
