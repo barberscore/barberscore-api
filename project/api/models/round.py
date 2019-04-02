@@ -1260,10 +1260,30 @@ class Round(TimeStampedModel):
 
         # Create Panelsists
         Assignment = apps.get_model('api.assignment')
+        cas = self.session.convention.assignments.filter(
+            status=Assignment.STATUS.active,
+            kind__in=[
+                Assignment.KIND.official,
+                Assignment.KIND.practice,
+            ],
+            category=Assignment.CATEGORY.ca,
+        ).order_by(
+            'kind',
+            'category',
+            'person__last_name',
+            'person__nick_name',
+            'person__first_name',
+        )
+        for ca in cas:
+            self.panelists.create(
+                kind=ca.kind,
+                category=ca.category,
+                person=ca.person,
+            )
         officials = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
             kind=Assignment.KIND.official,
-            category__gte=Assignment.CATEGORY.ca,
+            category__gt=Assignment.CATEGORY.ca,
         ).order_by(
             'kind',
             'category',
@@ -1284,7 +1304,7 @@ class Round(TimeStampedModel):
         practices = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
             kind=Assignment.KIND.practice,
-            category__gte=Assignment.CATEGORY.ca,
+            category__gt=Assignment.CATEGORY.ca,
         ).order_by(
             'kind',
             'category',
@@ -1296,7 +1316,7 @@ class Round(TimeStampedModel):
         for practice in practices:
             p += 1
             self.panelists.create(
-                num=i,
+                num=p,
                 kind=practice.kind,
                 category=practice.category,
                 person=practice.person,
@@ -1347,7 +1367,7 @@ class Round(TimeStampedModel):
                 )
                 # Set is_single=True if they are only in single-round contests
                 is_single = not bool(
-                    awards.filter(
+                    contestants.filter(
                         contest__award__is_single=False,
                     )
                 )
@@ -1362,7 +1382,7 @@ class Round(TimeStampedModel):
                     representing=entry.representing,
                 )
                 # Create contenders
-                awards = contestants.values_list('award', flat=True)
+                awards = contestants.values_list('contest__award', flat=True)
                 outcomes = self.outcomes.filter(award__in=awards)
                 for outcome in outcomes:
                     outcome.contenders.create(
