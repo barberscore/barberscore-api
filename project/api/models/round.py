@@ -1487,15 +1487,16 @@ class Round(TimeStampedModel):
             diff = spots - cnt
             # If there are additionl remaining spots, add them up to available
             if diff > 0:
-                adds = multis.exclude(
+                remains = multis.exclude(
                     id__in=advancers,
                 ).order_by(
                     '-tot_points',
                     '-sng_points',
                     '-per_points',
-                )[:diff]
+                )
+                adds = remains[:diff]
                 try:
-                    mt = multis[diff:diff+1]
+                    mt = remains[diff:diff+1]
                 except IndexError:
                     mt = None
                 for a in adds:
