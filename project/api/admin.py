@@ -280,7 +280,6 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_private',
         'participants',
         'representing',
-        'contesting',
         'pos',
         'stats',
         'csa',

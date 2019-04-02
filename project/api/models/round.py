@@ -339,7 +339,13 @@ class Round(TimeStampedModel):
                     song.penalties_patched = items
                 appearance.songs_patched = songs
             recent = appearances.get(round__num=self.num)
-            group.contesting_patched = list(recent.contesting)
+            contesting = recent.contenders.order_by(
+                'outcome__num',
+            ).values_list(
+                'outcome__num',
+                flat=True
+            )
+            group.contesting_patched = ", ".join(contesting)
             group.pos_patched = recent.pos
             group.representing_patched = recent.representing
             group.participants_patched = recent.participants
@@ -1254,12 +1260,9 @@ class Round(TimeStampedModel):
 
         # Create Panelsists
         Assignment = apps.get_model('api.assignment')
-        assignments = self.session.convention.assignments.filter(
+        officials = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
-            kind__in=[
-                Assignment.KIND.official,
-                Assignment.KIND.practice,
-            ],
+            kind=Assignment.KIND.official,
             category__gte=Assignment.CATEGORY.ca,
         ).order_by(
             'kind',
@@ -1268,29 +1271,57 @@ class Round(TimeStampedModel):
             'person__nick_name',
             'person__first_name',
         )
-        for assignment in assignments:
+        i = 0
+        for official in officials:
+            i += 1
             self.panelists.create(
-                kind=assignment.kind,
-                category=assignment.category,
-                person=assignment.person,
+                num=i,
+                kind=official.kind,
+                category=official.category,
+                person=official.person,
+            )
+
+        practices = self.session.convention.assignments.filter(
+            status=Assignment.STATUS.active,
+            kind=Assignment.KIND.practice,
+            category__gte=Assignment.CATEGORY.ca,
+        ).order_by(
+            'kind',
+            'category',
+            'person__last_name',
+            'person__nick_name',
+            'person__first_name',
+        )
+        p = 50
+        for practice in practices:
+            p += 1
+            self.panelists.create(
+                num=i,
+                kind=practice.kind,
+                category=practice.category,
+                person=practice.person,
             )
 
         # Create Outcomes
         contests = self.session.contests.select_related(
             'award',
         ).filter(
-            num__isnull=False,
+            status__gt=0,
+        ).order_by(
+            'award__tree_sort',
         )
+        # Don't include single-round contests past round one.
         if self.num > 1:
             contests = contests.exclude(award__is_single=True)
+        i = 0
         for contest in contests:
+            i += 1
             self.outcomes.create(
-                num=contest.num,
+                num=i,
                 award=contest.award,
             )
 
         # Create Appearances
-
         # Instantiate prior round
         Appearance = apps.get_model('api.appearance')
         if self.num == 1:
@@ -1310,23 +1341,16 @@ class Round(TimeStampedModel):
                 if entry.is_mt:
                     entry.draw = z
                     z -= 1
+                # Pull active contestants
+                contestants = entry.contestants.filter(
+                    status__gt=0,
+                )
                 # Set is_single=True if they are only in single-round contests
                 is_single = not bool(
-                    entry.contestants.filter(
-                        status__gt=0,
+                    awards.filter(
                         contest__award__is_single=False,
                     )
                 )
-                # Create the contesting legend
-                contestants = entry.contestants.filter(
-                    status=entry.contestants.model.STATUS.included,
-                ).order_by(
-                    'contest__num',
-                ).values_list(
-                    'contest__num',
-                    flat=True,
-                )
-                contesting = list(contestants)
                 # Create and start group
                 appearance = self.appearances.create(
                     entry=entry,
@@ -1336,12 +1360,10 @@ class Round(TimeStampedModel):
                     is_private=entry.is_private,
                     participants=entry.participants,
                     representing=entry.representing,
-                    contesting=contesting,
                 )
                 # Create contenders
-                outcomes = self.outcomes.filter(
-                    num__in=contesting,
-                )
+                awards = contestants.values_list('award', flat=True)
+                outcomes = self.outcomes.filter(award__in=awards)
                 for outcome in outcomes:
                     outcome.contenders.create(
                         appearance=appearance,
@@ -1352,10 +1374,6 @@ class Round(TimeStampedModel):
                 status=Appearance.STATUS.advanced,
             )
             for prior_appearance in prior_appearances:
-                outcomes = self.outcomes.filter(
-                    num__in=prior_appearance.contesting,
-                ).order_by('num')
-                contesting = list(outcomes.values_list('num', flat=True))
                 appearance = self.appearances.create(
                     entry=prior_appearance.entry,
                     group=prior_appearance.group,
@@ -1364,8 +1382,11 @@ class Round(TimeStampedModel):
                     is_private=prior_appearance.is_private,
                     participants=prior_appearance.participants,
                     representing=prior_appearance.representing,
-                    contesting=contesting,
                 )
+                multi_awards = prior_appearance.contenders.filter(
+                    award__is_single=False,
+                ).values_list('award', flat=True)
+                outcomes = self.outcomes.filter(award__in=multi_awards)
                 for outcome in outcomes:
                     outcome.contenders.create(
                         appearance=appearance,
@@ -1382,43 +1403,12 @@ class Round(TimeStampedModel):
                     is_private=mt.is_private,
                     participants=mt.participants,
                     representing=mt.representing,
-                    contesting=[],
                 )
 
 
     @fsm_log_by
     @transition(field=status, source=[STATUS.built], target=STATUS.started)
     def start(self, *args, **kwargs):
-        Panelist = apps.get_model('api.panelist')
-        # Number the panelists
-        officials = self.panelists.filter(
-            kind=Panelist.KIND.official,
-            category__gt=Panelist.CATEGORY.ca,
-        ).order_by(
-            'category',
-            'person__last_name',
-            'person__nick_name',
-            'person__first_name',
-        )
-        i = 0
-        for official in officials:
-            i += 1
-            official.num = i
-            official.save()
-        practices = self.panelists.filter(
-            kind=Panelist.KIND.practice,
-            category__gt=Panelist.CATEGORY.ca,
-        ).order_by(
-            'category',
-            'person__last_name',
-            'person__nick_name',
-            'person__first_name',
-        )
-        i = 50
-        for practice in practices:
-            i += 1
-            practice.num = i
-            practice.save()
         # Build the appearances
         appearances = self.appearances.all()
         for appearance in appearances:

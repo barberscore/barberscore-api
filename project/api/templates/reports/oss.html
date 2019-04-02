@@ -80,16 +80,10 @@
                   </strong>
                   <div class='smaller-font'>
                     {% if group.get_kind_display == 'Chorus' %}
-                      {{group.parent.name|truncatechars_html:"50"}}
-                      {% if group.contesting_patched_patched %}
-                        ({{group.contesting_patched_patched|join:", "}})
-                      {% endif %}<br>
+                      {{group.parent.name|truncatechars_html:"50"}}&nbsp;{{group.contesting_patched|default:""}}<br>
                       Dir(s): {{group.participants_patched|truncatechars_html:"60"|default:"(No Director Specified)"}};&nbsp;&nbsp;OnStage: {{group.pos_patched}}<br>
                     {% else %}
-                      {{group.representing_patched|default:"(Unknown)"}}
-                      {% if group.contesting_patched %}
-                        ({{group.contesting_patched|join:", "}})
-                      {% endif %}<br>
+                      {{group.representing_patched|default:"(Unknown)"}}&nbsp;{{group.contesting_patched|default:""}}<br>
                       {{group.participants_patched|truncatechars_html:"60"|default:"(No Members Specified)"}}<br>
                     {% endif %}
                   </div>

@@ -669,21 +669,6 @@ class Session(TimeStampedModel):
     def package(self, *args, **kwargs):
         """Button up session and transfer to CA."""
 
-        # Number Contests  Only include contested.
-        contests = self.contests.filter(
-            status__gt=0,
-            contestants__status__gt=0,
-            num__isnull=True,  # For indempotence
-        ).distinct(
-        ).order_by(
-            'award__tree_sort',
-        )
-        i = 0
-        for contest in contests:
-            i += 1
-            contest.num = i
-            contest.save()
-
         # Save final reports
         self.save_drcj()
         self.save_legacy()

@@ -43,11 +43,6 @@ class Contest(TimeStampedModel):
         default=STATUS.new,
     )
 
-    num = models.IntegerField(
-        blank=True,
-        null=True,
-    )
-
     is_primary = models.BooleanField(
         default=False,
     )

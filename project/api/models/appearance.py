@@ -102,16 +102,6 @@ class Appearance(TimeStampedModel):
         default='',
     )
 
-    contesting = ArrayField(
-        help_text='Award numbers contestanting',
-        base_field=models.IntegerField(
-            null=True,
-            blank=True,
-        ),
-        null=True,
-        blank=True,
-    )
-
     actual_start = models.DateTimeField(
         help_text="""
             The actual appearance datetime.""",
