@@ -51,15 +51,6 @@ def test_chart_endpoint(user_api_client, chart):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_competitor_endpoint(user_api_client, competitor):
-    path = reverse('competitor-list')
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('competitor-detail', args=(str(competitor.id),))
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
 def test_contest_endpoint(user_api_client, contest):
     path = reverse('contest-list')
     response = user_api_client.get(path)
@@ -74,6 +65,15 @@ def test_contestant_endpoint(user_api_client, contestant):
     response = user_api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
     path = reverse('contestant-detail', args=(str(contestant.id),))
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_contender_endpoint(user_api_client, contender):
+    path = reverse('contender-list')
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+    path = reverse('contender-detail', args=(str(contender.id),))
     response = user_api_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -96,13 +96,13 @@ def test_entry_endpoint(user_api_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_grid_endpoint(user_api_client, grid):
-    path = reverse('grid-list')
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('grid-detail', args=(str(grid.id),))
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+# def test_grid_endpoint(user_api_client, grid):
+#     path = reverse('grid-list')
+#     response = user_api_client.get(path)
+#     assert response.status_code == status.HTTP_200_OK
+#     path = reverse('grid-detail', args=(str(grid.id),))
+#     response = user_api_client.get(path)
+#     assert response.status_code == status.HTTP_200_OK
 
 
 def test_group_endpoint(user_api_client, group):

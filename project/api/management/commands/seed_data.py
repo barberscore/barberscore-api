@@ -7,7 +7,6 @@ from api.factories import AppearanceFactory
 from api.factories import AssignmentFactory
 from api.factories import AwardFactory
 from api.factories import ChartFactory
-from api.factories import CompetitorFactory
 from api.factories import ContestantFactory
 from api.factories import ContestFactory
 from api.factories import ConventionFactory
@@ -29,7 +28,6 @@ from api.models import Appearance
 from api.models import Assignment
 from api.models import Award
 from api.models import Chart
-from api.models import Competitor
 from api.models import Contest
 from api.models import Contestant
 from api.models import Convention

@@ -23,7 +23,7 @@ config = api_apps.get_app_config('api')
 log = logging.getLogger(__name__)
 
 
-class Contestant(TimeStampedModel):
+class Contender(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -43,35 +43,35 @@ class Contestant(TimeStampedModel):
     )
 
     # FKs
-    entry = models.ForeignKey(
-        'Entry',
-        related_name='contestants',
+    appearance = models.ForeignKey(
+        'Appearance',
+        related_name='contenders',
         on_delete=models.CASCADE,
     )
 
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='contestants',
+    outcome = models.ForeignKey(
+        'Outcome',
+        related_name='contenders',
         on_delete=models.CASCADE,
     )
 
     # Relations
     statelogs = GenericRelation(
         StateLog,
-        related_query_name='contestants',
+        related_query_name='contenders',
     )
 
     # Internals
     class Meta:
         ordering = (
-            'contest__award__tree_sort',
+            'outcome__num',
         )
         unique_together = (
-            ('entry', 'contest',),
+            ('appearance', 'outcome',),
         )
 
     class JSONAPIMeta:
-        resource_name = "contestant"
+        resource_name = "contender"
 
     def __str__(self):
         return str(self.id)
@@ -105,23 +105,16 @@ class Contestant(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.contest.session.convention.assignments.filter(
+                self.outcome.round.session.convention.assignments.filter(
                     person__user=request.user,
                     status__gt=0,
                     category__lte=10,
                 ),
-                self.contest.session.status < self.contest.session.STATUS.packaged,
-            ]),
-            all([
-                self.entry.group.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-                self.entry.status < self.entry.STATUS.approved,
+                self.outcome.round.status < self.outcome.round.STATUS.started,
             ]),
         ])
 
-    # Contestant Transitions
+    # contender Transitions
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.included)
     def include(self, *args, **kwargs):

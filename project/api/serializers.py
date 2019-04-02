@@ -11,8 +11,8 @@ from .models import Appearance
 from .models import Assignment
 from .models import Award
 from .models import Chart
-from .models import Competitor
 from .models import Contest
+from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
@@ -49,6 +49,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
         'songs': 'api.serializers.SongSerializer',
+        # 'contenders': 'api.serializers.ContenderSerializer',
     }
 
     class Meta:
@@ -61,15 +62,25 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'draw',
             'actual_start',
             'actual_finish',
+            'is_single',
+            'is_private',
+            'participants',
+            'representing',
             'pos',
             'stats',
+            'run_total',
             'variance_report',
             'round',
-            'competitor',
-            'grid',
+            'group',
+            # 'grid',
             'songs',
+            # 'contenders',
             'permissions',
         )
+        read_only_fields = [
+            'run_total',
+        ]
+
 
     class JSONAPIMeta:
         included_resources = [
@@ -162,33 +173,6 @@ class ChartSerializer(serializers.ModelSerializer):
         )
 
 
-class CompetitorSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-
-    class Meta:
-        model = Competitor
-        fields = (
-            'id',
-            'url',
-            'status',
-            'is_single',
-            'contesting',
-            'stats',
-            # 'csa',
-            'session',
-            'group',
-            'entry',
-            'permissions',
-        )
-
-    class JSONAPIMeta:
-        included_resources = [
-            # 'appearances',
-        ]
-
-
-
 class ContestSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
@@ -201,7 +185,6 @@ class ContestSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'status',
-            'num',
             'result',
             'group',
             'session',
@@ -227,6 +210,21 @@ class ContestantSerializer(serializers.ModelSerializer):
             'status',
             'entry',
             'contest',
+            'permissions',
+        )
+
+
+class ContenderSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Contender
+        fields = (
+            'id',
+            'url',
+            'status',
+            'appearance',
+            'outcome',
             'permissions',
         )
 
@@ -280,11 +278,6 @@ class ConventionSerializer(serializers.ModelSerializer):
 
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    # competitor = serializers.PrimaryKeyRelatedField(
-    #     queryset=Competitor.objects.all(),
-    #     required=False,
-    #     allow_null=True,
-    # )
     # logs = StateLogSerializer(many=True)
     statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     included_serializers = {
@@ -312,7 +305,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'notes',
             'session',
             'group',
-            # 'competitor',
             'contestants',
             'permissions',
             'statelogs',
@@ -363,7 +355,6 @@ class GroupSerializer(serializers.ModelSerializer):
         'repertories': 'api.serializers.RepertorySerializer',
         'members': 'api.serializers.MemberSerializer',
         'officers': 'api.serializers.OfficerSerializer',
-        'competitors': 'api.serializers.CompetitorSerializer',
         'entries': 'api.serializers.EntrySerializer',
     }
 
@@ -399,7 +390,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'parent',
             'children',
             'awards',
-            'competitors',
             'conventions',
             'entries',
             'members',
@@ -413,7 +403,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'repertories',
             # 'members',
             # 'officers',
-            # 'competitors',
             # 'entries',
         ]
 
@@ -496,6 +485,9 @@ class OfficerSerializer(serializers.ModelSerializer):
 
 class OutcomeSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    # included_serializers = {
+    #     'contenders': 'api.serializers.ContenderSerializer',
+    # }
 
     class Meta:
         model = Outcome
@@ -507,6 +499,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'award',
             'num',
             'name',
+            'contenders',
             'legacy_num',
             'legacy_name',
             'permissions',
@@ -703,7 +696,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'drcj_report',
             'contact_report',
             'num_rounds',
-            'competitors',
             'convention',
             'contests',
             'entries',

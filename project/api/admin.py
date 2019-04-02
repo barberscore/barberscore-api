@@ -30,7 +30,7 @@ from .inlines import ActiveQuartetInline
 from .inlines import AppearanceInline
 from .inlines import AssignmentInline
 from .inlines import AwardInline
-from .inlines import CompetitorInline
+from .inlines import ContenderInline
 from .inlines import ContestantInline
 from .inlines import ContestInline
 from .inlines import ConventionInline
@@ -53,8 +53,8 @@ from .models import Award
 from .models import Chart
 from .models import Flat
 from .models import Complete
-from .models import Competitor
 from .models import Contest
+from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
@@ -272,24 +272,29 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'actual_start',
         'actual_finish',
-        'competitor',
+        'group',
         'round',
         'num',
         'draw',
+        'is_single',
+        'is_private',
+        'participants',
+        'representing',
         'pos',
         'stats',
+        'csa',
         'variance_report',
     ]
     list_display = [
         'status',
-        'competitor',
+        'group',
         'round',
         'num',
         'draw',
         'status',
     ]
     list_select_related = [
-        'competitor',
+        'group',
         'round__session',
         'round__session__convention',
     ]
@@ -305,23 +310,24 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     save_on_top = True
     autocomplete_fields = [
-        'competitor',
+        'group',
         'round',
     ]
     readonly_fields = [
         'id',
         'stats',
+        'csa',
         'variance_report',
     ]
     search_fields = [
-        'competitor__group__name',
+        'group__name',
         'round__session__convention__name',
     ]
     inlines = [
         SongInline,
     ]
     ordering = (
-        'competitor__group__name',
+        'group__name',
     )
 
 
@@ -600,6 +606,43 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
 
+@admin.register(Contender)
+class ContenderAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
+    fields = [
+        'status',
+        # 'appearance',
+        # 'outcome',
+    ]
+
+    list_display = [
+        'id',
+    ]
+
+
+    list_filter = (
+        'status',
+    )
+
+    readonly_fields = [
+    ]
+
+    # autocomplete_fields = [
+    #     'appearance',
+    #     'outcome',
+    # ]
+
+    search_fields = [
+        'id',
+    ]
+
+    ordering = (
+    )
+
+
 @admin.register(Convention)
 class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = (
@@ -680,71 +723,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
 
 
-@admin.register(Competitor)
-class CompetitorAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    fields = (
-        'id',
-        'status',
-        'session',
-        'group',
-        'entry',
-        'representing',
-        'participants',
-        'contesting',
-        # 'draw',
-        'csa',
-        ('is_private', 'is_single',),
-        'stats',
-    )
-
-    list_display = (
-        'status',
-        'group',
-        'session',
-        'csa',
-    )
-
-    list_filter = [
-        SessionConventionStatusListFilter,
-        'status',
-        'session__kind',
-        'session__convention__season',
-        'session__convention__year',
-    ]
-
-    inlines = [
-        StateLogInline,
-        # GridInline,
-        # ContestantInline,
-    ]
-
-    search_fields = [
-        'session__convention__name',
-        'group__name',
-    ]
-
-    autocomplete_fields = [
-        'session',
-        'group',
-        'entry'
-    ]
-
-    readonly_fields = (
-        'id',
-        'stats',
-        'csa',
-    )
-
-    save_on_top = True
-
-    ordering = (
-    )
-
-
 @admin.register(Entry)
 class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
@@ -818,7 +796,7 @@ class GridAdmin(admin.ModelAdmin):
         'start',
         'venue',
         'round',
-        'appearance',
+        # 'appearance',
         'renditions',
     ]
     list_display = [
@@ -977,7 +955,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             # MemberInline,
             RepertoryInline,
             # EntryInline,
-            CompetitorInline,
             StateLogInline,
         ],
         'Quartet': [
@@ -985,7 +962,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             MemberInline,
             RepertoryInline,
             EntryInline,
-            CompetitorInline,
             StateLogInline,
         ],
         'VLQ': [
@@ -993,7 +969,6 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
             MemberInline,
             RepertoryInline,
             EntryInline,
-            CompetitorInline,
             StateLogInline,
         ],
     }
@@ -1324,6 +1299,10 @@ class OutcomeAdmin(admin.ModelAdmin):
         'id',
     ]
 
+    inlines = [
+        ContenderInline,
+    ]
+
 @admin.register(Panelist)
 class PanelistAdmin(admin.ModelAdmin):
     save_on_top = True
@@ -1589,8 +1568,8 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
-        'oss',
-        'sa',
+        # 'oss',
+        # 'sa',
     ]
 
     autocomplete_fields = [
@@ -1714,7 +1693,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         ContestInline,
         EntryInline,
-        CompetitorInline,
         RoundInline,
         StateLogInline,
     ]

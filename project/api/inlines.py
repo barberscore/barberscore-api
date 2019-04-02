@@ -6,8 +6,8 @@ from django.contrib import admin
 from .models import Appearance
 from .models import Assignment
 from .models import Award
-from .models import Competitor
 from .models import Contest
+from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
@@ -127,18 +127,20 @@ class ActiveQuartetInline(admin.TabularInline):
 class AppearanceInline(admin.TabularInline):
     model = Appearance
     fields = [
-        'competitor',
+        'group',
         'status',
         'num',
         'draw',
         'stats',
     ]
     readonly_fields = [
-        'competitor',
+        'group',
         'status',
     ]
     ordering = (
+        'draw',
         'num',
+        'group__name',
     )
     show_change_link = True
     extra = 0
@@ -201,7 +203,6 @@ class ContestInline(admin.TabularInline):
     fields = [
         'award',
         'group',
-        'num',
         'session',
         'status',
     ]
@@ -240,14 +241,19 @@ class ContestantInline(admin.TabularInline):
     ]
 
 
-class ConventionInline(admin.TabularInline):
-    model = Convention
+class ContenderInline(admin.TabularInline):
+    model = Contender
     fields = [
-        'name',
-        'group',
+        'appearance',
+        'outcome',
+        'status',
+    ]
+    readonly_fields = [
+        'status',
     ]
     autocomplete_fields = [
-        'group',
+        'appearance',
+        'outcome',
     ]
     show_change_link = True
     extra = 0
@@ -256,25 +262,14 @@ class ConventionInline(admin.TabularInline):
     ]
 
 
-class CompetitorInline(admin.TabularInline):
-    model = Competitor
+class ConventionInline(admin.TabularInline):
+    model = Convention
     fields = [
-        'status',
-        'session',
+        'name',
         'group',
-        'stats',
-        'is_single',
-    ]
-    readonly_fields = [
-        'status',
-        # 'seed',
     ]
     autocomplete_fields = [
-        'session',
         'group',
-    ]
-    ordering = [
-        'group__name',
     ]
     show_change_link = True
     extra = 0

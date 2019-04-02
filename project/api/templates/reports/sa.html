@@ -72,7 +72,7 @@
             <col span=1 class='col-info b-right'>
           </colgroup>
           <thead>
-            <th>Competitor</th>
+            <th>Group</th>
             <th>Songs</th>
             <th class='text-center'>TOT</th>
             <th class='text-center'>MUS</th>
@@ -80,28 +80,28 @@
             <th class='text-center'>SNG</th>
           </thead>
           <tbody>
-            {% for competitor in competitors %}
+            {% for group in groups %}
               <tr>
                 <td>
-                  <strong>{{competitor.group.name}}</strong><br>
-                  <strong>{{competitor.tot_rank}}</strong>&nbsp;&nbsp;{{competitor.mus_rank}}/{{competitor.per_rank}}/{{competitor.sng_rank}}
+                  <strong>{{group.name}}</strong><br>
+                  <strong>{{group.tot_rank}}</strong>&nbsp;&nbsp;{{group.mus_rank}}/{{group.per_rank}}/{{group.sng_rank}}
                 </td>
                 <td>
-                  {% for appearance in competitor.appearances_patched %}
+                  {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.chart.title|truncatechars_html:30|safe|default:"(Not included)"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  {% for appearance in competitor.appearances_patched %}
+                  {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       <strong>{{song.tot_score|floatformat:1}}</strong>&nbsp;&nbsp;<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  {% for appearance in competitor.appearances_patched %}
+                  {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.mus_score|floatformat:1}}&nbsp;&nbsp;
                       {% for score, diff in song.mus_scores %}
@@ -116,7 +116,7 @@
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  {% for appearance in competitor.appearances_patched %}
+                  {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.per_score|floatformat:1}}&nbsp;&nbsp;
                       {% for score, diff in song.per_scores %}
@@ -131,7 +131,7 @@
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  {% for appearance in competitor.appearances_patched %}
+                  {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.sng_score|floatformat:1}}&nbsp;&nbsp;
                       {% for score, diff in song.sng_scores %}

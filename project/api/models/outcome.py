@@ -80,6 +80,7 @@ class Outcome(TimeStampedModel):
 
     # Methods
     def get_name(self):
+        Group = apps.get_model('api.group')
         Panelist = apps.get_model('api.panelist')
         if self.round.kind != self.round.KIND.finals and not self.award.is_single:
             return "(Result determined in Finals)"
@@ -89,48 +90,46 @@ class Outcome(TimeStampedModel):
             return "MUST ENTER WINNER MANUALLY"
         if self.award.level == self.award.LEVEL.qualifier:
             threshold = self.award.threshold
-            num = [self.num]
-            qualifiers = self.round.session.competitors.filter(
-                contesting__contains=num,
+            qualifiers = Group.objects.filter(
+                appearances__contenders__outcome=self,
             ).annotate(
                 avg=Avg(
                     'appearances__songs__scores__points',
                     filter=Q(
                         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    )
+                    ),
                 ),
             ).filter(
                 avg__gte=threshold,
             ).order_by(
-                'group__name',
-            ).values_list('group__name', flat=True)
+                'name',
+            ).values_list('name', flat=True)
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
         if self.award.level in [self.award.LEVEL.championship, self.award.LEVEL.representative]:
-            num = [self.num]
-            winner = self.round.session.competitors.filter(
-                contesting__contains=num,
+            winner = Group.objects.filter(
+                appearances__contenders__outcome=self,
             ).annotate(
                 tot=Sum(
                     'appearances__songs__scores__points',
                     filter=Q(
                         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    )
+                    ),
                 ),
-                sng=Avg(
+                sng=Sum(
                     'appearances__songs__scores__points',
                     filter=Q(
                         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    )
+                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing
+                    ),
                 ),
-                per=Avg(
+                per=Sum(
                     'appearances__songs__scores__points',
                     filter=Q(
                         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    )
+                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance
+                    ),
                 ),
             ).earliest(
                 '-tot',
@@ -138,7 +137,7 @@ class Outcome(TimeStampedModel):
                 '-per',
             )
             if winner:
-                return str(winner.group.name)
+                return str(winner.name)
             return "(No Recipient)"
         raise RuntimeError("Level mismatch")
 
@@ -168,7 +167,7 @@ class Outcome(TimeStampedModel):
     @authenticated_users
     def has_object_read_permission(self, request):
         return any([
-            self.round.status == self.round.STATUS.finished,
+            self.round.status == self.round.STATUS.published,
             self.round.session.convention.assignments.filter(
                 person__user=request.user,
                 status__gt=0,
@@ -195,6 +194,6 @@ class Outcome(TimeStampedModel):
                     status__gt=0,
                     category__lte=10,
                 ),
-                self.round.status < self.round.STATUS.finished,
+                self.round.status < self.round.STATUS.published,
             ]),
         ])

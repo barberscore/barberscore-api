@@ -60,17 +60,6 @@ def test_chart_endpoint(admin_api_client, chart, django_assert_max_num_queries):
         assert response.status_code == status.HTTP_200_OK
 
 
-def test_competitor_endpoint(admin_api_client, competitor, django_assert_max_num_queries):
-    with django_assert_max_num_queries(10):
-        path = reverse('competitor-list')
-        response = admin_api_client.get(path)
-        assert response.status_code == status.HTTP_200_OK
-    with django_assert_max_num_queries(10):
-        path = reverse('competitor-detail', args=(str(competitor.id),))
-        response = admin_api_client.get(path)
-        assert response.status_code == status.HTTP_200_OK
-
-
 def test_contest_endpoint(admin_api_client, contest, django_assert_max_num_queries):
     with django_assert_max_num_queries(10):
         path = reverse('contest-list')
@@ -89,6 +78,17 @@ def test_contestant_endpoint(admin_api_client, contestant, django_assert_max_num
         assert response.status_code == status.HTTP_200_OK
     with django_assert_max_num_queries(10):
         path = reverse('contestant-detail', args=(str(contestant.id),))
+        response = admin_api_client.get(path)
+        assert response.status_code == status.HTTP_200_OK
+
+
+def test_contender_endpoint(admin_api_client, contender, django_assert_max_num_queries):
+    with django_assert_max_num_queries(10):
+        path = reverse('contender-list')
+        response = admin_api_client.get(path)
+        assert response.status_code == status.HTTP_200_OK
+    with django_assert_max_num_queries(10):
+        path = reverse('contender-detail', args=(str(contender.id),))
         response = admin_api_client.get(path)
         assert response.status_code == status.HTTP_200_OK
 
@@ -115,15 +115,15 @@ def test_entry_endpoint(admin_api_client, entry, django_assert_max_num_queries):
         assert response.status_code == status.HTTP_200_OK
 
 
-def test_grid_endpoint(admin_api_client, grid, django_assert_max_num_queries):
-    with django_assert_max_num_queries(10):
-        path = reverse('grid-list')
-        response = admin_api_client.get(path)
-        assert response.status_code == status.HTTP_200_OK
-    with django_assert_max_num_queries(10):
-        path = reverse('grid-detail', args=(str(grid.id),))
-        response = admin_api_client.get(path)
-        assert response.status_code == status.HTTP_200_OK
+# def test_grid_endpoint(admin_api_client, grid, django_assert_max_num_queries):
+#     with django_assert_max_num_queries(10):
+#         path = reverse('grid-list')
+#         response = admin_api_client.get(path)
+#         assert response.status_code == status.HTTP_200_OK
+#     with django_assert_max_num_queries(10):
+#         path = reverse('grid-detail', args=(str(grid.id),))
+#         response = admin_api_client.get(path)
+#         assert response.status_code == status.HTTP_200_OK
 
 
 def test_group_endpoint(admin_api_client, group, django_assert_max_num_queries):

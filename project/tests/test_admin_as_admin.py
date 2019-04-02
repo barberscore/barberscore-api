@@ -51,15 +51,6 @@ def test_chart_admin(admin_django_client, chart):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_competitor_admin(admin_django_client, competitor):
-    path = reverse('admin:api_competitor_changelist')
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_competitor_change', args=(str(competitor.id),))
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_contest_admin(admin_django_client, contest):
     path = reverse('admin:api_contest_changelist')
     response = admin_django_client.get(path)
@@ -74,6 +65,15 @@ def test_contestant_admin(admin_django_client, contestant):
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
     path = reverse('admin:api_contestant_change', args=(str(contestant.id),))
+    response = admin_django_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_contender_admin(admin_django_client, contender):
+    path = reverse('admin:api_contender_changelist')
+    response = admin_django_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+    path = reverse('admin:api_contender_change', args=(str(contender.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -96,13 +96,13 @@ def test_entry_admin(admin_django_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_grid_admin(admin_django_client, grid):
-    path = reverse('admin:api_grid_changelist')
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_grid_change', args=(str(grid.id),))
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+# def test_grid_admin(admin_django_client, grid):
+#     path = reverse('admin:api_grid_changelist')
+#     response = admin_django_client.get(path)
+#     assert response.status_code == status.HTTP_200_OK
+#     path = reverse('admin:api_grid_change', args=(str(grid.id),))
+#     response = admin_django_client.get(path)
+#     assert response.status_code == status.HTTP_200_OK
 
 
 def test_group_admin(admin_django_client, group):

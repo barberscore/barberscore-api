@@ -88,10 +88,10 @@ class Repertory(TimeStampedModel):
                 person__user=request.user,
                 status__gt=0,
             ),
-            self.group.competitors.filter(
-                session__convention__assignments__person__user=request.user,
-                session__convention__assignments__status__gt=0,
-                session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
+            self.group.appearances.filter(
+                round__session__convention__assignments__person__user=request.user,
+                round__session__convention__assignments__status__gt=0,
+                round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
             )
         ])
 

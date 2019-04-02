@@ -23,7 +23,7 @@
         table-layout:fixed; /* will switch the table-layout algorythm */
         line-height: 1.4;
       }
-      .w-competitors {
+      .w-groups {
         width: 37% !important;
       }
       .w-songs {
@@ -63,7 +63,7 @@
         <table class='table table-striped table-sm '>
           <thead>
             <tr>
-              <th class='w-competitors' scope='col'>Competitor</th>
+              <th class='w-groups' scope='col'>Group</th>
               <th class='w-songs' scope='col'>Songs</th>
               <th class='w-scores text-right' scope='col'>MUS</th>
               <th class='w-scores text-right' scope='col'>PER</th>
@@ -72,68 +72,62 @@
             </tr>
           </thead>
           <tbody>
-            {% for competitor in competitors %}
+            {% for group in groups %}
               <tr class='pbi_avoid'>
-                <td class='w-competitors'>
+                <td class='w-groups'>
                   <strong>
-                    {{competitor.group.name}}
+                    {{group.name}}
                   </strong>
                   <div class='smaller-font'>
-                    {% if competitor.group.get_kind_display == 'Chorus' %}
-                      {{competitor.group.parent.name|truncatechars_html:"50"}}
-                      {% if competitor.contesting_patched %}
-                        ({{competitor.contesting_patched|join:", "}})
-                      {% endif %}<br>
-                      Dir(s): {{competitor.participants|truncatechars_html:"60"|default:"(No Director Specified)"}};&nbsp;&nbsp;OnStage: {{competitor.pos_patched}}<br>
+                    {% if group.get_kind_display == 'Chorus' %}
+                      {{group.parent.name|truncatechars_html:"50"}}&nbsp;({{group.contesting_patched|default:"None"}})<br>
+                      Dir(s): {{group.participants_patched|truncatechars_html:"60"|default:"(No Director Specified)"}};&nbsp;&nbsp;OnStage: {{group.pos_patched}}<br>
                     {% else %}
-                      {{competitor.representing|default:"(Unknown)"}}
-                      {% if competitor.contesting %}
-                        ({{competitor.contesting|join:", "}})
-                      {% endif %}<br>
-                      {{competitor.participants|truncatechars_html:"60"|default:"(No Members Specified)"}}<br>
+                      {{group.representing_patched|default:"(Unknown)"}}&nbsp;({{group.contesting_patched|default:"None"}})<br>
+                      {{group.participants_patched|truncatechars_html:"60"|default:"(No Members Specified)"}}<br>
                     {% endif %}
                   </div>
                 </td>
                 <td class='w-songs'>
-                  <strong>Total: {{competitor.tot_points}} Points</strong><br>
-                  {% for appearance in competitor.appearances_patched %}
-                      {% if competitor.max_round > 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>{% endif %}
+                  <strong>Total: {{group.tot_points}} Points</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                      {% if group.max_round > 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
                       &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:60|safe|default:"(Song not included in contestant repertory)"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='w-scores text-right'>
-                  <strong>{{competitor.mus_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances_patched %}
-                    {% if competitor.max_round > 1 %}<span class='bolder'>{{appearance.mus_score|floatformat:1}}</span><br>{% endif %}
+                  <strong>{{group.mus_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max_round > 1 %}<span class='bolder'>{{appearance.mus_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
                         {{song.mus_score|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='w-scores text-right'>
-                  <strong>{{competitor.per_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances_patched %}
-                    {% if competitor.max_round > 1 %}<span class='bolder'>{{appearance.per_score|floatformat:1}}</span><br>{% endif %}
+                  <strong>{{group.per_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max_round > 1 %}<span class='bolder'>{{appearance.per_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
                         {{song.per_score|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='w-scores text-right'>
-                  <strong>{{competitor.sng_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances_patched %}
-                    {% if competitor.max_round > 1 %}<span class='bolder'>{{appearance.sng_score|floatformat:1}}</span><br>{% endif %}
+                  <strong>{{group.sng_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max_round > 1 %}<span class='bolder'>{{appearance.sng_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
                         {{song.sng_score|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='w-scores text-right'>
-                  <strong>{{competitor.tot_score|floatformat:1}}</strong><br>
-                  {% for appearance in competitor.appearances_patched %}
-                    {% if competitor.max_round > 1 %}<span class='bolder'>{{appearance.tot_score|floatformat:1}}</span><br>{% endif %}
+                  <strong>{{group.tot_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max_round > 1 %}<span class='bolder'>{{appearance.tot_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
                         {{song.tot_score|floatformat:1}}<br>
                     {% endfor %}
@@ -147,9 +141,9 @@
       <section>
         <p>
           {% if round.kind == 1 %}
-            Competitors are listed above in accordance with Article VII of the BHS Contest Rules.<br>
+            Groups are listed above in accordance with Article VII of the BHS Contest Rules.<br>
           {% else %}
-            Competitors not advancing are listed above in in accordance with Article VII of the BHS Contest Rules.<br>
+            Groups not advancing are listed above in in accordance with Article VII of the BHS Contest Rules.<br>
           {% endif %}
           {% if privates %}
             The following groups sang for Evaluation-Only: {{privates|join:", "}}

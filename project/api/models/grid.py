@@ -117,12 +117,12 @@ class Grid(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    appearance = models.OneToOneField(
-        'Appearance',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
+    # appearance = models.OneToOneField(
+    #     'Appearance',
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
     # Internals
     class JSONAPIMeta:

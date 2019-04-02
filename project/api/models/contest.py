@@ -43,11 +43,6 @@ class Contest(TimeStampedModel):
         default=STATUS.new,
     )
 
-    num = models.IntegerField(
-        blank=True,
-        null=True,
-    )
-
     is_primary = models.BooleanField(
         default=False,
     )
@@ -106,10 +101,6 @@ class Contest(TimeStampedModel):
             raise ValidationError(
                 {'level': 'Qualifiers can not select winners'}
             )
-        if self.num and not self.contestants.filter(status__gt=0):
-            raise ValidationError(
-                {'num': 'Contests without contestants should not be numbered.'}
-            )
 
 
     # Contest Permissions
@@ -147,24 +138,6 @@ class Contest(TimeStampedModel):
                 # self.session.status < self.session.STATUS.opened,
             ]),
         ])
-
-    # Methods
-    def get_group(self):
-        if self.award.level not in [
-            self.award.LEVEL.championship,
-            self.award.LEVEL.representative,
-        ]:
-            return
-        contestant = self.contestants.filter(
-            status__gt=0,
-        ).order_by(
-            '-entry__competitor__tot_points',
-            '-entry__competitor__sng_points',
-            '-entry__competitor__per_points',
-        ).first()
-        if contestant:
-            return contestant.entry.group
-        return
 
     # Transitions
     @fsm_log_by

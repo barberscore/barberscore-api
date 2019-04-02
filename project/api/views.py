@@ -24,7 +24,6 @@ from django.utils.text import slugify
 
 # Local
 from .filterbackends import AppearanceFilterBackend
-from .filterbackends import CompetitorFilterBackend
 from .filterbackends import OutcomeFilterBackend
 from .filterbackends import RepertoryFilterBackend
 from .filterbackends import ScoreFilterBackend
@@ -42,8 +41,8 @@ from .models import Appearance
 from .models import Assignment
 from .models import Award
 from .models import Chart
-from .models import Competitor
 from .models import Contest
+from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
@@ -70,7 +69,7 @@ from .serializers import AppearanceSerializer
 from .serializers import AssignmentSerializer
 from .serializers import AwardSerializer
 from .serializers import ChartSerializer
-from .serializers import CompetitorSerializer
+from .serializers import ContenderSerializer
 from .serializers import ContestantSerializer
 from .serializers import ContestSerializer
 from .serializers import ConventionSerializer
@@ -113,10 +112,11 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
         'round',
-        'competitor',
-        'grid',
+        'group',
+        # 'grid',
     ).prefetch_related(
         'songs',
+        # 'contenders',
         'statelogs',
     ).order_by('id')
     serializer_class = AppearanceSerializer
@@ -181,6 +181,66 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+    @action(methods=['post'], detail=True)
+    def complete(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.complete(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+    @action(methods=['post'], detail=True)
+    def advance(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.advance(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+    @action(methods=['post'], detail=True)
+    def scratch(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.scratch(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
+    @action(methods=['post'], detail=True)
+    def disqualify(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.disqualify(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
     @action(
         methods=['get'],
         detail=True,
@@ -196,14 +256,44 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             pdf = appearance.variance_report.file
         else:
             pdf = appearance.get_variance()
-        file_name = '{0}-oss'.format(
-            slugify("{0} Variance Report".format(appearance))
+        file_name = '{0} {1} {2} {3} Variance Report'.format(
+            appearance.round.session.convention.name,
+            appearance.round.session.get_kind_display(),
+            appearance.round.get_kind_display(),
+            appearance.group.name,
         )
         return PDFResponse(
             pdf,
             file_name=file_name,
             status=status.HTTP_200_OK
         )
+
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            PDFRenderer,
+        ],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
+    def csa(self, request, pk=None):
+        appearance = Appearance.objects.get(pk=pk)
+        if appearance.csa:
+            pdf = appearance.csa.file
+        else:
+            pdf = appearance.get_csa()
+        file_name = '{0} {1} Session {2} CSA'.format(
+            appearance.round.session.convention.name,
+            appearance.round.session.get_kind_display(),
+            appearance.group.name,
+        )
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
 
 
 class AssignmentViewSet(viewsets.ModelViewSet):
@@ -407,6 +497,51 @@ class ContestViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+class ContenderViewSet(viewsets.ModelViewSet):
+    queryset = Contender.objects.select_related(
+        'appearance',
+        'outcome',
+    ).prefetch_related(
+        'statelogs',
+    ).order_by('id')
+    serializer_class = ContenderSerializer
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "contender"
+
+    @action(methods=['post'], detail=True)
+    def include(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.include(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def exclude(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.exclude(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+
 class ContestantViewSet(viewsets.ModelViewSet):
     queryset = Contestant.objects.select_related(
         'entry',
@@ -498,108 +633,6 @@ class ConventionViewSet(viewsets.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
-
-
-class CompetitorViewSet(viewsets.ModelViewSet):
-    queryset = Competitor.objects.select_related(
-        'session',
-        'group',
-        'entry',
-    ).prefetch_related(
-        'statelogs',
-    ).order_by('id')
-    serializer_class = CompetitorSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-        CompetitorFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "competitor"
-
-    @action(methods=['post'], detail=True)
-    def start(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.start(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def finish(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.finish(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def disqualify(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.disqualify(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def scratch(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.scratch(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-
-    @action(
-        methods=['get'],
-        detail=True,
-        renderer_classes=[
-            PDFRenderer,
-        ],
-        permission_classes=[DRYPermissions],
-        content_negotiation_class=IgnoreClientContentNegotiation,
-    )
-    def csa(self, request, pk=None):
-        competitor = Competitor.objects.get(pk=pk)
-        if competitor.csa:
-            pdf = competitor.csa.file
-        else:
-            pdf = competitor.get_csa()
-        file_name = '{0} {1} Session {2} CSA'.format(
-            competitor.session.convention.name,
-            competitor.session.get_kind_display(),
-            competitor.group.name,
-        )
-        return PDFResponse(
-            pdf,
-            file_name=file_name,
-            status=status.HTTP_200_OK
-        )
 
 
 class EntryViewSet(viewsets.ModelViewSet):
@@ -694,7 +727,6 @@ class GridViewSet(viewsets.ModelViewSet):
     queryset = Grid.objects.select_related(
         'round',
         'venue',
-        'appearance',
     ).prefetch_related(
     ).order_by('id')
     serializer_class = GridSerializer
@@ -713,7 +745,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'children',
         'awards',
-        'competitors',
+        'appearances',
         'conventions',
         'entries',
         'members',
@@ -919,6 +951,7 @@ class OutcomeViewSet(viewsets.ModelViewSet):
         'round',
         'award',
     ).prefetch_related(
+        # 'contenders',
         'statelogs',
     ).order_by('id')
     serializer_class = OutcomeSerializer
@@ -1091,6 +1124,14 @@ class RoundViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "round"
 
+    @action(methods=['get'], detail=True)
+    def mock(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        object.mock()
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
     @action(methods=['post'], detail=True)
     def reset(self, request, pk=None, **kwargs):
         object = self.get_object()
@@ -1134,10 +1175,10 @@ class RoundViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True)
-    def review(self, request, pk=None, **kwargs):
+    def finish(self, request, pk=None, **kwargs):
         object = self.get_object()
         try:
-            object.review(by=self.request.user)
+            object.finish(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
                 {'status': 'Transition conditions not met.'},
@@ -1162,10 +1203,10 @@ class RoundViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True)
-    def finish(self, request, pk=None, **kwargs):
+    def publish(self, request, pk=None, **kwargs):
         object = self.get_object()
         try:
-            object.finish(by=self.request.user)
+            object.publish(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
                 {'status': 'Transition conditions not met.'},
@@ -1174,7 +1215,6 @@ class RoundViewSet(viewsets.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
-
 
     @action(
         methods=['get'],
@@ -1339,7 +1379,6 @@ class SessionViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'contests',
         'entries',
-        'competitors',
         'rounds',
         'statelogs',
     ).distinct().order_by('id')

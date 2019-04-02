@@ -106,7 +106,7 @@ class Entry(TimeStampedModel):
 
     description = models.TextField(
         help_text="""
-            Public Notes (usually from competitor).""",
+            Public Notes (usually from group).""",
         blank=True,
         max_length=1000,
     )

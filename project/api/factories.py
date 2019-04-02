@@ -26,8 +26,8 @@ from api.models import Appearance
 from api.models import Assignment
 from api.models import Award
 from api.models import Chart
-from api.models import Competitor
 from api.models import Contest
+from api.models import Contender
 from api.models import Contestant
 from api.models import Convention
 from api.models import Entry
@@ -54,7 +54,7 @@ class AppearanceFactory(DjangoModelFactory):
     actual_start = None
     actual_finish = None
     round = SubFactory('api.factories.RoundFactory')
-    competitor = SubFactory('api.factories.CompetitorFactory')
+    group = SubFactory('api.factories.GroupFactory')
 
     class Meta:
         model = Appearance
@@ -115,6 +115,15 @@ class ContestantFactory(DjangoModelFactory):
         model = Contestant
 
 
+class ContenderFactory(DjangoModelFactory):
+    status = Contender.STATUS.new
+    appearance = SubFactory('api.factories.AppearanceFactory')
+    outcome = SubFactory('api.factories.OutcomeFactory')
+
+    class Meta:
+        model = Contender
+
+
 class ConventionFactory(DjangoModelFactory):
     name = Faker('city')
     status = Convention.STATUS.new
@@ -157,15 +166,6 @@ class ConventionFactory(DjangoModelFactory):
     #                 convention=self,
     #                 category=Assignment.CATEGORY.singing,
     #             )
-
-
-class CompetitorFactory(DjangoModelFactory):
-    status = Competitor.STATUS.new
-    session = SubFactory('api.factories.SessionFactory')
-    group = SubFactory('api.factories.GroupFactory')
-
-    class Meta:
-        model = Competitor
 
 
 class EntryFactory(DjangoModelFactory):

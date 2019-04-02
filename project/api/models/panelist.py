@@ -81,6 +81,7 @@ class Panelist(TimeStampedModel):
     psa = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
+        default='',
     )
 
     legacy_num = models.IntegerField(
@@ -195,22 +196,24 @@ class Panelist(TimeStampedModel):
         ])
 
     def get_psa(self):
-        Competitor = apps.get_model('api.competitor')
+        Group = apps.get_model('api.group')
         # Score block
-        competitor_ids = self.round.appearances.exclude(
+        group_ids = self.round.appearances.exclude(
             # Don't include advancers on SA
             draw__gt=0,
-        ).values_list('competitor__id', flat=True)
-        competitors = Competitor.objects.filter(
-            id__in=competitor_ids,
+        ).values_list('group__id', flat=True)
+        groups = Group.objects.filter(
+            id__in=group_ids,
         ).prefetch_related(
             'appearances__songs__scores',
             'appearances__songs__scores__panelist',
+            'appearances__round__session',
         ).annotate(
             tot_points=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__round__session=self.round.session,
                 ),
             ),
             per_points=Sum(
@@ -218,6 +221,7 @@ class Panelist(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__round__session=self.round.session,
                 ),
             ),
             sng_points=Sum(
@@ -225,6 +229,7 @@ class Panelist(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__round__session=self.round.session,
                 ),
             ),
         ).order_by(
@@ -238,8 +243,10 @@ class Panelist(TimeStampedModel):
             Panelist.CATEGORY.performance: 'badge badge-success mono-font',
             Panelist.CATEGORY.singing: 'badge badge-info mono-font',
         }
-        for competitor in competitors:
-            appearances = competitor.appearances.order_by('round__kind')
+        for group in groups:
+            appearances = group.appearances.filter(
+                round__session=self.round.session,
+            ).order_by('round__kind')
             for appearance in appearances:
                 songs = appearance.songs.order_by(
                     'num',
@@ -276,11 +283,11 @@ class Panelist(TimeStampedModel):
                             span_class = "{0} black-font".format(span_class)
                         out.append((score.points, span_class))
                     song.scores_patched = out
-            competitor.appearances_patched = appearances
+            group.appearances_patched = appearances
 
         context = {
             'panelist': self,
-            'competitors': competitors,
+            'groups': groups,
         }
         rendered = render_to_string('reports/psa.html', context)
         file = pydf.generate_pdf(rendered)

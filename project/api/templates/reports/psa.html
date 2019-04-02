@@ -78,7 +78,7 @@
         <table class='table table-striped table-sm'>
           <thead>
             <tr>
-              <th>Competitor</th>
+              <th>Group</th>
               <th>Song</th>
               <th class='text-center' scope="col">Avg</th>
               <th class='text-center' scope="col">StdDev</th>
@@ -86,34 +86,34 @@
             </tr>
           </thead>
           <tbody>
-            {% for competitor in competitors %}
+            {% for group in groups %}
               <tr>
                 <td>
-                  {{competitor.group.name}}<br>
+                  {{group.name}}<br>
                 </td>
                 <td>
-                  {% for appearance in competitor.appearances_patched %}
+                  {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.chart.title|truncatechars_html:30|safe|default:"(Song not included in repertory)"}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-center'>
-                  {% for appearance in competitor.appearances_patched %}
+                  {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.avg|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-center'>
-                  {% for appearance in competitor.appearances_patched %}
+                  {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.dev|floatformat:2}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-center'>
-                  {% for appearance in competitor.appearances_patched %}
+                  {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {% for score, spanClass in song.scores_patched %}
                         <span class='{{spanClass}}'>{{score}}</span>&nbsp;
