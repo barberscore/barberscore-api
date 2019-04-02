@@ -69,6 +69,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'contesting',
             'pos',
             'stats',
+            'run_total',
             'variance_report',
             'round',
             'group',
@@ -77,6 +78,10 @@ class AppearanceSerializer(serializers.ModelSerializer):
             # 'contenders',
             'permissions',
         )
+        read_only_fields = [
+            'run_total',
+        ]
+
 
     class JSONAPIMeta:
         included_resources = [

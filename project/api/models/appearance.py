@@ -185,6 +185,19 @@ class Appearance(TimeStampedModel):
     def round__kind(self):
         return self.round.kind
 
+    @cached_property
+    def run_total(self):
+        Score = apps.get_model('api.score')
+        Panelist = apps.get_model('api.panelist')
+        scores_sum = Score.objects.filter(
+            song__appearance__round__session=self.round.session,
+            song__appearance__round__num__lte=self.round.num,
+            song__appearance__group=self.group,
+            panelist__kind=Panelist.KIND.official,
+        ).aggregate(sum=Sum('points'))['sum']
+        return scores_sum
+
+
     # Appearance Internals
     def clean(self):
         if self.group.kind != self.round.session.kind:
