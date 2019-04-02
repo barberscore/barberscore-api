@@ -345,7 +345,7 @@ class Round(TimeStampedModel):
                 'outcome__num',
                 flat=True
             )
-            group.contesting_patched = ", ".join(contesting)
+            group.contesting_patched = ", ".join([str(x) for x in contesting])
             group.pos_patched = recent.pos
             group.representing_patched = recent.representing
             group.participants_patched = recent.participants
@@ -1253,6 +1253,12 @@ class Round(TimeStampedModel):
         # Reset for indempodence
         self.reset()
 
+        # Instantiate prior round
+        if self.num == 1:
+            prior_round = None
+        else:
+            prior_round = self.session.rounds.get(num=self.num - 1)
+
         # Create Panelsists
         Assignment = apps.get_model('api.assignment')
         cas = self.session.convention.assignments.filter(
@@ -1318,46 +1324,48 @@ class Round(TimeStampedModel):
             )
 
         # Create Outcomes
-        contests = self.session.contests.select_related(
-            'award',
-        ).filter(
-            status__gt=0,
-        ).annotate(
-            cnt=Count(
-                'contestants',
-                filter=Q(
-                    contestants__status=10,
-                )
-            ),
-        ).exclude(
-            cnt=0,
-        ).order_by(
-            'award__tree_sort',
-        )
-        # Don't include single-round contests past round one.
-        if self.num > 1:
-            contests = contests.exclude(award__is_single=True)
-        i = 0
-        for contest in contests:
-            i += 1
-            self.outcomes.create(
-                num=i,
-                award=contest.award,
+        # Create from contests if no prior round
+        if not prior_round:
+            contests = self.session.contests.select_related(
+                'award',
+            ).filter(
+                status__gt=0,
+            ).annotate(
+                cnt=Count(
+                    'contestants',
+                    filter=Q(
+                        contestants__status=10,
+                    )
+                ),
+            ).exclude(
+                cnt=0,
+            ).order_by(
+                'award__tree_sort',
             )
+            i = 0
+            for contest in contests:
+                i += 1
+                self.outcomes.create(
+                    num=i,
+                    award=contest.award,
+                )
+        else:
+            prior_outcomes = prior_round.outcomes.exclude(
+                award__is_single=True,
+            )
+            for prior_outcome in prior_outcomes:
+                new_outcome = self.outcomes.create(
+                    num=prior_outcome.num,
+                    award=prior_outcome.award,
+                )
 
         # Create Appearances
-        # Instantiate prior round
         Appearance = apps.get_model('api.appearance')
-        if self.num == 1:
-            prior_round = None
-        else:
-            prior_round = self.session.rounds.get(num=self.num - 1)
-
-
+        Entry = apps.get_model('api.entry')
         # If the first round, populate from entries
         if not prior_round:
             entries = self.session.entries.filter(
-                status=self.session.entries.model.STATUS.approved,
+                status=Entry.STATUS.approved,
             )
             z = 0
             for entry in entries:
@@ -1394,6 +1402,7 @@ class Round(TimeStampedModel):
                     )
         # Otherwise, populate from prior round
         else:
+            new_outcomes = self.outcomes.all()
             prior_appearances = prior_round.appearances.filter(
                 status=Appearance.STATUS.advanced,
             )
@@ -1407,14 +1416,15 @@ class Round(TimeStampedModel):
                     participants=prior_appearance.participants,
                     representing=prior_appearance.representing,
                 )
-                multi_awards = prior_appearance.contenders.filter(
-                    award__is_single=False,
-                ).values_list('award', flat=True)
-                outcomes = self.outcomes.filter(award__in=multi_awards)
-                for outcome in outcomes:
-                    outcome.contenders.create(
-                        appearance=appearance,
+                for new_outcome in new_outcomes:
+                    curry = bool(
+                        prior_appearance.contenders.filter(outcome__award=new_outcome.award)
                     )
+                    if curry:
+                        new_outcome.contenders.create(
+                            appearance=appearance,
+                        )
+
             mts = prior_round.appearances.filter(
                 draw__lte=0,
             )
