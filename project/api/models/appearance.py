@@ -189,13 +189,34 @@ class Appearance(TimeStampedModel):
     def run_total(self):
         Score = apps.get_model('api.score')
         Panelist = apps.get_model('api.panelist')
-        scores_sum = Score.objects.filter(
+        run_total = Score.objects.filter(
             song__appearance__round__session=self.round.session,
             song__appearance__round__num__lte=self.round.num,
             song__appearance__group=self.group,
             panelist__kind=Panelist.KIND.official,
-        ).aggregate(sum=Sum('points'))['sum']
-        return scores_sum
+        ).aggregate(
+            sum=Sum('points'),
+            avg=Avg('points'),
+            mus=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            sng=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+            per=Sum(
+                'points',
+                filter=Q(
+                    panelist__kind=Panelist.CATEGORY.performance,
+                ),
+            ),
+        )
+        return run_total
 
 
     # Appearance Internals
