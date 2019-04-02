@@ -101,10 +101,6 @@ class Contest(TimeStampedModel):
             raise ValidationError(
                 {'level': 'Qualifiers can not select winners'}
             )
-        if self.num and not self.contestants.filter(status__gt=0):
-            raise ValidationError(
-                {'num': 'Contests without contestants should not be numbered.'}
-            )
 
 
     # Contest Permissions

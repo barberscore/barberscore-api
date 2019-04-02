@@ -17,7 +17,7 @@ from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from PyPDF2 import PdfFileMerger
-from django.db.models import Sum, Max, Avg, StdDev
+from django.db.models import Sum, Max, Avg, StdDev, Count, Q
 # Django
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
@@ -1230,12 +1230,7 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[
-            STATUS.new,
-            STATUS.built,
-            STATUS.started,
-            STATUS.finished,
-        ],
+        source='*',
         target=STATUS.new,
     )
     def reset(self, *args, **kwargs):
@@ -1327,6 +1322,15 @@ class Round(TimeStampedModel):
             'award',
         ).filter(
             status__gt=0,
+        ).annotate(
+            cnt=Count(
+                'contestants',
+                filter=Q(
+                    contestants__status=10,
+                )
+            ),
+        ).exclude(
+            cnt=0,
         ).order_by(
             'award__tree_sort',
         )
