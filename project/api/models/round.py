@@ -429,7 +429,9 @@ class Round(TimeStampedModel):
             ).order_by(
                 'num',
             )
-            persons = [x.person.common_name for x in sections]
+            persons = [
+                "{0} {1}".format(x.person.common_name, x.person.district) for x in sections
+            ]
             names = ", ".join(persons)
             panelists.append((value, names))
 
