@@ -1,8 +1,8 @@
-This is your formal invitation to enter the {{entry.session.convention.name|safe}} {{entry.session.get_kind_display}} session!
+This is your formal invitation to enter the {{entry.session.convention.name|safe}} {{entry.session.get_kind_display}} Session!
 
 Login to Barberscore, the contest entry system for the Barbershop Harmony Society at: https://www.barberscore.com/
 
-Please note, the deadline for contest entry is: {{entry.session.convention.close_date|date:"SHORT_DATE_FORMAT" }}.
+Please note, the deadline to accept your invitation is: {{entry.session.convention.close_date|date:"SHORT_DATE_FORMAT" }}.
 
 If you need more info, please go to: https://www.barberscore.com/tutorials.
 There you'll find helpful materials to guide you through the entry process.
