@@ -1,6 +1,9 @@
 
 # Local
 from .base import *
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.rq import RqIntegration
 
 # Core
 HOST_NAME = 'https://api.staging.barberscore.com'
@@ -19,6 +22,17 @@ DATABASES['bhs_db'] = dj_database_url.parse(
 DATABASE_ROUTERS = [
     'routers.BHSRouter',
 ]
+
+# Sentry
+sentry_sdk.init(
+    dsn=get_env_variable("SENTRY_DSN"),
+    integrations=[
+        DjangoIntegration(),
+        RqIntegration(),
+    ],
+    send_default_pii=True,
+    release=get_env_variable("HEROKU_RELEASE_VERSION")
+)
 
 # Email
 EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
