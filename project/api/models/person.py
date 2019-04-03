@@ -271,6 +271,12 @@ class Person(TimeStampedModel):
     )
 
     # Properties
+    def is_active(self):
+        # For Algolia indexing
+        return bool(
+            self.members.filter(group__bhs_id=1)
+        )
+
     @cached_property
     def is_mc(self):
         return bool(self.mc_pk)

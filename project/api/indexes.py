@@ -71,6 +71,7 @@ class GroupIndex(AlgoliaIndex):
 
 
 class PersonIndex(AlgoliaIndex):
+    should_index = 'is_active'
     fields = [
         'first_name',
         'middle_name',
