@@ -1,0 +1,11 @@
+The {{session.convention.name|safe}} {{session.get_kind_display}} Session
+has now been Verified!
+
+Verification means the initial draw is now public; the draft Legacy and DRCJ reports
+are attached to this email.  Please keep in mind these reports are subject to change
+until the Session is packaged.  Final versions of these reports will be made available
+when the Session is Packaged.
+
+Thanks!
+
+NOTE: This is not SPAM. Please do not report this email as SPAM.

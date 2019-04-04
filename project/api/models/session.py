@@ -28,6 +28,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from cloudinary_storage.storage import RawMediaCloudinaryStorage
 
+from api.tasks import get_email
 from api.tasks import send_email
 from api.fields import FileUploadPath
 
@@ -397,61 +398,89 @@ class Session(TimeStampedModel):
         content = ContentFile(file)
         return content
 
+
     def save_contact(self):
         content = self.get_contact()
         self.contact_report.save("contact_report", content)
 
 
-    def queue_reports(self, template):
-        subject = "[Barberscore] {0} Session Reports".format(
-            self,
+    def get_officer_emails(self):
+        Officer = apps.get_model('api.officer')
+        officers = Officer.objects.filter(
+            status=Officer.STATUS.active,
         )
-        context = {
-            'session': self,
-            'host_name': settings.HOST_NAME,
-        }
-        body = render_to_string(template, context)
-        assignments = self.convention.assignments.filter(
-            category__lte=self.convention.assignments.model.CATEGORY.ca,
-            status=self.convention.assignments.model.STATUS.active,
-            person__email__isnull=False,
-        )
-        to = ["{0} <{1}>".format(assignment.person.common_name.replace(",",""), assignment.person.email) for assignment in assignments]
-        attachments = []
-        if self.legacy_report:
-            attachments.append((
-                slugify("{0} session legacy report FINAL".format(self)),
-                self.legacy_report.file,
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            ))
-        if self.drcj_report:
-            attachments.append((
-                slugify("{0} session drcj report FINAL".format(self)),
-                self.drcj_report.file,
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            ))
-        if self.contact_report:
-            attachments.append((
-                slugify("{0} session contact report FINAL".format(self)),
-                self.contact_report.file,
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            ))
-        queue = django_rq.get_queue('high')
-        result = queue.enqueue(
-            send_email,
-            subject=subject,
-            body=body,
-            to=to,
-            attachments=attachments,
-        )
+        if self.kind == self.KIND.quartet:
+            officers = officers.filter(
+                group__parent=self.convention.group,
+            )
+        else:
+            officers = officers.filter(
+                group__parent__parent=self.convention.group,
+            )
+        if self.convention.divisions:
+            officers = officers.filter(
+                group__division__in=self.convention.divisions,
+            )
+        result = ["{0} <{1}>".format(
+            officer.person.common_name, officer.person.email
+        ) for officer in officers]
         return result
 
-    def queue_notifications(self, template):
-        if self.is_invitational:
-            return
-        subject = "[Barberscore] {0} Session Notification".format(
+
+    def get_open_email(self):
+        template = 'emails/session_open.txt'
+        context = {'session': self,}
+        subject = "[Barberscore] {0} Session is OPEN".format(
             self,
         )
+        to = self.convention.get_assignment_emails()
+        bcc = self.get_officer_emails()
+        email = get_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            bcc=bcc,
+        )
+        return email
+
+
+    def queue_open_email(self):
+        email = self.get_open_email()
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            send_email,
+            email,
+        )
+
+    def get_close_email(self):
+        template = 'emails/session_close.txt'
+        context = {'session': self}
+        subject = "[Barberscore] {0} Session is CLOSED".format(
+            self,
+        )
+        to = self.convention.get_assignment_emails()
+        bcc = self.get_officer_emails()
+        email = get_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            bcc=bcc,
+        )
+        return email
+
+
+    def queue_close_email(self):
+        email = self.get_close_email()
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            send_email,
+            email,
+        )
+
+    def get_verify_email(self):
+        template = 'emails/session_verify.txt'
         approved_entries = self.entries.filter(
             status=self.entries.model.STATUS.approved,
         ).order_by('draw')
@@ -459,50 +488,140 @@ class Session(TimeStampedModel):
             'session': self,
             'approved_entries': approved_entries,
         }
-        body = render_to_string(template, context)
-
-        assignments = self.convention.assignments.filter(
-            category__lte=self.convention.assignments.model.CATEGORY.ca,
-            status=self.convention.assignments.model.STATUS.active,
-            person__email__isnull=False,
+        subject = "[Barberscore] {0} Session Draw".format(
+            self,
         )
-        to = ["{0} <{1}>".format(assignment.person.common_name, assignment.person.email) for assignment in assignments]
-
-        # Start with base officers
-        Officer = apps.get_model('api.officer')
-        if self.kind == self.KIND.quartet:
-            officers = Officer.objects.filter(
-                status__gt=0,
-                person__email__isnull=False,
-                group__status__gt=0,
-                group__kind=self.kind,
-                group__parent=self.convention.group,
-            )
-        else:
-            officers = Officer.objects.filter(
-                status__gt=0,
-                person__email__isnull=False,
-                group__status__gt=0,
-                group__kind=self.kind,
-                group__parent__parent=self.convention.group,
-            )
-        if self.convention.divisions:
-            officers = officers.filter(
-                group__division__in=self.convention.divisions,
-            )
-        officers = officers.distinct()
-
-
-        bcc = ["{0} <{1}>".format(officer.person.common_name, officer.person.email) for officer in officers]
-        queue = django_rq.get_queue('high')
-        result = queue.enqueue(
-            send_email,
+        to = self.convention.get_assignment_emails()
+        bcc = self.get_officer_emails()
+        email = get_email(
+            template=template,
+            context=context,
             subject=subject,
-            body=body,
             to=to,
             bcc=bcc,
         )
-        return result
+        return email
+
+
+    def queue_verify_email(self):
+        email = self.get_verify_email()
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            send_email,
+            email,
+        )
+
+    def get_verify_report_email(self):
+        template = 'emails/session_verify_report.txt'
+        context = {
+            'session': self,
+        }
+        subject = "[Barberscore] {0} Session Draft Reports".format(
+            self,
+        )
+        to = self.convention.get_assignment_emails()
+
+        attachments = []
+        if self.drcj_report:
+            xlsx = self.drcj_report.file
+        else:
+            xlsx = self.get_drcj()
+        file_name = '{0} {1} Session DRCJ Report DRAFT'.format(
+            self.convention.name,
+            self.get_kind_display(),
+        )
+        attachments.append((
+            file_name,
+            xlsx,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ))
+        if self.legacy_report:
+            xlsx = self.legacy_report.file
+        else:
+            xlsx = self.get_legacy()
+        file_name = '{0} {1} Session Legacy Report DRAFT'.format(
+            self.convention.name,
+            self.get_kind_display(),
+        )
+        attachments.append((
+            file_name,
+            xlsx,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ))
+        email = get_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            attachments=attachments,
+        )
+        return email
+
+
+    def queue_verify_report_email(self):
+        email = self.get_verify_report_email()
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            send_email,
+            email,
+        )
+
+    def get_package_report_email(self):
+        template = 'emails/session_package_report.txt'
+        context = {
+            'session': self,
+        }
+        subject = "[Barberscore] {0} Session FINAL Reports".format(
+            self,
+        )
+        to = self.convention.get_assignment_emails()
+
+        attachments = []
+        if self.drcj_report:
+            xlsx = self.drcj_report.file
+        else:
+            xlsx = self.get_drcj()
+        file_name = '{0} {1} Session DRCJ Report FINAL'.format(
+            self.convention.name,
+            self.get_kind_display(),
+        )
+        attachments.append((
+            file_name,
+            xlsx,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ))
+        if self.legacy_report:
+            xlsx = self.legacy_report.file
+        else:
+            xlsx = self.get_legacy()
+        file_name = '{0} {1} Session Legacy Report FINAL'.format(
+            self.convention.name,
+            self.get_kind_display(),
+        )
+        attachments.append((
+            file_name,
+            xlsx,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ))
+        email = get_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            attachments=attachments,
+        )
+        return email
+
+
+    def queue_package_report_email(self):
+        email = self.get_package_report_email()
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            send_email,
+            email,
+        )
+
+
 
     # Session Permissions
     @staticmethod
@@ -554,6 +673,7 @@ class Session(TimeStampedModel):
         ])
 
     def can_close(self):
+        return True
         Entry = apps.get_model('api.entry')
         return all([
             self.convention.close_date < datetime.date.today(),
@@ -622,7 +742,8 @@ class Session(TimeStampedModel):
     def open(self, *args, **kwargs):
         """Make session available for entry."""
         # Send notification for all public contests
-        self.queue_notifications(template='emails/session_open.txt')
+        if not self.is_invitational:
+            self.queue_open_email()
         return
 
     @fsm_log_by
@@ -657,7 +778,7 @@ class Session(TimeStampedModel):
             entry.save()
             i += 1
         # Notify for all public contests
-        self.queue_notifications(template='emails/session_close.txt')
+        self.queue_close_email()
         return
 
     @fsm_log_by
@@ -669,8 +790,8 @@ class Session(TimeStampedModel):
     )
     def verify(self, *args, **kwargs):
         """Make draw public."""
-        self.queue_reports(template='emails/session_verified_reports.txt')
-        self.queue_notifications(template='emails/session_verify.txt')
+        self.queue_verify_email()
+        self.queue_verify_report_email()
         return
 
     @fsm_log_by
@@ -689,7 +810,7 @@ class Session(TimeStampedModel):
         self.save_contact()
 
         #  Create and send the reports
-        self.queue_reports(template='emails/session_package.txt')
+        self.queue_package_report_email()
         return
 
     @fsm_log_by
