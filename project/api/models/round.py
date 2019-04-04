@@ -29,6 +29,7 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from django.db.models.functions import DenseRank
+from django.conf import settings
 
 from api.tasks import get_email
 from api.tasks import send_email
@@ -1433,7 +1434,7 @@ class Round(TimeStampedModel):
         # ])
 
     def can_publish(self):
-        return True
+        return settings.DEBUG
 
     # Round Transitions
     @fsm_log_by
