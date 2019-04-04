@@ -1773,7 +1773,7 @@ class Round(TimeStampedModel):
             appearance.advance()
             appearance.save()
         panelists = self.panelists.filter(
-            category__gt=Panliest.CATEGORY.ca,
+            category__gt=Panelist.CATEGORY.ca,
         )
         for panelist in panelists:
             panelist.completer()
