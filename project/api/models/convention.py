@@ -257,6 +257,19 @@ class Convention(TimeStampedModel):
                 {'group': 'Owning group must be at least district'}
             )
 
+    # Methods
+    def get_assignment_emails(self):
+        assignments = self.assignments.filter(
+            status__gt=0,
+            person__email__isnull=False,
+        )
+        result = ["{0} <{1}>".format(
+            assignment.person.common_name,
+            assignment.person.email,
+        ) for assignment in assignments]
+        return result
+
+
     # Convention Permissions
     @staticmethod
     @allow_staff_or_superuser

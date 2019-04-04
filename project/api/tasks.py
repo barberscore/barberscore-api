@@ -14,6 +14,7 @@ from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
 from PyPDF2 import PdfFileMerger
 from django.core.mail import EmailMessage
+from django_rq import job
 
 # Django
 from django.apps import apps
@@ -213,7 +214,7 @@ def get_accounts(path='barberscore.csv'):
         return rows
 
 
-def send_email(subject, body, to, cc=None, bcc=None, attachments=None):
+def get_email(template, context, subject, to, cc=None, bcc=None, attachments=None):
     # Clean as necessary
     to = list(set(to))
     if cc:
@@ -225,6 +226,7 @@ def send_email(subject, body, to, cc=None, bcc=None, attachments=None):
         bcc = [x for x in bcc if x not in to]
         bcc = [x.replace(",", "") for x in bcc]
     to = [x.replace(",", "") for x in to]
+    body = render_to_string(template, context)
     email = EmailMessage(
         subject=subject,
         body=body,
@@ -237,4 +239,8 @@ def send_email(subject, body, to, cc=None, bcc=None, attachments=None):
         for attachment in attachments:
             with attachment[1].open() as f:
                 email.attach(attachment[0], f.read(), attachment[2])
+    return email
+
+
+def send_email(email):
     return email.send()

@@ -492,10 +492,34 @@ class Group(TimeStampedModel):
         s.update_bs()
         return
 
-
     def is_active(self):
         # For Algolia indexing
         return bool(self.status == self.STATUS.active)
+
+
+    def get_officer_emails(self):
+        officers = self.officers.filter(
+            status__gt=0,
+            person__email__isnull=False,
+        )
+        result = ["{0} <{1}>".format(
+            officer.person.common_name, officer.person.email
+        ) for officer in officers]
+        return result
+
+
+    def get_member_emails(self):
+        if self.kind == self.KIND.quartet:
+            members = self.members.filter(
+                status__gt=0,
+                person__email__isnull=False,
+            )
+            result = ["{0} <{1}>".format(
+                member.person.common_name, member.person.email
+            ) for member in members]
+            return result
+        return []
+
 
     # Internals
     objects = GroupManager()
