@@ -209,7 +209,7 @@ class Entry(TimeStampedModel):
     def get_invite_email(self):
         template = 'emails/entry_invite.txt'
         context = {'entry': self}
-        subject = "[Barberscore] Notification for {0}".format(
+        subject = "[Barberscore] Contest Invitation for {0}".format(
             self.group.name,
         )
         to = self.group.get_officer_emails()
@@ -236,7 +236,7 @@ class Entry(TimeStampedModel):
         # Send confirmation email
         template = 'emails/entry_withdraw.txt'
         context = {'entry': self}
-        subject = "[Barberscore] Notification for {0}".format(
+        subject = "[Barberscore] Withdrawl Notification for {0}".format(
             self.group.name,
         )
         to = self.group.get_officer_emails()
@@ -268,7 +268,7 @@ class Entry(TimeStampedModel):
             'entry': self,
             'contestants': contestants,
         }
-        subject = "[Barberscore] Notification for {0}".format(
+        subject = "[Barberscore] Submission Notification for {0}".format(
             self.group.name,
         )
         to = self.group.get_officer_emails()
@@ -314,7 +314,7 @@ class Entry(TimeStampedModel):
             'contestants': contestants,
             'members': members,
         }
-        subject = "[Barberscore] Notification for {0}".format(
+        subject = "[Barberscore] Approval Notification for {0}".format(
             self.group.name,
         )
         to = self.group.get_officer_emails()
