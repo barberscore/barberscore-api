@@ -27,8 +27,7 @@ from django.db.models import Avg, StdDev, Q, Max, Sum
 
 
 import django_rq
-from api.tasks import get_email
-from api.tasks import send_email
+from api.tasks import send_complete_email_from_panelist
 from api.fields import FileUploadPath
 
 
@@ -304,46 +303,13 @@ class Panelist(TimeStampedModel):
         content = self.get_psa()
         self.psa.save('psa', content)
 
-    def get_complete_email(self):
-        context = {'panelist': self}
-
-        template = 'emails/panelist_complete.txt'
-        subject = "[Barberscore] Panelist PSA for {0}".format(
-            self.person.common_name,
-        )
-        to = ["{0} <{1}>".format(self.person.common_name, self.person.email)]
-        cc = self.round.get_ca_emails()
-
-        if self.psa:
-            pdf = self.psa.file
-        else:
-            pdf = self.get_psa()
-        file_name = '{0} PSA'.format(
-            self,
-        )
-        attachments = [(
-            file_name,
-            pdf,
-            'application/pdf',
-        )]
-
-        email = get_email(
-            template=template,
-            context=context,
-            subject=subject,
-            to=to,
-            cc=cc,
-            attachments=attachments,
-        )
-        return email
-
     def queue_complete_email(self):
         if self.status != self.STATUS.completed:
             raise ValueError("Do not send PSAs unless completed")
         queue = django_rq.get_queue('high')
         return queue.enqueue(
-            send_email,
-            self.get_complete_email(),
+            send_complete_email_from_panelist,
+            self,
         )
 
     # Transitions

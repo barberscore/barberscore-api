@@ -28,8 +28,11 @@ from django.db import models
 from django.template.loader import render_to_string
 from cloudinary_storage.storage import RawMediaCloudinaryStorage
 
-from api.tasks import get_email
-from api.tasks import send_email
+from api.tasks import send_open_email_from_session
+from api.tasks import send_close_email_from_session
+from api.tasks import send_verify_email_from_session
+from api.tasks import send_verify_report_email_from_session
+from api.tasks import send_package_report_email_from_session
 from api.fields import FileUploadPath
 
 log = logging.getLogger(__name__)
@@ -378,198 +381,40 @@ class Session(TimeStampedModel):
         return result
 
 
-    def get_open_email(self):
-        template = 'emails/session_open.txt'
-        context = {'session': self,}
-        subject = "[Barberscore] {0} Session is OPEN".format(
-            self,
-        )
-        to = self.convention.get_assignment_emails()
-        bcc = self.get_officer_emails()
-        email = get_email(
-            template=template,
-            context=context,
-            subject=subject,
-            to=to,
-            bcc=bcc,
-        )
-        return email
-
-
     def queue_open_email(self):
         queue = django_rq.get_queue('high')
         return queue.enqueue(
-            send_email,
-            self.get_open_email(),
-        )
-
-    def get_close_email(self):
-        template = 'emails/session_close.txt'
-        context = {'session': self}
-        subject = "[Barberscore] {0} Session is CLOSED".format(
+            send_open_email_from_session,
             self,
         )
-        to = self.convention.get_assignment_emails()
-        bcc = self.get_officer_emails()
-        email = get_email(
-            template=template,
-            context=context,
-            subject=subject,
-            to=to,
-            bcc=bcc,
-        )
-        return email
-
 
     def queue_close_email(self):
         queue = django_rq.get_queue('high')
         return queue.enqueue(
-            send_email,
-            self.get_close_email(),
-        )
-
-    def get_verify_email(self):
-        template = 'emails/session_verify.txt'
-        approved_entries = self.entries.filter(
-            status=self.entries.model.STATUS.approved,
-        ).order_by('draw')
-        context = {
-            'session': self,
-            'approved_entries': approved_entries,
-        }
-        subject = "[Barberscore] {0} Session Draw".format(
+            send_close_email_from_session,
             self,
         )
-        to = self.convention.get_assignment_emails()
-        bcc = self.get_officer_emails()
-        email = get_email(
-            template=template,
-            context=context,
-            subject=subject,
-            to=to,
-            bcc=bcc,
-        )
-        return email
-
 
     def queue_verify_email(self):
         queue = django_rq.get_queue('high')
         return queue.enqueue(
-            send_email,
-            self.get_verify_email(),
-        )
-
-    def get_verify_report_email(self):
-        template = 'emails/session_verify_report.txt'
-        context = {
-            'session': self,
-        }
-        subject = "[Barberscore] {0} Session Draft Reports".format(
+            send_verify_email_from_session,
             self,
         )
-        to = self.convention.get_assignment_emails()
-
-        attachments = []
-        if self.drcj_report:
-            xlsx = self.drcj_report.file
-        else:
-            xlsx = self.get_drcj()
-        file_name = '{0} {1} Session DRCJ Report DRAFT'.format(
-            self.convention.name,
-            self.get_kind_display(),
-        )
-        attachments.append((
-            file_name,
-            xlsx,
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ))
-        if self.legacy_report:
-            xlsx = self.legacy_report.file
-        else:
-            xlsx = self.get_legacy()
-        file_name = '{0} {1} Session Legacy Report DRAFT'.format(
-            self.convention.name,
-            self.get_kind_display(),
-        )
-        attachments.append((
-            file_name,
-            xlsx,
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ))
-        email = get_email(
-            template=template,
-            context=context,
-            subject=subject,
-            to=to,
-            attachments=attachments,
-        )
-        return email
-
 
     def queue_verify_report_email(self):
-        email = self.get_verify_report_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
-            send_email,
-            email,
-        )
-
-    def get_package_report_email(self):
-        template = 'emails/session_package_report.txt'
-        context = {
-            'session': self,
-        }
-        subject = "[Barberscore] {0} Session FINAL Reports".format(
+            send_verify_report_email_from_session,
             self,
         )
-        to = self.convention.get_assignment_emails()
-
-        attachments = []
-        if self.drcj_report:
-            xlsx = self.drcj_report.file
-        else:
-            xlsx = self.get_drcj()
-        file_name = '{0} {1} Session DRCJ Report FINAL'.format(
-            self.convention.name,
-            self.get_kind_display(),
-        )
-        attachments.append((
-            file_name,
-            xlsx,
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ))
-        if self.legacy_report:
-            xlsx = self.legacy_report.file
-        else:
-            xlsx = self.get_legacy()
-        file_name = '{0} {1} Session Legacy Report FINAL'.format(
-            self.convention.name,
-            self.get_kind_display(),
-        )
-        attachments.append((
-            file_name,
-            xlsx,
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ))
-        email = get_email(
-            template=template,
-            context=context,
-            subject=subject,
-            to=to,
-            attachments=attachments,
-        )
-        return email
-
 
     def queue_package_report_email(self):
-        email = self.get_package_report_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
-            send_email,
-            email,
+            send_package_report_email_from_session,
+            self,
         )
-
-
 
     # Session Permissions
     @staticmethod

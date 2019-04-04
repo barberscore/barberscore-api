@@ -15,6 +15,10 @@ from openpyxl.writer.excel import save_virtual_workbook
 from PyPDF2 import PdfFileMerger
 from django.core.mail import EmailMessage
 from django_rq import job
+from django.db.models import Avg
+from django.db.models import Q
+from django.db.models import Sum
+from django.db.models import Max
 
 # Django
 from django.apps import apps
@@ -33,6 +37,35 @@ from django.utils.text import slugify
 from django.utils.timezone import localdate
 
 log = logging.getLogger(__name__)
+
+# Utility
+def build_email(template, context, subject, to, cc=None, bcc=None, attachments=None):
+    # Clean as necessary
+    to = list(set(to))
+    if cc:
+        cc = list(set(cc))
+        cc = [x for x in cc if x not in to]
+        cc = [x.replace(",", "") for x in cc]
+    if bcc:
+        bcc = list(set(bcc))
+        bcc = [x for x in bcc if x not in to]
+        bcc = [x.replace(",", "") for x in bcc]
+    to = [x.replace(",", "") for x in to]
+    body = render_to_string(template, context)
+    email = EmailMessage(
+        subject=subject,
+        body=body,
+        from_email='Barberscore <admin@barberscore.com>',
+        to=to,
+        cc=cc,
+        bcc=bcc,
+    )
+    if attachments:
+        for attachment in attachments:
+            with attachment[1].open() as f:
+                email.attach(attachment[0], f.read(), attachment[2])
+    return email.send()
+
 
 def check_account(account):
     User = apps.get_model('api.user')
@@ -140,6 +173,710 @@ def user_post_delete_handler(user):
     return "Deleted: {0}".format(user.username)
 
 
+def send_complete_email_from_appearance(appearance):
+    Appearance = apps.get_model('api.appearance')
+    Panelist = apps.get_model('api.panelist')
+    Score = apps.get_model('api.score')
+
+    # Context
+    group = appearance.group
+    stats = Score.objects.select_related(
+        'song__appearance__group',
+        'song__appearance__round__session',
+        'song__appearance__round',
+        'panelist',
+    ).filter(
+        song__appearance__group=appearance.group,
+        song__appearance__round__session=appearance.round.session,
+        panelist__kind=Panelist.KIND.official,
+    ).aggregate(
+        max=Max(
+            'song__appearance__round__num',
+        ),
+        tot_points=Sum(
+            'points',
+        ),
+        mus_points=Sum(
+            'points',
+            filter=Q(
+                panelist__category=Panelist.CATEGORY.music,
+            )
+        ),
+        per_points=Sum(
+            'points',
+            filter=Q(
+                panelist__category=Panelist.CATEGORY.performance,
+            )
+        ),
+        sng_points=Sum(
+            'points',
+            filter=Q(
+                panelist__category=Panelist.CATEGORY.singing,
+            )
+        ),
+        tot_score=Avg(
+            'points',
+        ),
+        mus_score=Avg(
+            'points',
+            filter=Q(
+                panelist__category=Panelist.CATEGORY.music,
+            )
+        ),
+        per_score=Avg(
+            'points',
+            filter=Q(
+                panelist__category=Panelist.CATEGORY.performance,
+            )
+        ),
+        sng_score=Avg(
+            'points',
+            filter=Q(
+                panelist__category=Panelist.CATEGORY.singing,
+            )
+        ),
+    )
+    appearances = Appearance.objects.select_related(
+        'group',
+        'round',
+        'round__session',
+    ).prefetch_related(
+        'songs__scores',
+        'songs__scores__panelist',
+    ).filter(
+        group=appearance.group,
+        round__session=appearance.round.session,
+    ).annotate(
+        tot_points=Sum(
+            'songs__scores__points',
+            filter=Q(
+                songs__scores__panelist__kind=Panelist.KIND.official,
+            ),
+        ),
+        mus_points=Sum(
+            'songs__scores__points',
+            filter=Q(
+                songs__scores__panelist__kind=Panelist.KIND.official,
+                songs__scores__panelist__category=Panelist.CATEGORY.music,
+            ),
+        ),
+        per_points=Sum(
+            'songs__scores__points',
+            filter=Q(
+                songs__scores__panelist__kind=Panelist.KIND.official,
+                songs__scores__panelist__category=Panelist.CATEGORY.performance,
+            ),
+        ),
+        sng_points=Sum(
+            'songs__scores__points',
+            filter=Q(
+                songs__scores__panelist__kind=Panelist.KIND.official,
+                songs__scores__panelist__category=Panelist.CATEGORY.singing,
+            ),
+        ),
+        tot_score=Avg(
+            'songs__scores__points',
+            filter=Q(
+                songs__scores__panelist__kind=Panelist.KIND.official,
+            ),
+        ),
+        mus_score=Avg(
+            'songs__scores__points',
+            filter=Q(
+                songs__scores__panelist__kind=Panelist.KIND.official,
+                songs__scores__panelist__category=Panelist.CATEGORY.music,
+            ),
+        ),
+        per_score=Avg(
+            'songs__scores__points',
+            filter=Q(
+                songs__scores__panelist__kind=Panelist.KIND.official,
+                songs__scores__panelist__category=Panelist.CATEGORY.performance,
+            ),
+        ),
+        sng_score=Avg(
+            'songs__scores__points',
+            filter=Q(
+                songs__scores__panelist__kind=Panelist.KIND.official,
+                songs__scores__panelist__category=Panelist.CATEGORY.singing,
+            ),
+        ),
+    )
+
+    # Monkeypatch
+    for key, value in stats.items():
+        setattr(group, key, value)
+    for appearance in appearances:
+        songs = appearance.songs.prefetch_related(
+            'scores',
+            'scores__panelist',
+        ).order_by(
+            'num',
+        ).annotate(
+            tot_score=Avg(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            mus_score=Avg(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                    scores__panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            per_score=Avg(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                    scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_score=Avg(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                    scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+            tot_points=Sum(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            mus_points=Sum(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                    scores__panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            per_points=Sum(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                    scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_points=Sum(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                    scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+        )
+        for song in songs:
+            penalties_map = {
+                10: "†",
+                30: "‡",
+                40: "✠",
+                50: "✶",
+            }
+            items = " ".join([penalties_map[x] for x in song.penalties])
+            song.penalties_patched = items
+        appearance.songs_patched = songs
+    group.appearances_patched = appearances
+    context = {'group': group}
+
+    template = 'emails/appearance_complete.txt'
+    subject = "[Barberscore] Appearance CSA for {0}".format(
+        appearance.group.name,
+    )
+    to = appearance.group.get_officer_emails()
+    cc = appearance.round.get_ca_emails()
+    cc.extend(appearance.group.get_member_emails())
+
+    if appearance.csa:
+        pdf = appearance.csa.file
+    else:
+        pdf = appearance.get_csa()
+    file_name = '{0} {1} Session {2} CSA'.format(
+        appearance.round.session.convention.name,
+        appearance.round.session.get_kind_display(),
+        appearance.group.name,
+    )
+    attachments = [(
+        file_name,
+        pdf,
+        'application/pdf',
+    )]
+
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        cc=cc,
+        attachments=attachments,
+    )
+    return email.send()
+
+def send_invite_email_from_entry(entry):
+    template = 'emails/entry_invite.txt'
+    context = {'entry': entry}
+    subject = "[Barberscore] Contest Invitation for {0}".format(
+        entry.group.name,
+    )
+    to = entry.group.get_officer_emails()
+    cc = entry.session.convention.get_assignment_emails()
+    cc.extend(entry.group.get_member_emails())
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        cc=cc,
+    )
+    return email.send()
+
+def send_withdraw_email_from_entry(entry):
+    # Send confirmation email
+    template = 'emails/entry_withdraw.txt'
+    context = {'entry': entry}
+    subject = "[Barberscore] Withdrawl Notification for {0}".format(
+        entry.group.name,
+    )
+    to = entry.group.get_officer_emails()
+    cc = entry.session.convention.get_assignment_emails()
+    cc.extend(entry.group.get_member_emails())
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        cc=cc,
+    )
+    return email.send()
+
+def send_submit_email_from_entry(entry):
+    template = 'emails/entry_submit.txt'
+    contestants = entry.contestants.filter(
+        status__gt=0,
+    ).order_by('contest__award__name')
+    context = {
+        'entry': entry,
+        'contestants': contestants,
+    }
+    subject = "[Barberscore] Submission Notification for {0}".format(
+        entry.group.name,
+    )
+    to = entry.group.get_officer_emails()
+    cc = entry.session.convention.get_assignment_emails()
+    cc.extend(entry.group.get_member_emails())
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        cc=cc,
+    )
+    return email.send()
+
+def send_approve_email_from_entry(entry):
+    template = 'emails/entry_approve.txt'
+    repertories = entry.group.repertories.order_by(
+        'chart__title',
+    )
+    contestants = entry.contestants.filter(
+        status__gt=0,
+    ).order_by(
+        'contest__award__name',
+    )
+    members = entry.group.members.filter(
+        status__gt=0,
+    ).order_by(
+        'person__last_name',
+        'person__first_name',
+    )
+    context = {
+        'entry': entry,
+        'repertories': repertories,
+        'contestants': contestants,
+        'members': members,
+    }
+    subject = "[Barberscore] Approval Notification for {0}".format(
+        entry.group.name,
+    )
+    to = entry.group.get_officer_emails()
+    cc = entry.session.convention.get_assignment_emails()
+    cc.extend(entry.group.get_member_emails())
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        cc=cc,
+    )
+    return email.send()
+
+
+def send_complete_email_from_panelist(panelist):
+    context = {'panelist': panelist}
+
+    template = 'emails/panelist_complete.txt'
+    subject = "[Barberscore] Panelist PSA for {0}".format(
+        panelist.person.common_name,
+    )
+    to = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email)]
+    cc = panelist.round.get_ca_emails()
+
+    if panelist.psa:
+        pdf = panelist.psa.file
+    else:
+        pdf = panelist.get_psa()
+    file_name = '{0} PSA'.format(
+        panelist,
+    )
+    attachments = [(
+        file_name,
+        pdf,
+        'application/pdf',
+    )]
+
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        cc=cc,
+        attachments=attachments,
+    )
+    return email.send()
+
+def send_publish_email_from_round(round):
+    Appearance = apps.get_model('api.appearance')
+    Group = apps.get_model('api.group')
+    Panelist = apps.get_model('api.panelist')
+    group_ids = round.appearances.filter(
+        is_private=False,
+    ).exclude(
+        # Don't include advancers on OSS
+        draw__gt=0,
+    ).exclude(
+        # Don't include mic testers on OSS
+        num__lte=0,
+    ).values_list('group__id', flat=True)
+    completes = Group.objects.filter(
+        id__in=group_ids,
+    ).prefetch_related(
+        'appearances',
+        'appearances__songs__scores',
+        'appearances__songs__scores__panelist',
+        'appearances__round__session',
+    ).annotate(
+        tot_points=Sum(
+            'appearances__songs__scores__points',
+            filter=Q(
+                appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                appearances__round__session=round.session,
+            ),
+        ),
+        per_points=Sum(
+            'appearances__songs__scores__points',
+            filter=Q(
+                appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                appearances__round__session=round.session,
+            ),
+        ),
+        sng_points=Sum(
+            'appearances__songs__scores__points',
+            filter=Q(
+                appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                appearances__round__session=round.session,
+            ),
+        ),
+        tot_score=Avg(
+            'appearances__songs__scores__points',
+            filter=Q(
+                appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                appearances__round__session=round.session,
+            ),
+        ),
+    ).order_by(
+        '-tot_points',
+        '-sng_points',
+        '-per_points',
+    )
+
+    # Draw Block
+    if round.kind != round.KIND.finals:
+        # Get advancers
+        advancers = round.appearances.filter(
+            status=Appearance.STATUS.advanced,
+        ).select_related(
+            'group',
+        ).order_by(
+            'draw',
+        ).values_list(
+            'draw',
+            'group__name',
+        )
+        advancers = list(advancers)
+        try:
+            mt = round.appearances.get(
+                draw=0,
+            ).group.name
+            advancers.append(('MT', mt))
+        except round.appearances.model.DoesNotExist:
+            pass
+    else:
+        advancers = None
+
+    # Outcome Block
+    items = round.outcomes.select_related(
+        'award',
+    ).order_by(
+        'num',
+    ).values_list(
+        'num',
+        'award__name',
+        'name',
+    )
+    outcomes = []
+    for item in items:
+        outcomes.append(
+            (
+                "{0} {1}".format(item[0], item[1]),
+                item[2],
+            )
+        )
+
+    context = {
+        'round': round,
+        'advancers': advancers,
+        'completes': completes,
+        'outcomes': outcomes,
+    }
+    template = 'emails/round_publish.txt'
+    subject = "[Barberscore] {0} Results".format(
+        round,
+    )
+    to = round.get_ca_emails()
+    cc = round.get_judge_emails()
+    bcc = round.get_member_emails()
+
+    if round.oss:
+        pdf = round.oss.file
+    else:
+        pdf = round.get_oss()
+    file_name = '{0} {1} {2} OSS'.format(
+        round.session.convention.name,
+        round.session.get_kind_display(),
+        round.get_kind_display(),
+    )
+    attachments = [(
+        file_name,
+        pdf,
+        'application/pdf',
+    )]
+
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        cc=cc,
+        bcc=bcc,
+        attachments=attachments,
+    )
+    return email.send()
+
+
+def send_publish_report_email_from_round(round):
+    template = 'emails/round_publish_report.txt'
+    context = {
+        'round': round,
+    }
+    subject = "[Barberscore] {0} Reports".format(
+        round,
+    )
+    to = round.get_ca_emails()
+    cc = round.get_judge_emails()
+    attachments = []
+    if round.sa:
+        pdf = round.sa.file
+    else:
+        pdf = round.get_sa()
+    file_name = '{0} {1} {2} SA'.format(
+        round.session.convention.name,
+        round.session.get_kind_display(),
+        round.get_kind_display(),
+    )
+    attachments = [(
+        file_name,
+        pdf,
+        'application/pdf',
+    )]
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        cc=cc,
+        attachments=attachments,
+    )
+    return email.send()
+
+
+def send_open_email_from_session(session):
+    template = 'emails/session_open.txt'
+    context = {'session': session,}
+    subject = "[Barberscore] {0} Session is OPEN".format(
+        session,
+    )
+    to = session.convention.get_assignment_emails()
+    bcc = session.get_officer_emails()
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        bcc=bcc,
+    )
+    return email.send()
+
+
+def send_close_email_from_session(session):
+    template = 'emails/session_close.txt'
+    context = {'session': session}
+    subject = "[Barberscore] {0} Session is CLOSED".format(
+        session,
+    )
+    to = session.convention.get_assignment_emails()
+    bcc = session.get_officer_emails()
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        bcc=bcc,
+    )
+    return email.send()
+
+
+def send_verify_email_from_session(session):
+    template = 'emails/session_verify.txt'
+    approved_entries = session.entries.filter(
+        status=session.entries.model.STATUS.approved,
+    ).order_by('draw')
+    context = {
+        'session': session,
+        'approved_entries': approved_entries,
+    }
+    subject = "[Barberscore] {0} Session Draw".format(
+        session,
+    )
+    to = session.convention.get_assignment_emails()
+    bcc = session.get_officer_emails()
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        bcc=bcc,
+    )
+    return email.send()
+
+
+def send_verify_report_email_from_session(session):
+    template = 'emails/session_verify_report.txt'
+    context = {
+        'session': session,
+    }
+    subject = "[Barberscore] {0} Session Draft Reports".format(
+        session,
+    )
+    to = session.convention.get_assignment_emails()
+
+    attachments = []
+    if session.drcj_report:
+        xlsx = session.drcj_report.file
+    else:
+        xlsx = session.get_drcj()
+    file_name = '{0} {1} Session DRCJ Report DRAFT'.format(
+        session.convention.name,
+        session.get_kind_display(),
+    )
+    attachments.append((
+        file_name,
+        xlsx,
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ))
+    if session.legacy_report:
+        xlsx = session.legacy_report.file
+    else:
+        xlsx = session.get_legacy()
+    file_name = '{0} {1} Session Legacy Report DRAFT'.format(
+        session.convention.name,
+        session.get_kind_display(),
+    )
+    attachments.append((
+        file_name,
+        xlsx,
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ))
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        attachments=attachments,
+    )
+    return email.send()
+
+
+def send_package_report_email_from_session(session):
+    template = 'emails/session_package_report.txt'
+    context = {
+        'session': session,
+    }
+    subject = "[Barberscore] {0} Session FINAL Reports".format(
+        session,
+    )
+    to = session.convention.get_assignment_emails()
+
+    attachments = []
+    if session.drcj_report:
+        xlsx = session.drcj_report.file
+    else:
+        xlsx = session.get_drcj()
+    file_name = '{0} {1} Session DRCJ Report FINAL'.format(
+        session.convention.name,
+        session.get_kind_display(),
+    )
+    attachments.append((
+        file_name,
+        xlsx,
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ))
+    if session.legacy_report:
+        xlsx = session.legacy_report.file
+    else:
+        xlsx = session.get_legacy()
+    file_name = '{0} {1} Session Legacy Report FINAL'.format(
+        session.convention.name,
+        session.get_kind_display(),
+    )
+    attachments.append((
+        file_name,
+        xlsx,
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ))
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        attachments=attachments,
+    )
+    return email.send()
+
+
 def check_member(member):
     if not member.group.mc_pk:
         raise RuntimeError("Not an MC entity.")
@@ -212,35 +949,3 @@ def get_accounts(path='barberscore.csv'):
         reader = csv.reader(f, skipinitialspace=True)
         rows = [row for row in reader]
         return rows
-
-
-def get_email(template, context, subject, to, cc=None, bcc=None, attachments=None):
-    # Clean as necessary
-    to = list(set(to))
-    if cc:
-        cc = list(set(cc))
-        cc = [x for x in cc if x not in to]
-        cc = [x.replace(",", "") for x in cc]
-    if bcc:
-        bcc = list(set(bcc))
-        bcc = [x for x in bcc if x not in to]
-        bcc = [x.replace(",", "") for x in bcc]
-    to = [x.replace(",", "") for x in to]
-    body = render_to_string(template, context)
-    email = EmailMessage(
-        subject=subject,
-        body=body,
-        from_email='Barberscore <admin@barberscore.com>',
-        to=to,
-        cc=cc,
-        bcc=bcc,
-    )
-    if attachments:
-        for attachment in attachments:
-            with attachment[1].open() as f:
-                email.attach(attachment[0], f.read(), attachment[2])
-    return email
-
-
-def send_email(email):
-    return email.send()

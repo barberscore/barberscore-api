@@ -31,8 +31,8 @@ from django.utils.text import slugify
 from django.db.models.functions import DenseRank
 from django.conf import settings
 
-from api.tasks import get_email
-from api.tasks import send_email
+from api.tasks import send_publish_email_from_round
+from api.tasks import send_publish_report_email_from_round
 from api.fields import FileUploadPath
 
 log = logging.getLogger(__name__)
@@ -1188,195 +1188,18 @@ class Round(TimeStampedModel):
         return
 
 
-    def get_publish_email(self):
-        Appearance = apps.get_model('api.appearance')
-        Group = apps.get_model('api.group')
-        Panelist = apps.get_model('api.panelist')
-        group_ids = self.appearances.filter(
-            is_private=False,
-        ).exclude(
-            # Don't include advancers on OSS
-            draw__gt=0,
-        ).exclude(
-            # Don't include mic testers on OSS
-            num__lte=0,
-        ).values_list('group__id', flat=True)
-        completes = Group.objects.filter(
-            id__in=group_ids,
-        ).prefetch_related(
-            'appearances',
-            'appearances__songs__scores',
-            'appearances__songs__scores__panelist',
-            'appearances__round__session',
-        ).annotate(
-            tot_points=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__session=self.session,
-                ),
-            ),
-            per_points=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    appearances__round__session=self.session,
-                ),
-            ),
-            sng_points=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    appearances__round__session=self.session,
-                ),
-            ),
-            tot_score=Avg(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__session=self.session,
-                ),
-            ),
-        ).order_by(
-            '-tot_points',
-            '-sng_points',
-            '-per_points',
-        )
-
-        # Draw Block
-        if self.kind != self.KIND.finals:
-            # Get advancers
-            advancers = self.appearances.filter(
-                status=Appearance.STATUS.advanced,
-            ).select_related(
-                'group',
-            ).order_by(
-                'draw',
-            ).values_list(
-                'draw',
-                'group__name',
-            )
-            advancers = list(advancers)
-            try:
-                mt = self.appearances.get(
-                    draw=0,
-                ).group.name
-                advancers.append(('MT', mt))
-            except self.appearances.model.DoesNotExist:
-                pass
-        else:
-            advancers = None
-
-        # Outcome Block
-        items = self.outcomes.select_related(
-            'award',
-        ).order_by(
-            'num',
-        ).values_list(
-            'num',
-            'award__name',
-            'name',
-        )
-        outcomes = []
-        for item in items:
-            outcomes.append(
-                (
-                    "{0} {1}".format(item[0], item[1]),
-                    item[2],
-                )
-            )
-
-        context = {
-            'round': self,
-            'advancers': advancers,
-            'completes': completes,
-            'outcomes': outcomes,
-        }
-        template = 'emails/round_publish.txt'
-        subject = "[Barberscore] {0} Results".format(
-            self,
-        )
-        to = self.get_ca_emails()
-        cc = self.get_judge_emails()
-        bcc = self.get_member_emails()
-
-        if self.oss:
-            pdf = self.oss.file
-        else:
-            pdf = self.get_oss()
-        file_name = '{0} {1} {2} OSS'.format(
-            self.session.convention.name,
-            self.session.get_kind_display(),
-            self.get_kind_display(),
-        )
-        attachments = [(
-            file_name,
-            pdf,
-            'application/pdf',
-        )]
-
-        email = get_email(
-            template=template,
-            context=context,
-            subject=subject,
-            to=to,
-            cc=cc,
-            bcc=bcc,
-            attachments=attachments,
-        )
-        return email
-
-
     def queue_publish_email(self):
         queue = django_rq.get_queue('high')
         return queue.enqueue(
-            send_email,
-            self.get_publish_email(),
-        )
-
-    def get_publish_report_email(self):
-        template = 'emails/round_publish_report.txt'
-        context = {
-            'round': self,
-        }
-        subject = "[Barberscore] {0} Reports".format(
+            send_publish_email_from_round,
             self,
         )
-        to = self.get_ca_emails()
-        cc = self.get_judge_emails()
-        attachments = []
-        if self.sa:
-            pdf = self.sa.file
-        else:
-            pdf = self.get_sa()
-        file_name = '{0} {1} {2} SA'.format(
-            self.session.convention.name,
-            self.session.get_kind_display(),
-            self.get_kind_display(),
-        )
-        attachments = [(
-            file_name,
-            pdf,
-            'application/pdf',
-        )]
-        email = get_email(
-            template=template,
-            context=context,
-            subject=subject,
-            to=to,
-            cc=cc,
-            attachments=attachments,
-        )
-        return email
-
 
     def queue_publish_report_email(self):
         queue = django_rq.get_queue('high')
         return queue.enqueue(
-            send_email,
-            self.get_publish_report_email(),
+            send_publish_report_email_from_round,
+            self,
         )
 
     # Permissions
