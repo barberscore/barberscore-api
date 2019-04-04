@@ -1,4 +1,4 @@
-We have received notice that you will not be participating in the
+We have received notice that you have withdrawn from the
 {{entry.session.convention.name|safe}} {{entry.session.get_kind_display}} Session.
 
 If anything changes please contact the DRCJ directly.  Thank you.

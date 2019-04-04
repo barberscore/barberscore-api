@@ -35,7 +35,6 @@ SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
 # EMAIL_USE_TLS = True
 
 # Sentry
-
 sentry_sdk.init(
     dsn=get_env_variable("SENTRY_DSN"),
     integrations=[

@@ -1,6 +1,3 @@
-IMPORTANT NOTE:  This is an *UNOFFICIAL* notice of the Scoring Analysis for the
-{{round.session}}.  It's not guaranteed to accurate; it's just part of the
-beta testing of Barberscore.  Thanks.
-
-SA PDF: {{round.sa.url}}
-
+IMPORTANT NOTE:  Please find attached the *UNOFFICIAL* Scoring Analysis for the
+{{round.session}}.  This report remains in Beta, so for the official record please
+refer to the SA produced by the Legacy program.

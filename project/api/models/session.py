@@ -231,6 +231,7 @@ class Session(TimeStampedModel):
             'Director/Participant(s)',
             'Award(s)',
             'Chapter(s)',
+            'Contacts(s)',
         ]
         ws.append(fieldnames)
         entries = self.entries.filter(
@@ -318,6 +319,18 @@ class Session(TimeStampedModel):
                     chapters = entry.group.parent.name
                 except AttributeError:
                     chapters = None
+            admins = entry.group.officers.filter(
+                status__gt=0,
+            )
+            admins_list = []
+            for admin in admins:
+                contact = "; ".join(filter(None, [
+                    admin.person.common_name,
+                    admin.person.email,
+                    admin.person.cell_phone,
+                ]))
+                admins_list.append(contact)
+            contacts = "\n".join(filter(None, admins_list))
             row = [
                 oa,
                 group_name,
@@ -336,6 +349,7 @@ class Session(TimeStampedModel):
                 participants,
                 awards,
                 chapters,
+                contacts,
             ]
             ws.append(row)
         file = save_virtual_workbook(wb)
