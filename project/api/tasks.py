@@ -64,7 +64,7 @@ def build_email(template, context, subject, to, cc=None, bcc=None, attachments=N
         for attachment in attachments:
             with attachment[1].open() as f:
                 email.attach(attachment[0], f.read(), attachment[2])
-    return email.send()
+    return email
 
 
 def check_account(account):
