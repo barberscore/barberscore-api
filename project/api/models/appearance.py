@@ -34,6 +34,7 @@ from django.utils.timezone import now
 from django.template.loader import render_to_string
 
 from api.fields import FileUploadPath
+from api.tasks import get_email
 from api.tasks import send_email
 
 class Appearance(TimeStampedModel):
@@ -535,15 +536,6 @@ class Appearance(TimeStampedModel):
                     ),
                 ),
             )
-            for song in songs:
-                penalties_map = {
-                    10: "†",
-                    30: "‡",
-                    40: "✠",
-                    50: "✶",
-                }
-                items = " ".join([penalties_map[x] for x in song.penalties])
-                song.penalties_patched = items
             appearance.songs_patched = songs
         group.appearances_patched = appearances
 
@@ -624,43 +616,255 @@ class Appearance(TimeStampedModel):
         content = self.get_csa()
         self.csa.save('csa', content)
 
-    def queue_notification(self, template, context=None):
-        officers = self.group.officers.filter(
-            status__gt=0,
-            person__email__isnull=False,
-        )
-        if not officers:
-            raise RuntimeError("No officers for {0}".format(self.group))
-        to = ["{0} <{1}>".format(officer.person.common_name.replace(",",""), officer.person.email) for officer in officers]
-        cc = []
-        if self.group.kind == self.group.KIND.quartet:
-            members = self.group.members.filter(
-                status__gt=0,
-                person__email__isnull=False,
-            ).exclude(
-                person__officers__in=officers,
-            ).distinct()
-            for member in members:
-                cc.append(
-                    "{0} <{1}>".format(member.person.common_name.replace(",",""), member.person.email)
+    def get_complete_email(self):
+        Panelist = apps.get_model('api.panelist')
+        Score = apps.get_model('api.score')
+
+        # Context
+        group = self.group
+        stats = Score.objects.select_related(
+            'song__appearance__group',
+            'song__appearance__round__session',
+            'song__appearance__round',
+            'panelist',
+        ).filter(
+            song__appearance__group=self.group,
+            song__appearance__round__session=self.round.session,
+            panelist__kind=Panelist.KIND.official,
+        ).aggregate(
+            max=Max(
+                'song__appearance__round__num',
+            ),
+            tot_points=Sum(
+                'points',
+            ),
+            mus_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.music,
                 )
-        # Ensure uniqueness
-        to = list(set(to))
-        cc = list(set(cc))
-        body = render_to_string(template, context)
-        subject = "[Barberscore] {0} Notification".format(
+            ),
+            per_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.performance,
+                )
+            ),
+            sng_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.singing,
+                )
+            ),
+            tot_score=Avg(
+                'points',
+            ),
+            mus_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.music,
+                )
+            ),
+            per_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.performance,
+                )
+            ),
+            sng_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.singing,
+                )
+            ),
+        )
+        appearances = Appearance.objects.select_related(
+            'group',
+            'round',
+            'round__session',
+        ).prefetch_related(
+            'songs__scores',
+            'songs__scores__panelist',
+        ).filter(
+            group=self.group,
+            round__session=self.round.session,
+        ).annotate(
+            tot_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            mus_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            per_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+            tot_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            mus_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            per_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+        )
+
+        # Monkeypatch
+        for key, value in stats.items():
+            setattr(group, key, value)
+        for appearance in appearances:
+            songs = appearance.songs.prefetch_related(
+                'scores',
+                'scores__panelist',
+            ).order_by(
+                'num',
+            ).annotate(
+                tot_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                mus_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.music,
+                    ),
+                ),
+                per_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.performance,
+                    ),
+                ),
+                sng_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.singing,
+                    ),
+                ),
+                tot_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                mus_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.music,
+                    ),
+                ),
+                per_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.performance,
+                    ),
+                ),
+                sng_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.singing,
+                    ),
+                ),
+            )
+            for song in songs:
+                penalties_map = {
+                    10: "†",
+                    30: "‡",
+                    40: "✠",
+                    50: "✶",
+                }
+                items = " ".join([penalties_map[x] for x in song.penalties])
+                song.penalties_patched = items
+            appearance.songs_patched = songs
+        group.appearances_patched = appearances
+        context = {'group': group}
+
+        template = 'emails/appearance_complete.txt'
+        subject = "[Barberscore] Appearance CSA for {0}".format(
             self.group.name,
         )
-        queue = django_rq.get_queue('high')
-        result = queue.enqueue(
-            send_email,
+        to = self.group.get_officer_emails()
+        cc = self.round.get_ca_emails()
+        cc.extend(self.group.get_member_emails())
+
+        if self.csa:
+            pdf = self.csa.file
+        else:
+            pdf = self.get_csa()
+        file_name = '{0} {1} Session {2} CSA'.format(
+            self.round.session.convention.name,
+            self.round.session.get_kind_display(),
+            self.group.name,
+        )
+        attachments = [(
+            file_name,
+            pdf,
+            'application/pdf',
+        )]
+
+        email = get_email(
+            template=template,
+            context=context,
             subject=subject,
-            body=body,
             to=to,
             cc=cc,
+            attachments=attachments,
         )
-        return result
+        return email
 
+    def queue_complete_email(self):
+        if self.status != self.STATUS.completed:
+            raise ValueError("Do not send CSAs unless completed")
+        email = self.get_complete_email()
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            send_email,
+            email,
+        )
 
     # Appearance Permissions
     @staticmethod

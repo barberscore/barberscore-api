@@ -1135,6 +1135,19 @@ class Round(TimeStampedModel):
         return content
 
 
+    def get_ca_emails(self):
+        Panelist = apps.get_model('api.panelist')
+        cas = self.panelists.filter(
+            status=Panelist.STATUS.active,
+            category=Panelist.CATEGORY.ca,
+            person__email__isnull=False,
+        )
+        result = ["{0} <{1}>".format(
+            ca.person.common_name,
+            ca.person.email,
+        ) for ca in cas]
+        return result
+
     def queue_notification(self, template, context=None):
         panelists = self.panelists.filter(
             person__email__isnull=False,

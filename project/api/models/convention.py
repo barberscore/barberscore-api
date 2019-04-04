@@ -259,8 +259,10 @@ class Convention(TimeStampedModel):
 
     # Methods
     def get_assignment_emails(self):
+        Assignment = apps.get_model('api.assignment')
         assignments = self.assignments.filter(
-            status__gt=0,
+            status=Assignment.STATUS.active,
+            category__lte=Assignment.CATEGORY.ca,
             person__email__isnull=False,
         )
         result = ["{0} <{1}>".format(
