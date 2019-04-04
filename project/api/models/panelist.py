@@ -12,6 +12,9 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 # Django
+from django_fsm import FSMIntegerField
+from django_fsm import transition
+from django_fsm_log.decorators import fsm_log_by
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
@@ -46,9 +49,10 @@ class Panelist(TimeStampedModel):
         (10, 'active', 'Active',),
     )
 
-    status = models.IntegerField(
+    status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
-        default=STATUS.new,
+        default=STATUS.active,
     )
 
     num = models.IntegerField(
@@ -343,3 +347,13 @@ class Panelist(TimeStampedModel):
             email,
         )
 
+    # Transitions
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.completed,
+    )
+    def completer(self, *args, **kwargs):
+        self.save_psa()
+        return

@@ -1314,7 +1314,6 @@ class PanelistAdmin(admin.ModelAdmin):
         'person',
         'category',
         'psa',
-        'complete',
     ]
 
     list_display = [
@@ -1331,7 +1330,7 @@ class PanelistAdmin(admin.ModelAdmin):
     ]
     list_filter = (
         AppearanceConventionStatusListFilter,
-        'round__status',
+        'status',
         'kind',
         'category',
     )
@@ -1348,12 +1347,8 @@ class PanelistAdmin(admin.ModelAdmin):
     autocomplete_fields = [
         'round',
         'person',
-        # 'complete',
     ]
 
-    readonly_fields = [
-        'complete',
-    ]
 
 
 @admin.register(Person)
