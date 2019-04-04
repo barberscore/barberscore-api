@@ -859,11 +859,10 @@ class Appearance(TimeStampedModel):
     def queue_complete_email(self):
         if self.status != self.STATUS.completed:
             raise ValueError("Do not send CSAs unless completed")
-        email = self.get_complete_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_email,
-            email,
+            self.get_complete_email(),
         )
 
     # Appearance Permissions

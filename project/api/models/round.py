@@ -1174,29 +1174,6 @@ class Round(TimeStampedModel):
         result = list(set(dups))
         return result
 
-    def queue_notification(self, template, context=None):
-        panelists = self.panelists.filter(
-            person__email__isnull=False,
-        )
-        if not panelists:
-            raise RuntimeError("No panelists for {0}".format(self))
-        to = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email) for panelist in panelists]
-        body = render_to_string(template, context)
-        subject = "[Barberscore] {0} {1} {2} SA".format(
-            self.session.convention.name,
-            self.session.get_kind_display(),
-            self.get_kind_display(),
-        )
-        # Ensure uniqueness
-        queue = django_rq.get_queue('high')
-        result = queue.enqueue(
-            send_email,
-            subject=subject,
-            body=body,
-            to=to,
-        )
-        return result
-
     def mock(self):
         Appearance = apps.get_model('api.appearance')
         if self.status != self.STATUS.started:
@@ -1352,11 +1329,10 @@ class Round(TimeStampedModel):
 
 
     def queue_publish_email(self):
-        email = self.get_publish_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_email,
-            email,
+            self.get_publish_email(),
         )
 
     def get_publish_report_email(self):
@@ -1396,11 +1372,10 @@ class Round(TimeStampedModel):
 
 
     def queue_publish_report_email(self):
-        email = self.get_publish_report_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_email,
-            email,
+            self.get_publish_report_email(),
         )
 
     # Permissions
@@ -1797,15 +1772,28 @@ class Round(TimeStampedModel):
         for appearance in advancing_appearances:
             appearance.advance()
             appearance.save()
-        # panelists = self.panelists.all()
-        # for panelist in panelists:
-        #     panelist.save_psa()
-        # self.save_oss()
-        # self.save_sa()
+        panelists = self.panelists.filter(
+            category__gt=Panliest.CATEGORY.ca,
+        )
+        for panelist in panelists:
+            panelist.completer()
+            panelists.save()
+        self.save_oss()
+        self.save_sa()
         return
 
     @fsm_log_by
     @transition(field=status, source=[STATUS.verified], target=STATUS.published, conditions=[can_publish])
     def publish(self, *args, **kwargs):
         # Publish results!
+        self.queue_publish_email()
+        self.queue_publish_report_email()
+        completed_appearances = self.appearances.exclude(
+            draw__gt=0,
+        )
+        for appearance in completed_appearances:
+            appearance.queue_complete_email()
+        panelists = self.panelists.all()
+        for panelist in panelists:
+            panelist.queue_complete_email()
         return

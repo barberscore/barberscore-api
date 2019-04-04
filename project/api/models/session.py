@@ -397,11 +397,10 @@ class Session(TimeStampedModel):
 
 
     def queue_open_email(self):
-        email = self.get_open_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_email,
-            email,
+            self.get_open_email(),
         )
 
     def get_close_email(self):
@@ -423,11 +422,10 @@ class Session(TimeStampedModel):
 
 
     def queue_close_email(self):
-        email = self.get_close_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_email,
-            email,
+            self.get_close_email(),
         )
 
     def get_verify_email(self):
@@ -455,11 +453,10 @@ class Session(TimeStampedModel):
 
 
     def queue_verify_email(self):
-        email = self.get_verify_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_email,
-            email,
+            self.get_verify_email(),
         )
 
     def get_verify_report_email(self):

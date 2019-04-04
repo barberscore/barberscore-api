@@ -225,11 +225,10 @@ class Entry(TimeStampedModel):
         return email
 
     def queue_invite_email(self):
-        email = self.get_invite_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_email,
-            email,
+            self.get_invite_email(),
         )
 
     def get_withdraw_email(self):
@@ -252,11 +251,10 @@ class Entry(TimeStampedModel):
         return email
 
     def queue_withdraw_email(self):
-        email = self.get_withdraw_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_email,
-            email,
+            self.get_withdraw_email(),
         )
 
     def get_submit_email(self):
@@ -285,11 +283,10 @@ class Entry(TimeStampedModel):
 
 
     def queue_submit_email(self):
-        email = self.get_submit_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_email,
-            email,
+            self.get_submit_email(),
         )
 
     def get_approve_email(self):
@@ -331,11 +328,10 @@ class Entry(TimeStampedModel):
 
 
     def queue_approve_email(self):
-        email = self.get_approve_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_email,
-            email,
+            self.get_approve_email(),
         )
 
     # Entry Transition Conditions
