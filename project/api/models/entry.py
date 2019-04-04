@@ -18,8 +18,8 @@ from model_utils.models import TimeStampedModel
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.template.loader import render_to_string
 
+from api.tasks import get_email
 from api.tasks import send_email
 
 log = logging.getLogger(__name__)
@@ -161,8 +161,6 @@ class Entry(TimeStampedModel):
         #     )
 
 
-    # Methods
-
     # Permissions
     @staticmethod
     @allow_staff_or_superuser
@@ -208,47 +206,137 @@ class Entry(TimeStampedModel):
         ])
 
     # Methods
-    def queue_notification(self, template, context=None):
-        officers = self.group.officers.filter(
-            status__gt=0,
-            person__email__isnull=False,
-        )
-        if not officers:
-            raise RuntimeError("No officers for {0}".format(self.group))
-        cc = []
-        assignments = self.session.convention.assignments.filter(
-            category__lt=10,
-            person__email__isnull=False
-        )
-        to = ["{0} <{1}>".format(officer.person.common_name.replace(",",""), officer.person.email) for officer in officers]
-        cc = ["{0} <{1}>".format(assignment.person.common_name.replace(",",""), assignment.person.email) for assignment in assignments]
-        if self.group.kind == self.group.KIND.quartet:
-            members = self.group.members.filter(
-                status__gt=0,
-                person__email__isnull=False,
-            ).exclude(
-                person__officers__in=officers,
-            ).distinct()
-            for member in members:
-                cc.append(
-                    "{0} <{1}>".format(member.person.common_name.replace(",",""), member.person.email)
-                )
-        body = render_to_string(template, context)
-        subject = "[Barberscore] {0} {1} {2} Session".format(
+    def get_invite_email(self):
+        template = 'emails/entry_invite.txt'
+        context = {'entry': self}
+        subject = "[Barberscore] Notification for {0}".format(
             self.group.name,
-            self.session.convention.name,
-            self.session.get_kind_display(),
         )
-        queue = django_rq.get_queue('high')
-        result = queue.enqueue(
-            send_email,
+        to = self.group.get_officer_emails()
+        cc = self.session.convention.get_assignment_emails()
+        cc.extend(self.group.get_member_emails())
+        email = get_email(
+            template=template,
+            context=context,
             subject=subject,
-            body=body,
             to=to,
             cc=cc,
         )
-        return result
+        return email
 
+    def queue_invite_email(self):
+        email = self.get_invite_email()
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            send_email,
+            email,
+        )
+
+    def get_withdraw_email(self):
+        # Send confirmation email
+        template = 'emails/entry_withdraw.txt'
+        context = {'entry': self}
+        subject = "[Barberscore] Notification for {0}".format(
+            self.group.name,
+        )
+        to = self.group.get_officer_emails()
+        cc = self.session.convention.get_assignment_emails()
+        cc.extend(self.group.get_member_emails())
+        email = get_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+        )
+        return email
+
+    def queue_withdraw_email(self):
+        email = self.get_withdraw_email()
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            send_email,
+            email,
+        )
+
+    def get_submit_email(self):
+        template = 'emails/entry_submit.txt'
+        contestants = self.contestants.filter(
+            status__gt=0,
+        ).order_by('contest__award__name')
+        context = {
+            'entry': self,
+            'contestants': contestants,
+        }
+        subject = "[Barberscore] Notification for {0}".format(
+            self.group.name,
+        )
+        to = self.group.get_officer_emails()
+        cc = self.session.convention.get_assignment_emails()
+        cc.extend(self.group.get_member_emails())
+        email = get_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+        )
+        return email
+
+
+    def queue_submit_email(self):
+        email = self.get_submit_email()
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            send_email,
+            email,
+        )
+
+    def get_approve_email(self):
+        template = 'emails/entry_approve.txt'
+        repertories = self.group.repertories.order_by(
+            'chart__title',
+        )
+        contestants = self.contestants.filter(
+            status__gt=0,
+        ).order_by(
+            'contest__award__name',
+        )
+        members = self.group.members.filter(
+            status__gt=0,
+        ).order_by(
+            'person__last_name',
+            'person__first_name',
+        )
+        context = {
+            'entry': self,
+            'repertories': repertories,
+            'contestants': contestants,
+            'members': members,
+        }
+        subject = "[Barberscore] Notification for {0}".format(
+            self.group.name,
+        )
+        to = self.group.get_officer_emails()
+        cc = self.session.convention.get_assignment_emails()
+        cc.extend(self.group.get_member_emails())
+        email = get_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+        )
+        return email
+
+
+    def queue_approve_email(self):
+        email = self.get_approve_email()
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            send_email,
+            email,
+        )
 
     # Entry Transition Conditions
     def can_build_entry(self):
@@ -316,8 +404,8 @@ class Entry(TimeStampedModel):
         conditions=[can_invite_entry],
     )
     def invite(self, *args, **kwargs):
-        context = {'entry': self}
-        self.queue_notification('emails/entry_invite.txt', context)
+        """Invites the group to enter"""
+        self.queue_invite_email()
         return
 
     @fsm_log_by
@@ -333,6 +421,8 @@ class Entry(TimeStampedModel):
         conditions=[],
     )
     def withdraw(self, *args, **kwargs):
+        """Withdraws the Entry from the Session"""
+        # If the session has been drawn, re-index.
         if self.draw:
             remains = self.session.entries.filter(draw__gt=self.draw)
             self.draw = None
@@ -340,12 +430,13 @@ class Entry(TimeStampedModel):
             for entry in remains:
                 entry.draw = entry.draw - 1
                 entry.save()
+        # Remove from all contestants
         contestants = self.contestants.filter(status__gte=0)
         for contestant in contestants:
             contestant.exclude()
             contestant.save()
-        context = {'entry': self}
-        self.queue_notification('emails/entry_withdraw.txt', context)
+        # Queue email
+        self.queue_withdraw_email()
         return
 
     @fsm_log_by
@@ -360,14 +451,7 @@ class Entry(TimeStampedModel):
         conditions=[can_submit_entry],
     )
     def submit(self, *args, **kwargs):
-        contestants = self.contestants.filter(
-            status__gt=0,
-        ).order_by('contest__award__name')
-        context = {
-            'entry': self,
-            'contestants': contestants,
-        }
-        self.queue_notification('emails/entry_submit.txt', context)
+        self.queue_submit_email()
         return
 
     @fsm_log_by
@@ -383,21 +467,5 @@ class Entry(TimeStampedModel):
         conditions=[],
     )
     def approve(self, *args, **kwargs):
-        repertories = self.group.repertories.order_by('chart__title')
-        contestants = self.contestants.filter(
-            status__gt=0,
-        ).order_by('contest__award__name')
-        members = self.group.members.filter(
-            status__gt=0,
-        ).order_by(
-            'person__last_name',
-            'person__first_name',
-        )
-        context = {
-            'entry': self,
-            'repertories': repertories,
-            'contestants': contestants,
-            'members': members,
-        }
-        self.queue_notification('emails/entry_approve.txt', context)
+        self.queue_approve_email()
         return
