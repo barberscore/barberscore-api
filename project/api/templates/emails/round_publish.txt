@@ -1,0 +1,23 @@
+The {{round.session.convention.name|safe}} {{round.session.get_kind_display}} {{round.get_kind_display}}
+has finished!
+
+Following are the summary results.  The full Official Scoring Summary is attached
+to this email.
+{% for advancer in advancers %}
+{{advancer.draw}} - {{advancer.group.name|safe}}
+{% endfor %}
+
+{% for complete in completes %}
+{{complete.name|safe}}: {{complete.tot_points}} ({{complete.tot_score|floatformat:1}}%)
+{% endfor %}
+
+{% for award, winner in outcomes %}
+{{award}}: {{winner}}
+{% endfor %}
+
+Congratulations to all our competitors!
+
+
+NOTE: This is not SPAM. Please do not report this email as SPAM. If you are receiving this
+email for an inactive group, or you are no longer an administrator for your group, we
+can fix that. Just send your request to be removed to: customerservice@barbershop.org
