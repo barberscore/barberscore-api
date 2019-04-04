@@ -1139,7 +1139,7 @@ class Round(TimeStampedModel):
     def get_ca_emails(self):
         Panelist = apps.get_model('api.panelist')
         cas = self.panelists.filter(
-            status=Panelist.STATUS.active,
+            # status=Panelist.STATUS.active,
             category=Panelist.CATEGORY.ca,
             person__email__isnull=False,
         )
@@ -1152,7 +1152,7 @@ class Round(TimeStampedModel):
     def get_judge_emails(self):
         Panelist = apps.get_model('api.panelist')
         cas = self.panelists.filter(
-            status=Panelist.STATUS.active,
+            # status=Panelist.STATUS.active,
             category__gt=Panelist.CATEGORY.ca,
             person__email__isnull=False,
         )
@@ -1353,6 +1353,50 @@ class Round(TimeStampedModel):
 
     def queue_publish_email(self):
         email = self.get_publish_email()
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            send_email,
+            email,
+        )
+
+    def get_publish_report_email(self):
+        template = 'emails/round_publish_report.txt'
+        context = {
+            'round': self,
+        }
+        subject = "[Barberscore] {0} Reports".format(
+            self,
+        )
+        to = self.get_ca_emails()
+        cc = self.get_judge_emails()
+        attachments = []
+        if self.sa:
+            pdf = self.sa.file
+        else:
+            pdf = self.get_sa()
+        file_name = '{0} {1} {2} SA'.format(
+            self.session.convention.name,
+            self.session.get_kind_display(),
+            self.get_kind_display(),
+        )
+        attachments = [(
+            file_name,
+            pdf,
+            'application/pdf',
+        )]
+        email = get_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+            attachments=attachments,
+        )
+        return email
+
+
+    def queue_publish_report_email(self):
+        email = self.get_publish_report_email()
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_email,
