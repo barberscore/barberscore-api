@@ -117,13 +117,6 @@ class Session(TimeStampedModel):
         storage=RawMediaCloudinaryStorage(),
     )
 
-    contact_report = models.FileField(
-        upload_to=FileUploadPath(),
-        blank=True,
-        default='',
-        storage=RawMediaCloudinaryStorage(),
-    )
-
     # FKs
     convention = models.ForeignKey(
         'Convention',
@@ -360,48 +353,6 @@ class Session(TimeStampedModel):
     def save_drcj(self):
         content = self.get_drcj()
         self.drcj_report.save("drcj_report", content)
-
-
-    def get_contact(self):
-        Entry = apps.get_model('api.entry')
-        wb = Workbook()
-        ws = wb.active
-        fieldnames = [
-            'group',
-            'admin',
-            'email',
-            'cell',
-        ]
-        ws.append(fieldnames)
-        entries = self.entries.filter(
-            status__in=[
-                Entry.STATUS.approved,
-            ]
-        ).order_by('group__name')
-        for entry in entries:
-            admins = entry.group.officers.filter(
-                status__gt=0,
-            )
-            for admin in admins:
-                group = entry.group.nomen
-                person = admin.person.nomen
-                email = admin.person.email
-                cell = admin.person.cell_phone
-                row = [
-                    group,
-                    person,
-                    email,
-                    cell,
-                ]
-                ws.append(row)
-        file = save_virtual_workbook(wb)
-        content = ContentFile(file)
-        return content
-
-
-    def save_contact(self):
-        content = self.get_contact()
-        self.contact_report.save("contact_report", content)
 
 
     def get_officer_emails(self):

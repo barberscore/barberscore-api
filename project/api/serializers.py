@@ -694,7 +694,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'notes',
             'legacy_report',
             'drcj_report',
-            'contact_report',
             'num_rounds',
             'convention',
             'contests',

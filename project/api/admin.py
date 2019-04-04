@@ -1652,7 +1652,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'legacy_report',
         'drcj_report',
-        'contact_report',
         'num_rounds',
         'is_invitational',
         'footnotes',
@@ -1687,7 +1686,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'legacy_report',
         'drcj_report',
-        'contact_report',
     ]
 
     inlines = [

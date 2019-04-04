@@ -1522,30 +1522,6 @@ class SessionViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(
-        methods=['get'],
-        detail=True,
-        renderer_classes=[XLSXRenderer],
-        permission_classes=[DRYPermissions],
-        content_negotiation_class=IgnoreClientContentNegotiation,
-    )
-    def contact(self, request, pk=None):
-        session = Session.objects.get(pk=pk)
-        if session.contact_report:
-            xlsx = session.contact_report.file
-        else:
-            xlsx = session.get_contact()
-        file_name = '{0} {1} Session Contact Report'.format(
-            session.convention.name,
-            session.get_kind_display()
-        )
-        return XLSXResponse(
-            xlsx,
-            file_name=file_name,
-            status=status.HTTP_200_OK
-        )
-
-
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'appearance',
