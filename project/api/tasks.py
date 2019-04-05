@@ -41,15 +41,19 @@ log = logging.getLogger(__name__)
 # Utility
 def build_email(template, context, subject, to, cc=None, bcc=None, attachments=None):
     # Clean as necessary
-    to = list(set(to))
+    seen = set()
+    to = [x for x in to if not (x in seen or seen.add(x))]
     if cc:
-        cc = list(set(cc))
+        seen = set()
+        cc = [x for x in cc if not (x in seen or seen.add(x))]
         cc = [x for x in cc if x not in to]
         cc = [x.replace(",", "") for x in cc]
     if bcc:
-        bcc = list(set(bcc))
+        seen = set()
+        bcc = [x for x in bcc if not (x in seen or seen.add(x))]
         bcc = [x for x in bcc if x not in to]
-        bcc = [x for x in bcc if x not in cc]
+        if cc:
+            bcc = [x for x in bcc if x not in cc]
         bcc = [x.replace(",", "") for x in bcc]
     to = [x.replace(",", "") for x in to]
     body = render_to_string(template, context)
@@ -411,7 +415,7 @@ def send_complete_email_from_appearance(appearance):
         'Chris Buechler <chris.buechler@verizon.net >',
         'David Mills <proclamation56@gmail.com>',
     ]
-    cc = None
+    cc = []
 
     email = build_email(
         template=template,
@@ -551,7 +555,7 @@ def send_complete_email_from_panelist(panelist):
         'Chris Buechler <chris.buechler@verizon.net >',
         'David Mills <proclamation56@gmail.com>',
     ]
-    cc = None
+    cc = []
 
     email = build_email(
         template=template,
@@ -691,15 +695,15 @@ def send_publish_email_from_round(round):
         pdf,
         'application/pdf',
     )]
-
+    context['bcc'] = [x.partition(" <")[0] for x in bcc]
     # OVERWRITE
     to = [
         'David Binetti <dbinetti@gmail.com>',
         'Chris Buechler <chris.buechler@verizon.net >',
         'David Mills <proclamation56@gmail.com>',
     ]
-    cc = None
-    bcc = None
+    cc = []
+    bcc = []
 
     email = build_email(
         template=template,
@@ -745,7 +749,7 @@ def send_publish_report_email_from_round(round):
         'Chris Buechler <chris.buechler@verizon.net >',
         'David Mills <proclamation56@gmail.com>',
     ]
-    cc = None
+    cc = []
 
 
     email = build_email(
@@ -767,6 +771,7 @@ def send_open_email_from_session(session):
     )
     to = session.convention.get_assignment_emails()
     bcc = session.get_officer_emails()
+    context['bcc'] = [x.partition(" <")[0] for x in bcc]
     email = build_email(
         template=template,
         context=context,
@@ -785,6 +790,7 @@ def send_close_email_from_session(session):
     )
     to = session.convention.get_assignment_emails()
     bcc = session.get_officer_emails()
+    context['bcc'] = [x.partition(" <")[0] for x in bcc]
     email = build_email(
         template=template,
         context=context,
@@ -808,7 +814,8 @@ def send_verify_email_from_session(session):
         session,
     )
     to = session.convention.get_assignment_emails()
-    bcc = session.get_officer_emails()
+    bcc = session.get_entry_emails()
+    context['bcc'] = [x.partition(" <")[0] for x in bcc]
     email = build_email(
         template=template,
         context=context,
