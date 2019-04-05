@@ -16,7 +16,7 @@ from model_utils.models import TimeStampedModel
 from timezone_field import TimeZoneField
 
 # Django
-from django.apps import apps as api_apps
+from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -25,7 +25,6 @@ from django.contrib.postgres.fields import ArrayField
 # First-Party
 from api.fields import ImageUploadPath
 
-config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 

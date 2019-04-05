@@ -16,7 +16,7 @@ from model_utils import Choices
 from django.apps import apps
 
 # Django
-from django.apps import apps as api_apps
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.contenttypes.fields import GenericRelation
@@ -30,7 +30,6 @@ from api.fields import LowerEmailField
 from api.managers import UserManager
 from api.tasks import get_auth0
 
-config = api_apps.get_app_config('api')
 
 log = logging.getLogger(__name__)
 
