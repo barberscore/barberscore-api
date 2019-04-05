@@ -505,27 +505,17 @@ class Group(TimeStampedModel):
             'person__last_name',
             'person__first_name',
         )
-        result = ["{0} ({2}) <{1}>".format(
-            officer.person.common_name, officer.person.email, officer.group.name
-        ) for officer in officers]
-        return result
-
-
-    def get_member_emails(self):
-        if self.kind == self.KIND.quartet:
-            members = self.members.filter(
-                status__gt=0,
-                person__email__isnull=False,
-            ).order_by(
-                'part',
+        seen = set()
+        result = [
+            "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,)
+            for officer in officers
+            if not (
+                "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,) in seen or seen.add(
+                    "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,)
+                )
             )
-            result = ["{0} ({2}) <{1}>".format(
-                member.person.common_name,
-                member.person.email,
-                member.group.name,
-            ) for member in members]
-            return result
-        return []
+        ]
+        return result
 
 
     # Internals

@@ -311,8 +311,8 @@ def send_complete_email_from_appearance(appearance):
     # Monkeypatch
     for key, value in stats.items():
         setattr(group, key, value)
-    for appearance in appearances:
-        songs = appearance.songs.prefetch_related(
+    for a in appearances:
+        songs = a.songs.prefetch_related(
             'scores',
             'scores__panelist',
         ).order_by(
@@ -382,7 +382,7 @@ def send_complete_email_from_appearance(appearance):
             }
             items = " ".join([penalties_map[x] for x in song.penalties])
             song.penalties_patched = items
-        appearance.songs_patched = songs
+        a.songs_patched = songs
     group.appearances_patched = appearances
     context = {'group': group}
 
@@ -391,8 +391,8 @@ def send_complete_email_from_appearance(appearance):
         appearance.group.name,
     )
     to = appearance.group.get_officer_emails()
-    cc = appearance.round.get_ca_emails()
-    cc.extend(appearance.group.get_member_emails())
+    cc = appearance.round.session.convention.get_drcj_emails()
+    cc.extend(appearance.round.session.convention.get_ca_emails())
 
     if appearance.csa:
         pdf = appearance.csa.file
@@ -427,6 +427,7 @@ def send_complete_email_from_appearance(appearance):
     )
     return email.send()
 
+
 def send_invite_email_from_entry(entry):
     template = 'emails/entry_invite.txt'
     context = {'entry': entry}
@@ -434,8 +435,8 @@ def send_invite_email_from_entry(entry):
         entry.group.name,
     )
     to = entry.group.get_officer_emails()
-    cc = entry.session.convention.get_assignment_emails()
-    cc.extend(entry.group.get_member_emails())
+    cc = entry.session.convention.get_drcj_emails()
+    cc.extend(entry.session.convention.get_ca_emails())
     email = build_email(
         template=template,
         context=context,
@@ -445,6 +446,7 @@ def send_invite_email_from_entry(entry):
     )
     return email.send()
 
+
 def send_withdraw_email_from_entry(entry):
     # Send confirmation email
     template = 'emails/entry_withdraw.txt'
@@ -453,8 +455,8 @@ def send_withdraw_email_from_entry(entry):
         entry.group.name,
     )
     to = entry.group.get_officer_emails()
-    cc = entry.session.convention.get_assignment_emails()
-    cc.extend(entry.group.get_member_emails())
+    cc = entry.session.convention.get_drcj_emails()
+    cc.extend(entry.session.convention.get_ca_emails())
     email = build_email(
         template=template,
         context=context,
@@ -463,6 +465,7 @@ def send_withdraw_email_from_entry(entry):
         cc=cc,
     )
     return email.send()
+
 
 def send_submit_email_from_entry(entry):
     template = 'emails/entry_submit.txt'
@@ -477,8 +480,8 @@ def send_submit_email_from_entry(entry):
         entry.group.name,
     )
     to = entry.group.get_officer_emails()
-    cc = entry.session.convention.get_assignment_emails()
-    cc.extend(entry.group.get_member_emails())
+    cc = entry.session.convention.get_drcj_emails()
+    cc.extend(entry.session.convention.get_ca_emails())
     email = build_email(
         template=template,
         context=context,
@@ -487,6 +490,7 @@ def send_submit_email_from_entry(entry):
         cc=cc,
     )
     return email.send()
+
 
 def send_approve_email_from_entry(entry):
     template = 'emails/entry_approve.txt'
@@ -514,8 +518,8 @@ def send_approve_email_from_entry(entry):
         entry.group.name,
     )
     to = entry.group.get_officer_emails()
-    cc = entry.session.convention.get_assignment_emails()
-    cc.extend(entry.group.get_member_emails())
+    cc = entry.session.convention.get_drcj_emails()
+    cc.extend(entry.session.convention.get_ca_emails())
     email = build_email(
         template=template,
         context=context,
@@ -534,7 +538,7 @@ def send_complete_email_from_panelist(panelist):
         panelist.person.common_name,
     )
     to = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email)]
-    cc = panelist.round.get_ca_emails()
+    cc = panelist.round.session.convention.get_ca_emails()
 
     if panelist.psa:
         pdf = panelist.psa.file
@@ -566,6 +570,7 @@ def send_complete_email_from_panelist(panelist):
         attachments=attachments,
     )
     return email.send()
+
 
 def send_publish_email_from_round(round):
     Appearance = apps.get_model('api.appearance')
@@ -677,9 +682,10 @@ def send_publish_email_from_round(round):
     subject = "[Barberscore] {0} Results".format(
         round,
     )
-    to = round.get_ca_emails()
-    cc = round.get_judge_emails()
-    bcc = round.get_member_emails()
+    to = round.session.convention.get_ca_emails()
+    cc = round.session.convention.get_drcj_emails()
+    cc.extend(round.get_judge_emails())
+    bcc = round.session.get_participant_emails()
 
     if round.oss:
         pdf = round.oss.file
@@ -725,8 +731,9 @@ def send_publish_report_email_from_round(round):
     subject = "[Barberscore] {0} Reports".format(
         round,
     )
-    to = round.get_ca_emails()
-    cc = round.get_judge_emails()
+    to = round.session.convention.get_ca_emails()
+    cc = round.session.convention.get_drcj_emails()
+    cc.extend(round.get_judge_emails())
     attachments = []
     if round.sa:
         pdf = round.sa.file
@@ -769,14 +776,16 @@ def send_open_email_from_session(session):
     subject = "[Barberscore] {0} Session is OPEN".format(
         session,
     )
-    to = session.convention.get_assignment_emails()
-    bcc = session.get_officer_emails()
+    to = session.convention.get_drcj_emails()
+    cc = session.convention.get_ca_emails()
+    bcc = session.get_district_emails()
     context['bcc'] = [x.partition(" <")[0] for x in bcc]
     email = build_email(
         template=template,
         context=context,
         subject=subject,
         to=to,
+        cc=cc,
         bcc=bcc,
     )
     return email.send()
@@ -788,14 +797,16 @@ def send_close_email_from_session(session):
     subject = "[Barberscore] {0} Session is CLOSED".format(
         session,
     )
-    to = session.convention.get_assignment_emails()
-    bcc = session.get_officer_emails()
+    to = session.convention.get_drcj_emails()
+    cc = session.convention.get_ca_emails()
+    bcc = session.get_district_emails()
     context['bcc'] = [x.partition(" <")[0] for x in bcc]
     email = build_email(
         template=template,
         context=context,
         subject=subject,
         to=to,
+        cc=cc,
         bcc=bcc,
     )
     return email.send()
@@ -813,14 +824,16 @@ def send_verify_email_from_session(session):
     subject = "[Barberscore] {0} Session Draw".format(
         session,
     )
-    to = session.convention.get_assignment_emails()
-    bcc = session.get_entry_emails()
+    to = session.convention.get_drcj_emails()
+    cc = session.convention.get_ca_emails()
+    bcc = session.get_participant_emails()
     context['bcc'] = [x.partition(" <")[0] for x in bcc]
     email = build_email(
         template=template,
         context=context,
         subject=subject,
         to=to,
+        cc=cc,
         bcc=bcc,
     )
     return email.send()
@@ -834,8 +847,8 @@ def send_verify_report_email_from_session(session):
     subject = "[Barberscore] {0} Session Draft Reports".format(
         session,
     )
-    to = session.convention.get_assignment_emails()
-
+    to = session.convention.get_drcj_emails()
+    cc = session.convention.get_ca_emails()
     attachments = []
     if session.drcj_report:
         xlsx = session.drcj_report.file
@@ -868,7 +881,35 @@ def send_verify_report_email_from_session(session):
         context=context,
         subject=subject,
         to=to,
+        cc=cc,
         attachments=attachments,
+    )
+    return email.send()
+
+
+def send_package_email_from_session(session):
+    template = 'emails/session_package.txt'
+    approved_entries = session.entries.filter(
+        status=session.entries.model.STATUS.approved,
+    ).order_by('draw')
+    context = {
+        'session': session,
+        'approved_entries': approved_entries,
+    }
+    subject = "[Barberscore] {0} Session Draw".format(
+        session,
+    )
+    to = session.convention.get_drcj_emails()
+    cc = session.convention.get_ca_emails()
+    bcc = session.get_participant_emails()
+    context['bcc'] = [x.partition(" <")[0] for x in bcc]
+    email = build_email(
+        template=template,
+        context=context,
+        subject=subject,
+        to=to,
+        cc=cc,
+        bcc=bcc,
     )
     return email.send()
 
@@ -881,7 +922,8 @@ def send_package_report_email_from_session(session):
     subject = "[Barberscore] {0} Session FINAL Reports".format(
         session,
     )
-    to = session.convention.get_assignment_emails()
+    to = session.convention.get_drcj_emails()
+    cc = session.convention.get_ca_emails()
 
     attachments = []
     if session.drcj_report:
@@ -915,6 +957,7 @@ def send_package_report_email_from_session(session):
         context=context,
         subject=subject,
         to=to,
+        cc=cc,
         attachments=attachments,
     )
     return email.send()

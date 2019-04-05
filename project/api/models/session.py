@@ -358,7 +358,7 @@ class Session(TimeStampedModel):
         self.drcj_report.save("drcj_report", content)
 
 
-    def get_officer_emails(self):
+    def get_district_emails(self):
         Officer = apps.get_model('api.officer')
         Group = apps.get_model('api.group')
         officers = Officer.objects.filter(
@@ -390,16 +390,38 @@ class Session(TimeStampedModel):
         # http://www.martinbroadhurst.com/removing-duplicates-from-a-list-while-preserving-order-in-python.html
         seen = set()
         result = [
-            "{0} ({2}) <{1}>".format(officer.person.common_name, officer.person.email, officer.group.name)
+            "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,)
             for officer in officers
             if not (
-                "{0} ({2}) <{1}>".format(officer.person.common_name, officer.person.email, officer.group.name) in seen or seen.add(
-                "{0} ({2}) <{1}>".format(officer.person.common_name, officer.person.email, officer.group.name)
+                "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,) in seen or seen.add(
+                    "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,)
                 )
             )
         ]
         return result
 
+
+    def get_participant_emails(self):
+        Officer = apps.get_model('api.officer')
+        Entry = apps.get_model('api.entry')
+        officers = Officer.objects.filter(
+            group__entries__in=self.entries.filter(status=Entry.STATUS.approved),
+        ).order_by(
+            'group__name',
+            'person__last_name',
+            'person__first_name',
+        )
+        seen = set()
+        result = [
+            "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,)
+            for officer in officers
+            if not (
+                "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,) in seen or seen.add(
+                    "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,)
+                )
+            )
+        ]
+        return result
 
     def queue_open_email(self):
         queue = django_rq.get_queue('high')

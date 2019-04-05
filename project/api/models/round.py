@@ -1137,29 +1137,9 @@ class Round(TimeStampedModel):
         return content
 
 
-    def get_ca_emails(self):
-        Panelist = apps.get_model('api.panelist')
-        cas = self.panelists.filter(
-            # status=Panelist.STATUS.active,
-            category=Panelist.CATEGORY.ca,
-            person__email__isnull=False,
-        ).order_by(
-            'kind',
-            'category',
-            'person__last_name',
-            'person__first_name',
-        )
-        result = ["{0} ({2} {3}) <{1}>".format(
-            ca.person.common_name,
-            ca.person.email,
-            ca.get_kind_display(),
-            ca.get_category_display(),
-        ) for ca in cas]
-        return result
-
     def get_judge_emails(self):
         Panelist = apps.get_model('api.panelist')
-        cas = self.panelists.filter(
+        judges = self.panelists.filter(
             # status=Panelist.STATUS.active,
             category__gt=Panelist.CATEGORY.ca,
             person__email__isnull=False,
@@ -1169,29 +1149,16 @@ class Round(TimeStampedModel):
             'person__last_name',
             'person__first_name',
         )
-        result = ["{0} ({2} {3}) <{1}>".format(
-            ca.person.common_name,
-            ca.person.email,
-            ca.get_kind_display(),
-            ca.get_category_display(),
-        ) for ca in cas]
-        return result
-
-    def get_member_emails(self):
-        Entry = apps.get_model('api.entry')
-        entries = self.session.entries.filter(
-            status=Entry.STATUS.approved,
-        ).order_by(
-            'group__name',
-        )
-        dups = []
-        for entry in entries:
-            dups.extend(entry.group.get_member_emails())
-            dups.extend(entry.group.get_officer_emails())
-        # Remove duplicates whilst preserving order.
-        # http://www.martinbroadhurst.com/removing-duplicates-from-a-list-while-preserving-order-in-python.html
         seen = set()
-        result = [x for x in dups if not (x in seen or seen.add(x))]
+        result = [
+            "{0} ({1} {2}) <{3}>".format(judge.person.common_name, judge.get_kind_display(), judge.get_category_display(), judge.person.email,)
+            for judge in judges
+            if not (
+                "{0} ({1} {2}) <{3}>".format(judge.person.common_name, judge.get_kind_display(), judge.get_category_display(), judge.person.email,) in seen or seen.add(
+                    "{0} ({1} {2}) <{3}>".format(judge.person.common_name, judge.get_kind_display(), judge.get_category_display(), judge.person.email,)
+                )
+            )
+        ]
         return result
 
     def mock(self):
