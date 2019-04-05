@@ -26,7 +26,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files import File
 from django.core.files.base import ContentFile
-from django.core.mail import EmailMessage
 from django.core.validators import ValidationError
 from django.core.validators import validate_email
 from django.db.models import Count
@@ -39,36 +38,43 @@ from django.utils.timezone import localdate
 log = logging.getLogger(__name__)
 
 # Utility
-def build_email(template, context, subject, to, cc=None, bcc=None, attachments=None):
+def build_email(template, context, subject, to, cc=[], bcc=[], attachments=[]):
     # Clean as necessary
-    seen = set()
-    to = [x for x in to if not (x in seen or seen.add(x))]
-    if cc:
-        seen = set()
-        cc = [x for x in cc if not (x in seen or seen.add(x))]
-        cc = [x for x in cc if x not in to]
-        cc = [x.replace(",", "") for x in cc]
-    if bcc:
-        seen = set()
-        bcc = [x for x in bcc if not (x in seen or seen.add(x))]
-        bcc = [x for x in bcc if x not in to]
-        if cc:
-            bcc = [x for x in bcc if x not in cc]
-        bcc = [x.replace(",", "") for x in bcc]
+    # Remove commas
     to = [x.replace(",", "") for x in to]
+    cc = [x.replace(",", "") for x in cc]
+    bcc = [x.replace(",", "") for x in bcc]
+
+    # Remove duplicate emails, keeping only the first
+    full = []
+    clean_to = []
+    clean_cc = []
+    clean_bcc = []
+    for address in to:
+        if not address.partition("<")[2].partition(">")[0] in full:
+            clean_to.append(address)
+        full.append(address.partition("<")[2].partition(">")[0])
+    for address in cc:
+        if not address.partition("<")[2].partition(">")[0] in full:
+            clean_cc.append(address)
+        full.append(address.partition("<")[2].partition(">")[0])
+    for address in bcc:
+        if not address.partition("<")[2].partition(">")[0] in full:
+            clean_bcc.append(address)
+        full.append(address.partition("<")[2].partition(">")[0])
+
     body = render_to_string(template, context)
     email = EmailMessage(
         subject=subject,
         body=body,
         from_email='Barberscore <admin@barberscore.com>',
-        to=to,
-        cc=cc,
-        bcc=bcc,
+        to=clean_to,
+        cc=clean_cc,
+        bcc=clean_bcc,
     )
-    if attachments:
-        for attachment in attachments:
-            with attachment[1].open() as f:
-                email.attach(attachment[0], f.read(), attachment[2])
+    for attachment in attachments:
+        with attachment[1].open() as f:
+            email.attach(attachment[0], f.read(), attachment[2])
     return email
 
 
