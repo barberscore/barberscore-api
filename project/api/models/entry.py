@@ -270,6 +270,11 @@ class Entry(TimeStampedModel):
         )
         return all(checklist)
 
+    def can_approve(self):
+        if self.is_private and self.contestants.filter(status__gt=0):
+            return False
+        return True
+
     # Entry Transitions
     @fsm_log_by
     @transition(
@@ -362,7 +367,9 @@ class Entry(TimeStampedModel):
             STATUS.approved,
         ],
         target=STATUS.approved,
-        conditions=[],
+        conditions=[
+            can_approve,
+        ],
     )
     def approve(self, *args, **kwargs):
         self.queue_approve_email()
