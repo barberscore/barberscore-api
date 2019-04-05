@@ -263,10 +263,17 @@ class Convention(TimeStampedModel):
             status=Assignment.STATUS.active,
             category__lte=Assignment.CATEGORY.ca,
             person__email__isnull=False,
+        ).order_by(
+            'kind',
+            'category',
+            'person__last_name',
+            'person__first_name',
         )
-        result = ["{0} <{1}>".format(
+        result = ["{0} ({2} {3}) <{1}>".format(
             assignment.person.common_name,
             assignment.person.email,
+            assignment.get_kind_display(),
+            assignment.get_category_display(),
         ) for assignment in assignments]
         return result
 

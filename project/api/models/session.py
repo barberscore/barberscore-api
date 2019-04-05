@@ -360,24 +360,44 @@ class Session(TimeStampedModel):
 
     def get_officer_emails(self):
         Officer = apps.get_model('api.officer')
+        Group = apps.get_model('api.group')
         officers = Officer.objects.filter(
             status=Officer.STATUS.active,
+            group__status=Group.STATUS.active,
+            person__email__isnull=False,
         )
         if self.kind == self.KIND.quartet:
             officers = officers.filter(
                 group__parent=self.convention.group,
+                group__kind=self.KIND.quartet,
             )
         else:
             officers = officers.filter(
                 group__parent__parent=self.convention.group,
+            ).exclude(
+                group__kind=self.KIND.quartet,
             )
         if self.convention.divisions:
             officers = officers.filter(
                 group__division__in=self.convention.divisions,
             )
-        result = ["{0} <{1}>".format(
-            officer.person.common_name, officer.person.email
-        ) for officer in officers]
+        officers = officers.order_by(
+            'group__name',
+            'person__last_name',
+            'person__first_name',
+        )
+        # Remove duplicates whilst preserving order.
+        # http://www.martinbroadhurst.com/removing-duplicates-from-a-list-while-preserving-order-in-python.html
+        seen = set()
+        result = [
+            "{0} ({2}) <{1}>".format(officer.person.common_name, officer.person.email, officer.group.name)
+            for officer in officers
+            if not (
+                "{0} ({2}) <{1}>".format(officer.person.common_name, officer.person.email, officer.group.name) in seen or seen.add(
+                "{0} ({2}) <{1}>".format(officer.person.common_name, officer.person.email, officer.group.name)
+                )
+            )
+        ]
         return result
 
 
