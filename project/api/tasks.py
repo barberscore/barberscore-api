@@ -49,6 +49,7 @@ def build_email(template, context, subject, to, cc=None, bcc=None, attachments=N
     if bcc:
         bcc = list(set(bcc))
         bcc = [x for x in bcc if x not in to]
+        bcc = [x for x in bcc if x not in cc]
         bcc = [x.replace(",", "") for x in bcc]
     to = [x.replace(",", "") for x in to]
     body = render_to_string(template, context)
@@ -404,6 +405,14 @@ def send_complete_email_from_appearance(appearance):
         'application/pdf',
     )]
 
+    # OVERWRITE
+    to = [
+        'David Binetti <dbinetti@gmail.com>',
+        'Chris Buechler <chris.buechler@verizon.net >',
+        'David Mills <proclamation56@gmail.com>',
+    ]
+    cc = None
+
     email = build_email(
         template=template,
         context=context,
@@ -535,6 +544,14 @@ def send_complete_email_from_panelist(panelist):
         pdf,
         'application/pdf',
     )]
+
+    # OVERWRITE
+    to = [
+        'David Binetti <dbinetti@gmail.com>',
+        'Chris Buechler <chris.buechler@verizon.net >',
+        'David Mills <proclamation56@gmail.com>',
+    ]
+    cc = None
 
     email = build_email(
         template=template,
@@ -675,6 +692,15 @@ def send_publish_email_from_round(round):
         'application/pdf',
     )]
 
+    # OVERWRITE
+    to = [
+        'David Binetti <dbinetti@gmail.com>',
+        'Chris Buechler <chris.buechler@verizon.net >',
+        'David Mills <proclamation56@gmail.com>',
+    ]
+    cc = None
+    bcc = None
+
     email = build_email(
         template=template,
         context=context,
@@ -712,6 +738,16 @@ def send_publish_report_email_from_round(round):
         pdf,
         'application/pdf',
     )]
+
+    # OVERWRITE
+    to = [
+        'David Binetti <dbinetti@gmail.com>',
+        'Chris Buechler <chris.buechler@verizon.net >',
+        'David Mills <proclamation56@gmail.com>',
+    ]
+    cc = None
+
+
     email = build_email(
         template=template,
         context=context,

@@ -1257,7 +1257,7 @@ class Round(TimeStampedModel):
         # ])
 
     def can_publish(self):
-        return settings.DEBUG
+        return True
 
     # Round Transitions
     @fsm_log_by
