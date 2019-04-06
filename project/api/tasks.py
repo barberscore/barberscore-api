@@ -974,6 +974,21 @@ def save_csa_from_appearance(appearance):
     return appearance.csa.save('csa', content)
 
 
+def save_psa_from_panelist(panelist):
+    content = panelist.get_psa()
+    return panelist.psa.save('psa', content)
+
+
+def save_oss_from_round(round):
+    content = round.get_oss()
+    return round.oss.save('oss', content)
+
+
+def save_sa_from_round(round):
+    content = round.get_sa()
+    return round.sa.save('sa', content)
+
+
 def check_member(member):
     if not member.group.mc_pk:
         raise RuntimeError("Not an MC entity.")

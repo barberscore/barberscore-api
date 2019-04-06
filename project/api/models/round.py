@@ -33,6 +33,9 @@ from django.conf import settings
 
 from api.tasks import send_publish_email_from_round
 from api.tasks import send_publish_report_email_from_round
+from api.tasks import save_oss_from_round
+from api.tasks import save_sa_from_round
+
 from api.fields import FileUploadPath
 
 log = logging.getLogger(__name__)
@@ -483,10 +486,12 @@ class Round(TimeStampedModel):
         content = ContentFile(file)
         return content
 
-    def save_oss(self):
-        content = self.get_oss()
-        self.oss.save("oss", content)
-
+    def queue_save_oss_from_round(self):
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            save_oss_from_round,
+            self,
+        )
 
     def get_sa(self):
         Panelist = apps.get_model('api.panelist')
@@ -859,10 +864,12 @@ class Round(TimeStampedModel):
         content = ContentFile(file)
         return content
 
-    def save_sa(self):
-        content = self.get_sa()
-        self.sa.save('sa', content)
-
+    def queue_save_sa_from_round(self):
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            save_sa_from_round,
+            self,
+        )
 
     def get_legacy_oss(self):
         # Contest = apps.get_model('api.contest')
@@ -1583,14 +1590,14 @@ class Round(TimeStampedModel):
         for appearance in advancing_appearances:
             appearance.advance()
             appearance.save()
-        # panelists = self.panelists.filter(
-        #     category__gt=Panelist.CATEGORY.ca,
-        # )
-        # for panelist in panelists:
-        #     panelist.completer()
-        #     panelist.save()
-        self.save_oss()
-        self.save_sa()
+        panelists = self.panelists.filter(
+            category__gt=Panelist.CATEGORY.ca,
+        )
+        for panelist in panelists:
+            panelist.completer()
+            panelist.save()
+        self.queue_save_oss_from_round()
+        self.queue_save_sa_from_round()
         return
 
     @fsm_log_by
