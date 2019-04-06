@@ -22,7 +22,7 @@ NOTE: This is not SPAM. Please do not report this email as SPAM. If you are rece
 email for an inactive group, or you are no longer an administrator for your group, we
 can fix that. Just send your request to be removed to: customerservice@barbershop.org
 
-This message was BCC'd to the following groups:
+This message was BCC'd to the following persons:
 {% for item in bcc %}
 {{item}}
 {% endfor %}

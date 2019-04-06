@@ -304,8 +304,6 @@ class Panelist(TimeStampedModel):
         self.psa.save('psa', content)
 
     def queue_complete_email(self):
-        if self.status != self.STATUS.completed:
-            raise ValueError("Do not send PSAs unless completed")
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_complete_email_from_panelist,

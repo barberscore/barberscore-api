@@ -6,9 +6,9 @@ This is the final list of approved participants, in draw order:
 {{entry.draw}} - {{entry.group.name|safe}}
 {% endfor %}
 
-At this point any changes -- including scratches, order-of-appearance requests,
-or repertory song entries -- must be made directly to and approved by the Contest
-Administrators (cc'd on this message).
+At this point repertory song changes are no longer permitted.  Other changes --
+including scratches or order-of-appearance requests -- must be made directly to
+and approved by the Contest Administrators (cc'd on this message).
 
 Have fun and break a leg!
 
@@ -17,7 +17,7 @@ NOTE: This is not SPAM. Please do not report this email as SPAM. If you are rece
 email for an inactive group, or you are no longer an administrator for your group, we
 can fix that. Just send your request to be removed to: customerservice@barbershop.org
 
-This message was BCC'd to the following groups:
+This message was BCC'd to the following persons:
 {% for item in bcc %}
 {{item}}
 {% endfor %}

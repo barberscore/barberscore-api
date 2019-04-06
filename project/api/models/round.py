@@ -1243,7 +1243,7 @@ class Round(TimeStampedModel):
         # ])
 
     def can_publish(self):
-        return True
+        return settings.DEBUG
 
     # Round Transitions
     @fsm_log_by
@@ -1570,6 +1570,7 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.finished], target=STATUS.verified, conditions=[can_verify])
     def verify(self, *args, **kwargs):
+        Panelist = apps.get_model('api.panelist')
         completed_appearances = self.appearances.exclude(
             draw__gt=0,
         )
@@ -1582,12 +1583,12 @@ class Round(TimeStampedModel):
         for appearance in advancing_appearances:
             appearance.advance()
             appearance.save()
-        panelists = self.panelists.filter(
-            category__gt=Panelist.CATEGORY.ca,
-        )
-        for panelist in panelists:
-            panelist.completer()
-            panelists.save()
+        # panelists = self.panelists.filter(
+        #     category__gt=Panelist.CATEGORY.ca,
+        # )
+        # for panelist in panelists:
+        #     panelist.completer()
+        #     panelist.save()
         self.save_oss()
         self.save_sa()
         return
@@ -1595,6 +1596,7 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source=[STATUS.verified], target=STATUS.published, conditions=[can_publish])
     def publish(self, *args, **kwargs):
+        Panelist = apps.get_model('api.panelist')
         # Publish results!
         self.queue_publish_email()
         self.queue_publish_report_email()
@@ -1603,7 +1605,9 @@ class Round(TimeStampedModel):
         )
         for appearance in completed_appearances:
             appearance.queue_complete_email()
-        panelists = self.panelists.all()
+        panelists = self.panelists.filter(
+            category__gt=Panelist.CATEGORY.ca,
+        )
         for panelist in panelists:
             panelist.queue_complete_email()
         return

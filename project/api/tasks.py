@@ -393,7 +393,7 @@ def send_complete_email_from_appearance(appearance):
     context = {'group': group}
 
     template = 'emails/appearance_complete.txt'
-    subject = "[Barberscore] Appearance CSA for {0}".format(
+    subject = "[Barberscore] CSA for {0}".format(
         appearance.group.name,
     )
     to = appearance.group.get_officer_emails()
@@ -540,7 +540,7 @@ def send_complete_email_from_panelist(panelist):
     context = {'panelist': panelist}
 
     template = 'emails/panelist_complete.txt'
-    subject = "[Barberscore] Panelist PSA for {0}".format(
+    subject = "[Barberscore] PSA for {0}".format(
         panelist.person.common_name,
     )
     to = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email)]
@@ -902,7 +902,7 @@ def send_package_email_from_session(session):
         'session': session,
         'approved_entries': approved_entries,
     }
-    subject = "[Barberscore] {0} Session Draw".format(
+    subject = "[Barberscore] {0} Session Starting".format(
         session,
     )
     to = session.convention.get_drcj_emails()
@@ -967,6 +967,11 @@ def send_package_report_email_from_session(session):
         attachments=attachments,
     )
     return email.send()
+
+
+def save_csa_from_appearance(appearance):
+    content = appearance.get_csa()
+    return appearance.csa.save('csa', content)
 
 
 def check_member(member):

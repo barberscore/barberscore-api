@@ -32,6 +32,7 @@ from api.tasks import send_open_email_from_session
 from api.tasks import send_close_email_from_session
 from api.tasks import send_verify_email_from_session
 from api.tasks import send_verify_report_email_from_session
+from api.tasks import send_package_email_from_session
 from api.tasks import send_package_report_email_from_session
 from api.fields import FileUploadPath
 
@@ -451,6 +452,13 @@ class Session(TimeStampedModel):
             self,
         )
 
+    def queue_package_email(self):
+        queue = django_rq.get_queue('high')
+        return queue.enqueue(
+            send_package_email_from_session,
+            self,
+        )
+
     def queue_package_report_email(self):
         queue = django_rq.get_queue('high')
         return queue.enqueue(
@@ -519,6 +527,16 @@ class Session(TimeStampedModel):
                     Entry.STATUS.withdrawn,
                 ],
             ).count() == 0,
+        ])
+
+    def can_verify(self):
+        Entry = apps.get_model('api.entry')
+        return all([
+            self.entries.filter(status=Entry.STATUS.approved).count() > 0,
+            not self.entries.filter(
+                status=Entry.STATUS.approved,
+                draw__isnull=True,
+            ),
         ])
 
     def can_finish(self):
@@ -621,7 +639,9 @@ class Session(TimeStampedModel):
         field=status,
         source=[STATUS.closed],
         target=STATUS.verified,
-        conditions=[],
+        conditions=[
+            can_verify,
+        ],
     )
     def verify(self, *args, **kwargs):
         """Make draw public."""
@@ -642,9 +662,9 @@ class Session(TimeStampedModel):
         # Save final reports
         self.save_drcj()
         self.save_legacy()
-        self.save_contact()
 
         #  Create and send the reports
+        self.queue_package_email()
         self.queue_package_report_email()
         return
 
