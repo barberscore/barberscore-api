@@ -774,7 +774,7 @@ class Appearance(TimeStampedModel):
     )
     def complete(self, *args, **kwargs):
         # Completes the Group.
-        self.queue_save_csa_from_appearance()
+        self.queue_save_csa()
         return
 
     @fsm_log_by

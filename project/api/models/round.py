@@ -33,8 +33,6 @@ from django.conf import settings
 
 from api.tasks import send_publish_email_from_round
 from api.tasks import send_publish_report_email_from_round
-from api.tasks import save_oss_from_round
-from api.tasks import save_sa_from_round
 
 from api.fields import FileUploadPath
 
@@ -486,13 +484,6 @@ class Round(TimeStampedModel):
         content = ContentFile(file)
         return content
 
-    def queue_save_oss_from_round(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            save_oss_from_round,
-            self,
-        )
-
     def get_sa(self):
         Panelist = apps.get_model('api.panelist')
         Song = apps.get_model('api.song')
@@ -863,13 +854,6 @@ class Round(TimeStampedModel):
         )
         content = ContentFile(file)
         return content
-
-    def queue_save_sa_from_round(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            save_sa_from_round,
-            self,
-        )
 
     def get_legacy_oss(self):
         # Contest = apps.get_model('api.contest')
@@ -1250,6 +1234,7 @@ class Round(TimeStampedModel):
         # ])
 
     def can_publish(self):
+        # Do not permit publishing until testing is done
         return settings.DEBUG
 
     # Round Transitions
@@ -1477,7 +1462,11 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.started], target=STATUS.finished, conditions=[can_finish,])
+    @transition(
+        field=status,
+        source=[STATUS.started],
+        target=STATUS.finished,
+        conditions=[can_finish],)
     def finish(self, *args, **kwargs):
         Panelist = apps.get_model('api.panelist')
         # Run outcomes
@@ -1575,16 +1564,24 @@ class Round(TimeStampedModel):
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.finished], target=STATUS.verified, conditions=[can_verify])
+    @transition(
+        field=status,
+        source=[STATUS.finished],
+        target=STATUS.verified,
+        conditions=[can_verify],)
     def verify(self, *args, **kwargs):
+        Appearance = apps.get_model('api.appearance')
         Panelist = apps.get_model('api.panelist')
-        completed_appearances = self.appearances.exclude(
+        completed_appearances = self.appearances.filter(
+            status=Appearance.STATUS.verified,
+        ).exclude(
             draw__gt=0,
         )
         for appearance in completed_appearances:
             appearance.complete()
             appearance.save()
         advancing_appearances = self.appearances.filter(
+            status=Appearance.STATUS.verified,
             draw__gt=0,
         )
         for appearance in advancing_appearances:
@@ -1594,14 +1591,16 @@ class Round(TimeStampedModel):
             category__gt=Panelist.CATEGORY.ca,
         )
         for panelist in panelists:
-            panelist.completer()
-            panelist.save()
-        self.queue_save_oss_from_round()
-        self.queue_save_sa_from_round()
+            panelist.queue_save_psa()
+        # Signal fires off report generation
         return
 
     @fsm_log_by
-    @transition(field=status, source=[STATUS.verified], target=STATUS.published, conditions=[can_publish])
+    @transition(
+        field=status,
+        source=[STATUS.verified],
+        target=STATUS.published,
+        conditions=[can_publish],)
     def publish(self, *args, **kwargs):
         Panelist = apps.get_model('api.panelist')
         # Publish results!
@@ -1616,5 +1615,5 @@ class Round(TimeStampedModel):
             category__gt=Panelist.CATEGORY.ca,
         )
         for panelist in panelists:
-            panelist.queue_complete_email()
+            panelist.queue_send_psa()
         return

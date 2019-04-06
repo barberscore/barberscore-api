@@ -1205,13 +1205,14 @@ class RoundViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def publish(self, request, pk=None, **kwargs):
         object = self.get_object()
-        try:
-            object.publish(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # try:
+        #     object.publish(by=self.request.user)
+        # except TransitionNotAllowed:
+        #     return Response(
+        #         {'status': 'Transition conditions not met.'},
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
+        object.publish(by=self.request.user)
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)

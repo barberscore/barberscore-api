@@ -27,7 +27,7 @@ from django.db.models import Avg, StdDev, Q, Max, Sum
 
 
 import django_rq
-from api.tasks import send_complete_email_from_panelist
+from api.tasks import send_psa_from_panelist
 from api.tasks import save_psa_from_panelist
 from api.fields import FileUploadPath
 
@@ -307,20 +307,9 @@ class Panelist(TimeStampedModel):
             self,
         )
 
-    def queue_complete_email(self):
+    def queue_send_psa(self):
         queue = django_rq.get_queue('high')
         return queue.enqueue(
-            send_complete_email_from_panelist,
+            send_psa_from_panelist,
             self,
         )
-
-    # Transitions
-    @fsm_log_by
-    @transition(
-        field=status,
-        source='*',
-        target=STATUS.completed,
-    )
-    def completer(self, *args, **kwargs):
-        self.queue_save_psa_from_panelist()
-        return

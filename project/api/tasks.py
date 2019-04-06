@@ -415,14 +415,6 @@ def send_complete_email_from_appearance(appearance):
         'application/pdf',
     )]
 
-    # OVERWRITE
-    to = [
-        'David Binetti <dbinetti@gmail.com>',
-        'Chris Buechler <chris.buechler@verizon.net >',
-        'David Mills <proclamation56@gmail.com>',
-    ]
-    cc = []
-
     email = build_email(
         template=template,
         context=context,
@@ -536,7 +528,7 @@ def send_approve_email_from_entry(entry):
     return email.send()
 
 
-def send_complete_email_from_panelist(panelist):
+def send_psa_from_panelist(panelist):
     context = {'panelist': panelist}
 
     template = 'emails/panelist_complete.txt'
@@ -558,14 +550,6 @@ def send_complete_email_from_panelist(panelist):
         pdf,
         'application/pdf',
     )]
-
-    # OVERWRITE
-    to = [
-        'David Binetti <dbinetti@gmail.com>',
-        'Chris Buechler <chris.buechler@verizon.net >',
-        'David Mills <proclamation56@gmail.com>',
-    ]
-    cc = []
 
     email = build_email(
         template=template,
@@ -708,14 +692,6 @@ def send_publish_email_from_round(round):
         'application/pdf',
     )]
     context['bcc'] = [x.partition(" <")[0] for x in bcc]
-    # OVERWRITE
-    to = [
-        'David Binetti <dbinetti@gmail.com>',
-        'Chris Buechler <chris.buechler@verizon.net >',
-        'David Mills <proclamation56@gmail.com>',
-    ]
-    cc = []
-    bcc = []
 
     email = build_email(
         template=template,
@@ -755,15 +731,6 @@ def send_publish_report_email_from_round(round):
         pdf,
         'application/pdf',
     )]
-
-    # OVERWRITE
-    to = [
-        'David Binetti <dbinetti@gmail.com>',
-        'Chris Buechler <chris.buechler@verizon.net >',
-        'David Mills <proclamation56@gmail.com>',
-    ]
-    cc = []
-
 
     email = build_email(
         template=template,
@@ -971,23 +938,20 @@ def send_package_report_email_from_session(session):
 
 def save_csa_from_appearance(appearance):
     content = appearance.get_csa()
-    return appearance.csa.save('csa', content)
+    return appearance.csa.save('csa', content, save=False)
 
 
 def save_psa_from_panelist(panelist):
     content = panelist.get_psa()
-    return panelist.psa.save('psa', content)
+    return panelist.psa.save('psa', content, save=False)
 
 
-def save_oss_from_round(round):
-    content = round.get_oss()
-    return round.oss.save('oss', content)
-
-
-def save_sa_from_round(round):
-    content = round.get_sa()
-    return round.sa.save('sa', content)
-
+def save_reports_from_round(round):
+    oss = round.get_oss()
+    round.oss.save('oss', oss, save=False)
+    sa = round.get_sa()
+    round.sa.save('sa', sa, save=False)
+    return round.save()
 
 def check_member(member):
     if not member.group.mc_pk:
