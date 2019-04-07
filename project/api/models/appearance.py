@@ -203,7 +203,7 @@ class Appearance(TimeStampedModel):
             per=Sum(
                 'points',
                 filter=Q(
-                    panelist__kind=Panelist.CATEGORY.performance,
+                    panelist__category=Panelist.CATEGORY.performance,
                 ),
             ),
         )
