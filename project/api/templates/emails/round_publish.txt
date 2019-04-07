@@ -3,8 +3,8 @@ has finished!
 
 Following are the summary results.  The full Official Scoring Summary is attached
 to this email.
-{% for advancer in advancers %}
-{{advancer.draw}} - {{advancer.group.name|safe}}
+{% for draw, group in advancers %}
+{{draw}} - {{group|safe}}
 {% endfor %}
 
 {% for complete in completes %}
@@ -24,5 +24,5 @@ can fix that. Just send your request to be removed to: customerservice@barbersho
 
 This message was BCC'd to the following persons:
 {% for item in bcc %}
-{{item}}
+{{item|safe}}
 {% endfor %}
