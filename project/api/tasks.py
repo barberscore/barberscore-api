@@ -638,7 +638,7 @@ def send_publish_email_from_round(round):
                 draw=0,
             ).group.name
             advancers.append(('MT', mt))
-        except round.appearances.model.DoesNotExist:
+        except Appearance.DoesNotExist:
             pass
     else:
         advancers = None
