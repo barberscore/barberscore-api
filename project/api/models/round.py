@@ -1463,7 +1463,7 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.started],
+        source=[STATUS.started, STATUS.finished,],
         target=STATUS.finished,
         conditions=[can_finish],)
     def finish(self, *args, **kwargs):
@@ -1478,7 +1478,8 @@ class Round(TimeStampedModel):
         if self.kind == self.KIND.finals:
             return
 
-        # Otherwise, get spots available
+        # Otherwise, figure out the Draw.
+        # First, get spots available
         spots = self.spots
 
         # Get all multi appearances and annotate average.
@@ -1519,36 +1520,43 @@ class Round(TimeStampedModel):
                 avg__gte=73.0,
             )
             # generate list of the advancers, as appearance IDs
-            advancers = [x.id for x in automatics]
+            advancer__ids = [x.id for x in automatics]
+            # Generate remaining multi appearances
+            remains = multis.exclude(
+                id__in=advancer__ids,
+            ).order_by(
+                '-tot_points',
+                '-sng_points',
+                '-per_points',
+            )
             # Figure out remaining spots
-            cnt = automatics.count()
-            diff = spots - cnt
-            # If there are additionl remaining spots, add them up to available
+            diff = spots - automatics.count()
+            # If there are additional remaining spots, add them up to available
             if diff > 0:
-                remains = multis.exclude(
-                    id__in=advancers,
-                ).order_by(
-                    '-tot_points',
-                    '-sng_points',
-                    '-per_points',
-                )
                 adds = remains[:diff]
+                for a in adds:
+                    advancer__ids.append(a.id)
                 try:
                     mt = remains[diff:diff+1]
                 except IndexError:
                     mt = None
-                for a in adds:
-                    advancers.append(a.id)
+            else:
+                # If MT available add, otherwise none
+                try:
+                    mt = remains.first().id
+                except AttributeError:
+                    mt = None
         # Otherwise, advance all
         else:
-            advancers = [a.id for a in multis]
+            advancer__ids = [a.id for a in multis]
+            mt = None
 
         # Reset draw
         self.appearances.update(draw=None)
 
         # Randomize the advancers and set the initial draw
         appearances = self.appearances.filter(
-            id__in=advancers,
+            id__in=advancer__ids,
         ).order_by('?')
         i = 1
         for appearance in appearances:
