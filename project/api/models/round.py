@@ -1226,12 +1226,11 @@ class Round(TimeStampedModel):
         ])
 
     def can_verify(self):
-        return True
-        # return all([
-        #     not self.outcomes.filter(
-        #         name='MUST ENTER WINNER MANUALLY',
-        #     ),
-        # ])
+        return all([
+            not self.outcomes.filter(
+                name='MUST ENTER WINNER MANUALLY',
+            ),
+        ])
 
     def can_publish(self):
         # Do not permit publishing until testing is done
