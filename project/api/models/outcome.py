@@ -90,12 +90,16 @@ class Outcome(TimeStampedModel):
             return "MUST ENTER WINNER MANUALLY"
         if self.award.level == self.award.LEVEL.qualifier:
             threshold = self.award.threshold
-            qualifiers = Group.objects.filter(
+            group_ids = Group.objects.filter(
                 appearances__contenders__outcome=self,
+            ).values_list('id', flat=True)
+            qualifiers = Group.objects.filter(
+                id__in=group_ids,
             ).annotate(
                 avg=Avg(
                     'appearances__songs__scores__points',
                     filter=Q(
+                        appearances__round__session=self.round.session,
                         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     ),
                 ),
