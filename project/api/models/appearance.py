@@ -536,6 +536,15 @@ class Appearance(TimeStampedModel):
                     ),
                 ),
             )
+            for song in songs:
+                penalties_map = {
+                    10: "†",
+                    30: "‡",
+                    40: "✠",
+                    50: "✶",
+                }
+                items = " ".join([penalties_map[x] for x in song.penalties])
+                song.penalties_patched = items
             appearance.songs_patched = songs
         group.appearances_patched = appearances
 
