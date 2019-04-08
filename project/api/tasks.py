@@ -946,11 +946,8 @@ def save_psa_from_panelist(panelist):
 
 
 def save_reports_from_round(round):
-    oss = round.get_oss()
-    round.oss.save('oss', oss, save=False)
-    sa = round.get_sa()
-    round.sa.save('sa', sa, save=False)
-    return round.save()
+    return round.save_reports()
+
 
 def check_member(member):
     if not member.group.mc_pk:
