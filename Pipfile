@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"auth0-python" = "*"
+"auth0-python" = "==3.6.1"
 "django-sendgrid-v5" = "*"
 "psycopg2-binary" = "*"
 algoliasearch-django = "*"
@@ -21,7 +21,7 @@ django-fsm-admin = "*"
 django-fsm-log = {git = "https://github.com/barberscore/django-fsm-log.git"}
 django-model-utils = "*"
 django-redis = "*"
-django-rq = "*"
+django-rq = "==1.3.1"
 django-timezone-field = "*"
 djangorestframework = "*"
 djangorestframework-jsonapi = "*"
@@ -36,7 +36,7 @@ pydf = {git = "https://github.com/barberscore/pydf.git"}
 python-pdf = "*"
 redis = "==3.0.1"
 requests = "*"
-rq = "*"
+rq = "==0.13.0"
 whitenoise = "*"
 maya = "*"
 "pypdf2" = "*"
