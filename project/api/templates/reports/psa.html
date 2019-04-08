@@ -1,3 +1,4 @@
+{% load psa_extras %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -82,6 +83,7 @@
               <th>Song</th>
               <th class='text-center' scope="col">Avg</th>
               <th class='text-center' scope="col">StdDev</th>
+              <th class='text-center' scope="col">Diff</th>
               <th class='text-center' scope="col">Scores</th>
             </tr>
           </thead>
@@ -109,6 +111,13 @@
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.dev|floatformat:2}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-center'>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
+                      {{song.diff_patched|floatformat:1|accounting}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>

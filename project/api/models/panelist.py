@@ -23,7 +23,7 @@ from django.utils.functional import cached_property
 from django.template.loader import render_to_string
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
-from django.db.models import Avg, StdDev, Q, Max, Sum
+from django.db.models import Avg, StdDev, Q, Max, Sum, F
 
 
 import django_rq
@@ -272,6 +272,27 @@ class Panelist(TimeStampedModel):
                             scores__panelist__kind=Panelist.KIND.official,
                         ),
                     ),
+                    Music=Avg(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                            scores__panelist__category=Panelist.CATEGORY.music,
+                        ),
+                    ),
+                    Performance=Avg(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                            scores__panelist__category=Panelist.CATEGORY.performance,
+                        ),
+                    ),
+                    Singing=Avg(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                            scores__panelist__category=Panelist.CATEGORY.singing,
+                        ),
+                    ),
                 )
                 for song in songs:
                     scores = song.scores.select_related(
@@ -288,6 +309,12 @@ class Panelist(TimeStampedModel):
                             span_class = "{0} black-font".format(span_class)
                         out.append((score.points, span_class))
                     song.scores_patched = out
+                    panelist_score = song.scores.get(
+                        panelist__person=self.person,
+                    )
+                    category = self.get_category_display()
+                    diff = panelist_score.points - getattr(song, category)
+                    song.diff_patched = diff
                 appearance.songs_patched = songs
             group.appearances_patched = appearances
 
