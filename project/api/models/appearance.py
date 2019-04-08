@@ -291,14 +291,23 @@ class Appearance(TimeStampedModel):
     def mock(self):
         # Mock Appearance
         Chart = apps.get_model('api.chart')
-        prelim = None
+        Panelist = apps.get_model('api.panelist')
         if self.group.kind == self.group.KIND.chorus:
             pos = self.group.members.filter(
                 status=self.group.members.model.STATUS.active,
             ).count()
             self.pos = pos
+        # Try to approximate reality
+        prelim = getattr(getattr(self, "entry"), "prelim", None)
         if not prelim:
-            prelim = randint(65, 80)
+            prelim = self.group.appearances.annotate(
+                avg=Avg(
+                    'songs__scores__points',
+                    filter=Q(
+                        songs__scores__panelist__kind=Panelist.KIND.official,
+                    )
+                )
+            ).latest('round__date').avg or randint(60, 70)
         songs = self.songs.all()
         for song in songs:
             song.chart = Chart.objects.filter(
