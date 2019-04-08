@@ -29,6 +29,7 @@ from django.db.models import Avg
 from django.db.models import Q
 from django.db.models import Sum
 from django.db.models import Max
+from django.db.models import Count
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.template.loader import render_to_string
@@ -558,9 +559,17 @@ class Appearance(TimeStampedModel):
             category__gt=10,
         ).order_by('num')
 
-
         # Score Block
         initials = [x.person.initials for x in panelists]
+
+        # Hackalicious
+        category_count = {
+            'Music': 0,
+            'Performance': 0,
+            'Singing': 0,
+        }
+        for panelist in panelists:
+            category_count[panelist.get_category_display()] += 1
         songs = Song.objects.filter(
             appearance__round__session=self.round.session,
             appearance__group=self.group,
@@ -615,6 +624,7 @@ class Appearance(TimeStampedModel):
             'songs': songs,
             'categories': categories,
             'penalties': penalties,
+            'category_count': category_count,
         }
         rendered = render_to_string('reports/csa.html', context)
         file = pydf.generate_pdf(rendered)

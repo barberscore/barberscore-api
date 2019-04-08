@@ -31,6 +31,15 @@
       .right-out {
           width: 250px;
       }
+      .col-music {
+        background-color: #dff0d8;
+      }
+      .col-performance {
+        background-color: #fcf8e3;
+      }
+      .col-singing {
+        background-color: #d9edf7;
+      }
     </style>
   </head>
   <body>
@@ -79,7 +88,14 @@
         <h3>
           Results
         </h3>
-        <table class='table'>
+        <table class='table table-bordered'>
+          <colgroup>
+            <col span=1>
+            <col span=1 class='col-music b-right'>
+            <col span=1 class='col-performance b-right'>
+            <col span=1 class='col-singing b-right'>
+            <col span=1>
+          </colgroup>
           <thead>
             <tr>
               <th class='col-md-6'>Songs</th>
@@ -144,7 +160,13 @@
         <h3>
           Scores
         </h3>
-        <table class='table'>
+        <table class='table table-striped'>
+          <colgroup>
+            <col span=1>
+            <col span={{category_count.Music}} class='col-music b-right'>
+            <col span={{category_count.Performance}} class='col-performance b-right'>
+            <col span={{category_count.Singing}} class='col-singing b-right'>
+          </colgroup>
           <thead>
             <tr>
               <th>Songs</th>
@@ -157,7 +179,7 @@
               {% for song in songs %}
                 <tr class='pbi_avoid'>
                   <td>
-                    {{song.chart.title}}
+                    {{song.chart.title|safe|default:"(Song not included in contestant repertory)"}}&nbsp;{{song.penalties_patched}}
                   </td>
                   {% for points, row_class in song.scores_patched %}
                     <td class='text-right {{row_class}}'>
