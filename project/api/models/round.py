@@ -484,6 +484,10 @@ class Round(TimeStampedModel):
         content = ContentFile(file)
         return content
 
+    def save_oss(self):
+        oss = self.get_oss()
+        return self.oss.save('oss', oss)
+
     def get_sa(self):
         Panelist = apps.get_model('api.panelist')
         Song = apps.get_model('api.song')
@@ -854,6 +858,18 @@ class Round(TimeStampedModel):
         )
         content = ContentFile(file)
         return content
+
+    def save_sa(self):
+        sa = self.get_sa()
+        return self.sa.save('sa', sa)
+
+    def save_reports(self):
+        oss = self.get_oss()
+        self.oss.save('oss', oss, save=False)
+        sa = self.get_sa()
+        self.sa.save('sa', sa, save=False)
+        return self.save()
+
 
     def get_legacy_oss(self):
         # Contest = apps.get_model('api.contest')
