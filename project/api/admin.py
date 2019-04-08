@@ -316,7 +316,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'id',
         'stats',
-        'csa',
+        # 'csa',
         'variance_report',
     ]
     search_fields = [

@@ -937,8 +937,7 @@ def send_package_report_email_from_session(session):
 
 
 def save_csa_from_appearance(appearance):
-    content = appearance.get_csa()
-    return appearance.csa.save('csa', content, save=False)
+    return appearance.save_csa()
 
 
 def save_psa_from_panelist(panelist):

@@ -640,19 +640,17 @@ class Appearance(TimeStampedModel):
         content = ContentFile(file)
         return content
 
+    def save_csa(self):
+        content = self.get_csa()
+        return self.csa.save('csa', content)
+
+
     def queue_complete_email(self):
         if self.status != self.STATUS.completed:
             raise ValueError("Do not send CSAs unless completed")
         queue = django_rq.get_queue('high')
         return queue.enqueue(
             send_complete_email_from_appearance,
-            self,
-        )
-
-    def queue_save_csa(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            save_csa_from_appearance,
             self,
         )
 
@@ -802,7 +800,7 @@ class Appearance(TimeStampedModel):
     )
     def complete(self, *args, **kwargs):
         # Completes the Group.
-        self.queue_save_csa()
+        # Saves CSA through signal
         return
 
     @fsm_log_by
