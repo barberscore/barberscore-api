@@ -273,7 +273,6 @@ class Panelist(TimeStampedModel):
                         ),
                     ),
                 )
-                appearance.songs_patched = songs
                 for song in songs:
                     scores = song.scores.select_related(
                         'panelist',
@@ -285,10 +284,11 @@ class Panelist(TimeStampedModel):
                         if score.points == 0:
                             score.points = "00"
                         span_class = class_map[score.panelist.category]
-                        if score.panelist == self:
+                        if score.panelist.person == self.person:
                             span_class = "{0} black-font".format(span_class)
                         out.append((score.points, span_class))
                     song.scores_patched = out
+                appearance.songs_patched = songs
             group.appearances_patched = appearances
 
         context = {
