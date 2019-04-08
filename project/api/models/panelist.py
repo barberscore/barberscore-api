@@ -327,12 +327,9 @@ class Panelist(TimeStampedModel):
         content = ContentFile(file)
         return content
 
-    def queue_save_psa(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            save_psa_from_panelist,
-            self,
-        )
+    def save_psa(self):
+        content = self.get_psa()
+        return self.psa.save('psa', content)
 
     def queue_send_psa(self):
         queue = django_rq.get_queue('high')

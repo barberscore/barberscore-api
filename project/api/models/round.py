@@ -1598,8 +1598,8 @@ class Round(TimeStampedModel):
             category__gt=Panelist.CATEGORY.ca,
         )
         for panelist in panelists:
-            panelist.queue_save_psa()
-        # Signal fires off report generation
+            panelist.save_psa()
+        # Signal saves off report generation
         return
 
     @fsm_log_by
