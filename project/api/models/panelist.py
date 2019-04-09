@@ -43,7 +43,7 @@ class Panelist(TimeStampedModel):
 
     STATUS = Choices(
         (-10, 'inactive', 'Inactive',),
-        (-5, 'completed', 'Completed',),
+        (-5, 'released', 'Released',),
         (0, 'new', 'New',),
         (10, 'active', 'Active',),
     )
@@ -333,7 +333,7 @@ class Panelist(TimeStampedModel):
     def get_psa_email(self):
         context = {'panelist': self}
 
-        template = 'emails/panelist_complete.txt'
+        template = 'emails/panelist_released.txt'
         subject = "[Barberscore] PSA for {0}".format(
             self.person.common_name,
         )
@@ -366,3 +366,10 @@ class Panelist(TimeStampedModel):
     def send_psa_email(self):
         email = self.get_psa_email()
         return email.send()
+
+    # Transitions
+    @fsm_log_by
+    @transition(field=status, source=[STATUS.new, STATUS.active], target=STATUS.released)
+    def release(self, *args, **kwargs):
+        # Saves PSA through post-transition signal to avoid race condition
+        return
