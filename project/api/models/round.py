@@ -1638,5 +1638,5 @@ class Round(TimeStampedModel):
             category__gt=Panelist.CATEGORY.ca,
         )
         for panelist in panelists:
-            panelist.queue_send_psa()
+            panelist.send_psa_email() # Syncronous!
         return

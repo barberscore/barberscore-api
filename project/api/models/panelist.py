@@ -27,8 +27,7 @@ from django.db.models import Avg, StdDev, Q, Max, Sum, F
 
 
 import django_rq
-from api.tasks import send_psa_from_panelist
-from api.tasks import save_psa_from_panelist
+from api.tasks import build_email
 from api.fields import FileUploadPath
 
 
@@ -331,9 +330,39 @@ class Panelist(TimeStampedModel):
         content = self.get_psa()
         return self.psa.save('psa', content)
 
-    def queue_send_psa(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            send_psa_from_panelist,
+    def get_psa_email(self):
+        context = {'panelist': self}
+
+        template = 'emails/panelist_complete.txt'
+        subject = "[Barberscore] PSA for {0}".format(
+            self.person.common_name,
+        )
+        to = ["{0} <{1}>".format(self.person.common_name, self.person.email)]
+        cc = self.round.session.convention.get_ca_emails()
+
+        if self.psa:
+            pdf = self.psa.file
+        else:
+            pdf = self.get_psa()
+        file_name = '{0} PSA'.format(
             self,
         )
+        attachments = [(
+            file_name,
+            pdf,
+            'application/pdf',
+        )]
+
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+            attachments=attachments,
+        )
+        return email
+
+    def send_psa_email(self):
+        email = self.get_psa_email()
+        return email.send()

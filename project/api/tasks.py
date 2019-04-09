@@ -290,39 +290,8 @@ def send_approve_email_from_entry(entry):
     return email.send()
 
 
-def send_psa_from_panelist(panelist):
-    context = {'panelist': panelist}
-
-    template = 'emails/panelist_complete.txt'
-    subject = "[Barberscore] PSA for {0}".format(
-        panelist.person.common_name,
-    )
-    to = ["{0} <{1}>".format(panelist.person.common_name, panelist.person.email)]
-    cc = panelist.round.session.convention.get_ca_emails()
-
-    if panelist.psa:
-        pdf = panelist.psa.file
-    else:
-        pdf = panelist.get_psa()
-    file_name = '{0} PSA'.format(
-        panelist,
-    )
-    attachments = [(
-        file_name,
-        pdf,
-        'application/pdf',
-    )]
-
-    email = build_email(
-        template=template,
-        context=context,
-        subject=subject,
-        to=to,
-        cc=cc,
-        attachments=attachments,
-    )
-    return email.send()
-
+def send_psa_email_from_panelist(panelist):
+    return panelist.send_email()
 
 def send_publish_email_from_round(round):
     Appearance = apps.get_model('api.appearance')
