@@ -181,8 +181,10 @@ class Session(TimeStampedModel):
                 contestant_id = entry.group.bhs_id
             elif group_type == 'Chorus':
                 contestant_id = entry.group.code
+            elif group_type == 'VLQ':
+                contestant_id = entry.group.code
             else:
-                raise RuntimeError("Improper Entity Type")
+                raise RuntimeError("Improper Entity Type: {0}".format(entry.group.get_kind_display()))
             i = 1
             for repertory in entry.group.repertories.order_by('chart__title'):
                 song_number = i
