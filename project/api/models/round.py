@@ -607,36 +607,36 @@ class Round(TimeStampedModel):
             'panelists__num',
         ).distinct()
 
-        persons_music = persons.filter(
+        mus_persons_qs = persons.filter(
             panelists__category=Panelist.CATEGORY.music,
             panelists__round__session=self.session,
         ).order_by(
             'panelists__num',
         ).distinct()
         mus_persons = []
-        for p in persons_music:
+        for p in mus_persons_qs:
             practice = bool(p.panelists.get(round=self).kind == Panelist.KIND.practice)
-            mus_persons.append((p.common_name, practice))
-        persons_performance = persons.filter(
+            mus_persons.append((p.common_name, practice, p.initials))
+        per_persons_qs = persons.filter(
             panelists__category=Panelist.CATEGORY.performance,
             panelists__round__session=self.session,
         ).order_by(
             'panelists__num',
         ).distinct()
         per_persons = []
-        for p in persons_performance:
+        for p in per_persons_qs:
             practice = bool(p.panelists.get(round=self).kind == Panelist.KIND.practice)
-            per_persons.append((p.common_name, practice))
-        persons_singing = persons.filter(
+            per_persons.append((p.common_name, practice, p.initials))
+        sng_persons_qs = persons.filter(
             panelists__category=Panelist.CATEGORY.singing,
             panelists__round__session=self.session,
         ).order_by(
             'panelists__num',
         ).distinct()
         sng_persons = []
-        for p in persons_singing:
+        for p in sng_persons_qs:
             practice = bool(p.panelists.get(round=self).kind == Panelist.KIND.practice)
-            sng_persons.append((p.common_name, practice))
+            sng_persons.append((p.common_name, practice, p.initials))
 
         # Monkeypatching
         for group in groups:
@@ -848,9 +848,9 @@ class Round(TimeStampedModel):
             'round': self,
             'groups': groups,
             'persons': persons,
-            'persons_music': mus_persons,
-            'persons_performance': per_persons,
-            'persons_singing': sng_persons,
+            'mus_persons': mus_persons,
+            'per_persons': per_persons,
+            'sng_persons': sng_persons,
             'stats': stats,
         }
         rendered = render_to_string('reports/sa.html', context)
