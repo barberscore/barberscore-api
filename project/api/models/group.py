@@ -720,14 +720,27 @@ class Group(TimeStampedModel):
             ])
         ])
 
+    # Conditions:
+    def can_activate(self):
+        return all([
+            bool(self.officers.filter(status__gt=0)),
+        ])
+
     # Transitions
     @fsm_log_by
     @fsm_log_description
-    @transition(field=status, source=[
-        STATUS.active,
-        STATUS.inactive,
-        STATUS.new,
-    ], target=STATUS.active)
+    @transition(
+        field=status,
+        source=[
+            STATUS.active,
+            STATUS.inactive,
+            STATUS.new,
+        ],
+        target=STATUS.active,
+        conditions=[
+            can_activate,
+        ]
+    )
     def activate(self, description=None, *args, **kwargs):
         """Activate the Group."""
         self.denormalize()
