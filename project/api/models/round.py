@@ -1808,11 +1808,12 @@ class Round(TimeStampedModel):
         conditions=[can_publish],)
     def publish(self, *args, **kwargs):
         """Publishes the results and notifies all parties"""
+        Appearance = apps.get_model('api.appearance')
         Panelist = apps.get_model('api.panelist')
         send_publish_email_from_round.delay(self)
         send_publish_report_email_from_round.delay(self)
         completed_appearances = self.appearances.filter(
-            status=Panelist.STATUS.completed,
+            status=Appearance.STATUS.completed,
         )
         for appearance in completed_appearances:
             send_complete_email_from_appearance.delay(appearance)
