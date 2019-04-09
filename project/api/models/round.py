@@ -1776,7 +1776,6 @@ class Round(TimeStampedModel):
     def verify(self, *args, **kwargs):
         Appearance = apps.get_model('api.appearance')
         Panelist = apps.get_model('api.panelist')
-        save_reports_from_round.delay(self)
         completed_appearances = self.appearances.filter(
             status=Appearance.STATUS.verified,
         ).exclude(
@@ -1796,8 +1795,9 @@ class Round(TimeStampedModel):
             category__gt=Panelist.CATEGORY.ca,
         )
         for panelist in panelists:
-            save_psa_from_panelist.delay(self)
-        # Signal saves off report generation
+            panelist.release()
+            panelist.save()
+        # Saves reports through transition signal to avoid race condition
         return
 
     @fsm_log_by
@@ -1807,17 +1807,18 @@ class Round(TimeStampedModel):
         target=STATUS.published,
         conditions=[can_publish],)
     def publish(self, *args, **kwargs):
+        """Publishes the results and notifies all parties"""
         Panelist = apps.get_model('api.panelist')
-        # Publish results!
         send_publish_email_from_round.delay(self)
         send_publish_report_email_from_round.delay(self)
-        completed_appearances = self.appearances.exclude(
-            draw__gt=0,
+        completed_appearances = self.appearances.filter(
+            status=Panelist.STATUS.completed,
         )
         for appearance in completed_appearances:
             send_complete_email_from_appearance.delay(appearance)
         panelists = self.panelists.filter(
             category__gt=Panelist.CATEGORY.ca,
+            status=Panelist.STATUS.released,
         )
         for panelist in panelists:
             send_psa_email_from_panelist.delay(panelist)

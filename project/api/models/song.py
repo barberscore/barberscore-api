@@ -253,7 +253,6 @@ class Song(TimeStampedModel):
                     status__gt=0,
                     category__lte=10,
                 ),
-                # self.appearance.status != self.appearance.STATUS.verified,
-                self.appearance.round.status != self.appearance.round.STATUS.published,
+                self.appearance.round.status < self.appearance.round.STATUS.verified,
             ]),
         ])

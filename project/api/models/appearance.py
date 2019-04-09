@@ -1038,8 +1038,7 @@ class Appearance(TimeStampedModel):
     )
     def complete(self, *args, **kwargs):
         # Completes the Group.
-        save_csa_from_appearance.delay(self)
-        send_complete_email_from_appearance.delay(self)
+        # Saves CSA via post-transition signal to avoid race condition
         return
 
     @fsm_log_by

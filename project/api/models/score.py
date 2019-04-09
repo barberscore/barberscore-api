@@ -178,7 +178,6 @@ class Score(TimeStampedModel):
                     status__gt=0,
                     category__lte=10,
                 ),
-                # self.song.appearance.status != self.song.appearance.STATUS.verified,
-                self.song.appearance.round.status != self.song.appearance.round.STATUS.published,
+                self.song.appearance.round.status < self.song.appearance.round.STATUS.verified,
             ]),
         ])

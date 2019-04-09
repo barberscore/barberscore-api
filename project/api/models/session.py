@@ -752,7 +752,7 @@ class Session(TimeStampedModel):
             kind = self.num_rounds - i
             if num == 1:
                 spots = 10
-            elif num == 2 and kind !=1:
+            elif num == 2 and kind != 1:
                 spots = 10
             else:
                 spots = None
