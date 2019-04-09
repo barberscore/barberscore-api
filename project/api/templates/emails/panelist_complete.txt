@@ -7,6 +7,7 @@ opposed to the SA, which is oriented towards the entire Panel.)
 Here's how to read it:
 - Overall, it is listed by Competitor in scoring order.
 - Each Song has an average and standard deviation for all Scores for that Song.
+- Each Song has a differential for your category.
 - The Scores themselves are ordered lowest to highest, as opposed to by judge number.
 - Your specific Score is in BOLD; the other panelists' Scores are in white.
 - The categories are color-coded: Yellow for Music, Green for Performance, Blue for Singing.

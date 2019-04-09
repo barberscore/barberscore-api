@@ -36,6 +36,8 @@ from django.template.loader import render_to_string
 
 from api.fields import FileUploadPath
 from api.tasks import build_email
+from api.tasks import save_csa_from_appearance
+from api.tasks import send_complete_email_from_appearance
 
 
 class Appearance(TimeStampedModel):
@@ -1036,7 +1038,8 @@ class Appearance(TimeStampedModel):
     )
     def complete(self, *args, **kwargs):
         # Completes the Group.
-        # Saves CSA through signal
+        save_csa_from_appearance.delay(self)
+        send_complete_email_from_appearance.delay(self)
         return
 
     @fsm_log_by

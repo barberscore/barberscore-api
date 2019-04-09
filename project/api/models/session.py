@@ -28,6 +28,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from cloudinary_storage.storage import RawMediaCloudinaryStorage
 
+from api.tasks import build_email
 from api.tasks import send_open_email_from_session
 from api.tasks import send_close_email_from_session
 from api.tasks import send_verify_email_from_session
@@ -424,47 +425,224 @@ class Session(TimeStampedModel):
         ]
         return result
 
-    def queue_open_email(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            send_open_email_from_session,
+    def get_open_email(self):
+        template = 'emails/session_open.txt'
+        context = {'session': self,}
+        subject = "[Barberscore] {0} Session is OPEN".format(
             self,
         )
+        to = self.convention.get_drcj_emails()
+        cc = self.convention.get_ca_emails()
+        bcc = self.get_district_emails()
+        context['bcc'] = [x.partition(" <")[0] for x in bcc]
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+            bcc=bcc,
+        )
+        return email
 
-    def queue_close_email(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            send_close_email_from_session,
-            self,
-        )
+    def send_open_email(self):
+        email = self.get_open_email()
+        return email.send()
 
-    def queue_verify_email(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            send_verify_email_from_session,
-            self,
-        )
 
-    def queue_verify_report_email(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            send_verify_report_email_from_session,
+    def get_close_email(self):
+        template = 'emails/session_close.txt'
+        context = {'session': self}
+        subject = "[Barberscore] {0} Session is CLOSED".format(
             self,
         )
+        to = self.convention.get_drcj_emails()
+        cc = self.convention.get_ca_emails()
+        bcc = self.get_district_emails()
+        context['bcc'] = [x.partition(" <")[0] for x in bcc]
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+            bcc=bcc,
+        )
+        return email
 
-    def queue_package_email(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            send_package_email_from_session,
-            self,
-        )
 
-    def queue_package_report_email(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            send_package_report_email_from_session,
+    def send_close_email(self):
+        email = self.get_close_email()
+        return email.send()
+
+
+    def get_verify_email(self):
+        template = 'emails/session_verify.txt'
+        approved_entries = self.entries.filter(
+            status=self.entries.model.STATUS.approved,
+        ).order_by('draw')
+        context = {
+            'session': self,
+            'approved_entries': approved_entries,
+        }
+        subject = "[Barberscore] {0} Session Draw".format(
             self,
         )
+        to = self.convention.get_drcj_emails()
+        cc = self.convention.get_ca_emails()
+        bcc = self.get_participant_emails()
+        context['bcc'] = [x.partition(" <")[0] for x in bcc]
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+            bcc=bcc,
+        )
+        return email
+
+    def send_verify_email(self):
+        email = self.get_verify_email()
+        return email.send()
+
+
+    def get_verify_report_email(self):
+        template = 'emails/session_verify_report.txt'
+        context = {
+            'session': self,
+        }
+        subject = "[Barberscore] {0} Session Draft Reports".format(
+            self,
+        )
+        to = self.convention.get_drcj_emails()
+        cc = self.convention.get_ca_emails()
+        attachments = []
+        if self.drcj_report:
+            xlsx = self.drcj_report.file
+        else:
+            xlsx = self.get_drcj()
+        file_name = '{0} {1} Session DRCJ Report DRAFT'.format(
+            self.convention.name,
+            self.get_kind_display(),
+        )
+        attachments.append((
+            file_name,
+            xlsx,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ))
+        if self.legacy_report:
+            xlsx = self.legacy_report.file
+        else:
+            xlsx = self.get_legacy()
+        file_name = '{0} {1} Session Legacy Report DRAFT'.format(
+            self.convention.name,
+            self.get_kind_display(),
+        )
+        attachments.append((
+            file_name,
+            xlsx,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ))
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+            attachments=attachments,
+        )
+        return email
+
+    def send_verify_report_email(self):
+        email = self.get_verify_report_email()
+        return email.send()
+
+
+    def get_package_email(self):
+        template = 'emails/session_package.txt'
+        approved_entries = self.entries.filter(
+            status=self.entries.model.STATUS.approved,
+        ).order_by('draw')
+        context = {
+            'session': self,
+            'approved_entries': approved_entries,
+        }
+        subject = "[Barberscore] {0} Session Starting".format(
+            self,
+        )
+        to = self.convention.get_drcj_emails()
+        cc = self.convention.get_ca_emails()
+        bcc = self.get_participant_emails()
+        context['bcc'] = [x.partition(" <")[0] for x in bcc]
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+            bcc=bcc,
+        )
+        return email
+
+    def send_package_email(self):
+        email = self.get_package_email()
+        return email.send()
+
+
+    def get_package_report_email(self):
+        template = 'emails/session_package_report.txt'
+        context = {
+            'session': self,
+        }
+        subject = "[Barberscore] {0} Session FINAL Reports".format(
+            self,
+        )
+        to = self.convention.get_drcj_emails()
+        cc = self.convention.get_ca_emails()
+
+        attachments = []
+        if self.drcj_report:
+            xlsx = self.drcj_report.file
+        else:
+            xlsx = self.get_drcj()
+        file_name = '{0} {1} Session DRCJ Report FINAL'.format(
+            self.convention.name,
+            self.get_kind_display(),
+        )
+        attachments.append((
+            file_name,
+            xlsx,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ))
+        if self.legacy_report:
+            xlsx = self.legacy_report.file
+        else:
+            xlsx = self.get_legacy()
+        file_name = '{0} {1} Session Legacy Report FINAL'.format(
+            self.convention.name,
+            self.get_kind_display(),
+        )
+        attachments.append((
+            file_name,
+            xlsx,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ))
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+            attachments=attachments,
+        )
+        return email
+
+
+    def send_package_report_email(self):
+        email = self.get_package_report_email()
+        return email.send()
+
 
     # Session Permissions
     @staticmethod
@@ -596,7 +774,7 @@ class Session(TimeStampedModel):
         """Make session available for entry."""
         # Send notification for all public contests
         if not self.is_invitational:
-            self.queue_open_email()
+            send_open_email_from_session.delay(self)
         return
 
     @fsm_log_by
@@ -631,7 +809,7 @@ class Session(TimeStampedModel):
             entry.save()
             i += 1
         # Notify for all public contests
-        self.queue_close_email()
+        send_close_email_from_session.delay(self)
         return
 
     @fsm_log_by
@@ -645,8 +823,8 @@ class Session(TimeStampedModel):
     )
     def verify(self, *args, **kwargs):
         """Make draw public."""
-        self.queue_verify_email()
-        self.queue_verify_report_email()
+        send_verify_email_from_session.delay(self)
+        send_verify_report_email_from_session.delay(self)
         return
 
     @fsm_log_by
@@ -664,8 +842,8 @@ class Session(TimeStampedModel):
         self.save_legacy()
 
         #  Create and send the reports
-        self.queue_package_email()
-        self.queue_package_report_email()
+        send_package_email_from_session.delay(self)
+        send_package_report_email_from_session.delay(self)
         return
 
     @fsm_log_by

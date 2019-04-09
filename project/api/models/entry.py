@@ -19,10 +19,11 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from api.tasks import build_email
 from api.tasks import send_invite_email_from_entry
 from api.tasks import send_submit_email_from_entry
-from api.tasks import send_approve_email_from_entry
 from api.tasks import send_withdraw_email_from_entry
+from api.tasks import send_approve_email_from_entry
 
 log = logging.getLogger(__name__)
 
@@ -208,33 +209,127 @@ class Entry(TimeStampedModel):
         ])
 
     # Methods
-    def queue_invite_email(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            send_invite_email_from_entry,
-            self,
+    def get_invite_email(self):
+        template = 'emails/entry_invite.txt'
+        context = {'entry': self}
+        subject = "[Barberscore] Contest Invitation for {0}".format(
+            self.group.name,
         )
+        to = self.group.get_officer_emails()
+        cc = self.session.convention.get_drcj_emails()
+        cc.extend(self.session.convention.get_ca_emails())
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+        )
+        return email
 
-    def queue_withdraw_email(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            send_withdraw_email_from_entry,
-            self,
-        )
 
-    def queue_submit_email(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            send_submit_email_from_entry,
-            self,
-        )
+    def send_invite_email(self):
+        email = self.get_invite_email()
+        return email.send()
 
-    def queue_approve_email(self):
-        queue = django_rq.get_queue('high')
-        return queue.enqueue(
-            send_approve_email_from_entry,
-            self,
+
+    def get_withdraw_email(self):
+        # Send confirmation email
+        template = 'emails/entry_withdraw.txt'
+        context = {'entry': self}
+        subject = "[Barberscore] Withdrawl Notification for {0}".format(
+            self.group.name,
         )
+        to = self.group.get_officer_emails()
+        cc = self.session.convention.get_drcj_emails()
+        cc.extend(self.session.convention.get_ca_emails())
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+        )
+        return email
+
+
+    def send_withdraw_email(self):
+        email = self.get_withdraw_email()
+        return email.send()
+
+
+    def get_submit_email(self):
+        template = 'emails/entry_submit.txt'
+        contestants = self.contestants.filter(
+            status__gt=0,
+        ).order_by('contest__award__name')
+        context = {
+            'entry': self,
+            'contestants': contestants,
+        }
+        subject = "[Barberscore] Submission Notification for {0}".format(
+            self.group.name,
+        )
+        to = self.group.get_officer_emails()
+        cc = self.session.convention.get_drcj_emails()
+        cc.extend(self.session.convention.get_ca_emails())
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+        )
+        return email
+
+
+    def send_submit_email(self):
+        email = self.get_submit_email()
+        return email.send()
+
+
+    def get_approve_email(self):
+        template = 'emails/entry_approve.txt'
+        repertories = self.group.repertories.order_by(
+            'chart__title',
+        )
+        contestants = self.contestants.filter(
+            status__gt=0,
+        ).order_by(
+            'contest__award__name',
+        )
+        members = self.group.members.filter(
+            status__gt=0,
+        ).order_by(
+            'person__last_name',
+            'person__first_name',
+        )
+        context = {
+            'entry': self,
+            'repertories': repertories,
+            'contestants': contestants,
+            'members': members,
+        }
+        subject = "[Barberscore] Approval Notification for {0}".format(
+            self.group.name,
+        )
+        to = self.group.get_officer_emails()
+        cc = self.session.convention.get_drcj_emails()
+        cc.extend(self.session.convention.get_ca_emails())
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+        )
+        return email
+
+
+    def send_approve_email(self):
+        email = self.get_approve_email()
+        return email.send()
+
 
     # Entry Transition Conditions
     def can_build_entry(self):
@@ -308,7 +403,7 @@ class Entry(TimeStampedModel):
     )
     def invite(self, *args, **kwargs):
         """Invites the group to enter"""
-        self.queue_invite_email()
+        send_invite_email_from_entry.delay(self)
         return
 
     @fsm_log_by
@@ -339,7 +434,7 @@ class Entry(TimeStampedModel):
             contestant.exclude()
             contestant.save()
         # Queue email
-        self.queue_withdraw_email()
+        send_withdraw_email_from_entry.delay(self)
         return
 
     @fsm_log_by
@@ -354,7 +449,7 @@ class Entry(TimeStampedModel):
         conditions=[can_submit_entry],
     )
     def submit(self, *args, **kwargs):
-        self.queue_submit_email()
+        send_submit_email_from_entry.delay(self)
         return
 
     @fsm_log_by
@@ -372,5 +467,5 @@ class Entry(TimeStampedModel):
         ],
     )
     def approve(self, *args, **kwargs):
-        self.queue_approve_email()
+        send_approve_email_from_entry.delay(self)
         return

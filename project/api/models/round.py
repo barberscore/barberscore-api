@@ -32,6 +32,12 @@ from django.db.models.functions import DenseRank
 from django.conf import settings
 
 from api.tasks import build_email
+from api.tasks import send_publish_email_from_round
+from api.tasks import send_publish_report_email_from_round
+from api.tasks import send_psa_email_from_panelist
+from api.tasks import save_psa_from_panelist
+from api.tasks import send_complete_email_from_appearance
+from api.tasks import save_reports_from_round
 
 from api.fields import FileUploadPath
 
@@ -1770,6 +1776,7 @@ class Round(TimeStampedModel):
     def verify(self, *args, **kwargs):
         Appearance = apps.get_model('api.appearance')
         Panelist = apps.get_model('api.panelist')
+        save_reports_from_round.delay(self)
         completed_appearances = self.appearances.filter(
             status=Appearance.STATUS.verified,
         ).exclude(
@@ -1789,7 +1796,7 @@ class Round(TimeStampedModel):
             category__gt=Panelist.CATEGORY.ca,
         )
         for panelist in panelists:
-            panelist.save_psa()
+            save_psa_from_panelist.delay(self)
         # Signal saves off report generation
         return
 
@@ -1802,16 +1809,16 @@ class Round(TimeStampedModel):
     def publish(self, *args, **kwargs):
         Panelist = apps.get_model('api.panelist')
         # Publish results!
-        self.send_publish_email()
-        self.send_publish_report_email()
+        send_publish_email_from_round.delay(self)
+        send_publish_report_email_from_round.delay(self)
         completed_appearances = self.appearances.exclude(
             draw__gt=0,
         )
         for appearance in completed_appearances:
-            appearance.queue_complete_email()
+            send_complete_email_from_appearance.delay(appearance)
         panelists = self.panelists.filter(
             category__gt=Panelist.CATEGORY.ca,
         )
         for panelist in panelists:
-            panelist.send_psa_email() # Syncronous!
+            send_psa_email_from_panelist.delay(panelist)
         return

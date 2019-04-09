@@ -1307,6 +1307,7 @@ class OutcomeAdmin(admin.ModelAdmin):
 class PanelistAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
+        'id',
         'status',
         'num',
         'kind',
@@ -1348,7 +1349,9 @@ class PanelistAdmin(admin.ModelAdmin):
         'round',
         'person',
     ]
-
+    readonly_fields = [
+        'id',
+    ]
 
 
 @admin.register(Person)

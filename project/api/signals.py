@@ -13,9 +13,6 @@ from .models import Round
 
 from .tasks import person_post_save_handler
 from .tasks import user_post_delete_handler
-from .tasks import save_reports_from_round
-from .tasks import save_csa_from_appearance
-from .tasks import send_complete_email_from_appearance
 
 @receiver(post_save, sender=Person)
 def person_post_save(sender, instance, created, **kwargs):
@@ -34,31 +31,4 @@ def user_post_delete(sender, instance, **kwargs):
         user_post_delete_handler,
         instance,
     )
-    return
-
-
-@receiver(post_transition, sender=Appearance)
-def appearance_post_transition(sender, instance, name, source, target, **kwargs):
-    if name == 'complete':
-        queue = django_rq.get_queue('high')
-        queue.enqueue(
-            save_csa_from_appearance,
-            instance,
-        )
-        queue.enqueue(
-            send_complete_email_from_appearance,
-            instance,
-        )
-        return
-    return
-
-@receiver(post_transition, sender=Round)
-def round_post_transition(sender, instance, name, source, target, **kwargs):
-    if name == 'verify':
-        queue = django_rq.get_queue('high')
-        queue.enqueue(
-            save_reports_from_round,
-            instance,
-        )
-        return
     return

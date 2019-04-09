@@ -115,6 +115,50 @@ def check_account(account):
     return "Skipped: {0}".format(account[0])
 
 
+def check_member(member):
+    if not member.group.mc_pk:
+        raise RuntimeError("Not an MC entity.")
+    Join = apps.get_model('bhs.join')
+    Member = apps.get_model('api.member')
+    try:
+        join = Join.objects.filter(
+            structure__id=member.group.mc_pk,
+            subscription__human__id=member.person.mc_pk,
+            paid=True,
+            deleted__isnull=True,
+        ).latest(
+            'modified',
+            '-inactive_date',
+        )
+    except Join.DoesNotExist:
+        gone = str(member)
+        member.delete()
+        return gone, "Deleted"
+    return Member.objects.update_or_create_from_join(join)
+
+
+def check_officer(officer):
+    if not officer.group.mc_pk:
+        raise RuntimeError("Not an MC group.")
+    if not officer.office.mc_pk:
+        raise RuntimeError("Not an MC office.")
+    Role = apps.get_model('bhs.role')
+    Officer = apps.get_model('api.officer')
+    try:
+        role = Role.objects.filter(
+            structure__id=officer.group.mc_pk,
+            human__id=officer.person.mc_pk,
+        ).latest(
+            'modified',
+            'created',
+        )
+    except Role.DoesNotExist:
+        gone = str(officer)
+        officer.delete()
+        return gone, "Deleted"
+    return Officer.objects.update_or_create_from_role(role)
+
+
 def create_or_update_account_from_person(person):
     user = getattr(person, 'user', None)
     if user:
@@ -184,372 +228,73 @@ def user_post_delete_handler(user):
     return "Deleted: {0}".format(user.username)
 
 
+@job('high')
 def send_complete_email_from_appearance(appearance):
     return appearance.send_complete_email()
 
-
+@job('high')
 def send_invite_email_from_entry(entry):
-    template = 'emails/entry_invite.txt'
-    context = {'entry': entry}
-    subject = "[Barberscore] Contest Invitation for {0}".format(
-        entry.group.name,
-    )
-    to = entry.group.get_officer_emails()
-    cc = entry.session.convention.get_drcj_emails()
-    cc.extend(entry.session.convention.get_ca_emails())
-    email = build_email(
-        template=template,
-        context=context,
-        subject=subject,
-        to=to,
-        cc=cc,
-    )
-    return email.send()
+    return entry.send_invite_email()
 
-
+@job('high')
 def send_withdraw_email_from_entry(entry):
-    # Send confirmation email
-    template = 'emails/entry_withdraw.txt'
-    context = {'entry': entry}
-    subject = "[Barberscore] Withdrawl Notification for {0}".format(
-        entry.group.name,
-    )
-    to = entry.group.get_officer_emails()
-    cc = entry.session.convention.get_drcj_emails()
-    cc.extend(entry.session.convention.get_ca_emails())
-    email = build_email(
-        template=template,
-        context=context,
-        subject=subject,
-        to=to,
-        cc=cc,
-    )
-    return email.send()
+    return entry.send_withdraw_email()
 
-
+@job('high')
 def send_submit_email_from_entry(entry):
-    template = 'emails/entry_submit.txt'
-    contestants = entry.contestants.filter(
-        status__gt=0,
-    ).order_by('contest__award__name')
-    context = {
-        'entry': entry,
-        'contestants': contestants,
-    }
-    subject = "[Barberscore] Submission Notification for {0}".format(
-        entry.group.name,
-    )
-    to = entry.group.get_officer_emails()
-    cc = entry.session.convention.get_drcj_emails()
-    cc.extend(entry.session.convention.get_ca_emails())
-    email = build_email(
-        template=template,
-        context=context,
-        subject=subject,
-        to=to,
-        cc=cc,
-    )
-    return email.send()
+    return entry.send_submit_email()
 
-
+@job('high')
 def send_approve_email_from_entry(entry):
-    template = 'emails/entry_approve.txt'
-    repertories = entry.group.repertories.order_by(
-        'chart__title',
-    )
-    contestants = entry.contestants.filter(
-        status__gt=0,
-    ).order_by(
-        'contest__award__name',
-    )
-    members = entry.group.members.filter(
-        status__gt=0,
-    ).order_by(
-        'person__last_name',
-        'person__first_name',
-    )
-    context = {
-        'entry': entry,
-        'repertories': repertories,
-        'contestants': contestants,
-        'members': members,
-    }
-    subject = "[Barberscore] Approval Notification for {0}".format(
-        entry.group.name,
-    )
-    to = entry.group.get_officer_emails()
-    cc = entry.session.convention.get_drcj_emails()
-    cc.extend(entry.session.convention.get_ca_emails())
-    email = build_email(
-        template=template,
-        context=context,
-        subject=subject,
-        to=to,
-        cc=cc,
-    )
-    return email.send()
+    return entry.send_approve_email()
 
-
+@job('high')
 def send_psa_email_from_panelist(panelist):
-    return panelist.send_email()
+    return panelist.send_psa_email()
 
-
+@job('high')
 def send_publish_email_from_round(round):
     return round.send_publish_email()
 
-
+@job('high')
 def send_publish_report_email_from_round(round):
     return round.send_publish_report_email()
 
-
+@job('high')
 def send_open_email_from_session(session):
-    template = 'emails/session_open.txt'
-    context = {'session': session,}
-    subject = "[Barberscore] {0} Session is OPEN".format(
-        session,
-    )
-    to = session.convention.get_drcj_emails()
-    cc = session.convention.get_ca_emails()
-    bcc = session.get_district_emails()
-    context['bcc'] = [x.partition(" <")[0] for x in bcc]
-    email = build_email(
-        template=template,
-        context=context,
-        subject=subject,
-        to=to,
-        cc=cc,
-        bcc=bcc,
-    )
-    return email.send()
+    return session.send_open_email()
 
-
+@job('high')
 def send_close_email_from_session(session):
-    template = 'emails/session_close.txt'
-    context = {'session': session}
-    subject = "[Barberscore] {0} Session is CLOSED".format(
-        session,
-    )
-    to = session.convention.get_drcj_emails()
-    cc = session.convention.get_ca_emails()
-    bcc = session.get_district_emails()
-    context['bcc'] = [x.partition(" <")[0] for x in bcc]
-    email = build_email(
-        template=template,
-        context=context,
-        subject=subject,
-        to=to,
-        cc=cc,
-        bcc=bcc,
-    )
-    return email.send()
+    return session.send_close_email()
 
-
+@job('high')
 def send_verify_email_from_session(session):
-    template = 'emails/session_verify.txt'
-    approved_entries = session.entries.filter(
-        status=session.entries.model.STATUS.approved,
-    ).order_by('draw')
-    context = {
-        'session': session,
-        'approved_entries': approved_entries,
-    }
-    subject = "[Barberscore] {0} Session Draw".format(
-        session,
-    )
-    to = session.convention.get_drcj_emails()
-    cc = session.convention.get_ca_emails()
-    bcc = session.get_participant_emails()
-    context['bcc'] = [x.partition(" <")[0] for x in bcc]
-    email = build_email(
-        template=template,
-        context=context,
-        subject=subject,
-        to=to,
-        cc=cc,
-        bcc=bcc,
-    )
-    return email.send()
+    return session.send_verify_email()
 
-
+@job('high')
 def send_verify_report_email_from_session(session):
-    template = 'emails/session_verify_report.txt'
-    context = {
-        'session': session,
-    }
-    subject = "[Barberscore] {0} Session Draft Reports".format(
-        session,
-    )
-    to = session.convention.get_drcj_emails()
-    cc = session.convention.get_ca_emails()
-    attachments = []
-    if session.drcj_report:
-        xlsx = session.drcj_report.file
-    else:
-        xlsx = session.get_drcj()
-    file_name = '{0} {1} Session DRCJ Report DRAFT'.format(
-        session.convention.name,
-        session.get_kind_display(),
-    )
-    attachments.append((
-        file_name,
-        xlsx,
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ))
-    if session.legacy_report:
-        xlsx = session.legacy_report.file
-    else:
-        xlsx = session.get_legacy()
-    file_name = '{0} {1} Session Legacy Report DRAFT'.format(
-        session.convention.name,
-        session.get_kind_display(),
-    )
-    attachments.append((
-        file_name,
-        xlsx,
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ))
-    email = build_email(
-        template=template,
-        context=context,
-        subject=subject,
-        to=to,
-        cc=cc,
-        attachments=attachments,
-    )
-    return email.send()
+    return session.send_verify_report_email()
 
-
+@job('high')
 def send_package_email_from_session(session):
-    template = 'emails/session_package.txt'
-    approved_entries = session.entries.filter(
-        status=session.entries.model.STATUS.approved,
-    ).order_by('draw')
-    context = {
-        'session': session,
-        'approved_entries': approved_entries,
-    }
-    subject = "[Barberscore] {0} Session Starting".format(
-        session,
-    )
-    to = session.convention.get_drcj_emails()
-    cc = session.convention.get_ca_emails()
-    bcc = session.get_participant_emails()
-    context['bcc'] = [x.partition(" <")[0] for x in bcc]
-    email = build_email(
-        template=template,
-        context=context,
-        subject=subject,
-        to=to,
-        cc=cc,
-        bcc=bcc,
-    )
-    return email.send()
+    return session.send_package_email()
 
-
+@job('high')
 def send_package_report_email_from_session(session):
-    template = 'emails/session_package_report.txt'
-    context = {
-        'session': session,
-    }
-    subject = "[Barberscore] {0} Session FINAL Reports".format(
-        session,
-    )
-    to = session.convention.get_drcj_emails()
-    cc = session.convention.get_ca_emails()
+    return session.send_package_report_email()
 
-    attachments = []
-    if session.drcj_report:
-        xlsx = session.drcj_report.file
-    else:
-        xlsx = session.get_drcj()
-    file_name = '{0} {1} Session DRCJ Report FINAL'.format(
-        session.convention.name,
-        session.get_kind_display(),
-    )
-    attachments.append((
-        file_name,
-        xlsx,
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ))
-    if session.legacy_report:
-        xlsx = session.legacy_report.file
-    else:
-        xlsx = session.get_legacy()
-    file_name = '{0} {1} Session Legacy Report FINAL'.format(
-        session.convention.name,
-        session.get_kind_display(),
-    )
-    attachments.append((
-        file_name,
-        xlsx,
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ))
-    email = build_email(
-        template=template,
-        context=context,
-        subject=subject,
-        to=to,
-        cc=cc,
-        attachments=attachments,
-    )
-    return email.send()
-
-
+@job('high')
 def save_csa_from_appearance(appearance):
     return appearance.save_csa()
 
-
+@job('high')
 def save_psa_from_panelist(panelist):
-    content = panelist.get_psa()
-    return panelist.psa.save('psa', content, save=False)
+    return panelist.save_psa()
 
-
+@job('high')
 def save_reports_from_round(round):
     return round.save_reports()
-
-
-def check_member(member):
-    if not member.group.mc_pk:
-        raise RuntimeError("Not an MC entity.")
-    Join = apps.get_model('bhs.join')
-    Member = apps.get_model('api.member')
-    try:
-        join = Join.objects.filter(
-            structure__id=member.group.mc_pk,
-            subscription__human__id=member.person.mc_pk,
-            paid=True,
-            deleted__isnull=True,
-        ).latest(
-            'modified',
-            '-inactive_date',
-        )
-    except Join.DoesNotExist:
-        gone = str(member)
-        member.delete()
-        return gone, "Deleted"
-    return Member.objects.update_or_create_from_join(join)
-
-
-def check_officer(officer):
-    if not officer.group.mc_pk:
-        raise RuntimeError("Not an MC group.")
-    if not officer.office.mc_pk:
-        raise RuntimeError("Not an MC office.")
-    Role = apps.get_model('bhs.role')
-    Officer = apps.get_model('api.officer')
-    try:
-        role = Role.objects.filter(
-            structure__id=officer.group.mc_pk,
-            human__id=officer.person.mc_pk,
-        ).latest(
-            'modified',
-            'created',
-        )
-    except Role.DoesNotExist:
-        gone = str(officer)
-        officer.delete()
-        return gone, "Deleted"
-    return Officer.objects.update_or_create_from_role(role)
 
 
 def get_auth0():
