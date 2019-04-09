@@ -15,7 +15,7 @@ from .tasks import person_post_save_handler
 from .tasks import user_post_delete_handler
 from .tasks import save_reports_from_round
 from .tasks import save_csa_from_appearance
-
+from .tasks import send_complete_email_from_appearance
 
 @receiver(post_save, sender=Person)
 def person_post_save(sender, instance, created, **kwargs):
@@ -43,6 +43,10 @@ def appearance_post_transition(sender, instance, name, source, target, **kwargs)
         queue = django_rq.get_queue('high')
         queue.enqueue(
             save_csa_from_appearance,
+            instance,
+        )
+        queue.enqueue(
+            send_complete_email_from_appearance,
             instance,
         )
         return
