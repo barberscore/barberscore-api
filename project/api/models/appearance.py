@@ -1066,4 +1066,3 @@ class Appearance(TimeStampedModel):
         # Disqualify the group.
         # Notify the group?
         return
-
