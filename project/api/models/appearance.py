@@ -282,7 +282,13 @@ class Appearance(TimeStampedModel):
             'tot_points': tot_points,
         }
         rendered = render_to_string('reports/variance.html', context)
-        pdf = pydf.generate_pdf(rendered, enable_smart_shrinking=False)
+        pdf = pydf.generate_pdf(
+            rendered,
+            enable_smart_shrinking=False,
+            orientation='Portrait',
+            margin_top='5mm',
+            margin_bottom='5mm',
+        )
         content = ContentFile(pdf)
         return content
 
@@ -637,8 +643,24 @@ class Appearance(TimeStampedModel):
             'penalties': penalties,
             'category_count': category_count,
         }
-        rendered = render_to_string('reports/csa.html', context)
-        file = pydf.generate_pdf(rendered)
+        rendered = render_to_string(
+            'reports/csa.html',
+            context,
+        )
+        statelog = self.round.statelogs.filter(transition='verify').latest()
+        footer = 'Published by {0} at {1}'.format(
+            statelog.by.person.common_name,
+            statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+        )
+        file = pydf.generate_pdf(
+            rendered,
+            orientation='Portrait',
+            margin_top='5mm',
+            margin_bottom='5mm',
+            footer_right=footer,
+            footer_font_name='Encode Sans',
+            footer_font_size=8,
+        )
         content = ContentFile(file)
         return content
 

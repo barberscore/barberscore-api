@@ -201,6 +201,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             sng_points=Sum(
@@ -209,6 +210,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             per_points=Sum(
@@ -217,6 +219,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             tot_score=Avg(
@@ -224,6 +227,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             mus_score=Avg(
@@ -232,6 +236,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             per_score=Avg(
@@ -240,6 +245,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             sng_score=Avg(
@@ -248,6 +254,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
         ).order_by(
@@ -261,6 +268,7 @@ class Round(TimeStampedModel):
             appearances = group.appearances.filter(
                 num__gt=0,
                 round__session=self.session,
+                round__num__lte=self.num,
             ).prefetch_related(
                 'songs__scores',
                 'songs__scores__panelist',
@@ -365,7 +373,8 @@ class Round(TimeStampedModel):
             'appearance__round',
             'appearance__group',
         ).filter(
-            appearance__round=self,
+            appearance__round__session=self.session,
+            appearance__round__num__lte=self.num,
             penalties__len__gt=0,
             appearance__is_private=False,
         ).distinct().values_list('penalties', flat=True)
@@ -474,17 +483,30 @@ class Round(TimeStampedModel):
         }
         rendered = render_to_string('reports/oss.html', context)
 
-        if groups.count() > 8 and self.kind == self.KIND.finals:
-            page_size = 'Legal'
+        if self.session.rounds.count() == 1:
+            if groups.count() < 16:
+                page_size = 'Letter'
+            else:
+                page_size = 'Legal'
         else:
-            page_size = 'Letter'
-
+            if groups.count() > 8 and self.kind == self.KIND.finals:
+                page_size = 'Legal'
+            else:
+                page_size = 'Letter'
+        statelog = self.statelogs.filter(transition='verify').latest()
+        footer = 'Published by {0} at {1}'.format(
+            statelog.by.person.common_name,
+            statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+        )
         file = pydf.generate_pdf(
             rendered,
             page_size=page_size,
             orientation='Portrait',
             margin_top='5mm',
             margin_bottom='5mm',
+            footer_right=footer,
+            footer_font_name='Encode Sans',
+            footer_font_size=8,
         )
         content = ContentFile(file)
         return content
@@ -517,6 +539,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             mus_points=Sum(
@@ -525,6 +548,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             per_points=Sum(
@@ -533,6 +557,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             sng_points=Sum(
@@ -541,6 +566,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             tot_score=Avg(
@@ -548,6 +574,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             mus_score=Avg(
@@ -556,6 +583,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             per_score=Avg(
@@ -564,6 +592,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             sng_score=Avg(
@@ -572,6 +601,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             tot_rank=Window(
@@ -643,6 +673,7 @@ class Round(TimeStampedModel):
             # Populate the group block
             appearances = group.appearances.filter(
                 round__session=self.session,
+                round__num__lte=self.num,
             ).prefetch_related(
                 'songs__scores',
                 'songs__scores__panelist',
@@ -808,7 +839,8 @@ class Round(TimeStampedModel):
         ).prefetch_related(
             'scores__panelist__kind',
         ).filter(
-            appearance__round=self,
+            appearance__round__session=self.session,
+            appearance__round__num__lte=self.num,
         ).annotate(
             tot_dev=StdDev(
                 'scores__points',
@@ -854,12 +886,20 @@ class Round(TimeStampedModel):
             'stats': stats,
         }
         rendered = render_to_string('reports/sa.html', context)
+        statelog = self.statelogs.filter(transition='verify').latest()
+        footer = 'Published by {0} at {1}'.format(
+            statelog.by.person.common_name,
+            statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+        )
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
             orientation='Landscape',
             margin_top='5mm',
             margin_bottom='5mm',
+            footer_right=footer,
+            footer_font_name='Encode Sans',
+            footer_font_size=8,
         )
         content = ContentFile(file)
         return content
@@ -1019,12 +1059,20 @@ class Round(TimeStampedModel):
             'mt': mt,
         }
         rendered = render_to_string('reports/legacy_oss.html', context)
+        statelog = self.statelogs.filter(transition='verify').latest()
+        footer = 'Published by {0} at {1}'.format(
+            statelog.by.person.common_name,
+            statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+        )
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
             orientation='Portrait',
             margin_top='5mm',
             margin_bottom='5mm',
+            footer_right=footer,
+            footer_font_name='Encode Sans',
+            footer_font_size=8,
         )
         content = ContentFile(file)
         return content
@@ -1212,6 +1260,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             per_points=Sum(
@@ -1220,6 +1269,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             sng_points=Sum(
@@ -1228,6 +1278,7 @@ class Round(TimeStampedModel):
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
             tot_score=Avg(
@@ -1235,6 +1286,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
                 ),
             ),
         ).order_by(

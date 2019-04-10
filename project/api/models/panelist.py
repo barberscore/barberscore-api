@@ -321,8 +321,25 @@ class Panelist(TimeStampedModel):
             'panelist': self,
             'groups': groups,
         }
-        rendered = render_to_string('reports/psa.html', context)
-        file = pydf.generate_pdf(rendered)
+        rendered = render_to_string(
+            'reports/psa.html',
+            context,
+        )
+        statelog = self.round.statelogs.filter(transition='verify').latest()
+        footer = 'Published by {0} at {1}'.format(
+            statelog.by.person.common_name,
+            statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+        )
+        file = pydf.generate_pdf(
+            rendered,
+            page_size='Letter',
+            orientation='Portrait',
+            margin_top='5mm',
+            margin_bottom='5mm',
+            footer_right=footer,
+            footer_font_name='Encode Sans',
+            footer_font_size=8,
+        )
         content = ContentFile(file)
         return content
 
