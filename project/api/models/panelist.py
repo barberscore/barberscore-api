@@ -201,6 +201,7 @@ class Panelist(TimeStampedModel):
         ])
 
     def get_psa(self):
+        Score = apps.get_model('api.score')
         Group = apps.get_model('api.group')
         # Score block
         group_ids = self.round.appearances.exclude(
@@ -317,6 +318,8 @@ class Panelist(TimeStampedModel):
                     category = self.get_category_display()
                     diff = panelist_score.points - getattr(song, category)
                     song.diff_patched = diff
+                    pp = song.scores.get(panelist__person=self.person).points
+                    song.pp = pp
                 appearance.songs_patched = songs
             group.appearances_patched = appearances
 

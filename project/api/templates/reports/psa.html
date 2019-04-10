@@ -36,9 +36,14 @@
       .black-font {
         color: black;
       }
-      section {
-          padding-top: 10px;
-          padding-bottom: 10px;
+      .black-font {
+        color: black;
+      }
+      .smaller-heading {
+        font-size: 10pt;
+        line-height: 1.2;
+        padding-bottom: 2px;
+        margin-bottom: 5px;
       }
     </style>
   </head>
@@ -50,7 +55,7 @@
         <h5>
           Panelist Scoring Analysis
         </h5>
-        <p>
+        <p class='smaller-heading'>
           {{panelist.round.session.convention.name}}
           {{panelist.round.session.get_kind_display}} {{panelist.round.get_kind_display}}<br>
           {{panelist.round.session.convention.location}}; {{panelist.round.session.convention.start_date|date:"F j, Y"}} - {{panelist.round.session.convention.end_date|date:"F j, Y"}}
@@ -84,7 +89,10 @@
               <th class='text-center' scope="col">Avg</th>
               <th class='text-center' scope="col">StdDev</th>
               <th class='text-center' scope="col">Diff</th>
-              <th class='text-center' scope="col">Scores</th>
+              <th class='text-center' scope="col">Official Scores</th>
+              {% if panelist.get_kind_display == 'Practice' %}
+                <th class='text-center' scope="col">Yours</th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -130,6 +138,15 @@
                     {% endfor %}
                   {% endfor %}
                 </td>
+                {% if panelist.get_kind_display == 'Practice' %}
+                  <td class='text-center'>
+                    {% for appearance in group.appearances_patched %}
+                      {% for song in appearance.songs_patched %}
+                        {{song.pp}}<br>
+                      {% endfor %}
+                    {% endfor %}
+                  </td>
+                {% endif %}
               </tr>
             {% endfor %}
           </tbody>
