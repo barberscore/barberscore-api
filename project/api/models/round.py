@@ -1485,8 +1485,7 @@ class Round(TimeStampedModel):
         ])
 
     def can_publish(self):
-        # Do not permit publishing until testing is done
-        return settings.DEBUG
+        return True
 
     # Round Transitions
     @fsm_log_by
@@ -1865,13 +1864,17 @@ class Round(TimeStampedModel):
         """Publishes the results and notifies all parties"""
         Appearance = apps.get_model('api.appearance')
         Panelist = apps.get_model('api.panelist')
-        send_publish_email_from_round.delay(self)
+        # Send the OSS
+        # send_publish_email_from_round.delay(self)
+        # Send the CSAs
+        # completed_appearances = self.appearances.filter(
+        #     status=Appearance.STATUS.completed,
+        # )
+        # for appearance in completed_appearances:
+        #     send_complete_email_from_appearance.delay(appearance)
+        # Send the SAs
         send_publish_report_email_from_round.delay(self)
-        completed_appearances = self.appearances.filter(
-            status=Appearance.STATUS.completed,
-        )
-        for appearance in completed_appearances:
-            send_complete_email_from_appearance.delay(appearance)
+        # Send the PSAs
         panelists = self.panelists.filter(
             category__gt=Panelist.CATEGORY.ca,
             status=Panelist.STATUS.released,
