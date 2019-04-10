@@ -19,5 +19,5 @@ can fix that. Just send your request to be removed to: customerservice@barbersho
 
 This message was BCC'd to the following persons:
 {% for item in bcc %}
-{{item}}
+{{item|safe}}
 {% endfor %}

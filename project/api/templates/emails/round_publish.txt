@@ -12,7 +12,7 @@ to this email.
 {% endfor %}
 
 {% for award, winner in outcomes %}
-{{award}}: {{winner}}
+{{award}}: {{winner|safe}}
 {% endfor %}
 
 Congratulations to all our competitors!
