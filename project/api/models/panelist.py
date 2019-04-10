@@ -204,8 +204,11 @@ class Panelist(TimeStampedModel):
         Group = apps.get_model('api.group')
         # Score block
         group_ids = self.round.appearances.exclude(
-            # Don't include advancers on SA
+            # Don't include advancers or MTs on PSA
             draw__gt=0,
+        ).exclude(
+            # Don't include MTs on PSA
+            num__lte=0,
         ).values_list('group__id', flat=True)
         groups = Group.objects.filter(
             id__in=group_ids,
