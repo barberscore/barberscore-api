@@ -552,14 +552,14 @@ class PersonManager(Manager):
         is_deceased = human.is_deceased
 
         # Transform
-        first_name = first_name.strip()
+        first_name = first_name.replace(',', '').replace('.',' ').strip()
         try:
-            middle_name = middle_name.strip()
+            middle_name = middle_name.replace(',', '').replace('.', '').strip()
         except AttributeError:
             middle_name = ""
-        last_name = last_name.strip()
+        last_name = last_name.replace(',', '').replace('.', '').strip()
         try:
-            nick_name = nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip()
+            nick_name = nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").replace(',', '').replace('.', '').strip()
         except AttributeError:
             nick_name = ""
         if nick_name == first_name:
