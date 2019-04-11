@@ -811,7 +811,8 @@ class Round(TimeStampedModel):
                     mus_scores = []
                     for m in music_scores:
                         diff = abs(m.points - m.song.mus_score) > 5
-                        mus_scores.append((m.points, diff))
+                        practice = bool(m.panelist.kind == Panelist.KIND.practice)
+                        mus_scores.append((m.points, diff, practice))
                     song.mus_scores = mus_scores
                     performance_scores = song.scores.filter(
                         panelist__category=Panelist.CATEGORY.performance,
@@ -821,7 +822,8 @@ class Round(TimeStampedModel):
                     per_scores = []
                     for m in performance_scores:
                         diff = abs(m.points - m.song.per_score) > 5
-                        per_scores.append((m.points, diff))
+                        practice = bool(m.panelist.kind == Panelist.KIND.practice)
+                        per_scores.append((m.points, diff, practice))
                     song.per_scores = per_scores
                     singing_scores = song.scores.filter(
                         panelist__category=Panelist.CATEGORY.singing,
@@ -831,7 +833,8 @@ class Round(TimeStampedModel):
                     sng_scores = []
                     for m in singing_scores:
                         diff = abs(m.points - m.song.sng_score) > 5
-                        sng_scores.append((m.points, diff))
+                        practice = bool(m.panelist.kind == Panelist.KIND.practice)
+                        sng_scores.append((m.points, diff, practice))
                     song.sng_scores = sng_scores
                 appearance.songs_patched = songs
             group.appearances_patched = appearances
