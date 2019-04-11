@@ -141,12 +141,12 @@
       <section>
         <p>
           {% if round.kind == 1 %}
-            Groups are listed above in accordance with Article VII of the BHS Contest Rules.<br>
+            Groups are listed above by total points and in accordance with Article VII of the BHS Contest Rules.<br>
           {% else %}
-            Groups not advancing are listed above in in accordance with Article VII of the BHS Contest Rules.<br>
+            Groups not advancing and/or competing only for single-round awards are listed above by total points and in accordance with Article VII of the BHS Contest Rules.<br>
           {% endif %}
           {% if privates %}
-            The following groups sang for Evaluation-Only: {{privates|join:", "}}
+            The following groups performed for evaluation score only: {{privates|join:", "}}
           {% endif %}
         </p>
       </section>
