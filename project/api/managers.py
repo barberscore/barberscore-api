@@ -552,7 +552,7 @@ class PersonManager(Manager):
         is_deceased = human.is_deceased
 
         # Transform
-        first_name = first_name.replace(',', '').replace('.',' ').strip()
+        first_name = first_name.replace(',', '').replace('.', '').strip()
         try:
             middle_name = middle_name.replace(',', '').replace('.', '').strip()
         except AttributeError:
