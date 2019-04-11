@@ -45,6 +45,9 @@
         padding-bottom: 2px;
         margin-bottom: 5px;
       }
+      .pbi_avoid {
+          page-break-inside: avoid !important;
+      }
     </style>
   </head>
   <body>
@@ -86,9 +89,9 @@
             <tr>
               <th>Group</th>
               <th>Song</th>
-              <th class='text-center' scope="col">Avg</th>
               <th class='text-center' scope="col">StdDev</th>
               <th class='text-center' scope="col">Diff</th>
+              <th class='text-center' scope="col">Avg</th>
               <th class='text-center' scope="col">Official Scores</th>
               {% if panelist.get_kind_display == 'Practice' %}
                 <th class='text-center' scope="col">Yours</th>
@@ -97,7 +100,7 @@
           </thead>
           <tbody>
             {% for group in groups %}
-              <tr>
+              <tr class='pbi_avoid'>
                 <td>
                   {{group.name}}<br>
                 </td>
@@ -105,13 +108,6 @@
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.chart.title|truncatechars_html:30|safe|default:"(Song not included in repertory)"}}<br>
-                    {% endfor %}
-                  {% endfor %}
-                </td>
-                <td class='text-center'>
-                  {% for appearance in group.appearances_patched %}
-                    {% for song in appearance.songs_patched %}
-                      {{song.avg|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
@@ -126,6 +122,13 @@
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.diff_patched|floatformat:1|accounting}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-center'>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
+                      {{song.avg|floatformat:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
