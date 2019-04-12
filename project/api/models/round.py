@@ -493,7 +493,7 @@ class Round(TimeStampedModel):
                 page_size = 'Legal'
             else:
                 page_size = 'Letter'
-        statelog = self.statelogs.filter(transition='verify').latest()
+        statelog = self.statelogs.latest('created')
         footer = 'Published by {0} at {1}'.format(
             statelog.by.person.common_name,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
@@ -892,7 +892,7 @@ class Round(TimeStampedModel):
             'stats': stats,
         }
         rendered = render_to_string('reports/sa.html', context)
-        statelog = self.statelogs.filter(transition='verify').latest()
+        statelog = self.statelogs.latest('created')
         footer = 'Published by {0} at {1}'.format(
             statelog.by.person.common_name,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
@@ -1065,7 +1065,7 @@ class Round(TimeStampedModel):
             'mt': mt,
         }
         rendered = render_to_string('reports/legacy_oss.html', context)
-        statelog = self.statelogs.filter(transition='verify').latest()
+        statelog = self.statelogs.latest('created')
         footer = 'Published by {0} at {1}'.format(
             statelog.by.person.common_name,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
