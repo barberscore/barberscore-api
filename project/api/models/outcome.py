@@ -14,7 +14,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-from django.db.models import Sum, Q, Avg
+from django.db.models import Sum, Q, Avg, F
 
 log = logging.getLogger(__name__)
 
@@ -86,8 +86,85 @@ class Outcome(TimeStampedModel):
             return "(Result determined in Finals)"
         if self.award.level == self.award.LEVEL.deferred:
             return "(Result determined post-contest)"
-        if self.award.level in [self.award.LEVEL.manual, self.award.LEVEL.raw, self.award.LEVEL.standard]:
-            return "MUST ENTER WINNER MANUALLY"
+        # if self.award.level ==self.award.LEVEL.manual, self.award.LEVEL.raw, self.award.LEVEL.standard]:
+        #     return "MUST ENTER WINNER MANUALLY"
+        if self.award.level == self.award.LEVEL.raw:
+            group_ids = Group.objects.filter(
+                appearances__contenders__outcome=self,
+            ).values_list('id', flat=True)
+            group = Group.objects.filter(
+                id__in=group_ids,
+            ).annotate(
+                avg=Avg(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__round__session=self.round.session,
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                base=Avg(
+                    'appearances__base',
+                    filter=Q(
+                        appearances__round__session=self.round.session,
+                    ),
+                ),
+                diff=F('avg') - F('base'),
+                sng=Sum(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing
+                    ),
+                ),
+                per=Sum(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance
+                    ),
+                ),
+            ).filter(
+                diff__gt=0,
+            ).order_by(
+               '-diff',
+            ).first()
+            try:
+                winner = group.name
+            except AttributeError:
+                winner = "(No Award Winner)"
+            return winner
+        if self.award.level == self.award.LEVEL.standard:
+            group_ids = Group.objects.filter(
+                appearances__contenders__outcome=self,
+            ).values_list('id', flat=True)
+            groups = Group.objects.filter(
+                id__in=group_ids,
+            ).annotate(
+                score=Avg(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__round__session=self.round.session,
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                base=Avg(
+                    'appearances__base',
+                    filter=Q(
+                        appearances__round__session=self.round.session,
+                    ),
+                ),
+            )
+            totals = groups.aggregate(
+                Avg('score'),
+                Avg('base'),
+            )
+            winner = groups.annotate(
+                score_ratio=F('score') / totals['score__avg'],
+                base_ratio=F('base') / totals['base__avg'],
+                diff=F('score_ratio') - F('base_ratio'),
+            ).order_by(
+                '-diff',
+            ).first().name
         if self.award.level == self.award.LEVEL.qualifier:
             threshold = self.award.threshold
             group_ids = Group.objects.filter(

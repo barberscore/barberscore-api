@@ -136,6 +136,13 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    base = models.FloatField(
+        help_text="""
+            The incoming base score used to determine most-improved winners.""",
+        null=True,
+        blank=True,
+    )
+
     variance_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
