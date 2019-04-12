@@ -654,7 +654,7 @@ class Appearance(TimeStampedModel):
             'reports/csa.html',
             context,
         )
-        statelog = self.round.statelogs.latest('created')
+        statelog = self.round.statelogs.latest('timestamp')
         footer = 'Published by {0} at {1}'.format(
             statelog.by.person.common_name,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
