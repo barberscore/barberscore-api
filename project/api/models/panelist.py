@@ -207,9 +207,6 @@ class Panelist(TimeStampedModel):
         group_ids = self.round.appearances.exclude(
             # Don't include advancers or MTs on PSA
             draw__gt=0,
-        ).exclude(
-            # Don't include MTs on PSA
-            num__lte=0,
         ).values_list('group__id', flat=True)
         groups = Group.objects.filter(
             id__in=group_ids,

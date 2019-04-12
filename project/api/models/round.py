@@ -525,9 +525,6 @@ class Round(TimeStampedModel):
         group_ids = self.appearances.exclude(
             # Don't include advancers on SA
             draw__gt=0,
-        ).exclude(
-            # Don't include MTs on PSA
-            num__lte=0,
         ).values_list('group__id', flat=True)
         groups = Group.objects.prefetch_related(
             'appearances',
