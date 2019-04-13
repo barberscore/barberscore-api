@@ -656,7 +656,7 @@ class Appearance(TimeStampedModel):
         )
         statelog = self.round.statelogs.latest('timestamp')
         footer = 'Published by {0} at {1}'.format(
-            statelog.by.person.common_name,
+            statelog.by,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
         )
         file = pydf.generate_pdf(
