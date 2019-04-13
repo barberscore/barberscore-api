@@ -222,10 +222,11 @@ class Appearance(TimeStampedModel):
 
     # Appearance Internals
     def clean(self):
-        if self.group.kind != self.round.session.kind:
-            raise ValidationError(
-                {'group': 'Group kind must match session'}
-            )
+        if self.group.kind != self.group.KIND.vlq:
+            if self.group.kind != self.round.session.kind:
+                raise ValidationError(
+                    {'group': 'Group kind must match session'}
+                )
 
     class Meta:
         ordering = [
