@@ -92,9 +92,9 @@
                 <td>
                   {% for song in appearance.songs.all|dictsort:'num' %}
                     {% if song.chart %}
-                      {{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
+                      {{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not in Group's Repertory)"}}<br>
                     {% else %}
-                      {{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
+                      {{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not in Group's Repertory)"}}<br>
                     {% endif %}
                   {% endfor %}
                 </td>
@@ -173,9 +173,9 @@
                   <td>
                     {% for song in appearance.songs.all|dictsort:'num' %}
                       {% if song.chart %}
-                        {{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
+                        {{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not in Group's Repertory)"}}<br>
                       {% else %}
-                        {{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not included in contestant repertory)"}}<br>
+                        {{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not in Group's Repertory)"}}<br>
                       {% endif %}
                     {% endfor %}
                   </td>

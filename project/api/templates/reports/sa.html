@@ -114,7 +114,7 @@
                 <td>
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
-                      {{song.chart.title|truncatechars_html:30|safe|default:"(Not included)"}}&nbsp;{{song.penalties_patched}}<br>
+                      {{song.chart.title|truncatechars_html:30|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>

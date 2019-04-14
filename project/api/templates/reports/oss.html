@@ -93,7 +93,7 @@
                   {% for appearance in group.appearances_patched %}
                       {% if group.max_round > 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:60|safe|default:"(Song not included in contestant repertory)"}}&nbsp;{{song.penalties_patched}}<br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:60|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
