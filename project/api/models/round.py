@@ -1415,7 +1415,21 @@ class Round(TimeStampedModel):
             pdf,
             'application/pdf',
         )]
-
+        # Add OSS Temporarily
+        if self.oss:
+            pdf = self.oss.file
+        else:
+            pdf = self.get_oss()
+        file_name = '{0} {1} {2} OSS'.format(
+            self.session.convention.name,
+            self.session.get_kind_display(),
+            self.get_kind_display(),
+        )
+        attachments.extend((
+            file_name,
+            pdf,
+            'application/pdf',
+        ))
         email = build_email(
             template=template,
             context=context,
