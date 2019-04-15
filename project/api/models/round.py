@@ -897,6 +897,23 @@ class Round(TimeStampedModel):
             sng=Avg('sng_dev'),
         )
 
+        # Penalties Block
+        array = Song.objects.select_related(
+            'appearance__round',
+            'appearance__group',
+        ).filter(
+            appearance__round__session=self.session,
+            appearance__round__num__lte=self.num,
+            penalties__len__gt=0,
+        ).distinct().values_list('penalties', flat=True)
+        penalties_map = {
+            10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
+            30: "‡ Score(s) penalized due to violation of Article IX.A.2 of the BHS Contest Rules.",
+            40: "✠ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
+            50: "✶ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules.",
+        }
+        penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
+
         context = {
             'round': self,
             'groups': groups,
@@ -905,6 +922,7 @@ class Round(TimeStampedModel):
             'per_persons': per_persons,
             'sng_persons': sng_persons,
             'stats': stats,
+            'penalties': penalties,
         }
         rendered = render_to_string('reports/sa.html', context)
         statelog = self.statelogs.latest('timestamp')

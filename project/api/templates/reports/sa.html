@@ -195,6 +195,11 @@
       </section>
       <div class='tight-spacing'>
         <section>
+          <ul class='list-unstyled'>
+            {% for penalty in penalties %}
+              <li>{{penalty}}</li>
+            {% endfor %}
+          </ul>
           <div class='float-left push-space'>
             Total (Average StDev {{stats.tot|floatformat:1}})<br>
             Score +/- 5 Points from Average in <strong>Bold</strong><br>
