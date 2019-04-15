@@ -524,7 +524,7 @@ class Session(TimeStampedModel):
             xlsx = self.drcj_report.file
         else:
             xlsx = self.get_drcj()
-        file_name = '{0} {1} Session DRCJ Report DRAFT'.format(
+        file_name = '{0} {1} Session DRCJ Report DRAFT.xlsx'.format(
             self.convention.name,
             self.get_kind_display(),
         )
@@ -537,7 +537,7 @@ class Session(TimeStampedModel):
             xlsx = self.legacy_report.file
         else:
             xlsx = self.get_legacy()
-        file_name = '{0} {1} Session Legacy Report DRAFT'.format(
+        file_name = '{0} {1} Session Legacy Report DRAFT.xlsx'.format(
             self.convention.name,
             self.get_kind_display(),
         )
@@ -608,7 +608,7 @@ class Session(TimeStampedModel):
             xlsx = self.drcj_report.file
         else:
             xlsx = self.get_drcj()
-        file_name = '{0} {1} Session DRCJ Report FINAL'.format(
+        file_name = '{0} {1} Session DRCJ Report FINAL.xlsx'.format(
             self.convention.name,
             self.get_kind_display(),
         )
@@ -621,7 +621,7 @@ class Session(TimeStampedModel):
             xlsx = self.legacy_report.file
         else:
             xlsx = self.get_legacy()
-        file_name = '{0} {1} Session Legacy Report FINAL'.format(
+        file_name = '{0} {1} Session Legacy Report FINAL.xlsx'.format(
             self.convention.name,
             self.get_kind_display(),
         )

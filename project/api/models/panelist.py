@@ -364,9 +364,7 @@ class Panelist(TimeStampedModel):
             pdf = self.psa.file
         else:
             pdf = self.get_psa()
-        file_name = '{0} PSA'.format(
-            self,
-        )
+        file_name = '{0} PSA.pdf'.format(self)
         attachments = [(
             file_name,
             pdf,

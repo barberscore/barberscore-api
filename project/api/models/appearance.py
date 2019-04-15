@@ -888,11 +888,7 @@ class Appearance(TimeStampedModel):
             pdf = self.csa.file
         else:
             pdf = self.get_csa()
-        file_name = '{0} {1} Session {2} CSA'.format(
-            self.round.session.convention.name,
-            self.round.session.get_kind_display(),
-            self.group.name,
-        )
+        file_name = '{0} CSA.pdf'.format(self)
         attachments = [(
             file_name,
             pdf,
