@@ -234,8 +234,8 @@ class Appearance(TimeStampedModel):
 
     def __str__(self):
         return "{0} {1}".format(
-            str(self.group),
-            str(self.round),
+            self.round,
+            self.group,
         )
 
     # Methods
