@@ -799,40 +799,58 @@ class Round(TimeStampedModel):
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
+
+
                 for song in songs:
-                    music_scores = song.scores.filter(
-                        panelist__category=Panelist.CATEGORY.music,
-                    ).order_by(
-                        'panelist__num',
-                    )
                     mus_scores = []
-                    for m in music_scores:
-                        diff = abs(m.points - m.song.mus_score) > 5
-                        practice = bool(m.panelist.kind == Panelist.KIND.practice)
-                        mus_scores.append((m.points, diff, practice))
+                    for person in mus_persons_qs:
+                        raw_music_scores = song.scores.filter(
+                            panelist__person=person,
+                        ).order_by(
+                            'panelist__num',
+                        )
+                        if raw_music_scores:
+                            for m in raw_music_scores:
+                                diff = abs(m.points - m.song.mus_score) > 5
+                                practice = bool(m.panelist.kind == Panelist.KIND.practice)
+                                mus_scores.append((m.points, diff, practice))
+                        else:
+                            mus_scores.append((None, False, False))
                     song.mus_scores = mus_scores
-                    performance_scores = song.scores.filter(
-                        panelist__category=Panelist.CATEGORY.performance,
-                    ).order_by(
-                        'panelist__num',
-                    )
+
                     per_scores = []
-                    for m in performance_scores:
-                        diff = abs(m.points - m.song.per_score) > 5
-                        practice = bool(m.panelist.kind == Panelist.KIND.practice)
-                        per_scores.append((m.points, diff, practice))
+                    for person in per_persons_qs:
+                        raw_performance_scores = song.scores.filter(
+                            panelist__person=person,
+                        ).order_by(
+                            'panelist__num',
+                        )
+                        if raw_performance_scores:
+                            for m in raw_performance_scores:
+                                diff = abs(m.points - m.song.per_score) > 5
+                                practice = bool(m.panelist.kind == Panelist.KIND.practice)
+                                per_scores.append((m.points, diff, practice))
+                        else:
+                            per_scores.append((None, False, False))
                     song.per_scores = per_scores
-                    singing_scores = song.scores.filter(
-                        panelist__category=Panelist.CATEGORY.singing,
-                    ).order_by(
-                        'panelist__num',
-                    )
+
                     sng_scores = []
-                    for m in singing_scores:
-                        diff = abs(m.points - m.song.sng_score) > 5
-                        practice = bool(m.panelist.kind == Panelist.KIND.practice)
-                        sng_scores.append((m.points, diff, practice))
+                    for person in sng_persons_qs:
+                        raw_singing_scores = song.scores.filter(
+                            panelist__person=person,
+                        ).order_by(
+                            'panelist__num',
+                        )
+                        if raw_singing_scores:
+                            for m in raw_singing_scores:
+                                diff = abs(m.points - m.song.sng_score) > 5
+                                practice = bool(m.panelist.kind == Panelist.KIND.practice)
+                                sng_scores.append((m.points, diff, practice))
+                        else:
+                            sng_scores.append((None, False, False))
                     song.sng_scores = sng_scores
+
+
                 appearance.songs_patched = songs
             group.appearances_patched = appearances
 

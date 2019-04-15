@@ -123,12 +123,16 @@
                     {% for song in appearance.songs_patched %}
                       {{song.mus_score|floatformat:1}}&nbsp;&nbsp;
                       {% for score, diff, practice in song.mus_scores %}
-                        {% if diff %}
-                          <span class='d-practice'>{{score}}</span>&nbsp;
-                        {% elif practice %}
-                          <em>{{score}}</em>&nbsp;
+                        {% if score %}
+                          {% if diff %}
+                            <span class='d-practice'>{{score}}</span>&nbsp;
+                          {% elif practice %}
+                            <em>{{score}}</em>&nbsp;
+                          {% else %}
+                            {{score}}&nbsp;
+                          {% endif %}
                         {% else %}
-                          {{score}}&nbsp;
+                          &nbsp;&nbsp;&nbsp;
                         {% endif %}
                       {% endfor %}
                       <br>
@@ -140,12 +144,16 @@
                     {% for song in appearance.songs_patched %}
                       {{song.per_score|floatformat:1}}&nbsp;&nbsp;
                       {% for score, diff, practice in song.per_scores %}
-                        {% if diff %}
-                          <span class='d-practice'>{{score}}</span>&nbsp;
-                        {% elif practice %}
-                          <em>{{score}}</em>&nbsp;
+                        {% if score %}
+                          {% if diff %}
+                            <span class='d-practice'>{{score}}</span>&nbsp;
+                          {% elif practice %}
+                            <em>{{score}}</em>&nbsp;
+                          {% else %}
+                            {{score}}&nbsp;
+                          {% endif %}
                         {% else %}
-                          {{score}}&nbsp;
+                          &nbsp;&nbsp;&nbsp;
                         {% endif %}
                       {% endfor %}
                       <br>
@@ -157,12 +165,16 @@
                     {% for song in appearance.songs_patched %}
                       {{song.sng_score|floatformat:1}}&nbsp;&nbsp;
                       {% for score, diff, practice in song.sng_scores %}
-                        {% if diff %}
-                          <span class='d-practice'>{{score}}</span>&nbsp;
-                        {% elif practice %}
-                          <em>{{score}}</em>&nbsp;
+                        {% if score %}
+                          {% if diff %}
+                            <span class='d-practice'>{{score}}</span>&nbsp;
+                          {% elif practice %}
+                            <em>{{score}}</em>&nbsp;
+                          {% else %}
+                            {{score}}&nbsp;
+                          {% endif %}
                         {% else %}
-                          {{score}}&nbsp;
+                          &nbsp;&nbsp;&nbsp;
                         {% endif %}
                       {% endfor %}
                       <br>
