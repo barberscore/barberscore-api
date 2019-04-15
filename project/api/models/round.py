@@ -493,9 +493,9 @@ class Round(TimeStampedModel):
                 page_size = 'Legal'
             else:
                 page_size = 'Letter'
-        statelog = self.statelogs.filter(transition='verify').latest()
+        statelog = self.statelogs.latest('timestamp')
         footer = 'Published by {0} at {1}'.format(
-            statelog.by.person.common_name,
+            statelog.by,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
         )
         file = pydf.generate_pdf(
@@ -525,9 +525,6 @@ class Round(TimeStampedModel):
         group_ids = self.appearances.exclude(
             # Don't include advancers on SA
             draw__gt=0,
-        ).exclude(
-            # Don't include MTs on PSA
-            num__lte=0,
         ).values_list('group__id', flat=True)
         groups = Group.objects.prefetch_related(
             'appearances',
@@ -811,7 +808,8 @@ class Round(TimeStampedModel):
                     mus_scores = []
                     for m in music_scores:
                         diff = abs(m.points - m.song.mus_score) > 5
-                        mus_scores.append((m.points, diff))
+                        practice = bool(m.panelist.kind == Panelist.KIND.practice)
+                        mus_scores.append((m.points, diff, practice))
                     song.mus_scores = mus_scores
                     performance_scores = song.scores.filter(
                         panelist__category=Panelist.CATEGORY.performance,
@@ -821,7 +819,8 @@ class Round(TimeStampedModel):
                     per_scores = []
                     for m in performance_scores:
                         diff = abs(m.points - m.song.per_score) > 5
-                        per_scores.append((m.points, diff))
+                        practice = bool(m.panelist.kind == Panelist.KIND.practice)
+                        per_scores.append((m.points, diff, practice))
                     song.per_scores = per_scores
                     singing_scores = song.scores.filter(
                         panelist__category=Panelist.CATEGORY.singing,
@@ -831,7 +830,8 @@ class Round(TimeStampedModel):
                     sng_scores = []
                     for m in singing_scores:
                         diff = abs(m.points - m.song.sng_score) > 5
-                        sng_scores.append((m.points, diff))
+                        practice = bool(m.panelist.kind == Panelist.KIND.practice)
+                        sng_scores.append((m.points, diff, practice))
                     song.sng_scores = sng_scores
                 appearance.songs_patched = songs
             group.appearances_patched = appearances
@@ -889,9 +889,9 @@ class Round(TimeStampedModel):
             'stats': stats,
         }
         rendered = render_to_string('reports/sa.html', context)
-        statelog = self.statelogs.filter(transition='verify').latest()
+        statelog = self.statelogs.latest('timestamp')
         footer = 'Published by {0} at {1}'.format(
-            statelog.by.person.common_name,
+            statelog.by,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
         )
         file = pydf.generate_pdf(
@@ -1062,9 +1062,9 @@ class Round(TimeStampedModel):
             'mt': mt,
         }
         rendered = render_to_string('reports/legacy_oss.html', context)
-        statelog = self.statelogs.filter(transition='verify').latest()
+        statelog = self.statelogs.latest('timestamp')
         footer = 'Published by {0} at {1}'.format(
-            statelog.by.person.common_name,
+            statelog.by,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
         )
         file = pydf.generate_pdf(
@@ -1407,7 +1407,21 @@ class Round(TimeStampedModel):
             pdf,
             'application/pdf',
         )]
-
+        # Add OSS Temporarily
+        if self.oss:
+            pdf = self.oss.file
+        else:
+            pdf = self.get_oss()
+        file_name = '{0} {1} {2} OSS'.format(
+            self.session.convention.name,
+            self.session.get_kind_display(),
+            self.get_kind_display(),
+        )
+        attachments.extend((
+            file_name,
+            pdf,
+            'application/pdf',
+        ))
         email = build_email(
             template=template,
             context=context,

@@ -187,6 +187,8 @@ class User(AbstractBaseUser):
 
     # User Internals
     def __str__(self):
+        if getattr(self, 'person'):
+            return self.person.common_name
         return self.username
 
     def clean(self):

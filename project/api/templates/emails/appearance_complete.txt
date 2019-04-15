@@ -8,7 +8,7 @@ Total: {{group.tot_points}} ({{group.tot_score|floatformat:1}}%)
 {% for appearance in group.appearances_patched %}
 {{ appearance.round.get_kind_display }} --> {{appearance.tot_points}} ({{appearance.tot_score|floatformat:1}}%)
 {% for song in appearance.songs_patched %}
-  Song {{song.num}}: {{song.chart.title|safe|default:"Song Not In Repertory"}} --> {{song.tot_points}} ({{song.tot_score|floatformat:1}}%)
+  Song {{song.num}}: {{song.chart.title|safe|default:"(Song not in Group's Repertory)"}} --> {{song.tot_points}} ({{song.tot_score|floatformat:1}}%)
 {% endfor %}
 {% endfor %}
 

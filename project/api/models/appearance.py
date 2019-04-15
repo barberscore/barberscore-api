@@ -136,6 +136,13 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    base = models.FloatField(
+        help_text="""
+            The incoming base score used to determine most-improved winners.""",
+        null=True,
+        blank=True,
+    )
+
     variance_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
@@ -215,10 +222,11 @@ class Appearance(TimeStampedModel):
 
     # Appearance Internals
     def clean(self):
-        if self.group.kind != self.round.session.kind:
-            raise ValidationError(
-                {'group': 'Group kind must match session'}
-            )
+        if self.group.kind != self.group.KIND.vlq:
+            if self.group.kind != self.round.session.kind:
+                raise ValidationError(
+                    {'group': 'Group kind must match session'}
+                )
 
     class Meta:
         ordering = [
@@ -647,9 +655,9 @@ class Appearance(TimeStampedModel):
             'reports/csa.html',
             context,
         )
-        statelog = self.round.statelogs.filter(transition='verify').latest()
+        statelog = self.round.statelogs.latest('timestamp')
         footer = 'Published by {0} at {1}'.format(
-            statelog.by.person.common_name,
+            statelog.by,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
         )
         file = pydf.generate_pdf(

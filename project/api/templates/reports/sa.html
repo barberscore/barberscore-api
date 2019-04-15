@@ -3,10 +3,11 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,400i,700,700i" rel="stylesheet">
     <style type="text/css">
       body {
-        font-family: 'Inconsolata', monospace;
+        font-family: 'Ubuntu Mono', monospace;
+
       }
       /*table tr {
         white-space:nowrap;
@@ -19,13 +20,17 @@
         font-weight: 700 !important;
       }*/
       table {
-        line-height: 1.1 !important;
+        line-height: 1.0 !important;
       }
       .diff {
         font-weight: 700 !important;
       }
+      .d-practice {
+        font-weight: 700 !important;
+        font-style: italic !important;
+      }
       .practice {
-        font-style: 'italic' !important;
+        font-style: italic !important;
       }
       .small_logo {
           height: 50px;
@@ -34,10 +39,10 @@
           page-break-inside: avoid !important;
       }
       .col-music {
-        background-color: #dff0d8;
+        background-color: #fcf8e3;
       }
       .col-performance {
-        background-color: #fcf8e3;
+        background-color: #dff0d8;
       }
       .col-singing {
         background-color: #d9edf7;
@@ -109,7 +114,7 @@
                 <td>
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
-                      {{song.chart.title|truncatechars_html:30|safe|default:"(Not included)"}}&nbsp;{{song.penalties_patched}}<br>
+                      {{song.chart.title|truncatechars_html:30|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
@@ -117,9 +122,11 @@
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.mus_score|floatformat:1}}&nbsp;&nbsp;
-                      {% for score, diff in song.mus_scores %}
+                      {% for score, diff, practice in song.mus_scores %}
                         {% if diff %}
-                          <strong>{{score}}</strong>&nbsp;
+                          <span class='d-practice'>{{score}}</span>&nbsp;
+                        {% elif practice %}
+                          <em>{{score}}</em>&nbsp;
                         {% else %}
                           {{score}}&nbsp;
                         {% endif %}
@@ -132,9 +139,11 @@
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.per_score|floatformat:1}}&nbsp;&nbsp;
-                      {% for score, diff in song.per_scores %}
+                      {% for score, diff, practice in song.per_scores %}
                         {% if diff %}
-                          <strong>{{score}}</strong>&nbsp;
+                          <span class='d-practice'>{{score}}</span>&nbsp;
+                        {% elif practice %}
+                          <em>{{score}}</em>&nbsp;
                         {% else %}
                           {{score}}&nbsp;
                         {% endif %}
@@ -147,9 +156,11 @@
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
                       {{song.sng_score|floatformat:1}}&nbsp;&nbsp;
-                      {% for score, diff in song.sng_scores %}
+                      {% for score, diff, practice in song.sng_scores %}
                         {% if diff %}
-                          <strong>{{score}}</strong>&nbsp;
+                          <span class='d-practice'>{{score}}</span>&nbsp;
+                        {% elif practice %}
+                          <em>{{score}}</em>&nbsp;
                         {% else %}
                           {{score}}&nbsp;
                         {% endif %}

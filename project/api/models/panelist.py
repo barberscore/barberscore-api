@@ -201,14 +201,12 @@ class Panelist(TimeStampedModel):
         ])
 
     def get_psa(self):
+        Score = apps.get_model('api.score')
         Group = apps.get_model('api.group')
         # Score block
         group_ids = self.round.appearances.exclude(
             # Don't include advancers or MTs on PSA
             draw__gt=0,
-        ).exclude(
-            # Don't include MTs on PSA
-            num__lte=0,
         ).values_list('group__id', flat=True)
         groups = Group.objects.filter(
             id__in=group_ids,
@@ -317,6 +315,8 @@ class Panelist(TimeStampedModel):
                     category = self.get_category_display()
                     diff = panelist_score.points - getattr(song, category)
                     song.diff_patched = diff
+                    pp = song.scores.get(panelist__person=self.person).points
+                    song.pp = pp
                 appearance.songs_patched = songs
             group.appearances_patched = appearances
 
@@ -328,9 +328,9 @@ class Panelist(TimeStampedModel):
             'reports/psa.html',
             context,
         )
-        statelog = self.round.statelogs.filter(transition='verify').latest()
+        statelog = self.round.statelogs.latest('timestamp')
         footer = 'Published by {0} at {1}'.format(
-            statelog.by.person.common_name,
+            statelog.by,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
         )
         file = pydf.generate_pdf(

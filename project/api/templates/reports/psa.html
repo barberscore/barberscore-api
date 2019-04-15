@@ -36,9 +36,17 @@
       .black-font {
         color: black;
       }
-      section {
-          padding-top: 10px;
-          padding-bottom: 10px;
+      .black-font {
+        color: black;
+      }
+      .smaller-heading {
+        font-size: 10pt;
+        line-height: 1.2;
+        padding-bottom: 2px;
+        margin-bottom: 5px;
+      }
+      .pbi_avoid {
+          page-break-inside: avoid !important;
       }
     </style>
   </head>
@@ -50,7 +58,7 @@
         <h5>
           Panelist Scoring Analysis
         </h5>
-        <p>
+        <p class='smaller-heading'>
           {{panelist.round.session.convention.name}}
           {{panelist.round.session.get_kind_display}} {{panelist.round.get_kind_display}}<br>
           {{panelist.round.session.convention.location}}; {{panelist.round.session.convention.start_date|date:"F j, Y"}} - {{panelist.round.session.convention.end_date|date:"F j, Y"}}
@@ -81,29 +89,25 @@
             <tr>
               <th>Group</th>
               <th>Song</th>
-              <th class='text-center' scope="col">Avg</th>
               <th class='text-center' scope="col">StdDev</th>
               <th class='text-center' scope="col">Diff</th>
-              <th class='text-center' scope="col">Scores</th>
+              <th class='text-center' scope="col">Avg</th>
+              <th class='text-center' scope="col">Official Scores</th>
+              {% if panelist.get_kind_display == 'Practice' %}
+                <th class='text-center' scope="col">Yours</th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
             {% for group in groups %}
-              <tr>
+              <tr class='pbi_avoid'>
                 <td>
                   {{group.name}}<br>
                 </td>
                 <td>
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
-                      {{song.chart.title|truncatechars_html:30|safe|default:"(Song not included in repertory)"}}<br>
-                    {% endfor %}
-                  {% endfor %}
-                </td>
-                <td class='text-center'>
-                  {% for appearance in group.appearances_patched %}
-                    {% for song in appearance.songs_patched %}
-                      {{song.avg|floatformat:1}}<br>
+                      {{song.chart.title|truncatechars_html:30|safe|default:"(Song not in Group's Repertory)"}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
@@ -124,12 +128,28 @@
                 <td class='text-center'>
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
+                      {{song.avg|floatformat:1}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-center'>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
                       {% for score, spanClass in song.scores_patched %}
                         <span class='{{spanClass}}'>{{score}}</span>&nbsp;
                       {% endfor %}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
+                {% if panelist.get_kind_display == 'Practice' %}
+                  <td class='text-center'>
+                    {% for appearance in group.appearances_patched %}
+                      {% for song in appearance.songs_patched %}
+                        {{song.pp}}<br>
+                      {% endfor %}
+                    {% endfor %}
+                  </td>
+                {% endif %}
               </tr>
             {% endfor %}
           </tbody>

@@ -566,6 +566,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'airports',
             'image',
             'description',
+            'gender',
             'bhs_id',
             'current_through',
             'current_status',

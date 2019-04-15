@@ -1,15 +1,16 @@
 Please find below your "Panelist Scoring Analysis" from the
 {{panelist.round}}.
 
-This is a new report format that is oriented towards your specific scores (as
-opposed to the SA, which is oriented towards the entire Panel.)
+This is an additional report format that is oriented towards your scores (as
+opposed to the SA, which is oriented for the entire panel).
 
 Here's how to read it:
-- Overall, it is listed by Competitor in scoring order.
-- Each Song has an average and standard deviation for all Scores for that Song.
-- Each Song has a differential for your category.
-- The Scores themselves are ordered lowest to highest, as opposed to by judge number.
-- Your specific Score is in BOLD; the other panelists' Scores are in white.
+- It is listed by ALL competitors (to include evaluation/score-only competitors) in total score order.
+- Each Song has an average and standard deviation for all Scores across the panel for that Song.
+- Each Song also shows your differential (plus or minus) as compared to the average within your category.
+- The panel Scores themselves are ordered lowest to highest, as opposed to by judge number.
+- For panelists, your specific Score is in BOLD black, while the other panelist's Scores are in white.
+- If you are a practice judge, you will see your scores in the additional column on the far right.
 - The categories are color-coded: Yellow for Music, Green for Performance, Blue for Singing.
 
 We are excited to try out this new report and are eager to hear your feedback!

@@ -89,6 +89,13 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
+    base = models.FloatField(
+        help_text="""
+            The incoming base score used to determine most-improved winners.""",
+        null=True,
+        blank=True,
+    )
+
     participants = models.CharField(
         max_length=255,
         blank=True,
