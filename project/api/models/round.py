@@ -391,8 +391,6 @@ class Round(TimeStampedModel):
             'group',
         ).filter(
             is_private=True,
-        ).exclude(
-            num=0,
         ).order_by(
             'group__name',
         ).values_list('group__name', flat=True)
@@ -1737,7 +1735,7 @@ class Round(TimeStampedModel):
                     group=mt.group,
                     num=mt.draw,
                     is_single=mt.is_single,
-                    is_private=mt.is_private,
+                    is_private=True,
                     participants=mt.participants,
                     representing=mt.representing,
                 )
