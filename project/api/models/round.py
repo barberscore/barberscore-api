@@ -166,7 +166,7 @@ class Round(TimeStampedModel):
         return
 
 
-    def get_oss(self):
+    def get_oss(self, zoom=1):
         Group = apps.get_model('api.group')
         Panelist = apps.get_model('api.panelist')
         Song = apps.get_model('api.song')
@@ -505,9 +505,33 @@ class Round(TimeStampedModel):
             footer_right=footer,
             footer_font_name='Encode Sans',
             footer_font_size=8,
+            zoom=zoom,
         )
         content = ContentFile(file)
         return content
+
+
+    # Placeholder for single-page recursion tool.
+    # from builtins import round as rnd
+    # from PyPDF2 import PdfFileReader
+
+    # r = Round.objects.get(id='0c02d601-357b-4315-9b73-063f563aa410')
+
+    # f = r.get_oss()
+    # obj = PdfFileReader(f)
+    # num_pages = obj.getNumPages()
+
+    # zoom = 1
+    # while num_pages > 1:
+    #     zoom = rnd((zoom - .05),2)
+    #     print(zoom)
+    #     f = r.get_oss(zoom=zoom)
+    #     obj = PdfFileReader(f)
+    #     num_pages = obj.getNumPages()
+    # print(type(f))
+
+    # r.oss.save('oss', f)
+
 
     def save_oss(self):
         oss = self.get_oss()
