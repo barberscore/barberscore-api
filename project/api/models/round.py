@@ -169,6 +169,7 @@ class Round(TimeStampedModel):
     def get_oss(self, zoom=1):
         Group = apps.get_model('api.group')
         Panelist = apps.get_model('api.panelist')
+        Appearance = apps.get_model('api.appearance')
         Song = apps.get_model('api.song')
 
         # Score Block
@@ -386,6 +387,15 @@ class Round(TimeStampedModel):
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
+        # Missing flag
+        is_missing = bool(Song.objects.filter(
+            appearance__round__session=self.session,
+            appearance__round__num__lte=self.num,
+            appearance__status=Appearance.STATUS.completed,
+            appearance__is_private=False,
+            chart__isnull=True,
+        ))
+
         # Eval Only Block
         privates = self.appearances.prefetch_related(
             'group',
@@ -478,6 +488,7 @@ class Round(TimeStampedModel):
             'advancers': advancers,
             'panelists': panelists,
             'outcomes': outcomes,
+            'is_missing': is_missing,
         }
         rendered = render_to_string('reports/oss.html', context)
 
