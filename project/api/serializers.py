@@ -625,6 +625,7 @@ class RoundSerializer(serializers.ModelSerializer):
         'members': 'api.serializers.MemberSerializer',
         'grids': 'api.serializers.GridSerializer',
         'outcomes': 'api.serializers.OutcomeSerializer',
+        'panelists': 'api.serializers.PanelistSerializer',
     }
 
     class Meta:
@@ -650,7 +651,8 @@ class RoundSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            # 'appearances',
+            'appearances',
+            'panelists',
             # 'members',
             # 'grids',
             # 'outcomes',
