@@ -315,7 +315,7 @@ class EntrySerializer(serializers.ModelSerializer):
     class JSONAPIMeta:
         included_resources = [
             # 'appearances',
-            # 'contestants',
+            'contestants',
         ]
 
     def validate(self, data):
@@ -710,7 +710,7 @@ class SessionSerializer(serializers.ModelSerializer):
     class JSONAPIMeta:
         included_resources = [
             # 'contests',
-            # 'entries',
+            'entries',
             # 'rounds',
         ]
 
