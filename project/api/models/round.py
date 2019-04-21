@@ -179,6 +179,9 @@ class Round(TimeStampedModel):
             # Don't include advancers on OSS
             draw__gt=0,
         ).exclude(
+            # Don't include scratches
+            status=Appearance.STATUS.scratched,
+        ).exclude(
             # Don't include mic testers on OSS
             num__lte=0,
         ).values_list('group__id', flat=True)
@@ -549,6 +552,7 @@ class Round(TimeStampedModel):
         return self.oss.save('oss', oss)
 
     def get_sa(self):
+        Appearance = apps.get_model('api.appearance')
         Panelist = apps.get_model('api.panelist')
         Song = apps.get_model('api.song')
         Group = apps.get_model('api.group')
@@ -556,6 +560,9 @@ class Round(TimeStampedModel):
 
         # Score Block
         group_ids = self.appearances.exclude(
+            # DOn't include scratches
+            status=Appearance.STATUS.scratched,
+        ).exclude(
             # Don't include advancers on SA
             draw__gt=0,
         ).values_list('group__id', flat=True)
@@ -1299,6 +1306,8 @@ class Round(TimeStampedModel):
             raise RuntimeError("Round not Started")
         appearances = self.appearances.exclude(
             status=Appearance.STATUS.verified,
+        ).exclude(
+            status=Appearance.STATUS.scratched,
         )
         for appearance in appearances:
             appearance.mock()
@@ -1549,7 +1558,13 @@ class Round(TimeStampedModel):
     def can_finish(self):
         Appearance = apps.get_model('api.appearance')
         return all([
-            not self.appearances.exclude(status=Appearance.STATUS.verified),
+            self.appearances.filter(
+                status__in=[
+                    Appearance.STATUS.verified,
+                    Appearance.STATUS.disqualified,
+                    Appearance.STATUS.scratched,
+                ]
+            ),
         ])
 
     def can_verify(self):
@@ -1793,6 +1808,7 @@ class Round(TimeStampedModel):
         target=STATUS.finished,
         conditions=[can_finish],)
     def finish(self, *args, **kwargs):
+        Appearance = apps.get_model('api.appearance')
         Panelist = apps.get_model('api.panelist')
         # Run outcomes
         outcomes = self.outcomes.all()
@@ -1810,6 +1826,7 @@ class Round(TimeStampedModel):
 
         # Get all multi appearances and annotate average.
         multis = self.appearances.filter(
+            status=Appearance.STATUS.verified,
             is_single=False,
         ).annotate(
             avg=Avg(
