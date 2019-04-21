@@ -49,7 +49,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
         'songs': 'api.serializers.SongSerializer',
-        # 'contenders': 'api.serializers.ContenderSerializer',
+        # 'songs__scores': 'api.serializers.ScoreSerializer',
     }
 
     class Meta:
@@ -74,6 +74,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'group',
             # 'grid',
             'songs',
+            # 'songs__scores',
             # 'contenders',
             'permissions',
         )
@@ -84,7 +85,8 @@ class AppearanceSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            # 'songs',
+            'songs',
+            # 'songs__scores',
         ]
 
 
@@ -715,9 +717,9 @@ class SessionSerializer(serializers.ModelSerializer):
 
 class SongSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    # included_serializers = {
-    #     'scores': 'api.serializers.ScoreSerializer',
-    # }
+    included_serializers = {
+        'scores': 'api.serializers.ScoreSerializer',
+    }
 
     class Meta:
         model = Song
@@ -734,10 +736,10 @@ class SongSerializer(serializers.ModelSerializer):
             'permissions',
         )
 
-    # class JSONAPIMeta:
-    #     included_resources = [
-    #         'scores',
-    #     ]
+    class JSONAPIMeta:
+        included_resources = [
+            'scores',
+        ]
 
 
 class VenueSerializer(serializers.ModelSerializer):
