@@ -3,6 +3,8 @@ from django_fsm_log.admin import StateLogInline
 from fsm_admin.mixins import FSMTransitionMixin
 from reversion.admin import VersionAdmin
 from .models import Person
+from .models import Group
+
 
 @admin.register(Person)
 class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
@@ -64,4 +66,78 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     ordering = [
         'last_name',
         'first_name',
+    ]
+
+
+@admin.register(Group)
+class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
+    fields = [
+        'id',
+        'status',
+        'name',
+        ('kind', 'gender'),
+        ('bhs_id', 'legacy_code'),
+        'division',
+        ('website', 'email'),
+        ('main_phone', 'fax_phone'),
+        'facebook',
+        'twitter',
+        'youtube',
+        'pinterest',
+        'flickr',
+        'instagram',
+        'soundcloud',
+        'tin',
+        ('preferred_name', 'first_alternate_name', 'second_alternate_name'),
+        'description',
+        'visitor_information',
+        ('established_date','chartered_date', 'licensed_date',),
+        'parent',
+        ('created', 'modified',),
+    ]
+
+    list_display = [
+        'name',
+        'kind',
+        'gender',
+        'email',
+        'status',
+    ]
+
+    list_filter = [
+        'status',
+        'kind',
+        'gender',
+        'division',
+    ]
+
+    readonly_fields = [
+        'id',
+        'created',
+        'modified',
+    ]
+
+    fsm_field = [
+        'status',
+    ]
+
+    search_fields = [
+        'name',
+        'bhs_id',
+        'legacy_code',
+        'tin',
+    ]
+
+    inlines = [
+        StateLogInline,
+    ]
+
+    save_on_top = True
+
+    ordering = [
+        'name',
+    ]
+
+    raw_id_fields = [
+        'parent',
     ]
