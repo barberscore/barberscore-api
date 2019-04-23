@@ -325,15 +325,7 @@ class Structure(models.Model):
         editable=False,
         db_column='legacy_code',
     )
-    chorus_name = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-    preferred_name = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-    phone = models.CharField(
+    website = models.CharField(
         max_length=255,
         editable=False,
     )
@@ -341,7 +333,15 @@ class Structure(models.Model):
         max_length=255,
         editable=False,
     )
-    website = models.CharField(
+    chorus_name = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    phone = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    fax = models.CharField(
         max_length=255,
         editable=False,
     )
@@ -353,7 +353,52 @@ class Structure(models.Model):
         max_length=255,
         editable=False,
     )
+    youtube = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    pinterest = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    flickr = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    instagram = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    soundcloud = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    tin = models.CharField(
+        max_length=18,
+        editable=False,
+    )
+    preferred_name = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    first_alternate_name = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    second_alternate_name = models.CharField(
+        max_length=255,
+        editable=False,
+    )
+    visitor_information = models.TextField(
+        editable=False,
+    )
     established_date = models.DateField(
+        editable=False,
+    )
+    chartered_date = models.DateField(
+        editable=False,
+    )
+    licenced_date = models.DateField(
         editable=False,
     )
     created = models.DateTimeField(
