@@ -1432,6 +1432,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         MemberInline,
         OfficerInline,
         AssignmentInline,
+        PanelistInline,
         StateLogInline,
     ]
 
