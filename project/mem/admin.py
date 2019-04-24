@@ -1,10 +1,13 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django_fsm_log.admin import StateLogInline
 from fsm_admin.mixins import FSMTransitionMixin
 from reversion.admin import VersionAdmin
 from .models import Person
 from .models import Group
-
+from .models import Stream
+from .inlines import StreamInline
 
 @admin.register(Person)
 class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
@@ -58,6 +61,7 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
+        StreamInline,
         StateLogInline,
     ]
 
@@ -129,6 +133,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
+        StreamInline,
         StateLogInline,
     ]
 
@@ -140,4 +145,86 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
 
     raw_id_fields = [
         'parent',
+    ]
+
+@admin.register(Stream)
+class StreamAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
+
+    def person_link(self, stream):
+        url = reverse("admin:mem_person_change", args=[stream.person.id])
+        link = '<a href="{0}">{1}</a>'.format(url, stream.person)
+        return mark_safe(link)
+    person_link.short_description = 'Person'
+
+    def group_link(self, stream):
+        url = reverse("admin:mem_group_change", args=[stream.group.id])
+        link = '<a href="{0}">{1}</a>'.format(url, stream.group)
+        return mark_safe(link)
+    group_link.short_description = 'Group'
+
+
+    fields = [
+        'id',
+        'status',
+        'code',
+        'is_paid',
+        'part',
+        ('is_current', 'inactive'),
+        ('join_created', 'join_modified', 'join_deleted'),
+        ('mem_created', 'mem_modified', 'mem_deleted'),
+        ('sub_created', 'sub_modified', 'sub_deleted'),
+        ('person', 'group',),
+        ('created', 'modified',),
+    ]
+
+    list_display = [
+        'status',
+        'code',
+        'person_link',
+        'group_link',
+        'is_current',
+    ]
+
+    list_filter = [
+        'status',
+        'code',
+        'is_paid',
+        'inactive',
+        'part',
+        'is_current',
+    ]
+
+    readonly_fields = [
+        'id',
+        'created',
+        'modified',
+        'join_created', 'join_modified', 'join_deleted',
+        'mem_created', 'mem_modified', 'mem_deleted',
+        'sub_created', 'sub_modified', 'sub_deleted',
+    ]
+
+    fsm_field = [
+        'status',
+    ]
+
+    search_fields = [
+        'person__last_name',
+        'person__email',
+        'person__bhs_id',
+        'group__bhs_id',
+        'group__name',
+    ]
+
+    # inlines = [
+    #     StateLogInline,
+    # ]
+
+    save_on_top = True
+
+    ordering = [
+    ]
+
+    raw_id_fields = [
+        'person',
+        'group',
     ]

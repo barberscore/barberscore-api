@@ -15,6 +15,7 @@ from .validators import validate_tin
 from .validators import validate_nopunctuation
 from .managers import PersonManager
 from .managers import GroupManager
+from .managers import StreamManager
 
 class Person(TimeStampedModel):
     id = models.UUIDField(
@@ -75,7 +76,7 @@ class Person(TimeStampedModel):
             validate_nopunctuation,
         ],
     )
-    email = models.EmailField(
+    email = LowerEmailField(
         max_length=255,
         unique=True,
         null=True,
@@ -144,7 +145,13 @@ class Person(TimeStampedModel):
     # Internals
     def __str__(self):
         return "{0}".format(
-            self.id,
+            " ".join([
+                self.prefix,
+                self.first_name,
+                self.middle_name,
+                self.last_name,
+                self.suffix,
+            ])
         )
 
     class Meta:
@@ -427,5 +434,162 @@ class Group(TimeStampedModel):
     )
     objects = GroupManager()
 
+    class JSONAPIMeta:
+        resource_name = "member"
+
     def __str__(self):
         return self.name
+
+
+class Stream(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+    STATUS = Choices(
+        (-30, 'cancelled', 'Cancelled',),
+        (-20, 'swapped', 'Swapped',),
+        (-10, 'expired', 'Expired',),
+        (0, 'new', 'New',),
+        (10, 'lapsed', 'Lapsed',),
+        (20, 'pending', 'Pending',),
+        (90, 'active', 'Active',),
+    )
+    status = FSMIntegerField(
+        default=STATUS.new,
+        choices=STATUS,
+    )
+    CODE = Choices(
+        (10, 'RG', 'RG Regular'),
+        (20, 'R5', 'R5 Regular 50 Year'),
+        (30, 'SN', 'SN Senior'),
+        (40, 'S5', 'S5 Senior 50 Year'),
+        (50, 'SL', 'SL Senior Legacy'),
+        (60, 'Y1', 'Y1 Youth Initial'),
+        (70, 'Y2', 'Y2 Youth Subsequent'),
+        (80, 'LF', 'LF Lifetime Regular'),
+        (90, 'L5', 'L5 Lifetime 50 Year'),
+        (100, 'LY', 'LY Lifetime Youth'),
+        (110, 'LS', 'LS Lifetime Senior'),
+        (120, 'AS', 'AS Associate'),
+        (120, 'SNA', 'SNA'),
+        (120, 'YA2', 'YA2'),
+        (120, 'MEP', 'MEP'),
+        (120, 'YA1', 'YA1'),
+    )
+    code = models.IntegerField(
+        choices=CODE,
+        null=True,
+        blank=True,
+    )
+    PART = Choices(
+        (10, 'tenor', 'Tenor'),
+        (20, 'lead', 'Lead'),
+        (30, 'baritone', 'Baritone'),
+        (40, 'bass', 'Bass'),
+    )
+    part = models.IntegerField(
+        choices=PART,
+        null=True,
+        blank=True,
+    )
+    is_paid = models.BooleanField(
+        default=False,
+    )
+    is_current = models.BooleanField(
+        default=False,
+    )
+    established_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+    inactive_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+    INACTIVE = Choices(
+        (10, 'nonrenewal', 'Non-Renewal'),
+        (20, 'renewed', 'Renewed'),
+        (30, 'notcancelled', 'Not Cancelled'),
+        (40, 'nonpayment', 'Non-Payment'),
+        (50, 'expired', 'Expired'),
+        (60, 'deceased', 'Deceased'),
+        (70, 'changedoption', 'Changed Option'),
+        (80, 'other', 'Other'),
+        (90, 'cancelled', 'Cancelled'),
+        (100, 'transferred', 'Transferred'),
+        (110, 'swappedchapter', 'Swapped Chapter'),
+        (120, 'swapped', 'Swapped'),
+    )
+
+    inactive = models.IntegerField(
+        choices=INACTIVE,
+        null=True,
+        blank=True,
+    )
+
+    current_through = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    join_created = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    join_modified = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    join_deleted = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    mem_created = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    mem_modified = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    mem_deleted = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    sub_created = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    sub_modified = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    sub_deleted = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    # FK Pointers
+    group = models.ForeignKey(
+        Group,
+        related_name='streams',
+        on_delete=models.CASCADE,
+    )
+    person = models.ForeignKey(
+        Person,
+        related_name='streams',
+        on_delete=models.CASCADE,
+    )
+
+    # Internals
+    objects = StreamManager()
+
+    class JSONAPIMeta:
+        resource_name = "stream"
+
+    def __str__(self):
+        return str(self.id)
+
+    def clean(self):
+        return
