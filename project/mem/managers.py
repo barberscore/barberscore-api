@@ -339,8 +339,98 @@ class GroupManager(Manager):
         )
         return group, created
 
+
 class StreamManager(Manager):
     def update_or_create_from_join(self, join):
+        # Extract
+        pk = join['id']
+        paid = join['paid']
+        established_date = join['established_date']
+        inactive_date = join['inactive_date']
+        vocal_part = join['vocal_part']
+        is_current = join['status']
+        inactive_reason = join['inactive_reason']
+        structure_id = join['structure__id']
+        human_id = join['subscription__human__id']
+        current_through = join['subscription__current_through']
+        sub_status = join['subscription__status']
+        mem_code = join['membership__code']
+        join_created = join['created']
+        join_modified = join['modified']
+        join_deleted = join['deleted']
+        mem_created = join['membership__created']
+        mem_modified = join['membership__modified']
+        mem_deleted = join['membership__deleted']
+        sub_created = join['subscription__created']
+        sub_modified = join['subscription__modified']
+        sub_deleted = join['subscription__deleted']
+
+        # Transform
+        part = getattr(
+            self.model.PART,
+            vocal_part.strip().lower() if vocal_part else '',
+            None,
+        )
+        code = getattr(
+            self.model.CODE,
+            mem_code,
+            None,
+        )
+        status = getattr(
+            self.model.STATUS,
+            sub_status.replace('lapsedRenew', 'lapsed') if sub_status else '',
+            None,
+        )
+        inactive_map = {
+            'Non-renewal': 10,
+            'Renewed': 20,
+            'Not Cancelled': 30,
+            'Non-Payment': 40,
+            'changedOption': 70,
+            'cancelled': 90,
+            'Transferred': 100,
+            'Expired': 50,
+            'Deceased': 60,
+            'Other': 80,
+            'swappedChapter': 110,
+            'swapped': 120,
+        }
+        inactive = inactive_map.get(inactive_reason, None)
+
+        # Build dictionary
+        defaults = {
+            'is_paid': paid,
+            'established_date': established_date,
+            'inactive_date': inactive_date,
+            'part': part,
+            'is_current': is_current,
+            'inactive': inactive,
+            'group_id': structure_id,
+            'person_id': human_id,
+            'current_through': current_through,
+            'status': status,
+            'code': code,
+            'join_created': join_created,
+            'join_modified': join_modified,
+            'join_deleted': join_deleted,
+            'mem_created': mem_created,
+            'mem_modified': mem_modified,
+            'mem_deleted': mem_deleted,
+            'sub_created': sub_created,
+            'sub_modified': sub_modified,
+            'sub_deleted': sub_deleted,
+        }
+
+        # Load
+        stream, created = self.update_or_create(
+            id=pk,
+            defaults=defaults,
+        )
+        return stream, created
+
+
+class MemberManager(Manager):
+    def update_or_create_from_stream(self, stream):
         # Extract
         pk = join['id']
         paid = join['paid']

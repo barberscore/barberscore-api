@@ -7,6 +7,8 @@ from reversion.admin import VersionAdmin
 from .models import Person
 from .models import Group
 from .models import Stream
+from .models import Member
+from .inlines import MemberInline
 from .inlines import StreamInline
 
 @admin.register(Person)
@@ -61,6 +63,7 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
+        MemberInline,
         StreamInline,
         StateLogInline,
     ]
@@ -133,6 +136,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
+        MemberInline,
         StreamInline,
         StateLogInline,
     ]
@@ -209,6 +213,8 @@ class StreamAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
 
     search_fields = [
         'person__last_name',
+        'person__first_name',
+        'person__nick_name',
         'person__email',
         'person__bhs_id',
         'group__bhs_id',
@@ -218,6 +224,77 @@ class StreamAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     # inlines = [
     #     StateLogInline,
     # ]
+
+    save_on_top = True
+
+    ordering = [
+    ]
+
+    raw_id_fields = [
+        'person',
+        'group',
+    ]
+
+
+@admin.register(Member)
+class MemberAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
+
+    def person_link(self, stream):
+        url = reverse("admin:mem_person_change", args=[stream.person.id])
+        link = '<a href="{0}">{1}</a>'.format(url, stream.person)
+        return mark_safe(link)
+    person_link.short_description = 'Person'
+
+    def group_link(self, stream):
+        url = reverse("admin:mem_group_change", args=[stream.group.id])
+        link = '<a href="{0}">{1}</a>'.format(url, stream.group)
+        return mark_safe(link)
+    group_link.short_description = 'Group'
+
+
+    fields = [
+        'id',
+        'status',
+        'part',
+        ('start_date', 'end_date'),
+        ('person', 'group',),
+        ('created', 'modified',),
+    ]
+
+    list_display = [
+        'status',
+        'person_link',
+        'group_link',
+    ]
+
+    list_filter = [
+        'status',
+    ]
+
+    readonly_fields = [
+        'id',
+        'created',
+        'modified',
+    ]
+
+    fsm_field = [
+        'status',
+    ]
+
+    search_fields = [
+        'person__last_name',
+        'person__first_name',
+        'person__nick_name',
+        'person__email',
+        'person__bhs_id',
+        'group__bhs_id',
+        'group__name',
+    ]
+
+    inlines = [
+        # StreamInline,
+        StateLogInline,
+    ]
 
     save_on_top = True
 

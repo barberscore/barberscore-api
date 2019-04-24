@@ -15,6 +15,7 @@ from .validators import validate_tin
 from .validators import validate_nopunctuation
 from .managers import PersonManager
 from .managers import GroupManager
+from .managers import MemberManager
 from .managers import StreamManager
 
 class Person(TimeStampedModel):
@@ -440,6 +441,47 @@ class Group(TimeStampedModel):
     def __str__(self):
         return self.name
 
+    def clean(self):
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.revoked,
+    )
+    def revoke(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.suspended,
+    )
+    def suspend(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.active,
+    )
+    def activate(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.merged,
+    )
+    def merge(self, *args, **kwargs):
+        return
+
+
+
 
 class Stream(TimeStampedModel):
     id = models.UUIDField(
@@ -592,4 +634,83 @@ class Stream(TimeStampedModel):
         return str(self.id)
 
     def clean(self):
+        return
+
+
+class Member(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+    status = FSMIntegerField(
+        default=STATUS.new,
+        choices=STATUS,
+    )
+    PART = Choices(
+        (10, 'tenor', 'Tenor'),
+        (20, 'lead', 'Lead'),
+        (30, 'baritone', 'Baritone'),
+        (40, 'bass', 'Bass'),
+    )
+    part = models.IntegerField(
+        choices=PART,
+        null=True,
+        blank=True,
+    )
+    start_date = models.DateField(
+    )
+    end_date = models.DateField(
+    )
+
+    # FK Pointers
+    group = models.ForeignKey(
+        Group,
+        related_name='members',
+        on_delete=models.CASCADE,
+    )
+    person = models.ForeignKey(
+        Person,
+        related_name='members',
+        on_delete=models.CASCADE,
+    )
+
+    # Internals
+    objects = MemberManager()
+
+    class Meta:
+        unique_together = (
+            ('group', 'person')
+        )
+
+    class JSONAPIMeta:
+        resource_name = "member"
+
+    def __str__(self):
+        return str(self.id)
+
+    def clean(self):
+        return
+
+    # Transitions
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.active, STATUS.new],
+        target=STATUS.inactive,
+    )
+    def deactivate(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.inactive, STATUS.new],
+        target=STATUS.active,
+    )
+    def activate(self, *args, **kwargs):
         return
