@@ -29,8 +29,7 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'last_name',
-        'first_name',
+        '__str__',
         'email',
         'gender',
         'part',
@@ -98,7 +97,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         ('preferred_name', 'first_alternate_name', 'second_alternate_name'),
         'description',
         'visitor_information',
-        ('established_date','chartered_date', 'licensed_date',),
+        ('established_date', 'chartered_date', 'licensed_date',),
         'parent',
         ('created', 'modified',),
     ]

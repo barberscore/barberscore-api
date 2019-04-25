@@ -145,6 +145,10 @@ class Person(TimeStampedModel):
 
     # Internals
     def __str__(self):
+        if self.nick_name:
+            nick = "({0})".format(self.nick_name)
+        else:
+            nick = ""
         return "{0}".format(
             " ".join([
                 self.prefix,
@@ -152,6 +156,7 @@ class Person(TimeStampedModel):
                 self.middle_name,
                 self.last_name,
                 self.suffix,
+                nick,
             ])
         )
 

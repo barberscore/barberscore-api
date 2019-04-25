@@ -184,11 +184,87 @@ class Group(TimeStampedModel):
         default=GENDER.male,
     )
 
+    DIVISION = Choices(
+        ('EVG', [
+            (10, 'evgd1', 'EVG Division I'),
+            (20, 'evgd2', 'EVG Division II'),
+            (30, 'evgd3', 'EVG Division III'),
+            (40, 'evgd4', 'EVG Division IV'),
+            (50, 'evgd5', 'EVG Division V'),
+        ]),
+        ('FWD', [
+            (60, 'fwdaz', 'FWD Arizona'),
+            (70, 'fwdne', 'FWD Northeast'),
+            (80, 'fwdnw', 'FWD Northwest'),
+            (90, 'fwdse', 'FWD Southeast'),
+            (100, 'fwdsw', 'FWD Southwest'),
+        ]),
+        ('LOL', [
+            (110, 'lol10l', 'LOL 10000 Lakes'),
+            (120, 'lolone', 'LOL Division One'),
+            (130, 'lolnp', 'LOL Northern Plains'),
+            (140, 'lolpkr', 'LOL Packerland'),
+            (150, 'lolsw', 'LOL Southwest'),
+        ]),
+        ('MAD', [
+            # (160, 'madatl', 'MAD Atlantic'),
+            (170, 'madcen', 'MAD Central'),
+            (180, 'madnth', 'MAD Northern'),
+            (190, 'madsth', 'MAD Southern'),
+            # (200, 'madwst', 'MAD Western'),
+        ]),
+        ('NED', [
+            (210, 'nedgp', 'NED Granite and Pine'),
+            (220, 'nedmtn', 'NED Mountain'),
+            (230, 'nedpat', 'NED Patriot'),
+            (240, 'nedsun', 'NED Sunrise'),
+            (250, 'nedyke', 'NED Yankee'),
+        ]),
+        ('SWD', [
+            (260, 'swdne', 'SWD Northeast'),
+            (270, 'swdnw', 'SWD Northwest'),
+            (280, 'swdse', 'SWD Southeast'),
+            (290, 'swdsw', 'SWD Southwest'),
+        ]),
+    )
+
+    division = models.IntegerField(
+        choices=DIVISION,
+        null=True,
+        blank=True,
+    )
+
+    bhs_id = models.IntegerField(
+        blank=True,
+        null=True,
+        unique=True,
+    )
+
     code = models.CharField(
         help_text="""
             Short-form code.""",
         max_length=255,
         blank=True,
+    )
+
+    website = models.URLField(
+        help_text="""
+            The website URL of the resource.""",
+        blank=True,
+    )
+
+    email = LowerEmailField(
+        help_text="""
+            The contact email of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    phone = models.CharField(
+        help_text="""
+            The phone number of the resource.  Include country code.""",
+        blank=True,
+        max_length=25,
     )
 
     start_date = models.DateField(
@@ -208,48 +284,48 @@ class Group(TimeStampedModel):
         blank=True,
     )
 
-    website = models.URLField(
-        help_text="""
-            The website URL of the resource.""",
-        blank=True,
-    )
-
     facebook = models.URLField(
         help_text="""
             The facebook URL of the resource.""",
         blank=True,
     )
 
-    twitter = models.CharField(
+    twitter = models.URLField(
         help_text="""
-            The twitter handle (in form @twitter_handle) of the resource.""",
+            The twitter URL of the resource.""",
         blank=True,
-        max_length=16,
-        validators=[
-            RegexValidator(
-                regex=r'@([A-Za-z0-9_]+)',
-                message="""
-                    Must be a single Twitter handle
-                    in the form `@twitter_handle`.
-                """,
-            ),
-        ],
     )
 
-    email = LowerEmailField(
+    youtube = models.URLField(
         help_text="""
-            The contact email of the resource.""",
+            The youtube URL of the resource.""",
         blank=True,
-        null=True,
+        default='',
     )
-
-    phone = models.CharField(
+    pinterest = models.URLField(
         help_text="""
-            The phone number of the resource.  Include country code.""",
+            The pinterest URL of the resource.""",
         blank=True,
-        max_length=25,
+        default='',
     )
-
+    flickr = models.URLField(
+        help_text="""
+            The flickr URL of the resource.""",
+        blank=True,
+        default='',
+    )
+    instagram = models.URLField(
+        help_text="""
+            The instagram URL of the resource.""",
+        blank=True,
+        default='',
+    )
+    soundcloud = models.URLField(
+        help_text="""
+            The soundcloud URL of the resource.""",
+        blank=True,
+        default='',
+    )
     image = models.ImageField(
         upload_to=ImageUploadPath(),
         null=True,
@@ -263,6 +339,12 @@ class Group(TimeStampedModel):
         max_length=1000,
     )
 
+    visitor_information = models.TextField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
     participants = models.CharField(
         help_text='Director(s) or Members (listed TLBB)',
         max_length=255,
@@ -270,42 +352,9 @@ class Group(TimeStampedModel):
         default='',
     )
 
-    bhs_id = models.IntegerField(
-        blank=True,
-        null=True,
-        unique=True,
-    )
-
     notes = models.TextField(
         help_text="""
             Notes (for internal use only).""",
-        blank=True,
-    )
-
-    MEM_STATUS = Choices(
-        (10, 'active', 'Active',),
-        (20, 'active_internal', 'Active Internal',),
-        (30, 'active_licensed', 'Active Licensed',),
-        (40, 'cancelled', 'Cancelled',),
-        (50, 'closed', 'Closed',),
-        (60, 'closed_merged', 'Closed Merged',),
-        (70, 'closed_revoked', 'Closed Revoked',),
-        (80, 'closed_voluntary', 'Closed Voluntary',),
-        (90, 'expelled', 'Expelled',),
-        (100, 'expired', 'Expired',),
-        (105, 'expired_licensed', 'Expired Licensed',),
-        (110, 'lapsed', 'Lapsed',),
-        (120, 'not_approved', 'Not Approved',),
-        (130, 'pending', 'Pending',),
-        (140, 'pending_voluntary', 'Pending Voluntary',),
-        (150, 'suspended', 'Suspended',),
-        (160, 'suspended_membership', 'Suspended Membership',),
-        (170, 'awaiting_payment', 'Awaiting Payment',),
-    )
-
-    mem_status = models.IntegerField(
-        choices=MEM_STATUS,
-        null=True,
         blank=True,
     )
 
@@ -369,56 +418,6 @@ class Group(TimeStampedModel):
     is_divided = models.BooleanField(
         help_text="""This district has divisions.""",
         default=False,
-    )
-
-    DIVISION = Choices(
-        ('EVG', [
-            (10, 'evgd1', 'EVG Division I'),
-            (20, 'evgd2', 'EVG Division II'),
-            (30, 'evgd3', 'EVG Division III'),
-            (40, 'evgd4', 'EVG Division IV'),
-            (50, 'evgd5', 'EVG Division V'),
-        ]),
-        ('FWD', [
-            (60, 'fwdaz', 'FWD Arizona'),
-            (70, 'fwdne', 'FWD Northeast'),
-            (80, 'fwdnw', 'FWD Northwest'),
-            (90, 'fwdse', 'FWD Southeast'),
-            (100, 'fwdsw', 'FWD Southwest'),
-        ]),
-        ('LOL', [
-            (110, 'lol10l', 'LOL 10000 Lakes'),
-            (120, 'lolone', 'LOL Division One'),
-            (130, 'lolnp', 'LOL Northern Plains'),
-            (140, 'lolpkr', 'LOL Packerland'),
-            (150, 'lolsw', 'LOL Southwest'),
-        ]),
-        ('MAD', [
-            # (160, 'madatl', 'MAD Atlantic'),
-            (170, 'madcen', 'MAD Central'),
-            (180, 'madnth', 'MAD Northern'),
-            (190, 'madsth', 'MAD Southern'),
-            # (200, 'madwst', 'MAD Western'),
-        ]),
-        ('NED', [
-            (210, 'nedgp', 'NED Granite and Pine'),
-            (220, 'nedmtn', 'NED Mountain'),
-            (230, 'nedpat', 'NED Patriot'),
-            (240, 'nedsun', 'NED Sunrise'),
-            (250, 'nedyke', 'NED Yankee'),
-        ]),
-        ('SWD', [
-            (260, 'swdne', 'SWD Northeast'),
-            (270, 'swdnw', 'SWD Northwest'),
-            (280, 'swdse', 'SWD Southeast'),
-            (290, 'swdsw', 'SWD Southwest'),
-        ]),
-    )
-
-    division = models.IntegerField(
-        choices=DIVISION,
-        null=True,
-        blank=True,
     )
 
     # Relations

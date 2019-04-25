@@ -132,6 +132,9 @@ class AppearanceViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True)
     def mock(self, request, pk=None, **kwargs):
+        """
+        Mocks an Appearance using fake data.
+        """
         object = self.get_object()
         object.mock()
         object.save()
@@ -278,6 +281,9 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         content_negotiation_class=IgnoreClientContentNegotiation,
     )
     def csa(self, request, pk=None):
+        """
+        Renders the Competitor Scoring Analysis in PDF
+        """
         appearance = Appearance.objects.get(pk=pk)
         if appearance.csa:
             pdf = appearance.csa.file

@@ -346,7 +346,7 @@ class GridSerializer(serializers.ModelSerializer):
             'renditions',
             'venue',
             'round',
-            'appearance',
+            # 'appearance',
             'permissions',
         ]
 
