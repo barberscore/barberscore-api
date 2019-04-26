@@ -556,33 +556,22 @@ class GroupManager(Manager):
 
 class MemberManager(Manager):
     def update_or_create_from_join(self, join):
-        # Ignore rows without approval flow
-        if not join.paid:
-            raise ValueError('Join not paid')
-        if join.deleted:
-            raise ValueError('Join was deleted')
-
         # Extract
-        mc_pk = str(join.id)
-        structure = str(join.structure.id)
-        human = str(join.subscription.human.id)
-        start_date = join.established_date
-        if join.inactive_date:
-            end_date = join.inactive_date
-        else:
-            end_date = join.subscription.current_through
-        part = join.vocal_part
+        if not isinstance(join, dict):
+            raise RuntimeError("Must be pre-validated")
+
+        mc_pk = join['id']
+        start_date = join['startest_date']
+        end_date = join['endest_date']
+        vocal_part = join['vocal_part']
+        group_id = join['structure__id']
+        person_id = join['subscription__human__id']
+        status = join['status']
 
         # Transform
-        if not end_date:
-            status = self.model.STATUS.active
-        elif end_date > localdate():
-            status = self.model.STATUS.active
-        else:
-            status = self.model.STATUS.inactive
         part = getattr(
             self.model.PART,
-            part.strip().lower() if part else '',
+            vocal_part.strip().lower() if vocal_part else '',
             None,
         )
 
@@ -595,34 +584,14 @@ class MemberManager(Manager):
             'part': part,
         }
 
-        # Get the related fields
-        Group = apps.get_model('api.group')
-        try:
-            group = Group.objects.get(
-                mc_pk=structure,
-            )
-        except Group.DoesNotExist:
-            Structure = apps.get_model('bhs.structure')
-            structure = Structure.objects.get(id=structure)
-            group, created = Group.objects.update_or_create_from_structure(structure)
-
-        Person = apps.get_model('api.person')
-        try:
-            person = Person.objects.get(
-                mc_pk=human,
-            )
-        except Person.DoesNotExist:
-            Human = apps.get_model('bhs.human')
-            human = Human.objects.get(id=human)
-            person, created = Person.objects.update_or_create_from_human(human)
-
-        # get or create
+        # Load
         member, created = self.update_or_create(
-            person=person,
-            group=group,
+            person_id=person_id,
+            group_id=group_id,
             defaults=defaults,
         )
         return member, created
+
 
     def update_or_create_from_mem(self, item):
         # Extract
@@ -657,24 +626,28 @@ class MemberManager(Manager):
 class OfficerManager(Manager):
     def update_or_create_from_role(self, role):
         # Extract
-        mc_pk = str(role.id)
-        office = role.name
-        group = str(role.structure.id)
-        person = str(role.human.id)
-        start_date = role.start_date
-        end_date = role.end_date
+        if not isinstance(role, dict):
+            raise RuntimeError("Must be pre-processed")
+        mc_pk = role['id']
+        name = role['name']
+        start_date = role['startest_date']
+        end_date = role['endest_date']
+        person_id = role['human_id']
+        group_id = role['structure_id']
+        status = role['status']
 
         # Transform
-        today = now().date()
-        if end_date:
-            if end_date < today:
-                status = self.model.STATUS.inactive
-            else:
-                status = self.model.STATUS.active
-        else:
-            status = self.model.STATUS.active
+        office_map = {
+            'Chapter President': "e42bdba1-1483-4a63-9352-61333d345962",
+            'Chapter Secretary': "25b39ea4-7ac6-4221-811c-2b6946d4517d",
+            'Chorus Director': "4f16b826-a874-4fcc-a9b3-b79cba7e23dd",
+            'Chorus Associate or Assistant Director': "e232b6a4-4627-48b4-9e49-9c42cb4ad924",
+            'Chorus Manager': "ee8c4957-a6e7-412e-ac62-74e1dbafc35a",
+            'Quartet Admin': "a8d8ae37-9a7a-4229-8a53-a308e89bfa86",
+        }
 
-        # Load
+        office_id = office_map.get(name, None)
+
         defaults = {
             'mc_pk': mc_pk,
             'status': status,
@@ -682,22 +655,15 @@ class OfficerManager(Manager):
             'end_date': end_date,
         }
 
-        # Get related fields
-        Group = apps.get_model('api.group')
-        group = Group.objects.get(mc_pk=group)
-        Person = apps.get_model('api.person')
-        person = Person.objects.get(mc_pk=person)
-        Office = apps.get_model('api.office')
-        office = Office.objects.get(name=office)
-
-        # get or create
+        # Load
         officer, created = self.update_or_create(
-            person=person,
-            group=group,
-            office=office,
+            office_id=office_id,
+            person_id=person_id,
+            group_id=group_id,
             defaults=defaults,
         )
         return officer, created
+
 
     def check_officers(self):
         officers = self.filter(
