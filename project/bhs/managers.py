@@ -39,6 +39,10 @@ class HumanManager(Manager):
             'sex',
             'primary_voice_part',
             'mon',
+            'honorary_member',
+            'is_suspended',
+            'is_expelled',
+            'merged_id',
         ))
 
     def update_persons(self, cursor=None):

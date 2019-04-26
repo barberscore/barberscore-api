@@ -103,6 +103,21 @@ class Human(models.Model):
         editable=False,
         db_column='trusted_mon',
     )
+    is_honorary = models.BooleanField(
+        editable=False,
+        db_column='honorary_member',
+    )
+    is_suspended = models.BooleanField(
+        editable=False,
+    )
+    is_expelled = models.BooleanField(
+        editable=False,
+    )
+    merged_id = models.CharField(
+        max_length=255,
+        editable=False,
+        db_column='merged_into',
+    )
     created = models.DateTimeField(
         db_column='created',
         null=False,
