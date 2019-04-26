@@ -58,6 +58,8 @@ pydocstyle = "*"
 pylint = "*"
 pytest = "*"
 pytest-django = "*"
+coreapi = "*"
+pyyaml = "*"
 
 [requires]
 python_version = "3.7"

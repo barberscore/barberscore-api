@@ -38,6 +38,13 @@ class Person(TimeStampedModel):
         editable=False,
     )
 
+    prefix = models.CharField(
+        help_text="""
+            The prefix of the person.""",
+        max_length=255,
+        blank=True,
+    )
+
     first_name = models.CharField(
         help_text="""
             The first name of the person.""",
@@ -64,6 +71,13 @@ class Person(TimeStampedModel):
     nick_name = models.CharField(
         help_text="""
             The nickname of the person.""",
+        max_length=255,
+        blank=True,
+    )
+
+    suffix = models.CharField(
+        help_text="""
+            The suffix of the person.""",
         max_length=255,
         blank=True,
     )
@@ -109,6 +123,13 @@ class Person(TimeStampedModel):
 
     part = models.IntegerField(
         choices=PART,
+        null=True,
+        blank=True,
+    )
+
+    mon = models.IntegerField(
+        help_text="""
+            Men of Note.""",
         null=True,
         blank=True,
     )

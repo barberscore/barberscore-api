@@ -278,6 +278,17 @@ class GroupManager(Manager):
                 raise e
         return group, created
 
+    def update_or_create_from_mem(self, item):
+        # Extract
+        mc_pk = item.pop('id')
+        # Update or create
+        group, created = self.update_or_create(
+            mc_pk=mc_pk,
+            defaults=item,
+        )
+        return group, created
+
+
     def sort_tree(self):
         self.all().update(tree_sort=None)
         root = self.get(kind=self.model.KIND.international)
@@ -456,6 +467,20 @@ class MemberManager(Manager):
         )
         return member, created
 
+    def update_or_create_from_mem(self, item):
+        # Extract
+        mc_pk = item.pop('id')
+        person_id = item.pop('person_id')
+        group_id = item.pop('group_id')
+        # Update or create
+        member, created = self.update_or_create(
+            person_id=person_id,
+            group_id=group_id,
+            defaults=item,
+        )
+        return member, created
+
+
     def check_members(self):
         members = self.filter(
             group__mc_pk__isnull=False,
@@ -608,6 +633,17 @@ class PersonManager(Manager):
         person, created = self.update_or_create(
             mc_pk=mc_pk,
             defaults=defaults,
+        )
+        return person, created
+
+
+    def update_or_create_from_mem(self, item):
+        # Extract
+        mc_pk = item.pop('id')
+        # Update or create
+        person, created = self.update_or_create(
+            mc_pk=mc_pk,
+            defaults=item,
         )
         return person, created
 
