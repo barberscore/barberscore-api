@@ -38,6 +38,18 @@ class Person(TimeStampedModel):
         editable=False,
     )
 
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=STATUS,
+        default=STATUS.active,
+    )
+
     prefix = models.CharField(
         help_text="""
             The prefix of the person.""",
@@ -80,18 +92,6 @@ class Person(TimeStampedModel):
             The suffix of the person.""",
         max_length=255,
         blank=True,
-    )
-
-    STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.active,
     )
 
     birth_date = models.DateField(
