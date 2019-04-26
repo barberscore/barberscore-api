@@ -89,8 +89,4 @@ class Command(BaseCommand):
             t = Join.objects.delete_orphans()
             self.stdout.write("Deleted {0} member orphans.".format(t))
 
-        # Sync Subscriptions
-        # t = Subscription.objects.update_users(cursor=cursor)
-        # self.stdout.write("Queued {0} users.".format(t))
-
         self.stdout.write("Complete.")
