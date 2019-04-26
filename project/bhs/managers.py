@@ -2,15 +2,45 @@
 # Third-Party
 import django_rq
 from django_fsm_log.models import StateLog
+from datetime import date
 
 # Django
 from django.apps import apps
 from django.db.models import Manager
 from django.db.models import Q
-from django.utils.timezone import localdate
+from django.db.models import F
+from django.db.models import Min
+from django.db.models import Max
+from django.db.models import When
+from django.db.models import IntegerField
+from django.db.models import Case
 
 
 class HumanManager(Manager):
+    def export_values(self, cursor=None):
+        hs = self.all()
+        if cursor:
+            hs = hs.filter(
+                modified__gte=cursor,
+            )
+        return list(hs.values(
+            'id',
+            'first_name',
+            'middle_name',
+            'last_name',
+            'nick_name',
+            'email',
+            'birth_date',
+            'is_deceased',
+            'phone',
+            'cell_phone',
+            'work_phone',
+            'bhs_id',
+            'sex',
+            'primary_voice_part',
+            'mon',
+        ))
+
     def update_persons(self, cursor=None):
         # Get base
         humans = self.all()
@@ -53,6 +83,62 @@ class HumanManager(Manager):
 
 
 class StructureManager(Manager):
+    def export_values(self, cursor=None):
+        today = date.today()
+        output = []
+        types = [
+            'organization',
+            'district',
+            'group',
+            'chapter',
+            'chorus',
+            'quartet',
+        ]
+        for t in types:
+            ss = self.filter(
+                kind=t,
+            )
+            if cursor:
+                ss = ss.filter(
+                    modified__gte=cursor,
+                )
+            output.extend(
+                list(ss.values(
+                    'id',
+                    'name',
+                    'status',
+                    'kind',
+                    'gender',
+                    'division',
+                    'bhs_id',
+                    'chapter_code',
+                    'website',
+                    'email',
+                    'phone',
+                    'fax',
+                    'facebook',
+                    'twitter',
+                    'youtube',
+                    'pinterest',
+                    'flickr',
+                    'instagram',
+                    'soundcloud',
+                    'tin',
+                    'preferred_name',
+                    'first_alternate_name',
+                    'second_alternate_name',
+                    'visitor_information',
+                    'established_date',
+                    'chartered_date',
+                    'licenced_date',
+                    'deleted',
+                    'status_id',
+                    'parent_id',
+                ))
+            )
+        return output
+
+
     def update_groups(self, cursor=None):
         # Get base
         structures = self.select_related('parent').all()
@@ -95,6 +181,28 @@ class StructureManager(Manager):
 
 
 class RoleManager(Manager):
+    def export_values(self, cursor=None):
+        today = date.today()
+        rs = self.all()
+        if cursor:
+            rs = rs.filter(
+                modified__gte=cursor,
+            )
+        return list(rs.values(
+            'name',
+            'human_id',
+            'structure_id',
+        ).annotate(
+            startest_date=Min('start_date'),
+            endest_date=Max('end_date'),
+            status=Case(
+                When(endest_date=None, then=10),
+                When(endest_date__gte=today, then=10),
+                default=-10,
+                output_field=IntegerField(),
+            ),
+        ))
+
     def update_officers(self, cursor=None):
         roles = self.select_related(
             'structure',
@@ -131,6 +239,41 @@ class RoleManager(Manager):
 
 
 class JoinManager(Manager):
+    def export_values(self, cursor=None):
+        today = date.today()
+        js = self.filter(
+            paid=True,
+            deleted__isnull=True,
+            subscription__current_through__isnull=False,
+            established_date__isnull=False,
+        ).select_related(
+            'structure',
+            'membership',
+            'subscription',
+            'subscription__human',
+        )
+        if cursor:
+            js = js.filter(
+                Q(modified__gte=cursor) |
+                Q(membership__modified__gte=cursor) |
+                Q(subscription__modified__gte=cursor)
+            )
+        return list(js.values(
+            'structure__id',
+            'subscription__human__id',
+        ).annotate(
+            startest_date=Min('established_date'),
+            endest_date=Max('subscription__current_through'),
+            vocal_part=F('vocal_part'),
+            status=Case(
+                When(endest_date=None, then=10),
+                When(endest_date__gte=today, then=10),
+                default=-10,
+                output_field=IntegerField(),
+            ),
+        ))
+
+
     def update_members(self, cursor=None):
         # Get all records as values
         joins = self.filter(
