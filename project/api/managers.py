@@ -41,6 +41,7 @@ from api.validators import validate_bhs_id
 from api.validators import validate_tin
 from api.validators import validate_url
 
+
 log = logging.getLogger(__name__)
 
 validate_url = URLValidator()
@@ -138,7 +139,7 @@ class GroupManager(Manager):
             visitor_information = structure['visitor_information']
             established_date = structure['established_date']
             status_id = structure['status_id']
-            parent_id = structure['parent_id']
+            parent_pk = structure['parent_id']
         else:
             mc_pk = str(structure.id)
             name = structure.name
@@ -162,7 +163,7 @@ class GroupManager(Manager):
             visitor_information = structure.visitor_information
             established_date = structure.established_date
             status_id = structure.status_id
-            parent_id = structure.parent_id
+            parent_pk = structure.parent_id
 
 
         # Transform
@@ -295,7 +296,7 @@ class GroupManager(Manager):
             'women': self.model.GENDER.female,
             'mixed': self.model.GENDER.mixed,
         }
-        gender = gender_map.get(gender, None)
+        gender = gender_map.get(gender, self.model.GENDER.male)
 
         division_map = {
             'EVG Division I': self.model.DIVISION.evgd1,
@@ -403,6 +404,13 @@ class GroupManager(Manager):
 
         visitor_information = visitor_information.strip() if visitor_information else ''
 
+        if parent_pk:
+            parent = self.get(
+                mc_pk=parent_pk,
+            )
+        else:
+            parent = None
+
         defaults = {
             'status': status,
             'name': name,
@@ -410,10 +418,10 @@ class GroupManager(Manager):
             'gender': gender,
             'division': division,
             'bhs_id': bhs_id,
-            'legacy_code': legacy_code,
+            'code': legacy_code,
             'website': website,
             'email': email,
-            'main_phone': main_phone,
+            'phone': main_phone,
             'fax_phone': fax_phone,
             'facebook': facebook,
             'twitter': twitter,
@@ -424,7 +432,7 @@ class GroupManager(Manager):
             'soundcloud': soundcloud,
             'visitor_information': visitor_information,
             'start_date': established_date,
-            'parent_id': parent_id,
+            'parent': parent,
         }
 
         # Load
@@ -557,6 +565,8 @@ class GroupManager(Manager):
 class MemberManager(Manager):
     def update_or_create_from_join(self, join):
         # Extract
+        Person = apps.get_model('api.person')
+        Group = apps.get_model('api.group')
         if not isinstance(join, dict):
             raise RuntimeError("Must be pre-validated")
 
@@ -564,8 +574,8 @@ class MemberManager(Manager):
         start_date = join['startest_date']
         end_date = join['endest_date']
         vocal_part = join['vocal_part']
-        group_id = join['structure__id']
-        person_id = join['subscription__human__id']
+        group_pk = join['structure__id']
+        person_pk = join['subscription__human__id']
         status = join['status']
 
         # Transform
@@ -584,10 +594,13 @@ class MemberManager(Manager):
             'part': part,
         }
 
+        person = Person.objects.get(mc_pk=person_pk)
+        group = Group.objects.get(mc_pk=group_pk)
+
         # Load
         member, created = self.update_or_create(
-            person_id=person_id,
-            group_id=group_id,
+            person=person,
+            group=group,
             defaults=defaults,
         )
         return member, created
@@ -625,6 +638,9 @@ class MemberManager(Manager):
 
 class OfficerManager(Manager):
     def update_or_create_from_role(self, role):
+        Person = apps.get_model('api.person')
+        Group = apps.get_model('api.group')
+        Office = apps.get_model('api.office')
         # Extract
         if not isinstance(role, dict):
             raise RuntimeError("Must be pre-processed")
@@ -632,21 +648,21 @@ class OfficerManager(Manager):
         name = role['name']
         start_date = role['startest_date']
         end_date = role['endest_date']
-        person_id = role['human_id']
-        group_id = role['structure_id']
+        person_pk = role['human_id']
+        group_pk = role['structure_id']
         status = role['status']
 
         # Transform
-        office_map = {
-            'Chapter President': "e42bdba1-1483-4a63-9352-61333d345962",
-            'Chapter Secretary': "25b39ea4-7ac6-4221-811c-2b6946d4517d",
-            'Chorus Director': "4f16b826-a874-4fcc-a9b3-b79cba7e23dd",
-            'Chorus Associate or Assistant Director': "e232b6a4-4627-48b4-9e49-9c42cb4ad924",
-            'Chorus Manager': "ee8c4957-a6e7-412e-ac62-74e1dbafc35a",
-            'Quartet Admin': "a8d8ae37-9a7a-4229-8a53-a308e89bfa86",
-        }
+        # office_map = {
+        #     'Chapter President': "e42bdba1-1483-4a63-9352-61333d345962",
+        #     'Chapter Secretary': "25b39ea4-7ac6-4221-811c-2b6946d4517d",
+        #     'Chorus Director': "4f16b826-a874-4fcc-a9b3-b79cba7e23dd",
+        #     'Chorus Associate or Assistant Director': "e232b6a4-4627-48b4-9e49-9c42cb4ad924",
+        #     'Chorus Manager': "ee8c4957-a6e7-412e-ac62-74e1dbafc35a",
+        #     'Quartet Admin': "a8d8ae37-9a7a-4229-8a53-a308e89bfa86",
+        # }
 
-        office_id = office_map.get(name, None)
+        # office_id = office_map.get(name, None)
 
         defaults = {
             'mc_pk': mc_pk,
@@ -655,11 +671,15 @@ class OfficerManager(Manager):
             'end_date': end_date,
         }
 
+        office = Office.objects.get(name=name)
+        person = Person.objects.get(mc_pk=person_pk)
+        group = Group.objects.get(mc_pk=group_pk)
+
         # Load
         officer, created = self.update_or_create(
-            office_id=office_id,
-            person_id=person_id,
-            group_id=group_id,
+            office=office,
+            person=person,
+            group=group,
             defaults=defaults,
         )
         return officer, created
