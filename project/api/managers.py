@@ -36,6 +36,10 @@ from api.tasks import get_auth0
 from api.tasks import check_member
 from api.tasks import check_officer
 from api.tasks import check_account
+from phonenumber_field.validators import validate_international_phonenumber
+from api.validators import validate_bhs_id
+from api.validators import validate_tin
+from api.validators import validate_url
 
 log = logging.getLogger(__name__)
 
@@ -111,74 +115,249 @@ class ChartManager(Manager):
 class GroupManager(Manager):
     def update_or_create_from_structure(self, structure):
         # Extract
-        mc_pk = str(structure.id)
-        raw_name = structure.name
-        preferred_name = structure.preferred_name
-        status = structure.status.name
-        kind = structure.kind
-        gender = structure.gender
-        division = structure.division
-        start_date = structure.established_date
-        email = structure.email
-        phone = structure.phone
-        website = structure.website
-        facebook = structure.facebook
-        twitter = structure.twitter
-        bhs_id = structure.bhs_id
-        try:
-            parent = self.get(mc_pk=structure.parent.id)
-        except AttributeError:
-            parent = None
-        except self.model.DoesNotExist:
-            parent = None
-        code = structure.chapter_code
+        if isinstance(structure, dict):
+            mc_pk = structure['id']
+            name = structure['name']
+            kind = structure['kind']
+            gender = structure['gender']
+            division = structure['division']
+            bhs_id = structure['bhs_id']
+            legacy_code = structure['chapter_code']
+            website = structure['website']
+            email = structure['email']
+            main_phone = structure['phone']
+            fax_phone = structure['fax']
+            facebook = structure['facebook']
+            twitter = structure['twitter']
+            youtube = structure['youtube']
+            pinterest = structure['pinterest']
+            flickr = structure['flickr']
+            instagram = structure['instagram']
+            soundcloud = structure['soundcloud']
+            preferred_name = structure['preferred_name']
+            visitor_information = structure['visitor_information']
+            established_date = structure['established_date']
+            status_id = structure['status_id']
+            parent_id = structure['parent_id']
+        else:
+            mc_pk = str(structure.id)
+            name = structure.name
+            kind = structure.kind
+            gender = structure.gender
+            division = structure.division
+            bhs_id = structure.bhs_id
+            legacy_code = structure.chapter_code
+            website = structure.website
+            email = structure.email
+            main_phone = structure.phone
+            fax_phone = structure.fax
+            facebook = structure.facebook
+            twitter = structure.twitter
+            youtube = structure.youtube
+            pinterest = structure.pinterest
+            flickr = structure.flickr
+            instagram = structure.instagram
+            soundcloud = structure.soundcloud
+            preferred_name = structure.preferred_name
+            visitor_information = structure.visitor_information
+            established_date = structure.established_date
+            status_id = structure.status_id
+            parent_id = structure.parent_id
+
+
         # Transform
-        name = raw_name.strip() if raw_name else ''
-        preferred_name = "{0} (NAME APPROVAL PENDING)".format(preferred_name) if preferred_name else ''
-        kind = getattr(
-            self.model.KIND,
-            kind.replace(
-                'group', 'noncomp'
-            ).replace(
-                'organization', 'international'
-            )
-        )
+        status_map = {
+            '64ad817f-f3c6-4b09-a1b0-4bd569b15d03': self.model.STATUS.inactive, # revoked
+            'd9e3e257-9eca-4cbf-959f-149cca968349': self.model.STATUS.inactive, # suspended
+            '6e3c5cc6-0734-4edf-8f51-40d3a865a94f': self.model.STATUS.inactive, # merged
+            'bd4721e7-addd-4854-9888-8a705725f748': self.model.STATUS.inactive, # closed
+            'e04744e6-b743-4247-92c2-2950855b3a93': self.model.STATUS.inactive, # expired
+            '55a97973-02c3-414a-bbef-22181ad46e85': self.model.STATUS.active, # pending
+            'bb1ee6f6-a2c5-4615-b6ad-76130c37b1e6': self.model.STATUS.active, # pending voluntary
+            'd7102af8-013a-40e7-bc85-0b00766ed124': self.model.STATUS.active, # awaiting
+            'f3facc00-1990-4c68-9052-39e066906a38': self.model.STATUS.active, # prospective
+            '4bfee76f-3110-4c32-bade-e5044fdd5fa2': self.model.STATUS.active, # licensed
+            '7b9e5e34-a7c5-4f1e-9fc5-656caa74b3c7': self.model.STATUS.active, # active
+        }
+        status = status_map.get(status_id, None)
+
+        # Re-construct dangling article
+        name = name.strip() if name else ""
+        parsed = name.partition(", The")
+        name = "The {0}".format(parsed[0]) if parsed[1] else parsed[0]
+
+        preferred_name = "{0} (NAME APPROVAL PENDING)".format(preferred_name.strip()) if preferred_name else ''
+        name = name if name else preferred_name
+
+        # AIC
+        aic_map = {
+            500983: "After Hours",
+            501972: "Main Street",
+            501329: "Forefront",
+            500922: "Instant Classic",
+            304772: "Musical Island Boys",
+            500000: "Masterpiece",
+            501150: "Ringmasters",
+            317293: "Old School",
+            286100: "Storm Front",
+            500035: "Crossroads",
+            297201: "OC Times",
+            299233: "Max Q",
+            302244: "Vocal Spectrum",
+            299608: "Realtime",
+            6158: "Gotcha!",
+            2496: "Power Play",
+            276016: "Four Voices",
+            5619: "Michigan Jake",
+            6738: "Platinum",
+            3525: "FRED",
+            5721: "Revival",
+            2079: "Yesteryear",
+            2163: "Nightlife",
+            4745: "Marquis",
+            3040: "Joker's Wild",
+            1259: "Gas House Gang",
+            2850: "Keepsake",
+            1623: "The Ritz",
+            3165: "Acoustix",
+            1686: "Second Edition",
+            492: "Chiefs of Staff",
+            1596: "Interstate Rivals",
+            1654: "Rural Route 4",
+            406: "The New Tradition",
+            1411: "Rapscallions",
+            1727: "Side Street Ramblers",
+            545: "Classic Collection",
+            490: "Chicago News",
+            329: "Boston Common",
+            4034: "Grandma's Boys",
+            318: "Bluegrass Student Union",
+            362: "Most Happy Fellows",
+            1590: "Innsiders",
+            1440: "Happiness Emporium",
+            1427: "Regents",
+            627: "Dealer's Choice",
+            1288: "Golden Staters",
+            1275: "Gentlemen's Agreement",
+            709: "Oriole Four",
+            711: "Mark IV",
+            2047: "Western Continentals",
+            1110: "Four Statesmen",
+            713: "Auto Towners",
+            715: "Four Renegades",
+            1729: "Sidewinders",
+            718: "Town and Country 4",
+            719: "Gala Lads",
+            1871: "The Suntones",
+            722: "Evans Quartet",
+            724: "Four Pitchikers",
+            726: "Gaynotes",
+            729: "Lads of Enchantment",
+            731: "Confederates",
+            732: "Four Hearsemen",
+            736: "The Orphans",
+            739: "Vikings",
+            743: "Four Teens",
+            746: "Schmitt Brothers",
+            748: "Buffalo Bills",
+            750: "Mid-States Four",
+            753: "Pittsburghers",
+            756: "Doctors of Harmony",
+            759: "Garden State Quartet",
+            761: "Misfits",
+            764: "Harmony Halls",
+            766: "Four Harmonizers",
+            770: "Elastic Four",
+            773: "Chord Busters",
+            775: "Flat Foot Four",
+            776: "Bartlsesville Barflies",
+        }
+
+        # Overwrite status for AIC
+        if bhs_id in aic_map:
+            status = -5
+
+        # Overwrite name for AIC
+        name = aic_map.get(bhs_id, name)
+
+        kind_map = {
+            'quartet': self.model.KIND.quartet,
+            'chorus': self.model.KIND.chorus,
+            'chapter': self.model.KIND.chapter,
+            'group': self.model.KIND.noncomp,
+            'district': self.model.KIND.district,
+            'organization': self.model.KIND.international,
+        }
+        kind = kind_map.get(kind, None)
+
         gender_map = {
             'men': self.model.GENDER.male,
             'women': self.model.GENDER.female,
             'mixed': self.model.GENDER.mixed,
         }
-        gender = gender_map.get(gender, self.model.GENDER.male)
+        gender = gender_map.get(gender, None)
+
         division_map = {
-            'EVG Division I': 10,
-            'EVG Division II': 20,
-            'EVG Division III': 30,
-            'EVG Division IV': 40,
-            'EVG Division V': 50,
-            'FWD Arizona': 60,
-            'FWD Northeast': 70,
-            'FWD Northwest': 80,
-            'FWD Southeast': 90,
-            'FWD Southwest': 100,
-            'LOL 10000 Lakes': 110,
-            'LOL Division One': 120,
-            'LOL Northern Plains': 130,
-            'LOL Packerland': 140,
-            'LOL Southwest': 150,
-            'MAD Central': 170,
-            'MAD Northern': 180,
-            'MAD Southern': 190,
-            'NED Granite and Pine': 210,
-            'NED Mountain': 220,
-            'NED Patriot': 230,
-            'NED Sunrise': 240,
-            'NED Yankee': 250,
-            'SWD Northeast': 260,
-            'SWD Northwest': 270,
-            'SWD Southeast': 280,
-            'SWD Southwest': 290,
+            'EVG Division I': self.model.DIVISION.evgd1,
+            'EVG Division II': self.model.DIVISION.evgd2,
+            'EVG Division III': self.model.DIVISION.evgd3,
+            'EVG Division IV': self.model.DIVISION.evgd4,
+            'EVG Division V': self.model.DIVISION.evgd5,
+            'FWD Arizona': self.model.DIVISION.fwdaz,
+            'FWD Northeast': self.model.DIVISION.fwdne,
+            'FWD Northwest': self.model.DIVISION.fwdnw,
+            'FWD Southeast': self.model.DIVISION.fwdse,
+            'FWD Southwest': self.model.DIVISION.fwdsw,
+            'LOL 10000 Lakes': self.model.DIVISION.lol10l,
+            'LOL Division One': self.model.DIVISION.lolone,
+            'LOL Northern Plains': self.model.DIVISION.lolnp,
+            'LOL Packerland': self.model.DIVISION.lolpkr,
+            'LOL Southwest': self.model.DIVISION.lolsw,
+            'MAD Central': self.model.DIVISION.madcen,
+            'MAD Northern': self.model.DIVISION.madnth,
+            'MAD Southern': self.model.DIVISION.madsth,
+            'NED Granite and Pine': self.model.DIVISION.nedgp,
+            'NED Mountain': self.model.DIVISION.nedmtn,
+            'NED Patriot': self.model.DIVISION.nedpat,
+            'NED Sunrise': self.model.DIVISION.nedsun,
+            'NED Yankee': self.model.DIVISION.nedyke,
+            'SWD Northeast': self.model.DIVISION.swdne,
+            'SWD Northwest': self.model.DIVISION.swdnw,
+            'SWD Southeast': self.model.DIVISION.swdse,
+            'SWD Southwest': self.model.DIVISION.swdsw,
         }
         division = division_map.get(division, None)
+
+        if bhs_id:
+            try:
+                validate_bhs_id(bhs_id)
+            except ValidationError:
+                bhs_id = None
+        else:
+            bhs_id = None
+
+        legacy_code = legacy_code.strip() if legacy_code else ''
+
+        if main_phone:
+            try:
+                validate_international_phonenumber(main_phone.strip())
+            except ValidationError:
+                main_phone = ""
+        else:
+            main_phone = ""
+        if fax_phone:
+            try:
+                validate_international_phonenumber(fax_phone.strip())
+            except ValidationError:
+                fax_phone = ""
+        else:
+            fax_phone = ""
+
+        try:
+            validate_url(website)
+        except ValidationError:
+            website = ""
+
         if email:
             email = email.strip().lower()
             try:
@@ -187,96 +366,74 @@ class GroupManager(Manager):
                 email = None
         else:
             email = None
-        phone = phone.strip()
-        website = website.strip()
-        facebook = facebook.strip()
-        twitter = twitter.strip()
-        status = getattr(self.model.STATUS, status, self.model.STATUS.inactive)
-        code = code.strip() if code else ''
 
-        # Construct the group name
-        if kind == self.model.KIND.quartet:
-            # If the name has not been assigned, use preferred. Otherwise, call unknown.
-            if not name:
-                name = preferred_name if preferred_name else 'UNKNOWN'
-        else:
-            name = name if name else 'UNKNOWN'
-
-        # Re-construct dangling article
-        if name.endswith(", The"):
-            parsed = name.partition(", The")
-            name = "The {0}".format(parsed[0])
-
-        # Clean website
-        try:
-            validate_url(website)
-        except ValidationError:
-            website = ""
-
-        # Clean facebook
         try:
             validate_url(facebook)
         except ValidationError:
             facebook = ""
 
-        # Clean twitter
-        if '@' in twitter:
-            if '/' in twitter:
-                twitter = twitter.rpartition("/")[2]
-            else:
-                twitter = twitter
-        else:
-            if '/' in twitter:
-                twitter = twitter.rpartition('/')[2]
-            else:
-                twitter = "@{0}".format(twitter)
         try:
-            validate_twitter(twitter)
+            validate_url(twitter)
         except ValidationError:
             twitter = ""
 
-        # Monkey-patch for the AIC
-        if str(bhs_id) in self.model.AIC:
-            status = getattr(self.model.STATUS, 'aic')
-            name = self.model.AIC[str(bhs_id)]
+        try:
+            validate_url(youtube)
+        except ValidationError:
+            youtube = ""
+        try:
+            validate_url(pinterest)
+        except ValidationError:
+            pinterest = ""
+
+        try:
+            validate_url(flickr)
+        except ValidationError:
+            flickr = ""
+
+        try:
+            validate_url(instagram)
+        except ValidationError:
+            instagram = ""
+
+        try:
+            validate_url(soundcloud)
+        except ValidationError:
+            soundcloud = ""
+
+        visitor_information = visitor_information.strip() if visitor_information else ''
 
         defaults = {
-            'name': name,
             'status': status,
+            'name': name,
             'kind': kind,
             'gender': gender,
             'division': division,
-            'start_date': start_date,
-            'email': email,
-            'phone': phone,
+            'bhs_id': bhs_id,
+            'legacy_code': legacy_code,
             'website': website,
+            'email': email,
+            'main_phone': main_phone,
+            'fax_phone': fax_phone,
             'facebook': facebook,
             'twitter': twitter,
-            'parent': parent,
-            'code': code,
-            'bhs_id': bhs_id,
+            'youtube': youtube,
+            'pinterest': pinterest,
+            'flickr': flickr,
+            'instagram': instagram,
+            'soundcloud': soundcloud,
+            'visitor_information': visitor_information,
+            'start_date': established_date,
+            'parent_id': parent_id,
         }
 
-        # Update or Create
-        try:
-            group, created = self.update_or_create(
-                mc_pk=mc_pk,
-                defaults=defaults,
-            )
-        except IntegrityError as e:
-            # Need to delete old offending record
-            if "api_group_bhs_id_kind" in str(e.args):
-                old = self.get(
-                    bhs_id=bhs_id,
-                )
-                old.delete()
-                group, created = self.update_or_create(
-                    mc_pk=mc_pk,
-                    defaults=defaults,
-                )
-            else:
-                raise e
+        # Load
+        group, created = self.update_or_create(
+            mc_pk=mc_pk,
+            defaults=defaults,
+        )
         return group, created
+
 
     def update_or_create_from_mem(self, item):
         # Extract
@@ -561,27 +718,79 @@ class OfficerManager(Manager):
 class PersonManager(Manager):
     def update_or_create_from_human(self, human):
         # Extract
-        mc_pk = str(human.id)
-        first_name = human.first_name
-        middle_name = human.middle_name
-        last_name = human.last_name
-        nick_name = human.nick_name
-        email = human.email
-        birth_date = human.birth_date
-        phone = human.phone
-        cell_phone = human.cell_phone
-        work_phone = human.work_phone
-        bhs_id = human.bhs_id
-        gender = human.sex
-        part = human.primary_voice_part
-        is_deceased = human.is_deceased
+        if isinstance(human, dict):
+            mc_pk = human['id']
+            first_name = human['first_name']
+            middle_name = human['middle_name']
+            last_name = human['last_name']
+            nick_name = human['nick_name']
+            email = human['email']
+            birth_date = human['birth_date']
+            home_phone = human['phone']
+            cell_phone = human['cell_phone']
+            work_phone = human['work_phone']
+            bhs_id = human['bhs_id']
+            gender = human['sex']
+            part = human['primary_voice_part']
+            mon = human['mon']
+            is_deceased = human['is_deceased']
+            is_honorary = human['is_honorary']
+            is_suspended = human['is_suspended']
+            is_expelled = human['is_expelled']
+            merged_id = human['merged_id']
+        else:
+            mc_pk = str(human.id)
+            first_name = human.first_name
+            middle_name = human.middle_name
+            last_name = human.last_name
+            nick_name = human.nick_name
+            email = human.email
+            birth_date = human.birth_date
+            home_phone = human.phone
+            cell_phone = human.cell_phone
+            work_phone = human.work_phone
+            bhs_id = human.bhs_id
+            gender = human.sex
+            part = human.primary_voice_part
+            mon = human.mon
+            is_deceased = human.is_deceased
+            is_honorary = human.is_honorary
+            is_suspended = human.is_suspended
+            is_expelled = human.is_expelled
+            merged_id = human.merged_id
 
         # Transform
+        inactive = any([
+            is_deceased,
+            is_honorary,
+            is_suspended,
+            is_expelled,
+            merged_id,
+        ])
+        if inactive:
+            status = self.model.STATUS.inactive
+        else:
+            status = self.model.STATUS.active
+
+        first_name = first_name.rpartition('Dr.')[2].strip()
+        prefix = first_name.rpartition('Dr.')[1].strip()
         first_name = first_name.replace(',', '').replace('.', '').strip()
         try:
             middle_name = middle_name.replace(',', '').replace('.', '').strip()
         except AttributeError:
             middle_name = ""
+        last_name = last_name.partition('II')[0].strip()
+        suffix = last_name.partition('II')[1].strip()
+        last_name = last_name.partition('III')[0].strip()
+        suffix = last_name.partition('III')[1].strip()
+        last_name = last_name.partition('DDS')[0].strip()
+        suffix = last_name.partition('DDS')[1].strip()
+        last_name = last_name.partition('Sr')[0].strip()
+        suffix = last_name.partition('Sr')[1].strip()
+        last_name = last_name.partition('Jr')[0].strip()
+        suffix = last_name.partition('Jr')[1].strip()
+        last_name = last_name.partition('M.D.')[0].strip()
+        suffix = last_name.partition('M.D.')[1].strip()
         last_name = last_name.replace(',', '').replace('.', '').strip()
         try:
             nick_name = nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").replace(',', '').replace('.', '').strip()
@@ -597,12 +806,27 @@ class PersonManager(Manager):
                 email = None
         else:
             email = None
-        if not phone:
-            phone = ''
-        if not cell_phone:
-            cell_phone = ''
-        if not work_phone:
-            work_phone = ''
+        if home_phone:
+            try:
+                validate_international_phonenumber(home_phone)
+            except ValidationError:
+                home_phone = ""
+        else:
+            home_phone = ""
+        if cell_phone:
+            try:
+                validate_international_phonenumber(cell_phone)
+            except ValidationError:
+                cell_phone = ""
+        else:
+            cell_phone = ""
+        if work_phone:
+            try:
+                validate_international_phonenumber(work_phone)
+            except ValidationError:
+                work_phone = ""
+        else:
+            work_phone = ""
         if gender:
             gender = getattr(self.model.GENDER, gender.casefold(), None)
         else:
@@ -614,20 +838,25 @@ class PersonManager(Manager):
 
         is_deceased = bool(is_deceased)
 
+
         defaults = {
+            'status': status,
+            'prefix': prefix,
             'first_name': first_name,
             'middle_name': middle_name,
             'last_name': last_name,
+            'suffix': suffix,
             'nick_name': nick_name,
             'email': email,
             'birth_date': birth_date,
-            'phone': phone,
+            'home_phone': home_phone,
             'cell_phone': cell_phone,
             'work_phone': work_phone,
             'bhs_id': bhs_id,
             'gender': gender,
             'part': part,
             'is_deceased': is_deceased,
+            'mon': mon,
         }
         # Update or create
         person, created = self.update_or_create(
