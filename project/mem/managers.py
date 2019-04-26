@@ -7,6 +7,7 @@ from .validators import validate_bhs_id
 from .validators import validate_tin
 from .validators import validate_url
 
+
 class PersonManager(Manager):
     def update_or_create_from_human(self, human):
         # Extract
@@ -141,19 +142,107 @@ class GroupManager(Manager):
 
         # Transform
         status_map = {
-            '64ad817f-f3c6-4b09-a1b0-4bd569b15d03': self.model.STATUS.revoked,
-            'd9e3e257-9eca-4cbf-959f-149cca968349': self.model.STATUS.suspended,
-            '6e3c5cc6-0734-4edf-8f51-40d3a865a94f': self.model.STATUS.merged,
-            'bd4721e7-addd-4854-9888-8a705725f748': self.model.STATUS.closed,
-            'e04744e6-b743-4247-92c2-2950855b3a93': self.model.STATUS.expired,
-            '55a97973-02c3-414a-bbef-22181ad46e85': self.model.STATUS.pending,
-            'bb1ee6f6-a2c5-4615-b6ad-76130c37b1e6': self.model.STATUS.penvol,
-            'd7102af8-013a-40e7-bc85-0b00766ed124': self.model.STATUS.awaiting,
-            'f3facc00-1990-4c68-9052-39e066906a38': self.model.STATUS.prospective,
-            '4bfee76f-3110-4c32-bade-e5044fdd5fa2': self.model.STATUS.licensed,
-            '7b9e5e34-a7c5-4f1e-9fc5-656caa74b3c7': self.model.STATUS.active,
+            '64ad817f-f3c6-4b09-a1b0-4bd569b15d03': self.model.STATUS.inactive, # revoked
+            'd9e3e257-9eca-4cbf-959f-149cca968349': self.model.STATUS.inactive, # suspended
+            '6e3c5cc6-0734-4edf-8f51-40d3a865a94f': self.model.STATUS.inactive, # merged
+            'bd4721e7-addd-4854-9888-8a705725f748': self.model.STATUS.inactive, # closed
+            'e04744e6-b743-4247-92c2-2950855b3a93': self.model.STATUS.inactive, # expired
+            '55a97973-02c3-414a-bbef-22181ad46e85': self.model.STATUS.active, # pending
+            'bb1ee6f6-a2c5-4615-b6ad-76130c37b1e6': self.model.STATUS.active, # pending voluntary
+            'd7102af8-013a-40e7-bc85-0b00766ed124': self.model.STATUS.active, # awaiting
+            'f3facc00-1990-4c68-9052-39e066906a38': self.model.STATUS.active, # prospective
+            '4bfee76f-3110-4c32-bade-e5044fdd5fa2': self.model.STATUS.active, # licensed
+            '7b9e5e34-a7c5-4f1e-9fc5-656caa74b3c7': self.model.STATUS.active, # active
         }
         status = status_map.get(status_id, None)
+
+        # AIC
+        aic_map = {
+            "500983": "After Hours",
+            "501972": "Main Street",
+            "501329": "Forefront",
+            "500922": "Instant Classic",
+            "304772": "Musical Island Boys",
+            "500000": "Masterpiece",
+            "501150": "Ringmasters",
+            "317293": "Old School",
+            "286100": "Storm Front",
+            "500035": "Crossroads",
+            "297201": "OC Times",
+            "299233": "Max Q",
+            "302244": "Vocal Spectrum",
+            "299608": "Realtime",
+            "6158": "Gotcha!",
+            "2496": "Power Play",
+            "276016": "Four Voices",
+            "5619": "Michigan Jake",
+            "6738": "Platinum",
+            "3525": "FRED",
+            "5721": "Revival",
+            "2079": "Yesteryear",
+            "2163": "Nightlife",
+            "4745": "Marquis",
+            "3040": "Joker's Wild",
+            "1259": "Gas House Gang",
+            "2850": "Keepsake",
+            "1623": "The Ritz",
+            "3165": "Acoustix",
+            "1686": "Second Edition",
+            "492": "Chiefs of Staff",
+            "1596": "Interstate Rivals",
+            "1654": "Rural Route 4",
+            "406": "The New Tradition",
+            "1411": "Rapscallions",
+            "1727": "Side Street Ramblers",
+            "545": "Classic Collection",
+            "490": "Chicago News",
+            "329": "Boston Common",
+            "4034": "Grandma's Boys",
+            "318": "Bluegrass Student Union",
+            "362": "Most Happy Fellows",
+            "1590": "Innsiders",
+            "1440": "Happiness Emporium",
+            "1427": "Regents",
+            "627": "Dealer's Choice",
+            "1288": "Golden Staters",
+            "1275": "Gentlemen's Agreement",
+            "709": "Oriole Four",
+            "711": "Mark IV",
+            "2047": "Western Continentals",
+            "1110": "Four Statesmen",
+            "713": "Auto Towners",
+            "715": "Four Renegades",
+            "1729": "Sidewinders",
+            "718": "Town and Country 4",
+            "719": "Gala Lads",
+            "1871": "The Suntones",
+            "722": "Evans Quartet",
+            "724": "Four Pitchikers",
+            "726": "Gaynotes",
+            "729": "Lads of Enchantment",
+            "731": "Confederates",
+            "732": "Four Hearsemen",
+            "736": "The Orphans",
+            "739": "Vikings",
+            "743": "Four Teens",
+            "746": "Schmitt Brothers",
+            "748": "Buffalo Bills",
+            "750": "Mid-States Four",
+            "753": "Pittsburghers",
+            "756": "Doctors of Harmony",
+            "759": "Garden State Quartet",
+            "761": "Misfits",
+            "764": "Harmony Halls",
+            "766": "Four Harmonizers",
+            "770": "Elastic Four",
+            "773": "Chord Busters",
+            "775": "Flat Foot Four",
+            "776": "Bartlsesville Barflies",
+        }
+
+        # Overwrite status for AIC
+        if bhs_id in aic_map:
+            status = -5
 
         # Construct the group name
         if kind == self.model.KIND.quartet:
@@ -162,6 +251,9 @@ class GroupManager(Manager):
                 name = preferred_name if preferred_name else 'UNKNOWN'
         else:
             name = name if name else 'UNKNOWN'
+
+        # Overwrite name for AIC
+        name = aic_map.get(bhs_id, name)
 
         # Re-construct dangling article
         if name.endswith(", The"):
@@ -340,30 +432,15 @@ class GroupManager(Manager):
         return group, created
 
 
-class StreamManager(Manager):
+class MemberManager(Manager):
     def update_or_create_from_join(self, join):
         # Extract
-        pk = join['id']
-        paid = join['paid']
-        established_date = join['established_date']
-        inactive_date = join['inactive_date']
+        start_date = join['startest_date']
+        end_date = join['endest_date']
         vocal_part = join['vocal_part']
-        is_current = join['status']
-        inactive_reason = join['inactive_reason']
-        structure_id = join['structure__id']
-        human_id = join['subscription__human__id']
-        current_through = join['subscription__current_through']
-        sub_status = join['subscription__status']
-        mem_code = join['membership__code']
-        join_created = join['created']
-        join_modified = join['modified']
-        join_deleted = join['deleted']
-        mem_created = join['membership__created']
-        mem_modified = join['membership__modified']
-        mem_deleted = join['membership__deleted']
-        sub_created = join['subscription__created']
-        sub_modified = join['subscription__modified']
-        sub_deleted = join['subscription__deleted']
+        group_id = join['structure__id']
+        person_id = join['subscription__human__id']
+        status = join['status']
 
         # Transform
         part = getattr(
@@ -371,148 +448,57 @@ class StreamManager(Manager):
             vocal_part.strip().lower() if vocal_part else '',
             None,
         )
-        code = getattr(
-            self.model.CODE,
-            mem_code,
-            None,
-        )
-        status = getattr(
-            self.model.STATUS,
-            sub_status.replace('lapsedRenew', 'lapsed') if sub_status else '',
-            None,
-        )
-        inactive_map = {
-            'Non-renewal': 10,
-            'Renewed': 20,
-            'Not Cancelled': 30,
-            'Non-Payment': 40,
-            'changedOption': 70,
-            'cancelled': 90,
-            'Transferred': 100,
-            'Expired': 50,
-            'Deceased': 60,
-            'Other': 80,
-            'swappedChapter': 110,
-            'swapped': 120,
-        }
-        inactive = inactive_map.get(inactive_reason, None)
 
         # Build dictionary
         defaults = {
-            'is_paid': paid,
-            'established_date': established_date,
-            'inactive_date': inactive_date,
-            'part': part,
-            'is_current': is_current,
-            'inactive': inactive,
-            'group_id': structure_id,
-            'person_id': human_id,
-            'current_through': current_through,
             'status': status,
-            'code': code,
-            'join_created': join_created,
-            'join_modified': join_modified,
-            'join_deleted': join_deleted,
-            'mem_created': mem_created,
-            'mem_modified': mem_modified,
-            'mem_deleted': mem_deleted,
-            'sub_created': sub_created,
-            'sub_modified': sub_modified,
-            'sub_deleted': sub_deleted,
+            'start_date': start_date,
+            'end_date': end_date,
+            'part': part,
         }
 
         # Load
-        stream, created = self.update_or_create(
-            id=pk,
+        member, created = self.update_or_create(
+            person_id=person_id,
+            group_id=group_id,
             defaults=defaults,
         )
-        return stream, created
+        return member, created
 
 
-class MemberManager(Manager):
-    def update_or_create_from_stream(self, stream):
+class OfficerManager(Manager):
+    def update_or_create_from_role(self, role):
         # Extract
-        pk = join['id']
-        paid = join['paid']
-        established_date = join['established_date']
-        inactive_date = join['inactive_date']
-        vocal_part = join['vocal_part']
-        is_current = join['status']
-        inactive_reason = join['inactive_reason']
-        structure_id = join['structure__id']
-        human_id = join['subscription__human__id']
-        current_through = join['subscription__current_through']
-        sub_status = join['subscription__status']
-        mem_code = join['membership__code']
-        join_created = join['created']
-        join_modified = join['modified']
-        join_deleted = join['deleted']
-        mem_created = join['membership__created']
-        mem_modified = join['membership__modified']
-        mem_deleted = join['membership__deleted']
-        sub_created = join['subscription__created']
-        sub_modified = join['subscription__modified']
-        sub_deleted = join['subscription__deleted']
+        name = role['name']
+        start_date = role['startest_date']
+        end_date = role['endest_date']
+        person_id = role['human_id']
+        group_id = role['structure_id']
+        status = role['status']
 
         # Transform
-        part = getattr(
-            self.model.PART,
-            vocal_part.strip().lower() if vocal_part else '',
-            None,
-        )
-        code = getattr(
-            self.model.CODE,
-            mem_code,
-            None,
-        )
-        status = getattr(
-            self.model.STATUS,
-            sub_status.replace('lapsedRenew', 'lapsed') if sub_status else '',
-            None,
-        )
-        inactive_map = {
-            'Non-renewal': 10,
-            'Renewed': 20,
-            'Not Cancelled': 30,
-            'Non-Payment': 40,
-            'changedOption': 70,
-            'cancelled': 90,
-            'Transferred': 100,
-            'Expired': 50,
-            'Deceased': 60,
-            'Other': 80,
-            'swappedChapter': 110,
-            'swapped': 120,
+        name_map = {
+            'Chapter President': 310,
+            'Chapter Secretary': 320,
+            'Chorus Director': 320,
+            'Chorus Associate or Assistant Director': 340,
+            'Chorus Manager': 350,
+            'Quartet Admin': 410,
         }
-        inactive = inactive_map.get(inactive_reason, None)
 
-        # Build dictionary
+        office = name_map.get(name, None)
+
         defaults = {
-            'is_paid': paid,
-            'established_date': established_date,
-            'inactive_date': inactive_date,
-            'part': part,
-            'is_current': is_current,
-            'inactive': inactive,
-            'group_id': structure_id,
-            'person_id': human_id,
-            'current_through': current_through,
             'status': status,
-            'code': code,
-            'join_created': join_created,
-            'join_modified': join_modified,
-            'join_deleted': join_deleted,
-            'mem_created': mem_created,
-            'mem_modified': mem_modified,
-            'mem_deleted': mem_deleted,
-            'sub_created': sub_created,
-            'sub_modified': sub_modified,
-            'sub_deleted': sub_deleted,
+            'start_date': start_date,
+            'end_date': end_date,
         }
 
         # Load
-        stream, created = self.update_or_create(
-            id=pk,
+        officer, created = self.update_or_create(
+            office=office,
+            person_id=person_id,
+            group_id=group_id,
             defaults=defaults,
         )
-        return stream, created
+        return officer, created
