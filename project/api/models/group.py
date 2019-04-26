@@ -186,6 +186,13 @@ class Group(TimeStampedModel):
         max_length=25,
     )
 
+    fax_phone = models.CharField(
+        help_text="""
+            The fax number of the resource.  Include country code.""",
+        blank=True,
+        max_length=25,
+    )
+
     start_date = models.DateField(
         null=True,
         blank=True,
