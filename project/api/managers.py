@@ -442,18 +442,6 @@ class GroupManager(Manager):
         )
         return group, created
 
-
-    def update_or_create_from_mem(self, item):
-        # Extract
-        mc_pk = item.pop('id')
-        # Update or create
-        group, created = self.update_or_create(
-            mc_pk=mc_pk,
-            defaults=item,
-        )
-        return group, created
-
-
     def delete_orphans(self, structures):
         # Delete Orphans
         orphans = self.filter(
@@ -464,7 +452,6 @@ class GroupManager(Manager):
         t = orphans.count()
         orphans.delete()
         return t
-
 
     def sort_tree(self):
         self.all().update(tree_sort=None)
@@ -617,20 +604,16 @@ class MemberManager(Manager):
         )
         return member, created
 
-
-    def update_or_create_from_mem(self, item):
-        # Extract
-        mc_pk = item.pop('id')
-        person_id = item.pop('person_id')
-        group_id = item.pop('group_id')
-        # Update or create
-        member, created = self.update_or_create(
-            person_id=person_id,
-            group_id=group_id,
-            defaults=item,
+    def delete_orphans(self, joins):
+        # Delete Orphans
+        orphans = self.filter(
+            mc_pk__isnull=False,
+        ).exclude(
+            mc_pk__in=joins,
         )
-        return member, created
-
+        t = orphans.count()
+        orphans.delete()
+        return t
 
     def check_members(self):
         members = self.filter(
@@ -696,6 +679,16 @@ class OfficerManager(Manager):
         )
         return officer, created
 
+    def delete_orphans(self, roles):
+        # Delete Orphans
+        orphans = self.filter(
+            mc_pk__isnull=False,
+        ).exclude(
+            mc_pk__in=roles,
+        )
+        t = orphans.count()
+        orphans.delete()
+        return t
 
     def check_officers(self):
         officers = self.filter(
@@ -863,7 +856,6 @@ class PersonManager(Manager):
         )
         return person, created
 
-
     def delete_orphans(self, humans):
         # Delete Orphans
         orphans = self.filter(
@@ -874,17 +866,6 @@ class PersonManager(Manager):
         t = orphans.count()
         orphans.delete()
         return t
-
-
-    def update_or_create_from_mem(self, item):
-        # Extract
-        mc_pk = item.pop('id')
-        # Update or create
-        person, created = self.update_or_create(
-            mc_pk=mc_pk,
-            defaults=item,
-        )
-        return person, created
 
 
 class UserManager(BaseUserManager):
