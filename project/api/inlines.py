@@ -283,7 +283,7 @@ class EntryInline(admin.TabularInline):
     fields = [
         'session',
         'group',
-        'prelim',
+        'base',
         'draw',
         'status',
     ]
