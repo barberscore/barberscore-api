@@ -1049,7 +1049,7 @@ class Appearance(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.verified],
+        source=[STATUS.verified, STATUS.advanced],
         target=STATUS.advanced,
     )
     def advance(self, *args, **kwargs):
@@ -1059,7 +1059,7 @@ class Appearance(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.verified, STATUS.advanced],
+        source=[STATUS.verified, STATUS.advanced, STATUS.completed],
         target=STATUS.completed,
     )
     def complete(self, *args, **kwargs):

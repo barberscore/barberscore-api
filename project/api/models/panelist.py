@@ -387,7 +387,11 @@ class Panelist(TimeStampedModel):
 
     # Transitions
     @fsm_log_by
-    @transition(field=status, source=[STATUS.new, STATUS.active], target=STATUS.released)
+    @transition(
+        field=status,
+        source=[STATUS.new, STATUS.active, STATUS.released],
+        target=STATUS.released
+    )
     def release(self, *args, **kwargs):
         # Saves PSA through post-transition signal to avoid race condition
         return
