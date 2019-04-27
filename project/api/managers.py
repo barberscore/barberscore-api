@@ -289,6 +289,18 @@ class GroupManager(Manager):
         return group, created
 
 
+    def delete_orphans(self, structures):
+        # Delete Orphans
+        orphans = self.filter(
+            mc_pk__isnull=False,
+        ).exclude(
+            mc_pk__in=structures,
+        )
+        t = orphans.count()
+        orphans.delete()
+        return t
+
+
     def sort_tree(self):
         self.all().update(tree_sort=None)
         root = self.get(kind=self.model.KIND.international)
@@ -635,6 +647,18 @@ class PersonManager(Manager):
             defaults=defaults,
         )
         return person, created
+
+
+    def delete_orphans(self, humans):
+        # Delete Orphans
+        orphans = self.filter(
+            mc_pk__isnull=False,
+        ).exclude(
+            mc_pk__in=humans,
+        )
+        t = orphans.count()
+        orphans.delete()
+        return t
 
 
     def update_or_create_from_mem(self, item):
