@@ -207,8 +207,8 @@ class JoinManager(Manager):
             endest_date=Case(
                 When(
                     structure__kind__in=[
-                        Structure.KIND.chorus,
-                        Structure.KIND.chapter,
+                        'chorus',
+                        'chapter',
                     ],
                     then=Max('inactive_date'),
                 ),
