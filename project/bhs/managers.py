@@ -13,6 +13,7 @@ from django.db.models import Min
 from django.db.models import Max
 from django.db.models import When
 from django.db.models import IntegerField
+from django.db.models import DateField
 from django.db.models import Case
 
 
@@ -201,9 +202,19 @@ class JoinManager(Manager):
             'subscription__human__id',
         ).annotate(
             id=Max('id'),
-            startest_date=Min('established_date'),
-            endest_date=Max('subscription__current_through'),
             vocal_part=Max('vocal_part'),
+            startest_date=Min('established_date'),
+            endest_date=Case(
+                When(
+                    structure__kind__in=[
+                        Structure.KIND.chorus,
+                        Structure.KIND.chapter,
+                    ],
+                    then=Max('inactive_date'),
+                ),
+                default=Max('subscription__current_through'),
+                output_field=DateField(),
+            ),
             status=Case(
                 When(endest_date=None, then=10),
                 When(endest_date__gte=today, then=10),
