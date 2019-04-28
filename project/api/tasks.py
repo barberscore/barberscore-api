@@ -78,85 +78,85 @@ def build_email(template, context, subject, to, cc=[], bcc=[], attachments=[]):
     return email
 
 
-def check_account(account):
-    User = apps.get_model('api.user')
-    try:
-        user = User.objects.get(
-            username=account[0],
-        )
-    except User.DoesNotExist:
-        # Delete orphan
-        auth0 = get_auth0()
-        auth0.users.delete(account[0])
-        return "Deleted: {0}".format(account[0])
-    # Delete accounts with no valid email
-    if not user.person.email:
-        auth0 = get_auth0()
-        auth0.users.delete(account[0])
-        return "Deleted: {0}".format(account[0])
-    # Ensure sync
-    check = any([
-        user.person.email != account[1],
-        user.person.common_name != account[2],
-    ])
-    if check:
-        auth0 = get_auth0()
-        email = user.person.email.lower()
-        name = user.person.common_name
-        payload = {
-            'email': email,
-            'email_verified': True,
-            'app_metadata': {
-                'name': name,
-            }
-        }
-        auth0.users.update(user.username, payload)
-        return "Updated: {0}".format(account[0])
-    return "Skipped: {0}".format(account[0])
+# def check_account(account):
+#     User = apps.get_model('api.user')
+#     try:
+#         user = User.objects.get(
+#             username=account[0],
+#         )
+#     except User.DoesNotExist:
+#         # Delete orphan
+#         auth0 = get_auth0()
+#         auth0.users.delete(account[0])
+#         return "Deleted: {0}".format(account[0])
+#     # Delete accounts with no valid email
+#     if not user.person.email:
+#         auth0 = get_auth0()
+#         auth0.users.delete(account[0])
+#         return "Deleted: {0}".format(account[0])
+#     # Ensure sync
+#     check = any([
+#         user.person.email != account[1],
+#         user.person.common_name != account[2],
+#     ])
+#     if check:
+#         auth0 = get_auth0()
+#         email = user.person.email.lower()
+#         name = user.person.common_name
+#         payload = {
+#             'email': email,
+#             'email_verified': True,
+#             'app_metadata': {
+#                 'name': name,
+#             }
+#         }
+#         auth0.users.update(user.username, payload)
+#         return "Updated: {0}".format(account[0])
+#     return "Skipped: {0}".format(account[0])
 
 
-def check_member(member):
-    if not member.group.mc_pk:
-        raise RuntimeError("Not an MC entity.")
-    Join = apps.get_model('bhs.join')
-    Member = apps.get_model('api.member')
-    try:
-        join = Join.objects.filter(
-            structure__id=member.group.mc_pk,
-            subscription__human__id=member.person.mc_pk,
-            paid=True,
-            deleted__isnull=True,
-        ).latest(
-            'modified',
-            '-inactive_date',
-        )
-    except Join.DoesNotExist:
-        gone = str(member)
-        member.delete()
-        return gone, "Deleted"
-    return Member.objects.update_or_create_from_join(join)
+# def check_member(member):
+#     if not member.group.mc_pk:
+#         raise RuntimeError("Not an MC entity.")
+#     Join = apps.get_model('bhs.join')
+#     Member = apps.get_model('api.member')
+#     try:
+#         join = Join.objects.filter(
+#             structure__id=member.group.mc_pk,
+#             subscription__human__id=member.person.mc_pk,
+#             paid=True,
+#             deleted__isnull=True,
+#         ).latest(
+#             'modified',
+#             '-inactive_date',
+#         )
+#     except Join.DoesNotExist:
+#         gone = str(member)
+#         member.delete()
+#         return gone, "Deleted"
+#     return Member.objects.update_or_create_from_join(join)
 
 
-def check_officer(officer):
-    if not officer.group.mc_pk:
-        raise RuntimeError("Not an MC group.")
-    if not officer.office.mc_pk:
-        raise RuntimeError("Not an MC office.")
-    Role = apps.get_model('bhs.role')
-    Officer = apps.get_model('api.officer')
-    try:
-        role = Role.objects.filter(
-            structure__id=officer.group.mc_pk,
-            human__id=officer.person.mc_pk,
-        ).latest(
-            'modified',
-            'created',
-        )
-    except Role.DoesNotExist:
-        gone = str(officer)
-        officer.delete()
-        return gone, "Deleted"
-    return Officer.objects.update_or_create_from_role(role)
+# def check_officer(officer):
+#     if not officer.group.mc_pk:
+#         raise RuntimeError("Not an MC group.")
+#     if not officer.office.mc_pk:
+#         raise RuntimeError("Not an MC office.")
+#     Role = apps.get_model('bhs.role')
+#     Officer = apps.get_model('api.officer')
+#     try:
+#         role = Role.objects.filter(
+#             structure__id=officer.group.mc_pk,
+#             human__id=officer.person.mc_pk,
+#         ).latest(
+#             'modified',
+#             'created',
+#         )
+#     except Role.DoesNotExist:
+#         gone = str(officer)
+#         officer.delete()
+#         return gone, "Deleted"
+#     return Officer.objects.update_or_create_from_role(role)
 
 
 def create_or_update_account_from_person(person):
