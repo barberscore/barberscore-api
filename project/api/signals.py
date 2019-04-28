@@ -19,7 +19,7 @@ from .tasks import save_psa_from_panelist
 from .tasks import save_csa_from_appearance
 
 
-@receiver(post_save, sender=Person)
+# @receiver(post_save, sender=Person)
 def person_post_save(sender, instance, created, **kwargs):
     queue = django_rq.get_queue('low')
     queue.enqueue(
@@ -29,7 +29,7 @@ def person_post_save(sender, instance, created, **kwargs):
     return
 
 
-@receiver(post_delete, sender=User)
+# @receiver(post_delete, sender=User)
 def user_post_delete(sender, instance, **kwargs):
     queue = django_rq.get_queue('low')
     queue.enqueue(
