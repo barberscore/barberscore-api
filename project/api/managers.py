@@ -709,6 +709,28 @@ class OfficerManager(Manager):
 
 
 class PersonManager(Manager):
+    def export_orphans(self, cursor=None):
+        ps = self.filter(
+            email__isnull=True,
+            user__isnull=False,
+        )
+        if cursor:
+            ps = ps.filter(
+                modified__gte=cursor,
+            )
+        return ps
+
+    def export_adoptions(self, cursor=None):
+        ps = self.filter(
+            email__isnull=False,
+            user__isnull=True,
+        )
+        if cursor:
+            ps = ps.filter(
+                modified__gte=cursor,
+            )
+        return ps
+
     def update_or_create_from_human(self, human):
         # Extract
         if isinstance(human, dict):
