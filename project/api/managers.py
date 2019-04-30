@@ -910,7 +910,6 @@ class UserManager(BaseUserManager):
     def create_superuser(self, username, password, **kwargs):
         user = self.model(
             username=username,
-            status=self.model.STATUS.active,
             is_staff=True,
             **kwargs
         )
