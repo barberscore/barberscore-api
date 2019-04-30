@@ -12,6 +12,9 @@ from django.db.models import F
 from django.db.models import Min
 from django.db.models import Max
 from django.db.models import When
+from django.db.models import Subquery
+from django.db.models import OuterRef
+from django.db.models import CharField
 from django.db.models import IntegerField
 from django.db.models import DateField
 from django.db.models import Case
@@ -179,6 +182,7 @@ class StructureManager(Manager):
 
 class JoinManager(Manager):
     def export_values(self, cursor=None):
+        Structure = apps.get_model('bhs.structure')
         today = date.today()
         js = self.filter(
             paid=True,
@@ -202,15 +206,33 @@ class JoinManager(Manager):
             'subscription__human__id',
         ).annotate(
             id=Max('id'),
-            vocal_part=Max('vocal_part'),
+            vocal_part=Subquery(
+                self.filter(
+                    structure__id=OuterRef('structure__id'),
+                    subscription__human__id=OuterRef('subscription__human__id'),
+                ).order_by(
+                    '-modified',
+                ).values('vocal_part')[:1],
+                output_field=CharField()
+            ),
             startest_date=Min('established_date'),
             endest_date=Case(
                 When(
-                    structure__kind__in=[
-                        'chorus',
-                        'chapter',
-                    ],
-                    then=Max('inactive_date'),
+                    Q(
+                        structure__kind__in=[
+                            Structure.KIND.chorus,
+                            Structure.KIND.chapter,
+                        ],
+                    ),
+                    then=Subquery(
+                        self.filter(
+                            structure__id=OuterRef('structure__id'),
+                            subscription__human__id=OuterRef('subscription__human__id'),
+                        ).order_by(
+                            F('inactive_date').desc(nulls_first=True)
+                        ).values('inactive_date')[:1],
+                        output_field=DateField()
+                    ),
                 ),
                 default=Max('subscription__current_through'),
                 output_field=DateField(),
