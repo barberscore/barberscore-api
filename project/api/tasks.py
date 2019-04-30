@@ -325,3 +325,31 @@ def get_accounts(path='barberscore.csv'):
         reader = csv.reader(f, skipinitialspace=True)
         rows = [row for row in reader]
         return rows
+
+
+@job('low')
+def update_from_account(row):
+    Person = apps.get_model('api.person')
+    Human = apps.get_model('bhs.human')
+    auth0 = get_auth0()
+    username = row[0]
+    p = Person.objects.get(
+        user__username=username,
+    )
+    h = Human.objects.get(id=p.mc_pk)
+    payload = {
+        'app_metadata': {},
+        'user_metadata': {},
+    }
+    auth0.users.update(username, payload)
+    payload = {
+        'app_metadata': {
+            'mc_pk': str(h.id),
+            'bhs_id': int(h.bhs_id)
+        },
+        'user_metadata': {
+            'name': p.common_name
+        }
+    }
+    auth0.users.update(username, payload)
+    return
