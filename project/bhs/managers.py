@@ -12,7 +12,11 @@ from django.db.models import F
 from django.db.models import Min
 from django.db.models import Max
 from django.db.models import When
+from django.db.models import Subquery
+from django.db.models import OuterRef
+from django.db.models import CharField
 from django.db.models import IntegerField
+from django.db.models import DateField
 from django.db.models import Case
 
 
@@ -45,31 +49,31 @@ class HumanManager(Manager):
             'merged_id',
         ))
 
-    def update_persons(self, cursor=None):
-        # Get base
-        humans = self.all()
-        # Filter if cursored
-        if cursor:
-            humans = self.filter(
-                modified__gt=cursor,
-            )
-        else:
-            # Else clear logs
-            ss = StateLog.objects.filter(
-                content_type__model='person',
-                groups__mc_pk__isnull=False,
-            )
-            ss.delete()
-        t = humans.count()
-        # Creating/Update Persons
-        Person = apps.get_model('api.person')
-        queue = django_rq.get_queue('low')
-        for human in humans:
-            queue.enqueue(
-                Person.objects.update_or_create_from_human,
-                human,
-            )
-        return t
+    # def update_persons(self, cursor=None):
+    #     # Get base
+    #     humans = self.all()
+    #     # Filter if cursored
+    #     if cursor:
+    #         humans = self.filter(
+    #             modified__gt=cursor,
+    #         )
+    #     else:
+    #         # Else clear logs
+    #         ss = StateLog.objects.filter(
+    #             content_type__model='person',
+    #             groups__mc_pk__isnull=False,
+    #         )
+    #         ss.delete()
+    #     t = humans.count()
+    #     # Creating/Update Persons
+    #     Person = apps.get_model('api.person')
+    #     queue = django_rq.get_queue('low')
+    #     for human in humans:
+    #         queue.enqueue(
+    #             Person.objects.update_or_create_from_human,
+    #             human,
+    #         )
+    #     return t
 
     def delete_orphans(self):
         # Get base
@@ -88,7 +92,6 @@ class HumanManager(Manager):
 
 class StructureManager(Manager):
     def export_values(self, cursor=None):
-        today = date.today()
         output = []
         types = [
             'organization',
@@ -136,31 +139,31 @@ class StructureManager(Manager):
         return output
 
 
-    def update_groups(self, cursor=None):
-        # Get base
-        structures = self.select_related('parent').all()
-        if cursor:
-            # Filter if cursored
-            structures = structures.filter(
-                modified__gt=cursor,
-            )
-        else:
-            # Else clear logs
-            ss = StateLog.objects.filter(
-                content_type__model='group',
-                groups__mc_pk__isnull=False,
-            )
-            ss.delete()
-        t = structures.count()
-        # Creating/Update Groups
-        Group = apps.get_model('api.group')
-        queue = django_rq.get_queue('low')
-        for structure in structures:
-            queue.enqueue(
-                Group.objects.update_or_create_from_structure,
-                structure,
-            )
-        return t
+    # def update_groups(self, cursor=None):
+    #     # Get base
+    #     structures = self.select_related('parent').all()
+    #     if cursor:
+    #         # Filter if cursored
+    #         structures = structures.filter(
+    #             modified__gt=cursor,
+    #         )
+    #     else:
+    #         # Else clear logs
+    #         ss = StateLog.objects.filter(
+    #             content_type__model='group',
+    #             groups__mc_pk__isnull=False,
+    #         )
+    #         ss.delete()
+    #     t = structures.count()
+    #     # Creating/Update Groups
+    #     Group = apps.get_model('api.group')
+    #     queue = django_rq.get_queue('low')
+    #     for structure in structures:
+    #         queue.enqueue(
+    #             Group.objects.update_or_create_from_structure,
+    #             structure,
+    #         )
+    #     return t
 
     def delete_orphans(self):
         # Get base
@@ -179,6 +182,7 @@ class StructureManager(Manager):
 
 class JoinManager(Manager):
     def export_values(self, cursor=None):
+        Structure = apps.get_model('bhs.structure')
         today = date.today()
         js = self.filter(
             paid=True,
@@ -202,9 +206,37 @@ class JoinManager(Manager):
             'subscription__human__id',
         ).annotate(
             id=Max('id'),
+            vocal_part=Subquery(
+                self.filter(
+                    structure__id=OuterRef('structure__id'),
+                    subscription__human__id=OuterRef('subscription__human__id'),
+                ).order_by(
+                    '-modified',
+                ).values('vocal_part')[:1],
+                output_field=CharField()
+            ),
             startest_date=Min('established_date'),
-            endest_date=Max('subscription__current_through'),
-            vocal_part=Max('vocal_part'),
+            endest_date=Case(
+                When(
+                    Q(
+                        structure__kind__in=[
+                            Structure.KIND.chorus,
+                            Structure.KIND.chapter,
+                        ],
+                    ),
+                    then=Subquery(
+                        self.filter(
+                            structure__id=OuterRef('structure__id'),
+                            subscription__human__id=OuterRef('subscription__human__id'),
+                        ).order_by(
+                            F('inactive_date').desc(nulls_first=True)
+                        ).values('inactive_date')[:1],
+                        output_field=DateField()
+                    ),
+                ),
+                default=Max('subscription__current_through'),
+                output_field=DateField(),
+            ),
             status=Case(
                 When(endest_date=None, then=10),
                 When(endest_date__gte=today, then=10),
@@ -214,30 +246,30 @@ class JoinManager(Manager):
         ))
 
 
-    def update_members(self, cursor=None):
-        # Get all records as values
-        joins = self.filter(
-            paid=True,
-            deleted__isnull=True,
-        ).select_related(
-            'structure',
-            'subscription',
-            'subscription__human',
-        )
-        if cursor:
-            joins = joins.filter(
-                modified__gt=cursor,
-            )
-        t = joins.count()
-        # Creates race condition on multi-worker
-        Member = apps.get_model('api.member')
-        queue = django_rq.get_queue('low')
-        for join in joins:
-            queue.enqueue(
-                Member.objects.update_or_create_from_join,
-                join,
-            )
-        return t
+    # def update_members(self, cursor=None):
+    #     # Get all records as values
+    #     joins = self.filter(
+    #         paid=True,
+    #         deleted__isnull=True,
+    #     ).select_related(
+    #         'structure',
+    #         'subscription',
+    #         'subscription__human',
+    #     )
+    #     if cursor:
+    #         joins = joins.filter(
+    #             modified__gt=cursor,
+    #         )
+    #     t = joins.count()
+    #     # Creates race condition on multi-worker
+    #     Member = apps.get_model('api.member')
+    #     queue = django_rq.get_queue('low')
+    #     for join in joins:
+    #         queue.enqueue(
+    #             Member.objects.update_or_create_from_join,
+    #             join,
+    #         )
+    #     return t
 
     def delete_orphans(self):
         # Get base
@@ -278,25 +310,25 @@ class RoleManager(Manager):
             ),
         ))
 
-    def update_officers(self, cursor=None):
-        roles = self.select_related(
-            'structure',
-            'human',
-        )
-        if cursor:
-            roles = roles.filter(
-                modified__gt=cursor,
-            )
-        t = roles.count()
-        # Creates race condition on multi-worker
-        Officer = apps.get_model('api.officer')
-        queue = django_rq.get_queue('low')
-        for role in roles:
-            queue.enqueue(
-                Officer.objects.update_or_create_from_role,
-                role,
-            )
-        return t
+    # def update_officers(self, cursor=None):
+    #     roles = self.select_related(
+    #         'structure',
+    #         'human',
+    #     )
+    #     if cursor:
+    #         roles = roles.filter(
+    #             modified__gt=cursor,
+    #         )
+    #     t = roles.count()
+    #     # Creates race condition on multi-worker
+    #     Officer = apps.get_model('api.officer')
+    #     queue = django_rq.get_queue('low')
+    #     for role in roles:
+    #         queue.enqueue(
+    #             Officer.objects.update_or_create_from_role,
+    #             role,
+    #         )
+    #     return t
 
     def delete_orphans(self):
         # Get base

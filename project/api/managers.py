@@ -33,9 +33,9 @@ from django.utils.timezone import now
 # First-Party
 from api.tasks import get_accounts
 from api.tasks import get_auth0
-from api.tasks import check_member
-from api.tasks import check_officer
-from api.tasks import check_account
+# from api.tasks import check_member
+# from api.tasks import check_officer
+# from api.tasks import check_account
 from phonenumber_field.validators import validate_international_phonenumber
 from api.validators import validate_bhs_id
 from api.validators import validate_tin
@@ -615,27 +615,24 @@ class MemberManager(Manager):
         orphans.delete()
         return t
 
-    def check_members(self):
-        members = self.filter(
-            group__mc_pk__isnull=False,
-        ).select_related(
-            'group',
-            'person',
-        )
-        queue = django_rq.get_queue('low')
-        for member in members:
-            queue.enqueue(
-                check_member,
-                member,
-            )
-        return
+    # def check_members(self):
+    #     members = self.filter(
+    #         group__mc_pk__isnull=False,
+    #     ).select_related(
+    #         'group',
+    #         'person',
+    #     )
+    #     queue = django_rq.get_queue('low')
+    #     for member in members:
+    #         queue.enqueue(
+    #             check_member,
+    #             member,
+    #         )
+    #     return
 
 
 class OfficerManager(Manager):
     def update_or_create_from_role(self, role):
-        Person = apps.get_model('api.person')
-        Group = apps.get_model('api.group')
-        Office = apps.get_model('api.office')
         # Extract
         if not isinstance(role, dict):
             raise RuntimeError("Must be pre-processed")
@@ -648,6 +645,11 @@ class OfficerManager(Manager):
         status = role['status']
 
         # Transform
+        Person = apps.get_model('api.person')
+        Group = apps.get_model('api.group')
+        Office = apps.get_model('api.office')
+
+
         # office_map = {
         #     'Chapter President': "e42bdba1-1483-4a63-9352-61333d345962",
         #     'Chapter Secretary': "25b39ea4-7ac6-4221-811c-2b6946d4517d",
@@ -690,23 +692,45 @@ class OfficerManager(Manager):
         orphans.delete()
         return t
 
-    def check_officers(self):
-        officers = self.filter(
-            group__mc_pk__isnull=False,
-        ).select_related(
-            'group',
-            'person',
-        )
-        queue = django_rq.get_queue('low')
-        for officer in officers:
-            queue.enqueue(
-                check_officer,
-                officer,
-            )
-        return
+    # def check_officers(self):
+    #     officers = self.filter(
+    #         group__mc_pk__isnull=False,
+    #     ).select_related(
+    #         'group',
+    #         'person',
+    #     )
+    #     queue = django_rq.get_queue('low')
+    #     for officer in officers:
+    #         queue.enqueue(
+    #             check_officer,
+    #             officer,
+    #         )
+    #     return
 
 
 class PersonManager(Manager):
+    def export_orphans(self, cursor=None):
+        ps = self.filter(
+            email__isnull=True,
+            user__isnull=False,
+        )
+        if cursor:
+            ps = ps.filter(
+                modified__gte=cursor,
+            )
+        return ps
+
+    def export_adoptions(self, cursor=None):
+        ps = self.filter(
+            email__isnull=False,
+            user__isnull=True,
+        )
+        if cursor:
+            ps = ps.filter(
+                modified__gte=cursor,
+            )
+        return ps
+
     def update_or_create_from_human(self, human):
         # Extract
         if isinstance(human, dict):
@@ -869,16 +893,16 @@ class PersonManager(Manager):
 
 
 class UserManager(BaseUserManager):
-    def check_accounts(self):
-        accounts = get_accounts()
-        i = len(accounts)
-        queue = django_rq.get_queue('low')
-        for account in accounts:
-            queue.enqueue(
-                check_account,
-                account,
-            )
-        return i
+    # def check_accounts(self):
+    #     accounts = get_accounts()
+    #     i = len(accounts)
+    #     queue = django_rq.get_queue('low')
+    #     for account in accounts:
+    #         queue.enqueue(
+    #             check_account,
+    #             account,
+    #         )
+    #     return i
 
     def delete_orphans(self):
         auth0 = get_auth0()
