@@ -201,10 +201,11 @@ class JoinManager(Manager):
                 Q(membership__modified__gte=cursor) |
                 Q(subscription__modified__gte=cursor)
             )
-        return list(js.values(
+        js = js.values(
             'structure__id',
             'subscription__human__id',
-        ).annotate(
+        )
+        js = js.annotate(
             id=Max('id'),
             vocal_part=Subquery(
                 self.filter(
@@ -212,8 +213,26 @@ class JoinManager(Manager):
                     subscription__human__id=OuterRef('subscription__human__id'),
                 ).order_by(
                     '-modified',
-                ).values('vocal_part')[:1],
+                ).values('id')[:1],
                 output_field=CharField()
+            ),
+            inactivist_date=Subquery(
+                self.filter(
+                    structure__id=OuterRef('structure__id'),
+                    subscription__human__id=OuterRef('subscription__human__id'),
+                ).order_by(
+                    F('inactive_date').desc(nulls_first=True)
+                ).values('inactive_date')[:1],
+                output_field=DateField()
+            ),
+            currentest_date=Subquery(
+                self.filter(
+                    structure__id=OuterRef('structure__id'),
+                    subscription__human__id=OuterRef('subscription__human__id'),
+                ).order_by(
+                    F('subscription__current_through').desc(nulls_first=True)
+                ).values('subscription__current_through')[:1],
+                output_field=DateField()
             ),
             startest_date=Min('established_date'),
             endest_date=Case(
@@ -224,26 +243,27 @@ class JoinManager(Manager):
                             Structure.KIND.chapter,
                         ],
                     ),
-                    then=Subquery(
-                        self.filter(
-                            structure__id=OuterRef('structure__id'),
-                            subscription__human__id=OuterRef('subscription__human__id'),
-                        ).order_by(
-                            F('inactive_date').desc(nulls_first=True)
-                        ).values('inactive_date')[:1],
-                        output_field=DateField()
-                    ),
+                    then=F('inactivist_date'),
                 ),
-                default=Max('subscription__current_through'),
+                default=F('currentest_date'),
                 output_field=DateField(),
             ),
             status=Case(
-                When(endest_date=None, then=10),
+                When(endest_date__isnull=True, then=10),
                 When(endest_date__gte=today, then=10),
                 default=-10,
                 output_field=IntegerField(),
             ),
-        ))
+        ).values(
+            'structure__id',
+            'subscription__human__id',
+            'id',
+            'vocal_part',
+            'startest_date',
+            'endest_date',
+            'status',
+        )
+        return list(js)
 
 
     # def update_members(self, cursor=None):
