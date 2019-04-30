@@ -4,11 +4,17 @@ has now been Packaged!
 Packaging the Session represents the official handoff between the DRCJ and the CAs --
 the Session Manager (entries, contests, etc.) has been locked and any new changes
 must take place in the Round Manager (appearances, outcomes, etc.)
+Please be aware however that contestants may still add charts to their repertory in Barberscore.
 
-Attached to this email are the FINAL versions of the DRCJ and Legacy reports;
-CAs using the legacy system should update to these files since
-Group Admins may have made changes to their repertory since the last download!
-These are the only files guaranteed to be accurate and up-to-date.
+Attached to this email are the latest versions of the DRCJ and Legacy reports as of
+the time of packaging. CAs using the legacy system should discard any older reports
+since Group Admins may have made changes to their repertory since the last download!
+
+CAs - PLEASE NOTE: Depending on the amount of time between packaging and the start of the
+contest, you may wish to do another download closer to the start of the contest to import
+any additional charts the competitor may have added to their repertory in Barberscore. In any
+case (whether or not that option is practical), you should ALWAYS consult the group's repertory
+in Barberscore live during the contest to see if a "missing song title" is actually missing.
 
 If you have any other questions please reach out to David Mills or Chris Buechler.
 Otherwise, thank you to the DRCJ and good luck to the CAs!
