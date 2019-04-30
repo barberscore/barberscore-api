@@ -6,11 +6,11 @@ This is the final list of approved participants, in draw order:
 {{entry.draw}} - {{entry.group.name|safe}}
 {% endfor %}
 
-At this point, any additions to your chart repertory you might make in Barberscore should
+At this point, any additions you might make to your chart repertory in Barberscore must
 also be communicated via email to the Contest Administrators (cc'd on this message). 
 
-Other changes -- including scratches or order-of-appearance requests -- must be made directly to
-the Contest Administrators (cc'd on this message).
+Other changes -- including scratches or order-of-appearance requests -- must be made
+directly to the Contest Administrators (cc'd on this message).
 
 Have fun and break a leg!
 
