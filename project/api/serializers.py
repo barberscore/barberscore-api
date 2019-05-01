@@ -558,8 +558,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'location',
             'part',
             'website',
-            'facebook',
-            'twitter',
             'email',
             'address',
             'home_phone',

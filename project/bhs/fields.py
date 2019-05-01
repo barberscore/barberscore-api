@@ -1,9 +1,19 @@
 import string
 from datetime import date
+import phonenumbers
 
 from django.db.models import EmailField, CharField, DateField
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+
+class ValidatedPhoneField(CharField):
+    def from_db_value(self, value, expression, connection):
+        try:
+            value = phonenumbers.parse(value, 'US')
+        except phonenumbers.NumberParseException:
+            return ""
+        return phonenumbers.format_number(value, phonenumbers.PhoneNumberFormat.E164)
+
 
 class LowerEmailField(EmailField):
     def from_db_value(self, value, expression, connection):

@@ -741,18 +741,19 @@ class PersonManager(Manager):
             nick_name = human['nick_name']
             email = human['email']
             birth_date = human['birth_date']
-            home_phone = human['phone']
+            home_phone = human['home_phone']
             cell_phone = human['cell_phone']
             work_phone = human['work_phone']
             bhs_id = human['bhs_id']
-            gender = human['sex']
-            part = human['primary_voice_part']
+            gender = human['gender']
+            part = human['part']
             mon = human['mon']
             is_deceased = human['is_deceased']
             is_honorary = human['is_honorary']
             is_suspended = human['is_suspended']
             is_expelled = human['is_expelled']
             merged_id = human['merged_id']
+            deleted = human['deleted']
         else:
             mc_pk = str(human.id)
             first_name = human.first_name
@@ -761,18 +762,19 @@ class PersonManager(Manager):
             nick_name = human.nick_name
             email = human.email
             birth_date = human.birth_date
-            home_phone = human.phone
+            home_phone = human.home_phone
             cell_phone = human.cell_phone
             work_phone = human.work_phone
             bhs_id = human.bhs_id
-            gender = human.sex
-            part = human.primary_voice_part
+            gender = human.gender
+            part = human.part
             mon = human.mon
             is_deceased = human.is_deceased
             is_honorary = human.is_honorary
             is_suspended = human.is_suspended
             is_expelled = human.is_expelled
             merged_id = human.merged_id
+            deleted = human.deleted
 
         # Transform
         inactive = any([
@@ -781,19 +783,15 @@ class PersonManager(Manager):
             is_suspended,
             is_expelled,
             merged_id,
+            deleted,
         ])
         if inactive:
             status = self.model.STATUS.inactive
         else:
             status = self.model.STATUS.active
 
-        first_name = first_name.rpartition('Dr.')[2].strip()
         prefix = first_name.rpartition('Dr.')[1].strip()
-        first_name = first_name.replace(',', '').replace('.', '').strip()
-        try:
-            middle_name = middle_name.replace(',', '').replace('.', '').strip()
-        except AttributeError:
-            middle_name = ""
+        first_name = first_name.rpartition('Dr.')[2].strip()
         last_name = last_name.partition('II')[0].strip()
         suffix = last_name.partition('II')[1].strip()
         last_name = last_name.partition('III')[0].strip()
@@ -806,48 +804,14 @@ class PersonManager(Manager):
         suffix = last_name.partition('Jr')[1].strip()
         last_name = last_name.partition('M.D.')[0].strip()
         suffix = last_name.partition('M.D.')[1].strip()
-        last_name = last_name.replace(',', '').replace('.', '').strip()
-        try:
-            nick_name = nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").replace(',', '').replace('.', '').strip()
-        except AttributeError:
-            nick_name = ""
         if nick_name == first_name:
             nick_name = ""
-        if email:
-            email = email.strip().lower()
-            try:
-                validate_email(email)
-            except ValidationError:
-                email = None
-        else:
-            email = None
-        if home_phone:
-            try:
-                validate_international_phonenumber(home_phone)
-            except ValidationError:
-                home_phone = ""
-        else:
-            home_phone = ""
-        if cell_phone:
-            try:
-                validate_international_phonenumber(cell_phone)
-            except ValidationError:
-                cell_phone = ""
-        else:
-            cell_phone = ""
-        if work_phone:
-            try:
-                validate_international_phonenumber(work_phone)
-            except ValidationError:
-                work_phone = ""
-        else:
-            work_phone = ""
         if gender:
-            gender = getattr(self.model.GENDER, gender.casefold(), None)
+            gender = getattr(self.model.GENDER, gender, None)
         else:
             gender = None
         if part:
-            part = getattr(self.model.PART, part.casefold(), None)
+            part = getattr(self.model.PART, part, None)
         else:
             part = None
 
@@ -873,6 +837,7 @@ class PersonManager(Manager):
             'is_deceased': is_deceased,
             'mon': mon,
         }
+        print(defaults)
         # Update or create
         person, created = self.update_or_create(
             mc_pk=mc_pk,

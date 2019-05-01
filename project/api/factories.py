@@ -292,10 +292,7 @@ class PersonFactory(DjangoModelFactory):
     birth_date = None
     location = ''
     website = ''
-    facebook = ''
-    twitter = ''
     email = None
-    phone = ''
     image = ''
     description = ''
     notes = ''

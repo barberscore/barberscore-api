@@ -1,7 +1,6 @@
 
 
 # Third-Party
-from phonenumber_field.modelfields import PhoneNumberField
 from model_utils import Choices
 
 # Django
@@ -15,6 +14,7 @@ from .managers import JoinManager
 from .managers import RoleManager
 from .managers import StructureManager
 
+from .fields import ValidatedPhoneField
 from .fields import LowerEmailField
 from .fields import ReasonableBirthDate
 from .fields import VoicePartField
@@ -57,14 +57,17 @@ class Human(models.Model):
     is_deceased = models.BooleanField(
         editable=False,
     )
-    home_phone = PhoneNumberField(
+    home_phone = ValidatedPhoneField(
+        max_length=255,
         editable=False,
         db_column='phone'
     )
-    cell_phone = PhoneNumberField(
+    cell_phone = ValidatedPhoneField(
+        max_length=255,
         editable=False,
     )
-    work_phone = PhoneNumberField(
+    work_phone = ValidatedPhoneField(
+        max_length=255,
         editable=False,
     )
     bhs_id = models.IntegerField(

@@ -13,6 +13,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Django
 from django.contrib.contenttypes.fields import GenericRelation
@@ -55,36 +56,35 @@ class Person(TimeStampedModel):
             The prefix of the person.""",
         max_length=255,
         blank=True,
+        default='',
     )
 
     first_name = models.CharField(
         help_text="""
             The first name of the person.""",
         max_length=255,
-        blank=False,
-        default='Unknown',
+        editable=False,
     )
 
     middle_name = models.CharField(
         help_text="""
             The middle name of the person.""",
         max_length=255,
-        blank=True,
+        editable=False,
     )
 
     last_name = models.CharField(
         help_text="""
             The last name of the person.""",
         max_length=255,
-        blank=False,
-        default='Unknown',
+        editable=False,
     )
 
     nick_name = models.CharField(
         help_text="""
             The nickname of the person.""",
         max_length=255,
-        blank=True,
+        editable=False,
     )
 
     suffix = models.CharField(
@@ -92,11 +92,12 @@ class Person(TimeStampedModel):
             The suffix of the person.""",
         max_length=255,
         blank=True,
+        default='',
     )
 
     birth_date = models.DateField(
         null=True,
-        blank=True,
+        editable=False,
     )
 
     spouse = models.CharField(
@@ -114,7 +115,6 @@ class Person(TimeStampedModel):
     )
 
     PART = Choices(
-        # (-1, 'director', 'Director'),
         (1, 'tenor', 'Tenor'),
         (2, 'lead', 'Lead'),
         (3, 'baritone', 'Baritone'),
@@ -124,14 +124,14 @@ class Person(TimeStampedModel):
     part = models.IntegerField(
         choices=PART,
         null=True,
-        blank=True,
+        editable=False,
     )
 
     mon = models.IntegerField(
         help_text="""
             Men of Note.""",
         null=True,
-        blank=True,
+        editable=False,
     )
 
     GENDER = Choices(
@@ -142,7 +142,7 @@ class Person(TimeStampedModel):
     gender = models.IntegerField(
         choices=GENDER,
         null=True,
-        blank=True,
+        editable=False,
     )
 
     district = models.CharField(
@@ -150,6 +150,7 @@ class Person(TimeStampedModel):
             District (used primarily for judges.)""",
         max_length=10,
         blank=True,
+        default='',
     )
 
     is_deceased = models.BooleanField(
@@ -163,44 +164,11 @@ class Person(TimeStampedModel):
         default='',
     )
 
-    facebook = models.URLField(
-        help_text="""
-            The facebook URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    twitter = models.CharField(
-        help_text="""
-            The twitter handle (in form @twitter_handle) of the resource.""",
-        blank=True,
-        max_length=16,
-        validators=[
-            RegexValidator(
-                regex=r'@([A-Za-z0-9_]+)',
-                message="""
-                    Must be a single Twitter handle
-                    in the form `@twitter_handle`.
-                """,
-            ),
-        ],
-        default='',
-    )
-
     email = LowerEmailField(
         help_text="""
             The contact email of the resource.""",
         null=True,
-        blank=True,
-        unique=True,
-    )
-
-    phone = models.CharField(
-        help_text="""
-            The phone number of the resource.  Include country code.""",
-        blank=True,
-        max_length=25,
-        default='',
+        editable=False,
     )
 
     address = models.TextField(
@@ -211,29 +179,24 @@ class Person(TimeStampedModel):
         default='',
     )
 
-    home_phone = models.CharField(
+    home_phone = PhoneNumberField(
         help_text="""
             The home phone number of the resource.  Include country code.""",
-        blank=True,
-        max_length=25,
-        default='',
+        editable=False,
     )
 
-    work_phone = models.CharField(
+    work_phone = PhoneNumberField(
         help_text="""
             The work phone number of the resource.  Include country code.""",
-        blank=True,
-        max_length=25,
-        default='',
+        editable=False,
     )
 
-    cell_phone = models.CharField(
+    cell_phone = PhoneNumberField(
         help_text="""
             The cell phone number of the resource.  Include country code.""",
-        blank=True,
-        max_length=25,
-        default='',
+        editable=False,
     )
+
 
     airports = ArrayField(
         base_field=models.CharField(
@@ -266,9 +229,7 @@ class Person(TimeStampedModel):
     )
 
     bhs_id = models.IntegerField(
-        null=True,
-        blank=True,
-        unique=True,
+        editable=False,
     )
 
     mc_pk = models.CharField(

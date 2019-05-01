@@ -35,18 +35,19 @@ class HumanManager(Manager):
             'nick_name',
             'email',
             'birth_date',
-            'phone',
+            'home_phone',
             'cell_phone',
             'work_phone',
             'bhs_id',
-            'sex',
-            'primary_voice_part',
+            'gender',
+            'part',
             'mon',
             'is_deceased',
             'is_honorary',
             'is_suspended',
             'is_expelled',
             'merged_id',
+            'deleted',
         ))
 
     # def update_persons(self, cursor=None):
