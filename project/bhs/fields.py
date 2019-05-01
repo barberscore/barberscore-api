@@ -1,24 +1,45 @@
-from django.db.models import EmailField, CharField
+import string
+from datetime import date
+
+from django.db.models import EmailField, CharField, DateField
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 
-class McEmailField(EmailField):
+class LowerEmailField(EmailField):
     def from_db_value(self, value, expression, connection):
         try:
             validate_email(value)
         except ValidationError:
-            return ""
+            return None
         return value.lower()
 
 
-class McVoicePartField(CharField):
+class VoicePartField(CharField):
     def from_db_value(self, value, expression, connection):
-        if not value:
-            return value
-        return value.strip().lower()
+        part_map = {
+            'tenor': 'tenor',
+            'lead': 'lead',
+            'baritone': 'baritone',
+            'bass': 'bass',
+        }
+        try:
+            return part_map[value.lower().strip()]
+        except AttributeError:
+            return None
+        except KeyError:
+            return None
 
 
-class McGenderField(CharField):
+
+class ReasonableBirthDate(DateField):
+    def from_db_value(self, value, expression, connection):
+        if value == date(1900, 1, 1) or value == date(2018, 11, 13):
+            return None
+        return value
+
+
+
+class GenderField(CharField):
     def from_db_value(self, value, expression, connection):
         gender_map = {
             'men': 'male',
@@ -29,3 +50,14 @@ class McGenderField(CharField):
             return gender_map[value.lower()]
         except AttributeError:
             return None
+        except KeyError:
+            return None
+
+
+class NoPunctuationCharField(CharField):
+    def from_db_value(self, value, expression, connection):
+        if not value:
+            return ""
+        return value.translate(
+            value.maketrans('', '', string.punctuation)
+        ).strip()

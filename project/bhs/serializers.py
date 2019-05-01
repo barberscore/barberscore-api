@@ -9,8 +9,19 @@ from .models import Structure
 
 
 class HumanSerializer(serializers.ModelSerializer):
-    def validate_first_name(self, value):
-        return value.strip()
+    common_name = serializers.SerializerMethodField()
+
+    def get_common_name(self, obj):
+        last = obj.last_name.strip()
+        if obj.nick_name:
+            first = obj.nick_name.strip()
+        else:
+            first = obj.first_name.strip()
+        return " ".join([
+            first,
+            last,
+        ])
+
 
     class Meta:
         model = Human
@@ -21,16 +32,17 @@ class HumanSerializer(serializers.ModelSerializer):
             'middle_name',
             'last_name',
             'nick_name',
+            'common_name',
             'email',
             'birth_date',
             'is_deceased',
-            'phone',
+            'home_phone',
             'cell_phone',
             'work_phone',
             'bhs_id',
-            'sex',
-            'primary_voice_part',
-            'full_name',
+            'gender',
+            'part',
+            # 'full_name',
             'created',
             'modified',
         )

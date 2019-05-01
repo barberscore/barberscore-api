@@ -1,26 +1,24 @@
 
 
 # Third-Party
-import django_rq
+from phonenumber_field.modelfields import PhoneNumberField
+from model_utils import Choices
 
 # Django
 from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.functional import cached_property
 
 # First-Party
-from bhs.managers import HumanManager
-from bhs.managers import JoinManager
-from bhs.managers import RoleManager
-from bhs.managers import StructureManager
-# from bhs.managers import SubscriptionManager
-from model_utils import Choices
+from .managers import HumanManager
+from .managers import JoinManager
+from .managers import RoleManager
+from .managers import StructureManager
 
-from bhs.fields import McEmailField
-from bhs.fields import McVoicePartField
-from bhs.fields import McGenderField
-
+from .fields import LowerEmailField
+from .fields import ReasonableBirthDate
+from .fields import VoicePartField
+from .fields import NoPunctuationCharField
 
 class Human(models.Model):
     id = models.CharField(
@@ -28,31 +26,30 @@ class Human(models.Model):
         max_length=255,
         editable=False,
     )
-    first_name = models.CharField(
+    first_name = NoPunctuationCharField(
         max_length=255,
         editable=False,
     )
-    middle_name = models.CharField(
+    middle_name = NoPunctuationCharField(
         max_length=255,
         editable=False,
         db_column='middle_initial',
     )
-    last_name = models.CharField(
+    last_name = NoPunctuationCharField(
         max_length=255,
         editable=False,
     )
-    nick_name = models.CharField(
+    nick_name = NoPunctuationCharField(
         max_length=255,
         editable=False,
         db_column='preferred_name',
     )
-    email = McEmailField(
-        max_length=255,
-        unique=True,
+    email = LowerEmailField(
         editable=False,
+        null=True,
         db_column='username',
     )
-    birth_date = models.DateField(
+    birth_date = ReasonableBirthDate(
         editable=False,
         null=True,
         db_column='birthday'
@@ -60,16 +57,14 @@ class Human(models.Model):
     is_deceased = models.BooleanField(
         editable=False,
     )
-    phone = models.CharField(
-        max_length=255,
+    home_phone = PhoneNumberField(
+        editable=False,
+        db_column='phone'
+    )
+    cell_phone = PhoneNumberField(
         editable=False,
     )
-    cell_phone = models.CharField(
-        max_length=255,
-        editable=False,
-    )
-    work_phone = models.CharField(
-        max_length=255,
+    work_phone = PhoneNumberField(
         editable=False,
     )
     bhs_id = models.IntegerField(
@@ -78,14 +73,15 @@ class Human(models.Model):
         null=False,
         db_column='legacy_id',
     )
-    SEX = Choices(
+    GENDER = Choices(
         ('male', 'Male'),
         ('female', 'Female'),
     )
-    sex = models.CharField(
+    gender = models.CharField(
         max_length=255,
         editable=False,
-        choices=SEX,
+        choices=GENDER,
+        db_column='sex',
     )
     PART = Choices(
         ('tenor', 'Tenor'),
@@ -93,12 +89,12 @@ class Human(models.Model):
         ('baritone', 'Baritone'),
         ('bass', 'Bass'),
     )
-    primary_voice_part = McVoicePartField(
+    part = VoicePartField(
         max_length=255,
         editable=False,
         choices=PART,
+        db_column='primary_voice_part',
     )
-
     mon = models.IntegerField(
         editable=False,
         db_column='trusted_mon',
@@ -118,6 +114,11 @@ class Human(models.Model):
         editable=False,
         db_column='merged_into',
     )
+    deleted = models.DateTimeField(
+        db_column='deleted',
+        null=True,
+        editable=False,
+    )
     created = models.DateTimeField(
         db_column='created',
         null=False,
@@ -129,54 +130,20 @@ class Human(models.Model):
         editable=False,
     )
 
-    deleted = models.DateTimeField(
-        db_column='deleted',
-        null=True,
-        editable=False,
-    )
-
     objects = HumanManager()
-
-    # Properties
-    @cached_property
-    def full_name(self):
-        if self.first_name:
-            first_name = self.first_name.strip()
-        else:
-            first_name = None
-        if self.middle_name:
-            middle_name = self.middle_name.strip()
-        else:
-            middle_name = None
-        if self.last_name:
-            last_name = self.last_name.strip()
-        else:
-            last_name = None
-        if self.nick_name:
-            format_nick = "({0})".format(
-                self.nick_name.replace("'", "").replace('"', '').replace("(", "").replace(")", "").strip()
-            )
-        else:
-            format_nick = None
-        full_name = " ".join(
-            filter(
-                None, [
-                    first_name,
-                    middle_name,
-                    last_name,
-                    format_nick,
-                ]
-            )
-        )
-        return full_name
 
     # Internals
     def __str__(self):
-        return "{0} [{1}]".format(
-            self.full_name,
-            self.bhs_id,
-        )
+        if self.nick_name:
+            first = self.nick_name
+        else:
+            first = self.first_name
+        return " ".join([
+            first,
+            self.last_name,
+        ])
 
+    # Methods
     def update_bs(self):
         Person = apps.get_model('api.person')
         Member = apps.get_model('api.member')
@@ -748,7 +715,7 @@ class Join(models.Model):
         ('baritone', 'Baritone'),
         ('bass', 'Bass'),
     )
-    vocal_part = McVoicePartField(
+    vocal_part = VoicePartField(
         max_length=255,
         editable=False,
         choices=PART,
