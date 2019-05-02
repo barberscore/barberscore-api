@@ -187,17 +187,19 @@ class JoinManager(Manager):
     def export_values(self, cursor=None):
         Structure = apps.get_model('bhs.structure')
         today = date.today()
-        js = self.filter(
-            Q(paid=True),
-            Q(deleted__isnull=True),
-            Q(structure__deleted_id="") | Q(structure__deleted_id=None),
-            Q(subscription__human__merged_id="") | Q(subscription__human__merged_id=None),
-            Q(subscription__human__deleted_id="") | Q(subscription__human__deleted_id=None),
-        ).select_related(
+        js = self.select_related(
             'structure',
             'membership',
             'subscription',
             'subscription__human',
+        ).filter(
+            Q(paid=True),
+            Q(deleted__isnull=True),
+            Q(membership__deleted_id="") | Q(membership__deleted_id=None),
+            Q(subscription__deleted=None),
+            Q(structure__deleted_id="") | Q(structure__deleted_id=None),
+            Q(subscription__human__merged_id="") | Q(subscription__human__merged_id=None),
+            Q(subscription__human__deleted_id="") | Q(subscription__human__deleted_id=None),
         )
         if cursor:
             js = js.filter(
