@@ -837,7 +837,6 @@ class PersonManager(Manager):
             'is_deceased': is_deceased,
             'mon': mon,
         }
-        print(defaults)
         # Update or create
         person, created = self.update_or_create(
             mc_pk=mc_pk,
