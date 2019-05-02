@@ -773,7 +773,6 @@ class Join(models.Model):
         related_name='joins',
         on_delete=models.CASCADE,
     )
-
     structure = models.ForeignKey(
         'Structure',
         editable=False,

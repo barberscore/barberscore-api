@@ -295,8 +295,9 @@ class Session(TimeStampedModel):
                 member_list.append(
                     member.person.email,
                 )
+                phone = member.person.cell_phone.as_national if member.person.cell_phone else None
                 member_list.append(
-                    member.person.phone,
+                    phone,
                 )
                 member_detail = "\n".join(filter(None, member_list))
                 parts[part] = member_detail
