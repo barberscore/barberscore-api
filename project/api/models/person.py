@@ -155,8 +155,20 @@ class Person(TimeStampedModel):
 
     is_deceased = models.BooleanField(
         default=False,
+        editable=False,
     )
-
+    is_honorary = models.BooleanField(
+        default=False,
+        editable=False,
+    )
+    is_suspended = models.BooleanField(
+        default=False,
+        editable=False,
+    )
+    is_expelled = models.BooleanField(
+        default=False,
+        editable=False,
+    )
     website = models.URLField(
         help_text="""
             The website URL of the resource.""",

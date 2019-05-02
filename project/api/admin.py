@@ -1359,29 +1359,21 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     # Disable for use with MC
     def has_add_permission(self, request):
         return False
-    def has_change_permission(self, request, obj=None):
-        return False
     def has_delete_permission(self, request, obj=None):
         return False
     fields = [
         'id',
         'status',
         ('first_name', 'middle_name', 'last_name', 'nick_name',),
-        'email',
-        'is_deceased',
-        'is_mc',
-        'bhs_id',
+        ('email', 'bhs_id', 'birth_date',),
+        ('home_phone', 'work_phone', 'cell_phone',),
+        ('part', 'gender',),
+        ('is_deceased', 'is_honorary', 'is_suspended', 'is_expelled',),
         'mc_pk',
-        'birth_date',
-        'part',
-        'gender',
         'spouse',
         'location',
         'district',
         'website',
-        'home_phone',
-        'work_phone',
-        'cell_phone',
         'image',
         'description',
         'notes',
@@ -1395,7 +1387,6 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'mc_pk',
         'part',
         'gender',
-        'is_mc',
         'status',
     ]
 
@@ -1409,8 +1400,26 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
-        'is_mc',
+        'first_name',
+        'middle_name',
+        'last_name',
+        'nick_name',
+        'email',
+        'is_deceased',
+        'bhs_id',
+        'mc_pk',
+        'birth_date',
+        'part',
+        'mon',
+        'gender',
+        'home_phone',
+        'work_phone',
+        'cell_phone',
         'common_name',
+        'is_deceased',
+        'is_honorary',
+        'is_suspended',
+        'is_expelled',
         'created',
         'modified',
     ]

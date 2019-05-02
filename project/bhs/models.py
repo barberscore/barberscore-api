@@ -54,9 +54,6 @@ class Human(models.Model):
         null=True,
         db_column='birthday'
     )
-    is_deceased = models.BooleanField(
-        editable=False,
-    )
     home_phone = ValidatedPhoneField(
         max_length=255,
         editable=False,
@@ -101,6 +98,9 @@ class Human(models.Model):
     mon = models.IntegerField(
         editable=False,
         db_column='trusted_mon',
+    )
+    is_deceased = models.BooleanField(
+        editable=False,
     )
     is_honorary = models.BooleanField(
         editable=False,
