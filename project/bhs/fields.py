@@ -69,5 +69,5 @@ class NoPunctuationCharField(CharField):
         if not value:
             return ""
         return value.translate(
-            value.maketrans('', '', string.punctuation)
+            value.maketrans('', '', '!"#$%&()*+,./:;<=>?@[\\]^_`{|}~')
         ).strip()

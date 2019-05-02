@@ -28,12 +28,11 @@ def create_or_update_account_from_human(human):
         bhs_id = human.bhs_id
 
     # Transform
-    email = email.lower() if email else None
     if nick_name:
         first = nick_name
     else:
         first = first_name
-    common_name = "{0} {1}".format(first, last_name)
+    common_name = " ".join([first, last_name])
 
     if not email:
         return
@@ -63,7 +62,15 @@ def create_or_update_account_from_human(human):
                 'name': name,
             },
         }
-        account = auth0.users.update(username, payload)
+        check = all([
+            email == results['users'][0]['email'],
+            bhs_id == results['users'][0]['app_metadata']['bhs_id'],
+            name == results['users'][0]['user_metadata']['name'],
+        ])
+        if not check:
+            account = auth0.users.update(username, payload)
+        else:
+            return "OK"
         created = False
     else:
         password = get_random_string()
