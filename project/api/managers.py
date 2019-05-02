@@ -752,8 +752,6 @@ class PersonManager(Manager):
             is_honorary = human['is_honorary']
             is_suspended = human['is_suspended']
             is_expelled = human['is_expelled']
-            merged_id = human['merged_id']
-            deleted = human['deleted']
         else:
             mc_pk = str(human.id)
             first_name = human.first_name
@@ -773,8 +771,6 @@ class PersonManager(Manager):
             is_honorary = human.is_honorary
             is_suspended = human.is_suspended
             is_expelled = human.is_expelled
-            merged_id = human.merged_id
-            deleted = human.deleted
 
         # Transform
         inactive = any([
@@ -782,8 +778,6 @@ class PersonManager(Manager):
             is_honorary,
             is_suspended,
             is_expelled,
-            merged_id,
-            deleted,
         ])
         if inactive:
             status = self.model.STATUS.inactive
