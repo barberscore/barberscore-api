@@ -325,10 +325,11 @@ class Session(TimeStampedModel):
             )
             admins_list = []
             for admin in admins:
+                phone = admin.person.cell_phone.as_national if admin.person.cell_phone else None
                 contact = "; ".join(filter(None, [
                     admin.person.common_name,
                     admin.person.email,
-                    admin.person.cell_phone,
+                    phone,
                 ]))
                 admins_list.append(contact)
             contacts = "\n".join(filter(None, admins_list))
