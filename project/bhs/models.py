@@ -4,7 +4,6 @@
 from model_utils import Choices
 
 # Django
-from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -19,6 +18,7 @@ from .fields import LowerEmailField
 from .fields import ReasonableBirthDate
 from .fields import VoicePartField
 from .fields import NoPunctuationCharField
+
 
 class Human(models.Model):
     id = models.CharField(
@@ -70,7 +70,7 @@ class Human(models.Model):
     bhs_id = models.IntegerField(
         editable=False,
         unique=True,
-        null=False,
+        null=True,
         db_column='legacy_id',
     )
     GENDER = Choices(
@@ -126,7 +126,7 @@ class Human(models.Model):
     )
     created = models.DateTimeField(
         db_column='created',
-        null=False,
+        null=True,
         editable=False,
     )
     modified = models.DateTimeField(
@@ -304,7 +304,7 @@ class Structure(models.Model):
     bhs_id = models.IntegerField(
         editable=False,
         unique=True,
-        null=False,
+        null=True,
         db_column='legacy_id',
     )
     chapter_code = models.CharField(
@@ -409,7 +409,6 @@ class Structure(models.Model):
         # editable=False,
         on_delete=models.CASCADE,
     )
-
     parent = models.ForeignKey(
         'self',
         null=True,
@@ -594,12 +593,12 @@ class Subscription(models.Model):
         editable=False,
     )
     deleted = models.DateTimeField(
-        null=False,
+        null=True,
         editable=False,
         db_column='deleted',
     )
     created = models.DateTimeField(
-        null=False,
+        null=True,
         editable=False,
         db_column='created',
     )
@@ -673,7 +672,7 @@ class Role(models.Model):
 
     created = models.DateTimeField(
         db_column='created',
-        null=False,
+        null=True,
         editable=False,
     )
     modified = models.DateTimeField(
@@ -730,7 +729,7 @@ class Join(models.Model):
     )
     established_date = models.DateField(
         db_column='created',
-        null=False,
+        null=True,
         editable=False,
     )
     inactive_date = models.DateField(
@@ -744,13 +743,13 @@ class Join(models.Model):
         editable=False,
     )
     deleted = models.DateTimeField(
-        null=False,
+        null=True,
         editable=False,
         db_column='deleted',
     )
     created = models.DateTimeField(
         db_column='created_on',
-        null=False,
+        null=True,
         editable=False,
     )
     modified = models.DateTimeField(
