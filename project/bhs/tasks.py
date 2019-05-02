@@ -70,7 +70,7 @@ def create_or_update_account_from_human(human):
         if not check:
             account = auth0.users.update(username, payload)
         else:
-            return "OK"
+            return "OK", False
         created = False
     else:
         password = get_random_string()
