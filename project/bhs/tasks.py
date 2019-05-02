@@ -10,7 +10,7 @@ from django_rq import job
 
 
 
-@job('high')
+@job('low')
 def create_or_update_account_from_human(human):
     if isinstance(human, dict):
         mc_pk = human['id']
