@@ -46,7 +46,7 @@ class HumanAdmin(ReadOnlyAdmin):
         ('home_phone', 'work_phone', 'cell_phone',),
         ('part', 'gender',),
         ('is_deceased', 'is_honorary', 'is_suspended', 'is_expelled',),
-        ('merged_id', 'deleted',),
+        ('merged_id', 'deleted_id',),
         ('created', 'modified',),
     ]
 
@@ -66,7 +66,6 @@ class HumanAdmin(ReadOnlyAdmin):
         'part',
         'created',
         'modified',
-        'deleted',
     ]
 
     readonly_fields = [
@@ -88,7 +87,6 @@ class HumanAdmin(ReadOnlyAdmin):
         'is_honorary',
         'is_suspended',
         'is_expelled',
-        'deleted',
         'created',
         'modified',
     ]
@@ -430,7 +428,6 @@ class JoinAdmin(ReadOnlyAdmin):
         'inactive_reason',
         'created',
         'modified',
-        'deleted',
     ]
 
     list_display = [
@@ -445,7 +442,6 @@ class JoinAdmin(ReadOnlyAdmin):
         'established_date',
         'created',
         'modified',
-        'deleted',
     ]
 
     list_select_related = [
@@ -464,7 +460,6 @@ class JoinAdmin(ReadOnlyAdmin):
         'established_date',
         'created',
         'modified',
-        'deleted',
     ]
 
     list_display_links = [

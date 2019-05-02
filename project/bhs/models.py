@@ -114,13 +114,15 @@ class Human(models.Model):
     )
     merged_id = models.CharField(
         max_length=255,
+        null=True,
         editable=False,
         db_column='merged_into',
     )
-    deleted = models.DateTimeField(
-        db_column='deleted',
+    deleted_id = models.CharField(
+        max_length=255,
         null=True,
         editable=False,
+        db_column='deleted_by_id',
     )
     created = models.DateTimeField(
         db_column='created',
@@ -147,67 +149,67 @@ class Human(models.Model):
         ])
 
     # Methods
-    def update_bs(self):
-        Person = apps.get_model('api.person')
-        Member = apps.get_model('api.member')
-        Officer = apps.get_model('api.officer')
-        Person.objects.update_or_create_from_human(self)
-        joins = self.get_joins()
-        for join in joins:
-            Member.objects.update_or_create_from_join(join)
-        roles = self.get_roles()
-        for role in roles:
-            Officer.objects.update_or_create_from_role(role)
-        return
+    # def update_bs(self):
+    #     Person = apps.get_model('api.person')
+    #     Member = apps.get_model('api.member')
+    #     Officer = apps.get_model('api.officer')
+    #     Person.objects.update_or_create_from_human(self)
+    #     joins = self.get_joins()
+    #     for join in joins:
+    #         Member.objects.update_or_create_from_join(join)
+    #     roles = self.get_roles()
+    #     for role in roles:
+    #         Officer.objects.update_or_create_from_role(role)
+    #     return
 
-    def get_joins(self):
-        Join = apps.get_model('bhs.join')
-        structures = self.subscriptions.prefetch_related(
-            'joins__structure',
-        ).values_list(
-            'joins__structure',
-            flat=True,
-        ).distinct()
-        joins = []
-        for structure in structures:
-            try:
-                join = Join.objects.select_related(
-                    'subscription__human',
-                    'structure',
-                ).filter(
-                    paid=True,
-                    deleted__isnull=True,
-                    subscription__human=self,
-                    structure__id=structure,
-                ).latest(
-                    'modified',
-                    '-inactive_date',
-                )
-            except Join.DoesNotExist:
-                continue
-            joins.append(join)
-        return joins
+    # def get_joins(self):
+    #     Join = apps.get_model('bhs.join')
+    #     structures = self.subscriptions.prefetch_related(
+    #         'joins__structure',
+    #     ).values_list(
+    #         'joins__structure',
+    #         flat=True,
+    #     ).distinct()
+    #     joins = []
+    #     for structure in structures:
+    #         try:
+    #             join = Join.objects.select_related(
+    #                 'subscription__human',
+    #                 'structure',
+    #             ).filter(
+    #                 paid=True,
+    #                 deleted__isnull=True,
+    #                 subscription__human=self,
+    #                 structure__id=structure,
+    #             ).latest(
+    #                 'modified',
+    #                 '-inactive_date',
+    #             )
+    #         except Join.DoesNotExist:
+    #             continue
+    #         joins.append(join)
+    #     return joins
 
-    def get_roles(self):
-        pairs = self.roles.select_related(
-            'structure',
-        ).values_list(
-            'structure',
-            'name',
-        ).distinct()
-        roles = []
-        for structure, name in pairs:
-            role = self.roles.select_related(
-                'structure',
-            ).filter(
-                structure__id=structure,
-                name=name,
-            ).latest(
-                'modified',
-                '-end_date',
-            )
-            roles.append(role)
-        return roles
+    # def get_roles(self):
+    #     pairs = self.roles.select_related(
+    #         'structure',
+    #     ).values_list(
+    #         'structure',
+    #         'name',
+    #     ).distinct()
+    #     roles = []
+    #     for structure, name in pairs:
+    #         role = self.roles.select_related(
+    #             'structure',
+    #         ).filter(
+    #             structure__id=structure,
+    #             name=name,
+    #         ).latest(
+    #             'modified',
+    #             '-end_date',
+    #         )
+    #         roles.append(role)
+    #     return roles
 
     class Meta:
         managed=False
@@ -386,6 +388,12 @@ class Structure(models.Model):
     licenced_date = models.DateField(
         editable=False,
     )
+    deleted_id = models.CharField(
+        max_length=255,
+        null=True,
+        editable=False,
+        db_column='deleted_by_id',
+    )
     created = models.DateTimeField(
         db_column='created',
         editable=False,
@@ -394,12 +402,6 @@ class Structure(models.Model):
         db_column='updated',
         editable=False,
     )
-    deleted = models.DateTimeField(
-        db_column='deleted',
-        null=True,
-        editable=False,
-    )
-
     # FKs
     status = models.ForeignKey(
         'Status',
@@ -430,68 +432,68 @@ class Structure(models.Model):
         )
 
 
-    def update_bs(self):
-        if self.kind not in [self.KIND.chorus, self.KIND.quartet,]:
-            raise ValueError("Only choruses and quartets may be updated")
-        Group = apps.get_model('api.group')
-        Member = apps.get_model('api.member')
-        Officer = apps.get_model('api.officer')
-        Group.objects.update_or_create_from_structure(self)
-        joins = self.get_joins()
-        for join in joins:
-            Member.objects.update_or_create_from_join(join)
-        roles = self.get_roles()
-        for role in roles:
-            Officer.objects.update_or_create_from_role(role)
-        return
+    # def update_bs(self):
+    #     if self.kind not in [self.KIND.chorus, self.KIND.quartet,]:
+    #         raise ValueError("Only choruses and quartets may be updated")
+    #     Group = apps.get_model('api.group')
+    #     Member = apps.get_model('api.member')
+    #     Officer = apps.get_model('api.officer')
+    #     Group.objects.update_or_create_from_structure(self)
+    #     joins = self.get_joins()
+    #     for join in joins:
+    #         Member.objects.update_or_create_from_join(join)
+    #     roles = self.get_roles()
+    #     for role in roles:
+    #         Officer.objects.update_or_create_from_role(role)
+    #     return
 
 
-    def get_joins(self):
-        humans = self.joins.select_related(
-            'subscription__human',
-        ).values_list(
-            'subscription__human',
-            flat=True,
-        ).distinct()
-        joins = []
-        for human in humans:
-            try:
-                join = self.joins.select_related(
-                    'subscription',
-                    'subscription__human',
-                ).filter(
-                    paid=True,
-                    deleted__isnull=True,
-                    subscription__human__id=human,
-                ).latest(
-                    'modified',
-                    '-inactive_date',
-                )
-            except self.joins.model.DoesNotExist:
-                continue
-            joins.append(join)
-        return joins
+    # def get_joins(self):
+    #     humans = self.joins.select_related(
+    #         'subscription__human',
+    #     ).values_list(
+    #         'subscription__human',
+    #         flat=True,
+    #     ).distinct()
+    #     joins = []
+    #     for human in humans:
+    #         try:
+    #             join = self.joins.select_related(
+    #                 'subscription',
+    #                 'subscription__human',
+    #             ).filter(
+    #                 paid=True,
+    #                 deleted__isnull=True,
+    #                 subscription__human__id=human,
+    #             ).latest(
+    #                 'modified',
+    #                 '-inactive_date',
+    #             )
+    #         except self.joins.model.DoesNotExist:
+    #             continue
+    #         joins.append(join)
+    #     return joins
 
-    def get_roles(self):
-        pairs = self.roles.select_related(
-            'human',
-        ).values_list(
-            'human',
-            'name',
-        ).distinct()
-        roles = []
-        for human, name in pairs:
-            role = self.roles.select_related(
-                'human',
-            ).filter(
-                human__id=human,
-                name=name,
-            ).latest(
-                'modified',
-                '-end_date',
-            )
-            roles.append(role)
-        return roles
+    # def get_roles(self):
+    #     pairs = self.roles.select_related(
+    #         'human',
+    #     ).values_list(
+    #         'human',
+    #         'name',
+    #     ).distinct()
+    #     roles = []
+    #     for human, name in pairs:
+    #         role = self.roles.select_related(
+    #             'human',
+    #         ).filter(
+    #             human__id=human,
+    #             name=name,
+    #         ).latest(
+    #             'modified',
+    #             '-end_date',
+    #         )
+    #         roles.append(role)
+    #     return roles
 
     class Meta:
         managed=False
@@ -539,9 +541,11 @@ class Membership(models.Model):
         db_column='modified',
         editable=False,
     )
-    deleted = models.DateTimeField(
-        db_column='deleted',
+    deleted_id = models.CharField(
+        max_length=255,
+        null=True,
         editable=False,
+        db_column='deleted_by_id',
     )
 
     # FKs
@@ -589,20 +593,20 @@ class Subscription(models.Model):
     items_editable = models.BooleanField(
         editable=False,
     )
-    created = models.DateTimeField(
-        db_column='created',
+    deleted = models.DateTimeField(
         null=False,
         editable=False,
+        db_column='deleted',
+    )
+    created = models.DateTimeField(
+        null=False,
+        editable=False,
+        db_column='created',
     )
     modified = models.DateTimeField(
+        null=True,
+        editable=False,
         db_column='updated',
-        null=True,
-        editable=False,
-    )
-    deleted = models.DateTimeField(
-        db_column='deleted',
-        null=True,
-        editable=False,
     )
 
     # objects = SubscriptionManager()
@@ -738,6 +742,11 @@ class Join(models.Model):
         db_column='inactive_reason',
         editable=False,
     )
+    deleted = models.DateTimeField(
+        null=False,
+        editable=False,
+        db_column='deleted',
+    )
     created = models.DateTimeField(
         db_column='created_on',
         null=False,
@@ -748,12 +757,6 @@ class Join(models.Model):
         null=True,
         editable=False,
     )
-    deleted = models.DateTimeField(
-        db_column='deleted',
-        null=True,
-        editable=False,
-    )
-
     objects = JoinManager()
 
     # FKs

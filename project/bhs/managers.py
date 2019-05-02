@@ -22,7 +22,10 @@ from django.db.models import Case
 
 class HumanManager(Manager):
     def export_values(self, cursor=None):
-        hs = self.all()
+        hs = self.filter(
+            Q(merged_id="") | Q(merged_id=None),
+            Q(deleted_id="") | Q(deleted_id=None),
+        )
         if cursor:
             hs = hs.filter(
                 modified__gte=cursor,
@@ -46,8 +49,6 @@ class HumanManager(Manager):
             'is_honorary',
             'is_suspended',
             'is_expelled',
-            'merged_id',
-            'deleted',
         ))
 
     # def update_persons(self, cursor=None):
@@ -104,7 +105,8 @@ class StructureManager(Manager):
         ]
         for t in types:
             ss = self.filter(
-                kind=t,
+                Q(kind=t),
+                Q(deleted_id="") | Q(deleted_id=None),
             )
             if cursor:
                 ss = ss.filter(
@@ -186,10 +188,11 @@ class JoinManager(Manager):
         Structure = apps.get_model('bhs.structure')
         today = date.today()
         js = self.filter(
-            paid=True,
-            deleted__isnull=True,
-            subscription__current_through__isnull=False,
-            established_date__isnull=False,
+            Q(paid=True),
+            Q(deleted__isnull=True),
+            Q(structure__deleted_id="") | Q(structure__deleted_id=None),
+            Q(subscription__human__merged_id="") | Q(subscription__human__merged_id=None),
+            Q(subscription__human__deleted_id="") | Q(subscription__human__deleted_id=None),
         ).select_related(
             'structure',
             'membership',
@@ -310,7 +313,11 @@ class JoinManager(Manager):
 class RoleManager(Manager):
     def export_values(self, cursor=None):
         today = date.today()
-        rs = self.all()
+        rs = self.filter(
+            Q(structure__deleted_id="") | Q(structure__deleted_id=None),
+            Q(human__merged_id="") | Q(human__merged_id=None),
+            Q(human__deleted_id="") | Q(human__deleted_id=None),
+        )
         if cursor:
             rs = rs.filter(
                 modified__gte=cursor,
