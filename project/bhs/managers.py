@@ -219,7 +219,7 @@ class JoinManager(Manager):
                     subscription__human__id=OuterRef('subscription__human__id'),
                 ).order_by(
                     '-modified',
-                ).values('id')[:1],
+                ).values('part')[:1],
                 output_field=CharField()
             ),
             inactivist_date=Subquery(

@@ -722,10 +722,11 @@ class Join(models.Model):
         ('baritone', 'Baritone'),
         ('bass', 'Bass'),
     )
-    vocal_part = VoicePartField(
+    part = VoicePartField(
         max_length=255,
         editable=False,
         choices=PART,
+        db_column='vocal_part',
     )
     established_date = models.DateField(
         db_column='created',
