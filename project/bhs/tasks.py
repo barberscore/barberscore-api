@@ -35,7 +35,7 @@ def create_or_update_account_from_human(human):
     common_name = " ".join([first, last_name])
 
     if not email:
-        return
+        return "Invalid"
 
     auth0 = get_auth0()
     q = "app_metadata.mc_pk={0}".format(mc_pk)
@@ -70,8 +70,7 @@ def create_or_update_account_from_human(human):
         if not check:
             account = auth0.users.update(username, payload)
         else:
-            return "OK", False
-        created = False
+            return "Skipped"
     else:
         password = get_random_string()
         payload = {
@@ -88,8 +87,7 @@ def create_or_update_account_from_human(human):
             },
         }
         account = auth0.users.create(payload)
-        created = True
-    return account, created
+    return account
 
 @job('high')
 def delete_account_from_human(human):
