@@ -328,28 +328,15 @@ def get_auth0():
 
 
 @job('low')
-def update_from_account(row):
-    Person = apps.get_model('api.person')
-    Human = apps.get_model('bhs.human')
+def onetime_update_from_account(account):
     auth0 = get_auth0()
-    username = row[0]
-    p = Person.objects.get(
-        user__username=username,
-    )
-    h = Human.objects.get(id=p.mc_pk)
-    payload = {
-        'app_metadata': {},
-        'user_metadata': {},
-    }
-    auth0.users.update(username, payload)
+    username = account['user_id']
+    name = account['user_metadata']['name']
     payload = {
         'app_metadata': {
-            'mc_pk': str(h.id),
-            'bhs_id': int(h.bhs_id)
+            'name': name,
         },
-        'user_metadata': {
-            'name': p.common_name
-        }
+        'user_metadata': {}
     }
     auth0.users.update(username, payload)
     return

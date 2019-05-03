@@ -56,16 +56,15 @@ def create_or_update_account_from_human(human):
             'email_verified': True,
             'app_metadata': {
                 'mc_pk': mc_pk,
+                'name': name,
                 'bhs_id': bhs_id,
             },
-            'user_metadata': {
-                'name': name,
-            },
+            'user_metadata': {}
         }
         check = all([
             email == results['users'][0]['email'],
             bhs_id == results['users'][0]['app_metadata']['bhs_id'],
-            name == results['users'][0]['user_metadata']['name'],
+            name == results['users'][0]['app_metadata']['name'],
         ])
         if not check:
             account = auth0.users.update(username, payload)
@@ -81,10 +80,9 @@ def create_or_update_account_from_human(human):
             'app_metadata': {
                 'mc_pk': mc_pk,
                 'bhs_id': bhs_id,
-            },
-            'user_metadata': {
                 'name': common_name,
             },
+            'user_metadata': {},
         }
         account = auth0.users.create(payload)
     return account
