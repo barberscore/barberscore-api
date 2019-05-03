@@ -9,6 +9,33 @@ from django.utils.crypto import get_random_string
 from django_rq import job
 
 
+def get_auth0():
+    auth0_api_access_token = cache.get('auth0_api_access_token')
+    if not auth0_api_access_token:
+        client = GetToken(settings.AUTH0_DOMAIN)
+        response = client.client_credentials(
+            settings.AUTH0_CLIENT_ID,
+            settings.AUTH0_CLIENT_SECRET,
+            settings.AUTH0_AUDIENCE,
+        )
+        cache.set(
+            'auth0_api_access_token',
+            response['access_token'],
+            timeout=response['expires_in'],
+        )
+        auth0_api_access_token = response['access_token']
+    auth0 = Auth0(
+        settings.AUTH0_DOMAIN,
+        auth0_api_access_token,
+    )
+    return auth0
+
+
+def get_accounts(path='barberscore.json'):
+    with open(path) as file:
+        accounts = [json.loads(line) for line in file]
+        return accounts
+
 
 @job('low')
 def create_or_update_account_from_human(human):
@@ -106,29 +133,16 @@ def delete_account_from_human(human):
     return "Deleted: {0}".format(human)
 
 
-def get_auth0():
-    auth0_api_access_token = cache.get('auth0_api_access_token')
-    if not auth0_api_access_token:
-        client = GetToken(settings.AUTH0_DOMAIN)
-        response = client.client_credentials(
-            settings.AUTH0_CLIENT_ID,
-            settings.AUTH0_CLIENT_SECRET,
-            settings.AUTH0_AUDIENCE,
-        )
-        cache.set(
-            'auth0_api_access_token',
-            response['access_token'],
-            timeout=response['expires_in'],
-        )
-        auth0_api_access_token = response['access_token']
-    auth0 = Auth0(
-        settings.AUTH0_DOMAIN,
-        auth0_api_access_token,
-    )
-    return auth0
-
-
-def get_accounts(path='barberscore.json'):
-    with open(path) as file:
-        accounts = [json.loads(line) for line in file]
-        return accounts
+@job('low')
+def onetime_update_from_account(account):
+    auth0 = get_auth0()
+    username = account['user_id']
+    name = account['user_metadata']['name']
+    payload = {
+        'app_metadata': {
+            'name': name,
+        },
+        'user_metadata': {}
+    }
+    auth0.users.update(username, payload)
+    return

@@ -768,14 +768,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "group"
 
-    # @action(methods=['get'], detail=True)
-    # def refresh(self, request, pk=None, **kwargs):
-    #     object = self.get_object()
-    #     object.refresh()
-    #     serializer = self.get_serializer(object)
-    #     return Response(serializer.data)
-
-
     @action(methods=['post'], detail=True)
     def activate(self, request, pk=None, **kwargs):
         object = self.get_object()

@@ -149,68 +149,6 @@ class Human(models.Model):
         ])
 
     # Methods
-    # def update_bs(self):
-    #     Person = apps.get_model('api.person')
-    #     Member = apps.get_model('api.member')
-    #     Officer = apps.get_model('api.officer')
-    #     Person.objects.update_or_create_from_human(self)
-    #     joins = self.get_joins()
-    #     for join in joins:
-    #         Member.objects.update_or_create_from_join(join)
-    #     roles = self.get_roles()
-    #     for role in roles:
-    #         Officer.objects.update_or_create_from_role(role)
-    #     return
-
-    # def get_joins(self):
-    #     Join = apps.get_model('bhs.join')
-    #     structures = self.subscriptions.prefetch_related(
-    #         'joins__structure',
-    #     ).values_list(
-    #         'joins__structure',
-    #         flat=True,
-    #     ).distinct()
-    #     joins = []
-    #     for structure in structures:
-    #         try:
-    #             join = Join.objects.select_related(
-    #                 'subscription__human',
-    #                 'structure',
-    #             ).filter(
-    #                 paid=True,
-    #                 deleted__isnull=True,
-    #                 subscription__human=self,
-    #                 structure__id=structure,
-    #             ).latest(
-    #                 'modified',
-    #                 '-inactive_date',
-    #             )
-    #         except Join.DoesNotExist:
-    #             continue
-    #         joins.append(join)
-    #     return joins
-
-    # def get_roles(self):
-    #     pairs = self.roles.select_related(
-    #         'structure',
-    #     ).values_list(
-    #         'structure',
-    #         'name',
-    #     ).distinct()
-    #     roles = []
-    #     for structure, name in pairs:
-    #         role = self.roles.select_related(
-    #             'structure',
-    #         ).filter(
-    #             structure__id=structure,
-    #             name=name,
-    #         ).latest(
-    #             'modified',
-    #             '-end_date',
-    #         )
-    #         roles.append(role)
-    #     return roles
-
     class Meta:
         managed=False
         db_table = 'vwMembers'
@@ -431,69 +369,6 @@ class Structure(models.Model):
         )
 
 
-    # def update_bs(self):
-    #     if self.kind not in [self.KIND.chorus, self.KIND.quartet,]:
-    #         raise ValueError("Only choruses and quartets may be updated")
-    #     Group = apps.get_model('api.group')
-    #     Member = apps.get_model('api.member')
-    #     Officer = apps.get_model('api.officer')
-    #     Group.objects.update_or_create_from_structure(self)
-    #     joins = self.get_joins()
-    #     for join in joins:
-    #         Member.objects.update_or_create_from_join(join)
-    #     roles = self.get_roles()
-    #     for role in roles:
-    #         Officer.objects.update_or_create_from_role(role)
-    #     return
-
-
-    # def get_joins(self):
-    #     humans = self.joins.select_related(
-    #         'subscription__human',
-    #     ).values_list(
-    #         'subscription__human',
-    #         flat=True,
-    #     ).distinct()
-    #     joins = []
-    #     for human in humans:
-    #         try:
-    #             join = self.joins.select_related(
-    #                 'subscription',
-    #                 'subscription__human',
-    #             ).filter(
-    #                 paid=True,
-    #                 deleted__isnull=True,
-    #                 subscription__human__id=human,
-    #             ).latest(
-    #                 'modified',
-    #                 '-inactive_date',
-    #             )
-    #         except self.joins.model.DoesNotExist:
-    #             continue
-    #         joins.append(join)
-    #     return joins
-
-    # def get_roles(self):
-    #     pairs = self.roles.select_related(
-    #         'human',
-    #     ).values_list(
-    #         'human',
-    #         'name',
-    #     ).distinct()
-    #     roles = []
-    #     for human, name in pairs:
-    #         role = self.roles.select_related(
-    #             'human',
-    #         ).filter(
-    #             human__id=human,
-    #             name=name,
-    #         ).latest(
-    #             'modified',
-    #             '-end_date',
-    #         )
-    #         roles.append(role)
-    #     return roles
-
     class Meta:
         managed=False
         db_table = 'vwStructures'
@@ -510,7 +385,6 @@ class Status(models.Model):
         editable=False,
     )
     # Internals
-
     def __str__(self):
         return str(self.name)
 
@@ -793,10 +667,6 @@ class Join(models.Model):
 
     def __str__(self):
         return str(self.id)
-        # return "{0} {1}".format(
-        #     self.subscription,
-        #     self.membership,
-        # )
 
     class Meta:
         managed = False
