@@ -295,13 +295,13 @@ class Panelist(TimeStampedModel):
                     ),
                 )
                 for song in songs:
-                    scores = song.scores.select_related(
+                    scores2 = song.scores.select_related(
                         'panelist',
                     ).filter(
                         panelist__kind=Panelist.KIND.official,
                     ).order_by('points')
                     out = []
-                    for score in scores:
+                    for score in scores2:
                         if score.points == 0:
                             score.points = "00"
                         span_class = class_map[score.panelist.category]
