@@ -24,10 +24,10 @@
         line-height: 1.3;
       }
       .w-groups {
-        width: 37% !important;
+        width: 40% !important;
       }
       .w-songs {
-        width: 47% !important;
+        width: 44% !important;
       }
       .w-scores {
         width: 4% !important;
@@ -76,17 +76,15 @@
               <tr class='pbi_avoid'>
                 <td class='w-groups'>
                   <strong>
-                    {{group.name}}
+                    {{group.name}}<br>
                   </strong>
-                  <div class='smaller-font'>
-                    {% if group.get_kind_display == 'Chorus' %}
-                      {{group.parent.name|truncatechars_html:"50"}}&nbsp;({{group.contesting_patched|default:"None"}})<br>
-                      Dir(s): {{group.participants_patched|truncatechars_html:"60"|default:"(No Director Specified)"}};&nbsp;&nbsp;OnStage: {{group.pos_patched}}<br>
-                    {% else %}
-                      {{group.representing_patched|default:"(Unknown)"}}&nbsp;({{group.contesting_patched|default:"None"}})<br>
-                      {{group.participants_patched|truncatechars_html:"60"|default:"(No Members Specified)"}}<br>
-                    {% endif %}
-                  </div>
+                  {% if group.get_kind_display == 'Chorus' %}
+                    {{group.parent.name|truncatechars_html:"50"}}&nbsp;({{group.contesting_patched|default:"None"}})<br>
+                    <span class='smaller-font'>Dir(s): {{group.participants_patched|default:"(No Director Specified)"}};&nbsp;&nbsp;OnStage: {{group.pos_patched}}</span><br>
+                  {% else %}
+                    {{group.representing_patched|default:"(Unknown)"}}&nbsp;({{group.contesting_patched|default:"None"}})<br>
+                    <span class='smaller-font'>{{group.participants_patched|default:"(No Members Specified)"}}</span><br>
+                  {% endif %}
                 </td>
                 <td class='w-songs'>
                   <strong>Total: {{group.tot_points}} Points</strong><br>
