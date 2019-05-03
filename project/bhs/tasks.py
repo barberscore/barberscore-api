@@ -1,4 +1,4 @@
-import csv
+import json
 
 from django.core.cache import cache
 from django.conf import settings
@@ -130,9 +130,7 @@ def get_auth0():
     return auth0
 
 
-def get_accounts(path='barberscore.csv'):
-    with open(path) as f:
-        next(f)  # Skip headers
-        reader = csv.reader(f, skipinitialspace=True)
-        rows = [row for row in reader]
-        return rows
+def get_accounts(path='barberscore.json'):
+    with open(path) as file:
+        accounts = [json.loads(line) for line in file]
+        return accounts

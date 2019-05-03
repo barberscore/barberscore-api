@@ -19,6 +19,8 @@ from django.db.models import IntegerField
 from django.db.models import DateField
 from django.db.models import Case
 
+from .tasks import get_accounts
+
 
 class HumanManager(Manager):
     def export_values(self, cursor=None):
@@ -90,6 +92,38 @@ class HumanManager(Manager):
         t = orphans.count()
         orphans.delete()
         return t
+
+
+    def get_account_orphans(self):
+        # Get humans
+        humans = list(self.values_list('id', flat=True))
+        # Get accounts
+        accounts = get_accounts()
+        mc_pks = [x['app_metadata']['mc_pk'] for x in accounts]
+        # Get orphans
+        orphans = [{'id': item} for item in mc_pks if item not in humans]
+        return orphans
+
+
+    def get_account_adoptions(self):
+        # Get accounts
+        accounts = get_accounts()
+        mc_pks = [x['app_metadata']['mc_pk'] for x in accounts]
+        # Get current
+        human_values = list(self.values(
+            'id',
+            'first_name',
+            'last_name',
+            'nick_name',
+            'email',
+            'bhs_id',
+        ))
+        # Rebuild list for verified emails only.
+        # Can skip this part if we trust MC data (which we don't currently)
+        humans = [x for x in human_values if x['email']]
+        # Get adoptions
+        adoptions = [item for item in humans if item['id'] not in mc_pks]
+        return adoptions
 
 
 class StructureManager(Manager):
