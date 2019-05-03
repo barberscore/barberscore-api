@@ -12,31 +12,9 @@ from .models import Person
 from .models import User
 from .models import Round
 
-from .tasks import person_post_save_handler
-from .tasks import user_post_delete_handler
 from .tasks import save_reports_from_round
 from .tasks import save_psa_from_panelist
 from .tasks import save_csa_from_appearance
-
-
-# @receiver(post_save, sender=Person)
-def person_post_save(sender, instance, created, **kwargs):
-    queue = django_rq.get_queue('low')
-    queue.enqueue(
-        person_post_save_handler,
-        instance,
-    )
-    return
-
-
-# @receiver(post_delete, sender=User)
-def user_post_delete(sender, instance, **kwargs):
-    queue = django_rq.get_queue('low')
-    queue.enqueue(
-        user_post_delete_handler,
-        instance,
-    )
-    return
 
 
 @receiver(post_transition, sender=Appearance)

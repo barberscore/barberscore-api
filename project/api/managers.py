@@ -31,11 +31,6 @@ from django.utils.timezone import localdate
 from django.utils.timezone import now
 
 # First-Party
-# from api.tasks import get_accounts
-from api.tasks import get_auth0
-# from api.tasks import check_member
-# from api.tasks import check_officer
-# from api.tasks import check_account
 from phonenumber_field.validators import validate_international_phonenumber
 from api.validators import validate_bhs_id
 from api.validators import validate_tin
@@ -615,21 +610,6 @@ class MemberManager(Manager):
         orphans.delete()
         return t
 
-    # def check_members(self):
-    #     members = self.filter(
-    #         group__mc_pk__isnull=False,
-    #     ).select_related(
-    #         'group',
-    #         'person',
-    #     )
-    #     queue = django_rq.get_queue('low')
-    #     for member in members:
-    #         queue.enqueue(
-    #             check_member,
-    #             member,
-    #         )
-    #     return
-
 
 class OfficerManager(Manager):
     def update_or_create_from_role(self, role):
@@ -691,21 +671,6 @@ class OfficerManager(Manager):
         t = orphans.count()
         orphans.delete()
         return t
-
-    # def check_officers(self):
-    #     officers = self.filter(
-    #         group__mc_pk__isnull=False,
-    #     ).select_related(
-    #         'group',
-    #         'person',
-    #     )
-    #     queue = django_rq.get_queue('low')
-    #     for officer in officers:
-    #         queue.enqueue(
-    #             check_officer,
-    #             officer,
-    #         )
-    #     return
 
 
 class PersonManager(Manager):
@@ -851,34 +816,6 @@ class PersonManager(Manager):
 
 
 class UserManager(BaseUserManager):
-    # def check_accounts(self):
-    #     accounts = get_accounts()
-    #     i = len(accounts)
-    #     queue = django_rq.get_queue('low')
-    #     for account in accounts:
-    #         queue.enqueue(
-    #             check_account,
-    #             account,
-    #         )
-    #     return i
-
-    # def delete_orphans(self):
-    #     auth0 = get_auth0()
-    #     queue = django_rq.get_queue('low')
-    #     accounts = get_accounts()
-    #     users = list(self.filter(
-    #         is_staff=False,
-    #     ).values_list('username', flat=True))
-    #     i = 0
-    #     for account in accounts:
-    #         if account[0] not in users:
-    #             i += 1
-    #             queue.enqueue(
-    #                 auth0.users.delete,
-    #                 account[0],
-    #             )
-    #     return i
-
     def create_user(self, username, person, **kwargs):
         user = self.model(
             username=username,

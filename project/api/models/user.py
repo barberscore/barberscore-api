@@ -28,7 +28,6 @@ from django.utils.functional import cached_property
 # First-Party
 from api.fields import LowerEmailField
 from api.managers import UserManager
-from api.tasks import get_auth0
 
 
 log = logging.getLogger(__name__)
