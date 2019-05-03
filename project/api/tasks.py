@@ -120,6 +120,7 @@ def save_psa_from_panelist(panelist):
 def save_reports_from_round(round):
     return round.save_reports()
 
+from bhs.tasks import get_auth0
 @job('low')
 def onetime_update_from_account(account):
     auth0 = get_auth0()
@@ -131,5 +132,6 @@ def onetime_update_from_account(account):
         },
         'user_metadata': {}
     }
-    auth0.users.update(username, payload)
-    return
+    result = auth0.users.update(username, payload)
+    return result
+
