@@ -119,3 +119,17 @@ def save_psa_from_panelist(panelist):
 @job('high')
 def save_reports_from_round(round):
     return round.save_reports()
+
+@job('low')
+def onetime_update_from_account(account):
+    auth0 = get_auth0()
+    username = account['user_id']
+    name = account['user_metadata']['name']
+    payload = {
+        'app_metadata': {
+            'name': name,
+        },
+        'user_metadata': {}
+    }
+    auth0.users.update(username, payload)
+    return
