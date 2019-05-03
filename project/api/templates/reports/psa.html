@@ -102,7 +102,7 @@
             {% for group in groups %}
               <tr class='pbi_avoid'>
                 <td>
-                  {{group.name}}<br>
+                  {{group.name|truncatechars_html:30|safe}}<br>
                 </td>
                 <td>
                   {% for appearance in group.appearances_patched %}
