@@ -108,7 +108,7 @@
             {% for group in groups %}
               <tr>
                 <td>
-                  <strong>{{group.name}}</strong><br>
+                  <strong>{{group.name|truncatechars_html:30|safe}}</strong><br>
                   <strong>{{group.tot_rank}}</strong>&nbsp;&nbsp;{{group.mus_rank}}/{{group.per_rank}}/{{group.sng_rank}}
                 </td>
                 <td>
