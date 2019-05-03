@@ -18,6 +18,7 @@ from bhs.models import Join
 from bhs.models import Role
 from bhs.models import Structure
 from bhs.models import Subscription
+from bhs.tasks import create_or_update_account_from_human
 
 log = logging.getLogger('updater')
 
@@ -65,23 +66,33 @@ class Command(BaseCommand):
             cursor = None
 
         # Sync Persons
-        self.stdout.write("Updating Persons.")
-        self.stdout.write("Fetching humans...")
+        self.stdout.write("Updating Persons and Accounts.")
+        self.stdout.write("Fetching Humans...")
         humans = Human.objects.export_values(cursor=cursor)
         t = len(humans)
         i = 0
         for human in humans:
             i += 1
-            self.stdout.write("Updating {0} of {1} persons...".format(i, t), ending='\r')
             if i != t:
                 self.stdout.flush()
+            self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
             Person.objects.update_or_create_from_human(human)
-        self.stdout.write("Updated {0} persons.".format(t))
+        i = 0
+        for human in humans:
+            i += 1
+            if i != t:
+                self.stdout.flush()
+            self.stdout.write("Updating {0} of {1} Accounts...".format(i, t), ending='\r')
+            create_or_update_account_from_human(human)
+        self.stdout.write("Updated {0} Accounts.".format(t))
         if not cursor:
-            self.stdout.write("Deleting orphans...")
             humans = list(Human.objects.values_list('id', flat=True))
+            self.stdout.write("Deleting Person orphans...")
             t = Person.objects.delete_orphans(humans)
-            self.stdout.write("Deleted {0} person orphans.".format(t))
+            self.stdout.write("Deleted {0} Person orphans.".format(t))
+            # self.stdout.write("Deleting Account orphans...")
+            # t = Person.objects.delete_orphans(humans)
+            # self.stdout.write("Deleted {0} Account orphans.".format(t))
 
         # Sync Groups
         self.stdout.write("Updating Groups.")
