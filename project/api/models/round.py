@@ -1495,7 +1495,7 @@ class Round(TimeStampedModel):
             self.session.get_kind_display(),
             self.get_kind_display(),
         )
-        attachments.extend((
+        attachments.append((
             file_name,
             pdf,
             'application/pdf',
