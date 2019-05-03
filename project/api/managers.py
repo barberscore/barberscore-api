@@ -31,7 +31,7 @@ from django.utils.timezone import localdate
 from django.utils.timezone import now
 
 # First-Party
-from api.tasks import get_accounts
+# from api.tasks import get_accounts
 from api.tasks import get_auth0
 # from api.tasks import check_member
 # from api.tasks import check_officer
@@ -862,22 +862,22 @@ class UserManager(BaseUserManager):
     #         )
     #     return i
 
-    def delete_orphans(self):
-        auth0 = get_auth0()
-        queue = django_rq.get_queue('low')
-        accounts = get_accounts()
-        users = list(self.filter(
-            is_staff=False,
-        ).values_list('username', flat=True))
-        i = 0
-        for account in accounts:
-            if account[0] not in users:
-                i += 1
-                queue.enqueue(
-                    auth0.users.delete,
-                    account[0],
-                )
-        return i
+    # def delete_orphans(self):
+    #     auth0 = get_auth0()
+    #     queue = django_rq.get_queue('low')
+    #     accounts = get_accounts()
+    #     users = list(self.filter(
+    #         is_staff=False,
+    #     ).values_list('username', flat=True))
+    #     i = 0
+    #     for account in accounts:
+    #         if account[0] not in users:
+    #             i += 1
+    #             queue.enqueue(
+    #                 auth0.users.delete,
+    #                 account[0],
+    #             )
+    #     return i
 
     def create_user(self, username, person, **kwargs):
         user = self.model(

@@ -319,12 +319,12 @@ def get_auth0():
     return auth0
 
 
-def get_accounts(path='barberscore.csv'):
-    with open(path) as f:
-        next(f)  # Skip headers
-        reader = csv.reader(f, skipinitialspace=True)
-        rows = [row for row in reader]
-        return rows
+# def get_accounts(path='barberscore.csv'):
+#     with open(path) as f:
+#         next(f)  # Skip headers
+#         reader = csv.reader(f, skipinitialspace=True)
+#         rows = [row for row in reader]
+#         return rows
 
 
 @job('low')
