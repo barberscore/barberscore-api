@@ -1,3 +1,5 @@
+from django_fsm_log.admin import StateLogInline
+from fsm_admin.mixins import FSMTransitionMixin
 
 
 # Django
@@ -5,7 +7,6 @@ from django.contrib import admin
 
 # Local
 from .inlines import JoinInline
-from .inlines import MembershipInline
 from .inlines import RoleInline
 from .inlines import SubscriptionInline
 from .inlines import StructureInline
@@ -13,11 +14,36 @@ from .models import Human
 from .models import Join
 from .models import Membership
 from .models import Role
-from .models import Status
 from .models import Structure
 from .models import Subscription
 
+from .models import Person
+from .models import Group
+from .models import Member
+from .models import Officer
+
 admin.site.disable_action('delete_selected')
+
+
+class MCListFilter(admin.SimpleListFilter):
+    title = 'Member Center'
+    parameter_name = 'is_mc'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('Yes', 'Yes'),
+            ('No', 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'Yes':
+            return queryset.filter(
+                mc_pk__isnull=False,
+            )
+        if self.value() == 'No':
+            return queryset.filter(
+                mc_pk__isnull=True,
+            )
 
 
 class ReadOnlyAdmin(admin.ModelAdmin):
@@ -462,3 +488,418 @@ class JoinAdmin(ReadOnlyAdmin):
         # 'membership__structure__name',
         # 'membership__structure__bhs_id',
     ]
+
+
+@admin.register(Person)
+class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    # Disable for use with MC
+    def has_add_permission(self, request):
+        return False
+    def has_delete_permission(self, request, obj=None):
+        return False
+    fields = [
+        'id',
+        'status',
+        ('first_name', 'middle_name', 'last_name', 'nick_name',),
+        ('email', 'bhs_id', 'birth_date',),
+        ('home_phone', 'work_phone', 'cell_phone',),
+        ('part', 'gender',),
+        ('is_deceased', 'is_honorary', 'is_suspended', 'is_expelled',),
+        'mc_pk',
+        'spouse',
+        'location',
+        'district',
+        'website',
+        'image',
+        'description',
+        'notes',
+        ('created', 'modified',),
+    ]
+
+    list_display = [
+        'common_name',
+        'email',
+        'cell_phone',
+        'part',
+        'gender',
+        'status',
+    ]
+
+    list_filter = [
+        'status',
+        'gender',
+        'part',
+        'is_deceased',
+    ]
+
+    readonly_fields = [
+        'id',
+        'first_name',
+        'middle_name',
+        'last_name',
+        'nick_name',
+        'email',
+        'is_deceased',
+        'bhs_id',
+        'mc_pk',
+        'birth_date',
+        'part',
+        'mon',
+        'gender',
+        'home_phone',
+        'work_phone',
+        'cell_phone',
+        'common_name',
+        'is_deceased',
+        'is_honorary',
+        'is_suspended',
+        'is_expelled',
+        'created',
+        'modified',
+    ]
+
+    fsm_field = [
+        'status',
+    ]
+
+    search_fields = [
+        'last_name',
+        'first_name',
+        'nick_name',
+        'bhs_id',
+        'email',
+    ]
+
+    # autocomplete_fields = [
+    #     'user',
+    # ]
+
+    save_on_top = True
+
+    inlines = [
+        # MemberInline,
+        # OfficerInline,
+        # AssignmentInline,
+        # PanelistInline,
+        # StateLogInline,
+    ]
+
+    ordering = [
+        'last_name',
+        'first_name',
+    ]
+    # readonly_fields = [
+    #     'common_name',
+    # ]
+
+
+
+@admin.register(Group)
+class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    save_on_top = True
+    fsm_field = [
+        'status',
+    ]
+    fields = [
+        'id',
+        'is_mc',
+        'name',
+        'status',
+        'kind',
+        'gender',
+        'division',
+        ('is_senior', 'is_youth',),
+        ('bhs_id', 'mc_pk', 'code',),
+        'parent',
+        ('international', 'district', 'chapter',),
+        'location',
+        'email',
+        'phone',
+        'website',
+        'image',
+        'description',
+        'participants',
+        'notes',
+        ('created', 'modified',),
+    ]
+
+    list_filter = [
+        'status',
+        'kind',
+        'gender',
+        'is_senior',
+        'is_youth',
+        'division',
+        # DistrictListFilter,
+    ]
+
+    search_fields = [
+        'name',
+        'bhs_id',
+        'code',
+    ]
+
+    list_display = [
+        'name',
+        'kind',
+        'gender',
+        'is_senior',
+        'is_youth',
+        'division',
+        'parent',
+        'bhs_id',
+        'code',
+        'is_mc',
+        'status',
+    ]
+    list_select_related = [
+        'parent',
+    ]
+    readonly_fields = [
+        'id',
+        'is_mc',
+        'international',
+        'district',
+        'chapter',
+        'created',
+        'modified',
+    ]
+
+    # autocomplete_fields = [
+    #     'parent',
+    # ]
+    raw_id_fields = [
+        'parent',
+    ]
+
+    ordering = [
+        'tree_sort',
+    ]
+
+    # INLINES = {
+    #     'International': [
+    #         AwardInline,
+    #         OfficerInline,
+    #         ConventionInline,
+    #         StateLogInline,
+    #     ],
+    #     'District': [
+    #         AwardInline,
+    #         OfficerInline,
+    #         ConventionInline,
+    #         ActiveChapterInline,
+    #         ActiveQuartetInline,
+    #         StateLogInline,
+    #     ],
+    #     'Noncompetitive': [
+    #         OfficerInline,
+    #         GroupInline,
+    #         StateLogInline,
+    #     ],
+    #     'Affiliate': [
+    #         OfficerInline,
+    #         GroupInline,
+    #         StateLogInline,
+    #     ],
+    #     'Chapter': [
+    #         ActiveChorusInline,
+    #         OfficerInline,
+    #         StateLogInline,
+    #     ],
+    #     'Chorus': [
+    #         OfficerInline,
+    #         # MemberInline,
+    #         RepertoryInline,
+    #         # EntryInline,
+    #         StateLogInline,
+    #     ],
+    #     'Quartet': [
+    #         OfficerInline,
+    #         MemberInline,
+    #         RepertoryInline,
+    #         EntryInline,
+    #         StateLogInline,
+    #     ],
+    #     'VLQ': [
+    #         OfficerInline,
+    #         MemberInline,
+    #         RepertoryInline,
+    #         EntryInline,
+    #         StateLogInline,
+    #     ],
+    # }
+
+    # def get_inline_instances(self, request, obj=None):
+    #     inline_instances = []
+    #     try:
+    #         inlines = self.INLINES[obj.KIND[obj.kind]]
+    #     except AttributeError:
+    #         return inline_instances
+
+    #     for inline_class in inlines:
+    #         inline = inline_class(self.model, self.admin_site)
+    #         inline_instances.append(inline)
+    #     return inline_instances
+
+    # def get_formsets(self, request, obj=None):
+    #     for inline in self.get_inline_instances(request, obj):
+    #         yield inline.get_formset(request, obj)
+
+    def get_queryset(self, request):
+        return super().get_queryset(
+            request
+        ).prefetch_related('members')
+
+    def is_mc(self, instance):
+        return instance.is_mc
+    is_mc.boolean = True
+    is_mc.short_description = 'Is Member Center'
+
+
+@admin.register(Member)
+class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+    fields = [
+        'id',
+        'status',
+        'person',
+        'group',
+        'part',
+        'is_mc',
+        'mc_pk',
+        'start_date',
+        'end_date',
+        # 'inactive_date',
+        # 'inactive_reason',
+        # 'sub_status',
+        # 'mem_code',
+        # 'mem_status',
+        'created',
+        'modified',
+    ]
+    list_display = [
+        'person',
+        'group',
+        'part',
+        'is_mc',
+        'status',
+    ]
+    readonly_fields = [
+        'id',
+        'is_mc',
+        'part',
+        'start_date',
+        'end_date',
+        # 'inactive_date',
+        # 'inactive_reason',
+        # 'sub_status',
+        # 'mem_code',
+        # 'mem_status',
+        'created',
+        'modified',
+    ]
+
+    autocomplete_fields = [
+        'person',
+        'group',
+    ]
+    search_fields = [
+        'person__first_name',
+        'person__last_name',
+        'group__name',
+        'person__bhs_id',
+        'group__bhs_id',
+    ]
+    list_filter = [
+        'status',
+        MCListFilter,
+        'group__kind',
+        'group__status',
+        'part',
+        'start_date',
+        'end_date',
+        # 'inactive_date',
+        # 'inactive_reason',
+        # 'sub_status',
+        # 'mem_code',
+        # 'mem_status',
+        'created',
+    ]
+    list_select_related = [
+        'person',
+        'group',
+    ]
+    inlines = [
+        # StateLogInline,
+    ]
+
+    def is_mc(self, instance):
+        return instance.is_mc
+    is_mc.boolean = True
+    is_mc.short_description = 'Is Member Center'
+
+
+@admin.register(Officer)
+class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
+    fields = [
+        'id',
+        'is_mc',
+        'status',
+        'person',
+        'office',
+        'group',
+        'start_date',
+        'end_date',
+        'mc_pk'
+    ]
+
+    list_display = [
+        'person',
+        'office',
+        'group',
+        'is_mc',
+        'status',
+    ]
+    readonly_fields = [
+        'id',
+        'is_mc',
+    ]
+    list_select_related = [
+        'person',
+        'group',
+    ]
+    list_filter = [
+        'status',
+        MCListFilter,
+        'group__kind',
+        'office',
+    ]
+    inlines = [
+        # StateLogInline,
+    ]
+    search_fields = [
+        'person__last_name',
+        'group__name',
+    ]
+    autocomplete_fields = [
+        'person',
+        'group',
+    ]
+    ordering = [
+        'office',
+        'person__last_name',
+        'person__first_name',
+    ]
+
+    def is_mc(self, instance):
+        return instance.is_mc
+    is_mc.boolean = True
+    is_mc.short_description = 'Is Member Center'
+
+
