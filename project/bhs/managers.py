@@ -57,7 +57,7 @@ class HumanManager(Manager):
         # Get base
         humans = list(self.values_list('id', flat=True))
         # Delete Orphans
-        Person = apps.get_model('api.person')
+        Person = apps.get_model('bhs.person')
         orphans = Person.objects.filter(
             mc_pk__isnull=False,
         ).exclude(
@@ -153,7 +153,7 @@ class StructureManager(Manager):
         # Get base
         structures = list(self.values_list('id', flat=True))
         # Delete Orphans
-        Group = apps.get_model('api.group')
+        Group = apps.get_model('bhs.group')
         orphans = Group.objects.filter(
             mc_pk__isnull=False,
         ).exclude(
@@ -256,7 +256,7 @@ class JoinManager(Manager):
         # Get base
         joins = list(self.values_list('id', flat=True))
         # Delete Orphans
-        Member = apps.get_model('api.member')
+        Member = apps.get_model('bhs.member')
         orphans = Member.objects.filter(
             mc_pk__isnull=False,
         ).exclude(
@@ -299,7 +299,7 @@ class RoleManager(Manager):
         # Get base
         roles = list(self.values_list('id', flat=True))
         # Delete Orphans
-        Officer = apps.get_model('api.officer')
+        Officer = apps.get_model('bhs.officer')
         orphans = Officer.objects.filter(
             mc_pk__isnull=False,
         ).exclude(
@@ -829,34 +829,30 @@ class OfficerManager(Manager):
         # Transform
         Person = apps.get_model('api.person')
         Group = apps.get_model('api.group')
-        Office = apps.get_model('api.office')
 
-
-        # office_map = {
-        #     'Chapter President': "e42bdba1-1483-4a63-9352-61333d345962",
-        #     'Chapter Secretary': "25b39ea4-7ac6-4221-811c-2b6946d4517d",
-        #     'Chorus Director': "4f16b826-a874-4fcc-a9b3-b79cba7e23dd",
-        #     'Chorus Associate or Assistant Director': "e232b6a4-4627-48b4-9e49-9c42cb4ad924",
-        #     'Chorus Manager': "ee8c4957-a6e7-412e-ac62-74e1dbafc35a",
-        #     'Quartet Admin': "a8d8ae37-9a7a-4229-8a53-a308e89bfa86",
-        # }
-
-        # office_id = office_map.get(name, None)
+        office_map = {
+            'Chapter President': self.model.OFFICE.chapter_pres,
+            'Chapter Secretary': self.model.OFFICE.chapter_sec,
+            'Chorus Associate or Assistant Director': self.model.OFFICE.chorus_asst,
+            'Chorus Director': self.model.OFFICE.chorus_dir,
+            'Chorus Manager': self.model.OFFICE.chorus_man,
+            'Quartet Admin': self.model.OFFICE.quartet_admin,
+        }
+        office = office_map.get(name)
 
         defaults = {
             'mc_pk': mc_pk,
             'status': status,
+            'office': office,
             'start_date': start_date,
             'end_date': end_date,
         }
 
-        office = Office.objects.get(name=name)
         person = Person.objects.get(mc_pk=person_pk)
         group = Group.objects.get(mc_pk=group_pk)
 
         # Load
         officer, created = self.update_or_create(
-            office=office,
             person=person,
             group=group,
             defaults=defaults,
