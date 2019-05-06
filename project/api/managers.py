@@ -816,10 +816,11 @@ class PersonManager(Manager):
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, person, **kwargs):
+    def create_user(self, username, email, person, **kwargs):
         user = self.model(
             username=username,
             person=person,
+            email=email,
             **kwargs
         )
         user.set_unusable_password()

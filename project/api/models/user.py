@@ -49,6 +49,13 @@ class User(AbstractBaseUser):
         editable=True,
     )
 
+    email = LowerEmailField(
+        help_text="""
+            The contact email of the resource.""",
+        blank=True,
+        null=True,
+    )
+
     is_staff = models.BooleanField(
         default=False,
     )
