@@ -308,3 +308,146 @@ class RoleManager(Manager):
         t = orphans.count()
         orphans.delete()
         return t
+
+
+class PersonManager(Manager):
+    def export_orphans(self, cursor=None):
+        ps = self.filter(
+            email__isnull=True,
+            user__isnull=False,
+        )
+        if cursor:
+            ps = ps.filter(
+                modified__gte=cursor,
+            )
+        return ps
+
+    def export_adoptions(self, cursor=None):
+        ps = self.filter(
+            email__isnull=False,
+            user__isnull=True,
+        )
+        if cursor:
+            ps = ps.filter(
+                modified__gte=cursor,
+            )
+        return ps
+
+    def update_or_create_from_human(self, human):
+        # Extract
+        if isinstance(human, dict):
+            mc_pk = human['id']
+            first_name = human['first_name']
+            middle_name = human['middle_name']
+            last_name = human['last_name']
+            nick_name = human['nick_name']
+            email = human['email']
+            birth_date = human['birth_date']
+            home_phone = human['home_phone']
+            cell_phone = human['cell_phone']
+            work_phone = human['work_phone']
+            bhs_id = human['bhs_id']
+            gender = human['gender']
+            part = human['part']
+            mon = human['mon']
+            is_deceased = human['is_deceased']
+            is_honorary = human['is_honorary']
+            is_suspended = human['is_suspended']
+            is_expelled = human['is_expelled']
+        else:
+            mc_pk = str(human.id)
+            first_name = human.first_name
+            middle_name = human.middle_name
+            last_name = human.last_name
+            nick_name = human.nick_name
+            email = human.email
+            birth_date = human.birth_date
+            home_phone = human.home_phone
+            cell_phone = human.cell_phone
+            work_phone = human.work_phone
+            bhs_id = human.bhs_id
+            gender = human.gender
+            part = human.part
+            mon = human.mon
+            is_deceased = human.is_deceased
+            is_honorary = human.is_honorary
+            is_suspended = human.is_suspended
+            is_expelled = human.is_expelled
+
+        # Transform
+        inactive = any([
+            is_deceased,
+            is_honorary,
+            is_suspended,
+            is_expelled,
+        ])
+        if inactive:
+            status = self.model.STATUS.inactive
+        else:
+            status = self.model.STATUS.active
+
+        prefix = first_name.rpartition('Dr.')[1].strip()
+        first_name = first_name.rpartition('Dr.')[2].strip()
+        last_name = last_name.partition('II')[0].strip()
+        suffix = last_name.partition('II')[1].strip()
+        last_name = last_name.partition('III')[0].strip()
+        suffix = last_name.partition('III')[1].strip()
+        last_name = last_name.partition('DDS')[0].strip()
+        suffix = last_name.partition('DDS')[1].strip()
+        last_name = last_name.partition('Sr')[0].strip()
+        suffix = last_name.partition('Sr')[1].strip()
+        last_name = last_name.partition('Jr')[0].strip()
+        suffix = last_name.partition('Jr')[1].strip()
+        last_name = last_name.partition('M.D.')[0].strip()
+        suffix = last_name.partition('M.D.')[1].strip()
+        if nick_name == first_name:
+            nick_name = ""
+        if gender:
+            gender = getattr(self.model.GENDER, gender, None)
+        else:
+            gender = None
+        if part:
+            part = getattr(self.model.PART, part, None)
+        else:
+            part = None
+
+        is_deceased = bool(is_deceased)
+
+
+        defaults = {
+            'status': status,
+            'prefix': prefix,
+            'first_name': first_name,
+            'middle_name': middle_name,
+            'last_name': last_name,
+            'suffix': suffix,
+            'nick_name': nick_name,
+            'email': email,
+            'birth_date': birth_date,
+            'home_phone': home_phone,
+            'cell_phone': cell_phone,
+            'work_phone': work_phone,
+            'bhs_id': bhs_id,
+            'gender': gender,
+            'part': part,
+            'is_deceased': is_deceased,
+            'mon': mon,
+        }
+        # Update or create
+        person, created = self.update_or_create(
+            mc_pk=mc_pk,
+            defaults=defaults,
+        )
+        return person, created
+
+    def delete_orphans(self, humans):
+        # Delete Orphans
+        orphans = self.filter(
+            mc_pk__isnull=False,
+        ).exclude(
+            mc_pk__in=humans,
+        )
+        t = orphans.count()
+        orphans.delete()
+        return t
+
