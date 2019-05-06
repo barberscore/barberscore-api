@@ -1635,7 +1635,7 @@ class Group(TimeStampedModel):
     def get_is_senior(self):
         if self.kind != self.KIND.quartet:
             raise ValueError('Must be quartet')
-        Person = apps.get_model('api.person')
+        Person = apps.get_model('bhs.person')
         midwinter = datetime.date(2020, 1, 11)
         persons = Person.objects.filter(
             members__group=self,

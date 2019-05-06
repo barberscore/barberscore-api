@@ -995,6 +995,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
 
+
 @admin.register(Member)
 class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [

@@ -3,6 +3,9 @@ from datetime import date
 # Third-Party
 import django_rq
 from django_fsm_log.models import StateLog
+from algoliasearch_django.decorators import disable_auto_indexing
+from openpyxl import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
 
 # Django
 from django.apps import apps
@@ -18,6 +21,7 @@ from django.db.models import CharField
 from django.db.models import IntegerField
 from django.db.models import DateField
 from django.db.models import Case
+from django.core.files.base import ContentFile
 
 from .tasks import get_accounts
 
@@ -387,6 +391,9 @@ class GroupManager(Manager):
         preferred_name = "{0} (NAME APPROVAL PENDING)".format(preferred_name.strip()) if preferred_name else ''
         name = name if name else preferred_name
 
+        if not name:
+            name = "(UNKNOWN)"
+
         # AIC
         aic_map = {
             500983: "After Hours",
@@ -488,6 +495,8 @@ class GroupManager(Manager):
         }
         kind = kind_map.get(kind, None)
 
+        legacy_code = legacy_code if legacy_code else ""
+
         gender_map = {
             'men': self.model.GENDER.male,
             'women': self.model.GENDER.female,
@@ -525,79 +534,6 @@ class GroupManager(Manager):
             'SWD Southwest': self.model.DIVISION.swdsw,
         }
         division = division_map.get(division, None)
-
-        if bhs_id:
-            try:
-                validate_bhs_id(bhs_id)
-            except ValidationError:
-                bhs_id = None
-        else:
-            bhs_id = None
-
-        legacy_code = legacy_code.strip() if legacy_code else ''
-
-        if main_phone:
-            try:
-                validate_international_phonenumber(main_phone.strip())
-            except ValidationError:
-                main_phone = ""
-        else:
-            main_phone = ""
-        if fax_phone:
-            try:
-                validate_international_phonenumber(fax_phone.strip())
-            except ValidationError:
-                fax_phone = ""
-        else:
-            fax_phone = ""
-
-        try:
-            validate_url(website)
-        except ValidationError:
-            website = ""
-
-        if email:
-            email = email.strip().lower()
-            try:
-                validate_email(email)
-            except ValidationError:
-                email = None
-        else:
-            email = None
-
-        try:
-            validate_url(facebook)
-        except ValidationError:
-            facebook = ""
-
-        try:
-            validate_url(twitter)
-        except ValidationError:
-            twitter = ""
-
-        try:
-            validate_url(youtube)
-        except ValidationError:
-            youtube = ""
-        try:
-            validate_url(pinterest)
-        except ValidationError:
-            pinterest = ""
-
-        try:
-            validate_url(flickr)
-        except ValidationError:
-            flickr = ""
-
-        try:
-            validate_url(instagram)
-        except ValidationError:
-            instagram = ""
-
-        try:
-            validate_url(soundcloud)
-        except ValidationError:
-            soundcloud = ""
 
         visitor_information = visitor_information.strip() if visitor_information else ''
 
@@ -761,8 +697,8 @@ class GroupManager(Manager):
 class MemberManager(Manager):
     def update_or_create_from_join(self, join):
         # Extract
-        Person = apps.get_model('api.person')
-        Group = apps.get_model('api.group')
+        Person = apps.get_model('bhs.person')
+        Group = apps.get_model('bhs.group')
         if not isinstance(join, dict):
             raise RuntimeError("Must be pre-validated")
 
@@ -827,8 +763,8 @@ class OfficerManager(Manager):
         status = role['status']
 
         # Transform
-        Person = apps.get_model('api.person')
-        Group = apps.get_model('api.group')
+        Person = apps.get_model('bhs.person')
+        Group = apps.get_model('bhs.group')
 
         office_map = {
             'Chapter President': self.model.OFFICE.chapter_pres,
