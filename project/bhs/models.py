@@ -1,4 +1,5 @@
 import uuid
+import datetime
 
 # Third-Party
 from model_utils import Choices
@@ -11,6 +12,8 @@ from django_fsm_log.decorators import fsm_log_description
 from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
+from openpyxl import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
 
 # Django
 from django.core.exceptions import ValidationError
@@ -19,6 +22,8 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.utils.functional import cached_property
 from django.utils.timezone import now
+from django.apps import apps
+from django.core.files.base import ContentFile
 
 # First-Party
 from .managers import HumanManager
@@ -1016,6 +1021,10 @@ class Person(TimeStampedModel):
     # Internals
     objects = PersonManager()
 
+    class Meta:
+        verbose_name_plural = ' Persons'
+
+
     class JSONAPIMeta:
         resource_name = "person"
 
@@ -1482,7 +1491,7 @@ class Group(TimeStampedModel):
 
     class Meta:
         ordering = ['tree_sort']
-        verbose_name_plural = 'groups'
+        verbose_name_plural = ' Groups'
         unique_together = (
             ('bhs_id', 'kind'),
         )
@@ -1647,7 +1656,7 @@ class Group(TimeStampedModel):
             is_senior = False
         return is_senior
 
-    Permissions
+    # Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -1797,6 +1806,7 @@ class Member(TimeStampedModel):
         unique_together = (
             ('group', 'person',),
         )
+        verbose_name_plural = ' Members'
 
     class JSONAPIMeta:
         resource_name = "member"
@@ -1967,6 +1977,7 @@ class Officer(TimeStampedModel):
         unique_together = (
             ('group', 'person'),
         )
+        verbose_name_plural = ' Officers'
 
     class JSONAPIMeta:
         resource_name = "officer"
