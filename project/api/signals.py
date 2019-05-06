@@ -2,7 +2,6 @@ import django_rq
 
 # Django
 from django.db.models.signals import post_save
-from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django_fsm.signals import post_transition
 # Local
@@ -16,6 +15,19 @@ from .tasks import save_reports_from_round
 from .tasks import save_psa_from_panelist
 from .tasks import save_csa_from_appearance
 
+
+@receiver(post_transition, sender=User)
+def user_post_save(sender, instance, created, **kwargs):
+    if created:
+        try:
+            person = Person.objects.get(
+                email=instance.email,
+            )
+        except Person.DoesNotExist:
+            return
+        instance.person = person
+        instance.save()
+    return
 
 @receiver(post_transition, sender=Appearance)
 def appearance_post_transition(sender, instance, name, source, target, **kwargs):
