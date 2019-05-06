@@ -292,24 +292,6 @@ class MembershipAdmin(ReadOnlyAdmin):
     ]
 
 
-# @admin.register(Status)
-# class StatusAdmin(ReadOnlyAdmin):
-#     fields = [
-#         'id',
-#         'name',
-#     ]
-
-#     list_display = [
-#         'id',
-#         'name',
-#     ]
-
-#     readonly_fields = [
-#         'id',
-#         'name',
-#     ]
-
-
 @admin.register(Subscription)
 class SubscriptionAdmin(ReadOnlyAdmin):
     fields = [
