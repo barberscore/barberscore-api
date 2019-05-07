@@ -19,6 +19,8 @@ from bhs.models import Role
 from bhs.models import Structure
 from bhs.models import Subscription
 from bhs.tasks import create_or_update_account_from_human
+from bhs.tasks import delete_account_from_human
+from bhs.tasks import get_account_orphans
 
 log = logging.getLogger('updater')
 
@@ -99,9 +101,12 @@ class Command(BaseCommand):
             self.stdout.write("Deleting Person orphans...")
             t = Person.objects.delete_orphans(humans)
             self.stdout.write("Deleted {0} Person orphans.".format(t))
-            # self.stdout.write("Deleting Account orphans...")
-            # t = Person.objects.delete_orphans(humans)
-            # self.stdout.write("Deleted {0} Account orphans.".format(t))
+            self.stdout.write("Deleting Account orphans...")
+            orphans = get_account_orphans()
+            t = len(orphans)
+            for orphan in orphans:
+                delete_account_from_human(orphan)
+            self.stdout.write("Deleted {0} Account orphans.".format(t))
 
         # Sync Groups
         self.stdout.write("Updating Groups.")

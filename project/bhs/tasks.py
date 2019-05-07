@@ -1,4 +1,5 @@
 import json
+import numpy
 
 from django.core.cache import cache
 from django.conf import settings
@@ -7,7 +8,8 @@ from auth0.v3.authentication import GetToken
 from auth0.v3.management import Auth0
 from django.utils.crypto import get_random_string
 from django_rq import job
-
+from django.apps import apps
+from .models import Human
 
 def get_auth0():
     auth0_api_access_token = cache.get('auth0_api_access_token')
@@ -116,14 +118,14 @@ def create_or_update_account_from_human(human):
         created = True
     return account, created
 
-@job('high')
+@job('low')
 def delete_account_from_human(human):
     if isinstance(human, dict):
         mc_pk = human['id']
     else:
         mc_pk = str(human.id)
     auth0 = get_auth0()
-    q = "mc_pk={0}".format(mc_pk)
+    q = "app_metadata.mc_pk={0}".format(mc_pk)
     params = {
         'include_totals': True,
         'include_fields': False,
@@ -131,20 +133,16 @@ def delete_account_from_human(human):
         'q': q,
     }
     results = auth0.users.list(**params)
-    auth0.users.delete(results['user_id'])
-    return "Deleted: {0}".format(human)
+    if results['total'] == 1:
+        auth0.users.delete(results['users'][0]['user_id'])
+        return "Deleted: {0}".format(human)
+    return "Not Found: {0}".format(human)
 
 
-@job('low')
-def onetime_update_from_account(account):
-    auth0 = get_auth0()
-    username = account['user_id']
-    name = account['user_metadata']['name']
-    payload = {
-        'app_metadata': {
-            'name': name,
-        },
-        'user_metadata': {}
-    }
-    auth0.users.update(username, payload)
-    return
+def get_account_orphans():
+    Person = apps.get_model('api.person')
+    accounts = get_accounts()
+    one = [a['app_metadata']['mc_pk'] for a in accounts]
+    two = list(Person.objects.values_list('mc_pk', flat=True))
+    orphans = [{'id':a} for a in one if a not in two]
+    return orphans
