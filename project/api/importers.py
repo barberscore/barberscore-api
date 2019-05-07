@@ -29,7 +29,6 @@ from .models import Person
 from .models import Repertory
 from .models import Round
 from .models import Score
-from .models import Selection
 from .models import Session
 from .models import Song
 from .models import User
