@@ -76,14 +76,19 @@ class Command(BaseCommand):
             if i != t:
                 self.stdout.flush()
             self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
-            Person.objects.update_or_create_from_human(human)
+            person, created = Person.objects.update_or_create_from_human(human)
         i = 0
         for human in humans:
             i += 1
             if i != t:
                 self.stdout.flush()
             self.stdout.write("Updating {0} of {1} Accounts...".format(i, t), ending='\r')
-            create_or_update_account_from_human(human)
+            account, created = create_or_update_account_from_human(human)
+            if created:
+                User.objects.create_user(
+                    username=account['user_id'],
+                    person=person,
+                )
         self.stdout.write("Updated {0} Accounts.".format(t))
         if not cursor:
             humans = list(Human.objects.values_list('id', flat=True))
