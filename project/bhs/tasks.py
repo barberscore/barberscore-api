@@ -1,5 +1,4 @@
 import json
-import numpy
 
 from django.core.cache import cache
 from django.conf import settings
@@ -9,7 +8,6 @@ from auth0.v3.management import Auth0
 from django.utils.crypto import get_random_string
 from django_rq import job
 from django.apps import apps
-from .models import Human
 
 def get_auth0():
     auth0_api_access_token = cache.get('auth0_api_access_token')
