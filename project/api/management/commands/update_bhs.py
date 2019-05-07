@@ -83,7 +83,11 @@ class Command(BaseCommand):
             if i != t:
                 self.stdout.flush()
             self.stdout.write("Updating {0} of {1} Accounts...".format(i, t), ending='\r')
-            account, created = create_or_update_account_from_human(human)
+            try:
+                account, created = create_or_update_account_from_human(human)
+            except Exception as e:
+                log.error((e, human))
+                continue
             if created:
                 User.objects.create_user(
                     username=account['user_id'],
