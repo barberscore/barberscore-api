@@ -490,7 +490,7 @@ class JoinAdmin(ReadOnlyAdmin):
     ]
 
 
-@admin.register(Person)
+# @admin.register(Person)
 class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
     # Disable for use with MC
     def has_add_permission(self, request):
@@ -594,7 +594,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 
-@admin.register(Group)
+# @admin.register(Group)
 class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
     fsm_field = [
@@ -756,7 +756,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
     is_mc.short_description = 'Is Member Center'
 
 
-@admin.register(Member)
+# @admin.register(Member)
 class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
@@ -841,7 +841,7 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
     is_mc.short_description = 'Is Member Center'
 
 
-@admin.register(Officer)
+# @admin.register(Officer)
 class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
@@ -901,5 +901,3 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
-
-
