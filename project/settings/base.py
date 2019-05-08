@@ -252,4 +252,5 @@ INSTALLED_APPS = [
     'api',
     'bhs',
     'keller',
+    'stage',
 ]
