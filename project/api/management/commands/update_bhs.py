@@ -77,14 +77,8 @@ class Command(BaseCommand):
             i += 1
             if i != t:
                 self.stdout.flush()
-            self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
-            person, created = Person.objects.update_or_create_from_human(human)
-        i = 0
-        for human in humans:
-            i += 1
-            if i != t:
-                self.stdout.flush()
-            self.stdout.write("Updating {0} of {1} Accounts...".format(i, t), ending='\r')
+            self.stdout.write("Updating {0} of {1} Persons/Accounts/Users...".format(i, t), ending='\r')
+            person, _ = Person.objects.update_or_create_from_human(human)
             try:
                 account, created = create_or_update_account_from_human(human)
             except Exception as e:
