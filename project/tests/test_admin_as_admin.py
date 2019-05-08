@@ -213,13 +213,13 @@ def test_song_admin(admin_django_client, song):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_venue_admin(admin_django_client, venue):
-    path = reverse('admin:api_venue_changelist')
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_venue_change', args=(str(venue.id),))
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+# def test_venue_admin(admin_django_client, venue):
+#     path = reverse('admin:api_venue_changelist')
+#     response = admin_django_client.get(path)
+#     assert response.status_code == status.HTTP_200_OK
+#     path = reverse('admin:api_venue_change', args=(str(venue.id),))
+#     response = admin_django_client.get(path)
+#     assert response.status_code == status.HTTP_200_OK
 
 
 def test_user_admin(admin_django_client, user):

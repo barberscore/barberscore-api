@@ -12,7 +12,6 @@ from .views import ContestantViewSet
 from .views import ContestViewSet
 from .views import ConventionViewSet
 from .views import EntryViewSet
-from .views import GridViewSet
 from .views import GroupViewSet
 from .views import MemberViewSet
 from .views import OfficerViewSet
@@ -27,7 +26,6 @@ from .views import SessionViewSet
 from .views import SongViewSet
 from .views import StateLogViewSet
 from .views import UserViewSet
-from .views import VenueViewSet
 
 router = routers.DefaultRouter(
     trailing_slash=False,
@@ -42,7 +40,6 @@ router.register(r'contender', ContenderViewSet)
 router.register(r'contestant', ContestantViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'entry', EntryViewSet)
-router.register(r'grid', GridViewSet)
 router.register(r'group', GroupViewSet)
 router.register(r'member', MemberViewSet)
 router.register(r'office', OfficeViewSet)
@@ -56,6 +53,5 @@ router.register(r'score', ScoreViewSet)
 router.register(r'session', SessionViewSet)
 router.register(r'song', SongViewSet)
 router.register(r'user', UserViewSet)
-router.register(r'venue', VenueViewSet)
 router.register(r'statelog', StateLogViewSet)
 urlpatterns = router.urls

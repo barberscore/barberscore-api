@@ -31,7 +31,6 @@ from api.models import Contender
 from api.models import Contestant
 from api.models import Convention
 from api.models import Entry
-from api.models import Grid
 from api.models import Group
 from api.models import Member
 from api.models import Office
@@ -45,7 +44,6 @@ from api.models import Score
 from api.models import Session
 from api.models import Song
 from api.models import User
-from api.models import Venue
 
 
 class AppearanceFactory(DjangoModelFactory):
@@ -136,7 +134,7 @@ class ConventionFactory(DjangoModelFactory):
     end_date = datetime.date(2017, 7, 8)
     location = "Nashville, TN"
     timezone = 'US/Central'
-    venue = SubFactory('api.factories.VenueFactory')
+    venue = None
     group = SubFactory('api.factories.GroupFactory')
 
     class Meta:
@@ -177,14 +175,6 @@ class EntryFactory(DjangoModelFactory):
 
     class Meta:
         model = Entry
-
-
-class GridFactory(DjangoModelFactory):
-    status = Grid.STATUS.new
-    round = SubFactory('api.factories.RoundFactory')
-
-    class Meta:
-        model = Grid
 
 
 class GroupFactory(DjangoModelFactory):
@@ -362,18 +352,6 @@ class SongFactory(DjangoModelFactory):
 
     class Meta:
         model = Song
-
-
-class VenueFactory(DjangoModelFactory):
-    name = 'Test Convention Center'
-    status = Venue.STATUS.active
-    city = 'Nashville'
-    state = 'TN'
-    airport = 'NTA'
-    timezone = 'US/Central'
-
-    class Meta:
-        model = Venue
 
 
 @mute_signals(pre_delete, post_save)
