@@ -127,42 +127,42 @@ class Command(BaseCommand):
             t = Group.objects.delete_orphans(structures)
             self.stdout.write("Deleted {0} Group orphans.".format(t))
 
-        # Sync Officers
-        self.stdout.write("Updating Officers.")
-        self.stdout.write("Fetching Roles...")
-        roles = Role.objects.export_values(cursor=cursor)
-        t = len(roles)
-        i = 0
-        for role in roles:
-            i += 1
-            if i != t:
-                self.stdout.flush()
-            self.stdout.write("Updating {0} of {1} Officers...".format(i, t), ending='\r')
-            Officer.objects.update_or_create_from_role(role)
-        self.stdout.write("Updated {0} Officers.".format(t))
-        if not cursor:
-            self.stdout.write("Deleting orphans...")
-            roles = list(Role.objects.values_list('id', flat=True))
-            t = Officer.objects.delete_orphans(roles)
-            self.stdout.write("Deleted {0} Officer orphans.".format(t))
+        # # Sync Officers
+        # self.stdout.write("Updating Officers.")
+        # self.stdout.write("Fetching Roles...")
+        # roles = Role.objects.export_values(cursor=cursor)
+        # t = len(roles)
+        # i = 0
+        # for role in roles:
+        #     i += 1
+        #     if i != t:
+        #         self.stdout.flush()
+        #     self.stdout.write("Updating {0} of {1} Officers...".format(i, t), ending='\r')
+        #     Officer.objects.update_or_create_from_role(role)
+        # self.stdout.write("Updated {0} Officers.".format(t))
+        # if not cursor:
+        #     self.stdout.write("Deleting orphans...")
+        #     roles = list(Role.objects.values_list('id', flat=True))
+        #     t = Officer.objects.delete_orphans(roles)
+        #     self.stdout.write("Deleted {0} Officer orphans.".format(t))
 
-        # Sync Members
-        self.stdout.write("Updating Members.")
-        self.stdout.write("Fetching Joins...")
-        joins = Join.objects.export_values(cursor=cursor)
-        t = len(joins)
-        i = 0
-        for join in joins:
-            i += 1
-            if i != t:
-                self.stdout.flush()
-            self.stdout.write("Updating {0} of {1} Members...".format(i, t), ending='\r')
-            Member.objects.update_or_create_from_join(join)
-        self.stdout.write("Updated {0} Members.".format(t))
-        if not cursor:
-            self.stdout.write("Deleting orphans...")
-            joins = list(Join.objects.values_list('id', flat=True))
-            t = Member.objects.delete_orphans(joins)
-            self.stdout.write("Deleted {0} Member orphans.".format(t))
+        # # Sync Members
+        # self.stdout.write("Updating Members.")
+        # self.stdout.write("Fetching Joins...")
+        # joins = Join.objects.export_values(cursor=cursor)
+        # t = len(joins)
+        # i = 0
+        # for join in joins:
+        #     i += 1
+        #     if i != t:
+        #         self.stdout.flush()
+        #     self.stdout.write("Updating {0} of {1} Members...".format(i, t), ending='\r')
+        #     Member.objects.update_or_create_from_join(join)
+        # self.stdout.write("Updated {0} Members.".format(t))
+        # if not cursor:
+        #     self.stdout.write("Deleting orphans...")
+        #     joins = list(Join.objects.values_list('id', flat=True))
+        #     t = Member.objects.delete_orphans(joins)
+        #     self.stdout.write("Deleted {0} Member orphans.".format(t))
 
         self.stdout.write("Complete.")
