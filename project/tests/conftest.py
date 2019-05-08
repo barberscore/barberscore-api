@@ -17,7 +17,7 @@ from api.factories import ContestantFactory
 from api.factories import ContestFactory
 from api.factories import ConventionFactory
 from api.factories import EntryFactory
-from api.factories import GridFactory
+# from api.factories import GridFactory
 from api.factories import GroupFactory
 from api.factories import MemberFactory
 from api.factories import OfficeFactory
@@ -31,7 +31,7 @@ from api.factories import ScoreFactory
 from api.factories import SessionFactory
 from api.factories import SongFactory
 from api.factories import UserFactory
-from api.factories import VenueFactory
+# from api.factories import VenueFactory
 
 # @pytest.fixture(scope='session')
 # def django_db_modify_db_settings():
@@ -122,9 +122,9 @@ def entry():
     return EntryFactory()
 
 
-@pytest.fixture
-def grid():
-    return GridFactory()
+# @pytest.fixture
+# def grid():
+#     return GridFactory()
 
 
 @pytest.fixture
@@ -187,9 +187,9 @@ def song():
     return SongFactory()
 
 
-@pytest.fixture
-def venue():
-    return VenueFactory()
+# @pytest.fixture
+# def venue():
+#     return VenueFactory()
 
 
 @pytest.fixture

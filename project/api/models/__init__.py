@@ -8,7 +8,6 @@ from .contender import Contender
 from .contestant import Contestant
 from .convention import Convention
 from .entry import Entry
-from .grid import Grid
 from .group import Group
 from .member import Member
 from .office import Office
@@ -22,4 +21,3 @@ from .score import Score
 from .session import Session
 from .song import Song
 from .user import User
-from .venue import Venue

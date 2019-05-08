@@ -35,7 +35,6 @@ from .inlines import ContestantInline
 from .inlines import ContestInline
 from .inlines import ConventionInline
 from .inlines import EntryInline
-from .inlines import GridInline
 from .inlines import GroupInline
 from .inlines import MemberInline
 from .inlines import OfficerInline
@@ -55,7 +54,6 @@ from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grid
 from .models import Group
 from .models import Member
 from .models import Office
@@ -69,7 +67,6 @@ from .models import Score
 from .models import Session
 from .models import Song
 from .models import User
-from .models import Venue
 
 admin.site.site_header = 'Barberscore Admin Backend'
 
@@ -593,53 +590,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     ordering = (
     )
-
-
-@admin.register(Grid)
-class GridAdmin(admin.ModelAdmin):
-    save_on_top = True
-    fields = [
-        # 'name',
-        'status',
-        'period',
-        'num',
-        'onstage',
-        'start',
-        'venue',
-        'round',
-        # 'appearance',
-        'renditions',
-    ]
-    list_display = [
-        'status',
-        'onstage',
-        'start',
-    ]
-    list_filter = (
-        'status',
-        'onstage',
-        'period',
-    )
-    readonly_fields = [
-    ]
-    autocomplete_fields = [
-        'round',
-        'venue',
-        # 'appearance',
-    ]
-    ordering = [
-        'round',
-        'period',
-        'num',
-    ]
-
-    def change_view(self, request, object_id, form_url='', extra_context=None):
-        obj = self.get_object(request, object_id)
-        try:
-            timezone.activate(obj.venue.timezone)
-        except AttributeError:
-            pass
-        return super().change_view(request, object_id, form_url, extra_context)
 
 
 @admin.register(Group)
@@ -1335,7 +1285,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         PanelistInline,
         AppearanceInline,
-        GridInline,
         OutcomeInline,
         StateLogInline,
     ]
@@ -1344,15 +1293,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session__convention__name',
     ]
 
-    def get_formsets_with_inlines(self, request, obj=None):
-        for inline in self.get_inline_instances(request, obj):
-            # hide MyInline in the add view
-            if isinstance(inline, GridInline):
-                try:
-                    timezone.activate(obj.session.convention.timezone)
-                except AttributeError:
-                    pass
-            yield inline.get_formset(request, obj), inline
 
 
 @admin.register(Score)
@@ -1516,45 +1456,6 @@ class SongAdmin(admin.ModelAdmin):
     ordering = (
         'num',
     )
-
-
-@admin.register(Venue)
-class VenueAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-    save_on_top = True
-    fields = (
-        'id',
-        'name',
-        'status',
-        'city',
-        'state',
-        'airport',
-        'timezone',
-    )
-
-    list_display = [
-        'name',
-        'city',
-        'state',
-        'airport',
-        'timezone',
-    ]
-
-    list_filter = (
-        'status',
-    )
-
-    search_fields = [
-        'name',
-        'city',
-        'state',
-    ]
-
-    readonly_fields = [
-        'id',
-    ]
 
 
 @admin.register(User)

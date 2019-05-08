@@ -8,7 +8,6 @@ from .models import Contest
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grid
 from .models import Group
 from .models import Member
 from .models import Office
@@ -22,7 +21,6 @@ from .models import Score
 from .models import Session
 from .models import Song
 from .models import User
-from .models import Venue
 
 class PersonSerializer(serializers.ModelSerializer):
 

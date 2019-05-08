@@ -145,27 +145,6 @@ class Round(TimeStampedModel):
         )
 
     # Methods
-    def create_grids(self, onstage, duration, start, finish):
-        venue = self.session.convention.venue
-        timezone = venue.timezone.zone
-        if not venue:
-            return ValueError("Must have venue selected.")
-        maya_object = maya.when(onstage, timezone=timezone)
-        while start <= finish:
-            onstage = maya_object.datetime()
-            defaults = {
-                'onstage': onstage,
-                'venue': venue,
-            }
-            self.grids.update_or_create(
-                num=start,
-                defaults=defaults,
-            )
-            start += 1
-            maya_object = maya_object.add(minutes=duration)
-        return
-
-
     def get_oss(self, zoom=1):
         Group = apps.get_model('api.group')
         Panelist = apps.get_model('api.panelist')

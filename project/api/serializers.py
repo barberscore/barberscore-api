@@ -7,6 +7,7 @@ from rest_framework_json_api import serializers
 
 # Local
 from .fields import TimezoneField
+
 from .models import Appearance
 from .models import Assignment
 from .models import Award
@@ -16,7 +17,6 @@ from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grid
 from .models import Group
 from .models import Member
 from .models import Office
@@ -30,7 +30,6 @@ from .models import Score
 from .models import Session
 from .models import Song
 from .models import User
-from .models import Venue
 
 
 class StateLogSerializer(serializers.ModelSerializer):
@@ -72,7 +71,6 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'variance_report',
             'round',
             'group',
-            # 'grid',
             'songs',
             # 'songs__scores',
             # 'contenders',
@@ -237,7 +235,6 @@ class ConventionSerializer(serializers.ModelSerializer):
     included_serializers = {
         'sessions': 'api.serializers.SessionSerializer',
         'assignments': 'api.serializers.AssignmentSerializer',
-        'venue': 'api.serializers.VenueSerializer',
         # 'person': 'api.serializers.PersonSerializer',
     }
 
@@ -323,32 +320,6 @@ class EntrySerializer(serializers.ModelSerializer):
         # if data['is_private'] and data['contestants']:
         #     raise serializers.ValidationError("Can not be private and compete for an award.")
         return data
-
-
-class GridSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Grid
-        fields = [
-            'id',
-            'url',
-            'status',
-            'period',
-            'num',
-            'location',
-            'photo',
-            'arrive',
-            'depart',
-            'backstage',
-            'onstage',
-            'start',
-            'renditions',
-            'venue',
-            'round',
-            # 'appearance',
-            'permissions',
-        ]
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -623,7 +594,6 @@ class RoundSerializer(serializers.ModelSerializer):
     included_serializers = {
         'appearances': 'api.serializers.AppearanceSerializer',
         'members': 'api.serializers.MemberSerializer',
-        'grids': 'api.serializers.GridSerializer',
         'outcomes': 'api.serializers.OutcomeSerializer',
         'panelists': 'api.serializers.PanelistSerializer',
     }
@@ -738,26 +708,6 @@ class SongSerializer(serializers.ModelSerializer):
         included_resources = [
             'scores',
         ]
-
-
-class VenueSerializer(serializers.ModelSerializer):
-    timezone = TimezoneField(allow_null=True)
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Venue
-        fields = (
-            'id',
-            'url',
-            'name',
-            'status',
-            'city',
-            'state',
-            'airport',
-            'timezone',
-            'conventions',
-            'permissions',
-        )
 
 
 class UserSerializer(serializers.ModelSerializer):

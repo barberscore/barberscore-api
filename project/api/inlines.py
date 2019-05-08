@@ -11,7 +11,6 @@ from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grid
 from .models import Group
 from .models import Member
 from .models import Officer
@@ -299,30 +298,6 @@ class EntryInline(admin.TabularInline):
     ]
     show_change_link = True
     extra = 0
-    classes = [
-        'collapse',
-    ]
-
-
-class GridInline(admin.TabularInline):
-    model = Grid
-    fields = [
-        'period',
-        'num',
-        'onstage',
-        'start',
-        'round',
-        'renditions',
-    ]
-    autocomplete_fields = [
-        'round',
-    ]
-    show_change_link = True
-    extra = 0
-    ordering = [
-        'period',
-        'num',
-    ]
     classes = [
         'collapse',
     ]
