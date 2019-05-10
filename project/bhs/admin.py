@@ -17,10 +17,10 @@ from .models import Role
 from .models import Structure
 from .models import Subscription
 
-from .models import Person
-from .models import Group
-from .models import Member
-from .models import Officer
+# from .models import Person
+# from .models import Group
+# from .models import Member
+# from .models import Officer
 
 admin.site.disable_action('delete_selected')
 
