@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class StageConfig(AppConfig):
-    name = 'stage'
+    name = 'apps.stage'
+    verbose_name = 'Stage Manager'

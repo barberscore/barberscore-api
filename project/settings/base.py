@@ -251,6 +251,6 @@ INSTALLED_APPS = [
     'reversion',
     'api',
     'bhs',
-    'keller',
-    'stage',
+    'apps.keller',
+    'apps.stage',
 ]

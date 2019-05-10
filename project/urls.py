@@ -23,7 +23,7 @@ urlpatterns = [
     path('', lambda r: HttpResponseRedirect('admin/')),
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
-    path('stage/', include('stage.urls')),
+    path('stage/', include('apps.stage.urls')),
     path('rq/', include('django_rq.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('schema/', schema_view),

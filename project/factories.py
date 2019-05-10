@@ -45,8 +45,8 @@ from api.models import Session
 from api.models import Song
 from api.models import User
 
-from stage.models import Grid
-from stage.models import Venue
+from apps.stage.models import Grid
+from apps.stage.models import Venue
 
 
 class AppearanceFactory(DjangoModelFactory):
