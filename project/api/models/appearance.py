@@ -982,14 +982,7 @@ class Appearance(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         """Sets up the Appearance."""
-        # Grid = apps.get_model('api.grid')
         Panelist = apps.get_model('api.panelist')
-        # grid, _ = Grid.objects.get_or_create(
-        #     round=self.round,
-        #     num=self.num,
-        # )
-        # grid.appearance = self
-        # grid.save()
         panelists = self.round.panelists.filter(
             category__gt=Panelist.CATEGORY.ca,
         )

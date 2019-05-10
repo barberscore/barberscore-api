@@ -251,5 +251,6 @@ INSTALLED_APPS = [
     'reversion',
     'api',
     'bhs',
-    # 'mem',
+    'keller',
+    'stage',
 ]

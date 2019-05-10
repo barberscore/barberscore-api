@@ -46,7 +46,6 @@ from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grid
 from .models import Group
 from .models import Member
 from .models import Office
@@ -60,7 +59,6 @@ from .models import Score
 from .models import Session
 from .models import Song
 from .models import User
-from .models import Venue
 from .renderers import PDFRenderer
 from .renderers import XLSXRenderer
 from .responders import PDFResponse
@@ -74,7 +72,6 @@ from .serializers import ContestantSerializer
 from .serializers import ContestSerializer
 from .serializers import ConventionSerializer
 from .serializers import EntrySerializer
-from .serializers import GridSerializer
 from .serializers import GroupSerializer
 from .serializers import MemberSerializer
 from .serializers import OfficerSerializer
@@ -89,7 +86,7 @@ from .serializers import SessionSerializer
 from .serializers import SongSerializer
 from .serializers import StateLogSerializer
 from .serializers import UserSerializer
-from .serializers import VenueSerializer
+
 
 log = logging.getLogger(__name__)
 
@@ -108,6 +105,7 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
         Select the first renderer in the `.renderer_classes` list.
         """
         return (renderers[0], renderers[0].media_type)
+
 
 class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
@@ -729,22 +727,6 @@ class EntryViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class GridViewSet(viewsets.ModelViewSet):
-    queryset = Grid.objects.select_related(
-        'round',
-        'venue',
-    ).prefetch_related(
-    ).order_by('id')
-    serializer_class = GridSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "grid"
-
-
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.select_related(
         'parent',
@@ -1101,6 +1083,7 @@ class RepertoryViewSet(viewsets.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
+
 
 class RoundViewSet(viewsets.ModelViewSet):
     queryset = Round.objects.select_related(
@@ -1521,6 +1504,7 @@ class SessionViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
+
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'appearance',
@@ -1538,23 +1522,6 @@ class SongViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "song"
-
-
-class VenueViewSet(viewsets.ModelViewSet):
-    queryset = Venue.objects.select_related(
-    ).prefetch_related(
-        'conventions',
-        'grids',
-        'statelogs',
-    ).order_by('name')
-    serializer_class = VenueSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "venue"
 
 
 class UserViewSet(viewsets.ModelViewSet):

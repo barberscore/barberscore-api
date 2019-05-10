@@ -10,6 +10,6 @@ router = routers.DefaultRouter(
     trailing_slash=False,
 )
 
-router.register(r'human', HumanViewSet)
-router.register(r'structure', StructureViewSet)
+# router.register(r'human', HumanViewSet)
+# router.register(r'structure', StructureViewSet)
 urlpatterns = router.urls

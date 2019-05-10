@@ -31,10 +31,10 @@ from .managers import JoinManager
 from .managers import RoleManager
 from .managers import StructureManager
 
-from .managers import PersonManager
-from .managers import GroupManager
-from .managers import MemberManager
-from .managers import OfficerManager
+# from .managers import PersonManager
+# from .managers import GroupManager
+# from .managers import MemberManager
+# from .managers import OfficerManager
 
 from .fields import ValidatedPhoneField
 from .fields import LowerEmailField

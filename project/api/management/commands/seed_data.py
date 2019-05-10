@@ -23,7 +23,6 @@ from api.factories import ScoreFactory
 from api.factories import SessionFactory
 from api.factories import SongFactory
 from api.factories import UserFactory
-from api.factories import VenueFactory
 from api.models import Appearance
 from api.models import Assignment
 from api.models import Award
@@ -44,7 +43,6 @@ from api.models import Score
 from api.models import Session
 from api.models import Song
 from api.models import User
-from api.models import Venue
 
 
 class Command(BaseCommand):
@@ -219,8 +217,6 @@ class Command(BaseCommand):
         # Sort tree
         Group.objects.sort_tree()
 
-        # create Venue
-        venue = VenueFactory()
 
         # create Chart
         chart_1 = ChartFactory(

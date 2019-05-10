@@ -19,6 +19,8 @@ from bhs.models import Role
 from bhs.models import Structure
 from bhs.models import Subscription
 from bhs.tasks import create_or_update_account_from_human
+from bhs.tasks import delete_account_from_human
+from bhs.tasks import get_account_orphans
 
 log = logging.getLogger('updater')
 
@@ -75,15 +77,13 @@ class Command(BaseCommand):
             i += 1
             if i != t:
                 self.stdout.flush()
-            self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
-            person, created = Person.objects.update_or_create_from_human(human)
-        i = 0
-        for human in humans:
-            i += 1
-            if i != t:
-                self.stdout.flush()
-            self.stdout.write("Updating {0} of {1} Accounts...".format(i, t), ending='\r')
-            account, created = create_or_update_account_from_human(human)
+            self.stdout.write("Updating {0} of {1} Persons/Accounts/Users...".format(i, t), ending='\r')
+            person, _ = Person.objects.update_or_create_from_human(human)
+            try:
+                account, created = create_or_update_account_from_human(human)
+            except Exception as e:
+                log.error((e, human))
+                continue
             if created:
                 User.objects.create_user(
                     username=account['user_id'],
@@ -95,9 +95,12 @@ class Command(BaseCommand):
             self.stdout.write("Deleting Person orphans...")
             t = Person.objects.delete_orphans(humans)
             self.stdout.write("Deleted {0} Person orphans.".format(t))
-            # self.stdout.write("Deleting Account orphans...")
-            # t = Person.objects.delete_orphans(humans)
-            # self.stdout.write("Deleted {0} Account orphans.".format(t))
+            self.stdout.write("Deleting Account orphans...")
+            orphans = get_account_orphans()
+            t = len(orphans)
+            for orphan in orphans:
+                delete_account_from_human(orphan)
+            self.stdout.write("Deleted {0} Account orphans.".format(t))
 
         # Sync Groups
         self.stdout.write("Updating Groups.")
@@ -118,42 +121,42 @@ class Command(BaseCommand):
             t = Group.objects.delete_orphans(structures)
             self.stdout.write("Deleted {0} Group orphans.".format(t))
 
-        # Sync Officers
-        self.stdout.write("Updating Officers.")
-        self.stdout.write("Fetching Roles...")
-        roles = Role.objects.export_values(cursor=cursor)
-        t = len(roles)
-        i = 0
-        for role in roles:
-            i += 1
-            if i != t:
-                self.stdout.flush()
-            self.stdout.write("Updating {0} of {1} Officers...".format(i, t), ending='\r')
-            Officer.objects.update_or_create_from_role(role)
-        self.stdout.write("Updated {0} Officers.".format(t))
-        if not cursor:
-            self.stdout.write("Deleting orphans...")
-            roles = list(Role.objects.values_list('id', flat=True))
-            t = Officer.objects.delete_orphans(roles)
-            self.stdout.write("Deleted {0} Officer orphans.".format(t))
+        # # Sync Officers
+        # self.stdout.write("Updating Officers.")
+        # self.stdout.write("Fetching Roles...")
+        # roles = Role.objects.export_values(cursor=cursor)
+        # t = len(roles)
+        # i = 0
+        # for role in roles:
+        #     i += 1
+        #     if i != t:
+        #         self.stdout.flush()
+        #     self.stdout.write("Updating {0} of {1} Officers...".format(i, t), ending='\r')
+        #     Officer.objects.update_or_create_from_role(role)
+        # self.stdout.write("Updated {0} Officers.".format(t))
+        # if not cursor:
+        #     self.stdout.write("Deleting orphans...")
+        #     roles = list(Role.objects.values_list('id', flat=True))
+        #     t = Officer.objects.delete_orphans(roles)
+        #     self.stdout.write("Deleted {0} Officer orphans.".format(t))
 
-        # Sync Members
-        self.stdout.write("Updating Members.")
-        self.stdout.write("Fetching Joins...")
-        joins = Join.objects.export_values(cursor=cursor)
-        t = len(joins)
-        i = 0
-        for join in joins:
-            i += 1
-            if i != t:
-                self.stdout.flush()
-            self.stdout.write("Updating {0} of {1} Members...".format(i, t), ending='\r')
-            Member.objects.update_or_create_from_join(join)
-        self.stdout.write("Updated {0} Members.".format(t))
-        if not cursor:
-            self.stdout.write("Deleting orphans...")
-            joins = list(Join.objects.values_list('id', flat=True))
-            t = Member.objects.delete_orphans(joins)
-            self.stdout.write("Deleted {0} Member orphans.".format(t))
+        # # Sync Members
+        # self.stdout.write("Updating Members.")
+        # self.stdout.write("Fetching Joins...")
+        # joins = Join.objects.export_values(cursor=cursor)
+        # t = len(joins)
+        # i = 0
+        # for join in joins:
+        #     i += 1
+        #     if i != t:
+        #         self.stdout.flush()
+        #     self.stdout.write("Updating {0} of {1} Members...".format(i, t), ending='\r')
+        #     Member.objects.update_or_create_from_join(join)
+        # self.stdout.write("Updated {0} Members.".format(t))
+        # if not cursor:
+        #     self.stdout.write("Deleting orphans...")
+        #     joins = list(Join.objects.values_list('id', flat=True))
+        #     t = Member.objects.delete_orphans(joins)
+        #     self.stdout.write("Deleted {0} Member orphans.".format(t))
 
         self.stdout.write("Complete.")

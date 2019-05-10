@@ -35,8 +35,6 @@ from .inlines import ContestantInline
 from .inlines import ContestInline
 from .inlines import ConventionInline
 from .inlines import EntryInline
-from .inlines import FlatInline
-from .inlines import GridInline
 from .inlines import GroupInline
 from .inlines import MemberInline
 from .inlines import OfficerInline
@@ -51,14 +49,11 @@ from .models import Appearance
 from .models import Assignment
 from .models import Award
 from .models import Chart
-from .models import Flat
-from .models import Complete
 from .models import Contest
 from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Grid
 from .models import Group
 from .models import Member
 from .models import Office
@@ -69,200 +64,11 @@ from .models import Person
 from .models import Repertory
 from .models import Round
 from .models import Score
-from .models import Selection
 from .models import Session
 from .models import Song
 from .models import User
-from .models import Venue
 
 admin.site.site_header = 'Barberscore Admin Backend'
-
-
-@admin.register(Flat)
-class FlatAdmin(admin.ModelAdmin):
-
-    fields = [
-        'id',
-        'complete',
-        'selection',
-        'score',
-    ]
-    list_display = [
-        'id',
-        'complete',
-        'selection',
-        'score',
-    ]
-    readonly_fields = [
-        'id',
-    ]
-    autocomplete_fields = [
-        'complete',
-        'selection',
-        'score',
-    ]
-
-
-@admin.register(Complete)
-class CompleteAdmin(admin.ModelAdmin):
-
-    fields = [
-        'id',
-        'mark',
-        'row',
-        'year',
-        'season_raw',
-        'district_raw',
-        'convention_raw',
-        'session_raw',
-        'round_raw',
-        'category_raw',
-        'season_kind',
-        'convention_name',
-        'session_kind',
-        'round_kind',
-        'category_kind',
-        'panelist_name',
-        'panelist_num',
-        'points',
-        'panelist',
-    ]
-    list_display = [
-        'row',
-        # 'mark',
-        # 'convention_raw',
-        'session_raw',
-        'session_kind',
-        # 'round_raw',
-        # 'round_kind',
-        # 'id',
-        # 'category',
-        # 'panelist_num',
-        # 'panelist_name',
-        # 'person',
-        # 'num_appearances',
-        # 'num_panelists',
-        # 'points',
-        # 'convention',
-        # 'session',
-        # 'round',
-        # 'panelist',
-    ]
-    list_filter = [
-        'year',
-        'season_kind',
-        'session_kind',
-        'round_kind',
-        'district_code',
-    ]
-    ordering = (
-        'year',
-        'district_code',
-        'season_kind',
-        'session_kind',
-        'round_kind',
-        'panelist_num',
-    )
-    readonly_fields = [
-        'id',
-    ]
-    search_fields = [
-        'round',
-    ]
-    autocomplete_fields = [
-        'panelist',
-    ]
-    inlines = [
-        # FlatInline,
-    ]
-
-
-@admin.register(Selection)
-class SelectionAdmin(admin.ModelAdmin):
-
-    fields = [
-        'id',
-        'row',
-        'season_raw',
-        'year',
-        'district_raw',
-        'event_raw',
-        'session_raw',
-        'season_kind',
-        'convention_name',
-        'session_kind',
-        'round_kind',
-        'group_name',
-        'appearance_num',
-        'song_num',
-        'song_title',
-        'totals',
-        'points',
-        'song',
-    ]
-    list_display = [
-        'row',
-        # 'season_raw',
-        # 'district_raw',
-        # 'event_raw',
-        # 'session_raw',
-        # 'district_code',
-        # 'event_raw',
-        # 'convention',
-        # 'event_raw',
-        # 'session_raw',
-        # 'session_kind',
-        # 'session',
-        'song',
-        'song_num',
-        # 'round_kind',
-        # 'appearance_num',
-        # 'song_num',
-        # 'group_name',
-        # 'song_title',
-        # 'convention',
-        # 'session',
-        # 'round',
-        # 'appearance',
-        # 'totals',
-        # 'points',
-        # 'song',
-    ]
-    list_filter = [
-        'year',
-        # 'season_raw',
-        # 'district_raw',
-        # 'event_raw',
-        # 'session_raw',
-        'season_kind',
-        'district_code',
-        'session_kind',
-        'round_kind',
-    ]
-    list_select_related = [
-        'song',
-    ]
-    list_editable = [
-        # 'convention_name',
-    ]
-
-    ordering = (
-        'row',
-        'appearance_num',
-        'song_num',
-    )
-    readonly_fields = [
-        'id',
-    ]
-    autocomplete_fields = [
-        'song',
-    ]
-    search_fields = [
-        'song',
-    ]
-    inlines = [
-        # FlatInline,
-    ]
 
 
 @admin.register(Appearance)
@@ -784,53 +590,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     ordering = (
     )
-
-
-@admin.register(Grid)
-class GridAdmin(admin.ModelAdmin):
-    save_on_top = True
-    fields = [
-        # 'name',
-        'status',
-        'period',
-        'num',
-        'onstage',
-        'start',
-        'venue',
-        'round',
-        # 'appearance',
-        'renditions',
-    ]
-    list_display = [
-        'status',
-        'onstage',
-        'start',
-    ]
-    list_filter = (
-        'status',
-        'onstage',
-        'period',
-    )
-    readonly_fields = [
-    ]
-    autocomplete_fields = [
-        'round',
-        'venue',
-        # 'appearance',
-    ]
-    ordering = [
-        'round',
-        'period',
-        'num',
-    ]
-
-    def change_view(self, request, object_id, form_url='', extra_context=None):
-        obj = self.get_object(request, object_id)
-        try:
-            timezone.activate(obj.venue.timezone)
-        except AttributeError:
-            pass
-        return super().change_view(request, object_id, form_url, extra_context)
 
 
 @admin.register(Group)
@@ -1526,7 +1285,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         PanelistInline,
         AppearanceInline,
-        GridInline,
         OutcomeInline,
         StateLogInline,
     ]
@@ -1535,15 +1293,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session__convention__name',
     ]
 
-    def get_formsets_with_inlines(self, request, obj=None):
-        for inline in self.get_inline_instances(request, obj):
-            # hide MyInline in the add view
-            if isinstance(inline, GridInline):
-                try:
-                    timezone.activate(obj.session.convention.timezone)
-                except AttributeError:
-                    pass
-            yield inline.get_formset(request, obj), inline
 
 
 @admin.register(Score)
@@ -1707,45 +1456,6 @@ class SongAdmin(admin.ModelAdmin):
     ordering = (
         'num',
     )
-
-
-@admin.register(Venue)
-class VenueAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-    save_on_top = True
-    fields = (
-        'id',
-        'name',
-        'status',
-        'city',
-        'state',
-        'airport',
-        'timezone',
-    )
-
-    list_display = [
-        'name',
-        'city',
-        'state',
-        'airport',
-        'timezone',
-    ]
-
-    list_filter = (
-        'status',
-    )
-
-    search_fields = [
-        'name',
-        'city',
-        'state',
-    ]
-
-    readonly_fields = [
-        'id',
-    ]
 
 
 @admin.register(User)

@@ -212,7 +212,7 @@ class Convention(TimeStampedModel):
 
     # FKs
     venue = models.ForeignKey(
-        'Venue',
+        'stage.venue',
         related_name='conventions',
         help_text="""
             The venue for the convention.""",
