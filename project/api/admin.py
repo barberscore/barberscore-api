@@ -1419,7 +1419,6 @@ class SongAdmin(admin.ModelAdmin):
         'legacy_chart',
         'num',
         'penalties',
-        'selection',
         # 'title',
     ]
 
@@ -1445,7 +1444,6 @@ class SongAdmin(admin.ModelAdmin):
     readonly_fields = (
         'id',
         'stats',
-        'selection',
     )
 
     autocomplete_fields = [

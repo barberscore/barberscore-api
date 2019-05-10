@@ -463,7 +463,6 @@ class ScoreInline(admin.TabularInline):
         'song',
         'panelist__person__common_name',
         'points',
-        'flat',
     ]
     autocomplete_fields = [
         'song',
@@ -472,7 +471,6 @@ class ScoreInline(admin.TabularInline):
         'song',
         'panelist__person__common_name',
         'status',
-        'flat',
     ]
     ordering = (
         'panelist__num',
