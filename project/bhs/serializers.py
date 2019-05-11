@@ -17,10 +17,10 @@ from .models import Person
 class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
-        'repertories': 'api.serializers.RepertorySerializer',
+        # 'repertories': 'api.serializers.RepertorySerializer',
         'members': 'api.serializers.MemberSerializer',
         'officers': 'api.serializers.OfficerSerializer',
-        'entries': 'api.serializers.EntrySerializer',
+        # 'entries': 'api.serializers.EntrySerializer',
     }
 
     class Meta:
@@ -54,18 +54,18 @@ class GroupSerializer(serializers.ModelSerializer):
             'tree_sort',
             'parent',
             'children',
-            'awards',
-            'conventions',
-            'entries',
+            # 'awards',
+            # 'conventions',
+            # 'entries',
             'members',
             'officers',
-            'repertories',
+            # 'repertories',
             'permissions',
         ]
 
     class JSONAPIMeta:
         included_resources = [
-            'repertories',
+            # 'repertories',
             # 'members',
             # 'officers',
             # 'entries',
@@ -124,10 +124,10 @@ class OfficerSerializer(serializers.ModelSerializer):
 class PersonSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
-        'assignments': 'api.serializers.AssignmentSerializer',
+        # 'assignments': 'api.serializers.AssignmentSerializer',
         'members': 'api.serializers.MemberSerializer',
         'officers': 'api.serializers.OfficerSerializer',
-        'panelists': 'api.serializers.PanelistSerializer',
+        # 'panelists': 'api.serializers.PanelistSerializer',
     }
 
     class Meta:
@@ -161,11 +161,11 @@ class PersonSerializer(serializers.ModelSerializer):
             'full_name',
             'common_name',
             'sort_name',
-            'assignments',
+            # 'assignments',
             'members',
             'officers',
-            'panelists',
-            'user',
+            # 'panelists',
+            # 'user',
             'permissions',
         )
         read_only_fields = [

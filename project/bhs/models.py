@@ -918,10 +918,10 @@ class Person(TimeStampedModel):
     )
 
     # Relations
-    # statelogs = GenericRelation(
-    #     StateLog,
-    #     related_query_name='persons',
-    # )
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='persons',
+    )
 
     # Properties
     def is_active(self):
@@ -1399,10 +1399,10 @@ class Group(TimeStampedModel):
     )
 
     # Relations
-    # statelogs = GenericRelation(
-    #     StateLog,
-    #     related_query_name='groups',
-    # )
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='groups',
+    )
 
     # Properties
     @cached_property
@@ -1794,10 +1794,10 @@ class Member(TimeStampedModel):
     )
 
     # Relations
-    # statelogs = GenericRelation(
-    #     StateLog,
-    #     related_query_name='members',
-    # )
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='members',
+    )
 
     # Internals
     objects = MemberManager()
@@ -1960,10 +1960,10 @@ class Officer(TimeStampedModel):
     )
 
     # Relations
-    # statelogs = GenericRelation(
-    #     StateLog,
-    #     related_query_name='officers',
-    # )
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='officers',
+    )
 
     objects = OfficerManager()
 
@@ -1975,7 +1975,7 @@ class Officer(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('group', 'person'),
+            ('group', 'person', 'office'),
         )
         verbose_name_plural = ' Officers'
 

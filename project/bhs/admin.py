@@ -563,7 +563,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # OfficerInline,
         # AssignmentInline,
         # PanelistInline,
-        # StateLogInline,
+        StateLogInline,
     ]
 
     ordering = [
@@ -657,74 +657,74 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'tree_sort',
     ]
 
-    # INLINES = {
-    #     'International': [
-    #         AwardInline,
-    #         OfficerInline,
-    #         ConventionInline,
-    #         StateLogInline,
-    #     ],
-    #     'District': [
-    #         AwardInline,
-    #         OfficerInline,
-    #         ConventionInline,
-    #         ActiveChapterInline,
-    #         ActiveQuartetInline,
-    #         StateLogInline,
-    #     ],
-    #     'Noncompetitive': [
-    #         OfficerInline,
-    #         GroupInline,
-    #         StateLogInline,
-    #     ],
-    #     'Affiliate': [
-    #         OfficerInline,
-    #         GroupInline,
-    #         StateLogInline,
-    #     ],
-    #     'Chapter': [
-    #         ActiveChorusInline,
-    #         OfficerInline,
-    #         StateLogInline,
-    #     ],
-    #     'Chorus': [
-    #         OfficerInline,
-    #         # MemberInline,
-    #         RepertoryInline,
-    #         # EntryInline,
-    #         StateLogInline,
-    #     ],
-    #     'Quartet': [
-    #         OfficerInline,
-    #         MemberInline,
-    #         RepertoryInline,
-    #         EntryInline,
-    #         StateLogInline,
-    #     ],
-    #     'VLQ': [
-    #         OfficerInline,
-    #         MemberInline,
-    #         RepertoryInline,
-    #         EntryInline,
-    #         StateLogInline,
-    #     ],
-    # }
+    INLINES = {
+        'International': [
+            # AwardInline,
+            # OfficerInline,
+            # ConventionInline,
+            StateLogInline,
+        ],
+        'District': [
+            # AwardInline,
+            # OfficerInline,
+            # ConventionInline,
+            # ActiveChapterInline,
+            # ActiveQuartetInline,
+            StateLogInline,
+        ],
+        'Noncompetitive': [
+            # OfficerInline,
+            # GroupInline,
+            StateLogInline,
+        ],
+        'Affiliate': [
+            # OfficerInline,
+            # GroupInline,
+            StateLogInline,
+        ],
+        'Chapter': [
+            # ActiveChorusInline,
+            # OfficerInline,
+            StateLogInline,
+        ],
+        'Chorus': [
+            # OfficerInline,
+            # MemberInline,
+            # RepertoryInline,
+            # EntryInline,
+            StateLogInline,
+        ],
+        'Quartet': [
+            # OfficerInline,
+            # MemberInline,
+            # RepertoryInline,
+            # EntryInline,
+            StateLogInline,
+        ],
+        'VLQ': [
+            # OfficerInline,
+            # MemberInline,
+            # RepertoryInline,
+            # EntryInline,
+            StateLogInline,
+        ],
+    }
 
-    # def get_inline_instances(self, request, obj=None):
-    #     inline_instances = []
-    #     try:
-    #         inlines = self.INLINES[obj.KIND[obj.kind]]
-    #     except AttributeError:
-    #         return inline_instances
+    def get_inline_instances(self, request, obj=None):
+        inline_instances = []
+        try:
+            inlines = self.INLINES[obj.KIND[obj.kind]]
+        except AttributeError:
+            return inline_instances
 
-    #     for inline_class in inlines:
-    #         inline = inline_class(self.model, self.admin_site)
-    #         inline_instances.append(inline)
-    #     return inline_instances
+        for inline_class in inlines:
+            inline = inline_class(self.model, self.admin_site)
+            inline_instances.append(inline)
+        return inline_instances
 
-    # def get_formsets(self, request, obj=None):
-    #     for inline in self.get_inline_instances(request, obj):
-    #         yield inline.get_formset(request, obj)
+    def get_formsets(self, request, obj=None):
+        for inline in self.get_inline_instances(request, obj):
+            yield inline.get_formset(request, obj)
 
     def get_queryset(self, request):
         return super().get_queryset(
@@ -813,7 +813,7 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'group',
     ]
     inlines = [
-        # StateLogInline,
+        StateLogInline,
     ]
 
     def is_mc(self, instance):
@@ -862,7 +862,7 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'office',
     ]
     inlines = [
-        # StateLogInline,
+        StateLogInline,
     ]
     search_fields = [
         'person__last_name',

@@ -63,13 +63,13 @@ class GroupViewSet(viewsets.ModelViewSet):
         'parent',
     ).prefetch_related(
         'children',
-        'awards',
-        'appearances',
-        'conventions',
-        'entries',
+        # 'awards',
+        # 'appearances',
+        # 'conventions',
+        # 'entries',
         'members',
         'officers',
-        'repertories',
+        # 'repertories',
         'statelogs',
     ).distinct()
     serializer_class = GroupSerializer
@@ -245,10 +245,10 @@ class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
         # 'user',
     ).prefetch_related(
-        'assignments',
+        # 'assignments',
         'members',
         'officers',
-        'panelists',
+        # 'panelists',
         'statelogs',
     ).order_by('id')
     serializer_class = PersonSerializer
