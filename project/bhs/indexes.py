@@ -1,0 +1,51 @@
+
+# Third-Party
+from algoliasearch_django import AlgoliaIndex
+
+
+class GroupIndex(AlgoliaIndex):
+    should_index = 'is_active'
+    fields = [
+        'name',
+        'get_kind_display',
+        'get_gender_display',
+        'code',
+        'image',
+        'bhs_id',
+    ]
+    settings = {
+        'searchableAttributes': [
+            'name',
+            'code',
+            'bhs_id',
+            'get_kind_display',
+        ],
+        'attributesForFaceting': [
+            'get_kind_display',
+        ]
+    }
+
+
+class PersonIndex(AlgoliaIndex):
+    should_index = 'is_active'
+    fields = [
+        'first_name',
+        'middle_name',
+        'last_name',
+        'nick_name',
+        'get_gender_display',
+        'get_part_display',
+        'email',
+        'image',
+        'bhs_id',
+        'full_name',
+        'common_name',
+    ]
+    settings = {
+        'searchableAttributes': [
+            'bhs_id,full_name',
+            'get_gender_display',
+            'get_part_display',
+            'email',
+        ]
+    }

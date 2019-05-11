@@ -3,13 +3,19 @@
 from rest_framework import routers
 
 # Local
-from .views import HumanViewSet
-from .views import StructureViewSet
+from .views import GroupViewSet
+from .views import MemberViewSet
+from .views import OfficerViewSet
+from .views import OfficeViewSet
+from .views import PersonViewSet
 
 router = routers.DefaultRouter(
     trailing_slash=False,
 )
 
-# router.register(r'human', HumanViewSet)
-# router.register(r'structure', StructureViewSet)
+router.register(r'group', GroupViewSet)
+router.register(r'member', MemberViewSet)
+router.register(r'office', OfficeViewSet)
+router.register(r'officer', OfficerViewSet)
+router.register(r'person', PersonViewSet)
 urlpatterns = router.urls

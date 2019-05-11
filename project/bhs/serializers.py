@@ -1,76 +1,211 @@
 
 # Third-Party
-# from rest_framework.validators import UniqueTogetherValidator
+from django_fsm_log.models import StateLog
+from dry_rest_permissions.generics import DRYPermissionsField
+from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_json_api import serializers
 
 # Local
-from .models import Human
-from .models import Structure
+from .fields import TimezoneField
+
+from .models import Group
+from .models import Member
+from .models import Office
+from .models import Officer
+from .models import Person
 
 
-class HumanSerializer(serializers.ModelSerializer):
-    common_name = serializers.SerializerMethodField()
-
-    def get_common_name(self, obj):
-        last = obj.last_name.strip()
-        if obj.nick_name:
-            first = obj.nick_name.strip()
-        else:
-            first = obj.first_name.strip()
-        return " ".join([
-            first,
-            last,
-        ])
-
+class GroupSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+    included_serializers = {
+        'repertories': 'api.serializers.RepertorySerializer',
+        'members': 'api.serializers.MemberSerializer',
+        'officers': 'api.serializers.OfficerSerializer',
+        'entries': 'api.serializers.EntrySerializer',
+    }
 
     class Meta:
-        model = Human
+        model = Group
+        fields = [
+            'id',
+            'url',
+            'name',
+            'status',
+            'kind',
+            'gender',
+            'is_senior',
+            'is_youth',
+            'division',
+            'code',
+            'start_date',
+            'end_date',
+            'location',
+            'website',
+            'facebook',
+            'twitter',
+            'email',
+            'phone',
+            'image',
+            'description',
+            'participants',
+            'bhs_id',
+            'international',
+            'district',
+            'chapter',
+            'tree_sort',
+            'parent',
+            'children',
+            'awards',
+            'conventions',
+            'entries',
+            'members',
+            'officers',
+            'repertories',
+            'permissions',
+        ]
+
+    class JSONAPIMeta:
+        included_resources = [
+            'repertories',
+            # 'members',
+            # 'officers',
+            # 'entries',
+        ]
+
+    # def to_representation(self, instance):
+    #     if instance.kind <= 30:
+    #         self.fields.pop('members')
+    #     return super().to_representation(instance)
+
+
+class MemberSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Member
+        fields = [
+            'id',
+            'url',
+            'status',
+            'part',
+            'start_date',
+            'end_date',
+            'group',
+            'person',
+            'permissions',
+        ]
+
+
+class OfficeSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Office
+        fields = [
+            'id',
+            'url',
+            'name',
+            'status',
+            'kind',
+            'code',
+            'is_convention_manager',
+            'is_session_manager',
+            'is_round_manager',
+            'is_scoring_manager',
+            'is_group_manager',
+            'is_person_manager',
+            'is_award_manager',
+            'is_officer_manager',
+            'is_chart_manager',
+            'is_assignment_manager',
+            'officers',
+            'permissions',
+        ]
+
+
+class OfficerSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Officer
+        fields = [
+            'id',
+            'url',
+            'status',
+            'start_date',
+            'end_date',
+            'office',
+            'person',
+            'group',
+            'permissions',
+        ]
+
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Officer.objects.all(),
+                fields=('person', 'office'),
+                message='This person already holds this office.',
+            )
+        ]
+
+
+class PersonSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+    included_serializers = {
+        'assignments': 'api.serializers.AssignmentSerializer',
+        'members': 'api.serializers.MemberSerializer',
+        'officers': 'api.serializers.OfficerSerializer',
+        'panelists': 'api.serializers.PanelistSerializer',
+    }
+
+    class Meta:
+        model = Person
         fields = (
             'id',
-            # 'url',
+            'url',
             'first_name',
             'middle_name',
             'last_name',
             'nick_name',
-            'common_name',
-            'email',
-            'birth_date',
-            'is_deceased',
-            'home_phone',
-            'cell_phone',
-            'work_phone',
-            'bhs_id',
-            'gender',
-            'part',
-            # 'full_name',
-            'created',
-            'modified',
-        )
-
-
-class StructureSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(
-        max_length=255,
-        allow_blank=True,
-        trim_whitespace=True,
-    )
-
-    class Meta:
-        model = Structure
-        fields = (
-            'id',
-            # 'url',
             'status',
-            'name',
-            'kind',
-            'bhs_id',
-            'chapter_code',
-            'chorus_name',
-            'preferred_name',
-            'phone',
+            'birth_date',
+            'spouse',
+            'location',
+            'part',
+            'website',
             'email',
-            'established_date',
-            'created',
-            'modified',
-            'parent',
+            'address',
+            'home_phone',
+            'work_phone',
+            'cell_phone',
+            'airports',
+            'image',
+            'description',
+            'gender',
+            'bhs_id',
+            'current_through',
+            'current_status',
+            'current_district',
+            'full_name',
+            'common_name',
+            'sort_name',
+            'assignments',
+            'members',
+            'officers',
+            'panelists',
+            'user',
+            'permissions',
         )
+        read_only_fields = [
+            'common_name',
+            'full_name',
+            'sort_name',
+        ]
+
+    class JSONAPIMeta:
+        included_resources = [
+            # 'assignments',
+            # 'members',
+            # 'officers',
+            # 'panelists',
+        ]
