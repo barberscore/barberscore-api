@@ -10,7 +10,6 @@ from .fields import TimezoneField
 
 from .models import Group
 from .models import Member
-from .models import Office
 from .models import Officer
 from .models import Person
 
@@ -92,33 +91,6 @@ class MemberSerializer(serializers.ModelSerializer):
             'end_date',
             'group',
             'person',
-            'permissions',
-        ]
-
-
-class OfficeSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Office
-        fields = [
-            'id',
-            'url',
-            'name',
-            'status',
-            'kind',
-            'code',
-            'is_convention_manager',
-            'is_session_manager',
-            'is_round_manager',
-            'is_scoring_manager',
-            'is_group_manager',
-            'is_person_manager',
-            'is_award_manager',
-            'is_officer_manager',
-            'is_chart_manager',
-            'is_assignment_manager',
-            'officers',
             'permissions',
         ]
 

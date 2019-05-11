@@ -23,11 +23,10 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 
 # Local
-from .filtersets import MemberFilterset
-from .filtersets import OfficerFilterset
+# from .filtersets import MemberFilterset
+# from .filtersets import OfficerFilterset
 from .models import Group
 from .models import Member
-from .models import Office
 from .models import Officer
 from .models import Person
 from .renderers import PDFRenderer
@@ -37,7 +36,6 @@ from .responders import XLSXResponse
 from .serializers import GroupSerializer
 from .serializers import MemberSerializer
 from .serializers import OfficerSerializer
-from .serializers import OfficeSerializer
 from .serializers import PersonSerializer
 
 
@@ -159,7 +157,7 @@ class MemberViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = MemberSerializer
-    filterset_class = MemberFilterset
+    # filterset_class = MemberFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -197,31 +195,15 @@ class MemberViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class OfficeViewSet(viewsets.ModelViewSet):
-    queryset = Office.objects.select_related(
-    ).prefetch_related(
-        'officers',
-    ).order_by('id')
-    serializer_class = OfficeSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "office"
-
-
 class OfficerViewSet(viewsets.ModelViewSet):
     queryset = Officer.objects.select_related(
-        'office',
         'person',
         'group',
     ).prefetch_related(
         'statelogs',
     ).order_by('id')
     serializer_class = OfficerSerializer
-    filterset_class = OfficerFilterset
+    # filterset_class = OfficerFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -261,7 +243,7 @@ class OfficerViewSet(viewsets.ModelViewSet):
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
-        'user',
+        # 'user',
     ).prefetch_related(
         'assignments',
         'members',
