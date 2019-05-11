@@ -25,10 +25,13 @@ from django.utils.text import slugify
 # Local
 # from .filtersets import MemberFilterset
 # from .filtersets import OfficerFilterset
+from .filterbackends import RepertoryFilterBackend
 from .models import Group
 from .models import Member
 from .models import Officer
 from .models import Person
+from .models import Chart
+from .models import Repertory
 from .renderers import PDFRenderer
 from .renderers import XLSXRenderer
 from .responders import PDFResponse
@@ -37,6 +40,8 @@ from .serializers import GroupSerializer
 from .serializers import MemberSerializer
 from .serializers import OfficerSerializer
 from .serializers import PersonSerializer
+from .serializers import ChartSerializer
+from .serializers import RepertorySerializer
 
 
 log = logging.getLogger(__name__)
@@ -287,3 +292,111 @@ class PersonViewSet(viewsets.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
+
+class ChartViewSet(viewsets.ModelViewSet):
+    queryset = Chart.objects.select_related(
+    ).prefetch_related(
+        'repertories',
+        'songs',
+        'statelogs',
+    ).order_by('status', 'title')
+    serializer_class = ChartSerializer
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "chart"
+
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(
+        methods=['get'],
+        detail=False,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
+    def report(self, request):
+        xlsx = Chart.objects.get_report()
+        file_name = 'chart-report'
+        return XLSXResponse(
+            xlsx,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+
+class RepertoryViewSet(viewsets.ModelViewSet):
+    queryset = Repertory.objects.select_related(
+        'group',
+        'chart',
+    ).prefetch_related(
+        'statelogs',
+    ).order_by('id')
+    serializer_class = RepertorySerializer
+    filter_backends = [
+        DjangoFilterBackend,
+        RepertoryFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "repertory"
+
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+

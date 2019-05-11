@@ -25,7 +25,6 @@ from django.core.files.base import ContentFile
 
 from .tasks import get_accounts
 
-
 class HumanManager(Manager):
     def export_values(self, cursor=None):
         hs = self.filter(
@@ -947,4 +946,42 @@ class PersonManager(Manager):
         t = orphans.count()
         orphans.delete()
         return t
+
+
+class ChartManager(Manager):
+    def get_report(self):
+        wb = Workbook()
+        ws = wb.active
+        fieldnames = [
+            'PK',
+            'Title',
+            'Arrangers',
+            'Composers',
+            'Lyricists',
+            'Holders',
+            'Status',
+        ]
+        ws.append(fieldnames)
+        charts = self.order_by('title', 'arrangers')
+        for chart in charts:
+            pk = str(chart.pk)
+            title = chart.title
+            arrangers = chart.arrangers
+            composers = chart.composers
+            lyricists = chart.lyricists
+            holders = chart.holders
+            status = chart.get_status_display()
+            row = [
+                pk,
+                title,
+                arrangers,
+                composers,
+                lyricists,
+                holders,
+                status,
+            ]
+            ws.append(row)
+        file = save_virtual_workbook(wb)
+        content = ContentFile(file)
+        return content
 

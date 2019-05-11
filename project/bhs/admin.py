@@ -10,6 +10,7 @@ from .inlines import JoinInline
 from .inlines import RoleInline
 from .inlines import SubscriptionInline
 from .inlines import StructureInline
+from .inlines import RepertoryInline
 from .models import Human
 from .models import Join
 from .models import Membership
@@ -21,6 +22,8 @@ from .models import Person
 from .models import Group
 from .models import Member
 from .models import Officer
+from .models import Chart
+from .models import Repertory
 
 from .filters import MCListFilter
 
@@ -882,3 +885,110 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
         return instance.is_mc
     is_mc.boolean = True
     is_mc.short_description = 'Is Member Center'
+
+
+@admin.register(Chart)
+class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
+    fields = [
+        'status',
+        'title',
+        'composers',
+        'lyricists',
+        'arrangers',
+        'holders',
+        'image',
+        'description',
+        'notes',
+        'created',
+        'modified',
+        # 'gender',
+        # 'tempo',
+        # 'is_medley',
+        # 'is_learning',
+        # 'voicing',
+    ]
+
+    list_display = [
+        'status',
+        'title',
+        'arrangers',
+        'composers',
+        'lyricists',
+    ]
+
+    list_editable = [
+        'title',
+        'arrangers',
+        'composers',
+        'lyricists',
+    ]
+
+    list_filter = [
+        'status',
+    ]
+
+    inlines = [
+        RepertoryInline,
+        StateLogInline,
+    ]
+
+    readonly_fields = [
+        'created',
+        'modified',
+    ]
+
+    search_fields = [
+        'title',
+        'arrangers',
+    ]
+
+    ordering = (
+        'title',
+        'arrangers',
+    )
+
+
+@admin.register(Repertory)
+class RepertoryAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+
+    fields = [
+        'id',
+        'status',
+        'group',
+        'chart',
+    ]
+
+    list_display = [
+        'group',
+        'chart',
+        'status',
+    ]
+
+    save_on_top = True
+
+    readonly_fields = [
+        'id',
+    ]
+
+    autocomplete_fields = [
+        'group',
+        'chart',
+    ]
+
+    inlines = [
+        StateLogInline,
+    ]
+
+    search_fields = [
+        'group__name',
+        'chart__title',
+    ]
+
+

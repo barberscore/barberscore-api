@@ -11,6 +11,7 @@ from .models import Status
 from .models import Structure
 from .models import Subscription
 
+from .models import Repertory
 
 class StructureInline(admin.TabularInline):
     model = Structure
@@ -129,3 +130,29 @@ class RoleInline(admin.TabularInline):
     # ]
     max_num = 0
     can_delete = False
+
+
+class RepertoryInline(admin.TabularInline):
+    model = Repertory
+    fields = [
+        'chart',
+        'group',
+        'status',
+    ]
+    autocomplete_fields = [
+        'chart',
+        'group',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+    readonly_fields = [
+        'status',
+    ]
+    ordering = [
+        'chart__title',
+    ]
+
+

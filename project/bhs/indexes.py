@@ -49,3 +49,18 @@ class PersonIndex(AlgoliaIndex):
             'email',
         ]
     }
+
+class ChartIndex(AlgoliaIndex):
+    fields = [
+        'title',
+        'arrangers'
+    ]
+    settings = {
+        'searchableAttributes': [
+            'title',
+            'arrangers',
+        ]
+    }
+    should_index = 'is_searchable'
+
+

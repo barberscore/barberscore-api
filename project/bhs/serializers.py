@@ -13,6 +13,9 @@ from .models import Member
 from .models import Officer
 from .models import Person
 
+from .models import Chart
+from .models import Repertory
+
 
 class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
@@ -181,3 +184,50 @@ class PersonSerializer(serializers.ModelSerializer):
             # 'officers',
             # 'panelists',
         ]
+
+
+class ChartSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Chart
+        fields = (
+            'id',
+            'url',
+            'status',
+            'title',
+            'arrangers',
+            'composers',
+            'lyricists',
+            'description',
+            'notes',
+            'image',
+            'holders',
+            'repertories',
+            'songs',
+            'permissions',
+        )
+
+class RepertorySerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Repertory
+        fields = (
+            'id',
+            'url',
+            'status',
+            'group',
+            'chart',
+            'permissions',
+        )
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Repertory.objects.all(),
+                fields=('group', 'chart'),
+                message='This chart already exists in your repertory.',
+            )
+        ]
+
+
+

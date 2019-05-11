@@ -3,9 +3,11 @@ from rest_framework import serializers
 
 from .models import Group
 from .models import Member
-from .models import Office
 from .models import Officer
 from .models import Person
+
+from .models import Chart
+from .models import Repertory
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -39,3 +41,16 @@ class GroupSerializer(serializers.ModelSerializer):
             'get_division_display',
             'chapter',
         ]
+
+class ChartSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Chart
+        fields = (
+            'id',
+            'title',
+            'arrangers',
+            'composers',
+            'lyricists',
+        )
+
