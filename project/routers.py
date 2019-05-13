@@ -57,8 +57,8 @@ class BHSRouter(object):
             'chart',
             'repertory',
         ]
-        if app_label == 'bhs' and model_name in models:
-            return True
-        if app_label == 'bhs':
-            return False
-        return None
+        # if app_label == 'bhs' and model_name in models:
+        #     return True
+        # if app_label == 'bhs':
+        #     return False
+        return True

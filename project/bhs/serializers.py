@@ -204,9 +204,10 @@ class ChartSerializer(serializers.ModelSerializer):
             'image',
             'holders',
             'repertories',
-            'songs',
+            # 'songs',
             'permissions',
         )
+
 
 class RepertorySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()

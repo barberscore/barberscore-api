@@ -2044,6 +2044,7 @@ class Officer(TimeStampedModel):
     def deactivate(self, description=None, *args, **kwargs):
         return
 
+
 class Chart(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -2181,6 +2182,7 @@ class Chart(TimeStampedModel):
     def protect(self, *args, **kwargs):
         """Protect the Chart."""
         return
+
 
 class Repertory(TimeStampedModel):
     id = models.UUIDField(

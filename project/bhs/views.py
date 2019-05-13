@@ -293,11 +293,11 @@ class PersonViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
+
 class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.select_related(
     ).prefetch_related(
         'repertories',
-        'songs',
         'statelogs',
     ).order_by('status', 'title')
     serializer_class = ChartSerializer

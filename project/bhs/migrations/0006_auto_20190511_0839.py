@@ -152,7 +152,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='officer',
-            unique_together={('group', 'person')},
+            unique_together={('group', 'person', 'office')},
         ),
         migrations.AlterUniqueTogether(
             name='member',
