@@ -8,30 +8,30 @@ from rest_framework.test import APIClient
 from django.test.client import Client
 
 # First-Party
-from api.factories import AppearanceFactory
-from api.factories import AssignmentFactory
-from api.factories import AwardFactory
-from api.factories import ChartFactory
-from api.factories import ContenderFactory
-from api.factories import ContestantFactory
-from api.factories import ContestFactory
-from api.factories import ConventionFactory
-from api.factories import EntryFactory
-# from api.factories import GridFactory
-from api.factories import GroupFactory
-from api.factories import MemberFactory
-from api.factories import OfficeFactory
-from api.factories import OfficerFactory
-from api.factories import OutcomeFactory
-from api.factories import PanelistFactory
-from api.factories import PersonFactory
-from api.factories import RepertoryFactory
-from api.factories import RoundFactory
-from api.factories import ScoreFactory
-from api.factories import SessionFactory
-from api.factories import SongFactory
-from api.factories import UserFactory
-# from api.factories import VenueFactory
+from factories import AppearanceFactory
+from factories import AssignmentFactory
+from factories import AwardFactory
+from factories import ChartFactory
+from factories import ContenderFactory
+from factories import ContestantFactory
+from factories import ContestFactory
+from factories import ConventionFactory
+from factories import EntryFactory
+from factories import GridFactory
+from factories import GroupFactory
+from factories import MemberFactory
+from factories import OfficeFactory
+from factories import OfficerFactory
+from factories import OutcomeFactory
+from factories import PanelistFactory
+from factories import PersonFactory
+from factories import RepertoryFactory
+from factories import RoundFactory
+from factories import ScoreFactory
+from factories import SessionFactory
+from factories import SongFactory
+from factories import UserFactory
+from factories import VenueFactory
 
 # @pytest.fixture(scope='session')
 # def django_db_modify_db_settings():
@@ -185,6 +185,14 @@ def session():
 @pytest.fixture
 def song():
     return SongFactory()
+
+@pytest.fixture
+def grid():
+    return GridFactory()
+
+@pytest.fixture
+def venue():
+    return VenueFactory()
 
 
 # @pytest.fixture

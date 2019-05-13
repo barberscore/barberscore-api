@@ -45,14 +45,17 @@ from api.models import Session
 from api.models import Song
 from api.models import User
 
+from stage.models import Grid
+from stage.models import Venue
+
 
 class AppearanceFactory(DjangoModelFactory):
     status = Appearance.STATUS.new
     num = 1
     actual_start = None
     actual_finish = None
-    round = SubFactory('api.factories.RoundFactory')
-    group = SubFactory('api.factories.GroupFactory')
+    round = SubFactory('factories.RoundFactory')
+    group = SubFactory('factories.GroupFactory')
 
     class Meta:
         model = Appearance
@@ -61,8 +64,8 @@ class AppearanceFactory(DjangoModelFactory):
 class AssignmentFactory(DjangoModelFactory):
     status = Assignment.STATUS.active
     kind = Assignment.KIND.official
-    convention = SubFactory('api.factories.ConventionFactory')
-    person = SubFactory('api.factories.PersonFactory')
+    convention = SubFactory('factories.ConventionFactory')
+    person = SubFactory('factories.PersonFactory')
 
     class Meta:
         model = Assignment
@@ -78,7 +81,7 @@ class AwardFactory(DjangoModelFactory):
     threshold = None
     minimum = None
     advance = None
-    group = SubFactory('api.factories.GroupFactory')
+    group = SubFactory('factories.GroupFactory')
 
     class Meta:
         model = Award
@@ -97,8 +100,8 @@ class ChartFactory(DjangoModelFactory):
 
 class ContestFactory(DjangoModelFactory):
     status = Contest.STATUS.included
-    session = SubFactory('api.factories.SessionFactory')
-    award = SubFactory('api.factories.AwardFactory')
+    session = SubFactory('factories.SessionFactory')
+    award = SubFactory('factories.AwardFactory')
 
     class Meta:
         model = Contest
@@ -106,8 +109,8 @@ class ContestFactory(DjangoModelFactory):
 
 class ContestantFactory(DjangoModelFactory):
     status = Contestant.STATUS.new
-    entry = SubFactory('api.factories.EntryFactory')
-    contest = SubFactory('api.factories.ContestFactory')
+    entry = SubFactory('factories.EntryFactory')
+    contest = SubFactory('factories.ContestFactory')
 
     class Meta:
         model = Contestant
@@ -115,8 +118,8 @@ class ContestantFactory(DjangoModelFactory):
 
 class ContenderFactory(DjangoModelFactory):
     status = Contender.STATUS.new
-    appearance = SubFactory('api.factories.AppearanceFactory')
-    outcome = SubFactory('api.factories.OutcomeFactory')
+    appearance = SubFactory('factories.AppearanceFactory')
+    outcome = SubFactory('factories.OutcomeFactory')
 
     class Meta:
         model = Contender
@@ -135,7 +138,7 @@ class ConventionFactory(DjangoModelFactory):
     location = "Nashville, TN"
     timezone = 'US/Central'
     venue = None
-    group = SubFactory('api.factories.GroupFactory')
+    group = SubFactory('factories.GroupFactory')
 
     class Meta:
         model = Convention
@@ -170,8 +173,8 @@ class EntryFactory(DjangoModelFactory):
     status = Entry.STATUS.new
     is_evaluation = True
     is_private = False
-    session = SubFactory('api.factories.SessionFactory')
-    group = SubFactory('api.factories.GroupFactory')
+    session = SubFactory('factories.SessionFactory')
+    group = SubFactory('factories.GroupFactory')
 
     class Meta:
         model = Entry
@@ -224,8 +227,8 @@ class MemberFactory(DjangoModelFactory):
         Member.PART.baritone,
         Member.PART.bass,
     ])
-    group = SubFactory('api.factories.GroupFactory')
-    person = SubFactory('api.factories.PersonFactory')
+    group = SubFactory('factories.GroupFactory')
+    person = SubFactory('factories.PersonFactory')
 
     class Meta:
         model = Member
@@ -244,17 +247,17 @@ class OfficerFactory(DjangoModelFactory):
     status = Officer.STATUS.new
     start_date = None
     end_date = None
-    office = SubFactory('api.factories.OfficeFactory')
-    person = SubFactory('api.factories.PersonFactory')
-    group = SubFactory('api.factories.GroupFactory')
+    office = SubFactory('factories.OfficeFactory')
+    person = SubFactory('factories.PersonFactory')
+    group = SubFactory('factories.GroupFactory')
 
     class Meta:
         model = Officer
 
 
 class OutcomeFactory(DjangoModelFactory):
-    round = SubFactory('api.factories.RoundFactory')
-    award = SubFactory('api.factories.AwardFactory')
+    round = SubFactory('factories.RoundFactory')
+    award = SubFactory('factories.AwardFactory')
 
     class Meta:
         model = Outcome
@@ -264,8 +267,8 @@ class PanelistFactory(DjangoModelFactory):
     status = Panelist.STATUS.new
     kind = Panelist.KIND.official
     category = Panelist.CATEGORY.drcj
-    round = SubFactory('api.factories.RoundFactory')
-    person = SubFactory('api.factories.PersonFactory')
+    round = SubFactory('factories.RoundFactory')
+    person = SubFactory('factories.PersonFactory')
 
     class Meta:
         model = Panelist
@@ -294,8 +297,8 @@ class PersonFactory(DjangoModelFactory):
 
 class RepertoryFactory(DjangoModelFactory):
     status = Repertory.STATUS.active
-    group = SubFactory('api.factories.GroupFactory')
-    chart = SubFactory('api.factories.ChartFactory')
+    group = SubFactory('factories.GroupFactory')
+    chart = SubFactory('factories.ChartFactory')
 
     class Meta:
         model = Repertory
@@ -305,7 +308,7 @@ class RoundFactory(DjangoModelFactory):
     status = Round.STATUS.new
     kind = Round.KIND.finals
     num = 1
-    session = SubFactory('api.factories.SessionFactory')
+    session = SubFactory('factories.SessionFactory')
 
     class Meta:
         model = Round
@@ -314,8 +317,8 @@ class RoundFactory(DjangoModelFactory):
 class ScoreFactory(DjangoModelFactory):
     status = Score.STATUS.new
     points = FuzzyInteger(50, 90)
-    song = SubFactory('api.factories.SongFactory')
-    panelist = SubFactory('api.factories.PanelistFactory')
+    song = SubFactory('factories.SongFactory')
+    panelist = SubFactory('factories.PanelistFactory')
 
     class Meta:
         model = Score
@@ -326,7 +329,7 @@ class SessionFactory(DjangoModelFactory):
     kind = Session.KIND.quartet
     is_invitational = False
     num_rounds = 2
-    convention = SubFactory('api.factories.ConventionFactory')
+    convention = SubFactory('factories.ConventionFactory')
 
     class Meta:
         model = Session
@@ -347,12 +350,32 @@ class SessionFactory(DjangoModelFactory):
 class SongFactory(DjangoModelFactory):
     status = Song.STATUS.new
     num = 1
-    appearance = SubFactory('api.factories.AppearanceFactory')
+    appearance = SubFactory('factories.AppearanceFactory')
     chart = None
 
     class Meta:
         model = Song
 
+
+
+class GridFactory(DjangoModelFactory):
+    status = Grid.STATUS.new
+    round = SubFactory('factories.RoundFactory')
+
+    class Meta:
+        model = Grid
+
+
+class VenueFactory(DjangoModelFactory):
+    name = 'Test Convention Center'
+    status = Venue.STATUS.active
+    city = 'Nashville'
+    state = 'TN'
+    airport = 'NTA'
+    timezone = 'US/Central'
+
+    class Meta:
+        model = Venue
 
 @mute_signals(pre_delete, post_save)
 class UserFactory(DjangoModelFactory):

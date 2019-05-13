@@ -115,15 +115,15 @@ def test_entry_endpoint(admin_api_client, entry, django_assert_max_num_queries):
         assert response.status_code == status.HTTP_200_OK
 
 
-# def test_grid_endpoint(admin_api_client, grid, django_assert_max_num_queries):
-#     with django_assert_max_num_queries(10):
-#         path = reverse('grid-list')
-#         response = admin_api_client.get(path)
-#         assert response.status_code == status.HTTP_200_OK
-#     with django_assert_max_num_queries(10):
-#         path = reverse('grid-detail', args=(str(grid.id),))
-#         response = admin_api_client.get(path)
-#         assert response.status_code == status.HTTP_200_OK
+def test_grid_endpoint(admin_api_client, grid, django_assert_max_num_queries):
+    with django_assert_max_num_queries(10):
+        path = reverse('grid-list')
+        response = admin_api_client.get(path)
+        assert response.status_code == status.HTTP_200_OK
+    with django_assert_max_num_queries(10):
+        path = reverse('grid-detail', args=(str(grid.id),))
+        response = admin_api_client.get(path)
+        assert response.status_code == status.HTTP_200_OK
 
 
 def test_group_endpoint(admin_api_client, group, django_assert_max_num_queries):
@@ -258,15 +258,15 @@ def test_song_endpoint(admin_api_client, song, django_assert_max_num_queries):
         assert response.status_code == status.HTTP_200_OK
 
 
-# def test_venue_endpoint(admin_api_client, venue, django_assert_max_num_queries):
-#     with django_assert_max_num_queries(10):
-#         path = reverse('venue-list')
-#         response = admin_api_client.get(path)
-#         assert response.status_code == status.HTTP_200_OK
-#     with django_assert_max_num_queries(10):
-#         path = reverse('venue-detail', args=(str(venue.id),))
-#         response = admin_api_client.get(path)
-#         assert response.status_code == status.HTTP_200_OK
+def test_venue_endpoint(admin_api_client, venue, django_assert_max_num_queries):
+    with django_assert_max_num_queries(10):
+        path = reverse('venue-list')
+        response = admin_api_client.get(path)
+        assert response.status_code == status.HTTP_200_OK
+    with django_assert_max_num_queries(10):
+        path = reverse('venue-detail', args=(str(venue.id),))
+        response = admin_api_client.get(path)
+        assert response.status_code == status.HTTP_200_OK
 
 
 def test_user_endpoint(admin_api_client, user, django_assert_max_num_queries):

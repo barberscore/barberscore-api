@@ -96,13 +96,13 @@ def test_entry_endpoint(user_api_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
-# def test_grid_endpoint(user_api_client, grid):
-#     path = reverse('grid-list')
-#     response = user_api_client.get(path)
-#     assert response.status_code == status.HTTP_200_OK
-#     path = reverse('grid-detail', args=(str(grid.id),))
-#     response = user_api_client.get(path)
-#     assert response.status_code == status.HTTP_200_OK
+def test_grid_endpoint(user_api_client, grid):
+    path = reverse('grid-list')
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+    path = reverse('grid-detail', args=(str(grid.id),))
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
 
 
 def test_group_endpoint(user_api_client, group):
@@ -213,13 +213,13 @@ def test_song_endpoint(user_api_client, song):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-# def test_venue_endpoint(user_api_client, venue):
-#     path = reverse('venue-list')
-#     response = user_api_client.get(path)
-#     assert response.status_code == status.HTTP_200_OK
-#     path = reverse('venue-detail', args=(str(venue.id),))
-#     response = user_api_client.get(path)
-#     assert response.status_code == status.HTTP_200_OK
+def test_venue_endpoint(user_api_client, venue):
+    path = reverse('venue-list')
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+    path = reverse('venue-detail', args=(str(venue.id),))
+    response = user_api_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
 
 
 def test_user_endpoint(user_api_client, user):
