@@ -13,20 +13,12 @@ from django.conf import settings
 # Local
 from .filters import AppearanceConventionStatusListFilter
 from .filters import AwardQualifierLevelFilter
-from .filters import ConventionGroupListFilter
 from .filters import ConventionStatusListFilter
-from .filters import DistrictListFilter
-from .filters import GroupListFilter
 from .filters import MCListFilter
 from .filters import MCUserListFilter
-from .filters import RoundGroupListFilter
 from .filters import SessionConventionStatusListFilter
-from .filters import SessionGroupListFilter
 from .forms import UserChangeForm
 from .forms import UserCreationForm
-from .inlines import ActiveChapterInline
-from .inlines import ActiveChorusInline
-from .inlines import ActiveQuartetInline
 from .inlines import AppearanceInline
 from .inlines import AssignmentInline
 from .inlines import AwardInline
@@ -35,12 +27,8 @@ from .inlines import ContestantInline
 from .inlines import ContestInline
 from .inlines import ConventionInline
 from .inlines import EntryInline
-from .inlines import GroupInline
-from .inlines import MemberInline
-from .inlines import OfficerInline
 from .inlines import OutcomeInline
 from .inlines import PanelistInline
-from .inlines import RepertoryInline
 from .inlines import RoundInline
 from .inlines import ScoreInline
 from .inlines import SessionInline
@@ -48,20 +36,13 @@ from .inlines import SongInline
 from .models import Appearance
 from .models import Assignment
 from .models import Award
-from .models import Chart
 from .models import Contest
 from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Group
-from .models import Member
-from .models import Office
-from .models import Officer
 from .models import Outcome
 from .models import Panelist
-from .models import Person
-from .models import Repertory
 from .models import Round
 from .models import Score
 from .models import Session
@@ -246,7 +227,6 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'season',
         'is_single',
-        GroupListFilter,
     ]
 
     readonly_fields = [
@@ -264,71 +244,6 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     ordering = (
         'tree_sort',
-    )
-
-
-@admin.register(Chart)
-class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    fields = [
-        'status',
-        'title',
-        'composers',
-        'lyricists',
-        'arrangers',
-        'holders',
-        'image',
-        'description',
-        'notes',
-        'created',
-        'modified',
-        # 'gender',
-        # 'tempo',
-        # 'is_medley',
-        # 'is_learning',
-        # 'voicing',
-    ]
-
-    list_display = [
-        'status',
-        'title',
-        'arrangers',
-        'composers',
-        'lyricists',
-    ]
-
-    list_editable = [
-        'title',
-        'arrangers',
-        'composers',
-        'lyricists',
-    ]
-
-    list_filter = [
-        'status',
-    ]
-
-    inlines = [
-        RepertoryInline,
-        StateLogInline,
-    ]
-
-    readonly_fields = [
-        'created',
-        'modified',
-    ]
-
-    search_fields = [
-        'title',
-        'arrangers',
-    ]
-
-    ordering = (
-        'title',
-        'arrangers',
     )
 
 
@@ -492,7 +407,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_filter = (
         'status',
         'season',
-        ConventionGroupListFilter,
         'year',
     )
 
@@ -590,394 +504,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     ordering = (
     )
-
-
-@admin.register(Group)
-class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    save_on_top = True
-    fsm_field = [
-        'status',
-    ]
-    fields = [
-        'id',
-        'is_mc',
-        'name',
-        'status',
-        'kind',
-        'gender',
-        'division',
-        ('is_senior', 'is_youth',),
-        ('bhs_id', 'mc_pk', 'code',),
-        'parent',
-        ('international', 'district', 'chapter',),
-        'location',
-        'email',
-        'phone',
-        'website',
-        'image',
-        'description',
-        'participants',
-        'notes',
-        ('created', 'modified',),
-    ]
-
-    list_filter = [
-        'status',
-        MCListFilter,
-        'kind',
-        'gender',
-        'is_senior',
-        'is_youth',
-        'division',
-        DistrictListFilter,
-    ]
-
-    search_fields = [
-        'name',
-        'bhs_id',
-        'code',
-    ]
-
-    list_display = [
-        'name',
-        'kind',
-        'gender',
-        'is_senior',
-        'is_youth',
-        'division',
-        'parent',
-        'bhs_id',
-        'code',
-        'is_mc',
-        'status',
-    ]
-    list_select_related = [
-        'parent',
-    ]
-    readonly_fields = [
-        'id',
-        'is_mc',
-        'international',
-        'district',
-        'chapter',
-        'created',
-        'modified',
-    ]
-
-    # autocomplete_fields = [
-    #     'parent',
-    # ]
-    raw_id_fields = [
-        'parent',
-    ]
-
-    ordering = [
-        'tree_sort',
-    ]
-
-    INLINES = {
-        'International': [
-            AwardInline,
-            OfficerInline,
-            ConventionInline,
-            StateLogInline,
-        ],
-        'District': [
-            AwardInline,
-            OfficerInline,
-            ConventionInline,
-            ActiveChapterInline,
-            ActiveQuartetInline,
-            StateLogInline,
-        ],
-        'Noncompetitive': [
-            OfficerInline,
-            GroupInline,
-            StateLogInline,
-        ],
-        'Affiliate': [
-            OfficerInline,
-            GroupInline,
-            StateLogInline,
-        ],
-        'Chapter': [
-            ActiveChorusInline,
-            OfficerInline,
-            StateLogInline,
-        ],
-        'Chorus': [
-            OfficerInline,
-            # MemberInline,
-            RepertoryInline,
-            # EntryInline,
-            StateLogInline,
-        ],
-        'Quartet': [
-            OfficerInline,
-            MemberInline,
-            RepertoryInline,
-            EntryInline,
-            StateLogInline,
-        ],
-        'VLQ': [
-            OfficerInline,
-            MemberInline,
-            RepertoryInline,
-            EntryInline,
-            StateLogInline,
-        ],
-    }
-
-    def get_inline_instances(self, request, obj=None):
-        inline_instances = []
-        try:
-            inlines = self.INLINES[obj.KIND[obj.kind]]
-        except AttributeError:
-            return inline_instances
-
-        for inline_class in inlines:
-            inline = inline_class(self.model, self.admin_site)
-            inline_instances.append(inline)
-        return inline_instances
-
-    def get_formsets(self, request, obj=None):
-        for inline in self.get_inline_instances(request, obj):
-            yield inline.get_formset(request, obj)
-
-    def get_queryset(self, request):
-        return super().get_queryset(
-            request
-        ).prefetch_related('members')
-
-    def is_mc(self, instance):
-        return instance.is_mc
-    is_mc.boolean = True
-    is_mc.short_description = 'Is Member Center'
-
-
-@admin.register(Member)
-class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-    fields = [
-        'id',
-        'status',
-        'person',
-        'group',
-        'part',
-        'is_mc',
-        'mc_pk',
-        'start_date',
-        'end_date',
-        # 'inactive_date',
-        # 'inactive_reason',
-        # 'sub_status',
-        # 'mem_code',
-        # 'mem_status',
-        'created',
-        'modified',
-    ]
-    list_display = [
-        'person',
-        'group',
-        'part',
-        'is_mc',
-        'status',
-    ]
-    readonly_fields = [
-        'id',
-        'is_mc',
-        'part',
-        'start_date',
-        'end_date',
-        # 'inactive_date',
-        # 'inactive_reason',
-        # 'sub_status',
-        # 'mem_code',
-        # 'mem_status',
-        'created',
-        'modified',
-    ]
-
-    autocomplete_fields = [
-        'person',
-        'group',
-    ]
-    search_fields = [
-        'person__first_name',
-        'person__last_name',
-        'group__name',
-        'person__bhs_id',
-        'group__bhs_id',
-    ]
-    list_filter = [
-        'status',
-        MCListFilter,
-        'group__kind',
-        'group__status',
-        'part',
-        'start_date',
-        'end_date',
-        # 'inactive_date',
-        # 'inactive_reason',
-        # 'sub_status',
-        # 'mem_code',
-        # 'mem_status',
-        'created',
-    ]
-    list_select_related = [
-        'person',
-        'group',
-    ]
-    inlines = [
-        StateLogInline,
-    ]
-
-    def is_mc(self, instance):
-        return instance.is_mc
-    is_mc.boolean = True
-    is_mc.short_description = 'Is Member Center'
-
-
-@admin.register(Office)
-class OfficeAdmin(admin.ModelAdmin):
-    fields = [
-        'id',
-        'name',
-        'is_mc',
-        'code',
-        'kind',
-        'mc_pk',
-        'is_convention_manager',
-        'is_session_manager',
-        'is_round_manager',
-        'is_scoring_manager',
-        'is_group_manager',
-        'is_person_manager',
-        'is_award_manager',
-        'is_officer_manager',
-        'is_chart_manager',
-        'is_assignment_manager',
-    ]
-
-    list_display = [
-        'name',
-        'is_mc',
-        'code',
-        'kind',
-        'is_convention_manager',
-        'is_session_manager',
-        'is_round_manager',
-        'is_scoring_manager',
-        'is_group_manager',
-        'is_person_manager',
-        'is_award_manager',
-        'is_officer_manager',
-        'is_chart_manager',
-        'is_assignment_manager',
-    ]
-    search_fields = [
-        'name',
-    ]
-
-    readonly_fields = [
-        'id',
-        'is_mc',
-    ]
-
-    list_filter = [
-        'status',
-        'kind',
-        MCListFilter,
-        'is_convention_manager',
-        'is_session_manager',
-        'is_round_manager',
-        'is_scoring_manager',
-        'is_group_manager',
-        'is_person_manager',
-        'is_award_manager',
-        'is_officer_manager',
-        'is_chart_manager',
-        'is_assignment_manager',
-    ]
-
-    inlines = [
-        OfficerInline,
-    ]
-
-    def is_mc(self, instance):
-        return instance.is_mc
-    is_mc.boolean = True
-    is_mc.short_description = 'Is Member Center'
-
-
-@admin.register(Officer)
-class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    def office__code(self, instance):
-        return "{0}".format(instance.office.code)
-
-    fsm_field = [
-        'status',
-    ]
-
-    fields = [
-        'id',
-        'is_mc',
-        'status',
-        'person',
-        'office',
-        'group',
-        'start_date',
-        'end_date',
-        'mc_pk'
-    ]
-
-    list_display = [
-        'person',
-        'office',
-        'group',
-        'is_mc',
-        'status',
-    ]
-    readonly_fields = [
-        'id',
-        'is_mc',
-        office__code,
-    ]
-    list_select_related = [
-        'person',
-        'group',
-        'office',
-    ]
-    list_filter = [
-        'status',
-        MCListFilter,
-        'group__kind',
-        'office__code',
-    ]
-    inlines = [
-        StateLogInline,
-    ]
-    search_fields = [
-        'person__last_name',
-        'group__name',
-    ]
-    autocomplete_fields = [
-        'office',
-        'person',
-        'group',
-    ]
-    ordering = [
-        'office__code',
-        'person__last_name',
-        'person__first_name',
-    ]
-
-    def is_mc(self, instance):
-        return instance.is_mc
-    is_mc.boolean = True
-    is_mc.short_description = 'Is Member Center'
 
 
 @admin.register(Outcome)
@@ -1078,157 +604,6 @@ class PanelistAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Person)
-class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    # Disable for use with MC
-    def has_add_permission(self, request):
-        return False
-    def has_delete_permission(self, request, obj=None):
-        return False
-    fields = [
-        'id',
-        'status',
-        ('first_name', 'middle_name', 'last_name', 'nick_name',),
-        ('email', 'bhs_id', 'birth_date',),
-        ('home_phone', 'work_phone', 'cell_phone',),
-        ('part', 'gender',),
-        ('is_deceased', 'is_honorary', 'is_suspended', 'is_expelled',),
-        'mc_pk',
-        'spouse',
-        'location',
-        'district',
-        'website',
-        'image',
-        'description',
-        'notes',
-        ('created', 'modified',),
-    ]
-
-    list_display = [
-        'common_name',
-        'email',
-        'cell_phone',
-        # 'mc_pk',
-        'part',
-        'gender',
-        'status',
-    ]
-
-    list_filter = [
-        'status',
-        MCListFilter,
-        'gender',
-        'part',
-        'is_deceased',
-    ]
-
-    readonly_fields = [
-        'id',
-        'first_name',
-        'middle_name',
-        'last_name',
-        'nick_name',
-        'email',
-        'is_deceased',
-        'bhs_id',
-        'mc_pk',
-        'birth_date',
-        'part',
-        'mon',
-        'gender',
-        'home_phone',
-        'work_phone',
-        'cell_phone',
-        'common_name',
-        'is_deceased',
-        'is_honorary',
-        'is_suspended',
-        'is_expelled',
-        'created',
-        'modified',
-    ]
-
-    fsm_field = [
-        'status',
-    ]
-
-    search_fields = [
-        'last_name',
-        'first_name',
-        'nick_name',
-        'bhs_id',
-        'email',
-    ]
-
-    # autocomplete_fields = [
-    #     'user',
-    # ]
-
-    save_on_top = True
-
-    inlines = [
-        MemberInline,
-        OfficerInline,
-        AssignmentInline,
-        PanelistInline,
-        StateLogInline,
-    ]
-
-    ordering = [
-        'last_name',
-        'first_name',
-    ]
-    # readonly_fields = [
-    #     'common_name',
-    # ]
-
-
-    def is_mc(self, instance):
-        return instance.is_mc
-    is_mc.boolean = True
-    is_mc.short_description = 'Is Member Center'
-
-
-@admin.register(Repertory)
-class RepertoryAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    fields = [
-        'id',
-        'status',
-        'group',
-        'chart',
-    ]
-
-    list_display = [
-        'group',
-        'chart',
-        'status',
-    ]
-
-    save_on_top = True
-
-    readonly_fields = [
-        'id',
-    ]
-
-    autocomplete_fields = [
-        'group',
-        'chart',
-    ]
-
-    inlines = [
-        StateLogInline,
-    ]
-
-    search_fields = [
-        'group__name',
-        'chart__title',
-    ]
-
-
 @admin.register(Round)
 class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
@@ -1255,7 +630,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'session__kind',
         'session__convention__season',
-        RoundGroupListFilter,
         'session__convention__year',
     ]
 
@@ -1292,7 +666,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     search_fields = [
         'session__convention__name',
     ]
-
 
 
 @admin.register(Score)
@@ -1369,7 +742,6 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'num_rounds',
         'is_invitational',
-        SessionGroupListFilter,
         'convention__season',
         'convention__year',
     )

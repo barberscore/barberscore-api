@@ -71,7 +71,7 @@ class User(AbstractBaseUser):
     )
 
     person = models.OneToOneField(
-        'Person',
+        'bhs.person',
         related_name='user',
         on_delete=models.CASCADE,
         null=True,

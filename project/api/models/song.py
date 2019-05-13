@@ -109,7 +109,7 @@ class Song(TimeStampedModel):
     )
 
     chart = models.ForeignKey(
-        'Chart',
+        'bhs.chart',
         related_name='songs',
         null=True,
         blank=True,

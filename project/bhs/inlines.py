@@ -12,6 +12,7 @@ from .models import Structure
 from .models import Subscription
 
 from .models import Repertory
+from .models import Group
 
 class StructureInline(admin.TabularInline):
     model = Structure
@@ -154,5 +155,104 @@ class RepertoryInline(admin.TabularInline):
     ordering = [
         'chart__title',
     ]
+
+# class ActiveChapterInline(admin.TabularInline):
+#     model = Group
+#     fields = [
+#         'name',
+#         'parent',
+#         'code',
+#         # 'kind',
+#         'gender',
+#         # 'bhs_id',
+#         # 'status',
+#     ]
+#     fk_name = 'parent'
+#     ordering = [
+#     ]
+#     show_change_link = True
+#     extra = 0
+#     classes = [
+#         'collapse',
+#     ]
+#     verbose_name_plural = 'Active Chapters'
+
+#     def get_queryset(self, request):
+#         """Alter the queryset to return no existing entries."""
+#         qs = super().get_queryset(request)
+#         qs = qs.filter(
+#             status__gt=0,
+#             kind=Group.KIND.chapter,
+#         )
+#         return qs
+
+
+# class ActiveChorusInline(admin.TabularInline):
+#     model = Group
+#     fields = [
+#         'name',
+#         'parent',
+#         'bhs_id',
+#         # 'code',
+#         # 'kind',
+#         'gender',
+#         'status',
+#         'mc_pk',
+#     ]
+#     fk_name = 'parent'
+#     ordering = [
+#     ]
+#     show_change_link = True
+#     extra = 0
+#     classes = [
+#         'collapse',
+#     ]
+#     verbose_name_plural = 'All Choruses'
+#     readonly_fields = [
+#         'status',
+#     ]
+
+#     def get_queryset(self, request):
+#         """Alter the queryset to return no existing entries."""
+#         qs = super().get_queryset(request)
+#         qs = qs.filter(
+#             kind=Group.KIND.chorus,
+#         )
+#         return qs
+
+
+# class ActiveQuartetInline(admin.TabularInline):
+#     model = Group
+#     fields = [
+#         'name',
+#         'parent',
+#         'bhs_id',
+#         'is_senior',
+#         'is_youth',
+#         'gender',
+#         # 'status',
+#     ]
+#     fk_name = 'parent'
+#     ordering = [
+#     ]
+#     show_change_link = True
+#     extra = 0
+#     classes = [
+#         'collapse',
+#     ]
+#     verbose_name_plural = 'Active Quartets'
+#     readonly_fields = [
+#         'status',
+#     ]
+
+#     def get_queryset(self, request):
+#         """Alter the queryset to return no existing entries."""
+#         qs = super().get_queryset(request)
+#         qs = qs.filter(
+#             status__gt=0,
+#             kind=Group.KIND.quartet,
+#         )
+#         return qs
+
 
 

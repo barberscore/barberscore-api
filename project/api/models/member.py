@@ -24,7 +24,6 @@ from django.utils.timezone import now
 from django.apps import apps
 
 # First-Party
-from api.managers import MemberManager
 
 log = logging.getLogger(__name__)
 
@@ -85,14 +84,14 @@ class Member(TimeStampedModel):
 
     # FKs
     group = models.ForeignKey(
-        'Group',
-        related_name='members',
+        'bhs.group',
+        related_name='members_old',
         on_delete=models.CASCADE,
     )
 
     person = models.ForeignKey(
-        'Person',
-        related_name='members',
+        'bhs.person',
+        related_name='members_old',
         on_delete=models.CASCADE,
     )
 
@@ -103,7 +102,7 @@ class Member(TimeStampedModel):
     )
 
     # Internals
-    objects = MemberManager()
+    # objects = MemberManager()
 
     class Meta:
         unique_together = (

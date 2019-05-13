@@ -44,3 +44,28 @@ from .models import Officer
 #             ],
 #         }
 
+# class GroupFilter(FilterSet):
+#     class Meta:
+#         model = Group
+#         fields = {
+#             'kind': [
+#                 'gt',
+#             ],
+#             'officers__person__user': [
+#                 'exact',
+#             ],
+#             'officers__status': [
+#                 'exact',
+#             ],
+#             'members__person__user': [
+#                 'exact',
+#             ],
+#             'members__status': [
+#                 'exact',
+#             ],
+#             'status': [
+#                 'exact',
+#             ],
+#         }
+
+

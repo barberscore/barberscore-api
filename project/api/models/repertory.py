@@ -42,14 +42,14 @@ class Repertory(TimeStampedModel):
 
     # FKs
     group = models.ForeignKey(
-        'Group',
-        related_name='repertories',
+        'bhs.group',
+        related_name='repertories_old',
         on_delete=models.CASCADE,
     )
 
     chart = models.ForeignKey(
-        'Chart',
-        related_name='repertories',
+        'bhs.chart',
+        related_name='repertories_old',
         on_delete=models.CASCADE,
     )
 

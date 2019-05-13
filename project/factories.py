@@ -48,7 +48,6 @@ from api.models import User
 from apps.stage.models import Grid
 from apps.stage.models import Venue
 
-
 class AppearanceFactory(DjangoModelFactory):
     status = Appearance.STATUS.new
     num = 1
@@ -357,7 +356,6 @@ class SongFactory(DjangoModelFactory):
         model = Song
 
 
-
 class GridFactory(DjangoModelFactory):
     status = Grid.STATUS.new
     round = SubFactory('factories.RoundFactory')
@@ -376,6 +374,7 @@ class VenueFactory(DjangoModelFactory):
 
     class Meta:
         model = Venue
+
 
 @mute_signals(pre_delete, post_save)
 class UserFactory(DjangoModelFactory):

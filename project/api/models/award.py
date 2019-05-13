@@ -262,7 +262,7 @@ class Award(TimeStampedModel):
 
     # FKs
     group = models.ForeignKey(
-        'Group',
+        'bhs.group',
         related_name='awards',
         on_delete=models.CASCADE,
     )

@@ -135,7 +135,7 @@ class Entry(TimeStampedModel):
     )
 
     group = models.ForeignKey(
-        'Group',
+        'bhs.group',
         related_name='entries',
         on_delete=models.CASCADE,
     )

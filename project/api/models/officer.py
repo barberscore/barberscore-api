@@ -21,7 +21,6 @@ from django.utils.functional import cached_property
 from django.utils.timezone import now
 
 # First-Party
-from api.managers import OfficerManager
 
 log = logging.getLogger(__name__)
 
@@ -66,19 +65,19 @@ class Officer(TimeStampedModel):
     # FKs
     office = models.ForeignKey(
         'Office',
-        related_name='officers',
+        related_name='officers_old',
         on_delete=models.CASCADE,
     )
 
     person = models.ForeignKey(
-        'Person',
-        related_name='officers',
+        'bhs.person',
+        related_name='officers_old',
         on_delete=models.CASCADE,
     )
 
     group = models.ForeignKey(
-        'Group',
-        related_name='officers',
+        'bhs.group',
+        related_name='officers_old',
         on_delete=models.CASCADE,
     )
 
@@ -88,7 +87,7 @@ class Officer(TimeStampedModel):
         related_query_name='officers',
     )
 
-    objects = OfficerManager()
+    # objects = OfficerManager()
 
     # Properties
     @cached_property
