@@ -21,8 +21,8 @@ class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
         # 'repertories': 'api.serializers.RepertorySerializer',
-        'members': 'api.serializers.MemberSerializer',
-        'officers': 'api.serializers.OfficerSerializer',
+        # 'members': 'bhs.serializers.MemberSerializer',
+        # 'officers': 'bhs.serializers.OfficerSerializer',
         # 'entries': 'api.serializers.EntrySerializer',
     }
 
@@ -56,11 +56,11 @@ class GroupSerializer(serializers.ModelSerializer):
             'chapter',
             'tree_sort',
             'parent',
-            'children',
+            # 'children',
             # 'awards',
             # 'conventions',
             # 'entries',
-            'members',
+            # 'members',
             'officers',
             # 'repertories',
             'permissions',
@@ -128,8 +128,8 @@ class PersonSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
         # 'assignments': 'api.serializers.AssignmentSerializer',
-        'members': 'api.serializers.MemberSerializer',
-        'officers': 'api.serializers.OfficerSerializer',
+        'members': 'bhs.serializers.MemberSerializer',
+        'officers': 'bhs.serializers.OfficerSerializer',
         # 'panelists': 'api.serializers.PanelistSerializer',
     }
 
