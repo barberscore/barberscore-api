@@ -123,14 +123,6 @@ def test_member_endpoint(user_api_client, member):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_office_endpoint(user_api_client, office):
-    path = reverse('office-list')
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('office-detail', args=(str(office.id),))
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
 
 def test_officer_endpoint(user_api_client, officer):
     path = reverse('officer-list')

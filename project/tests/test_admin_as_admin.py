@@ -43,10 +43,10 @@ def test_award_admin(admin_django_client, award):
 
 
 def test_chart_admin(admin_django_client, chart):
-    path = reverse('admin:api_chart_changelist')
+    path = reverse('admin:bhs_chart_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_chart_change', args=(str(chart.id),))
+    path = reverse('admin:bhs_chart_change', args=(str(chart.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -106,37 +106,28 @@ def test_grid_admin(admin_django_client, grid):
 
 
 def test_group_admin(admin_django_client, group):
-    path = reverse('admin:api_group_changelist')
+    path = reverse('admin:bhs_group_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_group_change', args=(str(group.id),))
+    path = reverse('admin:bhs_group_change', args=(str(group.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
 def test_member_admin(admin_django_client, member):
-    path = reverse('admin:api_member_changelist')
+    path = reverse('admin:bhs_member_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_member_change', args=(str(member.id),))
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_office_admin(admin_django_client, office):
-    path = reverse('admin:api_office_changelist')
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_office_change', args=(str(office.id),))
+    path = reverse('admin:bhs_member_change', args=(str(member.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
 def test_officer_admin(admin_django_client, officer):
-    path = reverse('admin:api_officer_changelist')
+    path = reverse('admin:bhs_officer_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_officer_change', args=(str(officer.id),))
+    path = reverse('admin:bhs_officer_change', args=(str(officer.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -160,19 +151,19 @@ def test_panelist_admin(admin_django_client, panelist):
 
 
 def test_person_admin(admin_django_client, person):
-    path = reverse('admin:api_person_changelist')
+    path = reverse('admin:bhs_person_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_person_change', args=(str(person.id),))
+    path = reverse('admin:bhs_person_change', args=(str(person.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
 def test_repertory_admin(admin_django_client, repertory):
-    path = reverse('admin:api_repertory_changelist')
+    path = reverse('admin:bhs_repertory_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_repertory_change', args=(str(repertory.id),))
+    path = reverse('admin:bhs_repertory_change', args=(str(repertory.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
