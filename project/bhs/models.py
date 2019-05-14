@@ -1023,7 +1023,7 @@ class Person(TimeStampedModel):
     objects = PersonManager()
 
     class Meta:
-        verbose_name_plural = ' Persons'
+        verbose_name_plural = 'Persons'
 
 
     class JSONAPIMeta:
@@ -1492,7 +1492,7 @@ class Group(TimeStampedModel):
 
     class Meta:
         ordering = ['tree_sort']
-        verbose_name_plural = ' Groups'
+        verbose_name_plural = 'Groups'
         unique_together = (
             ('bhs_id', 'kind'),
         )
@@ -1807,7 +1807,7 @@ class Member(TimeStampedModel):
         unique_together = (
             ('group', 'person',),
         )
-        verbose_name_plural = ' Members'
+        verbose_name_plural = 'Members'
 
     class JSONAPIMeta:
         resource_name = "member"
@@ -1978,7 +1978,7 @@ class Officer(TimeStampedModel):
         unique_together = (
             ('group', 'person', 'office'),
         )
-        verbose_name_plural = ' Officers'
+        verbose_name_plural = 'Officers'
 
     class JSONAPIMeta:
         resource_name = "officer"
