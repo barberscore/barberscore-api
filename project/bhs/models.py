@@ -2251,6 +2251,10 @@ class Repertory(TimeStampedModel):
                 person__user=request.user,
                 status__gt=0,
             ),
+            self.group.members.filter(
+                person__user=request.user,
+                status__gt=0,
+            ),
             self.group.appearances.filter(
                 round__session__convention__assignments__person__user=request.user,
                 round__session__convention__assignments__status__gt=0,
