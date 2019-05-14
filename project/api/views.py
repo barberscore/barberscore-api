@@ -241,12 +241,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             pdf = appearance.variance_report.file
         else:
             pdf = appearance.get_variance()
-        file_name = '{0} {1} {2} {3} Variance Report'.format(
-            appearance.round.session.convention.name,
-            appearance.round.session.get_kind_display(),
-            appearance.round.get_kind_display(),
-            appearance.group.name,
-        )
+        file_name = '{0} Variance Report.pdf'.format(appearance)
         return PDFResponse(
             pdf,
             file_name=file_name,
@@ -271,11 +266,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             pdf = appearance.csa.file
         else:
             pdf = appearance.get_csa()
-        file_name = '{0} {1} Session {2} CSA'.format(
-            appearance.round.session.convention.name,
-            appearance.round.session.get_kind_display(),
-            appearance.group.name,
-        )
+        file_name = '{0} CSA.pdf'.format(appearance)
         return PDFResponse(
             pdf,
             file_name=file_name,
@@ -700,12 +691,7 @@ class PanelistViewSet(viewsets.ModelViewSet):
             pdf = panelist.psa.file
         else:
             pdf = panelist.get_psa()
-        file_name = '{0} {1} {2} {3} PSA'.format(
-            panelist.round.session.convention.name,
-            panelist.round.session.get_kind_display(),
-            panelist.round.get_kind_display(),
-            panelist.person.common_name,
-        )
+        file_name = '{0} PSA.pdf'.format(panelist)
         return PDFResponse(
             pdf,
             file_name=file_name,
@@ -845,11 +831,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             pdf = round.oss.file
         else:
             pdf = round.get_oss()
-        file_name = '{0} {1} {2} OSS'.format(
-            round.session.convention.name,
-            round.session.get_kind_display(),
-            round.get_kind_display(),
-        )
+        file_name = '{0} OSS.pdf'.format(round)
         return PDFResponse(
             pdf,
             file_name=file_name,
@@ -873,11 +855,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             pdf = round.legacy_oss.file
         else:
             pdf = round.get_legacy_oss()
-        file_name = '{0} {1} {2} Legacy OSS'.format(
-            round.session.convention.name,
-            round.session.get_kind_display(),
-            round.get_kind_display(),
-        )
+        file_name = '{0} Legacy OSS.pdf'.format(round)
         return PDFResponse(
             pdf,
             file_name=file_name,

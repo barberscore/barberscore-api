@@ -145,7 +145,7 @@ class Panelist(TimeStampedModel):
     def __str__(self):
         return "{0} {1}".format(
             self.round,
-            self.num,
+            self.person,
         )
 
     def clean(self):

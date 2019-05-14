@@ -526,10 +526,7 @@ class Session(TimeStampedModel):
             xlsx = self.drcj_report.file
         else:
             xlsx = self.get_drcj()
-        file_name = '{0} {1} Session DRCJ Report DRAFT.xlsx'.format(
-            self.convention.name,
-            self.get_kind_display(),
-        )
+        file_name = '{0} Session DRCJ Report DRAFT.xlsx'.format(self)
         attachments.append((
             file_name,
             xlsx,
@@ -539,10 +536,7 @@ class Session(TimeStampedModel):
             xlsx = self.legacy_report.file
         else:
             xlsx = self.get_legacy()
-        file_name = '{0} {1} Session Legacy Report DRAFT.xlsx'.format(
-            self.convention.name,
-            self.get_kind_display(),
-        )
+        file_name = '{0} Session Legacy Report DRAFT.xlsx'.format(self)
         attachments.append((
             file_name,
             xlsx,
@@ -610,10 +604,7 @@ class Session(TimeStampedModel):
             xlsx = self.drcj_report.file
         else:
             xlsx = self.get_drcj()
-        file_name = '{0} {1} Session DRCJ Report FINAL.xlsx'.format(
-            self.convention.name,
-            self.get_kind_display(),
-        )
+        file_name = '{0} Session DRCJ Report FINAL.xlsx'.format(self)
         attachments.append((
             file_name,
             xlsx,
@@ -623,10 +614,7 @@ class Session(TimeStampedModel):
             xlsx = self.legacy_report.file
         else:
             xlsx = self.get_legacy()
-        file_name = '{0} {1} Session Legacy Report FINAL.xlsx'.format(
-            self.convention.name,
-            self.get_kind_display(),
-        )
+        file_name = '{0} Session Legacy Report FINAL.xlsx'.format(self)
         attachments.append((
             file_name,
             xlsx,
