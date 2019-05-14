@@ -765,6 +765,16 @@ class OfficerManager(Manager):
         Person = apps.get_model('bhs.person')
         Group = apps.get_model('bhs.group')
 
+        defaults = {
+            'mc_pk': mc_pk,
+            'status': status,
+            'start_date': start_date,
+            'end_date': end_date,
+        }
+
+        person = Person.objects.get(mc_pk=person_pk)
+        group = Group.objects.get(mc_pk=group_pk)
+
         office_map = {
             'Chapter President': self.model.OFFICE.chapter_pres,
             'Chapter Secretary': self.model.OFFICE.chapter_sec,
@@ -775,21 +785,11 @@ class OfficerManager(Manager):
         }
         office = office_map.get(name)
 
-        defaults = {
-            'mc_pk': mc_pk,
-            'status': status,
-            'office': office,
-            'start_date': start_date,
-            'end_date': end_date,
-        }
-
-        person = Person.objects.get(mc_pk=person_pk)
-        group = Group.objects.get(mc_pk=group_pk)
-
         # Load
         officer, created = self.update_or_create(
             person=person,
             group=group,
+            office=office,
             defaults=defaults,
         )
         return officer, created
