@@ -16,6 +16,8 @@ from .models import Chart
 from .models import Repertory
 
 from .inlines import RepertoryInline
+from .inlines import MemberInline
+from .inlines import OfficerInline
 
 # from .models import Human
 # from .models import Join
@@ -230,23 +232,23 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
             StateLogInline,
         ],
         'Chorus': [
-            # OfficerInline,
+            OfficerInline,
             # MemberInline,
-            # RepertoryInline,
+            RepertoryInline,
             # EntryInline,
             StateLogInline,
         ],
         'Quartet': [
-            # OfficerInline,
-            # MemberInline,
-            # RepertoryInline,
+            MemberInline,
+            OfficerInline,
+            RepertoryInline,
             # EntryInline,
             StateLogInline,
         ],
         'VLQ': [
-            # OfficerInline,
-            # MemberInline,
-            # RepertoryInline,
+            MemberInline,
+            OfficerInline,
+            RepertoryInline,
             # EntryInline,
             StateLogInline,
         ],

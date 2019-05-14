@@ -13,6 +13,8 @@ from .models import Subscription
 
 from .models import Repertory
 from .models import Group
+from .models import Member
+from .models import Officer
 
 class StructureInline(admin.TabularInline):
     model = Structure
@@ -155,6 +157,64 @@ class RepertoryInline(admin.TabularInline):
     ordering = [
         'chart__title',
     ]
+
+class MemberInline(admin.TabularInline):
+    model = Member
+    fields = [
+        'person',
+        'group',
+        'part',
+        'start_date',
+        'end_date',
+        'status',
+    ]
+    autocomplete_fields = [
+        'person',
+        'group',
+    ]
+    ordering = (
+        '-status',
+        'part',
+        'person__last_name',
+        'person__first_name',
+    )
+    readonly_fields = [
+        'status',
+    ]
+
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+
+
+class OfficerInline(admin.TabularInline):
+    model = Officer
+    fields = [
+        'office',
+        'person',
+        'group',
+        'status',
+    ]
+    autocomplete_fields = [
+        'office',
+        'person',
+        'group',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+    ordering = [
+        'person__last_name',
+        'person__first_name',
+    ]
+    readonly_fields = [
+        'status',
+    ]
+
 
 # class ActiveChapterInline(admin.TabularInline):
 #     model = Group
