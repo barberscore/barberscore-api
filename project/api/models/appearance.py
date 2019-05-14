@@ -306,7 +306,7 @@ class Appearance(TimeStampedModel):
 
     def mock(self):
         # Mock Appearance
-        Chart = apps.get_model('api.chart')
+        Chart = apps.get_model('bhs.chart')
         Panelist = apps.get_model('api.panelist')
         if self.group.kind == self.group.KIND.chorus:
             pos = self.group.members.filter(

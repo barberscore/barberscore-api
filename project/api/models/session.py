@@ -210,8 +210,8 @@ class Session(TimeStampedModel):
 
     def get_drcj(self):
         Entry = apps.get_model('api.entry')
-        Group = apps.get_model('api.group')
-        Member = apps.get_model('api.member')
+        Group = apps.get_model('bhs.group')
+        Member = apps.get_model('bhs.member')
         wb = Workbook()
         ws = wb.active
         fieldnames = [
@@ -365,8 +365,8 @@ class Session(TimeStampedModel):
 
 
     def get_district_emails(self):
-        Officer = apps.get_model('api.officer')
-        Group = apps.get_model('api.group')
+        Officer = apps.get_model('bhs.officer')
+        Group = apps.get_model('bhs.group')
         officers = Officer.objects.filter(
             status=Officer.STATUS.active,
             group__status=Group.STATUS.active,
@@ -408,7 +408,7 @@ class Session(TimeStampedModel):
 
 
     def get_participant_emails(self):
-        Officer = apps.get_model('api.officer')
+        Officer = apps.get_model('bhs.officer')
         Entry = apps.get_model('api.entry')
         officers = Officer.objects.filter(
             group__entries__in=self.entries.filter(status=Entry.STATUS.approved),

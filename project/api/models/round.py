@@ -146,7 +146,7 @@ class Round(TimeStampedModel):
 
     # Methods
     def get_oss(self, zoom=1):
-        Group = apps.get_model('api.group')
+        Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('api.panelist')
         Appearance = apps.get_model('api.appearance')
         Song = apps.get_model('api.song')
@@ -534,8 +534,8 @@ class Round(TimeStampedModel):
         Appearance = apps.get_model('api.appearance')
         Panelist = apps.get_model('api.panelist')
         Song = apps.get_model('api.song')
-        Group = apps.get_model('api.group')
-        Person = apps.get_model('api.person')
+        Group = apps.get_model('bhs.group')
+        Person = apps.get_model('bhs.person')
 
         # Score Block
         group_ids = self.appearances.exclude(
@@ -1186,7 +1186,7 @@ class Round(TimeStampedModel):
 
     def get_announcements(self):
         Panelist = apps.get_model('api.panelist')
-        Group = apps.get_model('api.group')
+        Group = apps.get_model('bhs.group')
         Appearance = apps.get_model('api.appearance')
         appearances = self.appearances.filter(
             draw__gt=0,
@@ -1296,7 +1296,7 @@ class Round(TimeStampedModel):
 
     def get_publish_email(self):
         Appearance = apps.get_model('api.appearance')
-        Group = apps.get_model('api.group')
+        Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('api.panelist')
         group_ids = self.appearances.filter(
             is_private=False,

@@ -138,7 +138,7 @@ def delete_account_from_human(human):
 
 
 def get_account_orphans():
-    Person = apps.get_model('api.person')
+    Person = apps.get_model('bhs.person')
     accounts = get_accounts()
     one = [a['app_metadata']['mc_pk'] for a in accounts]
     two = list(Person.objects.values_list('mc_pk', flat=True))

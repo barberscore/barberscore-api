@@ -202,7 +202,7 @@ class Panelist(TimeStampedModel):
 
     def get_psa(self):
         Score = apps.get_model('api.score')
-        Group = apps.get_model('api.group')
+        Group = apps.get_model('bhs.group')
         # Score block
         group_ids = self.round.appearances.exclude(
             # Don't include advancers or MTs on PSA

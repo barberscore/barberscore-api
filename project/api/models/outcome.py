@@ -80,7 +80,7 @@ class Outcome(TimeStampedModel):
 
     # Methods
     def get_name(self):
-        Group = apps.get_model('api.group')
+        Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('api.panelist')
         if self.round.kind != self.round.KIND.finals and not self.award.is_single:
             return "(Result determined in Finals)"
