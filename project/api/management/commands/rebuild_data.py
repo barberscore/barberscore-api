@@ -50,7 +50,7 @@ class Command(BaseCommand):
             cursor = timezone.now() - datetime.timedelta(minutes=options['minutes'], seconds=5)
         else:
             cursor = None
-        Group = apps.get_model('api.group')
+        Group = apps.get_model('bhs.group')
         Group.objects.denormalize(cursor=cursor)
         Group.objects.sort_tree()
         Group.objects.update_seniors()

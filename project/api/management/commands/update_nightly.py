@@ -8,10 +8,10 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 # First-Party
-from api.models import Person
-from api.models import Group
-from api.models import Member
-from api.models import Officer
+from bhs.models import Person
+from bhs.models import Group
+from bhs.models import Member
+from bhs.models import Officer
 from api.models import User
 from bhs.models import Human
 from bhs.models import Join
