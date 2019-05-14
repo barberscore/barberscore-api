@@ -21,8 +21,8 @@ class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
         # 'repertories': 'api.serializers.RepertorySerializer',
-        # 'members': 'bhs.serializers.MemberSerializer',
-        # 'officers': 'bhs.serializers.OfficerSerializer',
+        'members': 'bhs.serializers.MemberSerializer',
+        'officers': 'bhs.serializers.OfficerSerializer',
         # 'entries': 'api.serializers.EntrySerializer',
     }
 
@@ -56,21 +56,21 @@ class GroupSerializer(serializers.ModelSerializer):
             'chapter',
             'tree_sort',
             'parent',
-            # 'children',
-            # 'awards',
-            # 'conventions',
-            # 'entries',
-            # 'members',
+            'children',
+            'awards',
+            'conventions',
+            'entries',
+            'members',
             'officers',
-            # 'repertories',
+            'repertories',
             'permissions',
         ]
 
     class JSONAPIMeta:
         included_resources = [
             # 'repertories',
-            # 'members',
-            # 'officers',
+            'members',
+            'officers',
             # 'entries',
         ]
 

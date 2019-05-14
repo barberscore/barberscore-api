@@ -23,8 +23,8 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 
 # Local
-# from .filtersets import MemberFilterset
-# from .filtersets import OfficerFilterset
+from .filtersets import MemberFilterset
+from .filtersets import OfficerFilterset
 from .filterbackends import RepertoryFilterBackend
 from .models import Group
 from .models import Member
@@ -162,7 +162,7 @@ class MemberViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = MemberSerializer
-    # filterset_class = MemberFilterset
+    filterset_class = MemberFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -208,7 +208,7 @@ class OfficerViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = OfficerSerializer
-    # filterset_class = OfficerFilterset
+    filterset_class = OfficerFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]

@@ -7,42 +7,42 @@ from .models import Member
 from .models import Officer
 
 
-# class MemberFilterset(FilterSet):
-#     class Meta:
-#         model = Member
-#         fields = {
-#             'person__user': [
-#                 'exact',
-#             ],
-#             'status': [
-#                 'exact',
-#             ],
-#             'group__status': [
-#                 'exact',
-#             ],
-#             'group__kind': [
-#                 'gt',
-#             ],
-#             'group__parent__kind': [
-#                 'gt',
-#             ],
-#         }
+class MemberFilterset(FilterSet):
+    class Meta:
+        model = Member
+        fields = {
+            'person__user': [
+                'exact',
+            ],
+            'status': [
+                'exact',
+            ],
+            'group__status': [
+                'exact',
+            ],
+            'group__kind': [
+                'gt',
+            ],
+            'group__parent__kind': [
+                'gt',
+            ],
+        }
 
 
-# class OfficerFilterset(FilterSet):
-#     class Meta:
-#         model = Officer
-#         fields = {
-#             'person__user': [
-#                 'exact',
-#             ],
-#             'group__status': [
-#                 'exact',
-#             ],
-#             'status': [
-#                 'exact',
-#             ],
-#         }
+class OfficerFilterset(FilterSet):
+    class Meta:
+        model = Officer
+        fields = {
+            'person__user': [
+                'exact',
+            ],
+            'group__status': [
+                'exact',
+            ],
+            'status': [
+                'exact',
+            ],
+        }
 
 # class GroupFilter(FilterSet):
 #     class Meta:
