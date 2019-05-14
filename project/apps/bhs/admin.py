@@ -4,7 +4,7 @@ from fsm_admin.mixins import FSMTransitionMixin
 
 # Django
 from django.contrib import admin
-
+from reversion.admin import VersionAdmin
 # Local
 
 
@@ -53,7 +53,7 @@ class ReadOnlyAdmin(admin.ModelAdmin):
 
 
 @admin.register(Chart)
-class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class ChartAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
@@ -118,7 +118,7 @@ class ChartAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Group)
-class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
     fsm_field = [
         'status',
@@ -280,7 +280,7 @@ class GroupAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Member)
-class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class MemberAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
@@ -365,7 +365,7 @@ class MemberAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Officer)
-class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class OfficerAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
@@ -427,7 +427,7 @@ class OfficerAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Person)
-class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     # Disable for use with MC
     def has_add_permission(self, request):
         return False
@@ -530,7 +530,7 @@ class PersonAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Repertory)
-class RepertoryAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class RepertoryAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
     ]
