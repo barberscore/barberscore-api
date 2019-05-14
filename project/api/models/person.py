@@ -27,7 +27,7 @@ from django.utils.timezone import now
 # First-Party
 from api.fields import LowerEmailField
 from api.fields import ImageUploadPath
-from api.managers import PersonManager
+# from api.managers import PersonManager
 
 log = logging.getLogger(__name__)
 
@@ -360,7 +360,7 @@ class Person(TimeStampedModel):
         )
 
     # Internals
-    objects = PersonManager()
+    # objects = PersonManager()
 
     class JSONAPIMeta:
         resource_name = "person"

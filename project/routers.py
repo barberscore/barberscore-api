@@ -8,6 +8,8 @@ class BHSRouter(object):
             'group',
             'member',
             'officer',
+            'chart',
+            'repertory',
         ]
         if model._meta.app_label == 'bhs' and model._meta.model_name in models:
             return 'default'
@@ -22,6 +24,8 @@ class BHSRouter(object):
             'group',
             'member',
             'officer',
+            'chart',
+            'repertory',
         ]
         if model._meta.app_label == 'bhs' and model._meta.model_name in models:
             return 'default'
@@ -36,6 +40,8 @@ class BHSRouter(object):
             'group',
             'member',
             'officer',
+            'chart',
+            'repertory',
         ]
         if (obj1._meta.app_label == 'bhs' and obj1._meta.model_name in models) or (obj2._meta.app_label == 'bhs' and obj1._meta.model_name in models):
             return True
@@ -48,9 +54,11 @@ class BHSRouter(object):
             'group',
             'member',
             'officer',
+            'chart',
+            'repertory',
         ]
-        if app_label == 'bhs' and model_name in models:
-            return True
-        if app_label == 'bhs':
-            return False
-        return None
+        # if app_label == 'bhs' and model_name in models:
+        #     return True
+        # if app_label == 'bhs':
+        #     return False
+        return True

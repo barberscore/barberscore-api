@@ -148,17 +148,6 @@ def test_member_endpoint(admin_api_client, member, django_assert_max_num_queries
         assert response.status_code == status.HTTP_200_OK
 
 
-def test_office_endpoint(admin_api_client, office, django_assert_max_num_queries):
-    with django_assert_max_num_queries(10):
-        path = reverse('office-list')
-        response = admin_api_client.get(path)
-        assert response.status_code == status.HTTP_200_OK
-    with django_assert_max_num_queries(10):
-        path = reverse('office-detail', args=(str(office.id),))
-        response = admin_api_client.get(path)
-        assert response.status_code == status.HTTP_200_OK
-
-
 def test_officer_endpoint(admin_api_client, officer, django_assert_max_num_queries):
     with django_assert_max_num_queries(10):
         path = reverse('officer-list')

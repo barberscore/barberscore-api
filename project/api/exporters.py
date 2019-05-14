@@ -3,37 +3,20 @@ from rest_framework import serializers
 from .models import Appearance
 from .models import Assignment
 from .models import Award
-from .models import Chart
 from .models import Contest
 from .models import Contestant
 from .models import Convention
 from .models import Entry
 from .models import Group
-from .models import Member
-from .models import Office
-from .models import Officer
 from .models import Outcome
 from .models import Panelist
 from .models import Person
-from .models import Repertory
 from .models import Round
 from .models import Score
 from .models import Session
 from .models import Song
 from .models import User
 
-class PersonSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Person
-        fields = (
-            'id',
-            'common_name',
-            'bhs_id',
-        )
-        read_only_fields = [
-            'common_name',
-        ]
 
 class PanelistSerializer(serializers.ModelSerializer):
 
@@ -49,6 +32,7 @@ class PanelistSerializer(serializers.ModelSerializer):
             'person',
         )
 
+
 class ScoreSerializer(serializers.ModelSerializer):
 
     panelist = PanelistSerializer(read_only=True, many=False)
@@ -61,17 +45,6 @@ class ScoreSerializer(serializers.ModelSerializer):
             'panelist',
         ]
 
-class ChartSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Chart
-        fields = (
-            'id',
-            'title',
-            'arrangers',
-            'composers',
-            'lyricists',
-        )
 
 class SongSerializer(serializers.ModelSerializer):
 
@@ -114,24 +87,6 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'award',
         )
 
-class GroupSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Group
-        fields = [
-            'id',
-            'name',
-            'bhs_id',
-            'get_kind_display',
-            'get_gender_display',
-            'is_senior',
-            'is_youth',
-            'code',
-            'international',
-            'district',
-            'get_division_display',
-            'chapter',
-        ]
 
 class AppearanceSerializer(serializers.ModelSerializer):
     group = GroupSerializer(read_only=True, many=False)
@@ -170,6 +125,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'outcomes',
         )
 
+
 class SessionSerializer(serializers.ModelSerializer):
 
     rounds = RoundSerializer(read_only=True, many=True)
@@ -181,6 +137,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'get_kind_display',
             'rounds',
         )
+
 
 class ConventionSerializer(serializers.ModelSerializer):
 

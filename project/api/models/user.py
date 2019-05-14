@@ -71,11 +71,51 @@ class User(AbstractBaseUser):
     )
 
     person = models.OneToOneField(
-        'Person',
+        'bhs.person',
         related_name='user',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
+    )
+
+    is_convention_manager = models.BooleanField(
+        default=False,
+    )
+
+    is_session_manager = models.BooleanField(
+        default=False,
+    )
+
+    is_round_manager = models.BooleanField(
+        default=False,
+    )
+
+    is_scoring_manager = models.BooleanField(
+        default=False,
+    )
+
+    is_group_manager = models.BooleanField(
+        default=False,
+    )
+
+    is_person_manager = models.BooleanField(
+        default=False,
+    )
+
+    is_award_manager = models.BooleanField(
+        default=False,
+    )
+
+    is_officer_manager = models.BooleanField(
+        default=False,
+    )
+
+    is_chart_manager = models.BooleanField(
+        default=False,
+    )
+
+    is_assignment_manager = models.BooleanField(
+        default=False,
     )
 
     objects = UserManager()
@@ -88,113 +128,24 @@ class User(AbstractBaseUser):
     @cached_property
     def is_active(self):
         """Proxy status."""
-        if self.is_staff:
-            return True
-        if self.person:
-            return bool(self.person.status > 0)
-        return False
+        # if self.is_staff:
+        #     return True
+        # if self.person:
+        #     return bool(self.person.status > 0)
+        return True
 
     @cached_property
     def is_superuser(self):
         return bool(self.is_staff)
 
-    @cached_property
-    def is_convention_manager(self):
-        return bool(
-            self.person.officers.filter(
-                office__is_convention_manager=True,
-                status__gt=0,
-            )
-        )
-
-    @cached_property
-    def is_session_manager(self):
-        return bool(
-            self.person.officers.filter(
-                office__is_session_manager=True,
-                status__gt=0,
-            )
-        )
-
-    @cached_property
-    def is_round_manager(self):
-        return bool(
-            self.person.officers.filter(
-                office__is_round_manager=True,
-                status__gt=0,
-            )
-        )
-
-    @cached_property
-    def is_scoring_manager(self):
-        return bool(
-            self.person.officers.filter(
-                office__is_scoring_manager=True,
-                status__gt=0,
-            )
-        )
-
-    @cached_property
-    def is_group_manager(self):
-        return bool(
-            self.person.officers.filter(
-                office__is_group_manager=True,
-                status__gt=0,
-            )
-        )
-
-    @cached_property
-    def is_person_manager(self):
-        return bool(
-            self.person.officers.filter(
-                office__is_person_manager=True,
-                status__gt=0,
-            )
-        )
-
-    @cached_property
-    def is_award_manager(self):
-        return bool(
-            self.person.officers.filter(
-                office__is_award_manager=True,
-                status__gt=0,
-            )
-        )
-
-    @cached_property
-    def is_officer_manager(self):
-        return bool(
-            self.person.officers.filter(
-                office__is_officer_manager=True,
-                status__gt=0,
-            )
-        )
-
-    @cached_property
-    def is_chart_manager(self):
-        return bool(
-            self.person.officers.filter(
-                office__is_chart_manager=True,
-                status__gt=0,
-            )
-        )
-
-    @cached_property
-    def is_assignment_manager(self):
-        return bool(
-            self.person.officers.filter(
-                office__is_assignment_manager=True,
-                status__gt=0,
-            )
-        )
 
     class JSONAPIMeta:
         resource_name = "user"
 
     # User Internals
     def __str__(self):
-        if getattr(self, 'person'):
-            return self.person.common_name
+        # if getattr(self, 'person'):
+        #     return self.person.common_name
         return self.username
 
     def clean(self):

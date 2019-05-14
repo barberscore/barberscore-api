@@ -7,6 +7,7 @@ from django.db.models import EmailField, CharField, DateField
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.utils.deconstruct import deconstructible
+from rest_framework_json_api import serializers
 
 class ValidatedPhoneField(CharField):
     def from_db_value(self, value, expression, connection):
@@ -84,3 +85,14 @@ class NoPunctuationCharField(CharField):
         return value.translate(
             value.maketrans('', '', '!"#$%&()*+,./:;<=>?@[\\]^_`{|}~')
         ).strip()
+
+
+class TimezoneField(serializers.Field):
+    def to_representation(self, obj):
+        return six.text_type(obj)
+
+    def to_internal_value(self, data):
+        try:
+            return pytz.timezone(str(data))
+        except pytz.exceptions.UnknownTimeZoneError:
+            raise ValidationError('Unknown timezone')

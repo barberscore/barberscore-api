@@ -108,7 +108,7 @@ class Panelist(TimeStampedModel):
     )
 
     person = models.ForeignKey(
-        'Person',
+        'bhs.person',
         related_name='panelists',
         on_delete=models.CASCADE,
     )

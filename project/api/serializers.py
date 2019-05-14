@@ -11,20 +11,13 @@ from .fields import TimezoneField
 from .models import Appearance
 from .models import Assignment
 from .models import Award
-from .models import Chart
 from .models import Contest
 from .models import Contender
 from .models import Contestant
 from .models import Convention
 from .models import Entry
-from .models import Group
-from .models import Member
-from .models import Office
-from .models import Officer
 from .models import Outcome
 from .models import Panelist
-from .models import Person
-from .models import Repertory
 from .models import Round
 from .models import Score
 from .models import Session
@@ -88,7 +81,6 @@ class AppearanceSerializer(serializers.ModelSerializer):
         ]
 
 
-
 class AssignmentSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     # included_serializers = {
@@ -114,6 +106,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
     #         'convention',
     #         'person',
     #     ]
+
 
 class AwardSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
@@ -146,29 +139,6 @@ class AwardSerializer(serializers.ModelSerializer):
             'parent',
             'children',
             'contests',
-            'permissions',
-        )
-
-
-class ChartSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Chart
-        fields = (
-            'id',
-            'url',
-            'status',
-            'title',
-            'arrangers',
-            'composers',
-            'lyricists',
-            'description',
-            'notes',
-            'image',
-            'holders',
-            'repertories',
-            'songs',
             'permissions',
         )
 
@@ -282,7 +252,7 @@ class EntrySerializer(serializers.ModelSerializer):
     included_serializers = {
         'contestants': 'api.serializers.ContestantSerializer',
         'statelogs': 'api.serializers.StateLogSerializer',
-        'group': 'api.serializers.GroupSerializer',
+        'group': 'bhs.serializers.GroupSerializer',
     }
 
     class Meta:
@@ -320,140 +290,6 @@ class EntrySerializer(serializers.ModelSerializer):
         # if data['is_private'] and data['contestants']:
         #     raise serializers.ValidationError("Can not be private and compete for an award.")
         return data
-
-
-class GroupSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-    included_serializers = {
-        'repertories': 'api.serializers.RepertorySerializer',
-        'members': 'api.serializers.MemberSerializer',
-        'officers': 'api.serializers.OfficerSerializer',
-        'entries': 'api.serializers.EntrySerializer',
-    }
-
-    class Meta:
-        model = Group
-        fields = [
-            'id',
-            'url',
-            'name',
-            'status',
-            'kind',
-            'gender',
-            'is_senior',
-            'is_youth',
-            'division',
-            'code',
-            'start_date',
-            'end_date',
-            'location',
-            'website',
-            'facebook',
-            'twitter',
-            'email',
-            'phone',
-            'image',
-            'description',
-            'participants',
-            'bhs_id',
-            'international',
-            'district',
-            'chapter',
-            'tree_sort',
-            'parent',
-            'children',
-            'awards',
-            'conventions',
-            'entries',
-            'members',
-            'officers',
-            'repertories',
-            'permissions',
-        ]
-
-    class JSONAPIMeta:
-        included_resources = [
-            'repertories',
-            # 'members',
-            # 'officers',
-            # 'entries',
-        ]
-
-    # def to_representation(self, instance):
-    #     if instance.kind <= 30:
-    #         self.fields.pop('members')
-    #     return super().to_representation(instance)
-
-
-class MemberSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Member
-        fields = [
-            'id',
-            'url',
-            'status',
-            'part',
-            'start_date',
-            'end_date',
-            'group',
-            'person',
-            'permissions',
-        ]
-
-
-class OfficeSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Office
-        fields = [
-            'id',
-            'url',
-            'name',
-            'status',
-            'kind',
-            'code',
-            'is_convention_manager',
-            'is_session_manager',
-            'is_round_manager',
-            'is_scoring_manager',
-            'is_group_manager',
-            'is_person_manager',
-            'is_award_manager',
-            'is_officer_manager',
-            'is_chart_manager',
-            'is_assignment_manager',
-            'officers',
-            'permissions',
-        ]
-
-
-class OfficerSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Officer
-        fields = [
-            'id',
-            'url',
-            'status',
-            'start_date',
-            'end_date',
-            'office',
-            'person',
-            'group',
-            'permissions',
-        ]
-
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Officer.objects.all(),
-                fields=('person', 'office'),
-                message='This person already holds this office.',
-            )
-        ]
 
 
 class OutcomeSerializer(serializers.ModelSerializer):
@@ -505,95 +341,12 @@ class PanelistSerializer(serializers.ModelSerializer):
     #         'scores',
     #     ]
 
-class PersonSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-    included_serializers = {
-        'assignments': 'api.serializers.AssignmentSerializer',
-        'members': 'api.serializers.MemberSerializer',
-        'officers': 'api.serializers.OfficerSerializer',
-        'panelists': 'api.serializers.PanelistSerializer',
-    }
-
-    class Meta:
-        model = Person
-        fields = (
-            'id',
-            'url',
-            'first_name',
-            'middle_name',
-            'last_name',
-            'nick_name',
-            'status',
-            'birth_date',
-            'spouse',
-            'location',
-            'part',
-            'website',
-            'email',
-            'address',
-            'home_phone',
-            'work_phone',
-            'cell_phone',
-            'airports',
-            'image',
-            'description',
-            'gender',
-            'bhs_id',
-            'current_through',
-            'current_status',
-            'current_district',
-            'full_name',
-            'common_name',
-            'sort_name',
-            'assignments',
-            'members',
-            'officers',
-            'panelists',
-            'user',
-            'permissions',
-        )
-        read_only_fields = [
-            'common_name',
-            'full_name',
-            'sort_name',
-        ]
-
-    class JSONAPIMeta:
-        included_resources = [
-            # 'assignments',
-            # 'members',
-            # 'officers',
-            # 'panelists',
-        ]
-
-
-class RepertorySerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Repertory
-        fields = (
-            'id',
-            'url',
-            'status',
-            'group',
-            'chart',
-            'permissions',
-        )
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Repertory.objects.all(),
-                fields=('group', 'chart'),
-                message='This chart already exists in your repertory.',
-            )
-        ]
-
 
 class RoundSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
         'appearances': 'api.serializers.AppearanceSerializer',
-        'members': 'api.serializers.MemberSerializer',
+        'members': 'bhs.serializers.MemberSerializer',
         'outcomes': 'api.serializers.OutcomeSerializer',
         'panelists': 'api.serializers.PanelistSerializer',
     }

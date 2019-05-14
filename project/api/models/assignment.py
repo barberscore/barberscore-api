@@ -74,7 +74,7 @@ class Assignment(TimeStampedModel):
     )
 
     person = models.ForeignKey(
-        'Person',
+        'bhs.person',
         related_name='assignments',
         on_delete=models.CASCADE,
     )

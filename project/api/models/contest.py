@@ -54,7 +54,7 @@ class Contest(TimeStampedModel):
 
     # Private
     group = models.ForeignKey(
-        'Group',
+        'bhs.group',
         null=True,
         blank=True,
         related_name='contests',

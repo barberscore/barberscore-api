@@ -6,20 +6,13 @@ from rest_framework import routers
 from .views import AppearanceViewSet
 from .views import AssignmentViewSet
 from .views import AwardViewSet
-from .views import ChartViewSet
 from .views import ContenderViewSet
 from .views import ContestantViewSet
 from .views import ContestViewSet
 from .views import ConventionViewSet
 from .views import EntryViewSet
-from .views import GroupViewSet
-from .views import MemberViewSet
-from .views import OfficerViewSet
-from .views import OfficeViewSet
 from .views import OutcomeViewSet
 from .views import PanelistViewSet
-from .views import PersonViewSet
-from .views import RepertoryViewSet
 from .views import RoundViewSet
 from .views import ScoreViewSet
 from .views import SessionViewSet
@@ -34,20 +27,13 @@ router = routers.DefaultRouter(
 router.register(r'appearance', AppearanceViewSet)
 router.register(r'assignment', AssignmentViewSet)
 router.register(r'award', AwardViewSet, basename='award')
-router.register(r'chart', ChartViewSet)
 router.register(r'contest', ContestViewSet)
 router.register(r'contender', ContenderViewSet)
 router.register(r'contestant', ContestantViewSet)
 router.register(r'convention', ConventionViewSet)
 router.register(r'entry', EntryViewSet)
-router.register(r'group', GroupViewSet)
-router.register(r'member', MemberViewSet)
-router.register(r'office', OfficeViewSet)
-router.register(r'officer', OfficerViewSet)
 router.register(r'outcome', OutcomeViewSet)
 router.register(r'panelist', PanelistViewSet)
-router.register(r'person', PersonViewSet)
-router.register(r'repertory', RepertoryViewSet)
 router.register(r'round', RoundViewSet)
 router.register(r'score', ScoreViewSet)
 router.register(r'session', SessionViewSet)

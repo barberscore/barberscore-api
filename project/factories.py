@@ -25,29 +25,28 @@ from django.db.models.signals import pre_save
 from api.models import Appearance
 from api.models import Assignment
 from api.models import Award
-from api.models import Chart
 from api.models import Contest
 from api.models import Contender
 from api.models import Contestant
 from api.models import Convention
 from api.models import Entry
-from api.models import Group
-from api.models import Member
-from api.models import Office
-from api.models import Officer
 from api.models import Outcome
 from api.models import Panelist
-from api.models import Person
-from api.models import Repertory
 from api.models import Round
 from api.models import Score
 from api.models import Session
 from api.models import Song
 from api.models import User
 
+from bhs.models import Chart
+from bhs.models import Group
+from bhs.models import Member
+from bhs.models import Officer
+from bhs.models import Person
+from bhs.models import Repertory
+
 from apps.stage.models import Grid
 from apps.stage.models import Venue
-
 
 class AppearanceFactory(DjangoModelFactory):
     status = Appearance.STATUS.new
@@ -234,20 +233,10 @@ class MemberFactory(DjangoModelFactory):
         model = Member
 
 
-class OfficeFactory(DjangoModelFactory):
-    name = Faker('word')
-    status = Office.STATUS.active
-    kind = Office.KIND.international
-
-    class Meta:
-        model = Office
-
-
 class OfficerFactory(DjangoModelFactory):
     status = Officer.STATUS.new
     start_date = None
     end_date = None
-    office = SubFactory('factories.OfficeFactory')
     person = SubFactory('factories.PersonFactory')
     group = SubFactory('factories.GroupFactory')
 
@@ -357,7 +346,6 @@ class SongFactory(DjangoModelFactory):
         model = Song
 
 
-
 class GridFactory(DjangoModelFactory):
     status = Grid.STATUS.new
     round = SubFactory('factories.RoundFactory')
@@ -376,6 +364,7 @@ class VenueFactory(DjangoModelFactory):
 
     class Meta:
         model = Venue
+
 
 @mute_signals(pre_delete, post_save)
 class UserFactory(DjangoModelFactory):

@@ -135,7 +135,7 @@ class Entry(TimeStampedModel):
     )
 
     group = models.ForeignKey(
-        'Group',
+        'bhs.group',
         related_name='entries',
         on_delete=models.CASCADE,
     )
@@ -211,7 +211,7 @@ class Entry(TimeStampedModel):
                     person__user=request.user,
                     status__gt=0,
                 ),
-                self.status < self.STATUS.approved,
+                self.status <= self.STATUS.approved,
             ]),
         ])
 

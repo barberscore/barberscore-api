@@ -20,7 +20,6 @@ from factories import EntryFactory
 from factories import GridFactory
 from factories import GroupFactory
 from factories import MemberFactory
-from factories import OfficeFactory
 from factories import OfficerFactory
 from factories import OutcomeFactory
 from factories import PanelistFactory
@@ -135,11 +134,6 @@ def group():
 @pytest.fixture
 def member():
     return MemberFactory()
-
-
-@pytest.fixture
-def office():
-    return OfficeFactory()
 
 
 @pytest.fixture

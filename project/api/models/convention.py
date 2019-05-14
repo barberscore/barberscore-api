@@ -222,7 +222,7 @@ class Convention(TimeStampedModel):
     )
 
     group = models.ForeignKey(
-        'Group',
+        'bhs.group',
         related_name='conventions',
         on_delete=models.CASCADE,
     )
