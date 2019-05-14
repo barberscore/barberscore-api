@@ -1647,7 +1647,10 @@ class Group(TimeStampedModel):
         all_over_55 = True
         total_years = 0
         for person in persons:
-            years = int((midwinter - person.birth_date).days / 365)
+            try:
+                years = int((midwinter - person.birth_date).days / 365)
+            except TypeError:
+                return False
             if years < 55:
                 all_over_55 = False
             total_years += years
