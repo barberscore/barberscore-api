@@ -250,7 +250,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'reversion',
     'api',
-    'bhs',
+    'apps.bhs',
     'apps.keller',
     'apps.stage',
 ]

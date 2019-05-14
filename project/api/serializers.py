@@ -252,7 +252,7 @@ class EntrySerializer(serializers.ModelSerializer):
     included_serializers = {
         'contestants': 'api.serializers.ContestantSerializer',
         'statelogs': 'api.serializers.StateLogSerializer',
-        'group': 'bhs.serializers.GroupSerializer',
+        'group': 'apps.bhs.serializers.GroupSerializer',
     }
 
     class Meta:
@@ -346,7 +346,7 @@ class RoundSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
         'appearances': 'api.serializers.AppearanceSerializer',
-        'members': 'bhs.serializers.MemberSerializer',
+        'members': 'apps.bhs.serializers.MemberSerializer',
         'outcomes': 'api.serializers.OutcomeSerializer',
         'panelists': 'api.serializers.PanelistSerializer',
     }

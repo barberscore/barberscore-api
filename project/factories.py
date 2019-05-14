@@ -38,12 +38,12 @@ from api.models import Session
 from api.models import Song
 from api.models import User
 
-from bhs.models import Chart
-from bhs.models import Group
-from bhs.models import Member
-from bhs.models import Officer
-from bhs.models import Person
-from bhs.models import Repertory
+from apps.bhs.models import Chart
+from apps.bhs.models import Group
+from apps.bhs.models import Member
+from apps.bhs.models import Officer
+from apps.bhs.models import Person
+from apps.bhs.models import Repertory
 
 from apps.stage.models import Grid
 from apps.stage.models import Venue
