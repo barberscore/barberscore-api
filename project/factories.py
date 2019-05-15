@@ -237,6 +237,7 @@ class OfficerFactory(DjangoModelFactory):
     status = Officer.STATUS.new
     start_date = None
     end_date = None
+    office = 410
     person = SubFactory('factories.PersonFactory')
     group = SubFactory('factories.GroupFactory')
 
