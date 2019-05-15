@@ -156,6 +156,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'is_youth',
         'division',
         # DistrictListFilter,
+        MCListFilter,
     ]
 
     search_fields = [
