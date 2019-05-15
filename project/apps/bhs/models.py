@@ -1990,16 +1990,17 @@ class Officer(TimeStampedModel):
         return str(self.id)
 
     def clean(self):
-        if self.group.kind != self.group.KIND.vlq:
-            if self.office.kind != self.group.kind:
-                raise ValidationError({
-                    'office': 'Office does not match Group Type.',
-                })
-        else:
-            if self.office.code != self.office.CODE.chorus_man:
-                raise ValidationError({
-                    'office': 'VLQ officers must be Chorus Managers.',
-                })
+        pass
+        # if self.group.kind != self.group.KIND.vlq:
+        #     if self.office.kind != self.group.kind:
+        #         raise ValidationError({
+        #             'office': 'Office does not match Group Type.',
+        #         })
+        # else:
+        #     if self.office.code != self.office.CODE.chorus_man:
+        #         raise ValidationError({
+        #             'office': 'VLQ officers must be Chorus Managers.',
+        #         })
 
     # Permissions
     @staticmethod
