@@ -975,12 +975,12 @@ class Round(TimeStampedModel):
 
 
     def get_legacy_oss(self):
-        Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('api.panelist')
         Appearance = apps.get_model('api.appearance')
         Song = apps.get_model('api.song')
+        Score = apps.get_model('api.score')
 
-        # Score Block
+        # Get the Groups
         group_ids = self.appearances.filter(
             is_private=False,
         ).exclude(
@@ -994,57 +994,31 @@ class Round(TimeStampedModel):
             num__lte=0,
         ).values_list('group__id', flat=True)
 
+        session = self.session
 
-        rounds = self.session.rounds.filter(
+        rounds = session.rounds.filter(
             num__lte=self.num
-        )
+        ).order_by('kind')
 
         # Monkeypatching
         for round in rounds:
             appearances = round.appearances.filter(
-                num__gt=0,
-                round__num__lte=self.num,
+                group__id__in=group_ids,
             ).prefetch_related(
                 'songs__scores',
                 'songs__scores__panelist',
-            ).order_by(
-                'round__kind',
             ).annotate(
-                tot_points=Sum(
+                sub_points=Sum(
                     'songs__scores__points',
                     filter=Q(
                         songs__scores__panelist__kind=Panelist.KIND.official,
-                    ),
-                ),
-                tot_score=Avg(
-                    'songs__scores__points',
-                    filter=Q(
-                        songs__scores__panelist__kind=Panelist.KIND.official,
-                    ),
-                ),
-                mus_score=Avg(
-                    'songs__scores__points',
-                    filter=Q(
-                        songs__scores__panelist__kind=Panelist.KIND.official,
-                        songs__scores__panelist__category=Panelist.CATEGORY.music,
-                    ),
-                ),
-                per_score=Avg(
-                    'songs__scores__points',
-                    filter=Q(
-                        songs__scores__panelist__kind=Panelist.KIND.official,
-                        songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    ),
-                ),
-                sng_score=Avg(
-                    'songs__scores__points',
-                    filter=Q(
-                        songs__scores__panelist__kind=Panelist.KIND.official,
-                        songs__scores__panelist__category=Panelist.CATEGORY.singing,
                     ),
                 ),
             )
             for appearance in appearances:
+                if appearance.round.num == 1:
+                    appearance.prev_points = None
+                    appearance.sub_points = None
                 songs = appearance.songs.prefetch_related(
                     'scores',
                     'scores__panelist',
@@ -1088,200 +1062,34 @@ class Round(TimeStampedModel):
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
+                contesting = appearance.contenders.order_by(
+                    'outcome__num',
+                ).values_list('outcome__num', flat=True)
+                appearance.contesting = ", ".join([str(x) for x in contesting])
+                tot_score = Score.objects.filter(
+                    song__appearance__round__session=self.session,
+                    song__appearance__round__num__lte=round.num,
+                    song__appearance__group=appearance.group,
+                    panelist__kind=Panelist.KIND.official,
+                ).aggregate(tot_score=Avg('points'))['tot_score']
+                appearance.tot_score = tot_score
+                tot_points = Score.objects.filter(
+                    song__appearance__round__session=self.session,
+                    song__appearance__round__num__lte=round.num,
+                    song__appearance__group=appearance.group,
+                    panelist__kind=Panelist.KIND.official,
+                ).aggregate(tot_points=Sum('points'))['tot_points']
+                appearance.tot_points = tot_points if tot_points else 0
+                prev_points = Score.objects.filter(
+                    song__appearance__round__session=self.session,
+                    song__appearance__round__num=round.num - 1,
+                    song__appearance__group=appearance.group,
+                    panelist__kind=Panelist.KIND.official,
+                ).aggregate(prev_points=Sum('points'))['prev_points']
+                appearance.prev_points = prev_points
                 appearance.songs_patched = songs
+            appearances = sorted(appearances, reverse=True, key=lambda t: t.tot_points)
             round.appearances_patched = appearances
-
-        groups = Group.objects.filter(
-            id__in=group_ids,
-        )
-
-
-        # groups = Group.objects.filter(
-        #     id__in=group_ids,
-        # ).prefetch_related(
-        #     'appearances',
-        #     'appearances__songs__scores',
-        #     'appearances__songs__scores__panelist',
-        #     'appearances__round__session',
-        # ).annotate(
-        #     max_round=Max(
-        #         'appearances__round__num',
-        #         filter=Q(
-        #             appearances__num__gt=0,
-        #             appearances__round__session=self.session,
-        #         ),
-        #     ),
-        #     tot_points=Sum(
-        #         'appearances__songs__scores__points',
-        #         filter=Q(
-        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             appearances__round__session=self.session,
-        #             appearances__round__num__lte=self.num,
-        #         ),
-        #     ),
-        #     sng_points=Sum(
-        #         'appearances__songs__scores__points',
-        #         filter=Q(
-        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-        #             appearances__round__session=self.session,
-        #             appearances__round__num__lte=self.num,
-        #         ),
-        #     ),
-        #     per_points=Sum(
-        #         'appearances__songs__scores__points',
-        #         filter=Q(
-        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-        #             appearances__round__session=self.session,
-        #             appearances__round__num__lte=self.num,
-        #         ),
-        #     ),
-        #     tot_score=Avg(
-        #         'appearances__songs__scores__points',
-        #         filter=Q(
-        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             appearances__round__session=self.session,
-        #             appearances__round__num__lte=self.num,
-        #         ),
-        #     ),
-        #     mus_score=Avg(
-        #         'appearances__songs__scores__points',
-        #         filter=Q(
-        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
-        #             appearances__round__session=self.session,
-        #             appearances__round__num__lte=self.num,
-        #         ),
-        #     ),
-        #     per_score=Avg(
-        #         'appearances__songs__scores__points',
-        #         filter=Q(
-        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-        #             appearances__round__session=self.session,
-        #             appearances__round__num__lte=self.num,
-        #         ),
-        #     ),
-        #     sng_score=Avg(
-        #         'appearances__songs__scores__points',
-        #         filter=Q(
-        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-        #             appearances__round__session=self.session,
-        #             appearances__round__num__lte=self.num,
-        #         ),
-        #     ),
-        # ).order_by(
-        #     '-tot_points',
-        #     '-sng_points',
-        #     '-per_points',
-        # )
-
-        # # Monkeypatching
-        # for group in groups:
-        #     appearances = group.appearances.filter(
-        #         num__gt=0,
-        #         round__session=self.session,
-        #         round__num__lte=self.num,
-        #     ).prefetch_related(
-        #         'songs__scores',
-        #         'songs__scores__panelist',
-        #     ).order_by(
-        #         'round__kind',
-        #     ).annotate(
-        #         tot_points=Sum(
-        #             'songs__scores__points',
-        #             filter=Q(
-        #                 songs__scores__panelist__kind=Panelist.KIND.official,
-        #             ),
-        #         ),
-        #         tot_score=Avg(
-        #             'songs__scores__points',
-        #             filter=Q(
-        #                 songs__scores__panelist__kind=Panelist.KIND.official,
-        #             ),
-        #         ),
-        #         mus_score=Avg(
-        #             'songs__scores__points',
-        #             filter=Q(
-        #                 songs__scores__panelist__kind=Panelist.KIND.official,
-        #                 songs__scores__panelist__category=Panelist.CATEGORY.music,
-        #             ),
-        #         ),
-        #         per_score=Avg(
-        #             'songs__scores__points',
-        #             filter=Q(
-        #                 songs__scores__panelist__kind=Panelist.KIND.official,
-        #                 songs__scores__panelist__category=Panelist.CATEGORY.performance,
-        #             ),
-        #         ),
-        #         sng_score=Avg(
-        #             'songs__scores__points',
-        #             filter=Q(
-        #                 songs__scores__panelist__kind=Panelist.KIND.official,
-        #                 songs__scores__panelist__category=Panelist.CATEGORY.singing,
-        #             ),
-        #         ),
-        #     )
-        #     for appearance in appearances:
-        #         songs = appearance.songs.prefetch_related(
-        #             'scores',
-        #             'scores__panelist',
-        #         ).order_by(
-        #             'num',
-        #         ).annotate(
-        #             tot_score=Avg(
-        #                 'scores__points',
-        #                 filter=Q(
-        #                     scores__panelist__kind=Panelist.KIND.official,
-        #                 ),
-        #             ),
-        #             mus_score=Avg(
-        #                 'scores__points',
-        #                 filter=Q(
-        #                     scores__panelist__kind=Panelist.KIND.official,
-        #                     scores__panelist__category=Panelist.CATEGORY.music,
-        #                 ),
-        #             ),
-        #             per_score=Avg(
-        #                 'scores__points',
-        #                 filter=Q(
-        #                     scores__panelist__kind=Panelist.KIND.official,
-        #                     scores__panelist__category=Panelist.CATEGORY.performance,
-        #                 ),
-        #             ),
-        #             sng_score=Avg(
-        #                 'scores__points',
-        #                 filter=Q(
-        #                     scores__panelist__kind=Panelist.KIND.official,
-        #                     scores__panelist__category=Panelist.CATEGORY.singing,
-        #                 ),
-        #             ),
-        #         )
-        #         for song in songs:
-        #             penalties_map = {
-        #                 10: "†",
-        #                 30: "‡",
-        #                 40: "✠",
-        #                 50: "✶",
-        #             }
-        #             items = " ".join([penalties_map[x] for x in song.penalties])
-        #             song.penalties_patched = items
-        #         appearance.songs_patched = songs
-        #     recent = appearances.get(round__num=self.num)
-        #     contesting = recent.contenders.order_by(
-        #         'outcome__num',
-        #     ).values_list(
-        #         'outcome__num',
-        #         flat=True
-        #     )
-        #     group.contesting_patched = ", ".join([str(x) for x in contesting])
-        #     group.pos_patched = recent.pos
-        #     group.representing_patched = recent.representing
-        #     group.participants_patched = recent.participants
-        #     group.appearances_patched = appearances
-
 
         # Penalties Block
         array = Song.objects.select_related(
@@ -1388,8 +1196,7 @@ class Round(TimeStampedModel):
         for item in items:
             outcomes.append(
                 (
-                    "{0} {1}".format(item[0], item[1]),
-                    item[2],
+                    "{0} is the winner of the {1}".format(item[2], item[1])
                 )
             )
         contests = []
@@ -1397,10 +1204,11 @@ class Round(TimeStampedModel):
             contests.append(
                 "{0}={1}".format(item[0], item[1])
             )
+        contest_legend = ", ".join(contests)
 
         context = {
             'round': self,
-            'contests': contests,
+            'contest_legend': contest_legend,
             'rounds': rounds,
             'penalties': penalties,
             'privates': privates,
@@ -1411,16 +1219,17 @@ class Round(TimeStampedModel):
         }
         rendered = render_to_string('reports/legacy_oss.html', context)
 
-        if self.session.rounds.count() == 1:
-            if groups.count() < 16:
-                page_size = 'Letter'
-            else:
-                page_size = 'Legal'
-        else:
-            if groups.count() > 8 and self.kind == self.KIND.finals:
-                page_size = 'Legal'
-            else:
-                page_size = 'Letter'
+        # if self.session.rounds.count() == 1:
+        #     if groups.count() < 16:
+        #         page_size = 'Letter'
+        #     else:
+        #         page_size = 'Legal'
+        # else:
+        #     if groups.count() > 8 and self.kind == self.KIND.finals:
+        #         page_size = 'Legal'
+        #     else:
+        #         page_size = 'Letter'
+        page_size = 'Letter'
         try:
             statelog = self.statelogs.latest('timestamp')
             footer = 'Published by {0} at {1}'.format(

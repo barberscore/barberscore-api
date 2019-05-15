@@ -7,7 +7,7 @@
     <style type="text/css">
       body {
         font-family: 'Helvetica', sans-serif !important;
-        font-size: 10pt;
+        font-size: 8pt;
         font-weight: 200;
         margin: 10px;
       }
@@ -35,7 +35,7 @@
           font-size: 9pt;
       }
       .bolder {
-        font-weight: 400;
+        font-weight: 900 !important;
       }
       .small_logo {
           height: 50px;
@@ -43,38 +43,42 @@
       .pbi_avoid {
           page-break-inside: avoid !important;
       }
+      .w-groups {
+        width: 25% !important;
+      }
+      .w-songs {
+        width: 35% !important;
+      }
+      .w-scores {
+        width: 4% !important;
+      }
     </style>
   </head>
   <body>
-    <div class='container-fluid'>
+    <div class='container'>
       <h5>
         OFFICIAL SCORING SUMMARY {{round.session.convention.name}}<br>
         {{round.session.convention.group.name}} District, {{round.session.get_kind_display}} {{round.get_kind_display}}, {{round.session.convention.location}} {{round.session.convention.start_date|date:"F j, Y"}}
       </h5>
       <ul class='list-inline'>
-        Contest Legend:
-        {% for contest in contests %}
-          <li>{{contest}}</li>
-        {% empty %}
-        (Contests Unknown)
-        {% endfor %}
+        Contest Legend: {{contest_legend}}
       </ul>
       {% for round in rounds %}
         <div class='row'>
           <table class='table table-condensed table-striped'>
             <thead>
               <tr>
-                <th class='col-md-1'>{{round.get_kind_display}}</th>
-                <th class='col-md-4'>Songs</th>
-                <th class='text-right col-md-1'>MUS</th>
-                <th class='text-right col-md-1'>PER</th>
-                <th class='text-right col-md-1'>SNG</th>
-                <th class='text-right col-md-1'>Subt</th>
-                <th class='text-right col-md-1'>Prev</th>
-                <th class='text-right col-md-1'>Total</th>
-                <th class='text-right col-md-1'>Avg</th>
+                <th class='w-groups'>{{round.get_kind_display}}</th>
+                <th class='w-songs'>Songs</th>
+                <th class='text-right w-scores'>MUS</th>
+                <th class='text-right w-scores'>PER</th>
+                <th class='text-right w-scores'>SNG</th>
+                <th class='text-right w-scores'>Subt</th>
+                <th class='text-right w-scores'>Prev</th>
+                <th class='text-right w-scores'>Total</th>
+                <th class='text-right w-scores'>Avg</th>
                 {% if round.session.get_kind_display == 'Chorus' %}
-                  <th class='text-right col-md-1'>Cnt</th>
+                  <th class='text-right col-md-1 w-scores'>Cnt</th>
                 {% endif %}
               </tr>
             </thead>
@@ -84,10 +88,10 @@
                   <td>
                       {% if appearance.group.get_kind_display == 'Chorus' %}
                         <strong>{{appearance.group.parent.name|truncatechars_html:25}}</strong><br>
-                        {{appearance.group.name|truncatechars_html:25}} ({{appearance.group.contesting|default:"Unknown"}})<br>
+                        {{appearance.group.name|truncatechars_html:25}} ({{appearance.contesting|default:"Unknown"}})<br>
                       {% else %}
-                        <strong>{{appearance.group.name|truncatechars_html:25}}</strong><br>
-                        ({{appearance.group.contesting|default:"Unknown"}})<br>
+                        <span class='bolder'>{{forloop.counter}}&nbsp;{{appearance.group.name|truncatechars_html:25}}</span><br>
+                        ({{appearance.contesting|default:"Unknown"}})&nbsp;[{{appearance.representing}}]<br>
                       {% endif %}
                   </td>
                   <td>
@@ -115,21 +119,13 @@
                     {% endfor %}
                   </td>
                   <td class='text-right'>
-                    {% if appearance.run_points %}
-                      {{appearance.tot_points}}
-                    {% endif %}
+                    {{appearance.sub_points|default:""}}
                   </td>
                   <td class='text-right'>
-                    {% if appearance.run_points %}
-                      {{appearance.run_points}}
-                    {% endif %}
+                    {{appearance.prev_points|default:""}}
                   </td>
                   <td class='text-right'>
-                    {% if appearance.run_points %}
-                      {{appearance.calc_total}}
-                    {% else %}
-                      {{appearance.tot_points}}
-                    {% endif %}
+                    {{appearance.tot_points}}
                   </td>
                   <td class='text-right'>
                     {{appearance.tot_score|floatformat:1}}
@@ -157,7 +153,7 @@
           <div>
             <ul class='list-unstyled'>
               {% for outcome in outcomes %}
-                <li>{{outcome.name}} is the {{outcome.award.name}} Winner</li>
+                <li>{{outcome}}</li>
               {% endfor %}
             </ul>
           </div>
