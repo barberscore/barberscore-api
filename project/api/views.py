@@ -848,6 +848,29 @@ class RoundViewSet(viewsets.ModelViewSet):
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
     )
+    def legacy(self, request, pk=None):
+        round = Round.objects.get(pk=pk)
+        if round.legacy_oss:
+            pdf = round.legacy_oss.file
+        else:
+            pdf = round.get_legacy_oss()
+        file_name = '{0} Legacy OSS.pdf'.format(round)
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            PDFRenderer,
+        ],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
     def legacyoss(self, request, pk=None):
         round = Round.objects.select_related(
         ).get(pk=pk)

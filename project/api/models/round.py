@@ -975,162 +975,470 @@ class Round(TimeStampedModel):
 
 
     def get_legacy_oss(self):
-        # Contest = apps.get_model('api.contest')
+        Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('api.panelist')
-        # Contestant = apps.get_model('api.contestant')
-        appearances = self.appearances.filter(
-            Q(draw=0) | Q(draw__isnull=True),
+        Appearance = apps.get_model('api.appearance')
+        Song = apps.get_model('api.song')
+
+        # Score Block
+        group_ids = self.appearances.filter(
             is_private=False,
         ).exclude(
-            num=0,
-        ).select_related(
-            'group',
-        ).prefetch_related(
-            'round',
-            'songs',
-            'songs__chart',
-            'songs__scores',
-            'songs__scores__panelist',
-            'songs__scores__panelist__person',
-        ).order_by(
-            '-tot_points',
-            '-sng_points',
-            '-per_points',
-            'group__name',
+            # Don't include advancers on OSS
+            draw__gt=0,
+        ).exclude(
+            # Don't include scratches
+            status=Appearance.STATUS.scratched,
+        ).exclude(
+            # Don't include mic testers on OSS
+            num__lte=0,
+        ).values_list('group__id', flat=True)
+
+
+        rounds = self.session.rounds.filter(
+            num__lte=self.num
         )
-        comps = appearances.values_list('group__id', flat=True)
-        # MonkeyPatch running total
-        for appearance in appearances:
-            if not appearance.run_points:
-                appearance.calc_total = appearance.tot_points
-            else:
-                try:
-                    appearance.calc_total = appearance.run_points + appearance.tot_points
-                except TypeError:
-                    appearance.calc_total = None
-        rounds = self.session.rounds.filter(kind__gt=self.kind)
-        for rnd in rounds:
-            aps = rnd.appearances.filter(
-                id__in=comps,
-            ).exclude(
-                num=0,
-            ).select_related(
-                'group',
+
+        # Monkeypatching
+        for round in rounds:
+            appearances = round.appearances.filter(
+                num__gt=0,
+                round__num__lte=self.num,
             ).prefetch_related(
-                'round',
-                'songs',
-                'songs__chart',
                 'songs__scores',
                 'songs__scores__panelist',
-                'songs__scores__panelist__person',
             ).order_by(
-                '-tot_points',
-                '-sng_points',
-                '-per_points',
-                'group__name',
+                'round__kind',
+            ).annotate(
+                tot_points=Sum(
+                    'songs__scores__points',
+                    filter=Q(
+                        songs__scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                tot_score=Avg(
+                    'songs__scores__points',
+                    filter=Q(
+                        songs__scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                mus_score=Avg(
+                    'songs__scores__points',
+                    filter=Q(
+                        songs__scores__panelist__kind=Panelist.KIND.official,
+                        songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    ),
+                ),
+                per_score=Avg(
+                    'songs__scores__points',
+                    filter=Q(
+                        songs__scores__panelist__kind=Panelist.KIND.official,
+                        songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    ),
+                ),
+                sng_score=Avg(
+                    'songs__scores__points',
+                    filter=Q(
+                        songs__scores__panelist__kind=Panelist.KIND.official,
+                        songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    ),
+                ),
             )
-            for appearance in aps:
-                if not appearance.run_points:
-                    appearance.calc_total = appearance.tot_points
-                else:
-                    try:
-                        appearance.calc_total = appearance.run_points + appearance.tot_points
-                    except TypeError:
-                        appearance.calc_total = None
-            rnd.aps = aps
-        # Eval Only
-        privates = self.appearances.filter(
-            is_private=True,
-        ).select_related(
+            for appearance in appearances:
+                songs = appearance.songs.prefetch_related(
+                    'scores',
+                    'scores__panelist',
+                ).order_by(
+                    'num',
+                ).annotate(
+                    tot_score=Avg(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                        ),
+                    ),
+                    mus_points=Sum(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                            scores__panelist__category=Panelist.CATEGORY.music,
+                        ),
+                    ),
+                    per_points=Sum(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                            scores__panelist__category=Panelist.CATEGORY.performance,
+                        ),
+                    ),
+                    sng_points=Sum(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                            scores__panelist__category=Panelist.CATEGORY.singing,
+                        ),
+                    ),
+                )
+                for song in songs:
+                    penalties_map = {
+                        10: "†",
+                        30: "‡",
+                        40: "✠",
+                        50: "✶",
+                    }
+                    items = " ".join([penalties_map[x] for x in song.penalties])
+                    song.penalties_patched = items
+                appearance.songs_patched = songs
+            round.appearances_patched = appearances
+
+        groups = Group.objects.filter(
+            id__in=group_ids,
+        )
+
+
+        # groups = Group.objects.filter(
+        #     id__in=group_ids,
+        # ).prefetch_related(
+        #     'appearances',
+        #     'appearances__songs__scores',
+        #     'appearances__songs__scores__panelist',
+        #     'appearances__round__session',
+        # ).annotate(
+        #     max_round=Max(
+        #         'appearances__round__num',
+        #         filter=Q(
+        #             appearances__num__gt=0,
+        #             appearances__round__session=self.session,
+        #         ),
+        #     ),
+        #     tot_points=Sum(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     sng_points=Sum(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     per_points=Sum(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     tot_score=Avg(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     mus_score=Avg(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     per_score=Avg(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     sng_score=Avg(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        # ).order_by(
+        #     '-tot_points',
+        #     '-sng_points',
+        #     '-per_points',
+        # )
+
+        # # Monkeypatching
+        # for group in groups:
+        #     appearances = group.appearances.filter(
+        #         num__gt=0,
+        #         round__session=self.session,
+        #         round__num__lte=self.num,
+        #     ).prefetch_related(
+        #         'songs__scores',
+        #         'songs__scores__panelist',
+        #     ).order_by(
+        #         'round__kind',
+        #     ).annotate(
+        #         tot_points=Sum(
+        #             'songs__scores__points',
+        #             filter=Q(
+        #                 songs__scores__panelist__kind=Panelist.KIND.official,
+        #             ),
+        #         ),
+        #         tot_score=Avg(
+        #             'songs__scores__points',
+        #             filter=Q(
+        #                 songs__scores__panelist__kind=Panelist.KIND.official,
+        #             ),
+        #         ),
+        #         mus_score=Avg(
+        #             'songs__scores__points',
+        #             filter=Q(
+        #                 songs__scores__panelist__kind=Panelist.KIND.official,
+        #                 songs__scores__panelist__category=Panelist.CATEGORY.music,
+        #             ),
+        #         ),
+        #         per_score=Avg(
+        #             'songs__scores__points',
+        #             filter=Q(
+        #                 songs__scores__panelist__kind=Panelist.KIND.official,
+        #                 songs__scores__panelist__category=Panelist.CATEGORY.performance,
+        #             ),
+        #         ),
+        #         sng_score=Avg(
+        #             'songs__scores__points',
+        #             filter=Q(
+        #                 songs__scores__panelist__kind=Panelist.KIND.official,
+        #                 songs__scores__panelist__category=Panelist.CATEGORY.singing,
+        #             ),
+        #         ),
+        #     )
+        #     for appearance in appearances:
+        #         songs = appearance.songs.prefetch_related(
+        #             'scores',
+        #             'scores__panelist',
+        #         ).order_by(
+        #             'num',
+        #         ).annotate(
+        #             tot_score=Avg(
+        #                 'scores__points',
+        #                 filter=Q(
+        #                     scores__panelist__kind=Panelist.KIND.official,
+        #                 ),
+        #             ),
+        #             mus_score=Avg(
+        #                 'scores__points',
+        #                 filter=Q(
+        #                     scores__panelist__kind=Panelist.KIND.official,
+        #                     scores__panelist__category=Panelist.CATEGORY.music,
+        #                 ),
+        #             ),
+        #             per_score=Avg(
+        #                 'scores__points',
+        #                 filter=Q(
+        #                     scores__panelist__kind=Panelist.KIND.official,
+        #                     scores__panelist__category=Panelist.CATEGORY.performance,
+        #                 ),
+        #             ),
+        #             sng_score=Avg(
+        #                 'scores__points',
+        #                 filter=Q(
+        #                     scores__panelist__kind=Panelist.KIND.official,
+        #                     scores__panelist__category=Panelist.CATEGORY.singing,
+        #                 ),
+        #             ),
+        #         )
+        #         for song in songs:
+        #             penalties_map = {
+        #                 10: "†",
+        #                 30: "‡",
+        #                 40: "✠",
+        #                 50: "✶",
+        #             }
+        #             items = " ".join([penalties_map[x] for x in song.penalties])
+        #             song.penalties_patched = items
+        #         appearance.songs_patched = songs
+        #     recent = appearances.get(round__num=self.num)
+        #     contesting = recent.contenders.order_by(
+        #         'outcome__num',
+        #     ).values_list(
+        #         'outcome__num',
+        #         flat=True
+        #     )
+        #     group.contesting_patched = ", ".join([str(x) for x in contesting])
+        #     group.pos_patched = recent.pos
+        #     group.representing_patched = recent.representing
+        #     group.participants_patched = recent.participants
+        #     group.appearances_patched = appearances
+
+
+        # Penalties Block
+        array = Song.objects.select_related(
+            'appearance__round',
+            'appearance__group',
+        ).filter(
+            appearance__round__session=self.session,
+            appearance__round__num__lte=self.num,
+            penalties__len__gt=0,
+            appearance__is_private=False,
+        ).distinct().values_list('penalties', flat=True)
+        penalties_map = {
+            10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
+            30: "‡ Score(s) penalized due to violation of Article IX.A.2 of the BHS Contest Rules.",
+            40: "✠ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
+            50: "✶ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules.",
+        }
+        penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
+
+        # Missing flag
+        is_missing = bool(Song.objects.filter(
+            appearance__round__session=self.session,
+            appearance__round__num__lte=self.num,
+            appearance__status=Appearance.STATUS.completed,
+            appearance__is_private=False,
+            chart__isnull=True,
+        ))
+
+        # Eval Only Block
+        privates = self.appearances.prefetch_related(
             'group',
+        ).filter(
+            is_private=True,
         ).order_by(
             'group__name',
         ).values_list('group__name', flat=True)
         privates = list(privates)
-        contests = self.session.contests.filter(
-            num__isnull=False,
-        ).select_related(
-            'award',
-            'group',
-        ).distinct(
+
+        # Draw Block
+        if self.kind != self.KIND.finals:
+            # Get advancers
+            advancers = self.appearances.filter(
+                draw__gt=0,
+            ).select_related(
+                'group',
+            ).order_by(
+                'draw',
+            ).values_list(
+                'draw',
+                'group__name',
+            )
+            advancers = list(advancers)
+            try:
+                mt = self.appearances.get(
+                    draw=0,
+                ).group.name
+                advancers.append(('MT', mt))
+            except self.appearances.model.DoesNotExist:
+                pass
+        else:
+            advancers = None
+
+        # Panelist Block
+        panelists_raw = self.panelists.select_related(
+            'person',
+        ).filter(
+            kind=Panelist.KIND.official,
+            category__gte=Panelist.CATEGORY.ca,
         ).order_by(
             'num',
         )
-        # # MonkeyPatch qualifiers
-        for contest in contests:
-            if contest.award.level != contest.award.LEVEL.deferred:
-                if contest.award.level == contest.award.LEVEL.qualifier:
-                    threshold = contest.award.threshold
-                    if threshold:
-                        qualifiers = contest.contestants.filter(
-                            status__gt=0,
-                            entry__tot_score__gte=threshold,
-                            entry__is_private=False,
-                        ).distinct(
-                        ).order_by(
-                            'entry__group__name',
-                        ).values_list(
-                            'entry__group__name',
-                            flat=True,
-                        )
-                        if qualifiers:
-                            contest.detail = ", ".join(
-                                qualifiers.values_list('entry__group__name', flat=True)
-                            )
-                        else:
-                            contest.detail = "(No qualifiers)"
-                else:
-                    if contest.group:
-                        contest.detail = str(contest.group.name)
-                    else:
-                        contest.detail = "(No recipient)"
-            else:
-                contest.detail = "(Result determined post-contest)"
-        panelists = self.panelists.filter(
-            kind=Panelist.KIND.official,
-            category__gte=Panelist.CATEGORY.ca,
-        ).distinct(
-            'category',
-            'person__last_name',
-            'person__first_name',
+        categories_map = {
+            10: 'CA',
+            30: 'Music',
+            40: 'Performance',
+            50: 'Singing',
+        }
+        panelists = {}
+        for key, value in categories_map.items():
+            sections = panelists_raw.filter(
+                category=key,
+            ).select_related(
+                'person',
+            ).order_by(
+                'num',
+            )
+            persons = [
+                "{0} - {1}".format(x.person.common_name, x.person.district) for x in sections
+            ]
+            panelists[value] = persons
+
+
+        # Outcome Block
+        items = self.outcomes.select_related(
+            'award',
         ).order_by(
-            'category',
-            'person__last_name',
-            'person__first_name',
+            'num',
+        ).values_list(
+            'num',
+            'award__name',
+            'name',
         )
-        outcomes = self.outcomes.order_by('num')
-        advancers = self.appearances.filter(
-            draw__gt=0,
-        ).order_by('draw')
-        mt = self.appearances.filter(draw=0).first()
-        adds_add = len(advancers)
+        outcomes = []
+        for item in items:
+            outcomes.append(
+                (
+                    "{0} {1}".format(item[0], item[1]),
+                    item[2],
+                )
+            )
+        contests = []
+        for item in items:
+            contests.append(
+                "{0}={1}".format(item[0], item[1])
+            )
+
         context = {
             'round': self,
-            'appearances': appearances,
-            'rounds': rounds,
-            'privates': privates,
-            'panelists': panelists,
             'contests': contests,
-            'outcomes': outcomes,
+            'rounds': rounds,
+            'penalties': penalties,
+            'privates': privates,
             'advancers': advancers,
-            'adds_add': adds_add,
-            'mt': mt,
+            'panelists': panelists,
+            'outcomes': outcomes,
+            'is_missing': is_missing,
         }
         rendered = render_to_string('reports/legacy_oss.html', context)
-        statelog = self.statelogs.latest('timestamp')
-        footer = 'Published by {0} at {1}'.format(
-            statelog.by,
-            statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
-        )
+
+        if self.session.rounds.count() == 1:
+            if groups.count() < 16:
+                page_size = 'Letter'
+            else:
+                page_size = 'Legal'
+        else:
+            if groups.count() > 8 and self.kind == self.KIND.finals:
+                page_size = 'Legal'
+            else:
+                page_size = 'Letter'
+        try:
+            statelog = self.statelogs.latest('timestamp')
+            footer = 'Published by {0} at {1}'.format(
+                statelog.by,
+                statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            )
+        except StateLog.DoesNotExist:
+            footer = ""
         file = pydf.generate_pdf(
             rendered,
-            page_size='Letter',
+            page_size=page_size,
             orientation='Portrait',
             margin_top='5mm',
             margin_bottom='5mm',
             footer_right=footer,
-            footer_font_name='Encode Sans',
+            footer_font_name='Courier',
             footer_font_size=8,
+            # zoom=zoom,
         )
         content = ContentFile(file)
         return content
