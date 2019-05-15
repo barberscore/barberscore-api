@@ -154,6 +154,9 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     search_fields = [
         'id',
+        'person__first_name',
+        'person__last_name',
+        'person__bhs_id',
     ]
 
     autocomplete_fields = [
@@ -611,6 +614,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'oss',
         'sa',
+        'legacy_oss',
         ('session', 'kind', 'num', 'spots',),
         'date',
         'footnotes',
@@ -619,8 +623,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         '__str__',
         'status',
-        'oss',
-        'sa',
+        'legacy_oss',
     ]
 
 
@@ -896,16 +899,6 @@ class UserAdmin(BaseUserAdmin):
         'is_mc',
         'created',
         'modified',
-        'is_convention_manager',
-        'is_session_manager',
-        'is_round_manager',
-        'is_scoring_manager',
-        'is_group_manager',
-        'is_person_manager',
-        'is_award_manager',
-        'is_officer_manager',
-        'is_chart_manager',
-        'is_assignment_manager',
     ]
 
     def is_mc(self, instance):
