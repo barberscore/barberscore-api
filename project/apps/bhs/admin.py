@@ -515,8 +515,8 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
 
     inlines = [
-        # MemberInline,
-        # OfficerInline,
+        MemberInline,
+        OfficerInline,
         # AssignmentInline,
         # PanelistInline,
         StateLogInline,

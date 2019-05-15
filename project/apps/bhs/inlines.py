@@ -198,7 +198,6 @@ class OfficerInline(admin.TabularInline):
         'status',
     ]
     autocomplete_fields = [
-        'office',
         'person',
         'group',
     ]
