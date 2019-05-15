@@ -1928,8 +1928,6 @@ class Officer(TimeStampedModel):
 
     office = models.IntegerField(
         choices=OFFICE,
-        null=True,
-        blank=True,
     )
 
     start_date = models.DateField(
