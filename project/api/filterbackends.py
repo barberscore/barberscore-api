@@ -15,7 +15,7 @@ class AppearanceFilterBackend(DRYPermissionFiltersBase):
             return queryset
         queryset = queryset.filter(
             Q(
-                round__status=Round.STATUS.finished,
+                round__status=Round.STATUS.completed,
             ) |
             Q(
                 round__session__convention__assignments__person__user=request.user,
@@ -36,7 +36,7 @@ class OutcomeFilterBackend(DRYPermissionFiltersBase):
             return queryset
         queryset = queryset.filter(
             Q(
-                round__status=Round.STATUS.finished,
+                round__status=Round.STATUS.completed,
             ) |
             Q(
                 round__session__convention__assignments__person__user=request.user,
@@ -93,7 +93,7 @@ class SongFilterBackend(DRYPermissionFiltersBase):
             return queryset
         queryset = queryset.filter(
             Q(
-                appearance__round__status=Round.STATUS.finished,
+                appearance__round__status=Round.STATUS.completed,
             ) |
             Q(
                 appearance__round__session__convention__assignments__person__user=request.user,

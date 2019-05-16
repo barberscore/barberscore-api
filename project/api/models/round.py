@@ -55,7 +55,7 @@ class Round(TimeStampedModel):
         (0, 'new', 'New',),
         (10, 'built', 'Built',),
         (20, 'started', 'Started',),
-        (25, 'finished', 'Finished',),
+        (25, 'completed', 'Completed',),
         (27, 'verified', 'Verified',),
         (30, 'published', 'Published',),
     )
@@ -1652,7 +1652,7 @@ class Round(TimeStampedModel):
     def can_build(self):
         return True
 
-    def can_finish(self):
+    def can_complete(self):
         Appearance = apps.get_model('api.appearance')
         return all([
             self.appearances.filter(
@@ -1901,10 +1901,10 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.started, STATUS.finished,],
-        target=STATUS.finished,
-        conditions=[can_finish],)
-    def finish(self, *args, **kwargs):
+        source=[STATUS.started, STATUS.completed,],
+        target=STATUS.completed,
+        conditions=[can_complete],)
+    def complete(self, *args, **kwargs):
         Appearance = apps.get_model('api.appearance')
         Panelist = apps.get_model('api.panelist')
         # Run outcomes
@@ -2013,7 +2013,7 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.finished],
+        source=[STATUS.completed],
         target=STATUS.verified,
         conditions=[can_verify],)
     def verify(self, *args, **kwargs):
