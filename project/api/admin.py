@@ -612,12 +612,14 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        'oss',
-        'sa',
-        'legacy_oss',
+        # 'oss',
+        # 'sa',
+        # 'legacy_oss',
         ('session', 'kind', 'num', 'spots',),
-        'date',
-        'footnotes',
+        # 'footnotes',
+        '__str__',
+        # 'session__kind',
+        ('date', 'is_reviewed'),
     ]
 
     list_display = [
@@ -634,6 +636,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session__kind',
         'session__convention__season',
         'session__convention__year',
+        'is_reviewed',
     ]
 
     fsm_field = [
@@ -651,8 +654,9 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
-        # 'oss',
+        '__str__',
         # 'sa',
+        # 'session__kind',
     ]
 
     autocomplete_fields = [
@@ -660,9 +664,9 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        PanelistInline,
-        AppearanceInline,
         OutcomeInline,
+        AppearanceInline,
+        PanelistInline,
         StateLogInline,
     ]
 

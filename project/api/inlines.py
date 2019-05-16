@@ -24,17 +24,18 @@ class AppearanceInline(admin.TabularInline):
     fields = [
         'group',
         'status',
-        'num',
-        'draw',
-        'stats',
+        'representing',
+        # 'num',
+        # 'draw',
+        # 'stats',
     ]
     readonly_fields = [
         'group',
         'status',
     ]
     ordering = (
-        'draw',
-        'num',
+        # 'draw',
+        # 'num',
         'group__name',
     )
     show_change_link = True
@@ -204,12 +205,12 @@ class OutcomeInline(admin.TabularInline):
     model = Outcome
     fields = [
         'num',
-        'name',
-        'round',
         'award',
+        'round',
+        'name',
     ]
     autocomplete_fields = [
-        'award',
+        # 'award',
         'round',
     ]
     ordering = (
@@ -221,6 +222,20 @@ class OutcomeInline(admin.TabularInline):
         'collapse',
     ]
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'award':
+            try:
+                parent_obj_id = request.resolver_match.kwargs['object_id']
+                round = Round.objects.get(id=parent_obj_id)
+                kwargs["queryset"] = Award.objects.filter(
+                    kind=round.session.kind,
+                    season=round.session.convention.season,
+                    group=round.session.convention.group,
+                )
+            except IndexError:
+                pass
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 class PanelistInline(admin.TabularInline):
     model = Panelist
@@ -230,6 +245,7 @@ class PanelistInline(admin.TabularInline):
         'kind',
         'num',
         'person',
+        'representing',
         'round',
     ]
     readonly_fields = [

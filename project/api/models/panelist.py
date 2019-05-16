@@ -100,6 +100,12 @@ class Panelist(TimeStampedModel):
         blank=True,
     )
 
+    representing = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
     # FKs
     round = models.ForeignKey(
         'Round',
@@ -110,7 +116,9 @@ class Panelist(TimeStampedModel):
     person = models.ForeignKey(
         'bhs.person',
         related_name='panelists',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     # Relations

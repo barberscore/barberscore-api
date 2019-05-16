@@ -112,6 +112,11 @@ class Round(TimeStampedModel):
         default='',
     )
 
+    is_reviewed = models.BooleanField(
+        help_text="""Reviewed for history app""",
+        default=False,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
