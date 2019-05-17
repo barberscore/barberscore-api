@@ -1,67 +1,16 @@
 from rest_framework import serializers
 
 from .models import Appearance
-from .models import Assignment
-from .models import Award
 from .models import Contest
 from .models import Contestant
-from .models import Convention
 from .models import Entry
-from .models import Group
 from .models import Outcome
 from .models import Panelist
-from .models import Person
 from .models import Round
 from .models import Score
 from .models import Session
 from .models import Song
 from .models import User
-
-
-class PanelistSerializer(serializers.ModelSerializer):
-
-    person = PersonSerializer(read_only=True, many=False)
-    # person = serializers.StringRelatedField(read_only=True, many=False)
-    class Meta:
-        model = Panelist
-        fields = (
-            'id',
-            'num',
-            'get_kind_display',
-            'get_category_display',
-            'person',
-        )
-
-
-class ScoreSerializer(serializers.ModelSerializer):
-
-    panelist = PanelistSerializer(read_only=True, many=False)
-
-    class Meta:
-        model = Score
-        fields = [
-            'id',
-            'points',
-            'panelist',
-        ]
-
-
-class SongSerializer(serializers.ModelSerializer):
-
-    scores = ScoreSerializer(read_only=True, many=True)
-    chart = ChartSerializer(read_only=True, many=False)
-    # chart = serializers.StringRelatedField(read_only=True, many=False)
-
-    class Meta:
-        model = Song
-        fields = (
-            'id',
-            'num',
-            'chart',
-            'stats',
-            'penalties',
-            'scores',
-        )
 
 
 class AwardSerializer(serializers.ModelSerializer):
