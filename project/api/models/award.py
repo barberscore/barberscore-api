@@ -19,7 +19,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 # First-Party
-from api.managers import AwardManager
+# from api.managers import AwardManager
 
 log = logging.getLogger(__name__)
 
@@ -263,7 +263,7 @@ class Award(TimeStampedModel):
     # FKs
     group = models.ForeignKey(
         'bhs.group',
-        related_name='awards',
+        related_name='awards_old',
         on_delete=models.CASCADE,
     )
 
@@ -278,7 +278,7 @@ class Award(TimeStampedModel):
     )
 
     # Internals
-    objects = AwardManager()
+    # objects = AwardManager()
 
     class Meta:
         ordering = [

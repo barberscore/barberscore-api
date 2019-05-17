@@ -12,7 +12,6 @@ from django.apps import apps
 from django.conf import settings
 # Local
 from .filters import AppearanceConventionStatusListFilter
-from .filters import AwardQualifierLevelFilter
 from .filters import ConventionStatusListFilter
 from .filters import MCListFilter
 from .filters import MCUserListFilter
@@ -20,12 +19,9 @@ from .filters import SessionConventionStatusListFilter
 from .forms import UserChangeForm
 from .forms import UserCreationForm
 from .inlines import AppearanceInline
-# from .inlines import AssignmentInline
-# from .inlines import AwardInline
 from .inlines import ContenderInline
 from .inlines import ContestantInline
 from .inlines import ContestInline
-# from .inlines import ConventionInline
 from .inlines import EntryInline
 from .inlines import OutcomeInline
 from .inlines import PanelistInline
@@ -34,12 +30,9 @@ from .inlines import ScoreInline
 from .inlines import SessionInline
 from .inlines import SongInline
 from .models import Appearance
-# from .models import Assignment
-# from .models import Award
 from .models import Contest
 from .models import Contender
 from .models import Contestant
-# from .models import Convention
 from .models import Entry
 from .models import Outcome
 from .models import Panelist
@@ -124,7 +117,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        'award',
+        # 'award',
         'session',
         'result',
         'group',
@@ -132,7 +125,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         'id',
-        'award',
+        # 'award',
         'session',
         'result',
         'group',
@@ -140,7 +133,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
-        'award__kind',
+        # 'award__kind',
     ]
 
     save_on_top = True
@@ -158,13 +151,13 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     autocomplete_fields = [
-        'award',
+        # 'award',
         'session',
         'group',
     ]
 
     search_fields = [
-        'award__name',
+        # 'award__name',
     ]
 
 
@@ -189,7 +182,7 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     autocomplete_fields = [
         'entry',
-        'contest',
+        # 'contest',
     ]
 
     search_fields = [
@@ -306,7 +299,7 @@ class OutcomeAdmin(admin.ModelAdmin):
         'id',
         'status',
         'round',
-        'award',
+        # 'award',
         'num',
         'name',
         'legacy_name',
@@ -315,7 +308,7 @@ class OutcomeAdmin(admin.ModelAdmin):
     list_display = [
         'status',
         'round',
-        'award',
+        # 'award',
         'num',
         'name',
         'legacy_name',
@@ -327,12 +320,12 @@ class OutcomeAdmin(admin.ModelAdmin):
 
     list_select_related = [
         'round',
-        'award',
+        # 'award',
     ]
 
     autocomplete_fields = [
         'round',
-        'award',
+        # 'award',
     ]
 
     readonly_fields = [
@@ -515,7 +508,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        'convention',
+        # 'convention',
         'kind',
         'legacy_report',
         'drcj_report',
@@ -540,12 +533,12 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'num_rounds',
         'is_invitational',
-        'convention__season',
-        'convention__year',
+        # 'convention__season',
+        # 'convention__year',
     )
 
     autocomplete_fields = [
-        'convention',
+        # 'convention',
     ]
 
     readonly_fields = [
@@ -562,18 +555,18 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_select_related = [
-        'convention',
+        # 'convention',
     ]
 
     ordering = (
-        '-convention__year',
-        'convention__season',
-        'convention__group__tree_sort',
+        # '-convention__year',
+        # 'convention__season',
+        # 'convention__group__tree_sort',
         'kind',
     )
 
     search_fields = [
-        'convention__name',
+        # 'convention__name',
         'kind',
     ]
 

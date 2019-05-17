@@ -9,12 +9,9 @@ from rest_framework_json_api import serializers
 from .fields import TimezoneField
 
 from .models import Appearance
-from .models import Assignment
-from .models import Award
 from .models import Contest
 from .models import Contender
 from .models import Contestant
-from .models import Convention
 from .models import Entry
 from .models import Outcome
 from .models import Panelist
@@ -80,69 +77,6 @@ class AppearanceSerializer(serializers.ModelSerializer):
             # 'songs__scores',
         ]
 
-
-class AssignmentSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-    # included_serializers = {
-    #     'person': 'api.serializers.PersonSerializer',
-    #     'convention': 'api.serializers.ConventionSerializer',
-    # }
-
-    class Meta:
-        model = Assignment
-        fields = (
-            'id',
-            'url',
-            'status',
-            'kind',
-            'category',
-            'convention',
-            'person',
-            'permissions',
-        )
-
-    # class JSONAPIMeta:
-    #     included_resources = [
-    #         'convention',
-    #         'person',
-    #     ]
-
-
-class AwardSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Award
-        fields = (
-            'id',
-            'url',
-            'name',
-            'status',
-            'kind',
-            'gender',
-            'level',
-            'season',
-            'is_single',
-            'threshold',
-            'minimum',
-            'advance',
-            'spots',
-            'description',
-            'notes',
-            'age',
-            'size',
-            'size_range',
-            'scope',
-            'scope_range',
-            'tree_sort',
-            'group',
-            'parent',
-            'children',
-            'contests',
-            'permissions',
-        )
-
-
 class ContestSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
@@ -197,52 +131,6 @@ class ContenderSerializer(serializers.ModelSerializer):
             'outcome',
             'permissions',
         )
-
-
-class ConventionSerializer(serializers.ModelSerializer):
-    timezone = TimezoneField(allow_null=True)
-    permissions = DRYPermissionsField()
-    included_serializers = {
-        'sessions': 'api.serializers.SessionSerializer',
-        'assignments': 'api.serializers.AssignmentSerializer',
-        # 'person': 'api.serializers.PersonSerializer',
-    }
-
-    class Meta:
-        model = Convention
-        fields = (
-            'id',
-            'url',
-            'name',
-            'status',
-            'season',
-            'panel',
-            'year',
-            'open_date',
-            'close_date',
-            'start_date',
-            'end_date',
-            'location',
-            'timezone',
-            'image',
-            'description',
-            'venue',
-            'group',
-            'assignments',
-            'sessions',
-            'permissions',
-        )
-
-    class JSONAPIMeta:
-        included_resources = [
-            'sessions',
-            'assignments',
-            # 'assignments.person',
-        ]
-
-
-    def validate(self, data):
-        return data
 
 
 class EntrySerializer(serializers.ModelSerializer):

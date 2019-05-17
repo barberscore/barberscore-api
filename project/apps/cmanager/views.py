@@ -44,13 +44,13 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
-        'convention',
-        'person',
+        # 'convention',
+        # 'person',
     ).prefetch_related(
-        'statelogs',
+        # 'statelogs',
     ).order_by('id')
     serializer_class = AssignmentSerializer
-    filterset_class = AssignmentFilterset
+    # filterset_class = AssignmentFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -136,15 +136,15 @@ class AwardViewSet(viewsets.ModelViewSet):
 
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.select_related(
-        'venue',
-        'group',
+        # 'venue',
+        # 'group',
     ).prefetch_related(
-        'sessions',
-        'assignments',
-        'statelogs',
-    ).distinct().order_by('id')
+        # 'sessions',
+        # 'assignments',
+        # 'statelogs',
+    ).order_by('id')
     serializer_class = ConventionSerializer
-    filterset_class = ConventionFilterset
+    # filterset_class = ConventionFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]

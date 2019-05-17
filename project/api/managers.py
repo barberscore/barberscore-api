@@ -49,27 +49,6 @@ validate_twitter = RegexValidator(
     """,
 )
 
-
-class AwardManager(Manager):
-    def sort_tree(self):
-        self.all().update(tree_sort=None)
-        awards = self.order_by(
-            '-status',  # Actives first
-            'group__tree_sort',  # Basic BHS Hierarchy
-            '-kind', # Quartet, Chorus
-            'gender', #Male, mixed
-            F('age').asc(nulls_first=True), # Null, Senior, Youth
-            'level', #Championship, qualifier
-            'name', # alpha
-        )
-        i = 0
-        for award in awards:
-            i += 1
-            award.tree_sort = i
-            award.save()
-        return
-
-
 class UserManager(BaseUserManager):
     def create_user(self, username, person=None, **kwargs):
         user = self.model(

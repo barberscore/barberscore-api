@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     path('bhs/', include('apps.bhs.urls')),
+    path('cmanager/', include('apps.cmanager.urls')),
     path('stage/', include('apps.stage.urls')),
     path('rq/', include('django_rq.urls')),
     path('api-auth/', include('rest_framework.urls')),

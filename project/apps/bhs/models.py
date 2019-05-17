@@ -1594,7 +1594,7 @@ class Repertory(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        Assignment = apps.get_model('api.assignment')
+        Assignment = apps.get_model('cmanager.assignment')
         return any([
             self.group.officers.filter(
                 person__user=request.user,

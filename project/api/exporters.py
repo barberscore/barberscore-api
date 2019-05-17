@@ -13,19 +13,9 @@ from .models import Song
 from .models import User
 
 
-class AwardSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Award
-        fields = (
-            'id',
-            'name',
-        )
-
-
 class OutcomeSerializer(serializers.ModelSerializer):
     # award = serializers.StringRelatedField(read_only=True, many=False)
-    award = AwardSerializer(read_only=True, many=False)
+    # award = AwardSerializer(read_only=True, many=False)
 
     class Meta:
         model = Outcome
@@ -33,7 +23,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'id',
             'num',
             'name',
-            'award',
+            # 'award',
         )
 
 
@@ -85,24 +75,4 @@ class SessionSerializer(serializers.ModelSerializer):
             'id',
             'get_kind_display',
             'rounds',
-        )
-
-
-class ConventionSerializer(serializers.ModelSerializer):
-
-    sessions = SessionSerializer(read_only=True, many=True)
-
-    class Meta:
-        model = Convention
-        fields = (
-            'id',
-            'name',
-            'get_season_display',
-            'year',
-            'open_date',
-            'close_date',
-            'start_date',
-            'end_date',
-            'location',
-            'sessions',
         )

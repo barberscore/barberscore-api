@@ -213,7 +213,7 @@ class Convention(TimeStampedModel):
     # FKs
     venue = models.ForeignKey(
         'stage.venue',
-        related_name='conventions',
+        related_name='conventions_old',
         help_text="""
             The venue for the convention.""",
         on_delete=models.SET_NULL,
@@ -223,14 +223,14 @@ class Convention(TimeStampedModel):
 
     group = models.ForeignKey(
         'bhs.group',
-        related_name='conventions',
+        related_name='conventions_old',
         on_delete=models.CASCADE,
     )
 
     # Relations
     statelogs = GenericRelation(
         StateLog,
-        related_query_name='conventions',
+        related_query_name='conventions_old',
     )
 
     # Internals

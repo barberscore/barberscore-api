@@ -5,6 +5,8 @@ from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework_json_api import serializers
 
 # Local
+from .fields import TimezoneField
+
 from .models import Assignment
 from .models import Award
 from .models import Convention
@@ -38,7 +40,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'kind',
             'category',
             'convention',
-            'person',
+            # 'person',
             'permissions',
         )
 
