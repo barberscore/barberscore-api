@@ -1708,7 +1708,7 @@ class Round(TimeStampedModel):
             prior_round = self.session.rounds.get(num=self.num - 1)
 
         # Create Panelsists
-        Assignment = apps.get_model('api.assignment')
+        Assignment = apps.get_model('cmanager.assignment')
         cas = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
             kind__in=[

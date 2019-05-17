@@ -124,7 +124,7 @@ class Session(TimeStampedModel):
 
     # FKs
     convention = models.ForeignKey(
-        'Convention',
+        'cmanager.convention',
         related_name='sessions',
         on_delete=models.CASCADE,
     )

@@ -4,12 +4,9 @@ from rest_framework import routers
 
 # Local
 from .views import AppearanceViewSet
-from .views import AssignmentViewSet
-from .views import AwardViewSet
 from .views import ContenderViewSet
 from .views import ContestantViewSet
 from .views import ContestViewSet
-from .views import ConventionViewSet
 from .views import EntryViewSet
 from .views import OutcomeViewSet
 from .views import PanelistViewSet
@@ -25,12 +22,9 @@ router = routers.DefaultRouter(
 )
 
 router.register(r'appearance', AppearanceViewSet)
-router.register(r'assignment', AssignmentViewSet)
-router.register(r'award', AwardViewSet, basename='award')
 router.register(r'contest', ContestViewSet)
 router.register(r'contender', ContenderViewSet)
 router.register(r'contestant', ContestantViewSet)
-router.register(r'convention', ConventionViewSet)
 router.register(r'entry', EntryViewSet)
 router.register(r'outcome', OutcomeViewSet)
 router.register(r'panelist', PanelistViewSet)

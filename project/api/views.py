@@ -27,20 +27,15 @@ from .filterbackends import AppearanceFilterBackend
 from .filterbackends import OutcomeFilterBackend
 from .filterbackends import ScoreFilterBackend
 from .filterbackends import SongFilterBackend
-from .filtersets import AssignmentFilterset
-from .filtersets import ConventionFilterset
-from .filtersets import RoundFilterset
-from .filtersets import ScoreFilterset
-from .filtersets import SessionFilterset
-from .filtersets import StateLogFilterset
-from .filtersets import UserFilterset
+# from .filtersets import RoundFilterset
+# from .filtersets import ScoreFilterset
+# from .filtersets import SessionFilterset
+# from .filtersets import StateLogFilterset
+# from .filtersets import UserFilterset
 from .models import Appearance
-from .models import Assignment
-from .models import Award
 from .models import Contest
 from .models import Contender
 from .models import Contestant
-from .models import Convention
 from .models import Entry
 from .models import Outcome
 from .models import Panelist
@@ -54,12 +49,9 @@ from .renderers import XLSXRenderer
 from .responders import PDFResponse
 from .responders import XLSXResponse
 from .serializers import AppearanceSerializer
-from .serializers import AssignmentSerializer
-from .serializers import AwardSerializer
 from .serializers import ContenderSerializer
 from .serializers import ContestantSerializer
 from .serializers import ContestSerializer
-from .serializers import ConventionSerializer
 from .serializers import EntrySerializer
 from .serializers import OutcomeSerializer
 from .serializers import PanelistSerializer
@@ -274,98 +266,6 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         )
 
 
-class AssignmentViewSet(viewsets.ModelViewSet):
-    queryset = Assignment.objects.select_related(
-        'convention',
-        'person',
-    ).prefetch_related(
-        'statelogs',
-    ).order_by('id')
-    serializer_class = AssignmentSerializer
-    filterset_class = AssignmentFilterset
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "assignment"
-
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-
-class AwardViewSet(viewsets.ModelViewSet):
-    queryset = Award.objects.select_related(
-        'group',
-        'parent',
-    ).prefetch_related(
-        'children',
-        'contests',
-    ).order_by('status', 'name')
-    serializer_class = AwardSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "award"
-
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-
 class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
         'session',
@@ -494,54 +394,6 @@ class ContestantViewSet(viewsets.ModelViewSet):
         object = self.get_object()
         try:
             object.exclude(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-
-class ConventionViewSet(viewsets.ModelViewSet):
-    queryset = Convention.objects.select_related(
-        'venue',
-        'group',
-    ).prefetch_related(
-        'sessions',
-        'assignments',
-        'statelogs',
-    ).distinct().order_by('id')
-    serializer_class = ConventionSerializer
-    filterset_class = ConventionFilterset
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "convention"
-
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
                 {'status': 'Transition conditions not met.'},
@@ -710,7 +562,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = RoundSerializer
-    filterset_class = RoundFilterset
+    # filterset_class = RoundFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -973,7 +825,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     ).order_by('id')
     serializer_class = ScoreSerializer
-    filterset_class = ScoreFilterset
+    # filterset_class = ScoreFilterset
     filter_backends = [
         DjangoFilterBackend,
         ScoreFilterBackend,
@@ -994,7 +846,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = SessionSerializer
-    filterset_class = SessionFilterset
+    # filterset_class = SessionFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -1142,7 +994,7 @@ class SongViewSet(viewsets.ModelViewSet):
         'scores',
     ).order_by('id')
     serializer_class = SongSerializer
-    filterset_class = None
+    # filterset_class = None
     filter_backends = [
         DjangoFilterBackend,
         SongFilterBackend,
@@ -1158,7 +1010,7 @@ class UserViewSet(viewsets.ModelViewSet):
         'person',
     ).order_by('id')
     serializer_class = UserSerializer
-    filterset_class = UserFilterset
+    # filterset_class = UserFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -1181,7 +1033,7 @@ class StateLogViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     )
     serializer_class = StateLogSerializer
-    filterset_class = StateLogFilterset
+    # filterset_class = StateLogFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]

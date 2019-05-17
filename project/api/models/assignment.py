@@ -69,13 +69,13 @@ class Assignment(TimeStampedModel):
     # FKs
     convention = models.ForeignKey(
         'Convention',
-        related_name='assignments',
+        related_name='assignments_old',
         on_delete=models.CASCADE,
     )
 
     person = models.ForeignKey(
         'bhs.person',
-        related_name='assignments',
+        related_name='assignments_old',
         on_delete=models.CASCADE,
     )
 

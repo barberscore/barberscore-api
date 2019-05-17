@@ -1,15 +1,13 @@
 
 # Django
 from django.contrib import admin
+from django.apps import apps
 
 # Local
 from .models import Appearance
-from .models import Assignment
-from .models import Award
 from .models import Contest
 from .models import Contender
 from .models import Contestant
-from .models import Convention
 from .models import Entry
 from .models import Outcome
 from .models import Panelist
@@ -45,59 +43,10 @@ class AppearanceInline(admin.TabularInline):
     ]
 
 
-class AssignmentInline(admin.TabularInline):
-    model = Assignment
-    fields = [
-        'status',
-        'category',
-        'kind',
-        'person',
-        'convention',
-    ]
-    readonly_fields = [
-        'status',
-    ]
-    autocomplete_fields = [
-        'person',
-        'convention',
-    ]
-    ordering = (
-        'category',
-        'kind',
-        'person__last_name',
-        'person__first_name',
-    )
-    extra = 0
-    show_change_link = True
-    classes = [
-        'collapse',
-    ]
-
-
-class AwardInline(admin.TabularInline):
-    model = Award
-    fields = [
-        'name',
-        'kind',
-        'gender',
-        'is_single',
-        'group',
-    ]
-    readonly_fields = [
-        'name',
-        'status',
-    ]
-    extra = 0
-    show_change_link = True
-    classes = [
-        'collapse',
-    ]
-
-
 class ContestInline(admin.TabularInline):
     model = Contest
     fields = [
-        'award',
+        # 'award',
         'group',
         'session',
         'status',
@@ -106,7 +55,7 @@ class ContestInline(admin.TabularInline):
         'status',
     ]
     autocomplete_fields = [
-        'award',
+        # 'award',
         'group',
     ]
     show_change_link = True
@@ -127,7 +76,7 @@ class ContestantInline(admin.TabularInline):
         'status',
     ]
     autocomplete_fields = [
-        'contest',
+        # 'contest',
         'entry',
     ]
     show_change_link = True
@@ -150,22 +99,6 @@ class ContenderInline(admin.TabularInline):
     autocomplete_fields = [
         'appearance',
         'outcome',
-    ]
-    show_change_link = True
-    extra = 0
-    classes = [
-        'collapse',
-    ]
-
-
-class ConventionInline(admin.TabularInline):
-    model = Convention
-    fields = [
-        'name',
-        'group',
-    ]
-    autocomplete_fields = [
-        'group',
     ]
     show_change_link = True
     extra = 0
@@ -225,6 +158,7 @@ class OutcomeInline(admin.TabularInline):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'award':
             try:
+                Award = apps.get_model('cmanager.award')
                 parent_obj_id = request.resolver_match.kwargs['object_id']
                 round = Round.objects.get(id=parent_obj_id)
                 kwargs["queryset"] = Award.objects.filter(

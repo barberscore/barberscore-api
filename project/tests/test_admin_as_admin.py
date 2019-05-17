@@ -25,19 +25,19 @@ def test_appearance_admin(admin_django_client, appearance):
 
 
 def test_assignment_admin(admin_django_client, assignment):
-    path = reverse('admin:api_assignment_changelist')
+    path = reverse('admin:cmanager_assignment_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_assignment_change', args=(str(assignment.id),))
+    path = reverse('admin:cmanager_assignment_change', args=(str(assignment.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
 def test_award_admin(admin_django_client, award):
-    path = reverse('admin:api_award_changelist')
+    path = reverse('admin:cmanager_award_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_award_change', args=(str(award.id),))
+    path = reverse('admin:cmanager_award_change', args=(str(award.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -79,10 +79,10 @@ def test_contender_admin(admin_django_client, contender):
 
 
 def test_convention_admin(admin_django_client, convention):
-    path = reverse('admin:api_convention_changelist')
+    path = reverse('admin:cmanager_convention_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_convention_change', args=(str(convention.id),))
+    path = reverse('admin:cmanager_convention_change', args=(str(convention.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
