@@ -31,7 +31,7 @@ def forward(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0013_auto_20190517_1019'),
+        ('api', '0012_auto_20190517_0956'),
         ('cmanager', '0001_initial'),
     ]
 

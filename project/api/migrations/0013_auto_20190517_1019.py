@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('api', '0012_auto_20190517_0956'),
-        ('cmanager', '0001_initial'),
+        ('cmanager', '0002_auto_20190517_1000'),
     ]
 
     operations = [
