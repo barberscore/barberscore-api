@@ -20,7 +20,7 @@ from .models import Repertory
 class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
-        # 'repertories': 'api.serializers.RepertorySerializer',
+        'repertories': 'apps.bhs.serializers.RepertorySerializer',
         'members': 'apps.bhs.serializers.MemberSerializer',
         'officers': 'apps.bhs.serializers.OfficerSerializer',
         # 'entries': 'api.serializers.EntrySerializer',
@@ -68,7 +68,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            # 'repertories',
+            'repertories',
             'members',
             'officers',
             # 'entries',
