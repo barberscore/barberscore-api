@@ -27,11 +27,11 @@ from .filterbackends import AppearanceFilterBackend
 from .filterbackends import OutcomeFilterBackend
 from .filterbackends import ScoreFilterBackend
 from .filterbackends import SongFilterBackend
-# from .filtersets import RoundFilterset
-# from .filtersets import ScoreFilterset
-# from .filtersets import SessionFilterset
-# from .filtersets import StateLogFilterset
-# from .filtersets import UserFilterset
+from .filtersets import RoundFilterset
+from .filtersets import ScoreFilterset
+from .filtersets import SessionFilterset
+from .filtersets import StateLogFilterset
+from .filtersets import UserFilterset
 from .models import Appearance
 from .models import Contest
 from .models import Contender
@@ -562,7 +562,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = RoundSerializer
-    # filterset_class = RoundFilterset
+    filterset_class = RoundFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -825,7 +825,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     ).order_by('id')
     serializer_class = ScoreSerializer
-    # filterset_class = ScoreFilterset
+    filterset_class = ScoreFilterset
     filter_backends = [
         DjangoFilterBackend,
         ScoreFilterBackend,
@@ -846,7 +846,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).distinct().order_by('id')
     serializer_class = SessionSerializer
-    # filterset_class = SessionFilterset
+    filterset_class = SessionFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -994,7 +994,7 @@ class SongViewSet(viewsets.ModelViewSet):
         'scores',
     ).order_by('id')
     serializer_class = SongSerializer
-    # filterset_class = None
+    filterset_class = None
     filter_backends = [
         DjangoFilterBackend,
         SongFilterBackend,
@@ -1010,16 +1010,10 @@ class UserViewSet(viewsets.ModelViewSet):
         'person',
     ).order_by('id')
     serializer_class = UserSerializer
-    # filterset_class = UserFilterset
+    filterset_class = UserFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
-    # filterset_fields = {
-    #         'username': [
-    #             'exact',
-    #         ],
-    #     }
-
     permission_classes = [
         DRYPermissions,
     ]
@@ -1033,7 +1027,7 @@ class StateLogViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     )
     serializer_class = StateLogSerializer
-    # filterset_class = StateLogFilterset
+    filterset_class = StateLogFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
