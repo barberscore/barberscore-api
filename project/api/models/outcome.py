@@ -67,7 +67,7 @@ class Outcome(TimeStampedModel):
     )
 
     award = models.ForeignKey(
-        'api.award',
+        'cmanager.award',
         related_name='outcomes',
         on_delete=models.CASCADE,
     )

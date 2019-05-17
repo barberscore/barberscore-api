@@ -70,7 +70,7 @@ class Contest(TimeStampedModel):
     )
 
     award = models.ForeignKey(
-        'api.award',
+        'cmanager.award',
         related_name='contests',
         on_delete=models.CASCADE,
     )

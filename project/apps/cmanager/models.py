@@ -690,7 +690,7 @@ class Convention(TimeStampedModel):
 
     # Methods
     def get_drcj_emails(self):
-        Assignment = apps.get_model('api.assignment')
+        Assignment = apps.get_model('cmanager.assignment')
         assignments = self.assignments.filter(
             status=Assignment.STATUS.active,
             category=Assignment.CATEGORY.drcj,
@@ -715,7 +715,7 @@ class Convention(TimeStampedModel):
 
 
     def get_ca_emails(self):
-        Assignment = apps.get_model('api.assignment')
+        Assignment = apps.get_model('cmanager.assignment')
         assignments = self.assignments.filter(
             status=Assignment.STATUS.active,
             category=Assignment.CATEGORY.ca,

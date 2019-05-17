@@ -23,12 +23,9 @@ from django.db.models.signals import pre_save
 
 # First-Party
 from api.models import Appearance
-from api.models import Assignment
-from api.models import Award
 from api.models import Contest
 from api.models import Contender
 from api.models import Contestant
-from api.models import Convention
 from api.models import Entry
 from api.models import Outcome
 from api.models import Panelist
@@ -47,6 +44,10 @@ from apps.bhs.models import Repertory
 
 from apps.stage.models import Grid
 from apps.stage.models import Venue
+
+from apps.cmanager.models import Assignment
+from apps.cmanager.models import Award
+from apps.cmanager.models import Convention
 
 class AppearanceFactory(DjangoModelFactory):
     status = Appearance.STATUS.new
