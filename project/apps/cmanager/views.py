@@ -90,11 +90,11 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
-        'group',
+        # 'group',
         'parent',
     ).prefetch_related(
         'children',
-        'contests',
+        # 'contests',
     ).order_by('status', 'name')
     serializer_class = AwardSerializer
     filter_backends = [

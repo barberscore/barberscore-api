@@ -78,10 +78,10 @@ class AwardSerializer(serializers.ModelSerializer):
             'scope',
             'scope_range',
             'tree_sort',
-            'group',
+            # 'group',
             'parent',
             'children',
-            'contests',
+            # 'contests',
             'permissions',
         )
 
@@ -90,8 +90,8 @@ class ConventionSerializer(serializers.ModelSerializer):
     timezone = TimezoneField(allow_null=True)
     permissions = DRYPermissionsField()
     included_serializers = {
-        'sessions': 'api.serializers.SessionSerializer',
-        'assignments': 'api.serializers.AssignmentSerializer',
+        # 'sessions': 'api.serializers.SessionSerializer',
+        # 'assignments': 'apps.cmanager.serializers.AssignmentSerializer',
         # 'person': 'api.serializers.PersonSerializer',
     }
 
@@ -113,17 +113,17 @@ class ConventionSerializer(serializers.ModelSerializer):
             'timezone',
             'image',
             'description',
-            'venue',
-            'group',
+            # 'venue',
+            # 'group',
             'assignments',
-            'sessions',
+            # 'sessions',
             'permissions',
         )
 
     class JSONAPIMeta:
         included_resources = [
-            'sessions',
-            'assignments',
+            # 'sessions',
+            # 'assignments',
             # 'assignments.person',
         ]
 
