@@ -28,7 +28,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
-from django.db.models.functions import DenseRank
+from django.db.models.functions import DenseRank, RowNumber, Rank
 from django.conf import settings
 
 from api.tasks import build_email
@@ -629,19 +629,27 @@ class Round(TimeStampedModel):
                 ),
             ),
             tot_rank=Window(
-                expression=DenseRank(),
-                order_by=F('tot_points').desc(),
+                expression=RowNumber(),
+                order_by=(
+                    F('tot_points').desc(),
+                    F('sng_points').desc(),
+                    F('per_points').desc(),
+                )
             ),
+            # tot_rank=Window(
+            #     expression=DenseRank(),
+            #     order_by=F('tot_points').desc(),
+            # ),
             mus_rank=Window(
-                expression=DenseRank(),
+                expression=Rank(),
                 order_by=F('mus_points').desc(),
             ),
             per_rank=Window(
-                expression=DenseRank(),
+                expression=Rank(),
                 order_by=F('per_points').desc(),
             ),
             sng_rank=Window(
-                expression=DenseRank(),
+                expression=Rank(),
                 order_by=F('sng_points').desc(),
             ),
         ).order_by(
