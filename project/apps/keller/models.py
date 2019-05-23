@@ -6,6 +6,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from .managers import CompleteManager
 
 class Flat(models.Model):
     id = models.UUIDField(
@@ -37,7 +38,6 @@ class Flat(models.Model):
     def clean(self):
         if self.complete.panelist.round != self.selection.song.appearance.round:
             raise ValidationError('Rounds do not match')
-
 
 
 class Selection(models.Model):
@@ -194,7 +194,6 @@ class Selection(models.Model):
     )
 
 
-
 class Complete(models.Model):
     """LCD: Panelist"""
     id = models.UUIDField(
@@ -207,7 +206,7 @@ class Complete(models.Model):
         default=False,
     )
 
-    row = models.IntegerField(
+    row_id = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -270,6 +269,21 @@ class Complete(models.Model):
         max_length=255,
     )
 
+    panelist_raw = models.CharField(
+        blank=True,
+        null=True,
+        max_length=255,
+    )
+
+    points_raw = ArrayField(
+        base_field=models.IntegerField(
+            null=True,
+            blank=True,
+        ),
+        null=True,
+        blank=True,
+    )
+
     SESSION_KIND = Choices(
         (32, 'chorus', "Chorus"),
         (41, 'quartet', "Quartet"),
@@ -310,22 +324,7 @@ class Complete(models.Model):
         choices=CATEGORY_KIND
     )
 
-    panelist_name = models.CharField(
-        blank=True,
-        null=True,
-        max_length=255,
-    )
-
     panelist_num = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    points = ArrayField(
-        base_field=models.IntegerField(
-            null=True,
-            blank=True,
-        ),
         null=True,
         blank=True,
     )
@@ -367,3 +366,5 @@ class Complete(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
+    objects = CompleteManager()
