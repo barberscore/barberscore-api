@@ -216,31 +216,6 @@ class Complete(models.Model):
         blank=True,
     )
 
-    season_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
-    district_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
-    convention_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
-    session_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
-    round_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
     SEASON = Choices(
         (1, 'summer', 'Summer',),
         (2, 'midwinter', 'Midwinter',),
@@ -254,6 +229,13 @@ class Complete(models.Model):
         choices=SEASON
     )
 
+    SEASON = Choices(
+        (1, 'summer', 'Summer',),
+        (2, 'midwinter', 'Midwinter',),
+        (3, 'fall', 'Fall',),
+        (4, 'spring', 'Spring',),
+    )
+
     district_code = models.CharField(
         blank=True,
         max_length=255,
@@ -262,26 +244,6 @@ class Complete(models.Model):
     convention_name = models.CharField(
         blank=True,
         max_length=255,
-    )
-
-    category_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
-    panelist_raw = models.CharField(
-        blank=True,
-        null=True,
-        max_length=255,
-    )
-
-    points_raw = ArrayField(
-        base_field=models.IntegerField(
-            null=True,
-            blank=True,
-        ),
-        null=True,
-        blank=True,
     )
 
     SESSION_KIND = Choices(
@@ -324,38 +286,19 @@ class Complete(models.Model):
         choices=CATEGORY_KIND
     )
 
-    panelist_num = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    slips = ArrayField(
-        ArrayField(
-            base_field=models.IntegerField(
-                null=True,
-                blank=True,
-            ),
+    points = ArrayField(
+        base_field=models.IntegerField(
+            null=True,
+            blank=True,
         ),
         null=True,
         blank=True,
     )
 
-    num_sessions = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    num_rounds = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    num_appearances = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    num_panelists = models.IntegerField(
+    person = models.ForeignKey(
+        'bhs.person',
+        related_name='completes',
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )

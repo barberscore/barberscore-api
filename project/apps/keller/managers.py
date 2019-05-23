@@ -9,18 +9,18 @@ class CompleteManager(Manager):
         district_raw = row[3].strip()
         convention_raw = row[4].strip()
         session_raw = row[5].strip()
-        round_raw = row[6].strip().replace(":","")
+        round_raw = row[6].strip().replace(":", "")
         category_raw = row[7].strip()
         panelist_raw = row[8].strip()
         i = 10
-        points_raw = []
+        points = []
         while i < 124:
             try:
-                points_raw.append(int(row[i]))
+                points.append(int(row[i]))
             except TypeError:
-                points_raw.append(None)
+                points.append(None)
             except ValueError:
-                points_raw.append(None)
+                points.append(None)
             i += 1
 
         # Transform
@@ -94,6 +94,7 @@ class CompleteManager(Manager):
             'International Youth Convention': 'International Youth Convention',
             'International Next Generation Varsity Barbershop Quartet Contest': 'International Youth Convention',
             'International Collegiate Quartet Preliminary Contest': 'International Youth Prelims',
+            'Fall': 'International Chorus Preliminaries and District Quartet Convention',
         }
 
         # Remap BHS
@@ -125,22 +126,6 @@ class CompleteManager(Manager):
                 str(year),
                 rename,
             ])
-
-        # Format legacy name
-        if season_kind in [self.model.SEASON.summer, self.model.SEASON.midwinter]:
-            legacy_name = " ".join([
-                district_code,
-                rename,
-                str(year),
-            ])
-        else:
-            legacy_name = " ".join([
-                district_code,
-                self.model.SEASON[season_kind],
-                rename,
-                str(year),
-            ])
-
 
         session_map = {
             'Chorus': self.model.SESSION_KIND.chorus,
@@ -439,19 +424,31 @@ class CompleteManager(Manager):
             'Treptow,Richard': '4f6ea184-cd50-4645-936f-c78410312350',
             'XXX': 'fafadbd6-5317-456c-b288-0de64ea83f25',
             'XXX,': 'fafadbd6-5317-456c-b288-0de64ea83f25',
+            'Brock,Bob': 'de6bca7e-f2ab-45f2-b527-b8ed84b482cf',
+            'Clemons,Larry': '963ea6a1-feb2-48ac-b66b-304c76d208ec',
+            'Coates,Diane': 'fbabb671-406a-4f40-ab11-db576dd37c72',
+            'Ramsson,Beth': '3e103600-9cb4-49e3-aee7-c9e3d0e1aebc',
+            'Lancaster,Opie': 'c964c74c-37c4-43e2-85c7-f1af66af5977',
+            'Janes,Linda': '38167299-686e-4090-95f7-9e48cea2170d',
         }
-        panelist_name = panelist_map.get(panelist_raw)
 
-        return {
-            'row_id': row_id,
+
+
+        person_id = panelist_map.get(panelist_raw)
+
+        defaults = {
             'year': year,
             'season_kind': season_kind,
             'district_code': district_code,
             'convention_name': convention_name,
-            'legacy_name': legacy_name,
             'session_kind': session_kind,
             'round_kind': round_kind,
             'category_kind': category_kind,
-            'panelist_name': panelist_name,
-            'points_raw': points_raw,
-        }, False
+            'person_id': person_id,
+            'points': points,
+        }
+
+        return self.update_or_create(
+            row_id=row_id,
+            defaults=defaults,
+        )
