@@ -9,7 +9,7 @@ class CompleteManager(Manager):
         district_raw = row[3].strip()
         convention_raw = row[4].strip()
         session_raw = row[5].strip()
-        round_raw = row[6].strip()
+        round_raw = row[6].strip().replace(":","")
         category_raw = row[7].strip()
         panelist_raw = row[8].strip()
         i = 10
@@ -18,6 +18,8 @@ class CompleteManager(Manager):
             try:
                 points_raw.append(int(row[i]))
             except TypeError:
+                points_raw.append(None)
+            except ValueError:
                 points_raw.append(None)
             i += 1
 
@@ -90,6 +92,7 @@ class CompleteManager(Manager):
             'Harmony Foundation Collegiate Barbershop Quartet Contest': 'International Youth Convention',
             'Bank of America Collegiate Barbershop Quartet Contest': 'International Youth Convention',
             'International Youth Convention': 'International Youth Convention',
+            'International Next Generation Varsity Barbershop Quartet Contest': 'International Youth Convention',
             'International Collegiate Quartet Preliminary Contest': 'International Youth Prelims',
         }
 
@@ -108,15 +111,30 @@ class CompleteManager(Manager):
         else:
             rename = convention_raw
 
-        # Format legacy name
+        # Format convention name
         if season_kind in [self.model.SEASON.summer, self.model.SEASON.midwinter]:
             convention_name = " ".join([
+                district_code,
+                str(year),
+                rename,
+            ])
+        else:
+            convention_name = " ".join([
+                district_code,
+                self.model.SEASON[season_kind],
+                str(year),
+                rename,
+            ])
+
+        # Format legacy name
+        if season_kind in [self.model.SEASON.summer, self.model.SEASON.midwinter]:
+            legacy_name = " ".join([
                 district_code,
                 rename,
                 str(year),
             ])
         else:
-            convention_name = " ".join([
+            legacy_name = " ".join([
                 district_code,
                 self.model.SEASON[season_kind],
                 rename,
@@ -146,10 +164,10 @@ class CompleteManager(Manager):
         round_kind = round_map.get(round_raw)
 
         category_map = {
-            'MUS': self.model.CATEGORY_KIND.music,
-            'PER': self.model.CATEGORY_KIND.performance,
-            'PRS': self.model.CATEGORY_KIND.performance,
-            'SNG': self.model.CATEGORY_KIND.singing,
+            'MUS': self.model.CATEGORY_KIND.mus,
+            'PER': self.model.CATEGORY_KIND.per,
+            'PRS': self.model.CATEGORY_KIND.per,
+            'SNG': self.model.CATEGORY_KIND.sng,
         }
 
         category_kind = category_map.get(category_raw)
@@ -399,18 +417,41 @@ class CompleteManager(Manager):
             'Baughman,Will': '37a61340-bdbf-4a15-ae7f-88caa5f63e96',
             'LeClair,Liz': 'b9083bf7-4f6b-4f0c-a00b-70544627299f',
             'Rembecki,Andrew': '2ee78623-a987-4faa-b8ff-872b2bf7e7bf',
+
+            '': 'fafadbd6-5317-456c-b288-0de64ea83f25',
+            'Butterfield,Jay': 'bbe37cf8-1d22-4d29-8378-0f02ec30c7d6',
+            'Campbell,Robert': 'de3e965d-713a-4dc4-8d5c-f81c70ab12cb',
+            'Debar,Phil': 'f6459f6f-1d05-4762-bd55-43fc9ef12db9',
+            'Debusman,Jim': 'fa85a8c9-0346-45fc-9ddf-ce2904629ed8',
+            'Fritzen,Ed': '7967a4e4-1ec2-488b-b2b2-36e5679e7c49',
+            'Gray Jr,Bobby': 'b6ed48b2-44cb-4987-8c63-f88334abb1e8',
+            'Gray,Bobby': 'b6ed48b2-44cb-4987-8c63-f88334abb1e8',
+            'Hunter,Joe C.': '80426bd5-d2c1-4d85-86a6-f49b525097e2',
+            'Hunter,Jr,Joe': '80426bd5-d2c1-4d85-86a6-f49b525097e2',
+            'McFadden,Bob': 'b418d44e-4298-42c3-90e7-6af6de4cd445',
+            'McQueeney,Tom': '290a27f0-e25a-4384-ab66-c3b1f5203bc9',
+            'Missing': 'fafadbd6-5317-456c-b288-0de64ea83f25',
+            "O'Leary,L. Brian": 'ae3dbdad-42e5-4645-9a16-71cec0f1c22e',
+            'Payne,Rog': '6806d24d-67e6-440e-a59e-8e5b1e380f51',
+            'Peterson,Christopher': '871c1b01-3e0e-42e0-a82a-b2025083ca49',
+            'Rashleigh,William': 'a1f74fdd-5fad-466a-a144-1559a9cb7731',
+            'Rubin,Dave': 'e937eced-1e19-4ad9-b6bf-c4c17e4b4033',
+            'Treptow,Richard': '4f6ea184-cd50-4645-936f-c78410312350',
+            'XXX': 'fafadbd6-5317-456c-b288-0de64ea83f25',
+            'XXX,': 'fafadbd6-5317-456c-b288-0de64ea83f25',
         }
         panelist_name = panelist_map.get(panelist_raw)
 
-        # Load
-        print(
-            row_id,
-            year,
-            season_kind,
-            district_code,
-            convention_name,
-            session_kind,
-            round_kind,
-            category_kind,
-            panelist_name,
-        )
+        return {
+            'row_id': row_id,
+            'year': year,
+            'season_kind': season_kind,
+            'district_code': district_code,
+            'convention_name': convention_name,
+            'legacy_name': legacy_name,
+            'session_kind': session_kind,
+            'round_kind': round_kind,
+            'category_kind': category_kind,
+            'panelist_name': panelist_name,
+            'points_raw': points_raw,
+        }, False
