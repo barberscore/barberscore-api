@@ -76,7 +76,7 @@
               <tr class='pbi_avoid'>
                 <td class='w-groups'>
                   <strong>
-                    {{group.name}}<br>
+                    {{group.tot_rank}} {{group.name}}<br>
                   </strong>
                   {% if group.get_kind_display == 'Chorus' %}
                     {{group.parent.name|truncatechars_html:"50"}}&nbsp;({{group.contesting_patched|default:"None"}})<br>

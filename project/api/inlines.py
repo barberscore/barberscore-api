@@ -141,6 +141,7 @@ class OutcomeInline(admin.TabularInline):
         'award',
         'round',
         'name',
+        'is_primary',
     ]
     autocomplete_fields = [
         # 'award',
