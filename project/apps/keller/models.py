@@ -7,6 +7,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from .managers import CompleteManager
+from .managers import SelectionManager
+
 
 class Flat(models.Model):
     id = models.UUIDField(
@@ -192,6 +194,8 @@ class Selection(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
+    objects = SelectionManager()
 
 
 class Complete(models.Model):

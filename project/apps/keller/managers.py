@@ -452,3 +452,370 @@ class CompleteManager(Manager):
             row_id=row_id,
             defaults=defaults,
         )
+
+
+class SelectionManager(Manager):
+    def update_or_create_from_row(self, row):
+        # Extract
+        row_id = int(row[0])
+        season_raw = row[1].strip().lower()
+        year = int(row[2])
+        district_raw = row[3].strip()
+        event_raw = row[4].strip()
+        session_raw = row[5].strip()
+        competitor_raw = str(row[6]).strip().replace(":", "")
+        appearance_num = int(row[7])
+        song_num = int(row[8])
+        song_title = str(row[9]).strip()
+        i = 15
+        points = []
+        while i < 30:
+            try:
+                points.append(int(row[i]))
+            except TypeError:
+                points.append(None)
+            except ValueError:
+                points.append(None)
+            i += 1
+        # Transform
+
+        season_map = {
+            'Fall': self.model.SEASON.fall,
+            'Spring': self.model.SEASON.spring,
+        }
+
+        season = season_map.get(season_raw)
+
+        district_map = {
+            'CAR': 'CAR',
+            'CSD': 'CSD',
+            'CSD/ILL': 'CSD',
+            'College': 'BHS',
+            'DIX': 'DIX',
+            'EVG': 'EVG',
+            'FWD': 'FWD',
+            'ILL': 'ILL',
+            'INTL': 'BHS',
+            'Int\'l': 'BHS',
+            'International': 'BHS',
+            'Intl': 'BHS',
+            'JAD': 'JAD',
+            'LOL': 'LOL',
+            'MAD': 'MAD',
+            'Midwinter': 'BHS',
+            'NED': 'NED',
+            'NSC': 'NSC',
+            'ONT': 'ONT',
+            'PIO': 'PIO',
+            'PRS': 'NSC',
+            'RMD': 'RMD',
+            'RMD/FWD': 'RMD',
+            'SLD': 'SLD',
+            'SUN': 'SUN',
+            'SWD': 'SWD',
+            'Senior': 'BHS',
+         }
+
+        district_code = district_map.get(district_raw)
+
+        session_map = {
+            'Chorus Finals': self.model.SESSION_KIND.chorus,
+            'Chorus Semi-Finals': self.model.SESSION_KIND.chorus,
+            'Quartet Finals': self.model.SESSION_KIND.quartet,
+            'Quartet Finals Colle': self.model.SESSION_KIND.quartet,
+            'Quartet Finals Senio': self.model.SESSION_KIND.quartet,
+            'Quartet Finals Seniors': self.model.SESSION_KIND.quartet,
+            'Quartet Finals Youth': self.model.SESSION_KIND.quartet,
+            'Quartet Quarter-Fina': self.model.SESSION_KIND.quartet,
+            'Quartet Quarterfinals': self.model.SESSION_KIND.quartet,
+            'Quartet Semi-Finals': self.model.SESSION_KIND.quartet,
+            'Quartet Semifinals':self.model.SESSION_KIND.quartet,
+            'Seniors Chorus': self.model.SESSION_KIND.chorus,
+            'Very Large Quartet': self.model.SESSION_KIND.chorus,
+        }
+
+        session_kind = session_map.get(session_raw)
+
+        round_map = {
+            'Chorus Finals': self.model.ROUND_KIND.finals,
+            'Chorus Semi-Finals': self.model.ROUND_KIND.semis,
+            'Quartet Finals': self.model.ROUND_KIND.finals,
+            'Quartet Finals Colle': self.model.ROUND_KIND.finals,
+            'Quartet Finals Senio': self.model.ROUND_KIND.finals,
+            'Quartet Finals Seniors': self.model.ROUND_KIND.finals,
+            'Quartet Finals Youth': self.model.ROUND_KIND.finals,
+            'Quartet Quarter-Fina': self.model.ROUND_KIND.quarters,
+            'Quartet Quarterfinals': self.model.ROUND_KIND.quarters,
+            'Quartet Semi-Finals': self.model.ROUND_KIND.semis,
+            'Quartet Semifinals': self.model.ROUND_KIND.semis,
+            'Seniors Chorus': self.model.ROUND_KIND.finals,
+            'Very Large Quartet': self.model.ROUND_KIND.finals,
+         }
+
+        round_kind = round_map.get(session_raw)
+
+        name_map = {
+            'College': 'International Youth Convention',
+            'Denver': 'International Convention',
+            'International': 'International Convention',
+            'Intl': 'International Convention',
+            'Nashville': 'International Convention',
+            'Regular': 'International Convention',
+            'Senior': 'International Seniors Convention',
+            'Seniors': 'International Seniors Convention',
+            'Seniors Int\'l': 'International Seniors Convention',
+            'Video Prelims': 'International Youth Prelims',
+            'YBQC': 'International Youth Convention',
+        }
+        # Remap BHS
+        if district_code == 'BHS':
+            if any(x in event_raw for x in [
+                'Senior', 'Seniors', 'Seniors Int\'l',
+            ]):
+                season = self.model.SEASON.midwinter
+            elif "Video Prelims" in event_raw:
+                season = self.model.SEASON.spring
+            else:
+                season = self.model.SEASON.summer
+            rename = name_map[event_raw]
+        else:
+            rename = event_raw
+
+        if season in [self.model.SEASON.summer, self.model.SEASON.midwinter]:
+            legacy_name = " ".join([
+                str(district_code),
+                str(year),
+                rename,
+            ])
+        else:
+            legacy_name = " ".join([
+                str(district_code),
+                self.model.SEASON[season],
+                str(year),
+                rename,
+            ])
+
+        legacy_map = {
+            'CSD Spring Prelims 2015': 'CSD Spring International Quartet Preliminaries and District Chorus Convention 2015',
+            'EVG Spring DIV IV 2010': 'EVG Spring Division IV Quartet and Chorus Convention 2010',
+            'EVG Spring Div 1 2008': 'EVG Spring Evergreen Division I Quartet and Chorus Convention 2008',
+            'EVG Spring Div 1 2011': 'EVG Spring Division I - Division Quartet and Chorus Convention 2011',
+            'EVG Spring Div 1 2012': 'EVG Spring Division One Division Quartet and Chorus Convention 2012',
+            'EVG Spring Div 1 2013': 'EVG Spring Division I Quartet and Chorus Convention 2013',
+            'EVG Spring Div 1 2015': 'EVG Spring Division I Quartet and Chorus Convention 2015',
+            'EVG Spring Div 1 2017': 'EVG Spring Division I Quartet 2017',
+            'EVG Spring Div 2 2008': 'EVG Spring Division II Quartet and Chorus Convention 2008',
+            'EVG Spring Div 3 2016': 'EVG Spring Division III Quartet and Chorus Convention 2016',
+            'EVG Spring Div 5 2009': 'EVG Spring Division V Division Quartet and Chorus Convention 2009',
+            'EVG Spring Div 5 2011': 'EVG Spring Division V Quartet and Chorus Convention 2011',
+            'EVG Spring Div I 2009': 'EVG Spring Division I Division Quartet and Chorus Convention 2009',
+            'EVG Spring Div II 2009': 'EVG Spring Division II Quartet and Chorus Convention 2009',
+            'EVG Spring Div II 2010': 'EVG Spring Division II Quartet and Chorus Convention 2010',
+            'EVG Spring Div II 2013': 'EVG Spring Division II - Quartet and Chorus Convention 2013',
+            'EVG Spring Div II 2014': 'EVG Spring Division ll Quartet and Chorus Convention 2014',
+            'EVG Spring Div II 2017': 'EVG Spring Division II Quartet 2017',
+            'EVG Spring Div III 2009': 'EVG Spring Division III Quartet and Chorus Convention 2009',
+            'EVG Spring Div III 2010': 'EVG Spring Division III Division Quartet and Chorus Convention 2010',
+            'EVG Spring Div III 2011': 'EVG Spring Division III Division Quartet and Chorus Convention 2011',
+            'EVG Spring Div III 2012': 'EVG Spring Division III Division Quartet and Chorus Convention 2012',
+            'EVG Spring Div III 2013': 'EVG Spring Division III Division Quartet and Chorus Convention 2013',
+            'EVG Spring Div III 2014': 'EVG Spring Division III Division Quartet and Chorus Convention 2014',
+            'EVG Spring Div III 2017': 'EVG Spring Division lll Quartet and Chorus Convention 2017',
+            'EVG Spring Div IV 2011': 'EVG Spring Division IV Quartet and Chorus Convention 2011',
+            'EVG Spring Div IV 2012': 'EVG Spring Division IV Division Quartet and Chorus Convention 2012',
+            'EVG Spring Div IV 2014': 'EVG Spring Division IV Quartet and Chorus Convention 2014',
+            'EVG Spring Div V 2010': 'EVG Spring Division V Quartet and Chorus Convention 2010',
+            'EVG Spring Div V 2012': 'EVG Spring Division V Quartet and Chorus Convention 2012',
+            'EVG Spring Div V 2013': 'EVG Spring Division V - Division Quartet and Chorus Convention 2013',
+            'EVG Spring Div V 2014': 'EVG Spring Division 5 Division Quartet and Chorus Convention 2014',
+            'EVG Spring Div V 2016': 'EVG Spring Division V Quartet and Chorus Convention 2016',
+            'EVG Spring Div V 2017': 'EVG Spring Division V Quartet and Chorus Convention 2017',
+            'EVG Spring Division 1 2016': 'EVG Spring Division 1 Division Quartet and Chorus Convention 2016',
+            'EVG Spring Division 3 2008': 'EVG Spring Division III Division Quartet and Chorus Convention 2008',
+            'EVG Spring Division 5 2008': 'EVG Spring Division V  Division Quartet and Chorus Convention 2008',
+            'EVG Spring Division II 2016': 'EVG Spring Division II Division Quartet and Chorus Convention 2016',
+            'EVG Spring Division IV 2015': 'EVG Spring Division IV Quartet and Chorus Convention 2015',
+            'EVG Spring Prelims & Div 4 2016': 'EVG Spring International Quartet Preliminaries and Division IV Division Chorus Convention 2016',
+            'EVG Spring Prelims 2008': 'EVG Spring International Quartet Preliminaries and Division IV Convention 2008',
+            'EVG Spring Prelims 2009': 'EVG Spring International Quartet Preliminaries and Division IV Convention 2009',
+            'EVG Spring Prelims 2010': 'EVG Spring International Quartet Preliminaries and Division I Quartet and Chorus Convention 2010',
+            'EVG Spring Prelims 2011': 'EVG Spring International Quartet Preliminaries and Division II Quartet and Chorus Convention 2011',
+            'EVG Spring Prelims 2012': 'EVG Spring International Quartet Preliminaries and Division II Quartet and Chorus Convention 2012',
+            'EVG Spring Prelims 2015': 'EVG Spring International Chorus Preliminaries and District Quartet Convention 2015',
+            'EVG Spring Prelims 2017': 'EVG Spring International Quartet Preliminaries and Division IV Division Chorus Convention 2017',
+            'EVG Spring Prelims/Div IV 2013': 'EVG Spring International Quartet Preliminaries and Division IV Chorus Convention 2013',
+            'FWD Spring AZ Div 2010': 'FWD Spring Arizona Division Quartet and Chorus Convention 2010',
+            'FWD Spring AZ Div 2012': 'FWD Spring Arizona Division Quartet and Chorus Convention 2012',
+            'FWD Spring AZ Div 2014': 'FWD Spring Arizona Division Quartet Contest 2014',
+            'FWD Spring AZ Div 2017': 'FWD Spring Arizona Division Quartet and Chorus Convention 2017',
+            'FWD Spring AZ Division 2009': 'FWD Spring Arizona Division Quartet and Chorus Convention 2009',
+            'FWD Spring AZ Division 2011': 'FWD Spring Arizona Division Quartet and Chorus Convention 2011',
+            'FWD Spring AZ Division 2013': 'FWD Spring Arizona Division Quartet and Chorus Convention 2013',
+            'FWD Spring AZ Division 2015': 'FWD Spring Arizona Division Quartet  Convention 2015',
+            'FWD Spring AZ Division 2016': 'FWD Spring Arizona Division Quartet and Chorus Convention 2016',
+            'FWD Spring Az/Nev Div 2008': 'FWD Spring Arizona/S.Nevada/S.Utah Division Quartet and Chorus Convention 2008',
+            'FWD Spring NE & NW Div 2009': 'FWD Spring Combined NE & NW Divisions Quartet and Chorus Convention 2009',
+            'FWD Spring NE Div 2011': 'FWD Spring Northeast Division Quartet and Chorus Convention 2011',
+            'FWD Spring NE/NW 2014': 'FWD Spring NW/NE Division Quartet and Chorus Convention 2014',
+            'FWD Spring NE/NW Division 2016': 'FWD Spring NW/NE Division Quartet and Chorus Convention 2016',
+            'FWD Spring NW Div 2012': 'FWD Spring Northwest Division Quartet and Chorus Convention 2012',
+            'FWD Spring NW Division 2012': 'FWD Spring Northwest Division Quartet and Chorus Convention 2012',
+            'FWD Spring NorCal 2010': 'FWD Spring Northwest Division Quartet and Chorus Convention 2010',
+            'FWD Spring Norcal East/West 2008': 'FWD Spring NorCal East/Hawaii/NorCal West Division Quartet and Chorus Convention 2008',
+            'FWD Spring Prelims 2008': 'FWD Spring International Quartet Preliminaries and Southern California West Division Convention 2008',
+            'FWD Spring Prelims 2010': 'FWD Spring International Quartet Preliminaries and Northeast Division Chorus Convention 2010',
+            'FWD Spring Prelims 2011': 'FWD Spring International Quartet Preliminaries and Northwest Division Chorus Convention 2011',
+            'FWD Spring Prelims 2017': 'FWD Spring International Quartet Preliminaries and Northwest/Northeast Division Quartet and Chorus Convention 2017',
+            'FWD Spring Prelims/NE/NW 2013': 'FWD Spring International Quartet Preliminaries and NE/NW Division Quartet and Chorus Convention 2013',
+            'FWD Spring Prelims/NE/NW 2015': 'FWD Spring 2015 International Quartet Preliminaries and NW/NE Division Quartet and Chorus Convention 2015',
+            'FWD Spring Prelims/SE/SW 2012': 'FWD Spring International Quartet Preliminaries and SE/SW Division Quartet and Chorus Convention 2012',
+            'FWD Spring Prelims/SE/SW 2016': 'FWD Spring International Quartet Preliminaries and SW/SE Division Chorus Convention 2016',
+            'FWD Spring Prelims/SW/SE 2014': 'FWD Spring International Quartet Preliminaries and SE/SW Division Quartet and Chorus Convention 2014',
+            'FWD Spring SE & SW Div 2009': 'FWD Spring Combined SE & SW Division Quartet and Chorus Convention 2009',
+            'FWD Spring SE Div 2010': 'FWD Spring Southeast Division Quartet and Chorus Convention 2010',
+            'FWD Spring SE Div 2011': 'FWD Spring Southeast Division Quartet and Chorus Convention 2011',
+            'FWD Spring SE and SW Div 2017': 'FWD Spring SE-SW Division Quartet and Chorus Convention 2017',
+            'FWD Spring SE/SW Div 2013': 'FWD Spring SE/SW Division Quartet and Chorus Convention 2013',
+            'FWD Spring SE/SW Division 2015': 'FWD Spring Southeast & Southwest Division Quartet and Chorus Convention 2015',
+            'FWD Spring SW Div 2011': 'FWD Spring Southwest Division Quartet and Chorus Convention 2011',
+            'FWD Spring SoCal East 2008': 'FWD Spring SoCal East Division Quartet and Chorus Convention 2008',
+            'JAD Fall District 2006': 'JAD Fall Fall 2006',
+            'JAD Fall Division 2006': 'JAD Fall Fall 2006',
+            'LOL Spring 10K Div 2011': 'LOL Spring 10K Lakes 2011',
+            'LOL Spring 10K/SW Division 2017': 'LOL Spring Southwest Division and 10 2017',
+            'LOL Spring Div 1 2009': 'LOL Spring Division 1 Quartet and Chorus Convention 2009',
+            'LOL Spring Div 1 2010': 'LOL Spring Division One Quartet and Chorus Convention 2010',
+            'LOL Spring Div 1 and Packerland 2016': 'LOL Spring Division One and Packerland Divisions Quartet and Chorus Convention 2016',
+            'LOL Spring Div 1 and Packerland Division 2015': 'LOL Spring International Quartet Preliminaries and Division One/Packerland  Division Chorus Convention 2015',
+            'LOL Spring Div 1/Packerland Div 2013': 'LOL Spring Division One and Packerland Divisions Quartet and Chorus Convention 2013',
+            'LOL Spring Div I 2012': 'LOL Spring Division One Quartet and Chorus Convention 2012',
+            'LOL Spring NW 2010': 'LOL Spring Red Carpet & Northwest Division Quartet and Chorus Convention 2010',
+            'LOL Spring NW&RC Division 2012': 'LOL Spring Red Carpet/Northwest Divisions Quartet and Chorus Convention 2012',
+            'LOL Spring Northern Plains Div 2013': 'LOL Spring Northern Plains Division Quartet and Chorus Convention 2013',
+            'LOL Spring Northern Plains Div 2016': 'LOL Spring Northern Plains Division Quartet and Chorus Convention 2016',
+            'LOL Spring Northern Plains Div 2017': 'LOL Spring Northern Plains Division Quartet and Chorus Convention 2017',
+            'LOL Spring Packerland 2008': 'LOL Spring Packerland Division Quartet and Chorus Convention 2008',
+            'LOL Spring Packerland 2010': 'LOL Spring Packerland Division Quartet and Chorus Convention 2010',
+            'LOL Spring Packerland Div 2011': 'LOL Spring Packerland Division Quartet and Chorus Convention 2011',
+            'LOL Spring Prelims & Div 1 & Packerland Div 2017': 'LOL Spring International Quartet Preliminaries Division One & Packerland Division Chorus Convention 2017',
+            'LOL Spring Prelims 2009': 'LOL Spring International Quartet Preliminaries and Packerland Division Chorus Convention 2009',
+            'LOL Spring Prelims 2010': 'LOL Spring International Quartet Preliminaries and Southwest/10 2010',
+            'LOL Spring Prelims 2012': 'LOL Spring International Quartet Preliminary and Packerland  Chorus & Quartet Contest 2012',
+            'LOL Spring Prelims 2015': 'LOL Spring International Quartet Preliminaries and Division One/Packerland  Division Chorus Convention 2015',
+            'LOL Spring Prelims Div 1 2011': 'LOL Spring International Quartet Preliminaries and Division One Chorus Convention 2011',
+            'LOL Spring Prelims/Div 1 2014': 'LOL Spring International Quartet Preliminaries and Division One and Packerland Division Chorus Convention 2014',
+            'LOL Spring Prelims/Div 10K': 'LOL Spring International Quartet Preliminaries and 10 2016',
+            'LOL Spring Prelims/SW/10K Div 2013': 'LOL Spring International Quartet Preliminaries and 10 2013',
+            'LOL Spring Red Carpet 2008': 'LOL Spring Northwest and Red Carpet Divisions Quartet and Chorus Convention 2008',
+            'LOL Spring Red Carpet 2009': 'LOL Spring Red Carpet & Northwest Divisions Quartet and Chorus Convention 2009',
+            'LOL Spring Red Carpet and NW Div 2011': 'LOL Spring Red Carpet & Northwest Division Quartet and Chorus Convention 2011',
+            'LOL Spring SE & 10K Div 2012': 'LOL Spring Southwest & 10 2012',
+            'LOL Spring SW Division 2011': 'LOL Spring Southwest Division Quartet and Chorus Convention 2011',
+            'LOL Spring SW/10K 2014': 'LOL Spring SW/10K Div 2014',
+            'LOL Spring SW/10K Div 2015': 'LOL Spring SW and 10 2015',
+            'MAD Spring Atl/No Div 2013': 'MAD Spring Atlantic and Northern Divisions Quartet and Chorus Convention 2013',
+            'MAD Spring Atlantic 2008': 'MAD Spring Atlantic Division Quartet and Chorus Convention 2008',
+            'MAD Spring Atlantic 2009': 'MAD Spring Atlantic Division Quartet and Chorus Convention 2009',
+            'MAD Spring Atlantic 2010': 'MAD Spring Atlantic Division Quartet and Chorus Convention 2010',
+            'MAD Spring Atlantic Div 2011': 'MAD Spring Atlantic Division Quartet and Chorus Convention 2011',
+            'MAD Spring Atlantic Division 2015': 'MAD Spring Atlantic Division Quartet and Chorus Convention 2015',
+            'MAD Spring Atlantic and Western Division 2012': 'MAD Spring Atlantic & Western Divisions Quartet and Chorus Convention 2012',
+            'MAD Spring Atlantic/Western 2014': 'MAD Spring Atlantic & Western Division Quartet and Chorus Convention 2014',
+            'MAD Spring Central Division 2016': 'MAD Spring Central Division Quartet and Chorus Convention 2016',
+            'MAD Spring Central Division 2017': 'MAD Spring Central Division Quartet and Chorus Convention 2017',
+            'MAD Spring Northern 2008': 'MAD Spring Northern Division Quartet and Chorus Convention 2008',
+            'MAD Spring Northern 2012': 'MAD Spring Northern Division Quartet and Chorus Convention 2012',
+            'MAD Spring Northern 2014': 'MAD Spring Northern Division Quartet and Chorus Convention 2014',
+            'MAD Spring Northern 2017': 'MAD Spring Northern Division Quartet and Chorus Convention 2017',
+            'MAD Spring Northern Div 2009': 'MAD Spring Northern Division Quartet and Chorus Convention 2009',
+            'MAD Spring Northern Div 2010': 'MAD Spring Northern Division Quartet and Chorus Convention 2010',
+            'MAD Spring Northern Div 2011': 'MAD Spring Northern Division Quartet and Chorus Convention 2011',
+            'MAD Spring Northern Div 2016': 'MAD Spring Northern Division Quartet and Chorus Convention 2016',
+            'MAD Spring Northern and Western Division 2015': 'MAD Spring Northern & Western Division Quartet and Chorus Convention 2015',
+            'MAD Spring Prelims 2008': 'MAD Spring International Quartet Preliminaries and Seniors Quartet Contests 2008',
+            'MAD Spring Prelims 2009': 'MAD Spring International Quartet Preliminaries and Seniors Quartet Convention 2009',
+            'MAD Spring Prelims 2010': 'MAD Spring International Quartet Preliminaries Convention and Seniors Quartet Contest 2010',
+            'MAD Spring Prelims 2011': 'MAD Spring International Quartet Preliminaries and District Senior Quartet Convention 2011',
+            'MAD Spring Prelims 2012': 'MAD Spring International Quartet Preliminaries and District Senior Quartet Convention 2012',
+            'MAD Spring Prelims 2013': 'MAD Spring International Quartet Preliminaries and District Seniors Quartet Convention 2013',
+            'MAD Spring Prelims 2014': 'MAD Spring International Quartet Preliminaries and District Seniors Convention 2014',
+            'MAD Spring Prelims 2015': 'MAD Spring International Quartet Preliminaries Convention 2015',
+            'MAD Spring Prelims 2016': 'MAD Spring International Quartet Preliminaries 2016',
+            'MAD Spring Prelims 2017': 'MAD Spring 2017 Int\'l Prelims/Seniors/Mixed Quartet Contest/Youth Adjudication 2017',
+            'MAD Spring So Div 2010': 'MAD Spring Southern Division Quartet and Chorus Convention 2010',
+            'MAD Spring So/West Div 2013': 'MAD Spring Southern/Western Division Quartet and Chorus Convention 2013',
+            'MAD Spring Southern 2008': 'MAD Spring Southern Division Quartet and Chorus Convention 2008',
+            'MAD Spring Southern 2014': 'MAD Spring Southern Division Quartet and Chorus Convention 2014',
+            'MAD Spring Southern Div 2009': 'MAD Spring Southern Division Quartet and Chorus Convention 2009',
+            'MAD Spring Southern Div 2011': 'MAD Spring Southern Division Quartet and Chorus Convention 2011',
+            'MAD Spring Southern Div 2017': 'MAD Spring Southern Division Quartet Convention 2017',
+            'MAD Spring Southern Division 2012': 'MAD Spring Southern Division Quartet and Chorus Convention 2012',
+            'MAD Spring Southern Division 2015': 'MAD Spring Southern Division Quartet and Chorus Convention 2015',
+            'MAD Spring Southern Division 2016': 'MAD Spring Southern Division Quartet and Chorus Convention 2016',
+            'MAD Spring Western 2008': 'MAD Spring Western Division Quartet and Chorus Convention 2008',
+            'MAD Spring Western 2009': 'MAD Spring Western Division Quartet and Chorus Convention 2009',
+            'MAD Spring Western Div 2010': 'MAD Spring Western Division Quartet and Chorus Convention 2010',
+            'MAD Spring Western Division 2011': 'MAD Spring Western Division Quartet and Chorus Convention 2011',
+            'NED Spring G&P Div 2010': 'NED Spring Granite & Pine and Patriot Division Quartet and Chorus Convention 2010',
+            'NED Spring G&P Division 2009': 'NED Spring Granite & Pine Division Quartet and Chorus Convention 2009',
+            'NED Spring G&P and Patriot Div 2017': 'NED Spring Granite & Pine and Patriot Divisions Quartet and Chorus Convention 2017',
+            'NED Spring Granite & Pine 2012': 'NED Spring Granite & Pine Division Quartet Contest 2012',
+            'NED Spring MT/Yankee Division 2016': 'NED Spring Yankee / Mountain Division Quartet and Chorus Convention 2016',
+            'NED Spring MtnYank Div 2013': 'NED Spring Mountain and Yankee Divisions Quartet and Chorus Convention 2013',
+            'NED Spring Patriot 2012': 'NED Spring Eastern Regional Divisions Quartet and Chorus Convention 2012',
+            'NED Spring Patriot Div 2010': 'NED Spring Granite & Pine and Patriot Division Quartet and Chorus Convention 2010',
+            'NED Spring Patriot and Yankee 2009': 'NED Spring Patriot And Yankee Division Quartet and Chorus and VLQ Convention 2009',
+            'NED Spring Patriot/G&P Div 2016': 'NED Spring Granite & Pine/Patriot Divisions Quartet and Chorus Convention 2016',
+            'NED Spring Prelims & Mountain & Yankee Div 2017': 'NED Spring International Quartet Preliminaries and Western Regional Convention 2017',
+            'NED Spring Prelims 2008': 'NED Spring International Quartet Preliminaries and Patriot Division Chorus Convention 2008',
+            'NED Spring Prelims 2009': 'NED Spring International Quartet Preliminaries and Mountain Division Chorus Convention 2009',
+            'NED Spring Prelims 2011': 'NED Spring International Quartet Preliminaries and Granite & Pine and Patriot Divisions Convention 2011',
+            'NED Spring Prelims/G&P 2013': 'NED Spring International Quartet Preliminaries and Eastern Regional Convention 2013',
+            'NED Spring Prelims/M/Y 2014': 'NED Spring International Quartet Preliminaries and Mountain/Yankee Division Chorus Convention 2014',
+            'NED Spring Prelims/Mt Yankee Div 2010': 'NED Spring International Quartet Preliminaries and Mountain and Yankee Divisions Quartet and Chorus Convention 2010',
+            'NED Spring Prelims/Yankee/Mt Div 2012': 'NED Spring International Quartet Preliminaries and Yankee and Mountain Division Chorus Convention 2012',
+            'NED Spring Sunrise 2009': 'NED Spring Sunrise Division Quartet and Chorus Contests 2009',
+            'NED Spring Sunrise 2010': 'NED Spring Sunrise Division Quartet and Chorus Convention 2010',
+            'NED Spring Sunrise 2012': 'NED Spring Sunrise Division Quartet and Chorus Convention 2012',
+            'NED Spring Sunrise 2014': 'NED Spring Sunrise Division Quartet and Chorus Convention 2014',
+            'NED Spring Sunrise 2017': 'NED Spring Sunrise Division Quartet and Chorus Convention 2017',
+            'NED Spring Sunrise Div 2011': 'NED Spring Sunrise Division Quartet and Chorus Convention 2011',
+            'NED Spring Sunrise Div 2013': 'NED Spring Sunrise Division Quartet and Chorus Convention 2013',
+            'NED Spring Sunrise Div 2016': 'NED Spring Sunrise Division Quartet and Chorus Convention 2016',
+            'NED Spring Sunrise Division 2015': 'NED Spring Sunrise Division Quartet and Chorus Convention 2015',
+            'NED Spring Yankee 2008': 'NED Spring Yankee Division Quartet and Chorus Convention 2008',
+            'NED Spring Yankee and Mountain 2011': 'NED Spring Yankee and Mountain Division Quartet and Chorus Convention 2011',
+            'SLD Fall District 2008': 'SLD Fall Fall 2008',
+            'SWD Spring NE Div 2008': 'SWD Spring Northeast and Northwest Divisions Chorus and Quartet Contests 2008',
+            'SWD Spring NE/NW Div 2011': 'SWD Spring Northeast and Northwest Division Quartet and Chorus Contests 2011',
+            'SWD Spring NW Div 2012': 'SWD Spring NW Division Quartet and Chorus Convention 2012',
+            'SWD Spring Prelims 2008': 'SWD Spring International Quartet Preliminary and Southeast and Southwest Division Chorus and Quartet Contests 2008',
+            'SWD Spring Prelims 2009': 'SWD Spring International Quartet Preliminaries and NW and SW Divisions Chorus and Quartet Contests 2009',
+            'SWD Spring Prelims 2010': 'SWD Spring International Quartet Preliminaries and NE/NW Division Chorus Convention 2010',
+            'SWD Spring Prelims 2011': 'SWD Spring International Quartet Preliminary and SE/SW Divisions Quartet and Chorus Contests 2011',
+            'SWD Spring Prelims/SE Div 2012': 'SWD Spring International Quartet Preliminary and Southeast Division Quartet and Chorus Contest 2012',
+            'SWD Spring SE/NE Division 2009': 'SWD Spring NE & SE Divisions Quartet and Chorus Convention 2009',
+            'SWD Spring SE/SW Div 2010': 'SWD Spring SE & SW Division Quartet and Chorus Convention 2010',
+            'SWD Spring SW Division 2012': 'SWD Spring Southwest Division Quartet and Chorus Convention 2012',
+            'LOL Spring Prelims/Div 10K,SW 2016': 'LOL Spring International Quartet Preliminaries and 10 2016',
+        }
+        if legacy_name in legacy_map:
+            legacy_name = legacy_map[legacy_name]
+
+
+
+
+        # Load
+        return {
+            'row_id': row_id,
+            'season_raw': season_raw,
+            'year': year,
+            'district_raw': district_raw,
+            'event_raw': event_raw,
+            'session_raw': session_raw,
+            'competitor_raw': competitor_raw,
+            'appearance_num': appearance_num,
+            'song_num': song_num,
+            'song_title': song_title,
+            'points': points,
+        }, True
