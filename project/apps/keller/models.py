@@ -3,11 +3,46 @@ import uuid
 from model_utils import Choices
 
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from .managers import RawPanelistManager
 from .managers import CompleteManager
 from .managers import SelectionManager
+
+
+class RawPanelist(models.Model):
+    id = models.IntegerField(
+        primary_key=True,
+        editable=False,
+    )
+    year = models.IntegerField(
+    )
+    season = models.CharField(
+        max_length=255,
+    )
+    district = models.CharField(
+        max_length=255,
+    )
+    convention = models.CharField(
+        max_length=255,
+    )
+    session = models.CharField(
+        max_length=255,
+    )
+    round = models.CharField(
+        max_length=255,
+    )
+    category = models.CharField(
+        max_length=255,
+    )
+    judge = models.CharField(
+        max_length=255,
+    )
+    points = JSONField(
+    )
+    objects = RawPanelistManager()
 
 
 class Flat(models.Model):
@@ -53,7 +88,7 @@ class Selection(models.Model):
         default=False,
     )
 
-    row = models.IntegerField(
+    row_id = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -61,26 +96,6 @@ class Selection(models.Model):
     year = models.IntegerField(
         null=True,
         blank=True,
-    )
-
-    season_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
-    district_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
-    event_raw = models.CharField(
-        blank=True,
-        max_length=255,
-    )
-
-    session_raw = models.CharField(
-        blank=True,
-        max_length=255,
     )
 
     SEASON = Choices(
@@ -168,26 +183,6 @@ class Selection(models.Model):
         blank=True,
     )
 
-    num_sessions = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    num_rounds = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    num_appearances = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    num_panelists = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
     song = models.OneToOneField(
         'api.song',
         null=True,
@@ -204,10 +199,6 @@ class Complete(models.Model):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
-    )
-
-    mark = models.BooleanField(
-        default=False,
     )
 
     row_id = models.IntegerField(

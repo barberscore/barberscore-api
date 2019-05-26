@@ -41,51 +41,22 @@ class CompleteAdmin(admin.ModelAdmin):
 
     fields = [
         'id',
-        'mark',
         'row_id',
-        'district_code',
-        'season_kind',
-        'year',
-        'convention_name',
-        'session_kind',
-        'round_kind',
-        'category_kind',
         'points',
         'panelist',
     ]
     list_display = [
         'row_id',
-        'district_code',
-        'season_kind',
-        'year',
-        'convention_name',
-        'session_kind',
-        'round_kind',
-        'category_kind',
         'panelist',
     ]
     list_select_related = [
         'panelist',
     ]
-    list_filter = [
-        'year',
-        'season_kind',
-        'session_kind',
-        'round_kind',
-        'district_code',
-    ]
-    ordering = (
-        'year',
-        'district_code',
-        'season_kind',
-        'session_kind',
-        'round_kind',
-    )
     readonly_fields = [
         'id',
     ]
     search_fields = [
-        'round',
+        'row_id',
     ]
     autocomplete_fields = [
         'panelist',
@@ -100,12 +71,8 @@ class SelectionAdmin(admin.ModelAdmin):
 
     fields = [
         'id',
-        'row',
-        'season_raw',
+        'row_id',
         'year',
-        'district_raw',
-        'event_raw',
-        'session_raw',
         'season_kind',
         'convention_name',
         'session_kind',
@@ -114,12 +81,11 @@ class SelectionAdmin(admin.ModelAdmin):
         'appearance_num',
         'song_num',
         'song_title',
-        'totals',
         'points',
         'song',
     ]
     list_display = [
-        'row',
+        'row_id',
         # 'season_raw',
         # 'district_raw',
         # 'event_raw',
@@ -131,8 +97,6 @@ class SelectionAdmin(admin.ModelAdmin):
         # 'session_raw',
         # 'session_kind',
         # 'session',
-        'song',
-        'song_num',
         # 'round_kind',
         # 'appearance_num',
         # 'song_num',
@@ -165,7 +129,7 @@ class SelectionAdmin(admin.ModelAdmin):
     ]
 
     ordering = (
-        'row',
+        'row_id',
         'appearance_num',
         'song_num',
     )

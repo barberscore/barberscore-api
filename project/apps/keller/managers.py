@@ -1,4 +1,57 @@
 from django.db.models import Manager
+from api.models import Panelist
+
+
+class RawPanelistManager(Manager):
+    def update_or_create_from_row(self, row):
+        # Extract
+        id = int(row[0])
+        year = int(row[1])
+        season = row[2].strip()
+        district = row[3].strip()
+        convention = row[4].strip()
+        session = row[5].strip()
+        round = row[6].strip().replace(":", "")
+        category = row[7].strip()
+        judge = row[8].strip()
+
+        output = {}
+        i = 1
+        appearance_num = 1
+        while i < 115:
+            try:
+                points = int(row[i+9])
+            except TypeError:
+                points = None
+            except IndexError:
+                points = None
+            except ValueError:
+                points = None
+            if i % 2 != 0: #odd
+                payload = {1:points}
+            else:
+                payload.update({2:points})
+                if payload[1] and payload[2]:
+                    output[appearance_num] = payload
+                appearance_num += 1
+            i += 1
+        defaults = {
+            'year': year,
+            'season': season,
+            'district': district,
+            'convention': convention,
+            'session': session,
+            'round': round,
+            'category': category,
+            'judge': judge,
+            'points': output,
+        }
+        return self.update_or_create(
+            id=id,
+            defaults=defaults,
+        )
+
+
 
 class CompleteManager(Manager):
     def update_or_create_from_row(self, row):
@@ -6,6 +59,9 @@ class CompleteManager(Manager):
         row_id = int(row[0])
         year = int(row[1])
         season_raw = row[2].strip().lower()
+        if not (year == 2018 and season_raw == 'fall'):
+            return None, None
+
         district_raw = row[3].strip()
         convention_raw = row[4].strip()
         session_raw = row[5].strip()
@@ -97,6 +153,16 @@ class CompleteManager(Manager):
             'Fall': 'International Chorus Preliminaries and District Quartet Convention',
         }
 
+        idiom_map = {
+            'Arizona Division Quartet  Convention': 'Arizona Division Convention',
+            'Arizona Division Chorus Convention': 'Arizona Division Convention',
+            'Arizona Division Chorus Contest': 'Arizona Division Convention',
+            'Arizona Division Quartet Contest': 'Arizona Division Convention',
+            'Southern Division Chorus Convention': 'Southern Division Convention',
+            'Southern Division Quartet Convention': 'Southern Division Convention',
+         }
+
+
         # Remap BHS
         if district_code == 'BHS':
             if any(x in convention_raw for x in ['Senior', 'Midwinter', 'Winter',]):
@@ -110,7 +176,7 @@ class CompleteManager(Manager):
                 season_kind = self.model.SEASON.summer
             rename = convention_map[convention_raw]
         else:
-            rename = convention_raw
+            rename = idiom_map.get(convention_raw, convention_raw)
 
         # Format convention name
         if season_kind in [self.model.SEASON.summer, self.model.SEASON.midwinter]:
@@ -161,7 +227,7 @@ class CompleteManager(Manager):
         panelist_map = {
             '(Unknown)': 'ce995c5b-0909-4358-8628-5a6da2463fb8',
             'Adkisson,Russ': 'd3f74d4e-519a-4dd9-8d8c-fc67f61bde5d',
-            'Agnew,Paul': '5bd61c8a-1fd5-4a81-86fc-88477f723570',
+            'Agnew,Paul': '32827174-32b5-4ffc-bdf0-1834eac92354',
             'Aramian,Terry': '7cc07e45-8ea1-4e9b-9ae6-2d87b9cc5ef4',
             'Armstrong,Steve': '2bef5a76-f6d2-4ae3-8dcd-71ab391f3ef7',
             'Arnold,Chris': '2a7c0481-e973-4013-a948-e137698e4321',
@@ -288,7 +354,7 @@ class CompleteManager(Manager):
             'Mallett,John': '72ecd9c2-0f4f-4a23-86ad-be0d6f64ea82',
             'Mance,Rob': '7190cada-10a6-4092-8104-365d9ab2c57b',
             'Marron,Tim': '009a4092-88be-430c-8c9d-0affc34845a5',
-            'Martinez,Eddie': '91fb1a6e-399a-45d6-945a-d19c0e5ecc23',
+            'Martinez,Eddie': '2e97992a-ac0a-4a59-949e-2cd4b1d26d1e',
             'Massey,Jim': '5489cd94-63a3-4e25-8dcd-79f192b9a4a0',
             'Matchinsky,Tom': '1dbb16b8-9df3-4560-9efd-a509a33170a9',
             'McAdory,Howard': '60df9301-34e4-43f2-8f19-b1ba6af4337e',
@@ -332,7 +398,7 @@ class CompleteManager(Manager):
             'Richards,Jim': 'c073eeee-c438-4cc6-9eac-4513a8c1652f',
             'Ross,Roger': 'ea7a4da7-8443-4c65-aab9-61749e358a74',
             'Rubin,Alex': '7a5ccf95-59a2-4c47-8e8b-c5ccdb4373b3',
-            'Rubin,David': 'e937eced-1e19-4ad9-b6bf-c4c17e4b4033',
+            'Rubin,David': 'cdbeff1e-868a-446d-87b9-02ac2ebf5c2a',
             'Sawyer,Joe': '3d864631-ebe9-4e79-aa8e-5bfcc28b6f52',
             'Schleier,Dusty': '7c21cf56-7bfa-4d86-9dbf-824aa42362a6',
             'Schlinkert,Mark': '09aa8ec8-54dd-491d-aedf-c8e870121417',
@@ -420,7 +486,7 @@ class CompleteManager(Manager):
             'Payne,Rog': '6806d24d-67e6-440e-a59e-8e5b1e380f51',
             'Peterson,Christopher': '871c1b01-3e0e-42e0-a82a-b2025083ca49',
             'Rashleigh,William': 'a1f74fdd-5fad-466a-a144-1559a9cb7731',
-            'Rubin,Dave': 'e937eced-1e19-4ad9-b6bf-c4c17e4b4033',
+            'Rubin,Dave': 'cdbeff1e-868a-446d-87b9-02ac2ebf5c2a',
             'Treptow,Richard': '4f6ea184-cd50-4645-936f-c78410312350',
             'XXX': 'fafadbd6-5317-456c-b288-0de64ea83f25',
             'XXX,': 'fafadbd6-5317-456c-b288-0de64ea83f25',
@@ -432,19 +498,39 @@ class CompleteManager(Manager):
             'Janes,Linda': '38167299-686e-4090-95f7-9e48cea2170d',
         }
 
-
-
         person_id = panelist_map.get(panelist_raw)
 
+
+        try:
+            panelist = Panelist.objects.get(
+                status=-5, # Released
+                num=num,
+                kind=10, # Official
+                person__id=person_id,
+                category=category_kind,
+                round__kind=round_kind,
+                round__session__kind=session_kind,
+                round__session__convention__legacy_name=convention_name,
+            )
+        except Panelist.DoesNotExist:
+            return ((person_id, convention_name, session_kind, round_kind), False)
+
+        # SKIP
+        # Missing in selections
+        skips = [
+            'NED Spring 2005 Granite',
+            'JAD Fall 2006 East',
+            'SLD Fall 2008 Fall',
+            'LOL Spring 2008 International Quartet Preliminaries and Southwest/10',
+        ]
+
+        if convention_name in skips:
+            return ('Skipped', False)
+
+
+        # Load
         defaults = {
-            'year': year,
-            'season_kind': season_kind,
-            'district_code': district_code,
-            'convention_name': convention_name,
-            'session_kind': session_kind,
-            'round_kind': round_kind,
-            'category_kind': category_kind,
-            'person_id': person_id,
+            'panelist': panelist,
             'points': points,
         }
 
@@ -458,15 +544,16 @@ class SelectionManager(Manager):
     def update_or_create_from_row(self, row):
         # Extract
         row_id = int(row[0])
-        season_raw = row[1].strip().lower()
+        season_raw = row[1].strip()
         year = int(row[2])
         district_raw = row[3].strip()
         event_raw = row[4].strip()
         session_raw = row[5].strip()
-        competitor_raw = str(row[6]).strip().replace(":", "")
+        group_name = str(row[6]).strip()
         appearance_num = int(row[7])
         song_num = int(row[8])
         song_title = str(row[9]).strip()
+        totals = int(row[10])
         i = 15
         points = []
         while i < 30:
@@ -597,6 +684,9 @@ class SelectionManager(Manager):
 
         legacy_map = {
             'CSD Spring Prelims 2015': 'CSD Spring International Quartet Preliminaries and District Chorus Convention 2015',
+            'SLD Fall District 2008': 'SLD Fall Fall 2008',
+            'JAD Fall District 2006': 'JAD Fall Fall 2006',
+            'JAD Fall Division 2006': 'JAD Fall Fall 2006',
             'EVG Spring DIV IV 2010': 'EVG Spring Division IV Quartet and Chorus Convention 2010',
             'EVG Spring Div 1 2008': 'EVG Spring Evergreen Division I Quartet and Chorus Convention 2008',
             'EVG Spring Div 1 2011': 'EVG Spring Division I - Division Quartet and Chorus Convention 2011',
@@ -679,8 +769,6 @@ class SelectionManager(Manager):
             'FWD Spring SE/SW Division 2015': 'FWD Spring Southeast & Southwest Division Quartet and Chorus Convention 2015',
             'FWD Spring SW Div 2011': 'FWD Spring Southwest Division Quartet and Chorus Convention 2011',
             'FWD Spring SoCal East 2008': 'FWD Spring SoCal East Division Quartet and Chorus Convention 2008',
-            'JAD Fall District 2006': 'JAD Fall Fall 2006',
-            'JAD Fall Division 2006': 'JAD Fall Fall 2006',
             'LOL Spring 10K Div 2011': 'LOL Spring 10K Lakes 2011',
             'LOL Spring 10K/SW Division 2017': 'LOL Spring Southwest Division and 10 2017',
             'LOL Spring Div 1 2009': 'LOL Spring Division 1 Quartet and Chorus Convention 2009',
@@ -713,6 +801,7 @@ class SelectionManager(Manager):
             'LOL Spring SW Division 2011': 'LOL Spring Southwest Division Quartet and Chorus Convention 2011',
             'LOL Spring SW/10K 2014': 'LOL Spring SW/10K Div 2014',
             'LOL Spring SW/10K Div 2015': 'LOL Spring SW and 10 2015',
+            'LOL Spring Prelims/Div 10K,SW 2016': 'LOL Spring International Quartet Preliminaries and 10 2016',
             'MAD Spring Atl/No Div 2013': 'MAD Spring Atlantic and Northern Divisions Quartet and Chorus Convention 2013',
             'MAD Spring Atlantic 2008': 'MAD Spring Atlantic Division Quartet and Chorus Convention 2008',
             'MAD Spring Atlantic 2009': 'MAD Spring Atlantic Division Quartet and Chorus Convention 2009',
@@ -785,7 +874,6 @@ class SelectionManager(Manager):
             'NED Spring Sunrise Division 2015': 'NED Spring Sunrise Division Quartet and Chorus Convention 2015',
             'NED Spring Yankee 2008': 'NED Spring Yankee Division Quartet and Chorus Convention 2008',
             'NED Spring Yankee and Mountain 2011': 'NED Spring Yankee and Mountain Division Quartet and Chorus Convention 2011',
-            'SLD Fall District 2008': 'SLD Fall Fall 2008',
             'SWD Spring NE Div 2008': 'SWD Spring Northeast and Northwest Divisions Chorus and Quartet Contests 2008',
             'SWD Spring NE/NW Div 2011': 'SWD Spring Northeast and Northwest Division Quartet and Chorus Contests 2011',
             'SWD Spring NW Div 2012': 'SWD Spring NW Division Quartet and Chorus Convention 2012',
@@ -797,25 +885,85 @@ class SelectionManager(Manager):
             'SWD Spring SE/NE Division 2009': 'SWD Spring NE & SE Divisions Quartet and Chorus Convention 2009',
             'SWD Spring SE/SW Div 2010': 'SWD Spring SE & SW Division Quartet and Chorus Convention 2010',
             'SWD Spring SW Division 2012': 'SWD Spring Southwest Division Quartet and Chorus Convention 2012',
-            'LOL Spring Prelims/Div 10K,SW 2016': 'LOL Spring International Quartet Preliminaries and 10 2016',
         }
         if legacy_name in legacy_map:
             legacy_name = legacy_map[legacy_name]
 
 
 
+        # SKIP
+        # Points do not equal totals
+        other_skips = [
+            'CSD Fall District 2009',
+            'JAD Fall District 2009',
+            'EVG Fall District 2009',
+            'EVG Spring Div V 2005',
+            'EVG Spring Division II Quartet and Chorus Convention 2008',
+            'SWD Fall District 2009',
+            'EVG Spring Div I 2005',
+            'NED Fall District 2009',
+            'MAD Fall District 2009',
+            'LOL Spring Northwest and Red Carpet Divisions Quartet and Chorus Convention 2008',
+        ]
+        if legacy_name in other_skips:
+            return ('No Match', False)
+
+
+        # Missing in completes
+        skips = [
+            'CSD Spring 2007 College',
+            'EVG Spring 2007 Division',
+            'FWD Spring 2007 Division',
+            'ILL Spring 2007 College',
+            'JAD Spring 2007 College',
+            'LOL Spring 2007 College',
+            'LOL Spring 2007 Division',
+            'MAD Spring 2007 Division',
+            'NED Spring 2007 Division',
+            'SUN Spring 2007 College',
+            'SWD Spring 2007 College',
+            'SWD Spring 2007 Division',
+            'NED Spring 2010 Patriot Div',
+            'BHS 2011 International Seniors Convention',
+            'BHS 2013 International Seniors Convention',
+            'BHS 2017 International Seniors Convention',
+            'LOL Spring 2018 Sunrise Div',
+        ]
+
+        if legacy_name in skips:
+            return ('Skipped', False)
+
 
         # Load
-        return {
-            'row_id': row_id,
-            'season_raw': season_raw,
+        defaults = {
             'year': year,
-            'district_raw': district_raw,
-            'event_raw': event_raw,
-            'session_raw': session_raw,
-            'competitor_raw': competitor_raw,
+            'season_kind': season,
+            'district_code': district_code,
+            'convention_name': legacy_name,
+            'session_kind': session_kind,
+            'round_kind': round_kind,
+            'group_name': group_name,
             'appearance_num': appearance_num,
             'song_num': song_num,
             'song_title': song_title,
+            'totals': totals,
             'points': points,
-        }, True
+            # 'song_id': song_id,
+        }
+
+        return self.update_or_create(
+            row_id=row_id,
+            defaults=defaults,
+        )
+
+
+        # panelist_remap = {
+            # 'e937eced-1e19-4ad9-b6bf-c4c17e4b4033': 'cdbeff1e-868a-446d-87b9-02ac2ebf5c2a',
+            # '91fb1a6e-399a-45d6-945a-d19c0e5ecc23': '2e97992a-ac0a-4a59-949e-2cd4b1d26d1e',
+            # '5bd61c8a-1fd5-4a81-86fc-88477f723570': '32827174-32b5-4ffc-bdf0-1834eac92354',
+        # }
+        # for key, value in panelist_remap.items():
+            # ps = Panelist.objects.filter(
+                # person_id=key,
+            # )
+            # ps.update(person_id=value)
