@@ -152,6 +152,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = (
         'id',
         'name',
+        'district',
         'legacy_name',
         'legacy_selection',
         'legacy_complete',
@@ -171,6 +172,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         'name',
+        'district',
         'location',
         'timezone',
         'start_date',
