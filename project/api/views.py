@@ -753,7 +753,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         ).get(pk=pk)
         pdf = round.get_titles()
         file_name = '{0} {1} {2} Titles Report'.format(
-            round.session.convention.name,
+            round.session.convention,
             round.session.get_kind_display(),
             round.get_kind_display(),
         )
@@ -782,7 +782,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         else:
             pdf = round.get_sa()
         file_name = '{0} {1} {2} SA'.format(
-            round.session.convention.name,
+            round.session.convention,
             round.session.get_kind_display(),
             round.get_kind_display(),
         )
@@ -807,7 +807,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         ).get(pk=pk)
         pdf = round.get_announcements()
         file_name = '{0} {1} {2} Announcements'.format(
-            round.session.convention.name,
+            round.session.convention,
             round.session.get_kind_display(),
             round.get_kind_display(),
         )
@@ -953,7 +953,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         else:
             xlsx = session.get_legacy()
         file_name = '{0} {1} Session Legacy Report'.format(
-            session.convention.name,
+            session.convention,
             session.get_kind_display(),
         )
         return XLSXResponse(
@@ -976,7 +976,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         else:
             xlsx = session.get_drcj()
         file_name = '{0} {1} Session DRCJ Report'.format(
-            session.convention.name,
+            session.convention,
             session.get_kind_display(),
         )
         return XLSXResponse(

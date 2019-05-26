@@ -1,6 +1,6 @@
 Your contest entry has been Approved!
 You are officially entered for the
-{{entry.session.convention.name|safe}} {{entry.session.get_kind_display}} Session.
+{{entry.session.convention|safe}} {{entry.session.get_kind_display}} Session.
 
 ENTRY DETAILS
 
@@ -9,7 +9,7 @@ Group: {{entry.group.name|safe}}
 BHS ID: {{entry.group.bhs_id}}
 {% endif %}
 
-Session: {{entry.session.convention.name|safe}} {{entry.session.get_kind_display}} Session
+Session: {{entry.session.convention|safe}} {{entry.session.get_kind_display}} Session
 
 Requested Evaluation: {{entry.is_evaluation|yesno|title}}
 

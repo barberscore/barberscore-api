@@ -1,4 +1,4 @@
-The {{round.session.convention.name|safe}} {{round.session.get_kind_display}} {{round.get_kind_display}}
+The {{round.session.convention|safe}} {{round.session.get_kind_display}} {{round.get_kind_display}}
 has finished!
 
 Following are the summary results.  The full Official Scoring Summary is attached

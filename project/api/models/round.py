@@ -144,7 +144,7 @@ class Round(TimeStampedModel):
 
     def __str__(self):
         return "{0} {1} {2}".format(
-            self.session.convention.name,
+            self.session.convention,
             self.session.get_kind_display(),
             self.get_kind_display(),
         )

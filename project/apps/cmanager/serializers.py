@@ -101,6 +101,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'name',
+            'district',
             'status',
             'season',
             'panel',

@@ -1,5 +1,5 @@
 This is your formal invitation to enter the
-{{entry.session.convention.name|safe}} {{entry.session.get_kind_display}} Session!
+{{entry.session.convention|safe}} {{entry.session.get_kind_display}} Session!
 
 Login to Barberscore, the contest entry system for the Barbershop Harmony
 Society at: https://www.barberscore.com/
