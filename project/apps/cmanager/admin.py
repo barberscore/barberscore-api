@@ -171,26 +171,28 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_display = (
-        'name',
-        'district',
-        'location',
-        'timezone',
-        'start_date',
-        'end_date',
         'year',
         'season',
-        'status',
+        'district',
+        'name',
+        # 'location',
+        # 'timezone',
+        # 'start_date',
+        # 'end_date',
+        # 'status',
     )
 
     list_editable = [
-        'location',
-        'start_date',
-        'end_date',
+        'name',
+        # 'location',
+        # 'start_date',
+        # 'end_date',
     ]
 
     list_filter = (
         'status',
         'season',
+        'district',
         'year',
     )
 
