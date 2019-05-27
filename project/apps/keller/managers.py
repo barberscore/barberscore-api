@@ -1,5 +1,4 @@
 from django.db.models import Manager
-from api.models import Panelist
 
 
 class RawPanelistManager(Manager):
@@ -15,7 +14,7 @@ class RawPanelistManager(Manager):
         category = row[7].strip()
         judge = row[8].strip()
 
-        output = {}
+        scores = {}
         i = 1
         appearance_num = 1
         while i < 115:
@@ -32,7 +31,7 @@ class RawPanelistManager(Manager):
             else:
                 payload.update({2:points})
                 if payload[1] and payload[2]:
-                    output[appearance_num] = payload
+                    scores[appearance_num] = payload
                 appearance_num += 1
             i += 1
         defaults = {
@@ -44,13 +43,60 @@ class RawPanelistManager(Manager):
             'round': round,
             'category': category,
             'judge': judge,
-            'points': output,
+            'scores': scores,
         }
         return self.update_or_create(
             id=id,
             defaults=defaults,
         )
 
+
+class RawSongManager(Manager):
+    def update_or_create_from_row(self, row):
+        # Extract
+        id = int(row[0])
+        season = row[1].strip()
+        year = int(row[2])
+        district = row[3].strip()
+        event = row[4].strip()
+        session = row[5].strip()
+        group_name = row[6].strip()
+        appearance_num = int(row[7])
+        song_num = int(row[8])
+        song_title = row[9].strip()
+        totals = int(row[10])
+
+        scores = {}
+        i = 1
+        while i <= 15 :
+            try:
+                points = int(row[i+14])
+            except TypeError:
+                points = None
+            except IndexError:
+                points = None
+            except ValueError:
+                points = None
+            if points:
+                scores[i] = points
+            i += 1
+        defaults = {
+            'season': season,
+            'year': year,
+            'district': district,
+            'event': event,
+            'session': session,
+            'group_name': group_name,
+            'appearance_num': appearance_num,
+            'song_num': song_num,
+            'song_title': song_title,
+            'totals': totals,
+            'scores': scores,
+        }
+        return self.update_or_create(
+            id=id,
+            defaults=defaults,
+        )
 
 
 class CompleteManager(Manager):

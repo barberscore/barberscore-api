@@ -1,12 +1,15 @@
 from django.contrib import admin
 
-from .models import Flat
+from .models import RawSong
+from .models import RawPanelist
+
+# from .models import Flat
 from .models import Complete
-from .models import Selection
-from .inlines import FlatInline
+# from .models import Selection
+# from .inlines import FlatInline
 
 # Register your models here.
-@admin.register(Flat)
+# @admin.register(Flat)
 class FlatAdmin(admin.ModelAdmin):
 
     fields = [
@@ -36,6 +39,96 @@ class FlatAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(RawPanelist)
+class RawPanelistAdmin(admin.ModelAdmin):
+    fields = [
+        'id',
+        'year',
+        'season',
+        'district',
+        'convention',
+        'session',
+        'round',
+        'category',
+        'judge',
+        'scores',
+    ]
+    list_display = [
+        'id',
+        'year',
+        'season',
+        'district',
+        'convention',
+        'session',
+        'round',
+        'category',
+        'judge',
+    ]
+    list_filter = [
+        'year',
+        'season',
+        'district',
+        'convention',
+        'session',
+        'round',
+        'category',
+        # 'judge',
+    ]
+    readonly_fields = [
+        'id',
+    ]
+    search_fields = [
+        'id',
+        'convention',
+    ]
+
+@admin.register(RawSong)
+class RawSongAdmin(admin.ModelAdmin):
+    fields = [
+        'id',
+        'season',
+        'year',
+        'district',
+        'event',
+        'session',
+        'group_name',
+        'appearance_num',
+        'song_num',
+        'song_title',
+        'totals',
+        'scores',
+    ]
+    list_display = [
+        'id',
+        'season',
+        'year',
+        'district',
+        'event',
+        'session',
+        'group_name',
+        'appearance_num',
+        'song_num',
+        'song_title',
+    ]
+    list_filter = [
+        'season',
+        'year',
+        'district',
+        'event',
+        'session',
+        # 'group_name',
+        # 'appearance_num',
+        # 'song_num',
+        # 'song_title',
+    ]
+    readonly_fields = [
+        'id',
+    ]
+    search_fields = [
+        'id',
+    ]
+
+
 @admin.register(Complete)
 class CompleteAdmin(admin.ModelAdmin):
 
@@ -62,11 +155,11 @@ class CompleteAdmin(admin.ModelAdmin):
         'panelist',
     ]
     inlines = [
-        FlatInline,
+        # FlatInline,
     ]
 
 
-@admin.register(Selection)
+# @admin.register(Selection)
 class SelectionAdmin(admin.ModelAdmin):
 
     fields = [
@@ -143,5 +236,5 @@ class SelectionAdmin(admin.ModelAdmin):
         'song',
     ]
     inlines = [
-        FlatInline,
+        # FlatInline,
     ]
