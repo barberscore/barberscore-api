@@ -127,6 +127,7 @@ class ContenderFactory(DjangoModelFactory):
 
 class ConventionFactory(DjangoModelFactory):
     name = Faker('city')
+    district = 'BHS'
     status = Convention.STATUS.new
     season = Convention.SEASON.summer
     panel = Convention.PANEL.quintiple
