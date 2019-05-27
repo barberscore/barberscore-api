@@ -431,6 +431,7 @@ class RawPanelist(models.Model):
         panelist = Panelist.objects.get(**query)
         return panelist
 
+
 class RawSong(models.Model):
     id = models.IntegerField(
         primary_key=True,
