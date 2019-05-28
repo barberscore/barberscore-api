@@ -23,7 +23,7 @@ class AppearanceInline(admin.TabularInline):
         'group',
         'status',
         'representing',
-        # 'num',
+        'num',
         # 'draw',
         # 'stats',
     ]
@@ -33,7 +33,7 @@ class AppearanceInline(admin.TabularInline):
     ]
     ordering = (
         # 'draw',
-        # 'num',
+        'num',
         'group__name',
     )
     show_change_link = True

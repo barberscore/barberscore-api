@@ -51,18 +51,14 @@ class Song(TimeStampedModel):
     num = models.IntegerField(
     )
 
-    legacy_num = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
     legacy_chart = models.CharField(
         max_length=255,
         null=True,
         blank=True,
     )
 
-    legacy_total = models.IntegerField(
+    legacy_group = models.CharField(
+        max_length=255,
         null=True,
         blank=True,
     )
