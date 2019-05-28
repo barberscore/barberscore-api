@@ -12,6 +12,7 @@ from .managers import RawSongManager
 from .managers import RawPanelistManager
 from .managers import CleanPanelistManager
 from .managers import CleanSongManager
+from .managers import CleanFlatManager
 from .managers import CompleteManager
 from .managers import SelectionManager
 
@@ -580,6 +581,12 @@ class CleanSong(models.Model):
     )
     scores = JSONField(
     )
+    appearance = models.ForeignKey(
+        'api.appearance',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
     song = models.OneToOneField(
         'api.song',
         null=True,
@@ -587,6 +594,38 @@ class CleanSong(models.Model):
         on_delete=models.SET_NULL,
     )
     objects = CleanSongManager()
+
+
+class CleanFlat(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    cleanpanelist = models.ForeignKey(
+        'CleanPanelist',
+        related_name='cleanflats',
+        on_delete=models.CASCADE,
+    )
+    cleansong = models.ForeignKey(
+        'CleanSong',
+        related_name='cleanflats',
+        on_delete=models.CASCADE,
+    )
+    points = models.IntegerField(
+    )
+    score = models.OneToOneField(
+        'api.score',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    objects = CleanFlatManager()
+
+    class Meta:
+        unique_together = (
+            ('cleanpanelist', 'cleansong',)
+        )
 
 
 class RawPanelist(models.Model):

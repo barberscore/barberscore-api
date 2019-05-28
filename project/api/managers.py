@@ -71,6 +71,27 @@ class UserManager(BaseUserManager):
         return user
 
 
+class AppearanceManager(Manager):
+    def update_or_create_from_clean(self, item):
+        Round = apps.get_model('api.round')
+        round = Round.objects.get(
+            session__convention__district=item.district,
+            session__convention__season=item.season,
+            session__convention__year=item.year,
+            # session__convention__name=item.convention,
+            session__kind=item.session,
+            kind=item.round,
+        )
+        defaults = {
+            'legacy_group': item.legacy_group,
+        }
+        return self.update_or_create(
+            round=round,
+            num=item.appearance_num,
+            defaults=defaults,
+        )
+
+
 class PanelistManager(Manager):
     def update_or_create_from_clean(self, item):
         Round = apps.get_model('api.round')
@@ -108,10 +129,22 @@ class SongManager(Manager):
         )
         defaults = {
             'legacy_chart': item.legacy_chart,
-            'legacy_group': item.legacy_group,
         }
         return self.update_or_create(
             appearance=appearance,
             num=item.song_num,
+            defaults=defaults,
+        )
+
+class ScoreManager(Manager):
+    def update_or_create_from_clean(self, item):
+        song = item.cleansong.song
+        panelist = item.cleanpanelist.panelist
+        defaults = {
+            'points': item.points,
+        }
+        return self.update_or_create(
+            song=song,
+            panelist=panelist,
             defaults=defaults,
         )

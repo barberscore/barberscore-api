@@ -493,6 +493,19 @@ class CleanSongManager(Manager):
         )
 
 
+class CleanFlatManager(Manager):
+    def update_or_create_from_clean(self, item):
+
+        # Load
+        defaults = {
+            'points': item['points'],
+        }
+        return self.update_or_create(
+            cleanpanelist=item['cleanpanelist'],
+            cleansong=item['cleansong'],
+            defaults=defaults,
+        )
+
 class RawPanelistManager(Manager):
     def update_or_create_from_row(self, row):
         # Extract
