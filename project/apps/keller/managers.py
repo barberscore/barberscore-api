@@ -1,7 +1,28 @@
-from django.db.models import Manager
+from django.db.models import Manager, F, Window
+from django.db.models.functions import RowNumber
 
+from django.apps import apps
+
+class CleanPanelistManager(Manager):
+    pass
+
+class CleanSongManager(Manager):
+    pass
 
 class RawPanelistManager(Manager):
+    def panelists(self):
+        return self.values(
+            'year',
+            'season',
+            'district',
+            'convention',
+            'session',
+            'round',
+            'category',
+            'judge',
+            'scores',
+        )
+
     def update_or_create_from_row(self, row):
         # Extract
         id = int(row[0])
@@ -50,6 +71,147 @@ class RawPanelistManager(Manager):
             defaults=defaults,
         )
 
+    def get_clean_panelists(self):
+        CleanPanelist = apps.get_model('keller.cleanpanelist')
+        district_map = {
+            'Cardinal District': 'CAR',
+            'Carolinas District': 'NSC',
+            'Central States District': 'CSD',
+            'Dixie District': 'DIX',
+            'EVG': 'EVG',
+            'EVG Division': 'EVG',
+            'EVG Prelims': 'EVG',
+            'Evergreen District': 'EVG',
+            'FWD': 'FWD',
+            'FWD Division': 'FWD',
+            'FWD Prelims': 'FWD',
+            'Far Western District': 'FWD',
+            'Illinois District': 'ILL',
+            'International': 'BHS',
+            'JAD': 'JAD',
+            'JAD Prelims': 'JAD',
+            'Johnny Appleseed District': 'JAD',
+            'LOL': 'LOL',
+            'LOL Division': 'LOL',
+            'LOL Prelims': 'LOL',
+            'Land O\' Lakes District': 'LOL',
+            'MAD': 'MAD',
+            'MAD Division': 'MAD',
+            'MAD Prelims': 'MAD',
+            'Mid-Atlantic District': 'MAD',
+            'NED': 'NED',
+            'NED Division': 'NED',
+            'NED Patriot': 'NED',
+            'NED Prelims': 'NED',
+            'Northeastern District': 'NED',
+            'Ontario District': 'ONT',
+            'Pioneer District': 'PIO',
+            'RMD/FWD': 'RMD',
+            'Rocky Mountain District': 'RMD',
+            'SWD': 'SWD',
+            'SWD Division': 'SWD',
+            'SWD Prelims': 'SWD',
+            'Seneca Land District': 'SLD',
+            'Southwestern District': 'SWD',
+            'Sunshine District': 'SUN',
+        }
+        fs = self.annotate(
+            district_out=district_map.get(F('district')),
+            num_out=Window(
+                expression=RowNumber(),
+                partition_by=[
+                    F('year'),
+                    F('season'),
+                    F('district'),
+                    F('convention'),
+                    F('session'),
+                    F('round'),
+                ],
+                order_by=(
+                    F('id'),
+                )
+            ),
+        )
+        return fs
+        for f in fs:
+            district_map = {
+                'Cardinal District': 'CAR',
+                'Carolinas District': 'NSC',
+                'Central States District': 'CSD',
+                'Dixie District': 'DIX',
+                'EVG': 'EVG',
+                'EVG Division': 'EVG',
+                'EVG Prelims': 'EVG',
+                'Evergreen District': 'EVG',
+                'FWD': 'FWD',
+                'FWD Division': 'FWD',
+                'FWD Prelims': 'FWD',
+                'Far Western District': 'FWD',
+                'Illinois District': 'ILL',
+                'International': 'BHS',
+                'JAD': 'JAD',
+                'JAD Prelims': 'JAD',
+                'Johnny Appleseed District': 'JAD',
+                'LOL': 'LOL',
+                'LOL Division': 'LOL',
+                'LOL Prelims': 'LOL',
+                'Land O\' Lakes District': 'LOL',
+                'MAD': 'MAD',
+                'MAD Division': 'MAD',
+                'MAD Prelims': 'MAD',
+                'Mid-Atlantic District': 'MAD',
+                'NED': 'NED',
+                'NED Division': 'NED',
+                'NED Patriot': 'NED',
+                'NED Prelims': 'NED',
+                'Northeastern District': 'NED',
+                'Ontario District': 'ONT',
+                'Pioneer District': 'PIO',
+                'RMD/FWD': 'RMD',
+                'Rocky Mountain District': 'RMD',
+                'SWD': 'SWD',
+                'SWD Division': 'SWD',
+                'SWD Prelims': 'SWD',
+                'Seneca Land District': 'SLD',
+                'Southwestern District': 'SWD',
+                'Sunshine District': 'SUN',
+            }
+            f['district'] = district_map.get(f['district'])
+            season_map = {
+                'Fall': CleanPanelist.SEASON.fall,
+                'Spring': CleanPanelist.SEASON.spring,
+            }
+            f['season'] = season_map.get(f['season'])
+            if f['district'] == 'BHS':
+                f['season'] = CleanPanelist.SEASON.spring
+
+            session_map = {
+                'Chorus': CleanPanelist.SESSION.chorus,
+                'College': CleanPanelist.SESSION.quartet,
+                'Quartet': CleanPanelist.SESSION.quartet,
+                'Quartet College': CleanPanelist.SESSION.quartet,
+                'Senior Chorus': CleanPanelist.SESSION.chorus,
+                'Seniors': CleanPanelist.SESSION.quartet,
+                'VLQ': CleanPanelist.SESSION.chorus,
+            }
+            f['session'] = session_map.get(f['session'])
+
+            round_map = {
+                'Finals': CleanPanelist.ROUND.finals,
+                'Quarter-Finals': CleanPanelist.ROUND.quarters,
+                'Semi-Finals': CleanPanelist.ROUND.semis,
+                'Youth Finals': CleanPanelist.ROUND.finals,
+            }
+            f['round'] = round_map.get(f['round'])
+            category_map = {
+                'MUS': CleanPanelist.CATEGORY.mus,
+                'PER': CleanPanelist.CATEGORY.per,
+                'PRS': CleanPanelist.CATEGORY.per,
+                'SNG': CleanPanelist.CATEGORY.sng,
+            }
+            f['category'] = category_map.get(f['category'])
+        return fs
+
 
 class RawSongManager(Manager):
     def update_or_create_from_row(self, row):
@@ -97,6 +259,97 @@ class RawSongManager(Manager):
             id=id,
             defaults=defaults,
         )
+
+    def get_clean_songs(self):
+        CleanSong = apps.get_model('keller.cleansong')
+        fs = self.values(
+            'id',
+            'year',
+            'season',
+            'district',
+            'event',
+            'session',
+            'group_name',
+            'appearance_num',
+            'song_num',
+            'song_title',
+            'totals',
+            'scores',
+        )
+        for f in fs:
+            district_map = {
+                'CAR': 'CAR',
+                'CSD': 'CSD',
+                'CSD/ILL': 'CSD',
+                'College': 'BHS',
+                'DIX': 'DIX',
+                'EVG': 'EVG',
+                'FWD': 'FWD',
+                'ILL': 'ILL',
+                'INTL': 'BHS',
+                'Int\'l': 'BHS',
+                'International': 'BHS',
+                'Intl': 'BHS',
+                'JAD': 'JAD',
+                'LOL': 'LOL',
+                'MAD': 'MAD',
+                'Midwinter': 'BHS',
+                'NED': 'NED',
+                'NSC': 'NSC',
+                'ONT': 'ONT',
+                'PIO': 'PIO',
+                'PRS': 'NSC',
+                'RMD': 'RMD',
+                'RMD/FWD': 'RMD',
+                'SLD': 'SLD',
+                'SUN': 'SUN',
+                'SWD': 'SWD',
+                'Senior': 'BHS',
+             }
+            f['district'] = district_map.get(f['district'])
+            season_map = {
+                'Fall': CleanSong.SEASON.fall,
+                'Spring': CleanSong.SEASON.spring,
+            }
+            f['season'] = season_map.get(f['season'])
+            if f['district'] == 'BHS':
+                f['season'] = CleanSong.SEASON.spring
+
+            session_map = {
+                'Chorus Finals': CleanSong.SESSION.chorus,
+                'Chorus Semi-Finals': CleanSong.SESSION.chorus,
+                'Quartet Finals': CleanSong.SESSION.quartet,
+                'Quartet Finals Colle': CleanSong.SESSION.quartet,
+                'Quartet Finals Senio': CleanSong.SESSION.quartet,
+                'Quartet Finals Seniors': CleanSong.SESSION.quartet,
+                'Quartet Finals Youth': CleanSong.SESSION.quartet,
+                'Quartet Quarter-Fina': CleanSong.SESSION.quartet,
+                'Quartet Quarterfinals': CleanSong.SESSION.quartet,
+                'Quartet Semi-Finals': CleanSong.SESSION.quartet,
+                'Quartet Semifinals':CleanSong.SESSION.quartet,
+                'Seniors Chorus': CleanSong.SESSION.chorus,
+                'Very Large Quartet': CleanSong.SESSION.chorus,
+            }
+            f['session'] = session_map.get(f['session'])
+
+            round_map = {
+                'Chorus Finals': CleanSong.ROUND.finals,
+                'Chorus Semi-Finals': CleanSong.ROUND.semis,
+                'Quartet Finals': CleanSong.ROUND.finals,
+                'Quartet Finals Colle': CleanSong.ROUND.finals,
+                'Quartet Finals Senio': CleanSong.ROUND.finals,
+                'Quartet Finals Seniors': CleanSong.ROUND.finals,
+                'Quartet Finals Youth': CleanSong.ROUND.finals,
+                'Quartet Quarter-Fina': CleanSong.ROUND.quarters,
+                'Quartet Quarterfinals': CleanSong.ROUND.quarters,
+                'Quartet Semi-Finals': CleanSong.ROUND.semis,
+                'Quartet Semifinals': CleanSong.ROUND.semis,
+                'Seniors Chorus': CleanSong.ROUND.finals,
+                'Very Large Quartet': CleanSong.ROUND.finals,
+             }
+            f['round'] = round_map.get(f['session'])
+            f['convention'] = f.pop('event')
+        return fs
 
 
 class CompleteManager(Manager):

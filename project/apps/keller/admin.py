@@ -1,41 +1,115 @@
 from django.contrib import admin
 
-from .models import RawSong
+from .models import CleanPanelist
+from .models import CleanSong
 from .models import RawPanelist
+from .models import RawSong
 
 # from .models import Flat
-from .models import Complete
+# from .models import Complete
 # from .models import Selection
 # from .inlines import FlatInline
 
-# Register your models here.
-# @admin.register(Flat)
-class FlatAdmin(admin.ModelAdmin):
-
+@admin.register(CleanPanelist)
+class CleanPanelistAdmin(admin.ModelAdmin):
     fields = [
         'id',
-        'complete',
-        'selection',
-        'score',
+        'district',
+        'season',
+        'year',
+        'convention',
+        'session',
+        'round',
+        'category',
+        'num',
+        'legacy_person',
+        'scores',
+        'panelist',
     ]
     list_display = [
         'id',
-        'complete',
-        'selection',
-        'score',
+        'district',
+        'season',
+        'year',
+        'convention',
+        'session',
+        'round',
+        'category',
+        'num',
+        'legacy_person',
+        'panelist',
     ]
-    list_select_related = [
-        'complete',
-        'selection',
-        'score',
+    list_filter = [
+        'district',
+        'season',
+        'year',
+        'convention',
+        'session',
+        'round',
+        'category',
+        'num',
     ]
     readonly_fields = [
         'id',
     ]
-    autocomplete_fields = [
-        'complete',
-        'selection',
-        'score',
+    search_fields = [
+        'id',
+        'convention',
+    ]
+    raw_id_fields = [
+        'panelist',
+    ]
+
+
+@admin.register(CleanSong)
+class CleanSongAdmin(admin.ModelAdmin):
+    fields = [
+        'id',
+        'district',
+        'season',
+        'year',
+        'convention',
+        'session',
+        'round',
+        'appearance_num',
+        'song_num',
+        'legacy_group',
+        'legacy_chart',
+        'totals',
+        'scores',
+        'song',
+    ]
+    list_display = [
+        'id',
+        'district',
+        'season',
+        'year',
+        'convention',
+        'session',
+        'round',
+        'appearance_num',
+        'song_num',
+        'legacy_group',
+        'legacy_chart',
+        'totals',
+        'scores',
+        'song',
+    ]
+    list_filter = [
+        'district',
+        'season',
+        'year',
+        'session',
+        'round',
+    ]
+    readonly_fields = [
+        'id',
+    ]
+    search_fields = [
+        'id',
+    ]
+    raw_id_fields = [
+        'song',
     ]
 
 
@@ -50,6 +124,7 @@ class RawPanelistAdmin(admin.ModelAdmin):
         'session',
         'round',
         'category',
+        'num',
         'judge',
         'scores',
     ]
@@ -62,6 +137,7 @@ class RawPanelistAdmin(admin.ModelAdmin):
         'session',
         'round',
         'category',
+        'num',
         'judge',
     ]
     list_filter = [
@@ -72,6 +148,7 @@ class RawPanelistAdmin(admin.ModelAdmin):
         'session',
         'round',
         'category',
+        'num',
         # 'judge',
     ]
     readonly_fields = [
@@ -81,6 +158,7 @@ class RawPanelistAdmin(admin.ModelAdmin):
         'id',
         'convention',
     ]
+
 
 @admin.register(RawSong)
 class RawSongAdmin(admin.ModelAdmin):
@@ -129,7 +207,7 @@ class RawSongAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Complete)
+# @admin.register(Complete)
 class CompleteAdmin(admin.ModelAdmin):
 
     fields = [
@@ -237,4 +315,34 @@ class SelectionAdmin(admin.ModelAdmin):
     ]
     inlines = [
         # FlatInline,
+    ]
+
+
+# @admin.register(Flat)
+class FlatAdmin(admin.ModelAdmin):
+
+    fields = [
+        'id',
+        'complete',
+        'selection',
+        'score',
+    ]
+    list_display = [
+        'id',
+        'complete',
+        'selection',
+        'score',
+    ]
+    list_select_related = [
+        'complete',
+        'selection',
+        'score',
+    ]
+    readonly_fields = [
+        'id',
+    ]
+    autocomplete_fields = [
+        'complete',
+        'selection',
+        'score',
     ]
