@@ -578,8 +578,6 @@ class CleanSong(models.Model):
     legacy_chart = models.CharField(
         max_length=255,
     )
-    totals = models.IntegerField(
-    )
     scores = JSONField(
     )
     song = models.OneToOneField(

@@ -75,7 +75,6 @@ class CleanSongAdmin(admin.ModelAdmin):
         'song_num',
         'legacy_group',
         'legacy_chart',
-        'totals',
         'scores',
         'song',
     ]
@@ -91,7 +90,6 @@ class CleanSongAdmin(admin.ModelAdmin):
         'song_num',
         'legacy_group',
         'legacy_chart',
-        'totals',
         'scores',
         'song',
     ]

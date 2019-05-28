@@ -165,7 +165,9 @@ class Appearance(TimeStampedModel):
     group = models.ForeignKey(
         'bhs.group',
         related_name='appearances',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     entry = models.ForeignKey(

@@ -19,6 +19,8 @@ from django.db.models import Q
 from django.db.models import Sum, Min, Max, Count, StdDev
 from django.contrib.postgres.fields import ArrayField, JSONField
 
+from api.managers import SongManager
+
 log = logging.getLogger(__name__)
 
 
@@ -113,6 +115,8 @@ class Song(TimeStampedModel):
     )
 
     # Internals
+    objects = SongManager()
+
     class Meta:
         unique_together = (
             ('appearance', 'num',),
