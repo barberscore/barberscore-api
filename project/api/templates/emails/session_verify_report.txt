@@ -1,4 +1,4 @@
-The {{session.convention.name|safe}} {{session.get_kind_display}} Session
+The {{session.convention|safe}} {{session.get_kind_display}} Session
 has now been Verified!
 
 Verification means the initial draw is now public; the draft Legacy and DRCJ reports

@@ -18,6 +18,8 @@ from django.db.models import Min, Max, Count, Avg
 
 from django.apps import apps
 
+from api.managers import ScoreManager
+
 log = logging.getLogger(__name__)
 
 
@@ -85,12 +87,6 @@ class Score(TimeStampedModel):
         ]
     )
 
-    legacy_panelist = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
     # FKs
     song = models.ForeignKey(
         'Song',
@@ -103,6 +99,8 @@ class Score(TimeStampedModel):
         related_name='scores',
         on_delete=models.CASCADE,
     )
+
+    objects = ScoreManager()
 
     class Meta:
         unique_together = (

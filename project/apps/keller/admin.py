@@ -1,129 +1,247 @@
 from django.contrib import admin
 
-from .models import Flat
-from .models import Complete
-from .models import Selection
-from .inlines import FlatInline
+from .models import CleanPanelist
+from .models import CleanSong
+from .models import RawPanelist
+from .models import RawSong
 
-# Register your models here.
-@admin.register(Flat)
-class FlatAdmin(admin.ModelAdmin):
+# from .models import Flat
+# from .models import Complete
+# from .models import Selection
+# from .inlines import FlatInline
 
+@admin.register(CleanPanelist)
+class CleanPanelistAdmin(admin.ModelAdmin):
     fields = [
         'id',
-        'complete',
-        'selection',
-        'score',
-    ]
-    list_display = [
-        'id',
-        'complete',
-        'selection',
-        'score',
-    ]
-    list_select_related = [
-        'complete',
-        'selection',
-        'score',
-    ]
-    readonly_fields = [
-        'id',
-    ]
-    autocomplete_fields = [
-        'complete',
-        'selection',
-        'score',
-    ]
-
-
-@admin.register(Complete)
-class CompleteAdmin(admin.ModelAdmin):
-
-    fields = [
-        'id',
-        'mark',
-        'row_id',
+        'district',
+        'season',
         'year',
-        'season_raw',
-        'district_raw',
-        'convention_raw',
-        'session_raw',
-        'round_raw',
-        'category_raw',
-        'panelist_raw',
-        'points_raw',
-        'season_kind',
-        'convention_name',
-        'session_kind',
-        'round_kind',
-        'category_kind',
-        'panelist_num',
+        'convention',
+        'session',
+        'round',
+        'category',
+        'num',
+        'legacy_person',
+        'scores',
         'panelist',
     ]
     list_display = [
-        'row_id',
-        # 'mark',
-        # 'convention_raw',
-        # 'session_raw',
-        # 'session_kind',
-        # 'round_raw',
-        # 'round_kind',
-        # 'id',
-        # 'category',
-        # 'panelist_num',
-        # 'panelist_name',
-        # 'person',
-        # 'num_appearances',
-        # 'num_panelists',
-        # 'points',
-        # 'convention',
-        # 'session',
-        # 'round',
-        'panelist',
-    ]
-    list_select_related = [
+        'id',
+        'district',
+        'season',
+        'year',
+        'convention',
+        'session',
+        'round',
+        'category',
+        'num',
+        'legacy_person',
         'panelist',
     ]
     list_filter = [
+        'district',
+        'season',
         'year',
-        'season_kind',
-        'session_kind',
-        'round_kind',
-        'district_code',
+        'convention',
+        'session',
+        'round',
+        'category',
+        'num',
     ]
-    ordering = (
-        'year',
-        'district_code',
-        'season_kind',
-        'session_kind',
-        'round_kind',
-        'panelist_num',
-    )
     readonly_fields = [
         'id',
     ]
     search_fields = [
+        'id',
+        'convention',
+    ]
+    raw_id_fields = [
+        'panelist',
+    ]
+
+
+@admin.register(CleanSong)
+class CleanSongAdmin(admin.ModelAdmin):
+    fields = [
+        'id',
+        'district',
+        'season',
+        'year',
+        'convention',
+        'session',
         'round',
+        'appearance_num',
+        'song_num',
+        'legacy_group',
+        'legacy_chart',
+        'scores',
+        'song',
+    ]
+    list_display = [
+        'id',
+        'district',
+        'season',
+        'year',
+        'convention',
+        'session',
+        'round',
+        'appearance_num',
+        'song_num',
+        'legacy_group',
+        'legacy_chart',
+        'scores',
+        'song',
+    ]
+    list_filter = [
+        'district',
+        'season',
+        'year',
+        'session',
+        'round',
+    ]
+    readonly_fields = [
+        'id',
+    ]
+    search_fields = [
+        'id',
+    ]
+    raw_id_fields = [
+        'song',
+    ]
+
+
+@admin.register(RawPanelist)
+class RawPanelistAdmin(admin.ModelAdmin):
+    fields = [
+        'id',
+        'year',
+        'season',
+        'district',
+        'convention',
+        'session',
+        'round',
+        'category',
+        'num',
+        'judge',
+        'scores',
+    ]
+    list_display = [
+        'id',
+        'year',
+        'season',
+        'district',
+        'convention',
+        'session',
+        'round',
+        'category',
+        'num',
+        'judge',
+    ]
+    list_filter = [
+        'year',
+        'season',
+        'district',
+        'convention',
+        'session',
+        'round',
+        'category',
+        'num',
+        # 'judge',
+    ]
+    readonly_fields = [
+        'id',
+    ]
+    search_fields = [
+        'id',
+        'convention',
+    ]
+
+
+@admin.register(RawSong)
+class RawSongAdmin(admin.ModelAdmin):
+    fields = [
+        'id',
+        'season',
+        'year',
+        'district',
+        'event',
+        'session',
+        'group_name',
+        'appearance_num',
+        'song_num',
+        'song_title',
+        'totals',
+        'scores',
+    ]
+    list_display = [
+        'id',
+        'season',
+        'year',
+        'district',
+        'event',
+        'session',
+        'group_name',
+        'appearance_num',
+        'song_num',
+        'song_title',
+    ]
+    list_filter = [
+        'season',
+        'year',
+        'district',
+        'event',
+        'session',
+        # 'group_name',
+        # 'appearance_num',
+        # 'song_num',
+        # 'song_title',
+    ]
+    readonly_fields = [
+        'id',
+    ]
+    search_fields = [
+        'id',
+    ]
+
+
+# @admin.register(Complete)
+class CompleteAdmin(admin.ModelAdmin):
+
+    fields = [
+        'id',
+        'row_id',
+        'points',
+        'panelist',
+    ]
+    list_display = [
+        'row_id',
+        'panelist',
+    ]
+    list_select_related = [
+        'panelist',
+    ]
+    readonly_fields = [
+        'id',
+    ]
+    search_fields = [
+        'row_id',
     ]
     autocomplete_fields = [
         'panelist',
     ]
     inlines = [
-        FlatInline,
+        # FlatInline,
     ]
 
 
-@admin.register(Selection)
+# @admin.register(Selection)
 class SelectionAdmin(admin.ModelAdmin):
 
     fields = [
         'id',
-        'row',
-        'season_raw',
+        'row_id',
         'year',
-        'district_raw',
-        'event_raw',
-        'session_raw',
         'season_kind',
         'convention_name',
         'session_kind',
@@ -132,12 +250,11 @@ class SelectionAdmin(admin.ModelAdmin):
         'appearance_num',
         'song_num',
         'song_title',
-        'totals',
         'points',
         'song',
     ]
     list_display = [
-        'row',
+        'row_id',
         # 'season_raw',
         # 'district_raw',
         # 'event_raw',
@@ -149,8 +266,6 @@ class SelectionAdmin(admin.ModelAdmin):
         # 'session_raw',
         # 'session_kind',
         # 'session',
-        'song',
-        'song_num',
         # 'round_kind',
         # 'appearance_num',
         # 'song_num',
@@ -183,7 +298,7 @@ class SelectionAdmin(admin.ModelAdmin):
     ]
 
     ordering = (
-        'row',
+        'row_id',
         'appearance_num',
         'song_num',
     )
@@ -197,5 +312,35 @@ class SelectionAdmin(admin.ModelAdmin):
         'song',
     ]
     inlines = [
-        FlatInline,
+        # FlatInline,
+    ]
+
+
+# @admin.register(Flat)
+class FlatAdmin(admin.ModelAdmin):
+
+    fields = [
+        'id',
+        'complete',
+        'selection',
+        'score',
+    ]
+    list_display = [
+        'id',
+        'complete',
+        'selection',
+        'score',
+    ]
+    list_select_related = [
+        'complete',
+        'selection',
+        'score',
+    ]
+    readonly_fields = [
+        'id',
+    ]
+    autocomplete_fields = [
+        'complete',
+        'selection',
+        'score',
     ]

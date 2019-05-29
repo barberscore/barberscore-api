@@ -470,7 +470,14 @@ class Convention(TimeStampedModel):
 
     name = models.CharField(
         max_length=255,
-        unique=True,
+        null=True,
+        blank=True,
+    )
+
+    district = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
     )
 
     legacy_name = models.CharField(
@@ -680,7 +687,18 @@ class Convention(TimeStampedModel):
         resource_name = "convention"
 
     def __str__(self):
-        return self.name
+        if self.district == 'BHS':
+            return " ".join([
+                self.district,
+                str(self.year),
+                self.name,
+            ])
+        return " ".join([
+            self.district,
+            self.get_season_display(),
+            str(self.year),
+            self.name,
+        ])
 
     def clean(self):
         if self.group.kind > self.group.KIND.district:

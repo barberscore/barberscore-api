@@ -19,6 +19,8 @@ from django.db.models import Q
 from django.db.models import Sum, Min, Max, Count, StdDev
 from django.contrib.postgres.fields import ArrayField, JSONField
 
+from api.managers import SongManager
+
 log = logging.getLogger(__name__)
 
 
@@ -51,18 +53,8 @@ class Song(TimeStampedModel):
     num = models.IntegerField(
     )
 
-    legacy_num = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
     legacy_chart = models.CharField(
         max_length=255,
-        null=True,
-        blank=True,
-    )
-
-    legacy_total = models.IntegerField(
         null=True,
         blank=True,
     )
@@ -117,6 +109,8 @@ class Song(TimeStampedModel):
     )
 
     # Internals
+    objects = SongManager()
+
     class Meta:
         unique_together = (
             ('appearance', 'num',),

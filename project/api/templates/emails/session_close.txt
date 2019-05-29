@@ -1,4 +1,4 @@
-We're writing to let you know that the {{session.convention.name|safe}} {{session.get_kind_display}}
+We're writing to let you know that the {{session.convention|safe}} {{session.get_kind_display}}
 Session is no longer accepting contest entries.
 
 If you missed the deadline but still would like to enter the contest,
