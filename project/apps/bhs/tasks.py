@@ -79,20 +79,28 @@ def create_or_update_account_from_human(human):
         name = common_name
         username = results['users'][0]['user_id']
         payload = {
+            'name': name,
+            'given_name': first_name,
+            'family_name': last_name,
             'email': email,
             'email_verified': True,
             'app_metadata': {
                 'mc_pk': mc_pk,
-                'name': name,
                 'bhs_id': bhs_id,
+                'name': None,
             },
             'user_metadata': {}
         }
-        check = all([
-            email == results['users'][0]['email'],
-            bhs_id == results['users'][0]['app_metadata']['bhs_id'],
-            name == results['users'][0]['app_metadata']['name'],
-        ])
+        try:
+            check = all([
+                email == results['users'][0]['email'],
+                bhs_id == results['users'][0]['app_metadata']['bhs_id'],
+                common_name == results['users'][0]['name'],
+                first_name == results['users'][0]['given_name'],
+                last_name == results['users'][0]['last_name'],
+            ])
+        except KeyError:
+            check = False
         if not check:
             account = auth0.users.update(username, payload)
             created = False
@@ -105,10 +113,12 @@ def create_or_update_account_from_human(human):
             'email': email,
             'email_verified': True,
             'password': password,
+            'name': name,
+            'given_name': first_name,
+            'family_name': last_name,
             'app_metadata': {
                 'mc_pk': mc_pk,
                 'bhs_id': bhs_id,
-                'name': common_name,
             },
             'user_metadata': {},
         }
