@@ -75,11 +75,9 @@ def create_or_update_account_from_human(human):
     results = auth0.users.list(**params)
 
     if results['total']:
-        email = email
-        name = common_name
         username = results['users'][0]['user_id']
         payload = {
-            'name': name,
+            'name': common_name,
             'given_name': first_name,
             'family_name': last_name,
             'email': email,
@@ -113,7 +111,7 @@ def create_or_update_account_from_human(human):
             'email': email,
             'email_verified': True,
             'password': password,
-            'name': name,
+            'name': common_name,
             'given_name': first_name,
             'family_name': last_name,
             'app_metadata': {
