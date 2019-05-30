@@ -225,7 +225,8 @@ class Outcome(TimeStampedModel):
     # Internals
     class Meta:
         unique_together = (
-            ('round', 'award',)
+            ('round', 'award',),
+            ('round', 'num',),
         )
 
     class JSONAPIMeta:

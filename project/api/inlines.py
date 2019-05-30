@@ -46,8 +46,8 @@ class AppearanceInline(admin.TabularInline):
 class ContestInline(admin.TabularInline):
     model = Contest
     fields = [
-        # 'award',
-        'group',
+        'award',
+        # 'group',
         'session',
         'status',
     ]
@@ -55,8 +55,8 @@ class ContestInline(admin.TabularInline):
         'status',
     ]
     autocomplete_fields = [
-        # 'award',
-        'group',
+        'award',
+        # 'group',
     ]
     show_change_link = True
     extra = 0
