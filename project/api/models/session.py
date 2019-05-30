@@ -431,7 +431,7 @@ class Session(TimeStampedModel):
 
     def get_open_email(self):
         template = 'emails/session_open.txt'
-        context = {'session': self,}
+        context = {'session': self}
         subject = "[Barberscore] {0} Session is OPEN".format(
             self,
         )
@@ -800,8 +800,9 @@ class Session(TimeStampedModel):
             entry.draw = i
             entry.save()
             i += 1
-        # Notify for all public contests
-        send_close_email_from_session.delay(self)
+        # Send notification for all public contests only
+        if not self.is_invitational:
+            send_close_email_from_session.delay(self)
         return
 
     @fsm_log_by
