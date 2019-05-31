@@ -84,6 +84,9 @@ class ContestantInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
+    raw_id_fields = [
+        'contest',
+    ]
 
 
 class ContenderInline(admin.TabularInline):
