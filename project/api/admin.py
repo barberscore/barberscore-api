@@ -422,8 +422,9 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'session__kind',
         'session__convention__season',
+        'session__convention__district',
         'session__convention__year',
-        'is_reviewed',
+        # 'is_reviewed',
     ]
 
     fsm_field = [
@@ -536,8 +537,9 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'num_rounds',
         'is_invitational',
-        # 'convention__season',
-        # 'convention__year',
+        'convention__season',
+        'convention__district',
+        'convention__year',
     )
 
     autocomplete_fields = [

@@ -29,7 +29,7 @@ from django.db.models import Avg, StdDev, Q, Max, Sum, F
 import django_rq
 from api.tasks import build_email
 from api.fields import FileUploadPath
-
+from api.managers import PanelistManager
 
 log = logging.getLogger(__name__)
 
@@ -89,12 +89,7 @@ class Panelist(TimeStampedModel):
         default='',
     )
 
-    legacy_num = models.IntegerField(
-        null=True,
-        blank=True,
-    )
-
-    legacy_name = models.CharField(
+    legacy_person = models.CharField(
         max_length=255,
         null=True,
         blank=True,
@@ -141,6 +136,8 @@ class Panelist(TimeStampedModel):
 
 
     # Internals
+    objects = PanelistManager()
+
     class Meta:
         unique_together = (
             ('round', 'num',),

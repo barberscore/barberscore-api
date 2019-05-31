@@ -23,7 +23,7 @@ class AppearanceInline(admin.TabularInline):
         'group',
         'status',
         'representing',
-        # 'num',
+        'num',
         # 'draw',
         # 'stats',
     ]
@@ -33,7 +33,7 @@ class AppearanceInline(admin.TabularInline):
     ]
     ordering = (
         # 'draw',
-        # 'num',
+        'num',
         'group__name',
     )
     show_change_link = True
@@ -46,8 +46,8 @@ class AppearanceInline(admin.TabularInline):
 class ContestInline(admin.TabularInline):
     model = Contest
     fields = [
-        # 'award',
-        'group',
+        'award',
+        # 'group',
         'session',
         'status',
     ]
@@ -55,8 +55,8 @@ class ContestInline(admin.TabularInline):
         'status',
     ]
     autocomplete_fields = [
-        # 'award',
-        'group',
+        'award',
+        # 'group',
     ]
     show_change_link = True
     extra = 0

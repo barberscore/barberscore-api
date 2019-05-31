@@ -38,7 +38,7 @@ from api.fields import FileUploadPath
 from api.tasks import build_email
 from api.tasks import save_csa_from_appearance
 from api.tasks import send_complete_email_from_appearance
-
+from api.managers import AppearanceManager
 
 class Appearance(TimeStampedModel):
     """
@@ -126,9 +126,10 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    legacy_num = models.IntegerField(
-        null=True,
+    legacy_group = models.CharField(
+        max_length=255,
         blank=True,
+        default='',
     )
 
     stats = JSONField(
@@ -165,7 +166,9 @@ class Appearance(TimeStampedModel):
     group = models.ForeignKey(
         'bhs.group',
         related_name='appearances',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     entry = models.ForeignKey(
@@ -221,6 +224,8 @@ class Appearance(TimeStampedModel):
 
 
     # Appearance Internals
+    objects = AppearanceManager()
+
     def clean(self):
         if self.group.kind != self.group.KIND.vlq:
             if self.group.kind != self.round.session.kind:
