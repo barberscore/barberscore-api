@@ -210,6 +210,15 @@ class Round(TimeStampedModel):
                     appearances__round__num__lte=self.num,
                 ),
             ),
+            mus_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
+                ),
+            ),
             tot_primary=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
