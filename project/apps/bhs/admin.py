@@ -32,6 +32,7 @@ from .inlines import OfficerInline
 # from .inlines import StructureInline
 
 from .filters import MCListFilter
+from .filters import DistrictListFilter
 
 
 admin.site.disable_action('delete_selected')
@@ -154,8 +155,8 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'is_senior',
         'is_youth',
+        DistrictListFilter,
         'division',
-        # DistrictListFilter,
         MCListFilter,
     ]
 
