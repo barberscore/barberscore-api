@@ -441,9 +441,17 @@ class Round(TimeStampedModel):
             ).order_by(
                 'num',
             )
-            persons = [
-                "{0} {1}".format(x.person.common_name, x.person.district) for x in sections
-            ]
+            persons = []
+            for x in sections:
+                try:
+                    persons.append(
+                        "{0} {1}".format(
+                            x.person.common_name,
+                            x.person.district,
+                        )
+                    )
+                except AttributeError:
+                    persons.append("(Unknown)")
             names = ", ".join(persons)
             panelists.append((value, names))
 
@@ -489,11 +497,14 @@ class Round(TimeStampedModel):
                 page_size = 'Legal'
             else:
                 page_size = 'Letter'
-        statelog = self.statelogs.latest('timestamp')
-        footer = 'Published by {0} at {1}'.format(
-            statelog.by,
-            statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
-        )
+        try:
+            statelog = self.statelogs.latest('timestamp')
+            footer = 'Published by {0} at {1}'.format(
+                statelog.by,
+                statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            )
+        except StateLog.DoesNotExist:
+            footer = '(Unknown)'
         file = pydf.generate_pdf(
             rendered,
             page_size=page_size,
