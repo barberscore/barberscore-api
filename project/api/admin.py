@@ -302,6 +302,7 @@ class OutcomeAdmin(admin.ModelAdmin):
         # 'award',
         'num',
         'name',
+        'is_primary',
         'legacy_name',
     ]
 
@@ -311,11 +312,13 @@ class OutcomeAdmin(admin.ModelAdmin):
         # 'award',
         'num',
         'name',
+        'is_primary',
         'legacy_name',
     ]
 
     list_filter = (
         'status',
+        'is_primary',
     )
 
     list_select_related = [
