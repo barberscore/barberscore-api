@@ -190,10 +190,11 @@ class Award(TimeStampedModel):
 
     gender = models.IntegerField(
         help_text="""
-            The gender of session.
+            The gender to which the award is restricted.  If unselected, this award is open to all combinations.
         """,
         choices=GENDER,
-        default=GENDER.male,
+        null=True,
+        blank=True,
     )
 
     LEVEL = Choices(
