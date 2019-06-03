@@ -14,6 +14,7 @@ from model_utils.models import TimeStampedModel
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.db.models import Sum, Q, Avg, F
 
 log = logging.getLogger(__name__)
@@ -46,6 +47,10 @@ class Outcome(TimeStampedModel):
         max_length=1024,
         null=True,
         blank=True,
+    )
+
+    is_primary = models.BooleanField(
+        default=False,
     )
 
     legacy_num = models.IntegerField(
@@ -236,7 +241,8 @@ class Outcome(TimeStampedModel):
         return str(self.id)
 
     def clean(self):
-        pass
+        if self.round.outcomes.filter(is_primary=True).count() > 1:
+            raise ValidationError('May only have one primary award')
 
     # Permissions
     @staticmethod

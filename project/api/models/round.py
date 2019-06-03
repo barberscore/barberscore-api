@@ -210,6 +210,15 @@ class Round(TimeStampedModel):
                     appearances__round__num__lte=self.num,
                 ),
             ),
+            mus_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__round__session=self.session,
+                    appearances__round__num__lte=self.num,
+                ),
+            ),
             tot_score=Avg(
                 'appearances__songs__scores__points',
                 filter=Q(
@@ -252,7 +261,14 @@ class Round(TimeStampedModel):
         )
 
         # Monkeypatching
+        tot_rank = 0
         for group in groups:
+            if group.appearances.filter(contenders__outcome__is_primary=True):
+                tot_rank += 1
+                group.tot_rank = tot_rank
+            else:
+                group.tot_rank = None
+
             appearances = group.appearances.filter(
                 num__gt=0,
                 round__session=self.session,

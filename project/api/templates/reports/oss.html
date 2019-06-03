@@ -76,7 +76,7 @@
               <tr class='pbi_avoid'>
                 <td class='w-groups'>
                   <strong>
-                    {{group.name}}<br>
+                    {{group.tot_rank|default:""}} {{group.name}}<br>
                   </strong>
                   {% if group.get_kind_display == 'Chorus' %}
                     {{group.parent.name|truncatechars_html:"50"}}&nbsp;({{group.contesting_patched|default:"None"}})<br>
@@ -87,7 +87,7 @@
                   {% endif %}
                 </td>
                 <td class='w-songs'>
-                  <strong>Total: {{group.tot_points}} Points</strong><br>
+                  <strong>Total: {{group.tot_points}} Points</strong>&nbsp;({{group.mus_points}}/{{group.per_points}}/{{group.sng_points}})<br>
                   {% for appearance in group.appearances_patched %}
                       {% if group.max_round > 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}

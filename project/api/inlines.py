@@ -84,6 +84,9 @@ class ContestantInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
+    raw_id_fields = [
+        'contest',
+    ]
 
 
 class ContenderInline(admin.TabularInline):
@@ -141,6 +144,7 @@ class OutcomeInline(admin.TabularInline):
         'award',
         'round',
         'name',
+        'is_primary',
     ]
     autocomplete_fields = [
         # 'award',
