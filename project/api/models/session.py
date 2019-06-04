@@ -680,10 +680,13 @@ class Session(TimeStampedModel):
 
     def can_open(self):
         Contest = apps.get_model('api.contest')
-        return all([
-            self.convention.open_date <= datetime.date.today(),
-            self.contests.filter(status=Contest.STATUS.included),
-        ])
+        try:
+            return all([
+                self.convention.open_date <= datetime.date.today(),
+                self.contests.filter(status=Contest.STATUS.included),
+            ])
+        except TypeError:
+            return False
 
     def can_close(self):
         return True
@@ -710,10 +713,23 @@ class Session(TimeStampedModel):
         ])
 
     def can_finish(self):
-        # Session Transitions
         return all([
             not self.rounds.exclude(status=self.rounds.model.STATUS.completed)
         ])
+
+    # Session Transitions
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.new,
+    )
+    def reset(self, *args, **kwargs):
+        contests = self.contests.all()
+        rounds = self.rounds.all()
+        contests.delete()
+        rounds.delete()
+        return
 
     @fsm_log_by
     @transition(
@@ -724,13 +740,22 @@ class Session(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         """Build session contests."""
+
+        # Reset for indempotence
+        self.reset()
+
         i = 0
         # Get all the active awards for the convention group
         awards = self.convention.group.awards.filter(
             status=self.convention.group.awards.model.STATUS.active,
             kind=self.kind,
             season=self.convention.season,
+            # division__in=self.convention.divisions,
         ).order_by('tree_sort')
+        if self.convention.divisions:
+            awards = awards.filter(
+                division__in=self.convention.divisions,
+            ).order_by('tree_sort')
         for award in awards:
             # Create contests for each active award.
             # Could also do some logic here for more precision
