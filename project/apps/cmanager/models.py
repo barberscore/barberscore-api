@@ -20,7 +20,6 @@ from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 
 # Django
 from django.contrib.postgres.fields import FloatRangeField
@@ -29,6 +28,7 @@ from django.contrib.postgres.fields import IntegerRangeField
 # First-Party
 from .managers import AwardManager
 from .fields import ImageUploadPath
+from .fields import DivisionsField
 
 log = logging.getLogger(__name__)
 
@@ -86,7 +86,9 @@ class Assignment(TimeStampedModel):
     person = models.ForeignKey(
         'bhs.person',
         related_name='assignments',
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     # Relations
@@ -471,8 +473,7 @@ class Convention(TimeStampedModel):
 
     name = models.CharField(
         max_length=255,
-        null=True,
-        blank=True,
+        default='Convention',
     )
 
     district = models.CharField(
@@ -512,6 +513,7 @@ class Convention(TimeStampedModel):
         (-15, 'imported', 'Imported',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
+        (5, 'built', 'Built',),
         (10, 'active', 'Active',),
     )
 
@@ -522,8 +524,8 @@ class Convention(TimeStampedModel):
     )
 
     SEASON = Choices(
-        (1, 'summer', 'Summer',),
-        (2, 'midwinter', 'Midwinter',),
+        # (1, 'summer', 'Summer',),
+        # (2, 'midwinter', 'Midwinter',),
         (3, 'fall', 'Fall',),
         (4, 'spring', 'Spring',),
     )
@@ -576,13 +578,17 @@ class Convention(TimeStampedModel):
 
     location = models.CharField(
         help_text="""
-            The location in the form "City, State".""",
+            The general location in the form "City, State".""",
         max_length=255,
+        default='',
+        blank=True,
     )
 
     timezone = TimeZoneField(
         help_text="""
             The local timezone of the convention.""",
+        null=True,
+        blank=True,
     )
 
     image = models.ImageField(
@@ -642,9 +648,28 @@ class Convention(TimeStampedModel):
         ]),
     )
 
-    divisions = ArrayField(
+    divisions = DivisionsField(
         base_field=models.IntegerField(
             choices=DIVISION,
+        ),
+        default=list,
+        blank=True,
+    )
+
+    KINDS = Choices(
+        (32, 'chorus', "Chorus"),
+        (41, 'quartet', "Quartet"),
+        (42, 'mixed', "Mixed"),
+        (43, 'senior', "Senior"),
+        (44, 'youth', "Youth"),
+        (45, 'unknown', "Unknown"),
+        (46, 'vlq', "VLQ"),
+    )
+
+    kinds = DivisionsField(
+        help_text="""The session kind(s) created at build time.""",
+        base_field=models.IntegerField(
+            choices=KINDS,
         ),
         default=list,
         blank=True,
@@ -655,7 +680,7 @@ class Convention(TimeStampedModel):
         'stage.venue',
         related_name='conventions',
         help_text="""
-            The venue for the convention.""",
+            The specific venue for the convention (if available.)""",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -786,8 +811,13 @@ class Convention(TimeStampedModel):
         ])
 
     # Convention Transition Conditions
+    def can_build(self):
+        if self.kinds and self.panel:
+            return True
+        return False
+
     def can_activate(self):
-        if self.status == self.STATUS.new:
+        try:
             return all([
                 self.open_date,
                 self.close_date,
@@ -796,8 +826,12 @@ class Convention(TimeStampedModel):
                 self.open_date < self.close_date,
                 self.close_date < self.start_date,
                 self.start_date <= self.end_date,
+                self.location,
+                self.timezone,
                 self.sessions.count() > 0,
             ])
+        except TypeError:
+            return False
         return False
 
     def can_deactivate(self):
@@ -810,17 +844,88 @@ class Convention(TimeStampedModel):
     @transition(
         field=status,
         source='*',
-        target=STATUS.active,
-        conditions=[can_activate],
+        target=STATUS.new,
     )
-    def activate(self, *args, **kwargs):
-        """Publish convention and related sessions."""
+    def reset(self, *args, **kwargs):
+        assignments = self.assignments.all()
+        sessions = self.sessions.all()
+        assignments.delete()
+        sessions.delete()
         return
 
     @fsm_log_by
     @transition(
         field=status,
-        source='*',
+        source=STATUS.new,
+        target=STATUS.built,
+        conditions=[can_build],
+    )
+    def build(self, *args, **kwargs):
+        """Build convention and related sessions."""
+
+        # Reset for indempodence
+        self.reset()
+
+        # Assignment = apps.get_model('cmanager.assignment')
+        Officer = apps.get_model('bhs.officer')
+        drcjs = self.group.officers.filter(
+            office=Officer.OFFICE.drcj,
+            status__gt=0,
+        )
+        for drcj in drcjs:
+            self.assignments.create(
+                category=Assignment.CATEGORY.drcj,
+                status=Assignment.STATUS.active,
+                kind=Assignment.KIND.official,
+                person=drcj.person,
+            )
+        cas = int((self.panel + 1) / 2)
+        while cas > 0:
+            self.assignments.create(
+                category=Assignment.CATEGORY.ca,
+                status=Assignment.STATUS.active,
+                kind=Assignment.KIND.official,
+            )
+            cas -= 1
+        judges = self.panel
+        while judges > 0:
+            self.assignments.create(
+                category=Assignment.CATEGORY.music,
+                status=Assignment.STATUS.active,
+                kind=Assignment.KIND.official,
+            )
+            self.assignments.create(
+                category=Assignment.CATEGORY.performance,
+                status=Assignment.STATUS.active,
+                kind=Assignment.KIND.official,
+            )
+            self.assignments.create(
+                category=Assignment.CATEGORY.singing,
+                status=Assignment.STATUS.active,
+                kind=Assignment.KIND.official,
+            )
+            judges -= 1
+        for kind in list(self.kinds):
+            self.sessions.create(
+                kind=kind,
+            )
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=STATUS.built,
+        target=STATUS.active,
+        conditions=[can_activate],
+    )
+    def activate(self, *args, **kwargs):
+        """Activate convention."""
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=STATUS.active,
         target=STATUS.inactive,
         conditions=[can_deactivate],
     )

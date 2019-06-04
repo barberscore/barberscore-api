@@ -8,10 +8,11 @@ from django.contrib import admin
 # Local
 from .filters import AwardQualifierLevelFilter
 from .inlines import AssignmentInline
-# from .inlines import SessionInline
 from .models import Assignment
 from .models import Award
 from .models import Convention
+
+from api.inlines import SessionInline
 
 admin.site.site_header = 'Barberscore Admin Backend'
 
@@ -151,26 +152,26 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
 class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = (
         'id',
-        'name',
-        'district',
-        'legacy_name',
-        'legacy_selection',
-        'legacy_complete',
+        # 'legacy_selection',
+        # 'legacy_complete',
         'status',
-        ('group', 'divisions'),
-        'year',
-        'season',
-        'panel',
-        'image',
+        'name',
+        ('group', 'divisions', ),
+        ('year', 'season', ),
+        ('panel', 'kinds', ),
+        ('open_date', 'close_date', ),
+        ('start_date', 'end_date', ),
         'location',
         'timezone',
+        'image',
         'venue',
-        ('open_date', 'close_date',),
-        ('start_date', 'end_date',),
         'description',
+        'district',
+        'legacy_name',
     )
 
     list_display = (
+        '__str__',
         'year',
         'season',
         'district',
@@ -206,7 +207,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         AssignmentInline,
-        # SessionInline,
+        SessionInline,
     ]
 
     readonly_fields = (

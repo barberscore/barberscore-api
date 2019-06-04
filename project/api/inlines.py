@@ -254,7 +254,7 @@ class SessionInline(admin.TabularInline):
     fields = [
         'convention',
         'kind',
-        'num_rounds',
+        # 'num_rounds',
     ]
     autocomplete_fields = [
         'convention',
