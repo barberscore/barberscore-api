@@ -3,6 +3,7 @@
 import datetime
 import logging
 import uuid
+from math import ceil
 
 # Third-Party
 from django_fsm import FSMIntegerField
@@ -909,7 +910,7 @@ class Convention(TimeStampedModel):
                 kind=Assignment.KIND.observer,
                 person=ca_specialist.person,
             )
-        cas = int((self.panel + 1) / 2)
+        cas = ceil((self.panel + 1) / 2)
         while cas > 0:
             self.assignments.create(
                 category=Assignment.CATEGORY.ca,
