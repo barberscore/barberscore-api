@@ -514,11 +514,10 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         # 'convention',
         'kind',
+        ('num_rounds', 'is_invitational',),
         'legacy_report',
         'drcj_report',
-        'num_rounds',
-        'is_invitational',
-        'footnotes',
+        # 'footnotes',
         'description',
         'notes',
     ]
@@ -553,9 +552,9 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
+        RoundInline,
         ContestInline,
         EntryInline,
-        RoundInline,
         StateLogInline,
     ]
 

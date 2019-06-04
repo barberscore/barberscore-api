@@ -682,7 +682,7 @@ class Session(TimeStampedModel):
         Contest = apps.get_model('api.contest')
         try:
             return all([
-                self.convention.open_date <= datetime.date.today(),
+                # self.convention.open_date <= datetime.date.today(),
                 self.contests.filter(status=Contest.STATUS.included),
             ])
         except TypeError:
