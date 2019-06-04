@@ -673,6 +673,10 @@ class Session(TimeStampedModel):
         ])
 
     # Session Conditions
+    def can_reset(self):
+        if self.status <= self.STATUS.built
+        return False
+
     def can_build(self):
         return all([
             self.num_rounds,
@@ -723,6 +727,7 @@ class Session(TimeStampedModel):
         field=status,
         source='*',
         target=STATUS.new,
+        conditions=[can_reset]
     )
     def reset(self, *args, **kwargs):
         contests = self.contests.all()

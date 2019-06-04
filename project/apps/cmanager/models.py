@@ -649,6 +649,7 @@ class Convention(TimeStampedModel):
     )
 
     divisions = DivisionsField(
+        help_text="""Only select divisions if required.  If it is a district-wide convention do not select any.""",
         base_field=models.IntegerField(
             choices=DIVISION,
         ),
@@ -811,6 +812,10 @@ class Convention(TimeStampedModel):
         ])
 
     # Convention Transition Conditions
+    def can_reset(self):
+        if self.status <= self.STATUS.built
+        return False
+
     def can_build(self):
         if self.kinds and self.panel:
             return True
@@ -845,6 +850,7 @@ class Convention(TimeStampedModel):
         field=status,
         source='*',
         target=STATUS.new,
+        conditions=[can_reset],
     )
     def reset(self, *args, **kwargs):
         assignments = self.assignments.all()
