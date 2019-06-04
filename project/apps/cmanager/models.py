@@ -20,6 +20,7 @@ from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 
 # Django
 from django.contrib.postgres.fields import FloatRangeField
@@ -875,6 +876,17 @@ class Convention(TimeStampedModel):
 
         # Assignment = apps.get_model('cmanager.assignment')
         Officer = apps.get_model('bhs.officer')
+        scjcs = Officer.objects.filter(
+            Q(office=Officer.OFFICE.scjc_chair) | Q(office=Officer.OFFICE.scjc_admin),
+            status__gt=0,
+        )
+        for scjc in scjcs:
+            self.assignments.create(
+                category=Assignment.CATEGORY.drcj,
+                status=Assignment.STATUS.active,
+                kind=Assignment.KIND.observer,
+                person=scjc.person,
+            )
         drcjs = self.group.officers.filter(
             office=Officer.OFFICE.drcj,
             status__gt=0,
@@ -885,6 +897,17 @@ class Convention(TimeStampedModel):
                 status=Assignment.STATUS.active,
                 kind=Assignment.KIND.official,
                 person=drcj.person,
+            )
+        ca_specialists = Officer.objects.filter(
+            office=Officer.OFFICE.scjc_ca,
+            status__gt=0,
+        )
+        for ca_specialist in ca_specialists:
+            self.assignments.create(
+                category=Assignment.CATEGORY.ca,
+                status=Assignment.STATUS.active,
+                kind=Assignment.KIND.observer,
+                person=ca_specialist.person,
             )
         cas = int((self.panel + 1) / 2)
         while cas > 0:
