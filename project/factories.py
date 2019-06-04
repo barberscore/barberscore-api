@@ -76,7 +76,7 @@ class AwardFactory(DjangoModelFactory):
     status = Award.STATUS.active
     kind = Award.KIND.quartet
     level = Award.LEVEL.championship
-    season = Award.SEASON.summer
+    season = Award.SEASON.spring
     is_single = False
     threshold = None
     minimum = None
@@ -129,7 +129,7 @@ class ConventionFactory(DjangoModelFactory):
     name = Faker('city')
     district = 'BHS'
     status = Convention.STATUS.new
-    season = Convention.SEASON.summer
+    season = Convention.SEASON.spring
     panel = Convention.PANEL.quintiple
     year = 2017
     open_date = datetime.date(2017, 6, 1)
