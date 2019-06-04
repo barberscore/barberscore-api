@@ -813,7 +813,8 @@ class Convention(TimeStampedModel):
 
     # Convention Transition Conditions
     def can_reset(self):
-        if self.status <= self.STATUS.built
+        if self.status <= self.STATUS.built:
+            return True
         return False
 
     def can_build(self):
