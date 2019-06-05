@@ -76,7 +76,7 @@
               <tr class='pbi_avoid'>
                 <td class='w-groups'>
                   <strong>
-                    {% if round.session.convention.district == 'BHS' %}{{group.tot_rank|default:""}}{% endif %}
+                    {% if round.session.convention.district == 'BHS' %}{{group.tot_rank|default:""}}. {% endif %}
                     {{group.name}}<br>
                   </strong>
                   {% if group.get_kind_display == 'Chorus' %}
