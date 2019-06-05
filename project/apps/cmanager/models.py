@@ -325,6 +325,10 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
+    is_novice = models.BooleanField(
+        default=False,
+    )
+
     SIZE = Choices(
         (100, 'p1', 'Plateau 1',),
         (110, 'p2', 'Plateau 2',),

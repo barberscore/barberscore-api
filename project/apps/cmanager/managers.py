@@ -32,6 +32,7 @@ class AwardManager(Manager):
             'gender', #Male, mixed
             F('age').asc(nulls_first=True), # Null, Senior, Youth
             'level', #Championship, qualifier
+            'is_novice',
             'name', # alpha
         )
         i = 0

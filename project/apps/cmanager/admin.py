@@ -87,6 +87,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'level',
         'season',
         'is_single',
+        'is_novice',
         'parent',
         ('threshold', 'minimum', 'advance', 'spots',),
         'description',
@@ -128,6 +129,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'season',
         'is_single',
+        'is_novice',
     ]
 
     readonly_fields = [
