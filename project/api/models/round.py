@@ -81,8 +81,7 @@ class Round(TimeStampedModel):
     )
 
     spots = models.IntegerField(
-        null=True,
-        blank=True,
+        default=0,
     )
 
     date = models.DateField(
@@ -254,6 +253,14 @@ class Round(TimeStampedModel):
                     appearances__round__num__lte=self.num,
                 ),
             ),
+            tot_rank=Window(
+                expression=RowNumber(),
+                order_by=(
+                    F('tot_points').desc(),
+                    F('sng_points').desc(),
+                    F('per_points').desc(),
+                )
+            ),
         ).order_by(
             '-tot_points',
             '-sng_points',
@@ -261,14 +268,8 @@ class Round(TimeStampedModel):
         )
 
         # Monkeypatching
-        tot_rank = 0
         for group in groups:
-            if group.appearances.filter(contenders__outcome__is_primary=True):
-                tot_rank += 1
-                group.tot_rank = tot_rank
-            else:
-                group.tot_rank = None
-
+            group.tot_rank = group.tot_rank + self.spots
             appearances = group.appearances.filter(
                 num__gt=0,
                 round__session=self.session,
@@ -663,10 +664,6 @@ class Round(TimeStampedModel):
                     F('per_points').desc(),
                 )
             ),
-            # tot_rank=Window(
-            #     expression=DenseRank(),
-            #     order_by=F('tot_points').desc(),
-            # ),
             mus_rank=Window(
                 expression=Rank(),
                 order_by=F('mus_points').desc(),
@@ -1506,6 +1503,14 @@ class Round(TimeStampedModel):
                     appearances__round__num__lte=self.num,
                 ),
             ),
+            tot_rank=Window(
+                expression=RowNumber(),
+                order_by=(
+                    F('tot_points').desc(),
+                    F('sng_points').desc(),
+                    F('per_points').desc(),
+                )
+            ),
         ).order_by(
             '-tot_points',
             '-sng_points',
@@ -1717,6 +1722,8 @@ class Round(TimeStampedModel):
         target=STATUS.new,
     )
     def reset(self, *args, **kwargs):
+        self.oss.delete()
+        self.sa.delete()
         panelists = self.panelists.all()
         appearances = self.appearances.all()
         outcomes = self.outcomes.all()
@@ -2089,13 +2096,13 @@ class Round(TimeStampedModel):
         Appearance = apps.get_model('api.appearance')
         Panelist = apps.get_model('api.panelist')
         # Send the OSS
-        # send_publish_email_from_round.delay(self)
+        send_publish_email_from_round.delay(self)
         # Send the CSAs
-        # completed_appearances = self.appearances.filter(
-        #     status=Appearance.STATUS.completed,
-        # )
-        # for appearance in completed_appearances:
-        #     send_complete_email_from_appearance.delay(appearance)
+        completed_appearances = self.appearances.filter(
+            status=Appearance.STATUS.completed,
+        )
+        for appearance in completed_appearances:
+            send_complete_email_from_appearance.delay(appearance)
         # Send the SAs
         send_publish_report_email_from_round.delay(self)
         # Send the PSAs
