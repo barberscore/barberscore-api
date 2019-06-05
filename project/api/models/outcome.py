@@ -49,10 +49,6 @@ class Outcome(TimeStampedModel):
         blank=True,
     )
 
-    is_primary = models.BooleanField(
-        default=False,
-    )
-
     legacy_num = models.IntegerField(
         blank=True,
         null=True,
@@ -241,8 +237,7 @@ class Outcome(TimeStampedModel):
         return str(self.id)
 
     def clean(self):
-        if self.round.outcomes.filter(is_primary=True).count() > 1:
-            raise ValidationError('May only have one primary award')
+        pass
 
     # Permissions
     @staticmethod
