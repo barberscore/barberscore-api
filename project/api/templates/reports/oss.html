@@ -76,7 +76,8 @@
               <tr class='pbi_avoid'>
                 <td class='w-groups'>
                   <strong>
-                    {{group.tot_rank|default:""}} {{group.name}}<br>
+                    {% if round.session.convention.district == 'BHS' %}{{group.tot_rank|default:""}}{% endif %}
+                    {{group.name}}<br>
                   </strong>
                   {% if group.get_kind_display == 'Chorus' %}
                     {{group.parent.name|truncatechars_html:"50"}}&nbsp;({{group.contesting_patched|default:"None"}})<br>
