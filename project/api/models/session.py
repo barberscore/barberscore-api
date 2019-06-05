@@ -731,6 +731,7 @@ class Session(TimeStampedModel):
         conditions=[can_reset]
     )
     def reset(self, *args, **kwargs):
+        self.drcj_report.delete()
         contests = self.contests.all()
         rounds = self.rounds.all()
         contests.delete()
