@@ -770,10 +770,13 @@ class Session(TimeStampedModel):
                 award=award,
             )
         # Create the rounds for the session, along with default # spots
+        # for next round.
         for i in range(self.num_rounds):
             num = i + 1
             kind = self.num_rounds - i
-            if num == 1:
+            if kind == 3:
+                spots = 20
+            elif num == 1:
                 spots = 10
             elif num == 2 and kind != 1:
                 spots = 10
