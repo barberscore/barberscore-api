@@ -144,10 +144,9 @@ class OutcomeInline(admin.TabularInline):
         'award',
         'round',
         'name',
-        'is_primary',
     ]
     autocomplete_fields = [
-        # 'award',
+        'award',
         'round',
     ]
     ordering = (
@@ -159,20 +158,20 @@ class OutcomeInline(admin.TabularInline):
         'collapse',
     ]
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == 'award':
-            try:
-                Award = apps.get_model('cmanager.award')
-                parent_obj_id = request.resolver_match.kwargs['object_id']
-                round = Round.objects.get(id=parent_obj_id)
-                kwargs["queryset"] = Award.objects.filter(
-                    kind=round.session.kind,
-                    season=round.session.convention.season,
-                    group=round.session.convention.group,
-                )
-            except IndexError:
-                pass
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    #     if db_field.name == 'award':
+    #         try:
+    #             Award = apps.get_model('cmanager.award')
+    #             parent_obj_id = request.resolver_match.kwargs['object_id']
+    #             round = Round.objects.get(id=parent_obj_id)
+    #             kwargs["queryset"] = Award.objects.filter(
+    #                 kind=round.session.kind,
+    #                 season=round.session.convention.season,
+    #                 group=round.session.convention.group,
+    #             )
+    #         except IndexError:
+    #             pass
+    #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 class PanelistInline(admin.TabularInline):

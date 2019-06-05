@@ -117,7 +117,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        # 'award',
+        'award',
         'session',
         'result',
         'group',
@@ -125,7 +125,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         'id',
-        # 'award',
+        'award',
         'session',
         'result',
         'group',
@@ -133,7 +133,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_filter = [
         'status',
-        # 'award__kind',
+        'award__kind',
     ]
 
     save_on_top = True
@@ -151,13 +151,13 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     autocomplete_fields = [
-        # 'award',
+        'award',
         'session',
         'group',
     ]
 
     search_fields = [
-        # 'award__name',
+        'award__name',
     ]
 
 
@@ -182,7 +182,7 @@ class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     autocomplete_fields = [
         'entry',
-        # 'contest',
+        'contest',
     ]
 
     search_fields = [
@@ -299,36 +299,33 @@ class OutcomeAdmin(admin.ModelAdmin):
         'id',
         'status',
         'round',
-        # 'award',
+        'award',
         'num',
         'name',
-        'is_primary',
         'legacy_name',
     ]
 
     list_display = [
         'status',
         'round',
-        # 'award',
+        'award',
         'num',
         'name',
-        'is_primary',
         'legacy_name',
     ]
 
     list_filter = (
         'status',
-        'is_primary',
     )
 
     list_select_related = [
         'round',
-        # 'award',
+        'award',
     ]
 
     autocomplete_fields = [
         'round',
-        # 'award',
+        'award',
     ]
 
     readonly_fields = [
@@ -399,7 +396,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        # 'oss',
+        'oss',
         # 'sa',
         # 'legacy_oss',
         ('session', 'kind', 'num', 'spots',),
@@ -453,8 +450,8 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         OutcomeInline,
-        AppearanceInline,
         PanelistInline,
+        AppearanceInline,
         StateLogInline,
     ]
 
