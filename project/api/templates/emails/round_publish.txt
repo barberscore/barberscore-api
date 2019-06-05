@@ -1,19 +1,32 @@
 The {{round.session.convention|safe}} {{round.session.get_kind_display}} {{round.get_kind_display}}
-has finished!
+Round has finished!
 
 Following are the summary results.  The full Official Scoring Summary is attached
 to this email.
+
+{% if advancers %}
+Draw
+--------
 {% for draw, group in advancers %}
 {{draw}} - {{group|safe}}
 {% endfor %}
+{% endif %}
 
+{% if completes %}
+Results
+--------
 {% for complete in completes %}
-{{complete.name|safe}}: {{complete.tot_points}} ({{complete.tot_score|floatformat:1}}%)
+{% if round.session.convention.district == 'BHS' %}{{complete.tot_rank}}. {% endif %}{{complete.name|safe}}: {{complete.tot_points}} ({{complete.tot_score|floatformat:1}}%)
 {% endfor %}
+{% endif %}
 
+{% if outcomes %}
+Awards
+--------
 {% for award, winner in outcomes %}
-{{award}}: {{winner|safe}}
+{{award|safe}}: {{winner|safe}}
 {% endfor %}
+{% endif %}
 
 Congratulations to all our competitors!
 
