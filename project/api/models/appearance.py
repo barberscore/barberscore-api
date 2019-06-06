@@ -106,6 +106,13 @@ class Appearance(TimeStampedModel):
         default='',
     )
 
+    onstage = models.DateTimeField(
+        help_text="""
+            The actual appearance datetime.""",
+        null=True,
+        blank=True,
+    )
+
     actual_start = models.DateTimeField(
         help_text="""
             The actual appearance datetime.""",

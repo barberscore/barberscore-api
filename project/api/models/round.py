@@ -1852,6 +1852,7 @@ class Round(TimeStampedModel):
         # Create Appearances
         Appearance = apps.get_model('api.appearance')
         Entry = apps.get_model('api.entry')
+        Grid = apps.get_model('stage.grid')
         # If the first round, populate from entries
         if not prior_round:
             entries = self.session.entries.filter(
@@ -1873,11 +1874,20 @@ class Round(TimeStampedModel):
                         contest__award__is_single=False,
                     )
                 )
+                # Get grid if available
+                try:
+                    onstage = Grid.objects.get(
+                        round=self,
+                        num=entry.draw,
+                    ).onstage
+                except Grid.DoesNotExist:
+                    onstage = None
                 # Create and start group
                 appearance = self.appearances.create(
                     entry=entry,
                     group=entry.group,
                     num=entry.draw,
+                    onstage=onstage,
                     is_single=is_single,
                     is_private=entry.is_private,
                     participants=entry.participants,
@@ -1897,10 +1907,20 @@ class Round(TimeStampedModel):
                 status=Appearance.STATUS.advanced,
             )
             for prior_appearance in prior_appearances:
+                # Get grid if available
+                try:
+                    onstage = Grid.objects.get(
+                        round=self,
+                        num=prior_appearance.draw,
+                    ).onstage
+                except Grid.DoesNotExist:
+                    onstage = None
+                # Create and start group
                 appearance = self.appearances.create(
                     entry=prior_appearance.entry,
                     group=prior_appearance.group,
                     num=prior_appearance.draw,
+                    onstage=onstage,
                     is_single=prior_appearance.is_single,
                     is_private=prior_appearance.is_private,
                     participants=prior_appearance.participants,
@@ -1919,10 +1939,19 @@ class Round(TimeStampedModel):
                 draw__lte=0,
             )
             for mt in mts:
+                # Get grid if available
+                try:
+                    onstage = Grid.objects.get(
+                        round=self,
+                        num=mt.draw,
+                    ).onstage
+                except Grid.DoesNotExist:
+                    onstage = None
                 appearance = self.appearances.create(
                     entry=mt.entry,
                     group=mt.group,
                     num=mt.draw,
+                    onstage=onstage,
                     is_single=mt.is_single,
                     is_private=True,
                     participants=mt.participants,

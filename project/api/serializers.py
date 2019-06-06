@@ -49,6 +49,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'status',
             'num',
             'draw',
+            'onstage',
             'actual_start',
             'actual_finish',
             'is_single',
