@@ -42,6 +42,8 @@ from .models import Session
 from .models import Song
 from .models import User
 
+from apps.stage.inlines import GridInline
+
 admin.site.site_header = 'Barberscore Admin Backend'
 
 
@@ -452,6 +454,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         OutcomeInline,
         PanelistInline,
         AppearanceInline,
+        GridInline,
         StateLogInline,
     ]
 
