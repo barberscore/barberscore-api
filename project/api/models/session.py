@@ -18,6 +18,7 @@ from model_utils.models import TimeStampedModel
 from openpyxl.writer.excel import save_virtual_workbook
 from openpyxl import Workbook
 from django.utils.text import slugify
+
 # Django
 from django.apps import apps
 from django.conf import settings
@@ -25,6 +26,10 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.db import models
+from django.db.models import Avg
+from django.db.models import Q
+from django.db.models import F
+from django.db.models import Func
 from django.template.loader import render_to_string
 from cloudinary_storage.storage import RawMediaCloudinaryStorage
 
@@ -129,6 +134,14 @@ class Session(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    target = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='feeders',
+        on_delete=models.SET_NULL,
+    )
+
     # Relations
     statelogs = GenericRelation(
         StateLog,
@@ -155,6 +168,38 @@ class Session(TimeStampedModel):
         pass
 
     # Methods
+    def get_invitees(self):
+        Entry = apps.get_model('api.entry')
+        Panelist = apps.get_model('api.panelist')
+        target = self.contests.filter(
+            status__gt=0,
+            award__children__isnull=False,
+        ).distinct().first().award
+        feeders = self.feeders.all()
+        entries = Entry.objects.filter(
+            session__in=feeders,
+            contestants__contest__award__parent=target,
+            contestants__contest__status__gt=0,
+        ).annotate(
+            raw_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            tot_score=Func(
+                F('raw_score'),
+                function='ROUND',
+                template='%(function)s(%(expressions)s, 1)'
+            ),
+        ).exclude(
+            tot_score=None,
+        ).order_by(
+            '-tot_score',
+        )
+        return entries
+
+
     def get_legacy(self):
         Entry = apps.get_model('api.entry')
         wb = Workbook()

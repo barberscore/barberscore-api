@@ -509,9 +509,10 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        # 'convention',
+        'convention',
         'kind',
         ('num_rounds', 'is_invitational',),
+        'target',
         'legacy_report',
         'drcj_report',
         # 'footnotes',
@@ -539,7 +540,8 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     autocomplete_fields = [
-        # 'convention',
+        'convention',
+        'target',
     ]
 
     readonly_fields = [
@@ -556,18 +558,18 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_select_related = [
-        # 'convention',
+        'convention',
     ]
 
     ordering = (
-        # '-convention__year',
-        # 'convention__season',
-        # 'convention__group__tree_sort',
+        '-convention__year',
+        'convention__season',
+        'convention__group__tree_sort',
         'kind',
     )
 
     search_fields = [
-        # 'convention__name',
+        'convention__name',
         'kind',
     ]
 
