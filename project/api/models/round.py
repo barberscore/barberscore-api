@@ -2027,36 +2027,45 @@ class Round(TimeStampedModel):
         # If spots are constricted, find those who advance
         if spots:
             # All those above 73.0 advance automatically, regardless of spots available
-            automatics = multis.filter(
-                avg__gte=73.0,
-            )
-            # generate list of the advancers, as appearance IDs
-            advancer__ids = [x.id for x in automatics]
-            # Generate remaining multi appearances
-            remains = multis.exclude(
-                id__in=advancer__ids,
-            ).order_by(
-                '-tot_points',
-                '-sng_points',
-                '-per_points',
-            )
-            # Figure out remaining spots
-            diff = spots - automatics.count()
-            # If there are additional remaining spots, add them up to available
-            if diff > 0:
-                adds = remains[:diff]
-                for a in adds:
-                    advancer__ids.append(a.id)
-                try:
-                    mt = remains[diff:diff+1]
-                except IndexError:
-                    mt = None
+            if self.session.convention.district == 'BHS':
+                ordered = multis.order_by(
+                    '-tot_points',
+                    '-sng_points',
+                    '-per_points',
+                )
+                advancer__ids = [x.id for x in ordered[:spots]]
+                mt = ordered[spots:spots+1][0]
             else:
-                # If MT available add, otherwise none
-                try:
-                    mt = remains.first().id
-                except AttributeError:
-                    mt = None
+                automatics = multis.filter(
+                    avg__gte=73.0,
+                )
+                # generate list of the advancers, as appearance IDs
+                advancer__ids = [x.id for x in automatics]
+                # Generate remaining multi appearances
+                remains = multis.exclude(
+                    id__in=advancer__ids,
+                ).order_by(
+                    '-tot_points',
+                    '-sng_points',
+                    '-per_points',
+                )
+                # Figure out remaining spots
+                diff = spots - automatics.count()
+                # If there are additional remaining spots, add them up to available
+                if diff > 0:
+                    adds = remains[:diff]
+                    for a in adds:
+                        advancer__ids.append(a.id)
+                    try:
+                        mt = remains[diff:diff+1][0]
+                    except IndexError:
+                        mt = None
+                else:
+                    # If MT available add, otherwise none
+                    try:
+                        mt = remains.first()
+                    except AttributeError:
+                        mt = None
         # Otherwise, advance all
         else:
             advancer__ids = [a.id for a in multis]
@@ -2076,7 +2085,6 @@ class Round(TimeStampedModel):
             i += 1
         # create Mic Tester at draw 0
         if mt:
-            mt = self.appearances.get(id=mt)
             mt.draw = 0
             mt.save()
         return

@@ -344,7 +344,7 @@ class Appearance(TimeStampedModel):
             song.save()
             scores = song.scores.all()
             for score in scores:
-                d = randint(-4, 4)
+                d = randint(-3, 3)
                 score.points = prelim + d
                 score.save()
         if self.status == self.STATUS.new:
