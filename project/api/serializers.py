@@ -65,6 +65,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'songs',
             # 'songs__scores',
             # 'contenders',
+            'entry',
             'permissions',
         )
         read_only_fields = [

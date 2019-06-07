@@ -87,7 +87,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
         'round',
         'group',
-        # 'grid',
+        'entry',
     ).prefetch_related(
         'songs',
         # 'contenders',
