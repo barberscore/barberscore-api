@@ -254,4 +254,5 @@ INSTALLED_APPS = [
     'apps.keller',
     'apps.stage',
     'apps.cmanager',
+    'apps.smanager',
 ]

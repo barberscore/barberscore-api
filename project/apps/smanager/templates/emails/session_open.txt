@@ -1,0 +1,23 @@
+We're writing to let you know that the {{session.convention|safe}} {{session.get_kind_display}}
+Session is now accepting entries.
+
+The contest entry deadline is: {{session.convention.close_date|date:"SHORT_DATE_FORMAT" }}.
+
+To enter, go to: https://www.barberscore.com/
+
+If you're new to Barberscore, please visit https://www.barberscore.com/tutorials.
+There you'll find helpful materials to guide you through the contest entry process.
+
+If you experience any other problems or need help, please don't hesitate to reach
+out to customerservice@barbershop.org and we'll respond ASAP.
+
+Thanks!
+
+NOTE: This is not SPAM. Please do not report this email as SPAM. If you are receiving this
+email for an inactive quartet, or you are no longer an administrator for your chapter, we
+can fix that. Just send your request to be removed to: customerservice@barbershop.org
+
+This message was BCC'd to the following persons:
+{% for item in bcc %}
+{{item|safe}}
+{% endfor %}
