@@ -5,7 +5,6 @@ from django_fsm_log.models import StateLog
 # Local
 from .models import Round
 from .models import Score
-from .models import Session
 from .models import User
 
 
@@ -27,31 +26,6 @@ class ScoreFilterset(FilterSet):
                 'exact',
             ],
             'song__appearance': [
-                'exact',
-            ],
-        }
-
-
-class SessionFilterset(FilterSet):
-    class Meta:
-        model = Session
-        fields = {
-            'status': [
-                'exact',
-            ],
-            'kind': [
-                'exact',
-            ],
-            'is_invitational': [
-                'exact',
-            ],
-            'convention__assignments__person__user': [
-                'exact',
-            ],
-            'convention__status': [
-                'exact',
-            ],
-            'convention__assignments__category': [
                 'exact',
             ],
         }

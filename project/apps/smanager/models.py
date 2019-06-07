@@ -60,7 +60,7 @@ class Contest(TimeStampedModel):
         'bhs.group',
         null=True,
         blank=True,
-        related_name='contests_smanager',
+        related_name='contests',
         on_delete=models.SET_NULL,
         help_text="""The Winner of the Contest.""",
     )
@@ -68,13 +68,13 @@ class Contest(TimeStampedModel):
     # FKs
     session = models.ForeignKey(
         'Session',
-        related_name='contests_smanager',
+        related_name='contests',
         on_delete=models.CASCADE,
     )
 
     award = models.ForeignKey(
         'cmanager.award',
-        related_name='contests_smanager',
+        related_name='contests',
         on_delete=models.CASCADE,
     )
 
@@ -175,13 +175,13 @@ class Contestant(TimeStampedModel):
     # FKs
     entry = models.ForeignKey(
         'Entry',
-        related_name='contestants_smanager',
+        related_name='contestants',
         on_delete=models.CASCADE,
     )
 
     contest = models.ForeignKey(
         'Contest',
-        related_name='contestants_smanager',
+        related_name='contestants',
         on_delete=models.CASCADE,
     )
 
@@ -365,13 +365,13 @@ class Entry(TimeStampedModel):
     # FKs
     session = models.ForeignKey(
         'Session',
-        related_name='entries_smanager',
+        related_name='entries',
         on_delete=models.CASCADE,
     )
 
     group = models.ForeignKey(
         'bhs.group',
-        related_name='entries_smanager',
+        related_name='entries',
         on_delete=models.CASCADE,
     )
 
@@ -798,7 +798,7 @@ class Session(TimeStampedModel):
     # FKs
     convention = models.ForeignKey(
         'cmanager.convention',
-        related_name='sessions_smanager',
+        related_name='sessions',
         on_delete=models.CASCADE,
     )
 
@@ -806,7 +806,7 @@ class Session(TimeStampedModel):
         'self',
         null=True,
         blank=True,
-        related_name='feeders_smanager',
+        related_name='feeders',
         on_delete=models.SET_NULL,
     )
 
@@ -837,7 +837,7 @@ class Session(TimeStampedModel):
 
     # Methods
     def get_invitees(self):
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         Panelist = apps.get_model('api.panelist')
         target = self.contests.filter(
             status__gt=0,
@@ -869,7 +869,7 @@ class Session(TimeStampedModel):
 
 
     def get_legacy(self):
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         wb = Workbook()
         ws = wb.active
         fieldnames = [
@@ -922,7 +922,7 @@ class Session(TimeStampedModel):
 
 
     def get_drcj(self):
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         Group = apps.get_model('bhs.group')
         Member = apps.get_model('bhs.member')
         wb = Workbook()
@@ -1122,7 +1122,7 @@ class Session(TimeStampedModel):
 
     def get_participant_emails(self):
         Officer = apps.get_model('bhs.officer')
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         officers = Officer.objects.filter(
             group__entries__in=self.entries.filter(status=Entry.STATUS.approved),
         ).order_by(
@@ -1397,7 +1397,7 @@ class Session(TimeStampedModel):
         ])
 
     def can_open(self):
-        Contest = apps.get_model('api.contest')
+        Contest = apps.get_model('smanager.contest')
         try:
             return all([
                 # self.convention.open_date <= datetime.date.today(),
@@ -1408,7 +1408,7 @@ class Session(TimeStampedModel):
 
     def can_close(self):
         return True
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         return all([
             self.convention.close_date < datetime.date.today(),
             self.entries.all(),
@@ -1421,7 +1421,7 @@ class Session(TimeStampedModel):
         ])
 
     def can_verify(self):
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         return all([
             self.entries.filter(status=Entry.STATUS.approved).count() > 0,
             not self.entries.filter(

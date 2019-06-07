@@ -64,7 +64,7 @@ class Contest(TimeStampedModel):
 
     # FKs
     session = models.ForeignKey(
-        'Session',
+        'smanager.session',
         related_name='contests',
         on_delete=models.CASCADE,
     )

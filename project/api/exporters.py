@@ -1,14 +1,10 @@
 from rest_framework import serializers
 
 from .models import Appearance
-from .models import Contest
-from .models import Contestant
-from .models import Entry
 from .models import Outcome
 from .models import Panelist
 from .models import Round
 from .models import Score
-from .models import Session
 from .models import Song
 from .models import User
 
@@ -62,17 +58,4 @@ class RoundSerializer(serializers.ModelSerializer):
             'appearances',
             'panelists',
             'outcomes',
-        )
-
-
-class SessionSerializer(serializers.ModelSerializer):
-
-    rounds = RoundSerializer(read_only=True, many=True)
-
-    class Meta:
-        model = Session
-        fields = (
-            'id',
-            'get_kind_display',
-            'rounds',
         )

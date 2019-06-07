@@ -29,7 +29,7 @@ class StateLogSerializer(serializers.ModelSerializer):
 class ContestSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
-        'contestants': 'api.serializers.ContestantSerializer',
+        'contestants': 'apps.smanager.serializers.ContestantSerializer',
     }
 
     class Meta:
@@ -72,8 +72,8 @@ class EntrySerializer(serializers.ModelSerializer):
     # logs = StateLogSerializer(many=True)
     statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     included_serializers = {
-        'contestants': 'api.serializers.ContestantSerializer',
-        'statelogs': 'api.serializers.StateLogSerializer',
+        'contestants': 'apps.smanager.serializers.ContestantSerializer',
+        'statelogs': 'apps.smanager.serializers.StateLogSerializer',
         'group': 'apps.bhs.serializers.GroupSerializer',
     }
 
@@ -118,8 +118,8 @@ class SessionSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     included_serializers = {
-        'contests': 'api.serializers.ContestSerializer',
-        'entries': 'api.serializers.EntrySerializer',
+        'contests': 'apps.smanager.serializers.ContestSerializer',
+        'entries': 'apps.smanager.serializers.EntrySerializer',
         'rounds': 'api.serializers.RoundSerializer',
     }
 

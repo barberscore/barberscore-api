@@ -118,7 +118,7 @@ class Round(TimeStampedModel):
 
     # FKs
     session = models.ForeignKey(
-        'Session',
+        'smanager.session',
         related_name='rounds',
         on_delete=models.CASCADE,
     )
@@ -1851,7 +1851,7 @@ class Round(TimeStampedModel):
 
         # Create Appearances
         Appearance = apps.get_model('api.appearance')
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         Grid = apps.get_model('stage.grid')
         # If the first round, populate from entries
         if not prior_round:

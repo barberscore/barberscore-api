@@ -169,7 +169,7 @@ class Session(TimeStampedModel):
 
     # Methods
     def get_invitees(self):
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         Panelist = apps.get_model('api.panelist')
         target = self.contests.filter(
             status__gt=0,
@@ -201,7 +201,7 @@ class Session(TimeStampedModel):
 
 
     def get_legacy(self):
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         wb = Workbook()
         ws = wb.active
         fieldnames = [
@@ -254,7 +254,7 @@ class Session(TimeStampedModel):
 
 
     def get_drcj(self):
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         Group = apps.get_model('bhs.group')
         Member = apps.get_model('bhs.member')
         wb = Workbook()
@@ -454,7 +454,7 @@ class Session(TimeStampedModel):
 
     def get_participant_emails(self):
         Officer = apps.get_model('bhs.officer')
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         officers = Officer.objects.filter(
             group__entries__in=self.entries.filter(status=Entry.STATUS.approved),
         ).order_by(
@@ -729,7 +729,7 @@ class Session(TimeStampedModel):
         ])
 
     def can_open(self):
-        Contest = apps.get_model('api.contest')
+        Contest = apps.get_model('smanager.contest')
         try:
             return all([
                 # self.convention.open_date <= datetime.date.today(),
@@ -740,7 +740,7 @@ class Session(TimeStampedModel):
 
     def can_close(self):
         return True
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         return all([
             self.convention.close_date < datetime.date.today(),
             self.entries.all(),
@@ -753,7 +753,7 @@ class Session(TimeStampedModel):
         ])
 
     def can_verify(self):
-        Entry = apps.get_model('api.entry')
+        Entry = apps.get_model('smanager.entry')
         return all([
             self.entries.filter(status=Entry.STATUS.approved).count() > 0,
             not self.entries.filter(

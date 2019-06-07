@@ -129,7 +129,7 @@ class Entry(TimeStampedModel):
 
     # FKs
     session = models.ForeignKey(
-        'Session',
+        'smanager.session',
         related_name='entries',
         on_delete=models.CASCADE,
     )
