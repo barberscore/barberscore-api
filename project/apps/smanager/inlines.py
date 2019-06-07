@@ -6,7 +6,7 @@ from django.contrib import admin
 from .models import Contest
 from .models import Contestant
 from .models import Entry
-# from .models import Session
+from .models import Session
 
 
 class ContestInline(admin.TabularInline):
@@ -82,23 +82,23 @@ class EntryInline(admin.TabularInline):
     ]
 
 
-# class SessionInline(admin.TabularInline):
-#     model = Session
-#     fields = [
-#         'convention',
-#         'kind',
-#         # 'num_rounds',
-#     ]
-#     autocomplete_fields = [
-#         'convention',
-#     ]
-#     show_change_link = True
-#     extra = 0
-#     classes = [
-#         'collapse',
-#     ]
-#     readonly_fields = [
-#         'status',
-#     ]
+class SessionInline(admin.TabularInline):
+    model = Session
+    fields = [
+        'convention',
+        'kind',
+        # 'num_rounds',
+    ]
+    autocomplete_fields = [
+        'convention',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+    readonly_fields = [
+        'status',
+    ]
 
 
