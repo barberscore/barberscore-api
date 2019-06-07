@@ -1,0 +1,69 @@
+Your contest entry has been Approved!
+You are officially entered for the
+{{entry.session.convention|safe}} {{entry.session.get_kind_display}} Session.
+
+ENTRY DETAILS
+
+Group: {{entry.group.name|safe}}
+{% if entry.group.bhs_id %}
+BHS ID: {{entry.group.bhs_id}}
+{% endif %}
+
+Session: {{entry.session.convention|safe}} {{entry.session.get_kind_display}} Session
+
+Requested Evaluation: {{entry.is_evaluation|yesno|title}}
+
+Score/Eval-Only: {{entry.is_private|yesno|title}}
+
+{% if not is_private %}
+You are entered for the following contests/awards:
+{% for contestant in contestants %}
+    - {{contestant.contest.award.name}}
+{% empty %}
+    Not competing for any awards. (Score/Eval only)
+{% endfor %}
+{% endif %}
+{% if entry.group.kind == entry.group.KIND.quartet %}
+Members (TLBrBs): {{entry.participants|safe|default:"(No Members Specified)"}}
+
+{% else %}
+Director(s): {{entry.participants|safe|default:"(No Director Specified)"}}
+
+Estimated Participants-on-Stage:  {{entry.pos|default:"(No Estimate Provided)"}}
+
+
+{% endif %}
+Additional Notes/Requests:
+
+{{entry.description|safe|default:"(No additional notes/requests)"}}
+
+
+Now that your submission is APPROVED, you can now only edit your chart repertory.
+If you need to make any other changes or have additional requests, you will need
+to contact the DRCJ directly (cc'd on this message).
+
+If you wish to withdraw from the contest, go to your Entry and click the red "Withdraw"
+button on the bottom of the page. Please note however that if you scratch and then wish
+to re-enter, you'll need to contact the DRCJ for approval.
+
+IMPORTANT: Separate from this contest entry is your list of legal charts. Prior to
+competing it is your responsibility to ensure your songs are in your Repertory.
+As of now, your Repertory contains the following charts:
+
+{% for repertory in repertories %}
+    - {{repertory.chart.nomen|safe}}
+{% empty %}
+  No Songs in Your Repertory
+{% endfor %}
+
+You can delete or add charts to your Repertory at any time, however it is
+preferred that your charts are entered no later than 5 days prior to the contest.
+IMPORTANT: Every competition song MUST be vouched for by you (as a legal chart)
+by adding it to your Barberscore chart repertory prior to your performance.
+Any song sung on stage (not in your Repertory) that cannot later be properly
+validated by C&J will be cause for post-contest disqualification.
+
+
+NOTE: Please do not mark or flag this email as spam or junk mail, just delete it.
+If you are no longer the quartet admin or a Chapter Leader of your chorus, just send
+your request to be removed within the BHS Member Center to: customerservice@barbershop.org.

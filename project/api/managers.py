@@ -115,6 +115,7 @@ class PanelistManager(Manager):
             defaults=defaults,
         )
 
+
 class SongManager(Manager):
     def update_or_create_from_clean(self, item):
         Appearance = apps.get_model('api.appearance')
@@ -135,6 +136,7 @@ class SongManager(Manager):
             num=item.song_num,
             defaults=defaults,
         )
+
 
 class ScoreManager(Manager):
     def update_or_create_from_clean(self, item):

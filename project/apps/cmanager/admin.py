@@ -12,7 +12,7 @@ from .models import Assignment
 from .models import Award
 from .models import Convention
 
-from api.inlines import SessionInline
+# from apps.smanager.inlines import SessionInline
 
 admin.site.site_header = 'Barberscore Admin Backend'
 
@@ -209,7 +209,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         AssignmentInline,
-        SessionInline,
+        # SessionInline,
     ]
 
     readonly_fields = (

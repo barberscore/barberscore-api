@@ -43,13 +43,13 @@ class Contestant(TimeStampedModel):
 
     # FKs
     entry = models.ForeignKey(
-        'Entry',
+        'smanager.entry',
         related_name='contestants',
         on_delete=models.CASCADE,
     )
 
     contest = models.ForeignKey(
-        'Contest',
+        'smanager.contest',
         related_name='contestants',
         on_delete=models.CASCADE,
     )

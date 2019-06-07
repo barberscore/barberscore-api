@@ -179,7 +179,7 @@ class Appearance(TimeStampedModel):
     )
 
     entry = models.ForeignKey(
-        'Entry',
+        'smanager.entry',
         related_name='appearances',
         on_delete=models.SET_NULL,
         null=True,
