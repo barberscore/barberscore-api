@@ -24,6 +24,16 @@ from django.db.models import Q
 
 from api.fields import FileUploadPath
 from api.tasks import build_email
+from api.tasks import send_invite_email_from_entry
+from api.tasks import send_submit_email_from_entry
+from api.tasks import send_withdraw_email_from_entry
+from api.tasks import send_approve_email_from_entry
+from api.tasks import send_open_email_from_session
+from api.tasks import send_close_email_from_session
+from api.tasks import send_verify_email_from_session
+from api.tasks import send_verify_report_email_from_session
+from api.tasks import send_package_email_from_session
+from api.tasks import send_package_report_email_from_session
 
 
 class Contest(TimeStampedModel):
