@@ -52,19 +52,19 @@ def test_chart_admin(admin_django_client, chart):
 
 
 def test_contest_admin(admin_django_client, contest):
-    path = reverse('admin:api_contest_changelist')
+    path = reverse('admin:smanager_contest_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_contest_change', args=(str(contest.id),))
+    path = reverse('admin:smanager_contest_change', args=(str(contest.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
 def test_contestant_admin(admin_django_client, contestant):
-    path = reverse('admin:api_contestant_changelist')
+    path = reverse('admin:smanager_contestant_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_contestant_change', args=(str(contestant.id),))
+    path = reverse('admin:smanager_contestant_change', args=(str(contestant.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -88,10 +88,10 @@ def test_convention_admin(admin_django_client, convention):
 
 
 def test_entry_admin(admin_django_client, entry):
-    path = reverse('admin:api_entry_changelist')
+    path = reverse('admin:smanager_entry_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_entry_change', args=(str(entry.id),))
+    path = reverse('admin:smanager_entry_change', args=(str(entry.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -187,10 +187,10 @@ def test_score_admin(admin_django_client, score):
 
 
 def test_session_admin(admin_django_client, session):
-    path = reverse('admin:api_session_changelist')
+    path = reverse('admin:smanager_session_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_session_change', args=(str(session.id),))
+    path = reverse('admin:smanager_session_change', args=(str(session.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
