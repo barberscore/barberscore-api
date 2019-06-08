@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Helvetica:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <style type="text/css">
+      body {
+        font-family: 'Helvetica', sans-serif !important;
+        font-size: 8pt;
+        font-weight: 200;
+        margin: 10px;
+      }
+      strong {
+        font-family: 'Helvetica', sans-serif;
+        font-weight: 600;
+      }
+      h4 {
+        margin: 1px;
+      }
+      h5 {
+        margin: 2px;
+        font-weight: 600;
+      }
+
+      .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td
+      {
+          padding: 1px;
+          line-height: 1.4;
+      }
+      .table {
+        margin: 10px;
+      }
+      .smaller-font {
+          font-size: 9pt;
+      }
+      .bolder {
+        font-weight: 900 !important;
+      }
+      .small_logo {
+          height: 50px;
+      }
+      .pbi_avoid {
+          page-break-inside: avoid !important;
+      }
+      .w-groups {
+        width: 25% !important;
+      }
+      .w-songs {
+        width: 35% !important;
+      }
+      .w-scores {
+        width: 4% !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <h5>
+        OFFICIAL SCORING SUMMARY {{round.session.convention}}<br>
+        {{round.session.convention.group.name}} District, {{round.session.get_kind_display}} {{round.get_kind_display}}, {{round.session.convention.location}} {{round.session.convention.start_date|date:"F j, Y"}}
+      </h5>
+      <ul class='list-inline'>
+        Contest Legend: {{contest_legend}}
+      </ul>
+      {% for round in rounds %}
+        <div class='row'>
+          <table class='table table-condensed table-striped'>
+            <thead>
+              <tr>
+                <th class='w-groups'>{{round.get_kind_display}}</th>
+                <th class='w-songs'>Songs</th>
+                <th class='text-right w-scores'>MUS</th>
+                <th class='text-right w-scores'>PER</th>
+                <th class='text-right w-scores'>SNG</th>
+                <th class='text-right w-scores'>Subt</th>
+                <th class='text-right w-scores'>Prev</th>
+                <th class='text-right w-scores'>Total</th>
+                <th class='text-right w-scores'>Avg</th>
+                {% if round.session.get_kind_display == 'Chorus' %}
+                  <th class='text-right col-md-1 w-scores'>Cnt</th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for appearance in round.appearances_patched %}
+                <tr class='pbi_avoid'>
+                  <td>
+                      {% if appearance.group.get_kind_display == 'Chorus' %}
+                        <strong>{{appearance.group.parent.name|truncatechars_html:25}}</strong><br>
+                        {{appearance.group.name|truncatechars_html:25}} ({{appearance.contesting|default:"Unknown"}})<br>
+                      {% else %}
+                        <span class='bolder'>{{forloop.counter}}&nbsp;{{appearance.group.name|truncatechars_html:25}}</span><br>
+                        ({{appearance.contesting|default:"Unknown"}})&nbsp;[{{appearance.representing}}]<br>
+                      {% endif %}
+                  </td>
+                  <td>
+                    {% for song in appearance.songs_patched %}
+                      {% if song.chart %}
+                        {{song.chart.nomen|truncatechars_html:50|safe|default:"(Song not in Group's Repertory)"}}<br>
+                      {% else %}
+                        {{song.legacy_chart|truncatechars_html:50|safe|default:"(Song not in Group's Repertory)"}}<br>
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td class='text-right'>
+                    {% for song in appearance.songs_patched %}
+                        {{song.mus_points}}<br>
+                    {% endfor %}
+                  </td>
+                  <td class='text-right'>
+                    {% for song in appearance.songs_patched %}
+                        {{song.per_points}}<br>
+                    {% endfor %}
+                  </td>
+                  <td class='text-right'>
+                    {% for song in appearance.songs_patched %}
+                        {{song.sng_points}}<br>
+                    {% endfor %}
+                  </td>
+                  <td class='text-right'>
+                    {{appearance.sub_points|default:""}}
+                  </td>
+                  <td class='text-right'>
+                    {{appearance.prev_points|default:""}}
+                  </td>
+                  <td class='text-right'>
+                    {{appearance.tot_points}}
+                  </td>
+                  <td class='text-right'>
+                    {{appearance.tot_score|floatformat:1}}
+                  </td>
+                  {% if round.session.get_kind_display == 'Chorus' %}
+                    <td class='text-right'>
+                      {{appearance.pos|default:"?"}}
+                    </td>
+                  {% endif %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endfor %}
+      <div class='row'>
+        {% if privates %}
+          <p>
+            The following groups sang for Evaluation-Only: {{privates|join:", "}}
+          </p>
+        {% endif %}
+      </div>
+      <div>
+        {% if outcomes %}
+          <div>
+            <ul class='list-unstyled'>
+              {% for outcome in outcomes %}
+                <li>{{outcome}}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% else %}
+          <div>
+            <p>
+              (Contest winners unknown)
+            </p>
+          </div>
+        {% endif %}
+        {%if round.footnotes or penalties%}
+          <div>
+            <h5>Footnotes</h5>
+            <p>
+              {%if round.footnotes %}{{round.footnotes}}<br>{%endif%}
+              {% for penalty in penalties %}
+                {{penalty}}<br>
+              {% endfor %}
+            </p>
+          </div>
+        {% endif %}
+      </div>
+      <div class='pbi_avoid'>
+        {% if panelists %}
+          <table class='table'>
+            <thead>
+              <tr>
+                <th>Panel: Administrator(s)</th>
+                <th>Music</th>
+                <th>Performance</th>
+                <th>Singing</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  {% for key, value in panelists.items %}
+                    {% if key == 'CA' %}
+                        {% for item in value %}
+                          {{item}}<br>
+                        {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+                </td>
+                <td>
+                  {% for key, value in panelists.items %}
+                    {% if key == 'Music' %}
+                        {% for item in value %}
+                          {{item}}<br>
+                        {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+                </td>
+                <td>
+                  {% for key, value in panelists.items %}
+                    {% if key == 'Performance' %}
+                        {% for item in value %}
+                          {{item}}<br>
+                        {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+                </td>
+                <td>
+                  {% for key, value in panelists.items %}
+                    {% if key == 'Singing' %}
+                        {% for item in value %}
+                          {{item}}<br>
+                        {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        {% else %}
+          (Panel Unknown)
+        {% endif %}
+      </div>
+      <div>
+        {% if advancers %}
+          <div>
+            <h5>Draw</h5>
+            <p>
+              {% for advancer in advancers %}
+                <span class='text-nowrap'><strong>{{advancer.draw}}.</strong> {{advancer.group.name}}&nbsp;</span>
+              {% endfor %}
+              {% if mt %}<span class='text-nowrap'><strong>MT</strong> {{mt.group.name}}&nbsp;</span>{% endif %}
+            </p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

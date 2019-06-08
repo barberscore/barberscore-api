@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Encode+Sans:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <style type="text/css">
+      body {
+        font-family: 'Encode Sans', sans-serif !important;
+        font-size: 10pt;
+        font-weight: 200;
+      }
+      strong {
+        font-family: 'Encode Sans', sans-serif;
+        font-weight: 600;
+      }
+      /*.table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td
+      {
+          padding: 1px;
+          line-height: 1.4;
+      }*/
+      table {
+        table-layout:fixed; /* will switch the table-layout algorythm */
+        line-height: 1.3;
+      }
+      .w-groups {
+        width: 40% !important;
+      }
+      .w-songs {
+        width: 44% !important;
+      }
+      .w-scores {
+        width: 4% !important;
+      }
+      .bolder {
+        font-weight: 400;
+      }
+      .small_logo {
+          height: 50px;
+      }
+      .smaller-font {
+        font-size: 9pt !important;
+      }
+      .pbi_avoid {
+          page-break-inside: avoid !important;
+      }
+    </style>
+  </head>
+  <body>
+    <main role='main' class='container'>
+      <section>
+        <img class='float-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
+        {% if round.session.convention.image %}
+          <img class='float-right small_logo' src="{{round.session.convention.image.url}}">
+        {% endif %}
+        <h6>
+          Official Scoring Summary&nbsp;&mdash;&nbsp;{{round.session.get_kind_display}} {{round.get_kind_display}}<br>
+          {{round.session.convention}}<br>
+          {{round.session.convention.location}}; {{round.date|date:"F j, Y"}}
+        </h6>
+      </section>
+      <section>
+        <table class='table table-striped table-sm '>
+          <thead>
+            <tr>
+              <th class='w-groups' scope='col'>Group</th>
+              <th class='w-songs' scope='col'>Songs</th>
+              <th class='w-scores text-right' scope='col'>MUS</th>
+              <th class='w-scores text-right' scope='col'>PER</th>
+              <th class='w-scores text-right' scope='col'>SNG</th>
+              <th class='w-scores text-right' scope='col'>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for group in groups %}
+              <tr class='pbi_avoid'>
+                <td class='w-groups'>
+                  <strong>
+                    {% if round.session.convention.district == 'BHS' %}{{group.tot_rank|default:""}}. {% endif %}
+                    {{group.name}}<br>
+                  </strong>
+                  {% if group.get_kind_display == 'Chorus' %}
+                    {{group.parent.name|truncatechars_html:"50"}}&nbsp;({{group.contesting_patched|default:"None"}})<br>
+                    <span class='smaller-font'>Dir(s): {{group.participants_patched|default:"(No Director Specified)"}};&nbsp;&nbsp;OnStage: {{group.pos_patched}}</span><br>
+                  {% else %}
+                    {{group.representing_patched|default:"(Unknown)"}}&nbsp;({{group.contesting_patched|default:"None"}})<br>
+                    <span class='smaller-font'>{{group.participants_patched|default:"(No Members Specified)"}}</span><br>
+                  {% endif %}
+                </td>
+                <td class='w-songs'>
+                  <strong>Total: {{group.tot_points}} Points</strong>&nbsp;({{group.mus_points}}/{{group.per_points}}/{{group.sng_points}})<br>
+                  {% for appearance in group.appearances_patched %}
+                      {% if group.max_round > 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
+                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.nomen|truncatechars_html:60|safe|default:"(Song not in Group's Repertory)⁂"}}&nbsp;{{song.penalties_patched}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='w-scores text-right'>
+                  <strong>{{group.mus_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max_round > 1 %}<span class='bolder'>{{appearance.mus_score|floatformat:1}}</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
+                        {{song.mus_score|floatformat:1}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='w-scores text-right'>
+                  <strong>{{group.per_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max_round > 1 %}<span class='bolder'>{{appearance.per_score|floatformat:1}}</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
+                        {{song.per_score|floatformat:1}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='w-scores text-right'>
+                  <strong>{{group.sng_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max_round > 1 %}<span class='bolder'>{{appearance.sng_score|floatformat:1}}</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
+                        {{song.sng_score|floatformat:1}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='w-scores text-right'>
+                  <strong>{{group.tot_score|floatformat:1}}</strong><br>
+                  {% for appearance in group.appearances_patched %}
+                    {% if group.max_round > 1 %}<span class='bolder'>{{appearance.tot_score|floatformat:1}}</span><br>{% endif %}
+                    {% for song in appearance.songs_patched %}
+                        {{song.tot_score|floatformat:1}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+      <section>
+        <p>
+          {% if round.kind == 1 %}
+            Groups are listed above by total points and in accordance with Article VII of the BHS Contest Rules.<br>
+          {% else %}
+            Groups not advancing and/or competing only for single-round awards are listed above by total points and in accordance with Article VII of the BHS Contest Rules.<br>
+          {% endif %}
+          {% if privates %}
+            The following groups performed for evaluation score only: {{privates|join:", "}}
+          {% endif %}
+        </p>
+      </section>
+      <section class='pbi_avoid'>
+        <div class='float-right'>
+          <h5>Official Panel</h5>
+          {% if panelists %}
+            <ul class='list-unstyled'>
+              {% for category, person in panelists %}
+                <li class='text-nowrap'><strong>{{category}}:</strong>&nbsp;&nbsp;{{person}}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            (Panel Unknown)
+          {% endif %}
+        </div>
+        <div>
+        {% if advancers %}
+          <div>
+            <h5>Draw</h5>
+            <p>
+              {% for draw, group in advancers %}
+                <span class='text-nowrap'><strong>{{draw}}:</strong>&nbsp;{{group}}&nbsp;&nbsp;</span>
+              {% endfor %}
+            </p>
+          </div>
+        {% endif %}
+        {% if outcomes %}
+          <div>
+            <h5>Awards</h5>
+            <ul class='list-unstyled'>
+              {% for award, winner in outcomes %}
+                <li><strong>{{award}}:</strong>&nbsp;&nbsp;{{winner}}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+        {%if round.footnotes or penalties or is_missing%}
+          <div>
+            <h5>Footnotes</h5>
+            <p>
+              {%if round.footnotes %}{{round.footnotes}}<br>{%endif%}
+              {% for penalty in penalties %}
+                {{penalty}}<br>
+              {% endfor %}
+              {% if is_missing %}⁂ The Group is responsible for validating any performed chart to the DRCJ within 30 days.<br>{% endif %}
+            </p>
+          </div>
+        {% endif %}
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

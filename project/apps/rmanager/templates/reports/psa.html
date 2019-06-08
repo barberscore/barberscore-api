@@ -1,0 +1,163 @@
+{% load psa_extras %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700" rel="stylesheet">
+    <style type="text/css">
+      body {
+        font-family: 'Encode Sans Condensed', sans-serif;
+        font-size: 12pt;
+        font-weight: 300;
+      }
+      .small_logo {
+          max-height: 100px;
+          max-width: 200px;
+      }
+      .picture_logo {
+          weight: 200px;
+      }
+      .card-force {
+        height: 125px;
+      }
+      .group_image {
+          height: 100px;
+      }
+      .bolder {
+        font-weight: 700;
+      }
+      .mono-font {
+        font-family: 'Inconsolata', monospace;
+        color: white;
+        font-size: 11pt;
+      }
+      .black-font {
+        color: black;
+      }
+      .black-font {
+        color: black;
+      }
+      .smaller-heading {
+        font-size: 10pt;
+        line-height: 1.2;
+        padding-bottom: 2px;
+        margin-bottom: 5px;
+      }
+      .pbi_avoid {
+          page-break-inside: avoid !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <section>
+        <img class='float-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
+        {% if panelist.person.image %}<img class='float-right img-thumbnail small_logo' src="{{panelist.person.image.url}}">{% endif %}
+        <h5>
+          Panelist Scoring Analysis
+        </h5>
+        <p class='smaller-heading'>
+          {{panelist.round.session.convention}}
+          {{panelist.round.session.get_kind_display}} {{panelist.round.get_kind_display}}<br>
+          {{panelist.round.session.convention.location}}; {{panelist.round.session.convention.start_date|date:"F j, Y"}} - {{panelist.round.session.convention.end_date|date:"F j, Y"}}
+        </p>
+        <h6>
+          {{panelist.person.common_name}}&nbsp;{{panelist.person.district}}<br>
+          {{panelist.get_kind_display}} {{panelist.get_category_display}} Judge<br>
+        </h6>
+      </section>
+      {% comment %}
+      <section>
+        <div class='card card-force'>
+          <div class='card-body'>
+            <img class='float-right group_image img-thumbnail' src="{{panelist.person.image.url}}">
+            <h5 class='card-title'>
+              {{panelist.person.common_name}}
+            </h5>
+            <p class='card-text'>
+              Differential or other useful text
+            </p>
+          </div>
+        </div>
+      </section>
+      {% endcomment %}
+      <section>
+        <table class='table table-striped table-sm'>
+          <thead>
+            <tr>
+              <th>Group</th>
+              <th>Song</th>
+              <th class='text-center' scope="col">StdDev</th>
+              <th class='text-center' scope="col">Diff</th>
+              <th class='text-center' scope="col">Avg</th>
+              <th class='text-center' scope="col">Official Scores</th>
+              {% if panelist.get_kind_display == 'Practice' %}
+                <th class='text-center' scope="col">Yours</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for group in groups %}
+              <tr class='pbi_avoid'>
+                <td>
+                  {{group.name|truncatechars_html:30|safe}}<br>
+                </td>
+                <td>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
+                      {{song.chart.title|truncatechars_html:30|safe|default:"(Song not in Group's Repertory)"}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-center'>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
+                      {{song.dev|floatformat:2}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-center'>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
+                      {{song.diff_patched|floatformat:1|accounting}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-center'>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
+                      {{song.avg|floatformat:1}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-center'>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
+                      {% for score, spanClass in song.scores_patched %}
+                        <span class='{{spanClass}}'>{{score}}</span>&nbsp;
+                      {% endfor %}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                {% if panelist.get_kind_display == 'Practice' %}
+                  <td class='text-center'>
+                    {% for appearance in group.appearances_patched %}
+                      {% for song in appearance.songs_patched %}
+                        {{song.pp}}<br>
+                      {% endfor %}
+                    {% endfor %}
+                  </td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </body>
+</html>
+
+
+

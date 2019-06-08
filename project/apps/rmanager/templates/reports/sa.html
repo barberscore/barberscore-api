@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,400i,700,700i" rel="stylesheet">
+    <style type="text/css">
+      body {
+        font-family: 'Ubuntu Mono', monospace;
+
+      }
+      /*table tr {
+        white-space:nowrap;
+      }
+      table td {
+        line-height: 14px !important;
+      }
+      strong {
+        font-family: 'Inconsolata', monospace;
+        font-weight: 700 !important;
+      }*/
+      table {
+        line-height: 1.0 !important;
+      }
+      .diff {
+        font-weight: 700 !important;
+      }
+      .d-practice {
+        font-weight: 700 !important;
+        font-style: italic !important;
+      }
+      .practice {
+        font-style: italic !important;
+      }
+      .small_logo {
+          height: 50px;
+      }
+      .pbi_avoid {
+          page-break-inside: avoid !important;
+      }
+      .col-music {
+        background-color: #fcf8e3;
+      }
+      .col-performance {
+        background-color: #dff0d8;
+      }
+      .col-singing {
+        background-color: #d9edf7;
+      }
+      .b-right {
+        border-right: 1px solid gray;
+        border-left: 1px solid gray;
+      }
+      .push-space {
+        margin-right: 40px;
+      }
+      .tight-spacing {
+        line-height: 1.0 !important;
+        font-size: 10pt;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <section>
+        <img class='float-right small_logo' src="https://barberscore-api.herokuapp.com/static/api/bhs_logo.png">
+        {% if round.session.convention.image %}
+          <img class='float-right small_logo' src="{{round.session.convention.image.url}}">
+        {% endif %}
+        <h4>
+          Scoring Analysis {{round.session.get_kind_display}} {{round.get_kind_display}}<br>
+          {{round.session.convention}}
+        </h4>
+      </section>
+      <section>
+        <table class='table table-striped table-bordered table-sm'>
+          <colgroup>
+            <col span=2>
+            <col span=1 class='col-music b-right'>
+            <col span=1 class='col-performance b-right'>
+            <col span=1 class='col-singing b-right'>
+            <col span=1>
+          </colgroup>
+          <thead>
+            <th>Group</th>
+            <th>Songs</th>
+            <th class='text-right'>
+              MUS&nbsp;&nbsp;
+              {% for name, practice, intitals in mus_persons %}
+                {% if practice %}<em>{{intitals}}</em>{% else %}{{intitals}}{% endif %}&nbsp;{% if forloop.last %}&nbsp;{% endif %}
+              {% endfor %}
+            </th>
+            <th class='text-right'>
+              PER&nbsp;&nbsp;
+              {% for name, practice, intitals in per_persons %}
+                {% if practice %}<em>{{intitals}}</em>{% else %}{{intitals}}{% endif %}&nbsp;{% if forloop.last %}&nbsp;{% endif %}
+              {% endfor %}
+            </th>
+            <th class='text-right'>
+              SNG&nbsp;&nbsp;
+              {% for name, practice, intitals in sng_persons %}
+                {% if practice %}<em>{{intitals}}</em>{% else %}{{intitals}}{% endif %}&nbsp;{% if forloop.last %}&nbsp;{% endif %}
+              {% endfor %}
+            </th>
+            <th class='text-center'>TOT</th>
+          </thead>
+          <tbody>
+            {% for group in groups %}
+              <tr>
+                <td>
+                  <strong>{{group.name|truncatechars_html:30|safe}}</strong><br>
+                  <strong>{{group.tot_rank}}</strong>&nbsp;&nbsp;{{group.mus_rank}}/{{group.per_rank}}/{{group.sng_rank}}
+                </td>
+                <td>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
+                      {{song.chart.title|truncatechars_html:30|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-right'>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
+                      {{song.mus_score|floatformat:1}}&nbsp;&nbsp;
+                      {% for score, diff, practice in song.mus_scores %}
+                        {% if score %}
+                          {% if diff %}
+                            <span class='d-practice'>{{score}}</span>&nbsp;
+                          {% elif practice %}
+                            <em>{{score}}</em>&nbsp;
+                          {% else %}
+                            {{score}}&nbsp;
+                          {% endif %}
+                        {% else %}
+                          &nbsp;&nbsp;&nbsp;
+                        {% endif %}
+                      {% endfor %}
+                      <br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-right'>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
+                      {{song.per_score|floatformat:1}}&nbsp;&nbsp;
+                      {% for score, diff, practice in song.per_scores %}
+                        {% if score %}
+                          {% if diff %}
+                            <span class='d-practice'>{{score}}</span>&nbsp;
+                          {% elif practice %}
+                            <em>{{score}}</em>&nbsp;
+                          {% else %}
+                            {{score}}&nbsp;
+                          {% endif %}
+                        {% else %}
+                          &nbsp;&nbsp;&nbsp;
+                        {% endif %}
+                      {% endfor %}
+                      <br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-right'>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
+                      {{song.sng_score|floatformat:1}}&nbsp;&nbsp;
+                      {% for score, diff, practice in song.sng_scores %}
+                        {% if score %}
+                          {% if diff %}
+                            <span class='d-practice'>{{score}}</span>&nbsp;
+                          {% elif practice %}
+                            <em>{{score}}</em>&nbsp;
+                          {% else %}
+                            {{score}}&nbsp;
+                          {% endif %}
+                        {% else %}
+                          &nbsp;&nbsp;&nbsp;
+                        {% endif %}
+                      {% endfor %}
+                      <br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-right'>
+                  {% for appearance in group.appearances_patched %}
+                    {% for song in appearance.songs_patched %}
+                      <strong>{{song.tot_score|floatformat:1}}</strong>&nbsp;&nbsp;<br>
+                    {% endfor %}
+                  {% endfor %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+      <div class='tight-spacing'>
+        <section>
+          <ul class='list-unstyled'>
+            {% for penalty in penalties %}
+              <li>{{penalty}}</li>
+            {% endfor %}
+          </ul>
+          <div class='float-left push-space'>
+            Total (Average StDev {{stats.tot|floatformat:1}})<br>
+            Score +/- 5 Points from Average in <strong>Bold</strong><br>
+            Practice Judges in <em>Italics</em>.<br>
+          </div>
+          <div class='float-left push-space'>
+            <ul class='list-unstyled'>
+              Music (Average StDev {{stats.mus|floatformat:1}}):
+              {% for person, practice, _ in mus_persons %}
+                {% if practice %}
+                  <li><em>{{person}}</em></li>
+                {% else %}
+                  <li>{{person}}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+          <div class='float-left push-space'>
+            <ul class='list-unstyled'>
+              Performance (Average StDev {{stats.per|floatformat:1}}):
+              {% for person, practice, _ in per_persons %}
+                {% if practice %}
+                  <li><em>{{person}}</em></li>
+                {% else %}
+                  <li>{{person}}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+          <div class='float-left push-space'>
+            <ul class='list-unstyled'>
+              Singing (Average StDev {{stats.sng|floatformat:1}}):
+              {% for person, practice, _ in sng_persons %}
+                {% if practice %}
+                  <li><em>{{person}}</em></li>
+                {% else %}
+                  <li>{{person}}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>
+
+
+

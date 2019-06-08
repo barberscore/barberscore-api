@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style type="text/css">
+      ul {
+        font-size: 12pt;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+      .panelist {
+        font-size: 18pt;
+      }
+      .points {
+        font-size: 24pt;
+      }
+      .enter-height {
+        padding: 50px;
+        line-height: 50px;
+      }
+      .side-border {
+        border-left: 10px solid black;
+        border-right: 10px solid black;
+      }
+      .w-panelists {
+        width: 40% !important;
+      }
+      .w-scores {
+        width: 30% !important;
+      }
+      table {
+        line-height: 1.4;
+      }
+      section {
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <section>
+        <h2 class='float-right'>
+          <strong>Total Points:</strong> {{tot_points}}
+        </h2>
+        <h2>
+          <strong>{{appearance.group.name}}</strong>&nbsp;&nbsp;OA: {{appearance.num}}
+        </h2>
+        <ul class='list-unstyled'>
+          {% for song in songs %}
+            <li class='panelist'>Song #{{song.num}}:&nbsp;{{song.chart.title}}</li>
+          {% endfor %}
+        </ul>
+      </section>
+      <section>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th class='w-panelists points'>
+                Panelist
+              </th>
+              {% for song in songs %}
+                <th class='w-scores points text-center' colspan=2>&nbsp;Song {{song.num}}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for panelist in panelists %}
+              {% if panelist.get_category_display == 'Music' %}
+                {% if panelist.category in variances %}
+                  <tr class='table-warning side-border'>
+                {% else %}
+                  <tr class='table-warning'>
+                {% endif %}
+              {% endif %}
+              {% if panelist.get_category_display == 'Performance' %}
+                {% if panelist.category in variances %}
+                  <tr class='table-success side-border'>
+                {% else %}
+                  <tr class='table-success'>
+                {% endif %}
+              {% endif %}
+              {% if panelist.get_category_display == 'Singing' %}
+                {% if panelist.category in variances %}
+                  <tr class='table-primary side-border'>
+                {% else %}
+                  <tr class='table-primary'>
+                {% endif %}
+              {% endif %}
+                <td class='panelist'>
+                  {{panelist.person.common_name}}
+                </td>
+                {% for song in songs %}
+                  {% for score in panelist.scores.all %}
+                    {% if score.song == song %}
+                      <td class='text-right left-border'>
+                        <span class='points'>{{score.points}}</span>
+                      </td>
+                      <td class='right-border'>
+                        <input class='enter-height'>
+                      </td>
+                    {% endif %}
+                  {% endfor %}
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <th class='w-panelists points'>
+                Average
+              </th>
+              {% for song in songs %}
+                <th class='w-scores points' colspan=2>
+                  {{song.tot_score|floatformat:1}}
+                </th>
+              {% endfor %}
+            </tr>
+          </tfoot>
+        </table>
+      </section>
+      <br>
+      <br>
+      <br>
+      <br>
+      <section>
+        <small>
+          {{appearance}}
+        </small>
+      </section>
+    </div>
+  </body>
+</html>
