@@ -1505,7 +1505,7 @@ class Session(TimeStampedModel):
             elif num == 2 and kind != 1:
                 spots = 10
             else:
-                spots = None
+                spots = 0
             self.rounds.create(
                 num=num,
                 kind=kind,
