@@ -176,13 +176,13 @@ class Appearance(TimeStampedModel):
     # Appearance FKs
     round = models.ForeignKey(
         'Round',
-        related_name='appearances_rmanager',
+        related_name='appearances',
         on_delete=models.CASCADE,
     )
 
     group = models.ForeignKey(
         'bhs.group',
-        related_name='appearances_rmanager',
+        related_name='appearances',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -190,7 +190,7 @@ class Appearance(TimeStampedModel):
 
     entry = models.ForeignKey(
         'smanager.entry',
-        related_name='appearances_rmanager',
+        related_name='appearances',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -1130,13 +1130,13 @@ class Contender(TimeStampedModel):
     # FKs
     appearance = models.ForeignKey(
         'Appearance',
-        related_name='contenders_rmanager',
+        related_name='contenders',
         on_delete=models.CASCADE,
     )
 
     outcome = models.ForeignKey(
         'Outcome',
-        related_name='contenders_rmanager',
+        related_name='contenders',
         on_delete=models.CASCADE,
     )
 
@@ -1254,13 +1254,13 @@ class Outcome(TimeStampedModel):
     # FKs
     round = models.ForeignKey(
         'Round',
-        related_name='outcomes_rmanager',
+        related_name='outcomes',
         on_delete=models.CASCADE,
     )
 
     award = models.ForeignKey(
         'cmanager.award',
-        related_name='outcomes_rmanager',
+        related_name='outcomes',
         on_delete=models.CASCADE,
     )
 
@@ -1543,13 +1543,13 @@ class Panelist(TimeStampedModel):
     # FKs
     round = models.ForeignKey(
         'Round',
-        related_name='panelists_rmanager',
+        related_name='panelists',
         on_delete=models.CASCADE,
     )
 
     person = models.ForeignKey(
         'bhs.person',
-        related_name='panelists_rmanager',
+        related_name='panelists',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -1916,7 +1916,7 @@ class Round(TimeStampedModel):
     # FKs
     session = models.ForeignKey(
         'smanager.session',
-        related_name='rounds_rmanager',
+        related_name='rounds',
         on_delete=models.CASCADE,
     )
 
@@ -4016,13 +4016,13 @@ class Score(TimeStampedModel):
     # FKs
     song = models.ForeignKey(
         'Song',
-        related_name='scores_rmanager',
+        related_name='scores',
         on_delete=models.CASCADE,
     )
 
     panelist = models.ForeignKey(
         'Panelist',
-        related_name='scores_rmanager',
+        related_name='scores',
         on_delete=models.CASCADE,
     )
 
@@ -4179,13 +4179,13 @@ class Song(TimeStampedModel):
     # FKs
     appearance = models.ForeignKey(
         'Appearance',
-        related_name='songs_rmanager',
+        related_name='songs',
         on_delete=models.CASCADE,
     )
 
     chart = models.ForeignKey(
         'bhs.chart',
-        related_name='songs_rmanager',
+        related_name='songs',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
