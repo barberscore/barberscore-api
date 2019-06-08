@@ -120,7 +120,7 @@ class SessionSerializer(serializers.ModelSerializer):
     included_serializers = {
         'contests': 'apps.smanager.serializers.ContestSerializer',
         'entries': 'apps.smanager.serializers.EntrySerializer',
-        'rounds': 'api.serializers.RoundSerializer',
+        # 'rounds': 'api.serializers.RoundSerializer',
     }
 
     class Meta:

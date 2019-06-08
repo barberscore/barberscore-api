@@ -22,13 +22,14 @@ from django.db.models.signals import pre_delete
 from django.db.models.signals import pre_save
 
 # First-Party
-from api.models import Appearance
-from api.models import Contender
-from api.models import Outcome
-from api.models import Panelist
-from api.models import Round
-from api.models import Score
-from api.models import Song
+from apps.rmanager.models import Appearance
+from apps.rmanager.models import Contender
+from apps.rmanager.models import Outcome
+from apps.rmanager.models import Panelist
+from apps.rmanager.models import Round
+from apps.rmanager.models import Score
+from apps.rmanager.models import Song
+
 from api.models import User
 
 from apps.bhs.models import Chart

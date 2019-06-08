@@ -848,7 +848,7 @@ class Session(TimeStampedModel):
     # Methods
     def get_invitees(self):
         Entry = apps.get_model('smanager.entry')
-        Panelist = apps.get_model('api.panelist')
+        Panelist = apps.get_model('rmanager.panelist')
         target = self.contests.filter(
             status__gt=0,
             award__children__isnull=False,
