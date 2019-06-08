@@ -255,4 +255,5 @@ INSTALLED_APPS = [
     'apps.stage',
     'apps.cmanager',
     'apps.smanager',
+    'apps.rmanager',
 ]
