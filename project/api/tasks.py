@@ -56,21 +56,6 @@ def build_email(template, context, subject, to, cc=[], bcc=[], attachments=[]):
 def send_complete_email_from_appearance(appearance):
     return appearance.send_complete_email()
 
-@job('high')
-def send_invite_email_from_entry(entry):
-    return entry.send_invite_email()
-
-@job('high')
-def send_withdraw_email_from_entry(entry):
-    return entry.send_withdraw_email()
-
-@job('high')
-def send_submit_email_from_entry(entry):
-    return entry.send_submit_email()
-
-@job('high')
-def send_approve_email_from_entry(entry):
-    return entry.send_approve_email()
 
 @job('high')
 def send_psa_email_from_panelist(panelist):
@@ -83,30 +68,6 @@ def send_publish_email_from_round(round):
 @job('high')
 def send_publish_report_email_from_round(round):
     return round.send_publish_report_email()
-
-@job('high')
-def send_open_email_from_session(session):
-    return session.send_open_email()
-
-@job('high')
-def send_close_email_from_session(session):
-    return session.send_close_email()
-
-@job('high')
-def send_verify_email_from_session(session):
-    return session.send_verify_email()
-
-@job('high')
-def send_verify_report_email_from_session(session):
-    return session.send_verify_report_email()
-
-@job('high')
-def send_package_email_from_session(session):
-    return session.send_package_email()
-
-@job('high')
-def send_package_report_email_from_session(session):
-    return session.send_package_report_email()
 
 @job('high')
 def save_csa_from_appearance(appearance):

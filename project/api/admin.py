@@ -12,12 +12,12 @@ from django.apps import apps
 from django.conf import settings
 # Local
 from .filters import AppearanceConventionStatusListFilter
-from .filters import ConventionStatusListFilter
-from .filters import MCListFilter
 from .filters import MCUserListFilter
 from .filters import SessionConventionStatusListFilter
+
 from .forms import UserChangeForm
 from .forms import UserCreationForm
+
 from .inlines import AppearanceInline
 from .inlines import ContenderInline
 from .inlines import OutcomeInline
@@ -34,7 +34,6 @@ from .models import Score
 from .models import Song
 from .models import User
 
-from apps.stage.inlines import GridInline
 
 admin.site.site_header = 'Barberscore Admin Backend'
 
@@ -303,7 +302,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         OutcomeInline,
         PanelistInline,
         AppearanceInline,
-        GridInline,
+        # GridInline,
         StateLogInline,
     ]
 
