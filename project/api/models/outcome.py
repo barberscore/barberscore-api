@@ -63,13 +63,13 @@ class Outcome(TimeStampedModel):
     # FKs
     round = models.ForeignKey(
         'Round',
-        related_name='outcomes',
+        related_name='outcomes_oldapi',
         on_delete=models.CASCADE,
     )
 
     award = models.ForeignKey(
         'cmanager.award',
-        related_name='outcomes',
+        related_name='outcomes_oldapi',
         on_delete=models.CASCADE,
     )
 

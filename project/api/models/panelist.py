@@ -27,9 +27,9 @@ from django.db.models import Avg, StdDev, Q, Max, Sum, F
 
 
 import django_rq
-from api.tasks import build_email
-from api.fields import FileUploadPath
-from api.managers import PanelistManager
+from apps.rmanager.tasks import build_email
+from apps.rmanager.fields import FileUploadPath
+from apps.rmanager.managers import PanelistManager
 
 log = logging.getLogger(__name__)
 
@@ -104,13 +104,13 @@ class Panelist(TimeStampedModel):
     # FKs
     round = models.ForeignKey(
         'Round',
-        related_name='panelists',
+        related_name='panelists_oldapi',
         on_delete=models.CASCADE,
     )
 
     person = models.ForeignKey(
         'bhs.person',
-        related_name='panelists',
+        related_name='panelists_oldapi',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

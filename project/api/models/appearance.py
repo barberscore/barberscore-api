@@ -34,11 +34,11 @@ from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.template.loader import render_to_string
 
-from api.fields import FileUploadPath
-from api.tasks import build_email
-from api.tasks import save_csa_from_appearance
-from api.tasks import send_complete_email_from_appearance
-from api.managers import AppearanceManager
+from apps.rmanager.fields import FileUploadPath
+from apps.rmanager.tasks import build_email
+from apps.rmanager.tasks import save_csa_from_appearance
+from apps.rmanager.tasks import send_complete_email_from_appearance
+from apps.rmanager.managers import AppearanceManager
 
 class Appearance(TimeStampedModel):
     """
@@ -166,13 +166,13 @@ class Appearance(TimeStampedModel):
     # Appearance FKs
     round = models.ForeignKey(
         'Round',
-        related_name='appearances',
+        related_name='appearances_oldapi',
         on_delete=models.CASCADE,
     )
 
     group = models.ForeignKey(
         'bhs.group',
-        related_name='appearances',
+        related_name='appearances_oldapi',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -180,7 +180,7 @@ class Appearance(TimeStampedModel):
 
     entry = models.ForeignKey(
         'smanager.entry',
-        related_name='appearances',
+        related_name='appearances_oldapi',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

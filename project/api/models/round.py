@@ -31,13 +31,13 @@ from django.utils.text import slugify
 from django.db.models.functions import DenseRank, RowNumber, Rank
 from django.conf import settings
 
-from api.tasks import build_email
-from api.tasks import send_publish_email_from_round
-from api.tasks import send_publish_report_email_from_round
-from api.tasks import send_psa_email_from_panelist
-from api.tasks import save_psa_from_panelist
-from api.tasks import send_complete_email_from_appearance
-from api.tasks import save_reports_from_round
+from apps.rmanager.tasks import build_email
+from apps.rmanager.tasks import send_publish_email_from_round
+from apps.rmanager.tasks import send_publish_report_email_from_round
+from apps.rmanager.tasks import send_psa_email_from_panelist
+from apps.rmanager.tasks import save_psa_from_panelist
+from apps.rmanager.tasks import send_complete_email_from_appearance
+from apps.rmanager.tasks import save_reports_from_round
 
 from api.fields import FileUploadPath
 
@@ -119,7 +119,7 @@ class Round(TimeStampedModel):
     # FKs
     session = models.ForeignKey(
         'smanager.session',
-        related_name='rounds',
+        related_name='rounds_oldapi',
         on_delete=models.CASCADE,
     )
 

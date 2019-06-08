@@ -44,13 +44,13 @@ class Contender(TimeStampedModel):
     # FKs
     appearance = models.ForeignKey(
         'Appearance',
-        related_name='contenders',
+        related_name='contenders_oldapi',
         on_delete=models.CASCADE,
     )
 
     outcome = models.ForeignKey(
         'Outcome',
-        related_name='contenders',
+        related_name='contenders_oldapi',
         on_delete=models.CASCADE,
     )
 

@@ -19,7 +19,7 @@ from django.db.models import Q
 from django.db.models import Sum, Min, Max, Count, StdDev
 from django.contrib.postgres.fields import ArrayField, JSONField
 
-from api.managers import SongManager
+from apps.rmanager.managers import SongManager
 
 log = logging.getLogger(__name__)
 
@@ -96,13 +96,13 @@ class Song(TimeStampedModel):
     # FKs
     appearance = models.ForeignKey(
         'Appearance',
-        related_name='songs',
+        related_name='songs_oldapi',
         on_delete=models.CASCADE,
     )
 
     chart = models.ForeignKey(
         'bhs.chart',
-        related_name='songs',
+        related_name='songs_oldapi',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,

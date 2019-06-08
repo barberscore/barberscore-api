@@ -18,7 +18,7 @@ from django.db.models import Min, Max, Count, Avg
 
 from django.apps import apps
 
-from api.managers import ScoreManager
+from apps.rmanager.managers import ScoreManager
 
 log = logging.getLogger(__name__)
 
@@ -90,13 +90,13 @@ class Score(TimeStampedModel):
     # FKs
     song = models.ForeignKey(
         'Song',
-        related_name='scores',
+        related_name='scores_oldapi',
         on_delete=models.CASCADE,
     )
 
     panelist = models.ForeignKey(
         'Panelist',
-        related_name='scores',
+        related_name='scores_oldapi',
         on_delete=models.CASCADE,
     )
 
