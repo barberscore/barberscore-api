@@ -6,7 +6,6 @@ from .models import Panelist
 from .models import Round
 from .models import Score
 from .models import Song
-from .models import User
 
 
 class OutcomeSerializer(serializers.ModelSerializer):

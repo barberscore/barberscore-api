@@ -1,13 +1,11 @@
 
 # Standard Library
 import logging
-import random
 import uuid
-from io import BytesIO
-import django_rq
+from random import randint
+
 # Third-Party
 import pydf
-import maya
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
@@ -16,32 +14,1834 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from PyPDF2 import PdfFileMerger
 from django.db.models import Sum, Max, Avg, StdDev, Count, Q
+from django.contrib.postgres.fields import ArrayField, JSONField
+from django_fsm import RETURN_VALUE
+from django.db.models.functions import DenseRank, RowNumber, Rank
+from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
+from django.db import models
+from django.db.models import Min, Max, Count, Avg
+
 # Django
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.files.base import ContentFile
 from django.db import models
-from django.db.models import Q, F, Window
+from django.db.models import F, Window
 from django.template.loader import render_to_string
-from django.urls import reverse
 from django.utils.functional import cached_property
-from django.utils.text import slugify
-from django.db.models.functions import DenseRank, RowNumber, Rank
 from django.conf import settings
+from django.utils.timezone import now
 
-from api.tasks import build_email
-from api.tasks import send_publish_email_from_round
-from api.tasks import send_publish_report_email_from_round
-from api.tasks import send_psa_email_from_panelist
-from api.tasks import save_psa_from_panelist
-from api.tasks import send_complete_email_from_appearance
-from api.tasks import save_reports_from_round
+from .tasks import build_email
+from .tasks import send_publish_email_from_round
+from .tasks import send_publish_report_email_from_round
+from .tasks import send_psa_email_from_panelist
+from .tasks import save_psa_from_panelist
+from .tasks import send_complete_email_from_appearance
+from .tasks import save_reports_from_round
 
-from api.fields import FileUploadPath
+from .fields import FileUploadPath
+
+
+from .managers import AppearanceManager
+from .managers import PanelistManager
+from .managers import SongManager
+from .managers import ScoreManager
 
 log = logging.getLogger(__name__)
+
+
+class Appearance(TimeStampedModel):
+    """
+    An appearance of a group on stage.
+
+    The Appearance is meant to be a private resource.
+    """
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (-30, 'disqualified', 'Disqualified',),
+        (-20, 'scratched', 'Scratched',),
+        (-10, 'completed', 'Completed',),
+        (0, 'new', 'New',),
+        (7, 'built', 'Built',),
+        (10, 'started', 'Started',),
+        (20, 'finished', 'Finished',),
+        (25, 'variance', 'Variance',),
+        (30, 'verified', 'Verified',),
+        (40, 'advanced', 'Advanced',),
+    )
+
+    status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    num = models.IntegerField(
+        help_text="""The order of appearance for this round.""",
+    )
+
+    draw = models.IntegerField(
+        help_text="""The draw for the next round.""",
+        null=True,
+        blank=True,
+    )
+
+    is_private = models.BooleanField(
+        help_text="""Copied from entry.""",
+        default=False,
+    )
+
+    is_single = models.BooleanField(
+        help_text="""Single-round group""",
+        default=False,
+    )
+
+    participants = models.CharField(
+        help_text='Director(s) or Members (listed TLBB)',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    representing = models.CharField(
+        help_text='Representing entity',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    onstage = models.DateTimeField(
+        help_text="""
+            The actual appearance datetime.""",
+        null=True,
+        blank=True,
+    )
+
+    actual_start = models.DateTimeField(
+        help_text="""
+            The actual appearance datetime.""",
+        null=True,
+        blank=True,
+    )
+
+    actual_finish = models.DateTimeField(
+        help_text="""
+            The actual appearance datetime.""",
+        null=True,
+        blank=True,
+    )
+
+    pos = models.IntegerField(
+        help_text='Actual Participants-on-Stage',
+        null=True,
+        blank=True,
+    )
+
+    legacy_group = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    stats = JSONField(
+        null=True,
+        blank=True,
+    )
+
+    base = models.FloatField(
+        help_text="""
+            The incoming base score used to determine most-improved winners.""",
+        null=True,
+        blank=True,
+    )
+
+    variance_report = models.FileField(
+        upload_to=FileUploadPath(),
+        blank=True,
+        default='',
+    )
+
+    csa = models.FileField(
+        upload_to=FileUploadPath(),
+        blank=True,
+        default='',
+    )
+
+    # Appearance FKs
+    round = models.ForeignKey(
+        'Round',
+        related_name='appearances',
+        on_delete=models.CASCADE,
+    )
+
+    group = models.ForeignKey(
+        'bhs.group',
+        related_name='appearances',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    entry = models.ForeignKey(
+        'smanager.entry',
+        related_name='appearances',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='appearances',
+    )
+
+    @cached_property
+    def round__kind(self):
+        return self.round.kind
+
+    @cached_property
+    def run_total(self):
+        Score = apps.get_model('rmanager.score')
+        Panelist = apps.get_model('rmanager.panelist')
+        run_total = Score.objects.filter(
+            song__appearance__round__session=self.round.session,
+            song__appearance__round__num__lte=self.round.num,
+            song__appearance__group=self.group,
+            panelist__kind=Panelist.KIND.official,
+        ).aggregate(
+            sum=Sum('points'),
+            avg=Avg('points'),
+            mus=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            sng=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+            per=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+        )
+        return run_total
+
+
+    # Appearance Internals
+    objects = AppearanceManager()
+
+    def clean(self):
+        if self.group.kind != self.group.KIND.vlq:
+            if self.group.kind != self.round.session.kind:
+                raise ValidationError(
+                    {'group': 'Group kind must match session'}
+                )
+
+    class Meta:
+        ordering = [
+            '-round__num',
+            'num',
+        ]
+        unique_together = (
+            ('round', 'num'),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "appearance"
+
+    def __str__(self):
+        return "{0} {1}".format(
+            self.round,
+            self.group,
+        )
+
+    # Methods
+    def get_variance(self):
+        Score = apps.get_model('rmanager.score')
+        Panelist = apps.get_model('rmanager.panelist')
+
+        # Songs Block
+        songs = self.songs.annotate(
+            tot_score=Avg(
+                'scores__points',
+                filter=Q(
+                    scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+        ).order_by('num')
+        scores = Score.objects.filter(
+            panelist__kind=Panelist.KIND.official,
+            song__appearance=self,
+        ).order_by(
+            'category',
+            'panelist__person__last_name',
+            'song__num',
+        )
+        panelists = self.round.panelists.filter(
+            kind=Panelist.KIND.official,
+            category__gt=Panelist.CATEGORY.ca,
+        ).order_by(
+            'category',
+            'person__last_name',
+        )
+        variances = []
+        for song in songs:
+            variances.extend(song.dixons)
+            variances.extend(song.asterisks)
+        variances = list(set(variances))
+        tot_points = scores.aggregate(sum=Sum('points'))['sum']
+        context = {
+            'appearance': self,
+            'songs': songs,
+            'scores': scores,
+            'panelists': panelists,
+            'variances': variances,
+            'tot_points': tot_points,
+        }
+        rendered = render_to_string('reports/variance.html', context)
+        pdf = pydf.generate_pdf(
+            rendered,
+            enable_smart_shrinking=False,
+            orientation='Portrait',
+            margin_top='5mm',
+            margin_bottom='5mm',
+        )
+        content = ContentFile(pdf)
+        return content
+
+    def save_variance(self):
+        content = self.get_variance()
+        self.variance_report.save("variance_report", content)
+
+    def mock(self):
+        # Mock Appearance
+        Chart = apps.get_model('bhs.chart')
+        Panelist = apps.get_model('rmanager.panelist')
+        if self.group.kind == self.group.KIND.chorus:
+            pos = self.group.members.filter(
+                status=self.group.members.model.STATUS.active,
+            ).count()
+            self.pos = pos
+        # Try to approximate reality
+        prelim = getattr(getattr(self, "entry"), "prelim", None)
+        if not prelim:
+            prelim = self.group.appearances.annotate(
+                avg=Avg(
+                    'songs__scores__points',
+                    filter=Q(
+                        songs__scores__panelist__kind=Panelist.KIND.official,
+                    )
+                )
+            ).latest('round__date').avg or randint(60, 70)
+        songs = self.songs.all()
+        for song in songs:
+            song.chart = Chart.objects.filter(
+                status=Chart.STATUS.active
+            ).order_by("?").first()
+            song.save()
+            scores = song.scores.all()
+            for score in scores:
+                d = randint(-3, 3)
+                score.points = prelim + d
+                score.save()
+        if self.status == self.STATUS.new:
+            raise RuntimeError("Out of state")
+        if self.status == self.STATUS.built:
+            self.start()
+            self.finish()
+            self.verify()
+            return
+        if self.status == self.STATUS.started:
+            self.finish()
+            self.verify()
+            return
+        if self.status == self.STATUS.finished:
+            self.verify()
+            return
+
+    def check_variance(self):
+        # Set flag
+        variance = False
+        # Run checks for all songs and save.
+        for song in self.songs.all():
+            asterisks = song.get_asterisks()
+            if asterisks:
+                song.asterisks = asterisks
+                variance = True
+            dixons = song.get_dixons()
+            if dixons:
+                song.dixons = dixons
+                variance = True
+            if variance:
+                song.save()
+        return variance
+
+    def get_csa(self):
+        Panelist = apps.get_model('rmanager.panelist')
+        Song = apps.get_model('rmanager.song')
+        Score = apps.get_model('rmanager.score')
+
+        # Appearancers Block
+        group = self.group
+        stats = Score.objects.select_related(
+            'song__appearance__group',
+            'song__appearance__round__session',
+            'song__appearance__round',
+            'panelist',
+        ).filter(
+            song__appearance__group=self.group,
+            song__appearance__round__session=self.round.session,
+            panelist__kind=Panelist.KIND.official,
+        ).aggregate(
+            max=Max(
+                'song__appearance__round__num',
+            ),
+            tot_points=Sum(
+                'points',
+            ),
+            mus_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.music,
+                )
+            ),
+            per_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.performance,
+                )
+            ),
+            sng_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.singing,
+                )
+            ),
+            tot_score=Avg(
+                'points',
+            ),
+            mus_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.music,
+                )
+            ),
+            per_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.performance,
+                )
+            ),
+            sng_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.singing,
+                )
+            ),
+        )
+        appearances = Appearance.objects.select_related(
+            'group',
+            'round',
+            'round__session',
+        ).prefetch_related(
+            'songs__scores',
+            'songs__scores__panelist',
+        ).filter(
+            group=self.group,
+            round__session=self.round.session,
+        ).annotate(
+            tot_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            mus_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            per_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+            tot_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            mus_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            per_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+        )
+
+        # Monkeypatch
+        for key, value in stats.items():
+            setattr(group, key, value)
+        for appearance in appearances:
+            songs = appearance.songs.prefetch_related(
+                'scores',
+                'scores__panelist',
+            ).order_by(
+                'num',
+            ).annotate(
+                tot_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                mus_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.music,
+                    ),
+                ),
+                per_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.performance,
+                    ),
+                ),
+                sng_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.singing,
+                    ),
+                ),
+                tot_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                mus_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.music,
+                    ),
+                ),
+                per_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.performance,
+                    ),
+                ),
+                sng_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.singing,
+                    ),
+                ),
+            )
+            for song in songs:
+                penalties_map = {
+                    10: "†",
+                    30: "‡",
+                    40: "✠",
+                    50: "✶",
+                }
+                items = " ".join([penalties_map[x] for x in song.penalties])
+                song.penalties_patched = items
+            appearance.songs_patched = songs
+        group.appearances_patched = appearances
+
+        # Panelists
+        panelists = Panelist.objects.select_related(
+            'person',
+        ).filter(
+            kind=Panelist.KIND.official,
+            round__session=self.round.session,
+            round__num=1,
+            category__gt=10,
+        ).order_by('num')
+
+        # Score Block
+        initials = [x.person.initials for x in panelists]
+
+        # Hackalicious
+        category_count = {
+            'Music': 0,
+            'Performance': 0,
+            'Singing': 0,
+        }
+        for panelist in panelists:
+            category_count[panelist.get_category_display()] += 1
+        songs = Song.objects.filter(
+            appearance__round__session=self.round.session,
+            appearance__group=self.group,
+        ).order_by(
+            'appearance__round__kind',
+            'num',
+        )
+        for song in songs:
+            scores = song.scores.filter(
+                panelist__kind=Panelist.KIND.official,
+            ).order_by('panelist__num')
+            class_map = {
+                Panelist.CATEGORY.music: 'warning',
+                Panelist.CATEGORY.performance: 'success',
+                Panelist.CATEGORY.singing: 'info',
+            }
+            items = []
+            for score in scores:
+                items.append((score.points, class_map[score.panelist.category]))
+            song.scores_patched = items
+
+        # Category Block
+        categories = {
+            'Music': [],
+            'Performance': [],
+            'Singing': [],
+        }
+        # panelists from above
+        for panelist in panelists:
+            item = categories[panelist.get_category_display()]
+            item.append(panelist.person.common_name)
+
+        # Penalties Block
+        array = Song.objects.filter(
+            appearance__round__session=self.round.session,
+            appearance__group=self.group,
+            penalties__len__gt=0,
+        ).distinct().values_list('penalties', flat=True)
+        penalties_map = {
+            10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
+            30: "‡ Score(s) penalized due to violation of Article IX.A.2 of the BHS Contest Rules.",
+            40: "✠ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
+            50: "✶ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules.",
+        }
+        penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
+
+        context = {
+            'appearance': self,
+            'round': self.round,
+            'group': group,
+            'initials': initials,
+            'songs': songs,
+            'categories': categories,
+            'penalties': penalties,
+            'category_count': category_count,
+        }
+        rendered = render_to_string(
+            'reports/csa.html',
+            context,
+        )
+        statelog = self.round.statelogs.latest('timestamp')
+        footer = 'Published by {0} at {1}'.format(
+            statelog.by,
+            statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+        )
+        file = pydf.generate_pdf(
+            rendered,
+            orientation='Portrait',
+            margin_top='5mm',
+            margin_bottom='5mm',
+            footer_right=footer,
+            footer_font_name='Encode Sans',
+            footer_font_size=8,
+        )
+        content = ContentFile(file)
+        return content
+
+    def save_csa(self):
+        content = self.get_csa()
+        return self.csa.save('csa', content)
+
+
+    def get_complete_email(self):
+        Panelist = apps.get_model('rmanager.panelist')
+        Score = apps.get_model('rmanager.score')
+
+        # Context
+        group = self.group
+        stats = Score.objects.select_related(
+            'song__appearance__group',
+            'song__appearance__round__session',
+            'song__appearance__round',
+            'panelist',
+        ).filter(
+            song__appearance__group=self.group,
+            song__appearance__round__session=self.round.session,
+            panelist__kind=Panelist.KIND.official,
+        ).aggregate(
+            max=Max(
+                'song__appearance__round__num',
+            ),
+            tot_points=Sum(
+                'points',
+            ),
+            mus_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.music,
+                )
+            ),
+            per_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.performance,
+                )
+            ),
+            sng_points=Sum(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.singing,
+                )
+            ),
+            tot_score=Avg(
+                'points',
+            ),
+            mus_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.music,
+                )
+            ),
+            per_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.performance,
+                )
+            ),
+            sng_score=Avg(
+                'points',
+                filter=Q(
+                    panelist__category=Panelist.CATEGORY.singing,
+                )
+            ),
+        )
+        appearances = Appearance.objects.select_related(
+            'group',
+            'round',
+            'round__session',
+        ).prefetch_related(
+            'songs__scores',
+            'songs__scores__panelist',
+        ).filter(
+            group=self.group,
+            round__session=self.round.session,
+        ).annotate(
+            tot_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            mus_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            per_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_points=Sum(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+            tot_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                ),
+            ),
+            mus_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                ),
+            ),
+            per_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                ),
+            ),
+            sng_score=Avg(
+                'songs__scores__points',
+                filter=Q(
+                    songs__scores__panelist__kind=Panelist.KIND.official,
+                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                ),
+            ),
+        )
+
+        # Monkeypatch
+        for key, value in stats.items():
+            setattr(group, key, value)
+        for a in appearances:
+            songs = a.songs.prefetch_related(
+                'scores',
+                'scores__panelist',
+            ).order_by(
+                'num',
+            ).annotate(
+                tot_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                mus_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.music,
+                    ),
+                ),
+                per_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.performance,
+                    ),
+                ),
+                sng_score=Avg(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.singing,
+                    ),
+                ),
+                tot_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                mus_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.music,
+                    ),
+                ),
+                per_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.performance,
+                    ),
+                ),
+                sng_points=Sum(
+                    'scores__points',
+                    filter=Q(
+                        scores__panelist__kind=Panelist.KIND.official,
+                        scores__panelist__category=Panelist.CATEGORY.singing,
+                    ),
+                ),
+            )
+            for song in songs:
+                penalties_map = {
+                    10: "†",
+                    30: "‡",
+                    40: "✠",
+                    50: "✶",
+                }
+                items = " ".join([penalties_map[x] for x in song.penalties])
+                song.penalties_patched = items
+            a.songs_patched = songs
+        group.appearances_patched = appearances
+        context = {'group': group}
+
+        template = 'emails/appearance_complete.txt'
+        subject = "[Barberscore] CSA for {0}".format(
+            self.group.name,
+        )
+        to = self.group.get_officer_emails()
+        cc = self.round.session.convention.get_drcj_emails()
+        cc.extend(self.round.session.convention.get_ca_emails())
+
+        if self.csa:
+            pdf = self.csa.file
+        else:
+            pdf = self.get_csa()
+        file_name = '{0} CSA.pdf'.format(self)
+        attachments = [(
+            file_name,
+            pdf,
+            'application/pdf',
+        )]
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+            attachments=attachments,
+        )
+        return email
+
+    def send_complete_email(self):
+        if self.status != self.STATUS.completed:
+            raise ValueError("Do not send CSAs unless completed")
+        email = self.get_complete_email()
+        return email.send()
+
+    # Appearance Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return any([
+            self.round.status == self.round.STATUS.published,
+            self.round.session.convention.assignments.filter(
+                person__user=request.user,
+                status__gt=0,
+                category__lte=10,
+            ),
+        ])
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.is_round_manager,
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            all([
+                self.round.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.round.status != self.round.STATUS.published,
+            ]),
+        ])
+
+    # Appearance Conditions
+    def can_verify(self):
+        try:
+            if self.group.kind == self.group.KIND.chorus and not self.pos:
+                is_pos = False
+            else:
+                is_pos = True
+        except AttributeError:
+            is_pos = False
+        return all([
+            is_pos,
+            not self.songs.filter(scores__points__isnull=True),
+        ])
+
+    # Appearance Transitions
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.new],
+        target=STATUS.built,
+    )
+    def build(self, *args, **kwargs):
+        """Sets up the Appearance."""
+        Panelist = apps.get_model('rmanager.panelist')
+        panelists = self.round.panelists.filter(
+            category__gt=Panelist.CATEGORY.ca,
+        )
+        i = 1
+        while i <= 2:  # Number songs constant
+            song = self.songs.create(
+                num=i
+            )
+            for panelist in panelists:
+                song.scores.create(
+                    panelist=panelist,
+                )
+            i += 1
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.built],
+        target=STATUS.started,
+    )
+    def start(self, *args, **kwargs):
+        """Indicates when they start singing."""
+        self.actual_start = now()
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.started],
+        target=STATUS.finished,
+    )
+    def finish(self, *args, **kwargs):
+        """Indicates when they finish singing."""
+        self.actual_finish = now()
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.finished, STATUS.variance],
+        target=RETURN_VALUE(STATUS.variance, STATUS.verified,),
+        conditions=[can_verify],
+    )
+    def verify(self, *args, **kwargs):
+        # Checks for variance.  Returns Verified or Variance accordingly.
+        if self.status == self.STATUS.finished:
+            variance = self.check_variance()
+            if variance:
+                # Run variance report and save file.
+                self.save_variance()
+        # Variance is only checked once.
+        else:
+            variance = False
+        return self.STATUS.variance if variance else self.STATUS.verified
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.verified, STATUS.advanced],
+        target=STATUS.advanced,
+    )
+    def advance(self, *args, **kwargs):
+        # Advances the Group.
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.verified, STATUS.advanced, STATUS.completed],
+        target=STATUS.completed,
+    )
+    def complete(self, *args, **kwargs):
+        # Completes the Group.
+        # Saves CSA via post-transition signal to avoid race condition
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[
+            STATUS.new,
+            STATUS.built,
+        ],
+        target=STATUS.scratched,
+    )
+    def scratch(self, *args, **kwargs):
+        # Scratches the group.
+        # Notify the group?
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.disqualified,
+    )
+    def disqualify(self, *args, **kwargs):
+        # Disqualify the group.
+        # Notify the group?
+        return
+
+
+class Contender(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (-10, 'excluded', 'Excluded',),
+        (0, 'new', 'New',),
+        (10, 'included', 'Included',),
+    )
+
+    status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    # FKs
+    appearance = models.ForeignKey(
+        'Appearance',
+        related_name='contenders',
+        on_delete=models.CASCADE,
+    )
+
+    outcome = models.ForeignKey(
+        'Outcome',
+        related_name='contenders',
+        on_delete=models.CASCADE,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='contenders',
+    )
+
+    # Internals
+    class Meta:
+        ordering = (
+            'outcome__num',
+        )
+        unique_together = (
+            ('appearance', 'outcome',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "contender"
+
+    def __str__(self):
+        return str(self.id)
+
+    # Methods
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.is_session_manager,
+            request.user.is_round_manager,
+            request.user.is_group_manager,
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            all([
+                self.outcome.round.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.outcome.round.status < self.outcome.round.STATUS.started,
+            ]),
+        ])
+
+    # contender Transitions
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.included)
+    def include(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.excluded)
+    def exclude(self, *args, **kwargs):
+        return
+
+
+class Outcome(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    status = models.IntegerField(
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    num = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
+    name = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True,
+    )
+
+    legacy_num = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
+    legacy_name = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True,
+    )
+
+    # FKs
+    round = models.ForeignKey(
+        'Round',
+        related_name='outcomes',
+        on_delete=models.CASCADE,
+    )
+
+    award = models.ForeignKey(
+        'cmanager.award',
+        related_name='outcomes',
+        on_delete=models.CASCADE,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='outcomes',
+    )
+
+    # Methods
+    def get_name(self):
+        Group = apps.get_model('bhs.group')
+        Panelist = apps.get_model('rmanager.panelist')
+        if self.round.kind != self.round.KIND.finals and not self.award.is_single:
+            return "(Result determined in Finals)"
+        if self.award.level == self.award.LEVEL.deferred:
+            return "(Result determined post-contest)"
+        if self.award.level in [self.award.LEVEL.manual, self.award.LEVEL.raw, self.award.LEVEL.standard]:
+            return "MUST ENTER WINNER MANUALLY"
+        # if self.award.level == self.award.LEVEL.raw:
+        #     group_ids = Group.objects.filter(
+        #         appearances__contenders__outcome=self,
+        #     ).values_list('id', flat=True)
+        #     group = Group.objects.filter(
+        #         id__in=group_ids,
+        #     ).annotate(
+        #         avg=Avg(
+        #             'appearances__songs__scores__points',
+        #             filter=Q(
+        #                 appearances__round__session=self.round.session,
+        #                 appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             ),
+        #         ),
+        #         base=Avg(
+        #             'appearances__base',
+        #             filter=Q(
+        #                 appearances__round__session=self.round.session,
+        #             ),
+        #         ),
+        #         diff=F('avg') - F('base'),
+        #         sng=Sum(
+        #             'appearances__songs__scores__points',
+        #             filter=Q(
+        #                 appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #                 appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing
+        #             ),
+        #         ),
+        #         per=Sum(
+        #             'appearances__songs__scores__points',
+        #             filter=Q(
+        #                 appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #                 appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance
+        #             ),
+        #         ),
+        #     ).filter(
+        #         diff__gt=0,
+        #     ).order_by(
+        #        '-diff',
+        #     ).first()
+        #     try:
+        #         winner = group.name
+        #     except AttributeError:
+        #         winner = "(No Award Winner)"
+        #     return winner
+        # if self.award.level == self.award.LEVEL.standard:
+        #     group_ids = Group.objects.filter(
+        #         appearances__contenders__outcome=self,
+        #     ).values_list('id', flat=True)
+        #     groups = Group.objects.filter(
+        #         id__in=group_ids,
+        #     ).annotate(
+        #         score=Avg(
+        #             'appearances__songs__scores__points',
+        #             filter=Q(
+        #                 appearances__round__session=self.round.session,
+        #                 appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             ),
+        #         ),
+        #         base=Avg(
+        #             'appearances__base',
+        #             filter=Q(
+        #                 appearances__round__session=self.round.session,
+        #             ),
+        #         ),
+        #     )
+        #     totals = groups.aggregate(
+        #         Avg('score'),
+        #         Avg('base'),
+        #     )
+        #     winner = groups.annotate(
+        #         score_ratio=F('score') / totals['score__avg'],
+        #         base_ratio=F('base') / totals['base__avg'],
+        #         diff=F('score_ratio') - F('base_ratio'),
+        #     ).order_by(
+        #         '-diff',
+        #     ).first().name
+        if self.award.level == self.award.LEVEL.qualifier:
+            threshold = self.award.threshold
+            group_ids = Group.objects.filter(
+                appearances__contenders__outcome=self,
+            ).values_list('id', flat=True)
+            qualifiers = Group.objects.filter(
+                id__in=group_ids,
+            ).annotate(
+                avg=Avg(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__round__session=self.round.session,
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+            ).filter(
+                avg__gte=threshold,
+            ).order_by(
+                'name',
+            ).values_list('name', flat=True)
+            if qualifiers:
+                return ", ".join(qualifiers)
+            return "(No Qualifiers)"
+        if self.award.level in [self.award.LEVEL.championship, self.award.LEVEL.representative]:
+            winner = Group.objects.filter(
+                appearances__contenders__outcome=self,
+            ).annotate(
+                tot=Sum(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+                sng=Sum(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing
+                    ),
+                ),
+                per=Sum(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance
+                    ),
+                ),
+            ).earliest(
+                '-tot',
+                '-sng',
+                '-per',
+            )
+            if winner:
+                return str(winner.name)
+            return "(No Recipient)"
+        raise RuntimeError("Level mismatch")
+
+    # Internals
+    class Meta:
+        unique_together = (
+            ('round', 'award',),
+            ('round', 'num',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "outcome"
+
+    def __str__(self):
+        return str(self.id)
+
+    def clean(self):
+        pass
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return any([
+            self.round.status == self.round.STATUS.published,
+            self.round.session.convention.assignments.filter(
+                person__user=request.user,
+                status__gt=0,
+                category__lte=10,
+            ),
+        ])
+
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.is_round_manager,
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            all([
+                self.round.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.round.status < self.round.STATUS.verified,
+            ]),
+        ])
+
+
+class Panelist(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (-5, 'released', 'Released',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=STATUS,
+        default=STATUS.active,
+    )
+
+    num = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
+    KIND = Choices(
+        (10, 'official', 'Official'),
+        (20, 'practice', 'Practice'),
+        (30, 'observer', 'Observer'),
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+    )
+
+    CATEGORY = Choices(
+        (5, 'drcj', 'DRCJ'),
+        (10, 'ca', 'CA'),
+        (30, 'music', 'Music'),
+        (40, 'performance', 'Performance'),
+        (50, 'singing', 'Singing'),
+    )
+
+    category = models.IntegerField(
+        choices=CATEGORY,
+        null=True,
+        blank=True,
+    )
+
+    psa = models.FileField(
+        upload_to=FileUploadPath(),
+        blank=True,
+        default='',
+    )
+
+    legacy_person = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    representing = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    # FKs
+    round = models.ForeignKey(
+        'Round',
+        related_name='panelists',
+        on_delete=models.CASCADE,
+    )
+
+    person = models.ForeignKey(
+        'bhs.person',
+        related_name='panelists',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='panelists',
+    )
+
+    @cached_property
+    def row_class(self):
+        if self.category == self.CATEGORY.music:
+            row_class = 'warning'
+        elif self.category == self.CATEGORY.performance:
+            row_class = 'success'
+        elif self.category == self.CATEGORY.singing:
+            row_class = 'info'
+        else:
+            row_class = None
+        return row_class
+
+
+    # Internals
+    objects = PanelistManager()
+
+    class Meta:
+        unique_together = (
+            ('round', 'num',),
+            ('round', 'person', 'category',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "panelist"
+
+    def __str__(self):
+        return "{0} {1}".format(
+            self.round,
+            self.person,
+        )
+
+    def clean(self):
+        if self.kind > self.KIND.practice:
+            raise ValidationError(
+                {'category': 'Panel may only contain Official and Practice'}
+            )
+        if self.num and self.num > 50 and self.kind == self.KIND.official:
+            raise ValidationError(
+                {'num': 'Official Num must be less than 50'}
+            )
+        if self.num and self.num <= 50 and self.kind == self.KIND.practice:
+            raise ValidationError(
+                {'num': 'Practice Num must be greater than 50'}
+            )
+        if self.num and self.num and self.category == self.CATEGORY.ca:
+            raise ValidationError(
+                {'num': 'CAs must not have a num.'}
+            )
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.is_round_manager,
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            all([
+                self.round.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.round.status < self.round.STATUS.started,
+            ]),
+        ])
+
+    def get_psa(self):
+        Score = apps.get_model('rmanager.score')
+        Group = apps.get_model('bhs.group')
+        # Score block
+        group_ids = self.round.appearances.exclude(
+            # Don't include advancers or MTs on PSA
+            draw__gt=0,
+        ).values_list('group__id', flat=True)
+        groups = Group.objects.filter(
+            id__in=group_ids,
+        ).prefetch_related(
+            'appearances__songs__scores',
+            'appearances__songs__scores__panelist',
+            'appearances__round__session',
+        ).annotate(
+            tot_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__round__session=self.round.session,
+                ),
+            ),
+            per_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__round__session=self.round.session,
+                ),
+            ),
+            sng_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__round__session=self.round.session,
+                ),
+            ),
+        ).order_by(
+            '-tot_points',
+            '-sng_points',
+            '-per_points',
+        )
+        # Monkeypatching
+        class_map = {
+            Panelist.CATEGORY.music: 'badge badge-warning mono-font',
+            Panelist.CATEGORY.performance: 'badge badge-success mono-font',
+            Panelist.CATEGORY.singing: 'badge badge-info mono-font',
+        }
+        for group in groups:
+            appearances = group.appearances.filter(
+                round__session=self.round.session,
+            ).order_by('round__kind')
+            for appearance in appearances:
+                songs = appearance.songs.order_by(
+                    'num',
+                ).prefetch_related(
+                    'scores',
+                    'scores__panelist',
+                ).annotate(
+                    avg=Avg(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                        ),
+                    ),
+                    dev=StdDev(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                        ),
+                    ),
+                    Music=Avg(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                            scores__panelist__category=Panelist.CATEGORY.music,
+                        ),
+                    ),
+                    Performance=Avg(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                            scores__panelist__category=Panelist.CATEGORY.performance,
+                        ),
+                    ),
+                    Singing=Avg(
+                        'scores__points',
+                        filter=Q(
+                            scores__panelist__kind=Panelist.KIND.official,
+                            scores__panelist__category=Panelist.CATEGORY.singing,
+                        ),
+                    ),
+                )
+                for song in songs:
+                    scores2 = song.scores.select_related(
+                        'panelist',
+                    ).filter(
+                        panelist__kind=Panelist.KIND.official,
+                    ).order_by('points')
+                    out = []
+                    for score in scores2:
+                        if score.points == 0:
+                            score.points = "00"
+                        span_class = class_map[score.panelist.category]
+                        if score.panelist.person == self.person:
+                            span_class = "{0} black-font".format(span_class)
+                        out.append((score.points, span_class))
+                    song.scores_patched = out
+                    panelist_score = song.scores.get(
+                        panelist__person=self.person,
+                    )
+                    category = self.get_category_display()
+                    diff = panelist_score.points - getattr(song, category)
+                    song.diff_patched = diff
+                    pp = song.scores.get(panelist__person=self.person).points
+                    song.pp = pp
+                appearance.songs_patched = songs
+            group.appearances_patched = appearances
+
+        context = {
+            'panelist': self,
+            'groups': groups,
+        }
+        rendered = render_to_string(
+            'reports/psa.html',
+            context,
+        )
+        statelog = self.round.statelogs.latest('timestamp')
+        footer = 'Published by {0} at {1}'.format(
+            statelog.by,
+            statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+        )
+        file = pydf.generate_pdf(
+            rendered,
+            page_size='Letter',
+            orientation='Portrait',
+            margin_top='5mm',
+            margin_bottom='5mm',
+            footer_right=footer,
+            footer_font_name='Encode Sans',
+            footer_font_size=8,
+        )
+        content = ContentFile(file)
+        return content
+
+    def save_psa(self):
+        content = self.get_psa()
+        return self.psa.save('psa', content)
+
+    def get_psa_email(self):
+        context = {'panelist': self}
+
+        template = 'emails/panelist_released.txt'
+        subject = "[Barberscore] PSA for {0}".format(
+            self.person.common_name,
+        )
+        to = ["{0} <{1}>".format(self.person.common_name, self.person.email)]
+        cc = self.round.session.convention.get_ca_emails()
+
+        if self.psa:
+            pdf = self.psa.file
+        else:
+            pdf = self.get_psa()
+        file_name = '{0} PSA.pdf'.format(self)
+        attachments = [(
+            file_name,
+            pdf,
+            'application/pdf',
+        )]
+
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            cc=cc,
+            attachments=attachments,
+        )
+        return email
+
+    def send_psa_email(self):
+        email = self.get_psa_email()
+        return email.send()
+
+    # Transitions
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=[STATUS.new, STATUS.active, STATUS.released],
+        target=STATUS.released
+    )
+    def release(self, *args, **kwargs):
+        # Saves PSA through post-transition signal to avoid race condition
+        return
 
 
 class Round(TimeStampedModel):
@@ -151,9 +1951,9 @@ class Round(TimeStampedModel):
     # Methods
     def get_oss(self, zoom=1):
         Group = apps.get_model('bhs.group')
-        Panelist = apps.get_model('api.panelist')
-        Appearance = apps.get_model('api.appearance')
-        Song = apps.get_model('api.song')
+        Panelist = apps.get_model('rmanager.panelist')
+        Appearance = apps.get_model('rmanager.appearance')
+        Song = apps.get_model('rmanager.song')
 
         # Score Block
         group_ids = self.appearances.filter(
@@ -564,9 +2364,9 @@ class Round(TimeStampedModel):
         return self.oss.save('oss', oss)
 
     def get_sa(self):
-        Appearance = apps.get_model('api.appearance')
-        Panelist = apps.get_model('api.panelist')
-        Song = apps.get_model('api.song')
+        Appearance = apps.get_model('rmanager.appearance')
+        Panelist = apps.get_model('rmanager.panelist')
+        Song = apps.get_model('rmanager.song')
         Group = apps.get_model('bhs.group')
         Person = apps.get_model('bhs.person')
 
@@ -1012,10 +2812,10 @@ class Round(TimeStampedModel):
 
 
     def get_legacy_oss(self):
-        Panelist = apps.get_model('api.panelist')
-        Appearance = apps.get_model('api.appearance')
-        Song = apps.get_model('api.song')
-        Score = apps.get_model('api.score')
+        Panelist = apps.get_model('rmanager.panelist')
+        Appearance = apps.get_model('rmanager.appearance')
+        Song = apps.get_model('rmanager.song')
+        Score = apps.get_model('rmanager.score')
 
         # Get the Groups
         group_ids = self.appearances.filter(
@@ -1295,7 +3095,7 @@ class Round(TimeStampedModel):
 
 
     def get_titles(self):
-        Song = apps.get_model('api.song')
+        Song = apps.get_model('rmanager.song')
         appearances = self.appearances.filter(
             draw__gt=0,
         ).order_by(
@@ -1339,9 +3139,9 @@ class Round(TimeStampedModel):
         return content
 
     def get_announcements(self):
-        Panelist = apps.get_model('api.panelist')
+        Panelist = apps.get_model('rmanager.panelist')
         Group = apps.get_model('bhs.group')
-        Appearance = apps.get_model('api.appearance')
+        Appearance = apps.get_model('rmanager.appearance')
         appearances = self.appearances.filter(
             draw__gt=0,
         ).order_by(
@@ -1410,7 +3210,7 @@ class Round(TimeStampedModel):
 
 
     def get_judge_emails(self):
-        Panelist = apps.get_model('api.panelist')
+        Panelist = apps.get_model('rmanager.panelist')
         judges = self.panelists.filter(
             # status=Panelist.STATUS.active,
             category__gt=Panelist.CATEGORY.ca,
@@ -1434,7 +3234,7 @@ class Round(TimeStampedModel):
         return result
 
     def mock(self):
-        Appearance = apps.get_model('api.appearance')
+        Appearance = apps.get_model('rmanager.appearance')
         if self.status != self.STATUS.started:
             raise RuntimeError("Round not Started")
         appearances = self.appearances.exclude(
@@ -1449,9 +3249,9 @@ class Round(TimeStampedModel):
 
 
     def get_publish_email(self):
-        Appearance = apps.get_model('api.appearance')
+        Appearance = apps.get_model('rmanager.appearance')
         Group = apps.get_model('bhs.group')
-        Panelist = apps.get_model('api.panelist')
+        Panelist = apps.get_model('rmanager.panelist')
         group_ids = self.appearances.filter(
             is_private=False,
         ).exclude(
@@ -1693,7 +3493,7 @@ class Round(TimeStampedModel):
         return True
 
     def can_complete(self):
-        Appearance = apps.get_model('api.appearance')
+        Appearance = apps.get_model('rmanager.appearance')
         return all([
             self.appearances.filter(
                 status__in=[
@@ -1850,7 +3650,7 @@ class Round(TimeStampedModel):
                 )
 
         # Create Appearances
-        Appearance = apps.get_model('api.appearance')
+        Appearance = apps.get_model('rmanager.appearance')
         Entry = apps.get_model('smanager.entry')
         Grid = apps.get_model('stage.grid')
         # If the first round, populate from entries
@@ -1976,8 +3776,8 @@ class Round(TimeStampedModel):
         target=STATUS.completed,
         conditions=[can_complete],)
     def complete(self, *args, **kwargs):
-        Appearance = apps.get_model('api.appearance')
-        Panelist = apps.get_model('api.panelist')
+        Appearance = apps.get_model('rmanager.appearance')
+        Panelist = apps.get_model('rmanager.panelist')
         # Run outcomes
         outcomes = self.outcomes.all()
         for outcome in outcomes:
@@ -2096,8 +3896,8 @@ class Round(TimeStampedModel):
         target=STATUS.verified,
         conditions=[can_verify],)
     def verify(self, *args, **kwargs):
-        Appearance = apps.get_model('api.appearance')
-        Panelist = apps.get_model('api.panelist')
+        Appearance = apps.get_model('rmanager.appearance')
+        Panelist = apps.get_model('rmanager.panelist')
         completed_appearances = self.appearances.filter(
             status=Appearance.STATUS.verified,
         ).exclude(
@@ -2130,8 +3930,8 @@ class Round(TimeStampedModel):
         conditions=[can_publish],)
     def publish(self, *args, **kwargs):
         """Publishes the results and notifies all parties"""
-        Appearance = apps.get_model('api.appearance')
-        Panelist = apps.get_model('api.panelist')
+        Appearance = apps.get_model('rmanager.appearance')
+        Panelist = apps.get_model('rmanager.panelist')
         # Send the OSS
         # send_publish_email_from_round.delay(self)
         # Send the CSAs
@@ -2150,3 +3950,389 @@ class Round(TimeStampedModel):
         for panelist in panelists:
             send_psa_email_from_panelist.delay(panelist)
         return
+
+
+class Score(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'verified', 'Verified',),
+        # (20, 'entered', 'Entered',),
+        (25, 'cleared', 'Cleared',),
+        (30, 'flagged', 'Flagged',),
+        (35, 'revised', 'Revised',),
+        (40, 'confirmed', 'Confirmed',),
+        # (50, 'final', 'Final',),
+    )
+
+    status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    # CATEGORY = Choices(
+    #     (30, 'music', 'Music'),
+    #     (40, 'performance', 'Performance'),
+    #     (50, 'singing', 'Singing'),
+    # )
+
+    # category = models.IntegerField(
+    #     choices=CATEGORY,
+    # )
+
+    # KIND = Choices(
+    #     (10, 'official', 'Official'),
+    #     (20, 'practice', 'Practice'),
+    #     (30, 'composite', 'Composite'),
+    # )
+
+    # kind = models.IntegerField(
+    #     choices=KIND,
+    # )
+
+    # num = models.IntegerField(
+    # )
+
+    points = models.IntegerField(
+        help_text="""
+            The number of points (0-100)""",
+        null=True,
+        blank=True,
+        validators=[
+            MaxValueValidator(
+                100,
+                message='Points must be between 0 - 100',
+            ),
+            MinValueValidator(
+                0,
+                message='Points must be between 0 - 100',
+            ),
+        ]
+    )
+
+    # FKs
+    song = models.ForeignKey(
+        'Song',
+        related_name='scores',
+        on_delete=models.CASCADE,
+    )
+
+    panelist = models.ForeignKey(
+        'Panelist',
+        related_name='scores',
+        on_delete=models.CASCADE,
+    )
+
+    objects = ScoreManager()
+
+    class Meta:
+        unique_together = (
+            ('song', 'panelist',),
+        )
+
+    class JSONAPIMeta:
+        resource_name = "score"
+
+    def __str__(self):
+        return str(self.pk)
+
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        if not self.panelist:
+            return False
+        if not self.panelist.person:
+            return False
+        if not getattr(self.panelist.person, 'user', False):
+            return False
+        return any([
+            # Assigned DRCJs and CAs can always see
+            self.song.appearance.round.session.convention.assignments.filter(
+                person__user=request.user,
+                status__gt=0,
+                category__lte=10,
+            ),
+            # Panelists can see their own scores
+            self.panelist.person.user == request.user,
+            # Panelists can see others' scores if Appearance is complete.
+            all([
+                self.song.appearance.round.panelists.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                ),
+                self.song.appearance.status <= self.song.appearance.STATUS.completed
+            ]),
+            # Group members can see their own scores if complete.
+            all([
+                self.song.appearance.group.members.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                ),
+                self.song.appearance.status <= self.song.appearance.STATUS.completed
+            ]),
+        ])
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.is_round_manager,
+            request.user.is_scoring_manager,
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            all([
+                self.song.appearance.round.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.song.appearance.round.status < self.song.appearance.round.STATUS.verified,
+            ]),
+        ])
+
+
+class Song(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (0, 'new', 'New',),
+        (10, 'verified', 'Verified',),
+        # (20, 'entered', 'Entered',),
+        # (30, 'flagged', 'Flagged',),
+        # (35, 'verified', 'Verified',),
+        (38, 'finished', 'Finished',),
+        (40, 'confirmed', 'Confirmed',),
+        (50, 'final', 'Final',),
+        (90, 'announced', 'Announced',),
+        (95, 'archived', 'Archived',),
+    )
+
+    status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    num = models.IntegerField(
+    )
+
+    legacy_chart = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    asterisks = ArrayField(
+        base_field=models.IntegerField(
+        ),
+        default=list,
+        blank=True,
+    )
+
+    dixons = ArrayField(
+        base_field=models.IntegerField(
+        ),
+        default=list,
+        blank=True,
+    )
+
+    PENALTY = Choices(
+        (10, 'patreg', 'Primarily Patriotic/Religious Intent',),
+        (30, 'accompaniment', 'Instrumental Accompaniment',),
+        (40, 'texture', 'Chorus Exceeding 4-Part Texture',),
+        (50, 'enhancement', 'Sound Equipment or Electronic Enhancement',),
+    )
+
+    penalties = ArrayField(
+        base_field=models.IntegerField(
+            choices=PENALTY,
+        ),
+        default=list,
+        blank=True,
+    )
+
+    stats = JSONField(
+        null=True,
+        blank=True,
+    )
+
+    # FKs
+    appearance = models.ForeignKey(
+        'Appearance',
+        related_name='songs',
+        on_delete=models.CASCADE,
+    )
+
+    chart = models.ForeignKey(
+        'bhs.chart',
+        related_name='songs',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    # Internals
+    objects = SongManager()
+
+    class Meta:
+        unique_together = (
+            ('appearance', 'num',),
+        )
+        get_latest_by = ['num']
+
+    class JSONAPIMeta:
+        resource_name = "song"
+
+    def __str__(self):
+        return str(self.id)
+
+    # Methods
+    def get_asterisks(self):
+        """
+        Check to see if the song produces a category variance (asterisk)
+
+        Returns a list of categories that produced an asterisk.
+        """
+        # Set Flag
+        asterisks = []
+        # Get Averages by category
+        categories = self.scores.filter(
+            panelist__kind=10,
+        ).values(
+            'panelist__category',
+        ).annotate(
+            avg=Avg('points'),
+        )
+        for category in categories:
+            category_scores = self.scores.filter(
+                panelist__category=category['panelist__category'],
+                panelist__kind=10,
+            )
+            for score in category_scores:
+                is_asterisk = abs(score.points - category['avg']) > 5
+                if is_asterisk:
+                    asterisks.append(category['panelist__category'])
+                    continue
+        asterisks = list(set(asterisks))
+        return asterisks
+
+    def get_dixons(self):
+        """
+        Check to see if the song produces a spread error (Dixon's Q)
+
+        Returns a list of categories that produced a Dixon's Q.
+        """
+        # Set flag
+        output = []
+        # Confidence thresholds
+        confidence = {
+            '3': 0.941,
+            '6': .56,
+            '9': .376,
+            '12': .437,
+            '15': .338,
+        }
+        # Only use official scores.
+        scores = self.scores.filter(
+            panelist__kind=10,
+        )
+        # Get the totals
+        aggregates = scores.aggregate(
+            cnt=Count('id'),
+            max=Max('points'),
+            min=Min('points'),
+            spread=Max('points') - Min('points'),
+        )
+        # Check for validity.
+        if aggregates['cnt'] < 3:
+            return RuntimeError('Panel too small error')
+        # Bypass to avoid division by zero
+        if not aggregates['spread']:
+            return output
+        # Order the scores
+        ascending = scores.order_by('points')
+        descending = scores.order_by('-points')
+        # Separate check for single-panel
+        if aggregates['cnt'] == '3':
+            if abs(ascending[0].points - ascending[1].points) >= 10:
+                output.append(ascending[0].panelist.category)
+            if abs(descending[0].points - descending[1].points) >= 10:
+                output.append(descending[0].panelist.category)
+            return output
+
+        # Otherwise, run the checks, both ascending and descending
+        critical = confidence[str(aggregates['cnt'])]
+        ascending_distance = abs(ascending[0].points - ascending[1].points)
+        ascending_q = ascending_distance / aggregates['spread']
+        if ascending_q > critical and ascending_distance > 4:
+            output.append(ascending[0].panelist.category)
+        descending_distance = abs(descending[0].points - descending[1].points)
+        descending_q = descending_distance / aggregates['spread']
+        if descending_q > critical and descending_distance > 4:
+            output.append(descending[0].panelist.category)
+        return output
+
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return any([
+            self.appearance.round.status == self.appearance.round.STATUS.published,
+            self.appearance.round.session.convention.assignments.filter(
+                person__user=request.user,
+                status__gt=0,
+                category__lte=10,
+            ),
+        ])
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.is_round_manager,
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            all([
+                self.appearance.round.session.convention.assignments.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                    category__lte=10,
+                ),
+                self.appearance.round.status < self.appearance.round.STATUS.verified,
+            ]),
+        ])

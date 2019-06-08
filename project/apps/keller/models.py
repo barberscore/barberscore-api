@@ -75,7 +75,7 @@ class CleanPanelist(models.Model):
     scores = JSONField(
     )
     panelist = models.OneToOneField(
-        'api.panelist',
+        'rmanager.panelist',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -147,10 +147,10 @@ class CleanPanelist(models.Model):
         return convention
 
     def get_panelist(self):
-        Panelist = apps.get_model('api.panelist')
+        Panelist = apps.get_model('rmanager.panelist')
         Convention = apps.get_model('cmanager.convention')
         Session = apps.get_model('smanager.session')
-        Round = apps.get_model('api.round')
+        Round = apps.get_model('rmanager.round')
 
         year = self.year
         num = self.num
@@ -582,13 +582,13 @@ class CleanSong(models.Model):
     scores = JSONField(
     )
     appearance = models.ForeignKey(
-        'api.appearance',
+        'rmanager.appearance',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
     song = models.OneToOneField(
-        'api.song',
+        'rmanager.song',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -615,7 +615,7 @@ class CleanFlat(models.Model):
     points = models.IntegerField(
     )
     score = models.OneToOneField(
-        'api.score',
+        'rmanager.score',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -729,10 +729,10 @@ class RawPanelist(models.Model):
         return convention
 
     def get_panelist(self):
-        Panelist = apps.get_model('api.panelist')
+        Panelist = apps.get_model('rmanager.panelist')
         Convention = apps.get_model('cmanager.convention')
         Session = apps.get_model('smanager.session')
-        Round = apps.get_model('api.round')
+        Round = apps.get_model('rmanager.round')
 
         year = self.year
         num = self.num
@@ -1197,10 +1197,10 @@ class RawSong(models.Model):
 
 
     def get_song(self):
-        Song = apps.get_model('api.song')
+        Song = apps.get_model('rmanager.song')
         Convention = apps.get_model('cmanager.convention')
         Session = apps.get_model('smanager.session')
-        Round = apps.get_model('api.round')
+        Round = apps.get_model('rmanager.round')
 
         year = self.year
         name = self.event
@@ -1316,7 +1316,7 @@ class Flat(models.Model):
         on_delete=models.CASCADE,
     )
     score = models.OneToOneField(
-        'api.score',
+        'rmanager.score',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1438,7 +1438,7 @@ class Selection(models.Model):
     )
 
     song = models.OneToOneField(
-        'api.song',
+        'rmanager.song',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -1553,7 +1553,7 @@ class Complete(models.Model):
     )
 
     panelist = models.OneToOneField(
-        'api.panelist',
+        'rmanager.panelist',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,

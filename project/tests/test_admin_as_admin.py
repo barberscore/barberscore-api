@@ -16,10 +16,10 @@ def test_api_admin(admin_django_client):
 
 
 def test_appearance_admin(admin_django_client, appearance):
-    path = reverse('admin:api_appearance_changelist')
+    path = reverse('admin:rmanager_appearance_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_appearance_change', args=(str(appearance.id),))
+    path = reverse('admin:rmanager_appearance_change', args=(str(appearance.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -70,10 +70,10 @@ def test_contestant_admin(admin_django_client, contestant):
 
 
 def test_contender_admin(admin_django_client, contender):
-    path = reverse('admin:api_contender_changelist')
+    path = reverse('admin:rmanager_contender_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_contender_change', args=(str(contender.id),))
+    path = reverse('admin:rmanager_contender_change', args=(str(contender.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -133,19 +133,19 @@ def test_officer_admin(admin_django_client, officer):
 
 
 def test_outcome_admin(admin_django_client, outcome):
-    path = reverse('admin:api_outcome_changelist')
+    path = reverse('admin:rmanager_outcome_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_outcome_change', args=(str(outcome.id),))
+    path = reverse('admin:rmanager_outcome_change', args=(str(outcome.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
 def test_panelist_admin(admin_django_client, panelist):
-    path = reverse('admin:api_panelist_changelist')
+    path = reverse('admin:rmanager_panelist_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_panelist_change', args=(str(panelist.id),))
+    path = reverse('admin:rmanager_panelist_change', args=(str(panelist.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -169,19 +169,19 @@ def test_repertory_admin(admin_django_client, repertory):
 
 
 def test_round_admin(admin_django_client, round):
-    # path = reverse('admin:api_round_changelist')
+    # path = reverse('admin:rmanager_round_changelist')
     # response = admin_django_client.get(path)
     # assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_round_change', args=(str(round.id),))
+    path = reverse('admin:rmanager_round_change', args=(str(round.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
 
 def test_score_admin(admin_django_client, score):
-    path = reverse('admin:api_score_changelist')
+    path = reverse('admin:rmanager_score_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_score_change', args=(str(score.id),))
+    path = reverse('admin:rmanager_score_change', args=(str(score.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -196,10 +196,10 @@ def test_session_admin(admin_django_client, session):
 
 
 def test_song_admin(admin_django_client, song):
-    path = reverse('admin:api_song_changelist')
+    path = reverse('admin:rmanager_song_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:api_song_change', args=(str(song.id),))
+    path = reverse('admin:rmanager_song_change', args=(str(song.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

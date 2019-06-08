@@ -99,7 +99,7 @@ class Grid(TimeStampedModel):
 
     # FKs
     round = models.ForeignKey(
-        'api.round',
+        'rmanager.round',
         related_name='grids',
         on_delete=models.CASCADE,
     )
