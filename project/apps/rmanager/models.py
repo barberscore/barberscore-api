@@ -22,7 +22,7 @@ from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Min, Max, Count, Avg
-
+from django.core.exceptions import ValidationError
 # Django
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
