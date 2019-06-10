@@ -98,7 +98,10 @@ class ConventionSerializer(serializers.ModelSerializer):
     image_id = serializers.SerializerMethodField()
 
     def get_image_id(self, obj):
-        return obj.image.name
+        if obj.image:
+            return obj.image.name
+        else:
+            return 'missing_image'
 
     class Meta:
         model = Convention

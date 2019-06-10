@@ -30,7 +30,10 @@ class GroupSerializer(serializers.ModelSerializer):
     image_id = serializers.SerializerMethodField()
 
     def get_image_id(self, obj):
-        return obj.image.name
+        if obj.image:
+            return obj.image.name
+        else:
+            return 'missing_image'
 
     class Meta:
         model = Group
@@ -142,7 +145,10 @@ class PersonSerializer(serializers.ModelSerializer):
     image_id = serializers.SerializerMethodField()
 
     def get_image_id(self, obj):
-        return obj.image.name
+        if obj.image:
+            return obj.image.name
+        else:
+            return 'missing_image'
 
 
     class Meta:
@@ -204,7 +210,10 @@ class ChartSerializer(serializers.ModelSerializer):
     image_id = serializers.SerializerMethodField()
 
     def get_image_id(self, obj):
-        return obj.image.name
+        if obj.image:
+            return obj.image.name
+        else:
+            return 'missing_image'
 
     class Meta:
         model = Chart
