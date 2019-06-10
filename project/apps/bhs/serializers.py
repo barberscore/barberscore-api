@@ -4,6 +4,7 @@ from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_json_api import serializers
+from rest_framework.serializers import SerializerMethodField
 
 # Local
 from .fields import TimezoneField
@@ -25,6 +26,11 @@ class GroupSerializer(serializers.ModelSerializer):
         'officers': 'apps.bhs.serializers.OfficerSerializer',
         # 'entries': 'api.serializers.EntrySerializer',
     }
+
+    image_id = serializers.SerializerMethodField()
+
+    def get_image_id(self, obj):
+        return obj.image.name
 
     class Meta:
         model = Group
@@ -48,6 +54,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'image',
+            'image_id',
             'description',
             'participants',
             'bhs_id',
@@ -132,6 +139,11 @@ class PersonSerializer(serializers.ModelSerializer):
         'officers': 'apps.bhs.serializers.OfficerSerializer',
         # 'panelists': 'api.serializers.PanelistSerializer',
     }
+    image_id = serializers.SerializerMethodField()
+
+    def get_image_id(self, obj):
+        return obj.image.name
+
 
     class Meta:
         model = Person
@@ -155,6 +167,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'cell_phone',
             'airports',
             'image',
+            'image_id',
             'description',
             'gender',
             'bhs_id',
@@ -188,6 +201,10 @@ class PersonSerializer(serializers.ModelSerializer):
 
 class ChartSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    image_id = serializers.SerializerMethodField()
+
+    def get_image_id(self, obj):
+        return obj.image.name
 
     class Meta:
         model = Chart
@@ -202,6 +219,7 @@ class ChartSerializer(serializers.ModelSerializer):
             'description',
             'notes',
             'image',
+            'image_id',
             'holders',
             'repertories',
             # 'songs',
