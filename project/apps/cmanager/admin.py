@@ -13,6 +13,7 @@ from .models import Award
 from .models import Convention
 
 from apps.smanager.inlines import SessionInline
+from .filters import DistrictListFilter
 
 admin.site.site_header = 'Barberscore Admin Backend'
 
@@ -124,6 +125,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'level',
         AwardQualifierLevelFilter,
+        DistrictListFilter,
         'division',
         'age',
         'gender',
