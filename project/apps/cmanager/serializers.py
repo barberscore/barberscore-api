@@ -3,7 +3,7 @@
 from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework_json_api import serializers
-
+from rest_framework.serializers import SerializerMethodField
 # Local
 from .fields import TimezoneField
 
@@ -95,6 +95,11 @@ class ConventionSerializer(serializers.ModelSerializer):
         # 'person': 'api.serializers.PersonSerializer',
     }
 
+    image_id = serializers.SerializerMethodField()
+
+    def get_image_id(self, obj):
+        return obj.image.name
+
     class Meta:
         model = Convention
         fields = (
@@ -114,6 +119,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'location',
             'timezone',
             'image',
+            'image_id',
             'description',
             'venue',
             'group',
