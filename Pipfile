@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"auth0-python" = "==3.6.1"
+"auth0-python" = "*"
 "django-sendgrid-v5" = "*"
 "psycopg2-binary" = "*"
 algoliasearch-django = "*"

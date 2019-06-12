@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5e847e8833c81ba23f0b366568ae63f7efca2339ad442c07c01a601a24f14649"
+            "sha256": "c6c762ac87eaa32d0e676f772d3fa85a95234dfaf1782ff807732261620de94f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -48,11 +48,11 @@
         },
         "auth0-python": {
             "hashes": [
-                "sha256:83234aec79b19546c679d495ee925dd77a4ce7a089d9e2386d5f119f1a35f8b3",
-                "sha256:92f6906ec475da984034fbeac2c00c353430570c9d4e0f7cece5854a96429bd1"
+                "sha256:1ac5b7b52d0a526bf748f5e82dac0935e5bfd264d4b8ee94f3942c773b11084e",
+                "sha256:f9a6a6117beb1ad21666ffe6e56d3f1d03fb6de55f48cf5cf5f1c61ecb75d37b"
             ],
             "index": "pypi",
-            "version": "==3.6.1"
+            "version": "==3.8.0"
         },
         "babel": {
             "hashes": [
