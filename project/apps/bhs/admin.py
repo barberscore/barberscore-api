@@ -283,7 +283,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     is_mc.short_description = 'Is Member Center'
 
 
-@admin.register(Member)
+# @admin.register(Member)
 class MemberAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
@@ -368,7 +368,7 @@ class MemberAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     is_mc.short_description = 'Is Member Center'
 
 
-@admin.register(Officer)
+# @admin.register(Officer)
 class OfficerAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     fsm_field = [
         'status',
