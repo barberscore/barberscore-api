@@ -912,17 +912,17 @@ class PersonManager(Manager):
         try:
             validate_international_phonenumber(home_phone)
         except ValidationError:
-            home_phone = None
+            home_phone = ""
 
         try:
             validate_international_phonenumber(cell_phone)
         except ValidationError:
-            cell_phone = None
+            cell_phone = ""
 
         try:
             validate_international_phonenumber(work_phone)
         except ValidationError:
-            work_phone = None
+            work_phone = ""
 
         is_deceased = bool(is_deceased)
 
