@@ -9,6 +9,7 @@ from django.utils.crypto import get_random_string
 from django_rq import job
 from django.apps import apps
 
+
 def get_auth0():
     auth0_api_access_token = cache.get('auth0_api_access_token')
     if not auth0_api_access_token:
@@ -35,6 +36,18 @@ def get_accounts(path='barberscore.json'):
     with open(path) as file:
         accounts = [json.loads(line) for line in file]
         return accounts
+
+
+@job('low')
+def create_or_update_group_from_structure(structure):
+    Group = apps.get_model('bhs.group')
+    return Group.objects.update_or_create_from_structure(structure)
+
+
+@job('low')
+def create_or_update_person_from_human(human):
+    Person = apps.get_model('bhs.person')
+    return Person.objects.update_or_create_from_human(human)
 
 
 @job('low')
