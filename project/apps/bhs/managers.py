@@ -6,6 +6,7 @@ from django_fsm_log.models import StateLog
 from algoliasearch_django.decorators import disable_auto_indexing
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
+from phonenumber_field.validators import validate_international_phonenumber
 
 # Django
 from django.apps import apps
@@ -22,6 +23,7 @@ from django.db.models import IntegerField
 from django.db.models import DateField
 from django.db.models import Case
 from django.core.files.base import ContentFile
+from django.core.exceptions import ValidationError
 
 from .tasks import get_accounts
 
@@ -906,6 +908,21 @@ class PersonManager(Manager):
             part = getattr(self.model.PART, part, None)
         else:
             part = None
+
+        try:
+            validate_international_phonenumber(home_phone)
+        except ValidationError:
+            home_phone = None
+
+        try:
+            validate_international_phonenumber(cell_phone)
+        except ValidationError:
+            cell_phone = None
+
+        try:
+            validate_international_phonenumber(work_phone)
+        except ValidationError:
+            work_phone = None
 
         is_deceased = bool(is_deceased)
 
