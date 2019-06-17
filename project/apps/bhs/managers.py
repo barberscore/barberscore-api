@@ -900,6 +900,20 @@ class PersonManager(Manager):
         suffix = last_name.partition('M.D.')[1].strip()
         if nick_name == first_name:
             nick_name = ""
+
+        try:
+            validate_international_phonenumber(home_phone)
+        except ValidationError:
+            home_phone = ""
+        try:
+            validate_international_phonenumber(cell_phone)
+        except ValidationError:
+            cell_phone = ""
+        try:
+            validate_international_phonenumber(work_phone)
+        except ValidationError:
+            work_phone = ""
+
         if gender:
             gender = getattr(self.model.GENDER, gender, None)
         else:
