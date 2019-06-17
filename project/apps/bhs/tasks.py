@@ -175,5 +175,5 @@ def create_or_update_person_from_human(human):
 
 @job('low')
 def create_or_update_group_from_structure(structure):
-    Group = apps.get_model('bhs.structure')
+    Group = apps.get_model('bhs.group')
     return Group.objects.update_or_create_from_structure(structure)
