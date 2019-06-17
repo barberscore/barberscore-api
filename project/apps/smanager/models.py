@@ -986,13 +986,14 @@ class Session(TimeStampedModel):
             members = entry.group.members.filter(
                 status__gt=0,
             )
-            expiring_count = 0
-            for member in members:
-                try:
-                    if member.person.current_through <= self.convention.close_date:
-                        expiring_count += 1
-                except TypeError:
-                    continue
+            # expiring_count = 0
+            # for member in members:
+            #     try:
+            #         if member.person.current_through <= self.convention.close_date:
+            #             expiring_count += 1
+            #     except TypeError:
+            #         continue
+            expiring_count = "N/A"
             participants = entry.participants
             awards_list = []
             contestants = entry.contestants.filter(
