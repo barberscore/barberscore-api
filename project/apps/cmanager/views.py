@@ -10,6 +10,8 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from .renderers import XLSXRenderer
+from .responders import XLSXResponse
 
 # Local
 from .filtersets import AssignmentFilterset
@@ -132,6 +134,22 @@ class AwardViewSet(viewsets.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
+
+    @action(
+        methods=['get'],
+        detail=False,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
+    def portfolio(self, request):
+        xlsx = Award.objects.get_awards()
+        file_name = 'awards-report'
+        return XLSXResponse(
+            xlsx,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
 
 
 class ConventionViewSet(viewsets.ModelViewSet):

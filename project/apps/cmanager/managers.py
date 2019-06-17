@@ -50,36 +50,53 @@ class AwardManager(Manager):
         ws = wb.active
         fieldnames = [
             'ID',
+            'District',
+            'Division',
             'Name',
             'Kind',
             'Gender',
             'Season',
             'Level',
             'Single',
+            'Spots',
             'Threshold',
+            'Minimum',
+            'Advance',
         ]
         ws.append(fieldnames)
-        awards = self.filter(
+        awards = self.select_related(
+            'group',
+        ).filter(
             status__gt=0,
         ).order_by('tree_sort')
         for award in awards:
             pk = str(award.id)
+            district = award.group.code
+            division = award.get_division_display()
             name = award.name
             kind = award.get_kind_display()
             gender = award.get_gender_display()
             season = award.get_season_display()
             level = award.get_level_display()
             single = award.is_single
+            spots = award.spots
             threshold = award.threshold
+            minimum = award.minimum
+            advance = award.advance
             row = [
                 pk,
+                district,
+                division,
                 name,
                 kind,
                 gender,
                 season,
                 level,
                 single,
+                spots,
                 threshold,
+                minimum,
+                advance,
             ]
             ws.append(row)
         file = save_virtual_workbook(wb)
