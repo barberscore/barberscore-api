@@ -152,3 +152,15 @@ def get_account_orphans():
     two = list(Person.objects.values_list('mc_pk', flat=True))
     orphans = [{'id':a} for a in one if a not in two]
     return orphans
+
+
+@job('low')
+def create_or_update_person_from_human(human):
+    Person = apps.get_model('bhs.person')
+    return Person.objects.update_or_create_from_human(human)
+
+
+@job('low')
+def create_or_update_group_from_structure(structure):
+    Group = apps.get_model('bhs.structure')
+    return Group.objects.update_or_create_from_structure(structure)
