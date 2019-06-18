@@ -60,6 +60,7 @@ pytest = "*"
 pytest-django = "*"
 coreapi = "*"
 pyyaml = "*"
+python-docx = "*"
 
 [requires]
 python_version = "3.7"

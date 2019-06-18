@@ -33,3 +33,18 @@ class XLSXResponse(Response):
             *args,
             **kwargs
         )
+
+class DOCXResponse(Response):
+    def __init__(self, docx, file_name, *args, **kwargs):
+        headers = {
+            'Content-Disposition': 'filename="{}.docx"'.format(file_name),
+            # 'Content-Length': len(xlsx),
+        }
+
+        super().__init__(
+            docx,
+            content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            headers=headers,
+            *args,
+            **kwargs
+        )

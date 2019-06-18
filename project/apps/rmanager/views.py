@@ -43,6 +43,8 @@ from .renderers import PDFRenderer
 from .renderers import XLSXRenderer
 from .responders import PDFResponse
 from .responders import XLSXResponse
+from .renderers import DOCXRenderer
+from .responders import DOCXResponse
 
 from .serializers import AppearanceSerializer
 from .serializers import ContenderSerializer
@@ -607,7 +609,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         methods=['get'],
         detail=True,
         renderer_classes=[
-            PDFRenderer,
+            DOCXRenderer,
         ],
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
@@ -615,14 +617,14 @@ class RoundViewSet(viewsets.ModelViewSet):
     def announcements(self, request, pk=None):
         round = Round.objects.select_related(
         ).get(pk=pk)
-        pdf = round.get_announcements()
+        docx = round.get_announcements()
         file_name = '{0} {1} {2} Announcements'.format(
             round.session.convention,
             round.session.get_kind_display(),
             round.get_kind_display(),
         )
-        return PDFResponse(
-            pdf,
+        return DOCXResponse(
+            docx,
             file_name=file_name,
             status=status.HTTP_200_OK
         )
