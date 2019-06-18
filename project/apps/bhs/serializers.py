@@ -22,8 +22,8 @@ class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
         'repertories': 'apps.bhs.serializers.RepertorySerializer',
-        'members': 'apps.bhs.serializers.MemberSerializer',
-        'officers': 'apps.bhs.serializers.OfficerSerializer',
+        # 'members': 'apps.bhs.serializers.MemberSerializer',
+        # 'officers': 'apps.bhs.serializers.OfficerSerializer',
         # 'entries': 'api.serializers.EntrySerializer',
     }
 
@@ -70,8 +70,8 @@ class GroupSerializer(serializers.ModelSerializer):
             'awards',
             'conventions',
             'entries',
-            'members',
-            'officers',
+            # 'members',
+            # 'officers',
             'repertories',
             'permissions',
         ]
@@ -79,8 +79,8 @@ class GroupSerializer(serializers.ModelSerializer):
     class JSONAPIMeta:
         included_resources = [
             'repertories',
-            'members',
-            'officers',
+            # 'members',
+            # 'officers',
             # 'entries',
         ]
 

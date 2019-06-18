@@ -146,7 +146,7 @@ class SessionSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            # 'contests',
+            'contests',
             'entries',
             # 'rounds',
         ]

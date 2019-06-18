@@ -73,8 +73,11 @@ class GroupViewSet(viewsets.ModelViewSet):
         # 'conventions',
         # 'entries',
         'members',
+        'members__person',
         'officers',
-        # 'repertories',
+        'officers__person',
+        'repertories',
+        'repertories__chart',
         'statelogs',
     ).distinct()
     serializer_class = GroupSerializer

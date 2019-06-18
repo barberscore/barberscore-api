@@ -250,7 +250,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         'entries',
         'rounds',
         'statelogs',
-    ).distinct().order_by('id')
+    ).order_by('id')
     serializer_class = SessionSerializer
     filterset_class = SessionFilterset
     filter_backends = [
