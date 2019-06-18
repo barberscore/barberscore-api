@@ -44,6 +44,7 @@ sentry-sdk = "*"
 django-phonenumber-field = "*"
 phonenumberslite = "*"
 django-reversion = "*"
+python-docx = "*"
 
 [dev-packages]
 "autopep8" = "*"
@@ -60,7 +61,6 @@ pytest = "*"
 pytest-django = "*"
 coreapi = "*"
 pyyaml = "*"
-python-docx = "*"
 
 [requires]
 python_version = "3.7"
