@@ -102,12 +102,12 @@
             {% for group in groups %}
               <tr class='pbi_avoid'>
                 <td>
-                  {{group.name|truncatechars_html:30|safe}}<br>
+                  {{group.name|truncatechars_html:20|safe}}<br>
                 </td>
                 <td>
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
-                      {{song.chart.title|truncatechars_html:30|safe|default:"(Song not in Group's Repertory)"}}<br>
+                      {{song.chart.title|truncatechars_html:15|safe|default:"(Song not in Group's Repertory)"}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
