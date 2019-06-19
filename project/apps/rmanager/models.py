@@ -3989,13 +3989,13 @@ class Round(TimeStampedModel):
         Appearance = apps.get_model('rmanager.appearance')
         Panelist = apps.get_model('rmanager.panelist')
         # Send the OSS
-        # send_publish_email_from_round.delay(self)
+        send_publish_email_from_round.delay(self)
         # Send the CSAs
-        # completed_appearances = self.appearances.filter(
-        #     status=Appearance.STATUS.completed,
-        # )
-        # for appearance in completed_appearances:
-        #     send_complete_email_from_appearance.delay(appearance)
+        completed_appearances = self.appearances.filter(
+            status=Appearance.STATUS.completed,
+        )
+        for appearance in completed_appearances:
+            send_complete_email_from_appearance.delay(appearance)
         # Send the SAs
         send_publish_report_email_from_round.delay(self)
         # Send the PSAs
