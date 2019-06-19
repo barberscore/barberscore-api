@@ -19,6 +19,11 @@
         font-family: 'Inconsolata', monospace;
         font-weight: 700 !important;
       }*/
+      tr {
+         line-height: 15px;
+         min-height: 15px;
+         height: 15px;
+      }
       table {
         line-height: 1.0 !important;
       }
@@ -114,7 +119,7 @@
                 <td>
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
-                      {{song.chart.title|truncatechars_html:30|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}<br>
+                      {{song.chart.title|truncatechars_html:20|safe|default:"(Not in Repertory)"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
