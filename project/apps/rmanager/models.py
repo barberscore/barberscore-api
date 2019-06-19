@@ -692,7 +692,7 @@ class Appearance(TimeStampedModel):
             margin_bottom='5mm',
             footer_right=footer,
             footer_font_name='Encode Sans',
-            footer_font_size=8,
+            footer_font_size=6,
         )
         content = ContentFile(file)
         return content
@@ -1788,7 +1788,7 @@ class Panelist(TimeStampedModel):
             margin_bottom='5mm',
             footer_right=footer,
             footer_font_name='Encode Sans',
-            footer_font_size=8,
+            footer_font_size=6,
         )
         content = ContentFile(file)
         return content
@@ -2314,6 +2314,8 @@ class Round(TimeStampedModel):
                 page_size = 'Legal'
             else:
                 page_size = 'Letter'
+        # International Overwrite
+        page_size = 'Legal'
         try:
             statelog = self.statelogs.latest('timestamp')
             footer = 'Published by {0} at {1}'.format(
@@ -2330,7 +2332,7 @@ class Round(TimeStampedModel):
             margin_bottom='5mm',
             footer_right=footer,
             footer_font_name='Encode Sans',
-            footer_font_size=8,
+            footer_font_size=6,
             zoom=zoom,
         )
         content = ContentFile(file)
@@ -2794,7 +2796,7 @@ class Round(TimeStampedModel):
             margin_bottom='5mm',
             footer_right=footer,
             footer_font_name='Encode Sans',
-            footer_font_size=8,
+            footer_font_size=6,
         )
         content = ContentFile(file)
         return content
@@ -3083,7 +3085,7 @@ class Round(TimeStampedModel):
             margin_bottom='5mm',
             footer_right=footer,
             footer_font_name='Courier',
-            footer_font_size=8,
+            footer_font_size=6,
             # zoom=zoom,
         )
         content = ContentFile(file)
