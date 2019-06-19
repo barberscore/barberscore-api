@@ -3,9 +3,11 @@
 import logging
 import uuid
 from random import randint
+from io import BytesIO
 
 # Third-Party
 import pydf
+from docx import Document
 from django_fsm import FSMIntegerField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
@@ -14,7 +16,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django.db.models import Sum, Max, Avg, StdDev, Count, Q
+from django.db.models import Sum, Max, Avg, StdDev, Count, Q, F, Func
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django_fsm import RETURN_VALUE
 from django.db.models.functions import DenseRank, RowNumber, Rank
@@ -3182,20 +3184,25 @@ class Round(TimeStampedModel):
                         appearances__round__session=self.session,
                     ),
                 ),
-                tot_score=Avg(
+                raw_score=Avg(
                     'appearances__songs__scores__points',
                     filter=Q(
                         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                         appearances__round__session=self.session,
                     ),
                 ),
+                tot_score=Func(
+                    F('raw_score'),
+                    function='ROUND',
+                    template='%(function)s(%(expressions)s, 1)'
+                ),
             ).order_by(
                 '-tot_points',
             )[:5]
         else:
             groups = None
-        if groups:
-            groups = reversed(groups)
+        # if groups:
+        #     groups = reversed(groups)
         pos = self.appearances.aggregate(sum=Sum('pos'))['sum']
         context = {
             'round': self,
@@ -3205,6 +3212,7 @@ class Round(TimeStampedModel):
             'groups': groups,
             'pos': pos,
         }
+
         rendered = render_to_string('reports/announcements.html', context)
         file = pydf.generate_pdf(
             rendered,
@@ -3214,6 +3222,49 @@ class Round(TimeStampedModel):
             margin_bottom='5mm',
         )
         content = ContentFile(file)
+
+        document = Document()
+
+        document.add_heading(
+            'Announcements {0}'.format(self)
+        )
+        document.add_heading('Evaluations')
+        document.add_paragraph(
+            "Remember to state Start time(s) for each round, Rotation time and general location. For choruses it is critical to provide location for each chorus. 'It's on your CSA or eval schedule' is only appropriate for quartets."
+        )
+        document.add_heading('Administration')
+        document.add_paragraph(
+            "CSA: sent to group admins"
+        )
+        if pos:
+            document.add_paragraph(
+                "Total participants on stage: {0}".format(pos)
+            )
+        document.add_heading('Awards')
+        for outcome in outcomes:
+            document.add_paragraph("{0}: {1}".format(outcome.award.name, outcome.name))
+        if appearances:
+            document.add_heading('Draw')
+            for appearance in appearances:
+                document.add_paragraph(
+                    "{0}) {1}".format(appearance.draw, appearance.group.name),
+                    # style='List Bullet',
+                )
+        if groups:
+            document.add_heading('Results')
+            for group in groups:
+                document.add_paragraph(
+                    "With a score of {0}, a {1} average: {2}".format(
+                        group.tot_points,
+                        group.tot_score,
+                        group.name,
+                    ),
+                    style='List Bullet',
+                )
+
+        buff = BytesIO()
+        document.save(buff)
+        content = ContentFile(buff.getvalue())
         return content
 
 

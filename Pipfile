@@ -44,6 +44,7 @@ sentry-sdk = "*"
 django-phonenumber-field = "*"
 phonenumberslite = "*"
 django-reversion = "*"
+python-docx = "*"
 
 [dev-packages]
 "autopep8" = "*"

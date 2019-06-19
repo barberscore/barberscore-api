@@ -10,14 +10,14 @@
         padding-bottom: 10px;
       }
       .panelist {
-        font-size: 18pt;
+        font-size: 14pt;
       }
       .points {
         font-size: 24pt;
       }
       .enter-height {
         padding: 50px;
-        line-height: 50px;
+        line-height: 40px;
       }
       .side-border {
         border-left: 10px solid black;
@@ -33,8 +33,8 @@
         line-height: 1.4;
       }
       section {
-        margin-top: 20px;
-        margin-bottom: 20px;
+        margin-top: 15px;
+        margin-bottom: 15px;
       }
     </style>
   </head>
@@ -57,11 +57,11 @@
         <table class='table'>
           <thead>
             <tr>
-              <th class='w-panelists points'>
+              <th class='w-panelists panelist'>
                 Panelist
               </th>
               {% for song in songs %}
-                <th class='w-scores points text-center' colspan=2>&nbsp;Song {{song.num}}</th>
+                <th class='w-scores panelist text-center' colspan=2>&nbsp;Song {{song.num}}</th>
               {% endfor %}
             </tr>
           </thead>
@@ -120,15 +120,11 @@
           </tfoot>
         </table>
       </section>
-      <br>
-      <br>
-      <br>
-      <br>
-      <section>
+      <p>
         <small>
           {{appearance}}
         </small>
-      </section>
+      </p>
     </div>
   </body>
 </html>
