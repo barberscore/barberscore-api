@@ -2194,14 +2194,12 @@ class Round(TimeStampedModel):
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
         # Missing flag
+        # use group_ids - these are the completeds
         is_missing = bool(Song.objects.filter(
             appearance__round__session=self.session,
-            appearance__round__num__lte=self.num,
-            appearance__status=Appearance.STATUS.completed,
-            appearance__is_private=False,
             chart__isnull=True,
+            appearance__group__id__in=group_ids,
         ))
-
         # Eval Only Block
         privates = self.appearances.prefetch_related(
             'group',
@@ -2957,12 +2955,11 @@ class Round(TimeStampedModel):
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
         # Missing flag
+        # use group_ids - these are the completeds
         is_missing = bool(Song.objects.filter(
             appearance__round__session=self.session,
-            appearance__round__num__lte=self.num,
-            appearance__status=Appearance.STATUS.completed,
-            appearance__is_private=False,
             chart__isnull=True,
+            appearance__group__id__in=group_ids,
         ))
 
         # Eval Only Block

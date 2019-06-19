@@ -190,11 +190,15 @@
           <div>
             <h5>Footnotes</h5>
             <p>
-              {%if round.footnotes %}{{round.footnotes}}<br>{%endif%}
+              {%if round.footnotes %}
+                {{round.footnotes}}<br>
+              {%endif%}
               {% for penalty in penalties %}
                 {{penalty}}<br>
               {% endfor %}
-              {% if is_missing %}▴ The Group is responsible for validating any performed chart to the DRCJ within 30 days.<br>{% endif %}
+              {% if is_missing %}
+                ▴ The Group is responsible for validating any performed chart to the DRCJ within 30 days.<br>
+              {% endif %}
             </p>
           </div>
         {% endif %}
