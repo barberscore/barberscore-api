@@ -2305,17 +2305,23 @@ class Round(TimeStampedModel):
         rendered = render_to_string('reports/oss.html', context)
 
         if self.session.rounds.count() == 1:
-            if groups.count() < 16:
+            if groups.count() <= 15:
                 page_size = 'Letter'
             else:
                 page_size = 'Legal'
         else:
-            if groups.count() > 8 and self.kind == self.KIND.finals:
-                page_size = 'Legal'
+            if self.kind == self.KIND.finals:
+                if groups.count() >= 8:
+                    page_size = 'Legal'
+                else:
+                    page_size = 'Letter'
+            elif self.kind == self.KIND.semis:
+                if groups.count() >= 8:
+                    page_size = 'Legal'
+                else:
+                    page_size = 'Letter'
             else:
-                page_size = 'Letter'
-        # International Overwrite
-        page_size = 'Legal'
+                page_size = 'Legal'
         try:
             statelog = self.statelogs.latest('timestamp')
             footer = 'Published by {0} at {1}'.format(

@@ -7,21 +7,24 @@
     <style type="text/css">
       body {
         font-family: 'Encode Sans', sans-serif !important;
-        font-size: 10pt;
+        {% if round.kind == 1 and round.num == 3 %}
+            font-size: 9pt; /* 9pt for single-page */
+        {% else %}
+            font-size: 10pt;
+        {% endif %}
         font-weight: 200;
       }
       strong {
         font-family: 'Encode Sans', sans-serif;
         font-weight: 600;
       }
-      /*.table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td
-      {
-          padding: 1px;
-          line-height: 1.4;
-      }*/
       table {
         table-layout:fixed; /* will switch the table-layout algorythm */
-        line-height: 1.3;
+        {% if round.kind == 3 or round.kind == 2 and round.num == 2 %}
+            line-height: 1.1; /* 1.1 for single-page */
+        {% else %}
+            line-height: 1.3;
+        {% endif %}
       }
       .w-groups {
         width: 40% !important;
@@ -88,7 +91,7 @@
                   {% endif %}
                 </td>
                 <td class='w-songs'>
-                  <strong>Total: {{group.tot_points}} Points</strong>&nbsp;({{group.mus_points}}/{{group.per_points}}/{{group.sng_points}})<br>
+                  <strong>Total: {{group.tot_points}} Points</strong><br>
                   {% for appearance in group.appearances_patched %}
                       {% if group.max_round > 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
@@ -140,12 +143,22 @@
       <section>
         <p>
           {% if round.kind == 1 %}
-            Groups are listed above by total points and in accordance with Article VII of the BHS Contest Rules.<br>
+            {% if round.session.convention.district == 'BHS' %}
+                Groups are ranked above in accordance with Article VII of the BHS Contest Rules.<br>
+            {% else %}
+                Groups are listed above by total points and in accordance with Article VII of the BHS Contest Rules.<br>
+            {% endif %}
           {% else %}
-            Groups not advancing and/or competing only for single-round awards are listed above by total points and in accordance with Article VII of the BHS Contest Rules.<br>
+            {% if round.session.convention.district == 'BHS' %}
+              Groups not advancing are ranked above in accordance with Article VII of the BHS Contest Rules.<br>
+            {% else %}
+              Groups not advancing and/or competing only for single-round awards are listed above by total points and in accordance with Article VII of the BHS Contest Rules.<br>
+            {% endif %}
           {% endif %}
-          {% if privates %}
-            The following groups performed for evaluation score only: {{privates|join:", "}}
+          {% if round.session.convention.district != 'BHS' %}
+              {% if privates %}
+                The following groups performed for evaluation score only: {{privates|join:", "}}
+              {% endif %}
           {% endif %}
         </p>
       </section>
@@ -163,22 +176,12 @@
           {% endif %}
         </div>
         <div>
-        {% if advancers %}
-          <div>
-            <h5>Draw</h5>
-            <p>
-              {% for draw, group in advancers %}
-                <span class='text-nowrap'><strong>{{draw}}:</strong>&nbsp;{{group}}&nbsp;&nbsp;</span>
-              {% endfor %}
-            </p>
-          </div>
-        {% endif %}
         {% if outcomes %}
           <div>
             <h5>Awards</h5>
             <ul class='list-unstyled'>
               {% for award, winner in outcomes %}
-                <li><strong>{{award}}:</strong>&nbsp;&nbsp;{{winner}}</li>
+                <li><strong>{{award}}:</strong>{% if round.session.convention.district == 'BHS' %}<br>{% endif %}&nbsp;&nbsp;{{winner}}</li>
               {% endfor %}
             </ul>
           </div>
@@ -196,6 +199,18 @@
           </div>
         {% endif %}
         </div>
+      </section>
+      <section>
+        {% if advancers %}
+          <div>
+            <h5>Draw</h5>
+            <p>
+              {% for draw, group in advancers %}
+                <span class='text-nowrap'><strong>{{draw}}:</strong>&nbsp;{{group}}&nbsp;&nbsp;</span>
+              {% endfor %}
+            </p>
+          </div>
+        {% endif %}
       </section>
     </main>
   </body>
