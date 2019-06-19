@@ -25,7 +25,7 @@
         font-weight: 500;
       }
       section {
-          padding-top: 20px;
+          /*padding-top: 20px;*/
           padding-bottom: 20px;
       }
       .right-out {
@@ -84,9 +84,6 @@
           Representing: {{appearance.representing}}
         </div>
       </section>
-      <br>
-      <br>
-      <br>
       <section>
         <h3>
           Results
@@ -182,7 +179,7 @@
               {% for song in songs %}
                 <tr class='pbi_avoid'>
                   <td>
-                    {{song.chart.title|truncatechars_html:"50"|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}
+                    {{song.chart.title|truncatechars_html:"20"|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}
                   </td>
                   {% for points, row_class in song.scores_patched %}
                     <td class='text-right {{row_class}}'>
