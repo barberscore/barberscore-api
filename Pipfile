@@ -32,7 +32,6 @@ ipython = "==6.5.0"
 mysqlclient = "*"
 openpyxl = "*"
 pillow = "*"
-pydf = {git = "https://github.com/barberscore/pydf.git"}
 python-pdf = "*"
 redis = "*"
 requests = "*"
