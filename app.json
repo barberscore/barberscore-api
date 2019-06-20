@@ -3,7 +3,7 @@
   "description": "Scoring and Contest API for the Barbershop Harmony Society",
   "logo": "https://s3-us-west-1.amazonaws.com/barberscore/bhs_logo.png",
   "repository": "https://github.com/barberscore/barberscore-api",
-  "stack": "heroku-16",
+  "stack": "heroku-18",
   "success_url": "/admin/",
   "buildpacks": [
     {
@@ -118,7 +118,7 @@
         "AUTH0_DOMAIN": "test",
         "AUTH0_AUDIENCE": "test"
       },
-      "stack": "heroku-16",
+      "stack": "heroku-18",
       "scripts": {
         "test": "pytest"
       }
