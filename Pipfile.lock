@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9f8f0bea5e8bf89a78c355b4086e3a13e3eb0c7dd0ad03ca77383c853943b135"
+            "sha256": "c9c71c0f95f58059d9332ecf71d777a37c22dfcef971d37be2407b19c7d00df8"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -656,11 +656,6 @@
             ],
             "version": "==2.19"
         },
-        "pydf": {
-            "editable": true,
-            "git": "https://github.com/tutorcruncher/pydf.git",
-            "ref": "0d537e8251c72437abee0898e7be8a81d6d18abb"
-        },
         "pygments": {
             "hashes": [
                 "sha256:71e430bc85c88a430f000ac1d9b331d2407f681d6f6aec95e8bcfbc3df5b0127",
@@ -674,13 +669,6 @@
                 "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"
             ],
             "version": "==1.7.1"
-        },
-        "pypdf2": {
-            "hashes": [
-                "sha256:e28f902f2f0a1603ea95ebe21dff311ef09be3d0f0ef29a3e44a932729564385"
-            ],
-            "index": "pypi",
-            "version": "==1.26.0"
         },
         "python-dateutil": {
             "hashes": [
@@ -701,6 +689,14 @@
                 "sha256:7e430f4b9dd2b621b0051f6a362f103447ea8e267594c602a5c502a0c694ee38"
             ],
             "version": "==3.1.0"
+        },
+        "python-pdf": {
+            "hashes": [
+                "sha256:1b16766d888f2870322689a28bc89a195e27829f65df9d4fc2f6714fcad8fb33",
+                "sha256:9298c2558ec5571c25cbbfa1927f3381eb3876cce6ece41fe415694adbb4cc54"
+            ],
+            "index": "pypi",
+            "version": "==0.37"
         },
         "pytz": {
             "hashes": [
