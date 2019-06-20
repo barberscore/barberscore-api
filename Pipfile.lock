@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7e0bd257b1b95d0d6b8ea01b0f8cad298ada2e1bb4268b0f6a4d8f981acfd245"
+            "sha256": "c634718656121eb22b0f2583a2798bdaef654a1dbc94be9b58f936c7716568a9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -655,6 +655,10 @@
                 "sha256:a988718abfad80b6b157acce7bf130a30876d27603738ac39f140993246b25b3"
             ],
             "version": "==2.19"
+        },
+        "pydf": {
+            "git": "https://github.com/barberscore/pydf.git",
+            "ref": "0d537e8251c72437abee0898e7be8a81d6d18abb"
         },
         "pygments": {
             "hashes": [
