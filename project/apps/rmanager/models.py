@@ -3252,9 +3252,13 @@ class Round(TimeStampedModel):
             document.add_heading('Draw')
             for appearance in appearances:
                 document.add_paragraph(
-                    "{0}) {1}".format(appearance.draw, appearance.group.name),
+                    "{0}: {1}".format(appearance.draw, appearance.group.name),
                     # style='List Bullet',
                 )
+            document.add_paragraph(
+                "MT: {0}".format(mt.group.name),
+                # style='List Bullet',
+            )
         if groups:
             document.add_heading('Results')
             for group in groups:
