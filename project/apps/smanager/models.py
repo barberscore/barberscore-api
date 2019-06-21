@@ -1504,11 +1504,9 @@ class Session(TimeStampedModel):
         for i in range(self.num_rounds):
             num = i + 1
             kind = self.num_rounds - i
-            if kind == 3:
+            if kind == 3: # Unique to International
                 spots = 20
-            elif num == 1:
-                spots = 10
-            elif num == 2 and kind != 1:
+            elif num == 2 and kind != 1: # All Semis
                 spots = 10
             else:
                 spots = 0
