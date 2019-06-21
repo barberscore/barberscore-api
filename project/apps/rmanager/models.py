@@ -1967,6 +1967,9 @@ class Round(TimeStampedModel):
             # Don't include scratches
             status=Appearance.STATUS.scratched,
         ).exclude(
+            # Don't include disqualifications.
+            status=Appearance.STATUS.disqualified,
+        ).exclude(
             # Don't include mic testers on OSS
             num__lte=0,
         ).values_list('group__id', flat=True)
@@ -2210,6 +2213,16 @@ class Round(TimeStampedModel):
         ).values_list('group__name', flat=True)
         privates = list(privates)
 
+        # Disqualification Block
+        disqualifications = self.appearances.prefetch_related(
+            'group',
+        ).filter(
+            status=Appearance.STATUS.disqualified,
+        ).order_by(
+            'group__name',
+        ).values_list('group__name', flat=True)
+        disqualifications = list(disqualifications)
+
         # Draw Block
         if self.kind != self.KIND.finals:
             # Get advancers
@@ -2297,6 +2310,7 @@ class Round(TimeStampedModel):
             'groups': groups,
             'penalties': penalties,
             'privates': privates,
+            'disqualifications': disqualifications,
             'advancers': advancers,
             'panelists': panelists,
             'outcomes': outcomes,
@@ -2390,6 +2404,9 @@ class Round(TimeStampedModel):
         group_ids = self.appearances.exclude(
             # DOn't include scratches
             status=Appearance.STATUS.scratched,
+        ).exclude(
+            # Don't include disqualifications.
+            status=Appearance.STATUS.disqualified,
         ).exclude(
             # Don't include advancers on SA
             draw__gt=0,
@@ -2842,6 +2859,9 @@ class Round(TimeStampedModel):
         ).exclude(
             # Don't include scratches
             status=Appearance.STATUS.scratched,
+        ).exclude(
+            # Don't include disqualifications.
+            status=Appearance.STATUS.disqualified,
         ).exclude(
             # Don't include mic testers on OSS
             num__lte=0,
@@ -3307,6 +3327,9 @@ class Round(TimeStampedModel):
             raise RuntimeError("Round not Started")
         appearances = self.appearances.exclude(
             status=Appearance.STATUS.verified,
+        ).exclude(
+            # Don't include disqualifications.
+            status=Appearance.STATUS.disqualified,
         ).exclude(
             status=Appearance.STATUS.scratched,
         )
