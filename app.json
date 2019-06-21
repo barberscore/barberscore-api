@@ -1,7 +1,7 @@
 {
   "name": "Barberscore API",
   "description": "Scoring and Contest API for the Barbershop Harmony Society",
-  "logo": "https://s3-us-west-1.amazonaws.com/barberscore/bhs_logo.png",
+  "logo": "https://res.cloudinary.com/barberscore/image/upload/v1554830585/bhs_logo.png",
   "repository": "https://github.com/barberscore/barberscore-api",
   "stack": "heroku-18",
   "success_url": "/admin/",

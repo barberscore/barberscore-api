@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c634718656121eb22b0f2583a2798bdaef654a1dbc94be9b58f936c7716568a9"
+            "sha256": "bffbc5a5292ed1fccd8d7feded1ec17aec3b20ac0a07c4f9b35ee6645fea1038"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.7"
+            "python_full_version": "3.7.3"
         },
         "sources": [
             {
@@ -656,10 +656,6 @@
             ],
             "version": "==2.19"
         },
-        "pydf": {
-            "git": "https://github.com/barberscore/pydf.git",
-            "ref": "0d537e8251c72437abee0898e7be8a81d6d18abb"
-        },
         "pygments": {
             "hashes": [
                 "sha256:71e430bc85c88a430f000ac1d9b331d2407f681d6f6aec95e8bcfbc3df5b0127",
@@ -673,13 +669,6 @@
                 "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"
             ],
             "version": "==1.7.1"
-        },
-        "pypdf2": {
-            "hashes": [
-                "sha256:e28f902f2f0a1603ea95ebe21dff311ef09be3d0f0ef29a3e44a932729564385"
-            ],
-            "index": "pypi",
-            "version": "==1.26.0"
         },
         "python-dateutil": {
             "hashes": [
@@ -703,11 +692,11 @@
         },
         "python-pdf": {
             "hashes": [
-                "sha256:6a3b084809469ce97be61fb39d94eafd830181aebeda6a3e166b373e23c8731a",
-                "sha256:6fa2c3dcad746fa3144a45fec47530dc8b10f5cc664b407364a65d41e12d4782"
+                "sha256:1b16766d888f2870322689a28bc89a195e27829f65df9d4fc2f6714fcad8fb33",
+                "sha256:9298c2558ec5571c25cbbfa1927f3381eb3876cce6ece41fe415694adbb4cc54"
             ],
             "index": "pypi",
-            "version": "==0.36"
+            "version": "==0.37"
         },
         "pytz": {
             "hashes": [
