@@ -23,7 +23,7 @@ class GroupSerializer(serializers.ModelSerializer):
     included_serializers = {
         'repertories': 'apps.bhs.serializers.RepertorySerializer',
         # 'members': 'apps.bhs.serializers.MemberSerializer',
-        # 'officers': 'apps.bhs.serializers.OfficerSerializer',
+        'officers': 'apps.bhs.serializers.OfficerSerializer',
         # 'entries': 'api.serializers.EntrySerializer',
     }
 
@@ -71,7 +71,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'conventions',
             'entries',
             # 'members',
-            # 'officers',
+            'officers',
             'repertories',
             'permissions',
         ]
@@ -80,7 +80,7 @@ class GroupSerializer(serializers.ModelSerializer):
         included_resources = [
             'repertories',
             # 'members',
-            # 'officers',
+            'officers',
             # 'entries',
         ]
 
