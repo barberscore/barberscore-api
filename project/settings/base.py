@@ -257,6 +257,7 @@ INSTALLED_APPS = [
     'fsm_admin',
     'phonenumber_field',
     'reversion',
+    'rest_framework_jwt',
     'api',
     'apps.bhs',
     'apps.keller',

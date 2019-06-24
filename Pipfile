@@ -27,7 +27,7 @@ django-rq = "*"
 django-timezone-field = "*"
 djangorestframework = "*"
 djangorestframework-jsonapi = "*"
-djangorestframework-jwt = "*"
+djangorestframework-jwt = {editable = true,path = "./../django-rest-framework-jwt"}
 dry-rest-permissions = "*"
 gunicorn = "*"
 ipython = "==6.5.0"
@@ -43,7 +43,6 @@ requests = "*"
 rq = "*"
 sentry-sdk = "*"
 whitenoise = "*"
-
 
 [dev-packages]
 "autopep8" = "*"
