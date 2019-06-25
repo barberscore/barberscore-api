@@ -983,13 +983,13 @@ class PersonManager(Manager):
         return t
 
 
-    def link_from_user(self, user):
+    def link_from_user(self, instance):
         # Delete Orphans
         i = 0
         while i <= 3:
             time.sleep(i)
             user = User.objects.get(
-                id=user.id,
+                id=instance.id,
             )
             email = user.email
             if email:
