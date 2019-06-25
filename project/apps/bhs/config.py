@@ -8,7 +8,6 @@ class BhsConfig(AppConfig):
     verbose_name = 'BHS'
 
     def ready(self):
-        from .signals import user_post_save
         import algoliasearch_django as algoliasearch
         from .indexes import ChartIndex
         from .indexes import PersonIndex
