@@ -24,6 +24,9 @@ from django.db.models import DateField
 from django.db.models import Case
 from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 from .tasks import get_accounts
 
@@ -977,6 +980,19 @@ class PersonManager(Manager):
         t = orphans.count()
         orphans.delete()
         return t
+
+
+    def link_from_user(self, user):
+        # Delete Orphans
+        user = User.objects.get(
+            id=user.id,
+        )
+        person = self.get(
+            email=user.email,
+        )
+        person.user = user
+        person.save()
+        return person
 
 
 class ChartManager(Manager):

@@ -3,6 +3,7 @@ import json
 from django.core.cache import cache
 from django.conf import settings
 from auth0.v3.authentication import GetToken
+
 # from auth0.v3.exceptions import Auth0Error
 from auth0.v3.management import Auth0
 from django.utils.crypto import get_random_string
@@ -177,3 +178,8 @@ def create_or_update_person_from_human(human):
 def create_or_update_group_from_structure(structure):
     Group = apps.get_model('bhs.group')
     return Group.objects.update_or_create_from_structure(structure)
+
+@job('high')
+def link_person_from_user(user):
+    Person = apps.get_model('bhs.person')
+    return Person.objects.link_from_user(user)
