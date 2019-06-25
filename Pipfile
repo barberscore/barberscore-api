@@ -27,7 +27,7 @@ django-rq = "*"
 django-timezone-field = "*"
 djangorestframework = "*"
 djangorestframework-jsonapi = "*"
-djangorestframework-jwt = {editable = true,path = "./../django-rest-framework-jwt"}
+djangorestframework-jwt = {git = "https://github.com/barberscore/django-rest-framework-jwt.git"}
 dry-rest-permissions = "*"
 gunicorn = "*"
 ipython = "==6.5.0"
