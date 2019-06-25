@@ -59,6 +59,8 @@ pytest = "*"
 pytest-django = "*"
 coreapi = "*"
 pyyaml = "*"
+# django-fsm-log = {editable = true,path = "./../django-fsm-log"}
+# djangorestframework-jwt = {editable = true,path = "./../django-rest-framework-jwt"}
 
 [requires]
 python_full_version = "3.7.3"
