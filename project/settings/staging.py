@@ -31,7 +31,6 @@ sentry_sdk.init(
         RqIntegration(),
     ],
     send_default_pii=True,
-    release=get_env_variable("HEROKU_RELEASE_VERSION")
 )
 
 # Email
