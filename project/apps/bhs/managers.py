@@ -1,3 +1,4 @@
+import time
 from datetime import date
 
 # Third-Party
@@ -984,11 +985,18 @@ class PersonManager(Manager):
 
     def link_from_user(self, user):
         # Delete Orphans
-        user = User.objects.get(
-            id=user.id,
-        )
+        i = 0
+        while i <= 3:
+            time.sleep(i)
+            user = User.objects.get(
+                id=user.id,
+            )
+            email = user.email
+            if email:
+                break
+            i += 1
         person = self.get(
-            email=user.email,
+            email=email,
         )
         person.user = user
         person.save()
