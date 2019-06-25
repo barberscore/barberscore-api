@@ -263,7 +263,7 @@
         },
         "django-fsm-log": {
             "git": "https://github.com/barberscore/django-fsm-log.git",
-            "ref": "eceebaa563a1b262db4a990b56b538ecd0bb9876"
+            "ref": "dce2ff3963fa7574823a80ea6c2eb089701587f1"
         },
         "django-model-utils": {
             "hashes": [
