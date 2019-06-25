@@ -373,16 +373,16 @@ def test_venue_endpoint(anon_api_client, venue):
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_user_endpoint(anon_api_client, user):
-    path = reverse('user-list')
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.post(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    path = reverse('user-detail', args=(str(user.id),))
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.patch(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.delete(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+# def test_user_endpoint(anon_api_client, user):
+#     path = reverse('user-list')
+#     response = anon_api_client.get(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#     response = anon_api_client.post(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#     path = reverse('user-detail', args=(str(user.id),))
+#     response = anon_api_client.get(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#     response = anon_api_client.patch(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#     response = anon_api_client.delete(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
