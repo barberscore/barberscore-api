@@ -5,7 +5,6 @@ from django.utils.html import format_html
 # Django
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import Group as AuthGroup
 from django.utils import timezone
 from django.contrib import messages
 from django.apps import apps

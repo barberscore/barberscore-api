@@ -4,7 +4,6 @@ from fsm_admin.mixins import FSMTransitionMixin
 
 # Django
 from django.contrib import admin
-from django.contrib.auth.models import Group as AuthGroup
 
 # Local
 from .filters import ConventionStatusListFilter
