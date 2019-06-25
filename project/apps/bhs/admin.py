@@ -449,6 +449,7 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'description',
         'notes',
         ('created', 'modified',),
+        'user',
     ]
 
     list_display = [
@@ -465,6 +466,10 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'gender',
         'part',
         'is_deceased',
+    ]
+
+    raw_id_fields = [
+        'user',
     ]
 
     readonly_fields = [

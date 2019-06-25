@@ -14,6 +14,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
+from django.contrib.auth import get_user_model
 
 # Django
 from django.core.exceptions import ValidationError
@@ -44,6 +45,7 @@ from .fields import VoicePartField
 from .fields import NoPunctuationCharField
 from .fields import ImageUploadPath
 
+User = get_user_model()
 
 class Person(TimeStampedModel):
     id = models.UUIDField(
@@ -266,6 +268,14 @@ class Person(TimeStampedModel):
     )
 
     # Relations
+    user = models.OneToOneField(
+        User,
+        related_name='person',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
     statelogs = GenericRelation(
         StateLog,
         related_query_name='persons',
