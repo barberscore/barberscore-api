@@ -22,9 +22,10 @@ class Command(BaseCommand):
             is_staff=False,
             person__isnull=True,
         )
+        self.stdout.write("Linking {0} Accounts.")
         for user in users:
             person = Person.objects.get(
-                email=u.email,
+                email=user.email,
             )
             person.user = user
             person.save()
