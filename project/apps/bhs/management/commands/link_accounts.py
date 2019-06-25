@@ -22,7 +22,8 @@ class Command(BaseCommand):
             is_staff=False,
             person__isnull=True,
         )
-        self.stdout.write("Linking {0} Accounts.")
+        t = users.count()
+        self.stdout.write("Linking {0} Accounts.".format(t))
         for user in users:
             person = Person.objects.get(
                 email=user.email,
