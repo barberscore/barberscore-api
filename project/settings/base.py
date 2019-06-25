@@ -55,7 +55,7 @@ TIME_FORMAT = 'H:i:s'
 DATETIME_FORMAT = 'Y-m-d H:i:s'
 
 # Authentication
-AUTH_USER_MODEL = "api.User"
+AUTH_USER_MODEL = "rest_framework_jwt.User"
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'django.contrib.auth.backends.RemoteUserBackend',
@@ -258,11 +258,11 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'reversion',
     'rest_framework_jwt',
-    'api',
+    # 'api',
     'apps.bhs',
-    'apps.keller',
-    'apps.stage',
     'apps.cmanager',
     'apps.smanager',
     'apps.rmanager',
+    'apps.stage',
+    'apps.keller',
 ]

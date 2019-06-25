@@ -137,8 +137,8 @@ class Contest(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_session_manager,
-            request.user.is_round_manager,
+            # request.user.is_session_manager,
+            # request.user.is_round_manager,
         ])
 
 
@@ -148,7 +148,7 @@ class Contest(TimeStampedModel):
         return any([
             all([
                 self.session.convention.assignments.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                     category__lte=10,
                 ),
@@ -240,9 +240,9 @@ class Contestant(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_session_manager,
-            request.user.is_round_manager,
-            request.user.is_group_manager,
+            # request.user.is_session_manager,
+            # request.user.is_round_manager,
+            # request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
@@ -251,7 +251,7 @@ class Contestant(TimeStampedModel):
         return any([
             all([
                 self.contest.session.convention.assignments.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                     category__lte=10,
                 ),
@@ -259,7 +259,7 @@ class Contestant(TimeStampedModel):
             ]),
             all([
                 self.entry.group.officers.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                 ),
                 self.entry.status < self.entry.STATUS.approved,
@@ -438,8 +438,8 @@ class Entry(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_session_manager,
-            request.user.is_group_manager,
+            # request.user.is_session_manager,
+            # request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
@@ -449,7 +449,7 @@ class Entry(TimeStampedModel):
             # For DRCJs
             all([
                 self.session.convention.assignments.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                     category__lt=10,
                 ),
@@ -458,7 +458,7 @@ class Entry(TimeStampedModel):
             # For Groups
             all([
                 self.group.officers.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                 ),
                 self.status <= self.STATUS.approved,
@@ -1382,8 +1382,8 @@ class Session(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_convention_manager,
-            request.user.is_session_manager,
+            # request.user.is_convention_manager,
+            # request.user.is_session_manager,
             # request.user.is_round_manager,
         ])
 
@@ -1393,7 +1393,7 @@ class Session(TimeStampedModel):
         return any([
             all([
                 self.convention.assignments.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                     category=self.convention.assignments.model.CATEGORY.drcj,
                 ),

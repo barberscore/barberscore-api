@@ -412,7 +412,7 @@ class Person(TimeStampedModel):
             ]),
             all([
                 self.members.filter(
-                    group__officers__person__user=request.user,
+                    # group__officers__person__user=request.user,
                     group__officers__status__gt=0,
                 ),
                 self.mc_pk == None,
@@ -1031,7 +1031,7 @@ class Group(TimeStampedModel):
         return any([
             all([
                 self.officers.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                 ),
                 self.status > 0,
@@ -1185,7 +1185,7 @@ class Member(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_group_manager,
+            # request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
@@ -1194,7 +1194,7 @@ class Member(TimeStampedModel):
         return any([
             all([
                 self.group.officers.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                 ),
                 self.mc_pk == None,
@@ -1364,7 +1364,7 @@ class Officer(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_officer_manager,
+            # request.user.is_officer_manager,
         ])
 
     @allow_staff_or_superuser
@@ -1373,7 +1373,7 @@ class Officer(TimeStampedModel):
         return any([
             all([
                 self.group.officers.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                 ),
                 self.mc_pk == None,
@@ -1503,14 +1503,14 @@ class Chart(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_chart_manager,
+            # request.user.is_chart_manager,
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            request.user.is_chart_manager,
+            # request.user.is_chart_manager,
         ])
 
     # Transitions
@@ -1597,15 +1597,15 @@ class Repertory(TimeStampedModel):
         Assignment = apps.get_model('cmanager.assignment')
         return any([
             self.group.officers.filter(
-                person__user=request.user,
+                # person__user=request.user,
                 status__gt=0,
             ),
             self.group.members.filter(
-                person__user=request.user,
+                # person__user=request.user,
                 status__gt=0,
             ),
             self.group.appearances.filter(
-                round__session__convention__assignments__person__user=request.user,
+                # round__session__convention__assignments__person__user=request.user,
                 round__session__convention__assignments__status__gt=0,
                 round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
             )
@@ -1616,7 +1616,7 @@ class Repertory(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_group_manager,
+            # request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
@@ -1624,7 +1624,7 @@ class Repertory(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             self.group.officers.filter(
-                person__user=request.user,
+                # person__user=request.user,
                 status__gt=0,
             ),
         ])

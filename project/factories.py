@@ -3,7 +3,7 @@
 
 # Standard Library
 import datetime
-
+import rest_framework_jwt
 # Third-Party
 from factory import Faker  # post_generation,
 from factory import Iterator
@@ -30,7 +30,7 @@ from apps.rmanager.models import Round
 from apps.rmanager.models import Score
 from apps.rmanager.models import Song
 
-from api.models import User
+from rest_framework_jwt.models import User
 
 from apps.bhs.models import Chart
 from apps.bhs.models import Group

@@ -19,7 +19,7 @@ class AppearanceFilterBackend(DRYPermissionFiltersBase):
                 round__status=Round.STATUS.completed,
             ) |
             Q(
-                round__session__convention__assignments__person__user=request.user,
+                # round__session__convention__assignments__person__user=request.user,
                 round__session__convention__assignments__status__gt=0,
                 round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
             )
@@ -40,7 +40,7 @@ class OutcomeFilterBackend(DRYPermissionFiltersBase):
                 round__status=Round.STATUS.completed,
             ) |
             Q(
-                round__session__convention__assignments__person__user=request.user,
+                # round__session__convention__assignments__person__user=request.user,
                 round__session__convention__assignments__status__gt=0,
                 round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
             )
@@ -59,24 +59,24 @@ class ScoreFilterBackend(DRYPermissionFiltersBase):
         queryset = queryset.filter(
             # Assigned DRCJs and CAs can always see
             Q(
-                song__appearance__round__session__convention__assignments__person__user=request.user,
+                # song__appearance__round__session__convention__assignments__person__user=request.user,
                 song__appearance__round__session__convention__assignments__status__gt=0,
                 song__appearance__round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
             ) |
             # Panelists can see their own scores
             Q(
-                panelist__person__user=request.user,
+                # panelist__person__user=request.user,
                 panelist__status__gt=0,
             ) |
             # Panelists can see others' scores if Appearance is complete.
             Q(
-                song__appearance__round__panelists__person__user=request.user,
+                # song__appearance__round__panelists__person__user=request.user,
                 song__appearance__round__panelists__status__gt=0,
                 song__appearance__status__lte=Appearance.STATUS.completed,
             ) |
             # Group members can see their own scores if complete.
             Q(
-                song__appearance__group__members__person__user=request.user,
+                # song__appearance__group__members__person__user=request.user,
                 song__appearance__group__members__status__gt=0,
                 song__appearance__status__lte=Appearance.STATUS.completed,
             )
@@ -97,7 +97,7 @@ class SongFilterBackend(DRYPermissionFiltersBase):
                 appearance__round__status=Round.STATUS.completed,
             ) |
             Q(
-                appearance__round__session__convention__assignments__person__user=request.user,
+                # appearance__round__session__convention__assignments__person__user=request.user,
                 appearance__round__session__convention__assignments__status__gt=0,
                 appearance__round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
             )

@@ -70,53 +70,53 @@ class User(AbstractBaseUser):
         editable=False,
     )
 
-    person = models.OneToOneField(
-        'bhs.person',
-        related_name='user',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
+    # person = models.OneToOneField(
+    #     'bhs.person',
+    #     related_name='user',
+    #     on_delete=models.CASCADE,
+    #     null=True,
+    #     blank=True,
+    # )
 
-    is_convention_manager = models.BooleanField(
-        default=False,
-    )
+    # is_convention_manager = models.BooleanField(
+    #     default=False,
+    # )
 
-    is_session_manager = models.BooleanField(
-        default=False,
-    )
+    # is_session_manager = models.BooleanField(
+    #     default=False,
+    # )
 
-    is_round_manager = models.BooleanField(
-        default=False,
-    )
+    # is_round_manager = models.BooleanField(
+    #     default=False,
+    # )
 
-    is_scoring_manager = models.BooleanField(
-        default=False,
-    )
+    # is_scoring_manager = models.BooleanField(
+    #     default=False,
+    # )
 
-    is_group_manager = models.BooleanField(
-        default=False,
-    )
+    # is_group_manager = models.BooleanField(
+    #     default=False,
+    # )
 
-    is_person_manager = models.BooleanField(
-        default=False,
-    )
+    # is_person_manager = models.BooleanField(
+    #     default=False,
+    # )
 
-    is_award_manager = models.BooleanField(
-        default=False,
-    )
+    # is_award_manager = models.BooleanField(
+    #     default=False,
+    # )
 
-    is_officer_manager = models.BooleanField(
-        default=False,
-    )
+    # is_officer_manager = models.BooleanField(
+    #     default=False,
+    # )
 
-    is_chart_manager = models.BooleanField(
-        default=False,
-    )
+    # is_chart_manager = models.BooleanField(
+    #     default=False,
+    # )
 
-    is_assignment_manager = models.BooleanField(
-        default=False,
-    )
+    # is_assignment_manager = models.BooleanField(
+    #     default=False,
+    # )
 
     objects = UserManager()
 

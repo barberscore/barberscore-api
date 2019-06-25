@@ -60,10 +60,10 @@ def admin_api_client():
 
 @pytest.fixture
 def user_api_client():
-    person = PersonFactory()
+    # person = PersonFactory()
     user = UserFactory(
         is_staff=False,
-        person=person,
+        # person=person,
     )
     client = APIClient()
     client.force_authenticate(user=user)

@@ -958,7 +958,7 @@ class Appearance(TimeStampedModel):
         return any([
             self.round.status == self.round.STATUS.published,
             self.round.session.convention.assignments.filter(
-                person__user=request.user,
+                # person__user=request.user,
                 status__gt=0,
                 category__lte=10,
             ),
@@ -969,7 +969,7 @@ class Appearance(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_round_manager,
+            # request.user.is_round_manager,
         ])
 
     @allow_staff_or_superuser
@@ -978,7 +978,7 @@ class Appearance(TimeStampedModel):
         return any([
             all([
                 self.round.session.convention.assignments.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                     category__lte=10,
                 ),
@@ -1185,9 +1185,9 @@ class Contender(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_session_manager,
-            request.user.is_round_manager,
-            request.user.is_group_manager,
+            # request.user.is_session_manager,
+            # request.user.is_round_manager,
+            # request.user.is_group_manager,
         ])
 
     @allow_staff_or_superuser
@@ -1196,7 +1196,7 @@ class Contender(TimeStampedModel):
         return any([
             all([
                 self.outcome.round.session.convention.assignments.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                     category__lte=10,
                 ),
@@ -1448,7 +1448,7 @@ class Outcome(TimeStampedModel):
         return any([
             self.round.status == self.round.STATUS.published,
             self.round.session.convention.assignments.filter(
-                person__user=request.user,
+                # person__user=request.user,
                 status__gt=0,
                 category__lte=10,
             ),
@@ -1460,7 +1460,7 @@ class Outcome(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_round_manager,
+            # request.user.is_round_manager,
         ])
 
     @allow_staff_or_superuser
@@ -1469,7 +1469,7 @@ class Outcome(TimeStampedModel):
         return any([
             all([
                 self.round.session.convention.assignments.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                     category__lte=10,
                 ),
@@ -1632,7 +1632,7 @@ class Panelist(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_round_manager,
+            # request.user.is_round_manager,
         ])
 
     @allow_staff_or_superuser
@@ -1641,7 +1641,7 @@ class Panelist(TimeStampedModel):
         return any([
             all([
                 self.round.session.convention.assignments.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                     category__lte=10,
                 ),
@@ -3560,9 +3560,9 @@ class Round(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_convention_manager,
+            # request.user.is_convention_manager,
             # request.user.is_session_manager,
-            request.user.is_round_manager,
+            # request.user.is_round_manager,
         ])
 
     @allow_staff_or_superuser
@@ -3571,7 +3571,7 @@ class Round(TimeStampedModel):
         return any([
             all([
                 self.session.convention.assignments.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                     category=self.session.convention.assignments.model.CATEGORY.ca,
                 ),
@@ -4153,7 +4153,7 @@ class Score(TimeStampedModel):
         return any([
             # Assigned DRCJs and CAs can always see
             self.song.appearance.round.session.convention.assignments.filter(
-                person__user=request.user,
+                # person__user=request.user,
                 status__gt=0,
                 category__lte=10,
             ),
@@ -4162,7 +4162,7 @@ class Score(TimeStampedModel):
             # Panelists can see others' scores if Appearance is complete.
             all([
                 self.song.appearance.round.panelists.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                 ),
                 self.song.appearance.status <= self.song.appearance.STATUS.completed
@@ -4170,7 +4170,7 @@ class Score(TimeStampedModel):
             # Group members can see their own scores if complete.
             all([
                 self.song.appearance.group.members.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                 ),
                 self.song.appearance.status <= self.song.appearance.STATUS.completed
@@ -4182,8 +4182,8 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_round_manager,
-            request.user.is_scoring_manager,
+            # request.user.is_round_manager,
+            # request.user.is_scoring_manager,
         ])
 
     @allow_staff_or_superuser
@@ -4192,7 +4192,7 @@ class Score(TimeStampedModel):
         return any([
             all([
                 self.song.appearance.round.session.convention.assignments.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                     category__lte=10,
                 ),
@@ -4400,7 +4400,7 @@ class Song(TimeStampedModel):
         return any([
             self.appearance.round.status == self.appearance.round.STATUS.published,
             self.appearance.round.session.convention.assignments.filter(
-                person__user=request.user,
+                # person__user=request.user,
                 status__gt=0,
                 category__lte=10,
             ),
@@ -4411,7 +4411,7 @@ class Song(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.is_round_manager,
+            # request.user.is_round_manager,
         ])
 
     @allow_staff_or_superuser
@@ -4420,7 +4420,7 @@ class Song(TimeStampedModel):
         return any([
             all([
                 self.appearance.round.session.convention.assignments.filter(
-                    person__user=request.user,
+                    # person__user=request.user,
                     status__gt=0,
                     category__lte=10,
                 ),
