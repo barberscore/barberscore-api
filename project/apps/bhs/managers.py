@@ -995,6 +995,8 @@ class PersonManager(Manager):
             if email:
                 break
             i += 1
+        if not email:
+            return None
         person = self.get(
             email=email,
         )
