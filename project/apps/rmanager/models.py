@@ -969,7 +969,10 @@ class Appearance(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            # request.user.is_round_manager,
+            request.user.person.officers.filter(
+                office__lt=300,
+                status__gt=0,
+            ),
         ])
 
     @allow_staff_or_superuser
@@ -1185,9 +1188,10 @@ class Contender(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            # request.user.is_session_manager,
-            # request.user.is_round_manager,
-            # request.user.is_group_manager,
+            request.user.person.officers.filter(
+                office__lt=500,
+                status__gt=0,
+            ),
         ])
 
     @allow_staff_or_superuser
@@ -1460,7 +1464,10 @@ class Outcome(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            # request.user.is_round_manager,
+            request.user.person.officers.filter(
+                office__lt=300,
+                status__gt=0,
+            ),
         ])
 
     @allow_staff_or_superuser
@@ -1632,7 +1639,10 @@ class Panelist(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            # request.user.is_round_manager,
+            request.user.person.officers.filter(
+                office__lt=300,
+                status__gt=0,
+            ),
         ])
 
     @allow_staff_or_superuser
@@ -3560,9 +3570,10 @@ class Round(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            # request.user.is_convention_manager,
-            # request.user.is_session_manager,
-            # request.user.is_round_manager,
+            request.user.person.officers.filter(
+                office__lt=300,
+                status__gt=0,
+            ),
         ])
 
     @allow_staff_or_superuser
@@ -4182,8 +4193,10 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            # request.user.is_round_manager,
-            # request.user.is_scoring_manager,
+            request.user.person.officers.filter(
+                office__lt=300,
+                status__gt=0,
+            ),
         ])
 
     @allow_staff_or_superuser
@@ -4411,7 +4424,10 @@ class Song(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            # request.user.is_round_manager,
+            request.user.person.officers.filter(
+                office__lt=300,
+                status__gt=0,
+            ),
         ])
 
     @allow_staff_or_superuser

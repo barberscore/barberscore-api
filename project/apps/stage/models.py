@@ -143,16 +143,20 @@ class Grid(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            # request.user.is_convention_manager,
-            # request.user.is_session_manager,
+            request.user.person.officers.filter(
+                office__lt=200,
+                status__gt=0,
+            ),
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            # request.user.is_convention_manager,
-            # request.user.is_session_manager,
+            request.user.person.officers.filter(
+                office__lt=200,
+                status__gt=0,
+            ),
         ])
 
 
@@ -242,5 +246,10 @@ class Venue(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        # return request.user.is_convention_manager
-        return True
+        return any([
+            request.user.person.officers.filter(
+                office__lt=200,
+                status__gt=0,
+            ),
+        ])
+

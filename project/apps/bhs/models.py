@@ -1195,7 +1195,10 @@ class Member(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(office__gt=300)
+            request.user.person.officers.filter(
+                office__gt=300,
+                status__gt=0,
+            )
         ])
 
     @allow_staff_or_superuser
@@ -1374,7 +1377,10 @@ class Officer(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(office__lt=200)
+            request.user.person.officers.filter(
+                office__lt=200,
+                status__gt=0,
+            )
         ])
 
     @allow_staff_or_superuser
@@ -1513,14 +1519,20 @@ class Chart(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(office__gt=300)
+            request.user.person.officers.filter(
+                office__gt=300,
+                status__gt=0,
+            )
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            request.user.person.officers.filter(office=160)
+            request.user.person.officers.filter(
+                office=160,
+                status__gt=0,
+            )
         ])
 
     # Transitions
@@ -1626,7 +1638,10 @@ class Repertory(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(office__gt=300)
+            request.user.person.officers.filter(
+                office__gt=300,
+                status__gt=0,
+            )
         ])
 
     @allow_staff_or_superuser

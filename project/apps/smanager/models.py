@@ -137,8 +137,10 @@ class Contest(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            # request.user.is_session_manager,
-            # request.user.is_round_manager,
+            request.user.person.officers.filter(
+                office__lt=300,
+                status__gt=0,
+            ),
         ])
 
 
@@ -240,9 +242,10 @@ class Contestant(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            # request.user.is_session_manager,
-            # request.user.is_round_manager,
-            # request.user.is_group_manager,
+            request.user.person.officers.filter(
+                office__lt=500,
+                status__gt=0,
+            ),
         ])
 
     @allow_staff_or_superuser
@@ -438,8 +441,10 @@ class Entry(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            # request.user.is_session_manager,
-            # request.user.is_group_manager,
+            request.user.person.officers.filter(
+                office__lt=500,
+                status__gt=0,
+            ),
         ])
 
     @allow_staff_or_superuser
@@ -1382,10 +1387,12 @@ class Session(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            # request.user.is_convention_manager,
-            # request.user.is_session_manager,
-            # request.user.is_round_manager,
+            request.user.person.officers.filter(
+                office__lt=300,
+                status__gt=0,
+            ),
         ])
+
 
     @allow_staff_or_superuser
     @authenticated_users
