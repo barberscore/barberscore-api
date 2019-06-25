@@ -11,9 +11,9 @@ class RoundFilterset(FilterSet):
     class Meta:
         model = Round
         fields = {
-            # 'session__convention__assignments__person__user': [
-            #     'exact',
-            # ],
+            'session__convention__assignments__person__user': [
+                'exact',
+            ],
         }
 
 

@@ -187,7 +187,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'members',
             'officers',
             # 'panelists',
-            # 'user',
+            'user',
             'permissions',
         )
         read_only_fields = [

@@ -11,9 +11,9 @@ class MemberFilterset(FilterSet):
     class Meta:
         model = Member
         fields = {
-            # 'person__user': [
-            #     'exact',
-            # ],
+            'person__user': [
+                'exact',
+            ],
             'status': [
                 'exact',
             ],
@@ -33,9 +33,9 @@ class OfficerFilterset(FilterSet):
     class Meta:
         model = Officer
         fields = {
-            # 'person__user': [
-            #     'exact',
-            # ],
+            'person__user': [
+                'exact',
+            ],
             'group__status': [
                 'exact',
             ],

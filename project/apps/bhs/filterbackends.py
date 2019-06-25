@@ -13,11 +13,11 @@ class RepertoryFilterBackend(DRYPermissionFiltersBase):
             return queryset
         queryset = queryset.filter(
             Q(
-                # group__officers__person__user=request.user,
+                group__officers__person__user=request.user,
                 group__officers__status__gt=0,
             ) |
             Q(
-                # group__appearances__round__session__convention__assignments__person__user=request.user,
+                group__appearances__round__session__convention__assignments__person__user=request.user,
                 group__appearances__round__session__convention__assignments__status__gt=0,
                 group__appearances__round__session__convention__assignments__category__lte=10, # TODO
             )
