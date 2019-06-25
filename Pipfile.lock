@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7251f597d97bdd62318e99477e2a580a57082f9a9ed339be96115b60783ff11e"
+            "sha256": "6ddc1700efbd28d96cd8ed8fd80f9d669c206a668d24dd4abc3b02376cda7fc7"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_full_version": "3.7.2"
+            "python_full_version": "3.7.3"
         },
         "sources": [
             {
@@ -339,7 +339,7 @@
         },
         "djangorestframework-jwt": {
             "git": "https://github.com/barberscore/django-rest-framework-jwt.git",
-            "ref": "2993d8ef8216dfa00b191603957c69001eb41f52"
+            "ref": "05b5de72b8d312145b0fe722c6c4ea1722f9ca8a"
         },
         "dry-rest-permissions": {
             "hashes": [
