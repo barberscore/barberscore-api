@@ -22,7 +22,7 @@
   },
   "addons": [
     "heroku-redis:hobby-dev",
-    "heroku-postgresql:hobby-dev"
+    "heroku-postgresql:hobby-basic"
   ],
   "env": {
     "ALGOLIASEARCH_API_KEY": {
