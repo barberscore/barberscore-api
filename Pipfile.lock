@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6ddc1700efbd28d96cd8ed8fd80f9d669c206a668d24dd4abc3b02376cda7fc7"
+            "sha256": "78049e4e784ba792ebaf74db6e5c7a9c24276165658739417a912c4cac99ae24"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -260,10 +260,6 @@
             ],
             "index": "pypi",
             "version": "==1.2.4"
-        },
-        "django-fsm-log": {
-            "git": "https://github.com/barberscore/django-fsm-log.git",
-            "ref": "fcf73418f8b301ab6589d8c61f7f375ffb42e380"
         },
         "django-model-utils": {
             "hashes": [
@@ -884,6 +880,13 @@
             "index": "pypi",
             "version": "==2.1.9"
         },
+        "django-appconf": {
+            "hashes": [
+                "sha256:35f13ca4d567f132b960e2cd4c832c2d03cb6543452d34e29b7ba10371ba80e3",
+                "sha256:c98a7af40062e996b921f5962a1c4f3f0c979fa7885f7be4710cceb90ebe13a6"
+            ],
+            "version": "==1.0.3"
+        },
         "django-debug-toolbar": {
             "hashes": [
                 "sha256:17c53cd6bf4e7d69902aedf9a1d26c5d3b7369b54c5718744704f27b5a72f35d",
@@ -892,12 +895,40 @@
             "index": "pypi",
             "version": "==2.0"
         },
+        "django-fsm": {
+            "hashes": [
+                "sha256:96f776736042b8cde03483cb4b27c3a62580da40fc9b942845349718afdf5d0f",
+                "sha256:cacd5485c726b411c6728c9ae3120303c9badf8aa0edff2db3aecdbe3a906945"
+            ],
+            "index": "pypi",
+            "version": "==2.6.1"
+        },
+        "django-fsm-log": {
+            "editable": true,
+            "path": "./../django-fsm-log"
+        },
         "django-querycount": {
             "hashes": [
                 "sha256:8f5123d78716ff0704f2373e746a7200b8d8417798ce4a99bf2de87e3768f9ce"
             ],
             "index": "pypi",
             "version": "==0.7.0"
+        },
+        "djangorestframework": {
+            "hashes": [
+                "sha256:376f4b50340a46c15ae15ddd0c853085f4e66058f97e4dbe7d43ed62f5e60651",
+                "sha256:c12869cfd83c33d579b17b3cb28a2ae7322a53c3ce85580c2a2ebe4e3f56c4fb"
+            ],
+            "index": "pypi",
+            "version": "==3.9.4"
+        },
+        "djangorestframework-jsonapi": {
+            "hashes": [
+                "sha256:4cc55af703b9d312d0c3424201ba6cbae0d14c3c5bdf64b3f6270110379f0106",
+                "sha256:574171f1457b905dcd0c0197e91111c44f636376823b4856709a80176cc69160"
+            ],
+            "index": "pypi",
+            "version": "==2.8.0"
         },
         "factory-boy": {
             "hashes": [
@@ -936,6 +967,12 @@
                 "sha256:cb6ee23b46173539939964df59d3d72c3e0c1b5d54b84f1d8a7e912fe43612db"
             ],
             "version": "==0.18"
+        },
+        "inflection": {
+            "hashes": [
+                "sha256:18ea7fb7a7d152853386523def08736aa8c32636b047ade55f7578c4edeb16ca"
+            ],
+            "version": "==0.3.1"
         },
         "isort": {
             "hashes": [

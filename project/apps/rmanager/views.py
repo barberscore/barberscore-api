@@ -7,7 +7,6 @@ import pydf
 from rest_framework_json_api.filters import OrderingFilter
 from rest_framework_json_api.django_filters import DjangoFilterBackend
 from django_fsm import TransitionNotAllowed
-from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import status
 from rest_framework import viewsets
@@ -53,7 +52,6 @@ from .serializers import PanelistSerializer
 from .serializers import RoundSerializer
 from .serializers import ScoreSerializer
 from .serializers import SongSerializer
-from .serializers import StateLogSerializer
 
 
 log = logging.getLogger(__name__)

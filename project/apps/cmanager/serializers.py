@@ -1,6 +1,5 @@
 
 # Third-Party
-from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework_json_api import serializers
 from rest_framework.serializers import SerializerMethodField
@@ -11,17 +10,6 @@ from .models import Assignment
 from .models import Award
 from .models import Convention
 
-
-class StateLogSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StateLog
-        fields = (
-            'timestamp',
-            'object_id',
-            'transition',
-            'description',
-            'by',
-        )
 
 
 class AssignmentSerializer(serializers.ModelSerializer):

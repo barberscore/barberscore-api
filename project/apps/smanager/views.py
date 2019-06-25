@@ -7,7 +7,6 @@ import pydf
 from rest_framework_json_api.filters import OrderingFilter
 from rest_framework_json_api.django_filters import DjangoFilterBackend
 from django_fsm import TransitionNotAllowed
-from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissions
 from rest_framework import status
 from rest_framework import viewsets
@@ -24,7 +23,6 @@ from django.utils.text import slugify
 
 # Local
 from .filtersets import SessionFilterset
-from .filtersets import StateLogFilterset
 
 from .models import Contest
 from .models import Contestant
@@ -38,7 +36,6 @@ from .serializers import ContestantSerializer
 from .serializers import ContestSerializer
 from .serializers import EntrySerializer
 from .serializers import SessionSerializer
-from .serializers import StateLogSerializer
 
 
 log = logging.getLogger(__name__)
@@ -390,20 +387,3 @@ class SessionViewSet(viewsets.ModelViewSet):
             file_name=file_name,
             status=status.HTTP_200_OK
         )
-
-
-class StateLogViewSet(viewsets.ModelViewSet):
-    queryset = StateLog.objects.select_related(
-        'content_type',
-        'by',
-    ).prefetch_related(
-    )
-    serializer_class = StateLogSerializer
-    filterset_class = StateLogFilterset
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        IsAuthenticated,
-    ]
-    resource_name = "statelog"

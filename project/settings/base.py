@@ -202,8 +202,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser'
     ],
     'DEFAULT_RENDERER_CLASSES': [
-        'api.renderers.NoGroupMembersJSONRenderer',
-        'api.renderers.NoHTMLFormBrowsableAPIRenderer',
+        'rest_framework_json_api.renderers.JSONRenderer',
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.AdminRenderer',
     ],
@@ -214,7 +213,7 @@ REST_FRAMEWORK = {
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ],
     'TEST_REQUEST_RENDERER_CLASSES': (
-        'api.renderers.NoGroupMembersJSONRenderer',
+        'rest_framework.renderers.JSONRenderer',
     ),
     'TEST_REQUEST_DEFAULT_FORMAT': 'vnd.api+json',
     # 'DEFAULT_THROTTLE_CLASSES': (

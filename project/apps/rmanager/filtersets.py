@@ -1,6 +1,5 @@
 from django_filters.rest_framework import FilterSet
 # Third-Party
-from django_fsm_log.models import StateLog
 
 # Local
 from .models import Round
@@ -25,16 +24,6 @@ class ScoreFilterset(FilterSet):
                 'exact',
             ],
             'song__appearance': [
-                'exact',
-            ],
-        }
-
-
-class StateLogFilterset(FilterSet):
-    class Meta:
-        model = StateLog
-        fields = {
-            'object_id': [
                 'exact',
             ],
         }

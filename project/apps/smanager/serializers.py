@@ -1,6 +1,5 @@
 
 # Third-Party
-from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_json_api import serializers
@@ -13,17 +12,6 @@ from .models import Contestant
 from .models import Entry
 from .models import Session
 
-
-class StateLogSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StateLog
-        fields = (
-            'timestamp',
-            'object_id',
-            'transition',
-            'description',
-            'by',
-        )
 
 
 class ContestSerializer(serializers.ModelSerializer):
@@ -69,11 +57,10 @@ class ContestantSerializer(serializers.ModelSerializer):
 
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    # logs = StateLogSerializer(many=True)
     statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     included_serializers = {
         'contestants': 'apps.smanager.serializers.ContestantSerializer',
-        'statelogs': 'apps.smanager.serializers.StateLogSerializer',
+        # 'statelogs': 'django_fsm_log.serializers.StateLogSerializer',
         'group': 'apps.bhs.serializers.GroupSerializer',
     }
 

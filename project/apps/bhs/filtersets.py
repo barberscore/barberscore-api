@@ -1,6 +1,5 @@
 from django_filters.rest_framework import FilterSet
 # Third-Party
-from django_fsm_log.models import StateLog
 
 # Local
 from .models import Member

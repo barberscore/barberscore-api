@@ -18,7 +18,6 @@ django-cloudinary-storage = "*"
 django-filter = "*"
 django-fsm = "*"
 django-fsm-admin = "*"
-django-fsm-log = {git = "https://github.com/barberscore/django-fsm-log.git"}
 django-model-utils = "*"
 django-phonenumber-field = "*"
 django-redis = "*"
@@ -59,6 +58,7 @@ pytest = "*"
 pytest-django = "*"
 coreapi = "*"
 pyyaml = "*"
+django-fsm-log = {editable = true,path = "./../django-fsm-log"}
 
 [requires]
 python_full_version = "3.7.3"

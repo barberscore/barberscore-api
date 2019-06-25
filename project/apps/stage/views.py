@@ -30,7 +30,6 @@ class VenueViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'conventions',
         'grids',
-        'statelogs',
     ).order_by('name')
     serializer_class = VenueSerializer
     filter_backends = [

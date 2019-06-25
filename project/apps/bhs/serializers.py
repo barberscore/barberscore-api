@@ -1,6 +1,5 @@
 
 # Third-Party
-from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_json_api import serializers

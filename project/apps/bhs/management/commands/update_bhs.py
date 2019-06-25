@@ -6,13 +6,12 @@ import logging
 # Django
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-
+from django.contrib.auth import get_user_model
 # First-Party
 from apps.bhs.models import Person
 from apps.bhs.models import Group
 from apps.bhs.models import Member
 from apps.bhs.models import Officer
-from api.models import User
 from apps.bhs.models import Human
 from apps.bhs.models import Join
 from apps.bhs.models import Role
@@ -21,6 +20,9 @@ from apps.bhs.models import Subscription
 from apps.bhs.tasks import create_or_update_account_from_human
 from apps.bhs.tasks import delete_account_from_human
 from apps.bhs.tasks import get_account_orphans
+
+User = get_user_model()
+
 
 log = logging.getLogger('updater')
 

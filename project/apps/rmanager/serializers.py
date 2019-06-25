@@ -1,6 +1,5 @@
 
 # Third-Party
-from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_json_api import serializers
@@ -16,17 +15,6 @@ from .models import Round
 from .models import Score
 from .models import Song
 
-
-class StateLogSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StateLog
-        fields = (
-            'timestamp',
-            'object_id',
-            'transition',
-            'description',
-            'by',
-        )
 
 
 class AppearanceSerializer(serializers.ModelSerializer):
