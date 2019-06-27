@@ -3217,6 +3217,25 @@ class Round(TimeStampedModel):
                     filter=Q(
                         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                         appearances__round__session=self.session,
+                        appearances__round__num__lte=self.num,
+                    ),
+                ),
+                sng_points=Sum(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                        appearances__round__session=self.session,
+                        appearances__round__num__lte=self.num,
+                    ),
+                ),
+                per_points=Sum(
+                    'appearances__songs__scores__points',
+                    filter=Q(
+                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                        appearances__round__session=self.session,
+                        appearances__round__num__lte=self.num,
                     ),
                 ),
                 raw_score=Avg(
@@ -3224,6 +3243,7 @@ class Round(TimeStampedModel):
                     filter=Q(
                         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                         appearances__round__session=self.session,
+                        appearances__round__num__lte=self.num,
                     ),
                 ),
                 tot_score=Func(
@@ -3232,12 +3252,13 @@ class Round(TimeStampedModel):
                     template='%(function)s(%(expressions)s, 1)'
                 ),
             ).order_by(
-                '-tot_points',
-            )[:5]
+                'tot_points',
+                'sng_points',
+                'per_points',
+            )
+            groups = list(groups)[-5:]
         else:
             groups = None
-        # if groups:
-        #     groups = reversed(groups)
         pos = self.appearances.aggregate(sum=Sum('pos'))['sum']
         context = {
             'round': self,
