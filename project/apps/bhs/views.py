@@ -25,6 +25,7 @@ from django.utils.text import slugify
 # Local
 from .filtersets import MemberFilterset
 from .filtersets import OfficerFilterset
+from .filtersets import PersonFilterset
 from .filterbackends import RepertoryFilterBackend
 from .models import Group
 from .models import Member
@@ -260,6 +261,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         'statelogs',
     ).order_by('id')
     serializer_class = PersonSerializer
+    filterset_class = PersonFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]

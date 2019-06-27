@@ -4,6 +4,7 @@ from django_filters.rest_framework import FilterSet
 # Local
 from .models import Member
 from .models import Officer
+from .models import Person
 
 
 class MemberFilterset(FilterSet):
@@ -36,6 +37,22 @@ class OfficerFilterset(FilterSet):
                 'exact',
             ],
             'group__status': [
+                'exact',
+            ],
+            'status': [
+                'exact',
+            ],
+        }
+
+
+class PersonFilterset(FilterSet):
+    class Meta:
+        model = Person
+        fields = {
+            'user': [
+                'exact',
+            ],
+            'user__username': [
                 'exact',
             ],
             'status': [
