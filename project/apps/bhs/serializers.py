@@ -136,9 +136,9 @@ class OfficerSerializer(serializers.ModelSerializer):
 class PersonSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
-        # 'assignments': 'api.serializers.AssignmentSerializer',
-        'members': 'apps.bhs.serializers.MemberSerializer',
-        'officers': 'apps.bhs.serializers.OfficerSerializer',
+        # 'assignments': 'apps.cmanager.serializers.AssignmentSerializer',
+        # 'members': 'apps.bhs.serializers.MemberSerializer',
+        # 'officers': 'apps.bhs.serializers.OfficerSerializer',
         # 'panelists': 'api.serializers.PanelistSerializer',
     }
     image_id = serializers.SerializerMethodField()
@@ -182,7 +182,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'full_name',
             'common_name',
             'sort_name',
-            # 'assignments',
+            'assignments',
             'members',
             'officers',
             # 'panelists',
