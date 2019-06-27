@@ -1101,7 +1101,8 @@ class Appearance(TimeStampedModel):
     )
     def scratch(self, *args, **kwargs):
         # Scratches the group.
-        # Notify the group?
+        # Remove songs
+        self.songs.delete()
         return
 
     @fsm_log_by
@@ -1112,6 +1113,7 @@ class Appearance(TimeStampedModel):
     )
     def disqualify(self, *args, **kwargs):
         # Disqualify the group.
+        self.songs.delete()
         # Notify the group?
         return
 
@@ -1660,12 +1662,19 @@ class Panelist(TimeStampedModel):
         ])
 
     def get_psa(self):
+        Appearance = apps.get_model('rmanager.appearance')
         Score = apps.get_model('rmanager.score')
         Group = apps.get_model('bhs.group')
         # Score block
         group_ids = self.round.appearances.exclude(
             # Don't include advancers or MTs on PSA
             draw__gt=0,
+        ).exclude(
+            # Don't include scratches
+            status=Appearance.STATUS.scratched,
+        ).exclude(
+            # Don't include disqualifications
+            status=Appearance.STATUS.disqualified,
         ).values_list('group__id', flat=True)
         groups = Group.objects.filter(
             id__in=group_ids,
@@ -3438,6 +3447,9 @@ class Round(TimeStampedModel):
             '-sng_points',
             '-per_points',
         )
+        # Monkeypatch results
+        for complete in completes:
+            complete.tot_rank = complete.tot_rank + self.spots
 
         # Draw Block
         if self.kind != self.KIND.finals:
@@ -3489,7 +3501,7 @@ class Round(TimeStampedModel):
             'outcomes': outcomes,
         }
         template = 'emails/round_publish.txt'
-        subject = "[Barberscore] {0} Results".format(
+        subject = "[Barberscore] {0} Results and OSS".format(
             self,
         )
         to = self.session.convention.get_ca_emails()
@@ -3531,7 +3543,7 @@ class Round(TimeStampedModel):
         context = {
             'round': self,
         }
-        subject = "[Barberscore] {0} Reports".format(
+        subject = "[Barberscore] {0} Reports and SA".format(
             self,
         )
         to = self.session.convention.get_ca_emails()
@@ -3548,17 +3560,6 @@ class Round(TimeStampedModel):
             pdf,
             'application/pdf',
         )]
-        # Add OSS Temporarily
-        if self.oss:
-            pdf = self.oss.file
-        else:
-            pdf = self.get_oss()
-        file_name = '{0} OSS.pdf'.format(self)
-        attachments.append((
-            file_name,
-            pdf,
-            'application/pdf',
-        ))
         email = build_email(
             template=template,
             context=context,

@@ -1,7 +1,7 @@
 The {{round}}
-results are now Published!
+results are now published!
 
-Attached to this email is the new-format SA and OSS for this round.
+Attached to this email is the new-format SA.
 
 Please note that we have modified the SA to provide the following two enhancements:
 
@@ -9,7 +9,7 @@ Please note that we have modified the SA to provide the following two enhancemen
 2) All recorded scores: Unlike the old SA (which listed competitors "ranked" similar to the OSS),
    the intent of the new SA is to provide a true "scoring analysis". EVERY group is listed in
    score order (to include scored MTs and all groups performing for evaluation score only).
-   
+
 {You are also encouraged to review the new-format OSS to ascertain contest session and official contest award results}
 
 Please help us by offering your feedback to David Mills on ways the SA can be improved further.

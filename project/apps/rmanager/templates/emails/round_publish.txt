@@ -1,5 +1,5 @@
 The {{round.session.convention|safe}} {{round.session.get_kind_display}} {{round.get_kind_display}}
-Round has finished!
+Round has been published!
 
 Following are the summary results.  The full Official Scoring Summary is attached
 to this email.
