@@ -30,7 +30,7 @@ djangorestframework-jsonapi = "*"
 djangorestframework-jwt = {git = "https://github.com/barberscore/django-rest-framework-jwt.git"}
 dry-rest-permissions = "*"
 gunicorn = "*"
-ipython = "==6.5.0"
+ipython = "*"
 maya = "*"
 mysqlclient = "*"
 openpyxl = "*"
