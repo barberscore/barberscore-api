@@ -1978,7 +1978,7 @@ class Round(TimeStampedModel):
         Appearance = apps.get_model('rmanager.appearance')
         Song = apps.get_model('rmanager.song')
 
-        # Score Block
+        # Score Block - get completeds
         group_ids = self.appearances.filter(
             is_private=False,
         ).exclude(
@@ -2204,10 +2204,10 @@ class Round(TimeStampedModel):
             'appearance__round',
             'appearance__group',
         ).filter(
-            appearance__round__session=self.session,
-            appearance__round__num__lte=self.num,
-            penalties__len__gt=0,
-            appearance__is_private=False,
+            appearance__round__session=self.session, # Using any session appearance
+            penalties__len__gt=0, # Where there are penalties
+            appearance__is_private=False, # If a public appearance
+            appearance__group__id__in=group_ids,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
             10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
@@ -2812,9 +2812,10 @@ class Round(TimeStampedModel):
             'appearance__round',
             'appearance__group',
         ).filter(
-            appearance__round__session=self.session,
-            appearance__round__num__lte=self.num,
-            penalties__len__gt=0,
+            appearance__round__session=self.session, # Using any session appearance
+            penalties__len__gt=0, # Where there are penalties
+            appearance__is_private=False, # If a public appearance
+            appearance__group__id__in=group_ids,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
             10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
@@ -2990,10 +2991,10 @@ class Round(TimeStampedModel):
             'appearance__round',
             'appearance__group',
         ).filter(
-            appearance__round__session=self.session,
-            appearance__round__num__lte=self.num,
-            penalties__len__gt=0,
-            appearance__is_private=False,
+            appearance__round__session=self.session, # Using any session appearance
+            penalties__len__gt=0, # Where there are penalties
+            appearance__is_private=False, # If a public appearance
+            appearance__group__id__in=group_ids,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
             10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
