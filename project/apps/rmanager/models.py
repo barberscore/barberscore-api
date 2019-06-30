@@ -1272,7 +1272,9 @@ class Outcome(TimeStampedModel):
     award = models.ForeignKey(
         'cmanager.award',
         related_name='outcomes',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     # Relations
