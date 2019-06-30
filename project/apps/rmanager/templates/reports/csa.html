@@ -206,16 +206,16 @@
           </div>
         {% endfor %}
       </section>
-      <section>
+      <section class='row'>
         {% if penalties %}
-          <h3>
-            Penalties
-          </h3>
-          <ul class='list-unstyled'>
-            {% for penalty in penalties %}
-              <li>{{penalty}}</li>
-            {% endfor %}
-          </ul>
+            <h3>
+              Penalties
+            </h3>
+            <ul class='list-unstyled'>
+              {% for penalty in penalties %}
+                <li>{{penalty}}</li>
+              {% endfor %}
+            </ul>
         {% endif %}
       </section>
     </div>
