@@ -42,10 +42,6 @@
       "value": false,
       "required": true
     },
-    "AUTH0_AUDIENCE": {
-      "description": "Auth0 API audience.",
-      "required": true
-    },
     "AUTH0_CLIENT_ID": {
       "description": "Auth0 Client id.",
       "required": true
@@ -116,7 +112,6 @@
         "AUTH0_CLIENT_ID": "test",
         "AUTH0_CLIENT_SECRET": "test",
         "AUTH0_DOMAIN": "test",
-        "AUTH0_AUDIENCE": "test"
       },
       "stack": "heroku-18",
       "scripts": {

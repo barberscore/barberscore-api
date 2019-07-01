@@ -18,7 +18,7 @@ def get_auth0():
         response = client.client_credentials(
             settings.AUTH0_CLIENT_ID,
             settings.AUTH0_CLIENT_SECRET,
-            settings.AUTH0_AUDIENCE,
+            "https://{0}/api/v2/".format(settings.AUTH0_DOMAIN),
         )
         cache.set(
             'auth0_api_access_token',

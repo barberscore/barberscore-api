@@ -27,12 +27,6 @@ def get_env_variable(var_name):
         raise ImproperlyConfigured(error_msg)
     return var
 
-def jwt_get_username_from_payload_handler(payload):
-    """Switch to email as JWT username payload."""
-    username = payload.get('sub')
-    authenticate(remote_user=username)
-    return username
-
 
 # Common
 DJANGO_SETTINGS_MODULE = get_env_variable("DJANGO_SETTINGS_MODULE")
@@ -158,26 +152,14 @@ RQ_SHOW_ADMIN_LINK = True
 AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
 AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
-AUTH0_AUDIENCE = get_env_variable("AUTH0_AUDIENCE")
 
-jwt_public_key = None
-if AUTH0_DOMAIN != 'test':
-    jwks = requests.get(
-        "https://{0}/.well-known/jwks.json".format(AUTH0_DOMAIN)
-    ).json()
-    cert = "-----BEGIN CERTIFICATE-----\n{0}\n-----END CERTIFICATE-----".format(
-        jwks['keys'][0]['x5c'][0],
-    )
-    certificate = load_pem_x509_certificate(cert.encode('utf-8'), default_backend())
-    jwt_public_key = certificate.public_key()
-
-JWT_AUTH = {
-    'JWT_AUDIENCE': AUTH0_CLIENT_ID,
-    'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_username_from_payload_handler,
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
-    'JWT_PUBLIC_KEY': jwt_public_key,
-    'JWT_ALGORITHM': 'RS256',
-}
+# JWT_AUTH = {
+#     # 'JWT_AUDIENCE': AUTH0_CLIENT_ID,
+#     # 'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_username_from_payload_handler,
+#     # 'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+#     # 'JWT_PUBLIC_KEY': jwt_public_key,
+#     # 'JWT_ALGORITHM': 'RS256',
+# }
 
 # Algolia
 ALGOLIA = {
