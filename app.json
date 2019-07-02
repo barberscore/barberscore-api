@@ -111,7 +111,7 @@
         "ALGOLIASEARCH_AUTO_INDEXING": "test",
         "AUTH0_CLIENT_ID": "test",
         "AUTH0_CLIENT_SECRET": "test",
-        "AUTH0_DOMAIN": "test",
+        "AUTH0_DOMAIN": "test"
       },
       "stack": "heroku-18",
       "scripts": {
