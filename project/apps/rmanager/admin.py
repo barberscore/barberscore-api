@@ -42,6 +42,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
+        'onstage',
         'actual_start',
         'actual_finish',
         'group',
