@@ -4180,12 +4180,12 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        if not self.panelist:
-            return False
-        if not self.panelist.person:
-            return False
-        if not getattr(self.panelist.person, 'user', False):
-            return False
+        # if not self.panelist:
+        #     return False
+        # if not self.panelist.person:
+        #     return False
+        # if not getattr(self.panelist.person, 'user', False):
+        #     return False
         return any([
             # Assigned DRCJs and CAs can always see
             self.song.appearance.round.session.convention.assignments.filter(
