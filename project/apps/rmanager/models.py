@@ -3437,7 +3437,7 @@ class Round(TimeStampedModel):
                     appearances__round__num__lte=self.num,
                 ),
             ),
-            tot_rank=Window(
+            raw_rank=Window(
                 expression=RowNumber(),
                 order_by=(
                     F('tot_points').desc(),
@@ -3452,7 +3452,7 @@ class Round(TimeStampedModel):
         )
         # Monkeypatch results
         for complete in completes:
-            complete.tot_rank = complete.tot_rank + self.spots
+            complete.tot_rank = complete.raw_rank + self.spots
 
         # Draw Block
         if self.kind != self.KIND.finals:
