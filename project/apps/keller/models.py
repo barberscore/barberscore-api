@@ -1547,9 +1547,9 @@ class Complete(models.Model):
     person = models.ForeignKey(
         'bhs.person',
         related_name='completes',
-        on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     panelist = models.OneToOneField(
