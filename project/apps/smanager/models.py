@@ -73,11 +73,11 @@ class Contest(TimeStampedModel):
     # Private
     group = models.ForeignKey(
         'bhs.group',
+        help_text="""The Winner of the Contest.""",
+        related_name='contests',
         null=True,
         blank=True,
-        related_name='contests',
         on_delete=models.SET_NULL,
-        help_text="""The Winner of the Contest.""",
     )
 
     # FKs
@@ -90,7 +90,9 @@ class Contest(TimeStampedModel):
     award = models.ForeignKey(
         'cmanager.award',
         related_name='contests',
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     # Relations
@@ -390,7 +392,9 @@ class Entry(TimeStampedModel):
     group = models.ForeignKey(
         'bhs.group',
         related_name='entries',
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     statelogs = GenericRelation(
@@ -819,6 +823,8 @@ class Session(TimeStampedModel):
     convention = models.ForeignKey(
         'cmanager.convention',
         related_name='sessions',
+        null=True,
+        blank=True,
         on_delete=models.CASCADE,
     )
 
