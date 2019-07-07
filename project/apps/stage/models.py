@@ -101,7 +101,9 @@ class Grid(TimeStampedModel):
     round = models.ForeignKey(
         'rmanager.round',
         related_name='grids',
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     venue = models.ForeignKey(
