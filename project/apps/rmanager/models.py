@@ -188,17 +188,17 @@ class Appearance(TimeStampedModel):
     group = models.ForeignKey(
         'bhs.group',
         related_name='appearances',
-        on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     entry = models.ForeignKey(
         'smanager.entry',
         related_name='appearances',
-        on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     # Relations
@@ -1272,9 +1272,9 @@ class Outcome(TimeStampedModel):
     award = models.ForeignKey(
         'cmanager.award',
         related_name='outcomes',
-        on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     # Relations
@@ -1566,9 +1566,9 @@ class Panelist(TimeStampedModel):
     person = models.ForeignKey(
         'bhs.person',
         related_name='panelists',
-        on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     # Relations
