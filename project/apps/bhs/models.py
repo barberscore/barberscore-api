@@ -1143,13 +1143,13 @@ class Member(TimeStampedModel):
 
     # FKs
     group = models.ForeignKey(
-        'bhs.group',
+        'Group',
         related_name='members',
         on_delete=models.CASCADE,
     )
 
     person = models.ForeignKey(
-        'bhs.person',
+        'Person',
         related_name='members',
         on_delete=models.CASCADE,
     )
@@ -1310,13 +1310,13 @@ class Officer(TimeStampedModel):
 
     # FKs
     person = models.ForeignKey(
-        'bhs.person',
+        'Person',
         related_name='officers',
         on_delete=models.CASCADE,
     )
 
     group = models.ForeignKey(
-        'bhs.group',
+        'Group',
         related_name='officers',
         on_delete=models.CASCADE,
     )
@@ -1576,13 +1576,13 @@ class Repertory(TimeStampedModel):
 
     # FKs
     group = models.ForeignKey(
-        'bhs.group',
+        'Group',
         related_name='repertories',
         on_delete=models.CASCADE,
     )
 
     chart = models.ForeignKey(
-        'bhs.chart',
+        'Chart',
         related_name='repertories',
         on_delete=models.CASCADE,
     )
