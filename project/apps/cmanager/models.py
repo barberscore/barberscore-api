@@ -398,7 +398,9 @@ class Award(TimeStampedModel):
     group = models.ForeignKey(
         'bhs.group',
         related_name='awards',
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     parent = models.ForeignKey(
@@ -700,15 +702,17 @@ class Convention(TimeStampedModel):
         related_name='conventions',
         help_text="""
             The specific venue for the convention (if available.)""",
-        on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
 
     group = models.ForeignKey(
         'bhs.group',
         related_name='conventions',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     # Relations
