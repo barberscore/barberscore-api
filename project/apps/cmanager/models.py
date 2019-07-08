@@ -596,12 +596,18 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    venue_name = models.CharField(
+        help_text="""
+            The venue name (when available).""",
+        max_length=255,
+        default='(TBD)',
+    )
+
     location = models.CharField(
         help_text="""
             The general location in the form "City, State".""",
         max_length=255,
-        default='',
-        blank=True,
+        default='(TBD)',
     )
 
     timezone = TimeZoneField(

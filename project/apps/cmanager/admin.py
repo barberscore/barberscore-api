@@ -165,6 +165,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('panel', 'kinds', ),
         ('open_date', 'close_date', ),
         ('start_date', 'end_date', ),
+        'venue_name',
         'location',
         'timezone',
         'image',
