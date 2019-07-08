@@ -74,11 +74,9 @@ class CleanPanelist(models.Model):
     )
     scores = JSONField(
     )
-    panelist = models.OneToOneField(
-        'rmanager.panelist',
+    panelist_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
     objects = CleanPanelistManager()
 
@@ -581,17 +579,13 @@ class CleanSong(models.Model):
     )
     scores = JSONField(
     )
-    appearance = models.ForeignKey(
-        'rmanager.appearance',
+    appearance_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
-    song = models.OneToOneField(
-        'rmanager.song',
+    song_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
     objects = CleanSongManager()
 
@@ -614,11 +608,9 @@ class CleanFlat(models.Model):
     )
     points = models.IntegerField(
     )
-    score = models.OneToOneField(
-        'rmanager.score',
+    score_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
     objects = CleanFlatManager()
 
@@ -1315,15 +1307,13 @@ class Flat(models.Model):
         related_name='flats',
         on_delete=models.CASCADE,
     )
-    score = models.OneToOneField(
-        'rmanager.score',
+    score_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
     class Meta:
         unique_together = (
-            ('complete', 'selection', 'score'),
+            ('complete', 'selection', 'score_id'),
         )
 
     def clean(self):
@@ -1437,11 +1427,9 @@ class Selection(models.Model):
         blank=True,
     )
 
-    song = models.OneToOneField(
-        'rmanager.song',
+    song_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     objects = SelectionManager()
@@ -1552,11 +1540,9 @@ class Complete(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    panelist = models.OneToOneField(
-        'rmanager.panelist',
+    panelist_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     objects = CompleteManager()

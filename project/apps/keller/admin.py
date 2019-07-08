@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import CleanPanelist
 from .models import CleanSong
+from .models import CleanFlat
 from .models import RawPanelist
 from .models import RawSong
 
@@ -24,7 +25,7 @@ class CleanPanelistAdmin(admin.ModelAdmin):
         'num',
         'legacy_person',
         'scores',
-        'panelist',
+        'panelist_id',
     ]
     list_display = [
         'id',
@@ -37,7 +38,7 @@ class CleanPanelistAdmin(admin.ModelAdmin):
         'category',
         'num',
         'legacy_person',
-        'panelist',
+        'panelist_id',
     ]
     list_filter = [
         'district',
@@ -55,9 +56,6 @@ class CleanPanelistAdmin(admin.ModelAdmin):
     search_fields = [
         'id',
         'convention',
-    ]
-    raw_id_fields = [
-        'panelist',
     ]
 
 
@@ -76,7 +74,7 @@ class CleanSongAdmin(admin.ModelAdmin):
         'legacy_group',
         'legacy_chart',
         'scores',
-        'song',
+        'song_id',
     ]
     list_display = [
         'id',
@@ -91,7 +89,7 @@ class CleanSongAdmin(admin.ModelAdmin):
         'legacy_group',
         'legacy_chart',
         'scores',
-        'song',
+        # 'song',
     ]
     list_filter = [
         'district',
@@ -107,7 +105,35 @@ class CleanSongAdmin(admin.ModelAdmin):
         'id',
     ]
     raw_id_fields = [
-        'song',
+        # 'song',
+    ]
+
+
+@admin.register(CleanFlat)
+class CleanFLatAdmin(admin.ModelAdmin):
+    fields = [
+        'id',
+        'cleanpanelist',
+        'cleansong',
+        'points',
+        'score_id',
+    ]
+    list_display = [
+        'id',
+        'cleanpanelist',
+        'cleansong',
+        'points',
+        'score_id',
+    ]
+    readonly_fields = [
+        'id',
+    ]
+    search_fields = [
+        'id',
+    ]
+    raw_id_fields = [
+        'cleanpanelist',
+        'cleansong',
     ]
 
 
@@ -212,14 +238,11 @@ class CompleteAdmin(admin.ModelAdmin):
         'id',
         'row_id',
         'points',
-        'panelist',
+        'panelist_id',
     ]
     list_display = [
         'row_id',
-        'panelist',
-    ]
-    list_select_related = [
-        'panelist',
+        'panelist_id',
     ]
     readonly_fields = [
         'id',
@@ -227,12 +250,7 @@ class CompleteAdmin(admin.ModelAdmin):
     search_fields = [
         'row_id',
     ]
-    autocomplete_fields = [
-        'panelist',
-    ]
-    inlines = [
-        # FlatInline,
-    ]
+
 
 
 # @admin.register(Selection)
@@ -251,7 +269,7 @@ class SelectionAdmin(admin.ModelAdmin):
         'song_num',
         'song_title',
         'points',
-        'song',
+        'song_id',
     ]
     list_display = [
         'row_id',
@@ -290,12 +308,6 @@ class SelectionAdmin(admin.ModelAdmin):
         'session_kind',
         'round_kind',
     ]
-    list_select_related = [
-        'song',
-    ]
-    list_editable = [
-        # 'convention_name',
-    ]
 
     ordering = (
         'row_id',
@@ -304,12 +316,6 @@ class SelectionAdmin(admin.ModelAdmin):
     )
     readonly_fields = [
         'id',
-    ]
-    autocomplete_fields = [
-        'song',
-    ]
-    search_fields = [
-        'song',
     ]
     inlines = [
         # FlatInline,
@@ -323,18 +329,17 @@ class FlatAdmin(admin.ModelAdmin):
         'id',
         'complete',
         'selection',
-        'score',
+        'score_id',
     ]
     list_display = [
         'id',
         'complete',
         'selection',
-        'score',
+        'score_id',
     ]
     list_select_related = [
         'complete',
         'selection',
-        'score',
     ]
     readonly_fields = [
         'id',
@@ -342,5 +347,4 @@ class FlatAdmin(admin.ModelAdmin):
     autocomplete_fields = [
         'complete',
         'selection',
-        'score',
     ]
