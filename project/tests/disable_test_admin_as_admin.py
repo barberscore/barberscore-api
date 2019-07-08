@@ -96,15 +96,6 @@ def test_entry_admin(admin_django_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_grid_admin(admin_django_client, grid):
-    path = reverse('admin:stage_grid_changelist')
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:stage_grid_change', args=(str(grid.id),))
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_group_admin(admin_django_client, group):
     path = reverse('admin:bhs_group_changelist')
     response = admin_django_client.get(path)
@@ -200,15 +191,6 @@ def test_song_admin(admin_django_client, song):
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
     path = reverse('admin:rmanager_song_change', args=(str(song.id),))
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
-def test_venue_admin(admin_django_client, venue):
-    path = reverse('admin:stage_venue_changelist')
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:stage_venue_change', args=(str(venue.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 

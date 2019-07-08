@@ -178,21 +178,6 @@ def test_entry_endpoint(anon_api_client, entry):
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_grid_endpoint(anon_api_client, grid):
-    path = reverse('grid-list')
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.post(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    path = reverse('grid-detail', args=(str(grid.id),))
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.patch(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.delete(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-
 def test_group_endpoint(anon_api_client, group):
     path = reverse('group-list')
     response = anon_api_client.get(path)
@@ -357,20 +342,6 @@ def test_song_endpoint(anon_api_client, song):
     response = anon_api_client.delete(path)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-
-def test_venue_endpoint(anon_api_client, venue):
-    path = reverse('venue-list')
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.post(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    path = reverse('venue-detail', args=(str(venue.id),))
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.patch(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.delete(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 # def test_user_endpoint(anon_api_client, user):

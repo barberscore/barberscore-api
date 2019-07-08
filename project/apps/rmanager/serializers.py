@@ -153,7 +153,6 @@ class RoundSerializer(serializers.ModelSerializer):
             'session',
             'appearances',
             'panelists',
-            'grids',
             'outcomes',
             'permissions',
         )
@@ -163,7 +162,6 @@ class RoundSerializer(serializers.ModelSerializer):
             'appearances',
             'panelists',
             # 'members',
-            # 'grids',
             # 'outcomes',
         ]
 

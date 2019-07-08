@@ -367,7 +367,6 @@ class RoundViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'appearances',
         'panelists',
-        'grids',
         'outcomes',
         'statelogs',
     ).distinct().order_by('id')
@@ -487,7 +486,6 @@ class RoundViewSet(viewsets.ModelViewSet):
         round = Round.objects.select_related(
             'session',
             'session__convention',
-            'session__convention__venue',
         ).get(pk=pk)
         if round.oss:
             pdf = round.oss.file
@@ -585,7 +583,6 @@ class RoundViewSet(viewsets.ModelViewSet):
         round = Round.objects.select_related(
             'session',
             'session__convention',
-            'session__convention__venue',
         ).get(pk=pk)
         if round.sa:
             pdf = round.sa.file

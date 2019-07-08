@@ -32,8 +32,6 @@ from .models import Round
 from .models import Score
 from .models import Song
 
-# from apps.stage.inlines import GridInline
-
 admin.site.site_header = 'Barberscore Admin Backend'
 
 
@@ -302,7 +300,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         OutcomeInline,
         PanelistInline,
         AppearanceInline,
-        # GridInline,
         StateLogInline,
     ]
 

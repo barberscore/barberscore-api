@@ -169,7 +169,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'location',
         'timezone',
         'image',
-        'venue',
         'description',
         'district',
         'legacy_name',
@@ -221,7 +220,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     autocomplete_fields = [
         'group',
-        'venue',
     ]
 
     ordering = (

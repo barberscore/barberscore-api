@@ -703,16 +703,6 @@ class Convention(TimeStampedModel):
     )
 
     # FKs
-    venue = models.ForeignKey(
-        'stage.venue',
-        related_name='conventions',
-        help_text="""
-            The specific venue for the convention (if available.)""",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     group = models.ForeignKey(
         'bhs.group',
         related_name='conventions',

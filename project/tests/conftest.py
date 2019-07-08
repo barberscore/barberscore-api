@@ -17,7 +17,6 @@ from factories import ContestantFactory
 from factories import ContestFactory
 from factories import ConventionFactory
 from factories import EntryFactory
-from factories import GridFactory
 from factories import GroupFactory
 from factories import MemberFactory
 from factories import OfficerFactory
@@ -30,7 +29,6 @@ from factories import ScoreFactory
 from factories import SessionFactory
 from factories import SongFactory
 from factories import UserFactory
-from factories import VenueFactory
 
 # @pytest.fixture(scope='session')
 # def django_db_modify_db_settings():
@@ -121,11 +119,6 @@ def entry():
     return EntryFactory()
 
 
-# @pytest.fixture
-# def grid():
-#     return GridFactory()
-
-
 @pytest.fixture
 def group():
     return GroupFactory()
@@ -179,19 +172,6 @@ def session():
 @pytest.fixture
 def song():
     return SongFactory()
-
-@pytest.fixture
-def grid():
-    return GridFactory()
-
-@pytest.fixture
-def venue():
-    return VenueFactory()
-
-
-# @pytest.fixture
-# def venue():
-#     return VenueFactory()
 
 
 @pytest.fixture

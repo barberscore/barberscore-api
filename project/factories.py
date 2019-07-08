@@ -39,9 +39,6 @@ from apps.bhs.models import Officer
 from apps.bhs.models import Person
 from apps.bhs.models import Repertory
 
-from apps.stage.models import Grid
-from apps.stage.models import Venue
-
 from apps.cmanager.models import Assignment
 from apps.cmanager.models import Award
 from apps.cmanager.models import Convention
@@ -138,9 +135,9 @@ class ConventionFactory(DjangoModelFactory):
     close_date = datetime.date(2017, 6, 30)
     start_date = datetime.date(2017, 7, 1)
     end_date = datetime.date(2017, 7, 8)
+    venue_name = "Grand Ole Opry"
     location = "Nashville, TN"
     timezone = 'US/Central'
-    venue = None
     group = SubFactory('factories.GroupFactory')
 
     class Meta:
@@ -349,26 +346,6 @@ class SongFactory(DjangoModelFactory):
 
     class Meta:
         model = Song
-
-
-class GridFactory(DjangoModelFactory):
-    status = Grid.STATUS.new
-    round = SubFactory('factories.RoundFactory')
-
-    class Meta:
-        model = Grid
-
-
-class VenueFactory(DjangoModelFactory):
-    name = 'Test Convention Center'
-    status = Venue.STATUS.active
-    city = 'Nashville'
-    state = 'TN'
-    airport = 'NTA'
-    timezone = 'US/Central'
-
-    class Meta:
-        model = Venue
 
 
 @mute_signals(pre_delete, post_save)

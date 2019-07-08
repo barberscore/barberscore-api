@@ -154,7 +154,6 @@ class AwardViewSet(viewsets.ModelViewSet):
 
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.select_related(
-        'venue',
         'group',
     ).prefetch_related(
         'sessions',
