@@ -24,7 +24,7 @@ from django.db import models
 from django.db.models import Q
 
 # Django
-from django.contrib.postgres.fields import FloatRangeField
+from django.contrib.postgres.fields import DecimalRangeField
 from django.contrib.postgres.fields import IntegerRangeField
 
 # First-Party
@@ -381,7 +381,7 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    scope_range = FloatRangeField(
+    scope_range = DecimalRangeField(
         null=True,
         blank=True,
     )
