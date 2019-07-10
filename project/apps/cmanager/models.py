@@ -122,22 +122,18 @@ class Assignment(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+        ]
+        return any(item in request.user.roles for item in roles)
 
     # Transitions
     @fsm_log_by
@@ -453,22 +449,18 @@ class Award(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+        ]
+        return any(item in request.user.roles for item in roles)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+        ]
+        return any(item in request.user.roles for item in roles)
 
     # Transitions
     @fsm_log_by
@@ -818,22 +810,18 @@ class Convention(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     # Convention Transition Conditions
     def can_reset(self):
