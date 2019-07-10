@@ -181,6 +181,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'target',
         'legacy_report',
         'drcj_report',
+        'owner',
         # 'footnotes',
         'description',
         'notes',
@@ -208,6 +209,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     autocomplete_fields = [
         'convention',
         'target',
+        # 'owner',
     ]
 
     readonly_fields = [
@@ -237,4 +239,8 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     search_fields = [
         'convention__name',
         'kind',
+    ]
+
+    raw_id_fields = [
+        'owner',
     ]
