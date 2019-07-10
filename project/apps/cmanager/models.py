@@ -408,11 +408,6 @@ class Award(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
-    group_id_new = models.UUIDField(
-        null=True,
-        blank=True,
-    )
-
     parent = models.ForeignKey(
         'self',
         help_text="""If a qualifier, this is the award qualifying for.""",
@@ -717,11 +712,6 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
-    group_id_new = models.UUIDField(
-        null=True,
-        blank=True,
-    )
-
     # Relations
     statelogs = GenericRelation(
         StateLog,
@@ -729,15 +719,15 @@ class Convention(TimeStampedModel):
     )
 
     # Internals
-    class Meta:
-        unique_together = (
-            (
-                'year',
-                'season',
-                'name',
-                'group',
-            ),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         (
+    #             'year',
+    #             'season',
+    #             'name',
+    #             'group',
+    #         ),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "convention"
