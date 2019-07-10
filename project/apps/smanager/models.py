@@ -26,6 +26,7 @@ from django.db.models import Avg
 from django.db.models import Q
 from django.db.models import Func
 from django.db.models import F
+from django.conf import settings
 
 from .fields import FileUploadPath
 from .tasks import build_email
@@ -138,26 +139,21 @@ class Contest(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+            'DRCJ',
+        ]
+        return any([item in roles for item in request.user.roles])
 
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
+        if self.session.status >= self.session.STATUS.opened:
+            return False
         return any([
-            all([
-                self.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
-                # self.session.status < self.session.STATUS.opened,
-            ]),
+            'SCJC' in request.user.roles,
+            self.session.owner == request.user,
         ])
 
     # Transitions
@@ -227,7 +223,7 @@ class Contestant(TimeStampedModel):
 
     # Methods
 
-    # Permissions
+    # Contestant Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -243,30 +239,26 @@ class Contestant(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=500,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'Manager',
+        ]
+        return any([item in roles for item in request.user.roles])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.contest.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
+                'SCJC' in request.user.roles,
+            ]),
+            all([
+                self.contest.session.owner == request.user,
                 self.contest.session.status < self.contest.session.STATUS.packaged,
             ]),
             all([
-                self.entry.group.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
+                self.entry.owner == request.user,
                 self.entry.status < self.entry.STATUS.approved,
             ]),
         ])
@@ -383,6 +375,14 @@ class Entry(TimeStampedModel):
     )
 
     # FKs
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='entries',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     session = models.ForeignKey(
         'Session',
         related_name='entries',
@@ -428,7 +428,7 @@ class Entry(TimeStampedModel):
         #     )
 
 
-    # Permissions
+    # Entry Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -444,12 +444,12 @@ class Entry(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=500,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'Manager',
+        ]
+        return any([item in roles for item in request.user.roles])
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -457,19 +457,12 @@ class Entry(TimeStampedModel):
         return any([
             # For DRCJs
             all([
-                self.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lt=10,
-                ),
+                self.session.owner == request.user,
                 self.session.status < self.session.STATUS.packaged,
             ]),
             # For Groups
             all([
-                self.group.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
+                self.owner == request.user,
                 self.status <= self.STATUS.approved,
             ]),
         ])
@@ -820,6 +813,14 @@ class Session(TimeStampedModel):
     )
 
     # FKs
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='sessions',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
     convention = models.ForeignKey(
         'cmanager.convention',
         related_name='sessions',
@@ -1392,26 +1393,21 @@ class Session(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+            'DRCJ',
+        ]
+        return any([item in roles for item in request.user.roles])
 
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
+        if self.status >= self.STATUS.finished:
+            return False
         return any([
-            all([
-                self.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category=self.convention.assignments.model.CATEGORY.drcj,
-                ),
-                self.status < self.STATUS.finished,
-            ]),
+            'SCJC' in request.user.roles,
+            self.owner == request.user,
         ])
 
     # Session Conditions
