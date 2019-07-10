@@ -6,7 +6,6 @@ class CmanagerConfig(AppConfig):
     verbose_name = 'Convention Manager'
 
     def ready(self):
-        from apps.cmanager import signals
         # import algoliasearch_django as algoliasearch
         # from .indexes import AwardIndex
         # from .indexes import ConventionIndex
