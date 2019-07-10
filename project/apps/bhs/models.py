@@ -45,6 +45,7 @@ from .fields import VoicePartField
 from .fields import NoPunctuationCharField
 from .fields import ImageUploadPath
 
+
 class Person(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -406,26 +407,12 @@ class Person(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return True
+        return False
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        user = getattr(self, 'user', None)
-        return any([
-            all([
-                user == request.user,
-                self.status > 0,
-                self.mc_pk == None,
-            ]),
-            all([
-                self.members.filter(
-                    group__officers__person__user=request.user,
-                    group__officers__status__gt=0,
-                ),
-                self.mc_pk == None,
-            ]),
-        ])
+        return False
 
     # Transitions
     @fsm_log_by
@@ -1031,21 +1018,12 @@ class Group(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return True
+        return False
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            all([
-                self.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-                self.status > 0,
-                # self.mc_pk == None,
-            ])
-        ])
+        return False
 
     # Conditions:
     def can_activate(self):
@@ -1192,25 +1170,12 @@ class Member(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__gt=300,
-                status__gt=0,
-            )
-        ])
+        return False
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            all([
-                self.group.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-                self.mc_pk == None,
-            ]),
-        ])
+        return False
 
     # Transitions
     @fsm_log_by
@@ -1374,25 +1339,12 @@ class Officer(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            )
-        ])
+        return False
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            all([
-                self.group.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-                self.mc_pk == None,
-            ]),
-        ])
+        return False
 
     # Transitions
     @fsm_log_by
@@ -1516,22 +1468,20 @@ class Chart(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__gt=300,
-                status__gt=0,
-            )
-        ])
+        roles = [
+            'SCJC',
+            'Librarian',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            request.user.person.officers.filter(
-                office=160,
-                status__gt=0,
-            )
-        ])
+        roles = [
+            'SCJC',
+            'Librarian',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     # Transitions
     @fsm_log_by
@@ -1614,38 +1564,43 @@ class Repertory(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        Assignment = apps.get_model('cmanager.assignment')
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'CA',
+            'Librarian',
+        ]
         return any([
+            [item in roles for item in request.user.roles],
             self.group.officers.filter(
                 person__user=request.user,
                 status__gt=0,
             ),
-            self.group.members.filter(
-                person__user=request.user,
-                status__gt=0,
-            ),
-            self.group.appearances.filter(
-                round__session__convention__assignments__person__user=request.user,
-                round__session__convention__assignments__status__gt=0,
-                round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
-            )
         ])
 
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__gt=300,
-                status__gt=0,
-            )
-        ])
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'Librarian',
+            'Manager',
+        ]
+        return any([item in roles for item in request.user.roles])
+
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'Librarian',
+        ]
         return any([
+            [item in roles for item in request.user.roles],
             self.group.officers.filter(
                 person__user=request.user,
                 status__gt=0,
