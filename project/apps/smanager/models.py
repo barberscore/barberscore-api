@@ -153,7 +153,7 @@ class Contest(TimeStampedModel):
             return False
         return any([
             'SCJC' in request.user.roles,
-            self.session.owner == request.user,
+            self.session.owners.filter(id__contains=request.user.id),
         ])
 
     # Transitions
@@ -254,11 +254,11 @@ class Contestant(TimeStampedModel):
                 'SCJC' in request.user.roles,
             ]),
             all([
-                self.contest.session.owner == request.user,
+                self.contest.session.filter(owners__contains=request.user),
                 self.contest.session.status < self.contest.session.STATUS.packaged,
             ]),
             all([
-                self.entry.owner == request.user,
+                self.entry.filter(owners__contains=request.user),
                 self.entry.status < self.entry.STATUS.approved,
             ]),
         ])
@@ -375,12 +375,9 @@ class Entry(TimeStampedModel):
     )
 
     # FKs
-    owner = models.ForeignKey(
+    owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='entries',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     session = models.ForeignKey(
@@ -457,12 +454,12 @@ class Entry(TimeStampedModel):
         return any([
             # For DRCJs
             all([
-                self.session.owner == request.user,
+                self.session.owners.filter(id__contains=request.user.id),
                 self.session.status < self.session.STATUS.packaged,
             ]),
             # For Groups
             all([
-                self.owner == request.user,
+                self.owners.filter(id__contains=request.user.id),
                 self.status <= self.STATUS.approved,
             ]),
         ])
@@ -813,12 +810,9 @@ class Session(TimeStampedModel):
     )
 
     # FKs
-    owner = models.ForeignKey(
+    owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='sessions',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     convention = models.ForeignKey(
@@ -1407,7 +1401,7 @@ class Session(TimeStampedModel):
             return False
         return any([
             'SCJC' in request.user.roles,
-            self.owner == request.user,
+            self.owners.filter(id__contains=request.user.id),
         ])
 
     # Session Conditions
@@ -1422,11 +1416,10 @@ class Session(TimeStampedModel):
         ])
 
     def can_open(self):
-        Contest = apps.get_model('smanager.contest')
         try:
             return all([
                 # self.convention.open_date <= datetime.date.today(),
-                self.contests.filter(status=Contest.STATUS.included),
+                self.contests.filter(status=self.contests.model.STATUS.included),
             ])
         except TypeError:
             return False
@@ -1472,8 +1465,10 @@ class Session(TimeStampedModel):
         self.drcj_report.delete()
         contests = self.contests.all()
         rounds = self.rounds.all()
+        entries = self.entries.all()
         contests.delete()
         rounds.delete()
+        entries.delete()
         return
 
     @fsm_log_by

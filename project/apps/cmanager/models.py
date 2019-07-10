@@ -22,6 +22,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.conf import settings
 
 # Django
 from django.contrib.postgres.fields import DecimalRangeField
@@ -87,6 +88,14 @@ class Assignment(TimeStampedModel):
 
     person = models.ForeignKey(
         'bhs.person',
+        related_name='assignments',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         related_name='assignments',
         null=True,
         blank=True,
@@ -399,6 +408,11 @@ class Award(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    group_id_new = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
     parent = models.ForeignKey(
         'self',
         help_text="""If a qualifier, this is the award qualifying for.""",
@@ -703,6 +717,11 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    group_id_new = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
     # Relations
     statelogs = GenericRelation(
         StateLog,
@@ -738,31 +757,30 @@ class Convention(TimeStampedModel):
         ])
 
     def clean(self):
-        if self.group.kind > self.group.KIND.district:
-            raise ValidationError(
-                {'group': 'Owning group must be at least district'}
-            )
+        return
+        # if self.group.kind > self.group.KIND.district:
+        #     raise ValidationError(
+        #         {'group': 'Owning group must be at least district'}
+        #     )
 
     # Methods
     def get_drcj_emails(self):
-        Assignment = apps.get_model('cmanager.assignment')
         assignments = self.assignments.filter(
             status=Assignment.STATUS.active,
             category=Assignment.CATEGORY.drcj,
-            person__email__isnull=False,
         ).order_by(
             'kind',
             'category',
-            'person__last_name',
-            'person__first_name',
+            'user__family_name',
+            'user__given_name',
         )
         seen = set()
         result = [
-            "{0} ({1} {2}) <{3}>".format(assignment.person.common_name, assignment.get_kind_display(), assignment.get_category_display(), assignment.person.email,)
+            "{0} ({1} {2}) <{3}>".format(assignment.user.name, assignment.get_kind_display(), assignment.get_category_display(), assignment.user.email,)
             for assignment in assignments
             if not (
-                "{0} ({1} {2}) <{3}>".format(assignment.person.common_name, assignment.get_kind_display(), assignment.get_category_display(), assignment.person.email,) in seen or seen.add(
-                    "{0} ({1} {2}) <{3}>".format(assignment.person.common_name, assignment.get_kind_display(), assignment.get_category_display(), assignment.person.email,)
+                "{0} ({1} {2}) <{3}>".format(assignment.user.name, assignment.get_kind_display(), assignment.get_category_display(), assignment.user.email,) in seen or seen.add(
+                    "{0} ({1} {2}) <{3}>".format(assignment.user.name, assignment.get_kind_display(), assignment.get_category_display(), assignment.user.email,)
                 )
             )
         ]
@@ -770,24 +788,22 @@ class Convention(TimeStampedModel):
 
 
     def get_ca_emails(self):
-        Assignment = apps.get_model('cmanager.assignment')
         assignments = self.assignments.filter(
             status=Assignment.STATUS.active,
             category=Assignment.CATEGORY.ca,
-            person__email__isnull=False,
         ).order_by(
             'kind',
             'category',
-            'person__last_name',
-            'person__first_name',
+            'user__family_name',
+            'user__given_name',
         )
         seen = set()
         result = [
-            "{0} ({1} {2}) <{3}>".format(assignment.person.common_name, assignment.get_kind_display(), assignment.get_category_display(), assignment.person.email,)
+            "{0} ({1} {2}) <{3}>".format(assignment.user.name, assignment.get_kind_display(), assignment.get_category_display(), assignment.user.email,)
             for assignment in assignments
             if not (
-                "{0} ({1} {2}) <{3}>".format(assignment.person.common_name, assignment.get_kind_display(), assignment.get_category_display(), assignment.person.email,) in seen or seen.add(
-                    "{0} ({1} {2}) <{3}>".format(assignment.person.common_name, assignment.get_kind_display(), assignment.get_category_display(), assignment.person.email,)
+                "{0} ({1} {2}) <{3}>".format(assignment.user.name, assignment.get_kind_display(), assignment.get_category_display(), assignment.user.email,) in seen or seen.add(
+                    "{0} ({1} {2}) <{3}>".format(assignment.user.name, assignment.get_kind_display(), assignment.get_category_display(), assignment.user.email,)
                 )
             )
         ]
