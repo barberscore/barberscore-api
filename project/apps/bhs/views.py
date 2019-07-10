@@ -26,7 +26,7 @@ from django.utils.text import slugify
 from .filtersets import MemberFilterset
 from .filtersets import OfficerFilterset
 from .filtersets import PersonFilterset
-from .filterbackends import RepertoryFilterBackend
+# from .filterbackends import RepertoryFilterBackend
 from .models import Group
 from .models import Member
 from .models import Officer
@@ -369,7 +369,7 @@ class RepertoryViewSet(viewsets.ModelViewSet):
     serializer_class = RepertorySerializer
     filter_backends = [
         DjangoFilterBackend,
-        RepertoryFilterBackend,
+        # RepertoryFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
