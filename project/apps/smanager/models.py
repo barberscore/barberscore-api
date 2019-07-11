@@ -71,16 +71,6 @@ class Contest(TimeStampedModel):
         default='',
     )
 
-    # Private
-    group = models.ForeignKey(
-        'bhs.group',
-        help_text="""The Winner of the Contest.""",
-        related_name='contests',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     # FKs
     session = models.ForeignKey(
         'Session',

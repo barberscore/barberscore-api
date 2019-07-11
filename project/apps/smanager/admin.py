@@ -31,7 +31,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'award',
         'session',
         'result',
-        'group',
+        # 'group',
     ]
 
     list_display = (
@@ -39,7 +39,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'award',
         'session',
         'result',
-        'group',
+        # 'group',
     )
 
     list_filter = [
@@ -64,7 +64,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     autocomplete_fields = [
         'award',
         'session',
-        'group',
+        # 'group',
     ]
 
     search_fields = [
