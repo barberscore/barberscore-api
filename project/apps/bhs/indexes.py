@@ -10,6 +10,7 @@ class GroupIndex(AlgoliaIndex):
         'get_kind_display',
         'get_gender_display',
         'code',
+        'district',
         'image',
         'bhs_id',
     ]
@@ -18,6 +19,7 @@ class GroupIndex(AlgoliaIndex):
             'name',
             'code',
             'bhs_id',
+            'district',
             'get_kind_display',
         ],
         'attributesForFaceting': [
