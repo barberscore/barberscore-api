@@ -142,7 +142,7 @@ class Assignment(TimeStampedModel):
         roles = [
             'SCJC',
         ]
-        return any(item in request.user.roles for item in roles)
+        return any(item in roles for item in request.user.roles)
 
     # Transitions
     @fsm_log_by
@@ -852,16 +852,13 @@ class Convention(TimeStampedModel):
                 self.start_date <= self.end_date,
                 self.location,
                 self.timezone,
-                self.sessions.count() > 0,
             ])
         except TypeError:
             return False
         return False
 
     def can_deactivate(self):
-        return all([
-            not self.sessions.exclude(status=self.sessions.model.STATUS.finished)
-        ])
+        return
 
     # Convention Transitions
     @fsm_log_by
@@ -873,9 +870,7 @@ class Convention(TimeStampedModel):
     )
     def reset(self, *args, **kwargs):
         assignments = self.assignments.all()
-        sessions = self.sessions.all()
         assignments.delete()
-        sessions.delete()
         return
 
     @fsm_log_by
@@ -891,49 +886,47 @@ class Convention(TimeStampedModel):
         # Reset for indempodence
         self.reset()
 
-        # Assignment = apps.get_model('cmanager.assignment')
-        Officer = apps.get_model('bhs.officer')
-        scjcs = Officer.objects.filter(
-            Q(office=Officer.OFFICE.scjc_chair) | Q(office=Officer.OFFICE.scjc_admin),
-            status__gt=0,
-        )
-        for scjc in scjcs:
-            self.assignments.create(
-                category=Assignment.CATEGORY.drcj,
-                status=Assignment.STATUS.active,
-                kind=Assignment.KIND.observer,
-                person=scjc.person,
-            )
-        drcjs = self.group.officers.filter(
-            office=Officer.OFFICE.drcj,
-            status__gt=0,
-        )
-        for drcj in drcjs:
-            self.assignments.create(
-                category=Assignment.CATEGORY.drcj,
-                status=Assignment.STATUS.active,
-                kind=Assignment.KIND.official,
-                person=drcj.person,
-            )
-        ca_specialists = Officer.objects.filter(
-            office=Officer.OFFICE.scjc_ca,
-            status__gt=0,
-        )
-        for ca_specialist in ca_specialists:
-            self.assignments.create(
-                category=Assignment.CATEGORY.ca,
-                status=Assignment.STATUS.active,
-                kind=Assignment.KIND.observer,
-                person=ca_specialist.person,
-            )
-        cas = ceil((self.panel + 1) / 2)
-        while cas > 0:
-            self.assignments.create(
-                category=Assignment.CATEGORY.ca,
-                status=Assignment.STATUS.active,
-                kind=Assignment.KIND.official,
-            )
-            cas -= 1
+        # scjcs = Officer.objects.filter(
+        #     Q(office=Officer.OFFICE.scjc_chair) | Q(office=Officer.OFFICE.scjc_admin),
+        #     status__gt=0,
+        # )
+        # for scjc in scjcs:
+        #     self.assignments.create(
+        #         category=Assignment.CATEGORY.drcj,
+        #         status=Assignment.STATUS.active,
+        #         kind=Assignment.KIND.observer,
+        #         person=scjc.person,
+        #     )
+        # drcjs = self.group.officers.filter(
+        #     office=Officer.OFFICE.drcj,
+        #     status__gt=0,
+        # )
+        # for drcj in drcjs:
+        #     self.assignments.create(
+        #         category=Assignment.CATEGORY.drcj,
+        #         status=Assignment.STATUS.active,
+        #         kind=Assignment.KIND.official,
+        #         person=drcj.person,
+        #     )
+        # ca_specialists = Officer.objects.filter(
+        #     office=Officer.OFFICE.scjc_ca,
+        #     status__gt=0,
+        # )
+        # for ca_specialist in ca_specialists:
+        #     self.assignments.create(
+        #         category=Assignment.CATEGORY.ca,
+        #         status=Assignment.STATUS.active,
+        #         kind=Assignment.KIND.observer,
+        #         person=ca_specialist.person,
+        #     )
+        # cas = ceil((self.panel + 1) / 2)
+        # while cas > 0:
+        #     self.assignments.create(
+        #         category=Assignment.CATEGORY.ca,
+        #         status=Assignment.STATUS.active,
+        #         kind=Assignment.KIND.official,
+        #     )
+        #     cas -= 1
         judges = self.panel
         while judges > 0:
             self.assignments.create(
@@ -952,10 +945,10 @@ class Convention(TimeStampedModel):
                 kind=Assignment.KIND.official,
             )
             judges -= 1
-        for kind in list(self.kinds):
-            self.sessions.create(
-                kind=kind,
-            )
+        # for kind in list(self.kinds):
+        #     self.sessions.create(
+        #         kind=kind,
+        #     )
         return
 
     @fsm_log_by
