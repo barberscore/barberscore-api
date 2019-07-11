@@ -69,6 +69,9 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         StateLogInline,
     ]
+    raw_id_fields = [
+        'user',
+    ]
 
 
 @admin.register(Award)
@@ -84,6 +87,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'group',
         'kind',
         'gender',
+        'district',
         'division',
         'age',
         'level',
@@ -101,6 +105,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'size',
         # 'scope',
         'group',
+        'district',
         'division',
         'kind',
         'age',
@@ -125,8 +130,9 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'kind',
         'level',
-        AwardQualifierLevelFilter,
+        # AwardQualifierLevelFilter,
         DistrictListFilter,
+        'district',
         'division',
         'age',
         'gender',

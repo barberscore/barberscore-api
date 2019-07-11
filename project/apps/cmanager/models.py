@@ -286,6 +286,12 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
+    district = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
     DIVISION = Choices(
         (10, 'evgd1', 'EVG Division I'),
         (20, 'evgd2', 'EVG Division II'),
