@@ -29,6 +29,7 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'convention',
         'person',
+        'user',
         'category',
     ]
 
