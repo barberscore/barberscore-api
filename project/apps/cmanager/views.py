@@ -46,8 +46,6 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
-        'convention',
-        'person',
     ).prefetch_related(
         'statelogs',
     ).order_by('id')
@@ -92,7 +90,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
-        'group',
         'parent',
     ).prefetch_related(
         'children',
@@ -154,7 +151,6 @@ class AwardViewSet(viewsets.ModelViewSet):
 
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.select_related(
-        'group',
     ).prefetch_related(
         'sessions',
         'assignments',

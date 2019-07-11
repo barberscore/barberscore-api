@@ -14,28 +14,31 @@ class AssignmentInline(admin.TabularInline):
         'status',
         'category',
         'kind',
-        'person',
+        # 'person_id',
+        'user',
         'convention',
     ]
     readonly_fields = [
         'status',
     ]
     autocomplete_fields = [
-        'person',
+        # 'person',
         'convention',
     ]
     ordering = (
         'category',
         'kind',
-        'person__last_name',
-        'person__first_name',
+        # 'person__last_name',
+        # 'person__first_name',
     )
     extra = 0
     show_change_link = True
     classes = [
         'collapse',
     ]
-
+    raw_id_fields = [
+        'user',
+    ]
 
 class AwardInline(admin.TabularInline):
     model = Award

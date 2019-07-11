@@ -28,13 +28,13 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'kind',
         'convention',
-        'person',
+        'person_id',
         'user',
         'category',
     ]
 
     list_display = [
-        'person',
+        'person_id',
         'convention',
         'kind',
         'category',
@@ -49,19 +49,14 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_select_related = [
         'convention',
-        'person',
     ]
 
     search_fields = [
         'id',
-        'person__first_name',
-        'person__last_name',
-        'person__bhs_id',
     ]
 
     autocomplete_fields = [
         'convention',
-        'person',
     ]
 
     readonly_fields = [
@@ -84,7 +79,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'name',
         'status',
-        'group',
+        'group_id',
         'kind',
         'gender',
         'district',
@@ -104,8 +99,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         # 'size',
         # 'scope',
-        'group',
-        'district',
+        'group_id',
         'division',
         'kind',
         'age',
@@ -150,7 +144,6 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     autocomplete_fields = [
-        'group',
         'parent',
     ]
 
@@ -167,7 +160,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'legacy_complete',
         'status',
         'name',
-        ('group', 'divisions', ),
+        ('group_id', 'divisions', ),
         ('year', 'season', ),
         ('panel', 'kinds', ),
         ('open_date', 'close_date', ),
@@ -226,16 +219,16 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     autocomplete_fields = [
-        'group',
+        # 'group',
     ]
 
     ordering = (
         '-year',
         'season',
-        'group__tree_sort',
+        # 'group__tree_sort',
     )
     list_select_related = [
-        'group',
+        # 'group',
     ]
 
     save_on_top = True

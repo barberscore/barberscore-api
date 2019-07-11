@@ -28,7 +28,8 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'kind',
             'category',
             'convention',
-            'person',
+            'person_id',
+            'user',
             'permissions',
         )
 
@@ -66,7 +67,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'scope',
             'scope_range',
             'tree_sort',
-            'group',
+            'group_id',
             'parent',
             'children',
             'contests',
@@ -113,7 +114,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'image',
             'image_id',
             'description',
-            'group',
+            'group_id',
             'assignments',
             'sessions',
             'permissions',

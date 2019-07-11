@@ -86,12 +86,9 @@ class Assignment(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    person = models.ForeignKey(
-        'bhs.person',
-        related_name='assignments',
+    person_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     user = models.ForeignKey(
@@ -406,12 +403,9 @@ class Award(TimeStampedModel):
     )
 
     # FKs
-    group = models.ForeignKey(
-        'bhs.group',
-        related_name='awards',
+    group_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     parent = models.ForeignKey(
@@ -710,10 +704,7 @@ class Convention(TimeStampedModel):
     )
 
     # FKs
-    group = models.ForeignKey(
-        'bhs.group',
-        related_name='conventions',
-        on_delete=models.SET_NULL,
+    group_id = models.UUIDField(
         null=True,
         blank=True,
     )

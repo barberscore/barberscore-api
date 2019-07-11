@@ -64,7 +64,7 @@ class AssignmentFactory(DjangoModelFactory):
     status = Assignment.STATUS.active
     kind = Assignment.KIND.official
     convention = SubFactory('factories.ConventionFactory')
-    person = SubFactory('factories.PersonFactory')
+    # person = SubFactory('factories.PersonFactory')
 
     class Meta:
         model = Assignment
@@ -80,7 +80,7 @@ class AwardFactory(DjangoModelFactory):
     threshold = None
     minimum = None
     advance = None
-    group = SubFactory('factories.GroupFactory')
+    # group = SubFactory('factories.GroupFactory')
 
     class Meta:
         model = Award
@@ -138,7 +138,7 @@ class ConventionFactory(DjangoModelFactory):
     venue_name = "Grand Ole Opry"
     location = "Nashville, TN"
     timezone = 'US/Central'
-    group = SubFactory('factories.GroupFactory')
+    # group = SubFactory('factories.GroupFactory')
 
     class Meta:
         model = Convention

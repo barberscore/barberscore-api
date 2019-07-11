@@ -66,8 +66,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'tree_sort',
             'parent',
             'children',
-            'awards',
-            'conventions',
             'entries',
             # 'members',
             'officers',
@@ -182,7 +180,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'full_name',
             'common_name',
             'sort_name',
-            'assignments',
             'members',
             'officers',
             # 'panelists',
@@ -255,6 +252,3 @@ class RepertorySerializer(serializers.ModelSerializer):
                 message='This chart already exists in your repertory.',
             )
         ]
-
-
-
