@@ -62,7 +62,7 @@ class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
         'session',
         'award',
-        'group',
+        # 'group',
     ).prefetch_related(
         'contestants',
         'statelogs',
