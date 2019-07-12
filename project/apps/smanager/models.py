@@ -244,11 +244,11 @@ class Contestant(TimeStampedModel):
                 'SCJC' in request.user.roles,
             ]),
             all([
-                self.contest.session.filter(owners__contains=request.user),
+                self.contest.session.owners.filter(id__contains=request.user.id),
                 self.contest.session.status < self.contest.session.STATUS.packaged,
             ]),
             all([
-                self.entry.filter(owners__contains=request.user),
+                self.entry.owners.filter(id__contains=request.user.id),
                 self.entry.status < self.entry.STATUS.approved,
             ]),
         ])
@@ -442,6 +442,8 @@ class Entry(TimeStampedModel):
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
+            # For SCJC
+            'SCJC' in request.user.roles,
             # For DRCJs
             all([
                 self.session.owners.filter(id__contains=request.user.id),
