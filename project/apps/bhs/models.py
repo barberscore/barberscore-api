@@ -785,6 +785,13 @@ class Group(TimeStampedModel):
         return bool(self.mc_pk)
 
     # Methods
+    @property
+    def image_id(self):
+        if obj.image:
+            return obj.image.name
+        else:
+            return 'missing_image'
+
     def get_roster(self):
         Member = apps.get_model('bhs.member')
         wb = Workbook()

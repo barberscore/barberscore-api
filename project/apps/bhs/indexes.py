@@ -12,6 +12,7 @@ class GroupIndex(AlgoliaIndex):
         'code',
         'district',
         'image',
+        'image_id',
         'bhs_id',
     ]
     settings = {
