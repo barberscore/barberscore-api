@@ -93,10 +93,10 @@ class Contest(TimeStampedModel):
     )
 
     # Internals
-    class Meta:
-        unique_together = (
-            ('session', 'award',)
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('session', 'award',)
+    #     )
 
     class JSONAPIMeta:
         resource_name = "contest"
@@ -197,13 +197,13 @@ class Contestant(TimeStampedModel):
     )
 
     # Internals
-    class Meta:
-        ordering = (
-            'contest__award__tree_sort',
-        )
-        unique_together = (
-            ('entry', 'contest',),
-        )
+    # class Meta:
+    #     ordering = (
+    #         'contest__award__tree_sort',
+    #     )
+    #     unique_together = (
+    #         ('entry', 'contest',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "contestant"
@@ -394,9 +394,9 @@ class Entry(TimeStampedModel):
     # Internals
     class Meta:
         verbose_name_plural = 'entries'
-        unique_together = (
-            ('group', 'session',),
-        )
+        # unique_together = (
+        #     ('group', 'session',),
+        # )
 
     class JSONAPIMeta:
         resource_name = "entry"
@@ -829,10 +829,10 @@ class Session(TimeStampedModel):
 
     # Properties
     # Internals
-    class Meta:
-        unique_together = (
-            ('convention', 'kind')
-        )
+    # class Meta:
+        # unique_together = (
+        #     ('convention', 'kind')
+        # )
 
     class JSONAPIMeta:
         resource_name = "session"
