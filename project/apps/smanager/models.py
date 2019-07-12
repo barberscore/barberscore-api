@@ -376,12 +376,9 @@ class Entry(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    group = models.ForeignKey(
-        'bhs.group',
-        related_name='entries',
+    group_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     statelogs = GenericRelation(
@@ -636,8 +633,6 @@ class Entry(TimeStampedModel):
                 status=self.contestants.model.STATUS.excluded,
                 contest=contest,
             )
-        self.representing = self.group.district
-        self.participants = self.group.participants
         return
 
     @fsm_log_by

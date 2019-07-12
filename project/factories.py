@@ -174,7 +174,7 @@ class EntryFactory(DjangoModelFactory):
     is_evaluation = True
     is_private = False
     session = SubFactory('factories.SessionFactory')
-    group = SubFactory('factories.GroupFactory')
+    # group = SubFactory('factories.GroupFactory')
 
     class Meta:
         model = Entry

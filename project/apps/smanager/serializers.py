@@ -27,7 +27,6 @@ class ContestSerializer(serializers.ModelSerializer):
             'url',
             'status',
             'result',
-            'group',
             'session',
             'award',
             'contestants',
@@ -61,7 +60,7 @@ class EntrySerializer(serializers.ModelSerializer):
     included_serializers = {
         'contestants': 'apps.smanager.serializers.ContestantSerializer',
         # 'statelogs': 'django_fsm_log.serializers.StateLogSerializer',
-        'group': 'apps.bhs.serializers.GroupSerializer',
+        # 'group': 'apps.bhs.serializers.GroupSerializer',
     }
 
     class Meta:
@@ -82,7 +81,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'description',
             'notes',
             'session',
-            'group',
+            'group_id',
             'contestants',
             'permissions',
             'statelogs',

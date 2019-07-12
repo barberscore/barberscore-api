@@ -114,7 +114,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'status',
         'session',
-        'group',
+        # 'group',
         'representing',
         ('is_evaluation', 'is_private', 'is_mt'),
         'draw',
@@ -129,7 +129,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = (
         'status',
         'session',
-        'group',
+        # 'group',
     )
 
     list_filter = [
@@ -142,19 +142,19 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         # AppearanceInline,
-        ContestantInline,
-        StateLogInline,
+        # ContestantInline,
+        # StateLogInline,
     ]
 
     search_fields = [
         'id',
         'session__convention__name',
-        'group__name',
+        # 'group__name',
     ]
 
     autocomplete_fields = [
         'session',
-        'group',
+        # 'group',
     ]
     readonly_fields = (
         'id',
