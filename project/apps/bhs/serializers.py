@@ -66,7 +66,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'tree_sort',
             'parent',
             'children',
-            'entries',
+            # 'entries',
             # 'members',
             'officers',
             'repertories',
