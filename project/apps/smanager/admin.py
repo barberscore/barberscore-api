@@ -232,7 +232,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ordering = (
         '-convention__year',
         'convention__season',
-        'convention__group__tree_sort',
+        # 'convention__group__tree_sort',
         'kind',
     )
 
