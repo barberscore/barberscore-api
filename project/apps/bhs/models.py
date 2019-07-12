@@ -1018,12 +1018,30 @@ class Group(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return False
+        roles = [
+            'SCJC',
+            'Librarian',
+            'Manager',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return False
+        return any([
+            all([
+                'SCJC' in request.user.roles,
+            ]),
+            all([
+                'Librarian' in request.user.roles,
+            ]),
+            all([
+                self.officers.filter(
+                    person__user=request.user,
+                    status__gt=0,
+                ),
+            ]),
+        ])
 
     # Conditions:
     def can_activate(self):
