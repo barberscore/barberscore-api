@@ -688,6 +688,11 @@ class Group(TimeStampedModel):
     )
 
     # FKs
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='groups',
+    )
+
     parent = models.ForeignKey(
         'Group',
         null=True,

@@ -134,6 +134,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'gender',
         'division',
+        'owners',
         ('is_senior', 'is_youth',),
         ('bhs_id', 'mc_pk', 'code',),
         'parent',
@@ -192,9 +193,10 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'modified',
     ]
 
-    # autocomplete_fields = [
-    #     'parent',
-    # ]
+    autocomplete_fields = [
+        'owners',
+        # 'parent',
+    ]
     raw_id_fields = [
         'parent',
     ]
