@@ -74,7 +74,7 @@ class PanelistSerializer(serializers.ModelSerializer):
             'psa',
             'legacy_person',
             'representing',
-            'person',
+            'person_id',
             'scores',
         )
 

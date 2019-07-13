@@ -117,7 +117,7 @@ class PanelistSerializer(serializers.ModelSerializer):
             'kind',
             'category',
             'round',
-            'person',
+            'person_id',
             'scores',
             'permissions',
         )

@@ -6,7 +6,6 @@ from django_fsm.signals import post_transition
 # Local
 from .models import Appearance
 from .models import Panelist
-# from .models import Person
 from .models import Round
 
 from .tasks import save_reports_from_round

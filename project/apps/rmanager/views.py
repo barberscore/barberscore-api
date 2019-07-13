@@ -22,10 +22,10 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 
 # Local
-from .filterbackends import AppearanceFilterBackend
-from .filterbackends import OutcomeFilterBackend
-from .filterbackends import ScoreFilterBackend
-from .filterbackends import SongFilterBackend
+# from .filterbackends import AppearanceFilterBackend
+# from .filterbackends import OutcomeFilterBackend
+# from .filterbackends import ScoreFilterBackend
+# from .filterbackends import SongFilterBackend
 
 from .filtersets import RoundFilterset
 from .filtersets import ScoreFilterset
@@ -88,7 +88,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     filterset_class = None
     filter_backends = [
         DjangoFilterBackend,
-        AppearanceFilterBackend,
+        # AppearanceFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -313,7 +313,7 @@ class OutcomeViewSet(viewsets.ModelViewSet):
     serializer_class = OutcomeSerializer
     filter_backends = [
         DjangoFilterBackend,
-        OutcomeFilterBackend,
+        # OutcomeFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -324,7 +324,6 @@ class OutcomeViewSet(viewsets.ModelViewSet):
 class PanelistViewSet(viewsets.ModelViewSet):
     queryset = Panelist.objects.select_related(
         'round',
-        'person',
     ).prefetch_related(
         'scores',
         'statelogs',
@@ -635,7 +634,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     filterset_class = ScoreFilterset
     filter_backends = [
         DjangoFilterBackend,
-        ScoreFilterBackend,
+        # ScoreFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -654,7 +653,7 @@ class SongViewSet(viewsets.ModelViewSet):
     filterset_class = None
     filter_backends = [
         DjangoFilterBackend,
-        SongFilterBackend,
+        # SongFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,

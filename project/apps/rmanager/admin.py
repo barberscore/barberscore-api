@@ -13,7 +13,7 @@ from django.conf import settings
 from .filters import AppearanceConventionStatusListFilter
 from .filters import ConventionStatusListFilter
 from .filters import MCListFilter
-from .filters import MCUserListFilter
+# from .filters import MCUserListFilter
 from .filters import SessionConventionStatusListFilter
 
 from .inlines import AppearanceInline

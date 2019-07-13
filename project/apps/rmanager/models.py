@@ -270,14 +270,16 @@ class Appearance(TimeStampedModel):
         resource_name = "appearance"
 
     def __str__(self):
-        return "{0} {1}".format(
-            self.round,
-            self.group,
-        )
+        return str(self.id)
+        # return "{0} {1}".format(
+        #     self.round,
+        #     self.group,
+        # )
 
     # Methods
     def get_variance(self):
         Chart = apps.get_model('bhs.chart')
+        Person = apps.get_model('bhs.person')
         Score = apps.get_model('rmanager.score')
         Panelist = apps.get_model('rmanager.panelist')
 
@@ -295,7 +297,7 @@ class Appearance(TimeStampedModel):
             song__appearance=self,
         ).order_by(
             'category',
-            'panelist__person__last_name',
+            # 'panelist__person__last_name',
             'song__num',
         )
         panelists = self.round.panelists.filter(
@@ -303,8 +305,11 @@ class Appearance(TimeStampedModel):
             category__gt=Panelist.CATEGORY.ca,
         ).order_by(
             'category',
-            'person__last_name',
+            # 'person__last_name',
         )
+        for panelist in panelists:
+            person = Person.objects.get(id=panelist.person_id)
+            panelist.person = person
         variances = []
         for song in songs:
             chart = Chart.objects.get(song.chart_id)
@@ -400,10 +405,11 @@ class Appearance(TimeStampedModel):
         return variance
 
     def get_csa(self):
+        Chart = apps.get_model('bhs.chart')
+        Person = apps.get_model('bhs.person')
         Panelist = apps.get_model('rmanager.panelist')
         Song = apps.get_model('rmanager.song')
         Score = apps.get_model('rmanager.score')
-        Chart = apps.get_model('bhs.chart')
 
         # Appearancers Block
         group = self.group
@@ -609,7 +615,7 @@ class Appearance(TimeStampedModel):
 
         # Panelists
         panelists = Panelist.objects.select_related(
-            'person',
+            # 'person',
         ).filter(
             kind=Panelist.KIND.official,
             round__session=self.round.session,
@@ -618,7 +624,11 @@ class Appearance(TimeStampedModel):
         ).order_by('num')
 
         # Score Block
-        initials = [x.person.initials for x in panelists]
+        initials = []
+        for panelist in panelists:
+            person = Person.objects.get(id=panelist.person_id)
+            initials.append(person.initials)
+
 
         # Hackalicious
         category_count = {
@@ -660,7 +670,8 @@ class Appearance(TimeStampedModel):
         # panelists from above
         for panelist in panelists:
             item = categories[panelist.get_category_display()]
-            item.append(panelist.person.common_name)
+            person = Person.objects.get(id=panelist.person_id)
+            item.append(person.common_name)
 
         # Penalties Block
         array = Song.objects.filter(
@@ -968,11 +979,7 @@ class Appearance(TimeStampedModel):
     def has_object_read_permission(self, request):
         return any([
             self.round.status == self.round.STATUS.published,
-            self.round.session.convention.assignments.filter(
-                person__user=request.user,
-                status__gt=0,
-                category__lte=10,
-            ),
+            self.round.owners.filter(id__contains=request.user.id),
         ])
 
     @staticmethod
@@ -980,10 +987,8 @@ class Appearance(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
 
     @allow_staff_or_superuser
@@ -991,11 +996,7 @@ class Appearance(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.round.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
+                self.round.owners.filter(id__contains=request.user.id),
                 self.round.status != self.round.STATUS.published,
             ]),
         ])
@@ -1201,23 +1202,18 @@ class Contender(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=500,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
+            'SCJC' in request.user.roles,
             all([
-                self.outcome.round.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
-                self.outcome.round.status < self.outcome.round.STATUS.started,
+                self.outcome.round.owners.filter(id__contains=request.user.id),
+                self.outcome.round.status != self.outcome.round.STATUS.started,
             ]),
         ])
 
@@ -1466,11 +1462,7 @@ class Outcome(TimeStampedModel):
     def has_object_read_permission(self, request):
         return any([
             self.round.status == self.round.STATUS.published,
-            self.round.session.convention.assignments.filter(
-                person__user=request.user,
-                status__gt=0,
-                category__lte=10,
-            ),
+            self.round.owners.filter(id__contains=request.user.id),
         ])
 
 
@@ -1479,22 +1471,17 @@ class Outcome(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
+
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.round.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
+                self.round.owners.filter(id__contains=request.user.id),
                 self.round.status < self.round.STATUS.verified,
             ]),
         ])
@@ -1574,6 +1561,15 @@ class Panelist(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='panelists',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+
     person_id = models.UUIDField(
         null=True,
         blank=True,
@@ -1611,10 +1607,11 @@ class Panelist(TimeStampedModel):
         resource_name = "panelist"
 
     def __str__(self):
-        return "{0} {1}".format(
-            self.round,
-            self.person,
-        )
+        return str(self.id)
+        # return "{0} {1}".format(
+        #     self.round,
+        #     self.person,
+        # )
 
     def clean(self):
         if self.kind > self.KIND.practice:
@@ -1651,22 +1648,17 @@ class Panelist(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
+
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.round.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
+                self.round.owners.filter(id__contains=request.user.id),
                 self.round.status < self.round.STATUS.started,
             ]),
         ])
@@ -1786,23 +1778,27 @@ class Panelist(TimeStampedModel):
                         if score.points == 0:
                             score.points = "00"
                         span_class = class_map[score.panelist.category]
-                        if score.panelist.person == self.person:
+                        if score.panelist == self:
                             span_class = "{0} black-font".format(span_class)
                         out.append((score.points, span_class))
                     song.scores_patched = out
                     panelist_score = song.scores.get(
-                        panelist__person=self.person,
+                        panelist=self,
                     )
                     category = self.get_category_display()
                     diff = panelist_score.points - getattr(song, category)
                     song.diff_patched = diff
-                    pp = song.scores.get(panelist__person=self.person).points
+                    pp = song.scores.get(panelist=self).points
                     song.pp = pp
                 appearance.songs_patched = songs
             group.appearances_patched = appearances
+        panelist = self
+        person = Person.objects.get(id=panelist.person_id)
+        panelist.person = person
+
 
         context = {
-            'panelist': self,
+            'panelist': panelist,
             'groups': groups,
         }
         rendered = render_to_string(
@@ -1832,13 +1828,15 @@ class Panelist(TimeStampedModel):
         return self.psa.save('psa', content)
 
     def get_psa_email(self):
+        Person = apps.get_model('bhs.person')
         context = {'panelist': self}
 
         template = 'emails/panelist_released.txt'
+        person = Person.objects.get(id=self.person_id)
         subject = "[Barberscore] PSA for {0}".format(
-            self.person.common_name,
+            person.common_name,
         )
-        to = ["{0} <{1}>".format(self.person.common_name, self.person.email)]
+        to = ["{0} <{1}>".format(person.common_name, person.email)]
         cc = self.round.session.convention.get_ca_emails()
 
         if self.psa:
@@ -1991,6 +1989,7 @@ class Round(TimeStampedModel):
     def get_oss(self, zoom=1):
         Group = apps.get_model('bhs.group')
         Chart = apps.get_model('bhs.chart')
+        Person = apps.get_model('bhs.person')
         Panelist = apps.get_model('rmanager.panelist')
         Appearance = apps.get_model('rmanager.appearance')
         Song = apps.get_model('rmanager.song')
@@ -2289,7 +2288,7 @@ class Round(TimeStampedModel):
 
         # Panelist Block
         panelists_raw = self.panelists.select_related(
-            'person',
+            # 'person',
         ).filter(
             kind=Panelist.KIND.official,
             category__gte=Panelist.CATEGORY.ca,
@@ -2307,17 +2306,18 @@ class Round(TimeStampedModel):
             sections = panelists_raw.filter(
                 category=key,
             ).select_related(
-                'person',
+                # 'person',
             ).order_by(
                 'num',
             )
             persons = []
             for x in sections:
                 try:
+                    person = Person.objects.get(id=x.person_id)
                     persons.append(
                         "{0} {1}".format(
-                            x.person.common_name,
-                            x.person.district,
+                            person.common_name,
+                            person.district,
                         )
                     )
                 except AttributeError:
@@ -2577,6 +2577,7 @@ class Round(TimeStampedModel):
         for p in mus_persons_qs:
             practice = bool(p.panelists.get(round=self).kind == Panelist.KIND.practice)
             mus_persons.append((p.common_name, practice, p.initials))
+
         per_persons_qs = persons.filter(
             panelists__category=Panelist.CATEGORY.performance,
             panelists__round__session=self.session,
@@ -2587,6 +2588,7 @@ class Round(TimeStampedModel):
         for p in per_persons_qs:
             practice = bool(p.panelists.get(round=self).kind == Panelist.KIND.practice)
             per_persons.append((p.common_name, practice, p.initials))
+
         sng_persons_qs = persons.filter(
             panelists__category=Panelist.CATEGORY.singing,
             panelists__round__session=self.session,
@@ -2851,7 +2853,6 @@ class Round(TimeStampedModel):
         context = {
             'round': self,
             'groups': groups,
-            'persons': persons,
             'mus_persons': mus_persons,
             'per_persons': per_persons,
             'sng_persons': sng_persons,
@@ -2890,11 +2891,12 @@ class Round(TimeStampedModel):
 
 
     def get_legacy_oss(self):
+        Chart = apps.get_model('bhs.chart')
+        Person = apps.get_model('bhs.person')
         Panelist = apps.get_model('rmanager.panelist')
         Appearance = apps.get_model('rmanager.appearance')
         Song = apps.get_model('rmanager.song')
         Score = apps.get_model('rmanager.score')
-        Chart = apps.get_model('bhs.chart')
 
         # Get the Groups
         group_ids = self.appearances.filter(
@@ -3074,7 +3076,7 @@ class Round(TimeStampedModel):
 
         # Panelist Block
         panelists_raw = self.panelists.select_related(
-            'person',
+            # 'person',
         ).filter(
             kind=Panelist.KIND.official,
             category__gte=Panelist.CATEGORY.ca,
@@ -3092,13 +3094,14 @@ class Round(TimeStampedModel):
             sections = panelists_raw.filter(
                 category=key,
             ).select_related(
-                'person',
+                # 'person',
             ).order_by(
                 'num',
             )
-            persons = [
-                "{0} - {1}".format(x.person.common_name, x.person.district) for x in sections
-            ]
+            persons = []
+            for x in sections:
+                person = Person.objects.get(id=x.person_id)
+                persons.append("{0} - {1}".format(person.common_name, person.district))
             panelists[value] = persons
 
 
@@ -3373,20 +3376,20 @@ class Round(TimeStampedModel):
         judges = self.panelists.filter(
             # status=Panelist.STATUS.active,
             category__gt=Panelist.CATEGORY.ca,
-            person__email__isnull=False,
+            # person__email__isnull=False,
         ).order_by(
             'kind',
             'category',
-            'person__last_name',
-            'person__first_name',
+            # 'person__last_name',
+            # 'person__first_name',
         )
         seen = set()
         result = [
-            "{0} ({1} {2}) <{3}>".format(judge.person.common_name, judge.get_kind_display(), judge.get_category_display(), judge.person.email,)
+            "{0} ({1} {2}) <{3}>".format(judge.user.common_name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,)
             for judge in judges
             if not (
-                "{0} ({1} {2}) <{3}>".format(judge.person.common_name, judge.get_kind_display(), judge.get_category_display(), judge.person.email,) in seen or seen.add(
-                    "{0} ({1} {2}) <{3}>".format(judge.person.common_name, judge.get_kind_display(), judge.get_category_display(), judge.person.email,)
+                "{0} ({1} {2}) <{3}>".format(judge.user.common_name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,) in seen or seen.add(
+                    "{0} ({1} {2}) <{3}>".format(judge.user.common_name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,)
                 )
             )
         ]
@@ -3606,7 +3609,7 @@ class Round(TimeStampedModel):
         email = self.get_publish_report_email()
         return email.send()
 
-    # Permissions
+    # Round Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -3623,23 +3626,18 @@ class Round(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
+
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category=self.session.convention.assignments.model.CATEGORY.ca,
-                ),
-                self.status != self.STATUS.published,
+                self.round.owners.filter(id__contains=request.user.id),
+                self.round.status != self.round.STATUS.published,
             ]),
         ])
 
@@ -3716,15 +3714,15 @@ class Round(TimeStampedModel):
         ).order_by(
             'kind',
             'category',
-            'person__last_name',
-            'person__nick_name',
-            'person__first_name',
+            # 'person__last_name',
+            # 'person__nick_name',
+            # 'person__first_name',
         )
         for ca in cas:
             self.panelists.create(
                 kind=ca.kind,
                 category=ca.category,
-                person=ca.person,
+                # person=ca.person,
             )
         officials = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
@@ -3733,9 +3731,9 @@ class Round(TimeStampedModel):
         ).order_by(
             'kind',
             'category',
-            'person__last_name',
-            'person__nick_name',
-            'person__first_name',
+            # 'person__last_name',
+            # 'person__nick_name',
+            # 'person__first_name',
         )
         i = 0
         for official in officials:
@@ -3744,7 +3742,7 @@ class Round(TimeStampedModel):
                 num=i,
                 kind=official.kind,
                 category=official.category,
-                person=official.person,
+                # person=official.person,
             )
 
         practices = self.session.convention.assignments.filter(
@@ -3754,9 +3752,9 @@ class Round(TimeStampedModel):
         ).order_by(
             'kind',
             'category',
-            'person__last_name',
-            'person__nick_name',
-            'person__first_name',
+            # 'person__last_name',
+            # 'person__nick_name',
+            # 'person__first_name',
         )
         p = 50
         for practice in practices:
@@ -3765,7 +3763,7 @@ class Round(TimeStampedModel):
                 num=p,
                 kind=practice.kind,
                 category=practice.category,
-                person=practice.person,
+                # person=practice.person,
             )
 
         # Create Outcomes
@@ -4180,35 +4178,22 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        # if not self.panelist:
-        #     return False
-        # if not self.panelist.person:
-        #     return False
-        # if not getattr(self.panelist.person, 'user', False):
-        #     return False
         return any([
-            # Assigned DRCJs and CAs can always see
-            self.song.appearance.round.session.convention.assignments.filter(
-                person__user=request.user,
-                status__gt=0,
-                category__lte=10,
-            ),
-            # Panelists can see their own scores
-            self.panelist.person.user == request.user,
+            # Assigned owners can always see
+            self.round.owners.filter(id__contains=request.user.id),
+
+            # Panelists can always see their own scores
+            self.panelist.user == request.user,
+
             # Panelists can see others' scores if Appearance is complete.
             all([
-                self.song.appearance.round.panelists.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
+                self.round.panelists.filter(user__contains=request.user),
                 self.song.appearance.status <= self.song.appearance.STATUS.completed
             ]),
-            # Group members can see their own scores if complete.
+
+            # Group onwers can see their own scores if complete.
             all([
-                self.song.appearance.group.members.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
+                self.song.appearance.owners.filter(id__contains=request.user.id),
                 self.song.appearance.status <= self.song.appearance.STATUS.completed
             ]),
         ])
@@ -4218,22 +4203,17 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
+
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.song.appearance.round.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
+                self.song.appearance.round.owners.filter(id__contains=request.user.id),
                 self.song.appearance.round.status < self.song.appearance.round.STATUS.verified,
             ]),
         ])
@@ -4422,7 +4402,7 @@ class Song(TimeStampedModel):
         return output
 
 
-    # Permissions
+    # Song Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -4434,11 +4414,7 @@ class Song(TimeStampedModel):
     def has_object_read_permission(self, request):
         return any([
             self.appearance.round.status == self.appearance.round.STATUS.published,
-            self.appearance.round.session.convention.assignments.filter(
-                person__user=request.user,
-                status__gt=0,
-                category__lte=10,
-            ),
+            self.appearance.round.owners.filter(id__contains=request.user.id),
         ])
 
     @staticmethod
@@ -4446,22 +4422,17 @@ class Song(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
+
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.appearance.round.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
+                self.appearance.round.owners.filter(id__contains=request.user.id),
                 self.appearance.round.status < self.appearance.round.STATUS.verified,
             ]),
         ])
