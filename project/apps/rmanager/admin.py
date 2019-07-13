@@ -43,7 +43,8 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'onstage',
         'actual_start',
         'actual_finish',
-        'group',
+        'owners',
+        'group_id',
         'round',
         'num',
         'draw',
@@ -59,14 +60,12 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     list_display = [
         'status',
-        'group',
         'round',
         'num',
         'draw',
         'status',
     ]
     list_select_related = [
-        'group',
         'round__session',
         'round__session__convention',
     ]
@@ -82,8 +81,8 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     save_on_top = True
     autocomplete_fields = [
-        'group',
         'round',
+        'owners',
     ]
     readonly_fields = [
         'id',
@@ -92,15 +91,12 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'variance_report',
     ]
     search_fields = [
-        'group__name',
         'round__session__convention__name',
     ]
     inlines = [
         SongInline,
     ]
-    ordering = (
-        'group__name',
-    )
+
 
 
 @admin.register(Contender)
@@ -197,7 +193,7 @@ class PanelistAdmin(admin.ModelAdmin):
         'num',
         'kind',
         'round',
-        'person',
+        'person_id',
         'category',
         'psa',
     ]
@@ -206,14 +202,10 @@ class PanelistAdmin(admin.ModelAdmin):
         'num',
         'kind',
         'category',
-        'person',
         'round',
         'psa',
     ]
 
-    list_editable = [
-        'person',
-    ]
     list_filter = (
         AppearanceConventionStatusListFilter,
         'status',
@@ -223,7 +215,6 @@ class PanelistAdmin(admin.ModelAdmin):
 
     list_select_related = [
         'round',
-        'person',
     ]
 
     search_fields = [
@@ -232,7 +223,6 @@ class PanelistAdmin(admin.ModelAdmin):
 
     autocomplete_fields = [
         'round',
-        'person',
     ]
     readonly_fields = [
         'id',
@@ -245,6 +235,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'status',
         'oss',
+        'owners',
         # 'sa',
         # 'legacy_oss',
         ('session', 'kind', 'num', 'spots',),
@@ -294,6 +285,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     autocomplete_fields = [
         'session',
+        'owners',
     ]
 
     inlines = [
@@ -355,7 +347,7 @@ class SongAdmin(admin.ModelAdmin):
         # 'name',
         'stats',
         'appearance',
-        'chart',
+        'chart_id',
         'legacy_chart',
         'num',
         'penalties',
@@ -388,7 +380,7 @@ class SongAdmin(admin.ModelAdmin):
 
     autocomplete_fields = [
         'appearance',
-        'chart',
+        # 'chart',
     ]
 
     ordering = (

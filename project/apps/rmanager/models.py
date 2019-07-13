@@ -190,12 +190,9 @@ class Appearance(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    group = models.ForeignKey(
-        'bhs.group',
-        related_name='appearances',
+    group_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     entry = models.ForeignKey(
@@ -1568,12 +1565,9 @@ class Panelist(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    person = models.ForeignKey(
-        'bhs.person',
-        related_name='panelists',
+    person_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     # Relations
@@ -4297,12 +4291,9 @@ class Song(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    chart = models.ForeignKey(
-        'bhs.chart',
-        related_name='songs',
+    chart_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     # Internals

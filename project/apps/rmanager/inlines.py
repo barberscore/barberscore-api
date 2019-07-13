@@ -16,7 +16,7 @@ from .models import Song
 class AppearanceInline(admin.TabularInline):
     model = Appearance
     fields = [
-        'group',
+        # 'group',
         'status',
         'representing',
         'num',
@@ -24,13 +24,13 @@ class AppearanceInline(admin.TabularInline):
         # 'stats',
     ]
     readonly_fields = [
-        'group',
+        # 'group',
         'status',
     ]
     ordering = (
         # 'draw',
         'num',
-        'group__name',
+        # 'group__name',
     )
     show_change_link = True
     extra = 0
@@ -104,7 +104,7 @@ class PanelistInline(admin.TabularInline):
         'category',
         'kind',
         'num',
-        'person',
+        # 'person',
         'representing',
         'round',
     ]
@@ -112,7 +112,7 @@ class PanelistInline(admin.TabularInline):
         'status',
     ]
     autocomplete_fields = [
-        'person',
+        # 'person',
         'round',
     ]
     ordering = (
@@ -129,7 +129,7 @@ class ScoreInline(admin.TabularInline):
     model = Score
     fields = [
         'song',
-        'panelist__person__common_name',
+        # 'panelist__person__common_name',
         'points',
     ]
     autocomplete_fields = [
@@ -137,7 +137,7 @@ class ScoreInline(admin.TabularInline):
     ]
     readonly_fields = [
         'song',
-        'panelist__person__common_name',
+        # 'panelist__person__common_name',
         'status',
     ]
     ordering = (
@@ -148,8 +148,8 @@ class ScoreInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
-    def panelist__person__common_name(self, obj):
-        return getattr(getattr(obj.panelist, 'person'), 'common_name', getattr(obj.panelist, 'legacy_name'))
+    # def panelist__person__common_name(self, obj):
+    #     return getattr(getattr(obj.panelist, 'person'), 'common_name', getattr(obj.panelist, 'legacy_name'))
 
 
 class SongInline(admin.TabularInline):
