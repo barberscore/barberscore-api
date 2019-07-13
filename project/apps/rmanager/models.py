@@ -179,6 +179,11 @@ class Appearance(TimeStampedModel):
     )
 
     # Appearance FKs
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='appearances',
+    )
+
     round = models.ForeignKey(
         'Round',
         related_name='appearances',
@@ -260,9 +265,9 @@ class Appearance(TimeStampedModel):
             '-round__num',
             'num',
         ]
-        unique_together = (
-            ('round', 'num'),
-        )
+        # unique_together = (
+        #     ('round', 'num'),
+        # )
 
     class JSONAPIMeta:
         resource_name = "appearance"
@@ -1161,9 +1166,9 @@ class Contender(TimeStampedModel):
         ordering = (
             'outcome__num',
         )
-        unique_together = (
-            ('appearance', 'outcome',),
-        )
+        # unique_together = (
+        #     ('appearance', 'outcome',),
+        # )
 
     class JSONAPIMeta:
         resource_name = "contender"
@@ -1428,11 +1433,11 @@ class Outcome(TimeStampedModel):
         raise RuntimeError("Level mismatch")
 
     # Internals
-    class Meta:
-        unique_together = (
-            ('round', 'award',),
-            ('round', 'num',),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('round', 'award',),
+    #         ('round', 'num',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "outcome"
@@ -1593,11 +1598,11 @@ class Panelist(TimeStampedModel):
     # Internals
     objects = PanelistManager()
 
-    class Meta:
-        unique_together = (
-            ('round', 'num',),
-            ('round', 'person', 'category',),
-        )
+    # class Meta:
+        # unique_together = (
+        #     ('round', 'num',),
+        #     ('round', 'person', 'category',),
+        # )
 
     class JSONAPIMeta:
         resource_name = "panelist"
@@ -1940,6 +1945,11 @@ class Round(TimeStampedModel):
     )
 
     # FKs
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='rounds',
+    )
+
     session = models.ForeignKey(
         'smanager.session',
         related_name='rounds',
@@ -1954,9 +1964,9 @@ class Round(TimeStampedModel):
 
     # Internals
     class Meta:
-        unique_together = (
-            ('session', 'kind',),
-        )
+        # unique_together = (
+        #     ('session', 'kind',),
+        # )
         get_latest_by = [
             'num',
         ]
@@ -4130,10 +4140,10 @@ class Score(TimeStampedModel):
 
     objects = ScoreManager()
 
-    class Meta:
-        unique_together = (
-            ('song', 'panelist',),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('song', 'panelist',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "score"
@@ -4299,9 +4309,9 @@ class Song(TimeStampedModel):
     objects = SongManager()
 
     class Meta:
-        unique_together = (
-            ('appearance', 'num',),
-        )
+        # unique_together = (
+        #     ('appearance', 'num',),
+        # )
         get_latest_by = ['num']
 
     class JSONAPIMeta:
