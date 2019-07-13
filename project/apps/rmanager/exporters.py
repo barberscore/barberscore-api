@@ -34,11 +34,11 @@ class ContenderSerializer(serializers.ModelSerializer):
 
 class SongSerializer(serializers.ModelSerializer):
     scores = ScoreSerializer(read_only=True, many=True)
-    chart = serializers.PrimaryKeyRelatedField(
-        read_only=True,
-        pk_field=UUIDField(format='hex_verbose'),
-        allow_null=True,
-    )
+    # chart = serializers.PrimaryKeyRelatedField(
+    #     read_only=True,
+    #     pk_field=UUIDField(format='hex_verbose'),
+    #     allow_null=True,
+    # )
 
     class Meta:
         model = Song
@@ -50,7 +50,7 @@ class SongSerializer(serializers.ModelSerializer):
             'dixons',
             'penalties',
             'stats',
-            'chart',
+            # 'chart',
             'scores',
         )
 

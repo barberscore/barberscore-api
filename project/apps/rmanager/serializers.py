@@ -198,7 +198,7 @@ class SongSerializer(serializers.ModelSerializer):
             'num',
             'penalties',
             'appearance',
-            'chart',
+            'chart_id',
             'scores',
             'permissions',
         )

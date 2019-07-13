@@ -646,7 +646,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'appearance',
-        'chart',
+        # 'chart',
     ).prefetch_related(
         'scores',
     ).order_by('id')

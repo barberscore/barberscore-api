@@ -277,6 +277,7 @@ class Appearance(TimeStampedModel):
 
     # Methods
     def get_variance(self):
+        Chart = apps.get_model('bhs.chart')
         Score = apps.get_model('rmanager.score')
         Panelist = apps.get_model('rmanager.panelist')
 
@@ -306,6 +307,8 @@ class Appearance(TimeStampedModel):
         )
         variances = []
         for song in songs:
+            chart = Chart.objects.get(song.chart_id)
+            song.chart = chart
             variances.extend(song.dixons)
             variances.extend(song.asterisks)
         variances = list(set(variances))
@@ -355,9 +358,9 @@ class Appearance(TimeStampedModel):
             ).latest('round__date').avg or randint(60, 70)
         songs = self.songs.all()
         for song in songs:
-            song.chart = Chart.objects.filter(
-                status=Chart.STATUS.active
-            ).order_by("?").first()
+            # song.chart = Chart.objects.filter(
+            #     status=Chart.STATUS.active
+            # ).order_by("?").first()
             song.save()
             scores = song.scores.all()
             for score in scores:
@@ -400,6 +403,7 @@ class Appearance(TimeStampedModel):
         Panelist = apps.get_model('rmanager.panelist')
         Song = apps.get_model('rmanager.song')
         Score = apps.get_model('rmanager.score')
+        Chart = apps.get_model('bhs.chart')
 
         # Appearancers Block
         group = self.group
@@ -632,6 +636,8 @@ class Appearance(TimeStampedModel):
             'num',
         )
         for song in songs:
+            chart = Chart.objects.get(id=song.chart_id)
+            song.chart = chart
             scores = song.scores.filter(
                 panelist__kind=Panelist.KIND.official,
             ).order_by('panelist__num')
@@ -709,6 +715,7 @@ class Appearance(TimeStampedModel):
     def get_complete_email(self):
         Panelist = apps.get_model('rmanager.panelist')
         Score = apps.get_model('rmanager.score')
+        Chart = apps.get_model('bhs.chart')
 
         # Context
         group = self.group
@@ -901,6 +908,8 @@ class Appearance(TimeStampedModel):
                 ),
             )
             for song in songs:
+                chart = Chart.objects.get(id=song.chart_id)
+                song.chart = chart
                 penalties_map = {
                     10: "†",
                     30: "‡",
@@ -1663,9 +1672,10 @@ class Panelist(TimeStampedModel):
         ])
 
     def get_psa(self):
+        Group = apps.get_model('bhs.group')
+        Chart = apps.get_model('bhs.chart')
         Appearance = apps.get_model('rmanager.appearance')
         Score = apps.get_model('rmanager.score')
-        Group = apps.get_model('bhs.group')
         # Score block
         group_ids = self.round.appearances.exclude(
             # Don't include advancers or MTs on PSA
@@ -1764,6 +1774,8 @@ class Panelist(TimeStampedModel):
                     ),
                 )
                 for song in songs:
+                    chart = Chart.objects.get(id=song.chart_id)
+                    song.chart = song
                     scores2 = song.scores.select_related(
                         'panelist',
                     ).filter(
@@ -1978,6 +1990,7 @@ class Round(TimeStampedModel):
     # Methods
     def get_oss(self, zoom=1):
         Group = apps.get_model('bhs.group')
+        Chart = apps.get_model('bhs.chart')
         Panelist = apps.get_model('rmanager.panelist')
         Appearance = apps.get_model('rmanager.appearance')
         Song = apps.get_model('rmanager.song')
@@ -2180,6 +2193,8 @@ class Round(TimeStampedModel):
                     ),
                 )
                 for song in songs:
+                    chart = Chart.objects.get(id=song.chart_id)
+                    song.chart = chart
                     penalties_map = {
                         10: "†",
                         30: "‡",
@@ -2225,7 +2240,7 @@ class Round(TimeStampedModel):
         # use group_ids - these are the completeds
         is_missing = bool(Song.objects.filter(
             appearance__round__session=self.session,
-            chart__isnull=True,
+            chart_id__isnull=True,
             appearance__group__id__in=group_ids,
         ))
         # Eval Only Block
@@ -2419,11 +2434,12 @@ class Round(TimeStampedModel):
         return self.oss.save('oss', oss)
 
     def get_sa(self):
+        Group = apps.get_model('bhs.group')
+        Person = apps.get_model('bhs.person')
+        Chart = apps.get_model('bhs.chart')
         Appearance = apps.get_model('rmanager.appearance')
         Panelist = apps.get_model('rmanager.panelist')
         Song = apps.get_model('rmanager.song')
-        Group = apps.get_model('bhs.group')
-        Person = apps.get_model('bhs.person')
 
         # Score Block
         group_ids = self.appearances.exclude(
@@ -2716,6 +2732,9 @@ class Round(TimeStampedModel):
 
 
                 for song in songs:
+                    chart = Chart.objects.get(id=song.chart_id)
+                    song.chart = chart
+
                     mus_scores = []
                     for person in mus_persons_qs:
                         raw_music_scores = song.scores.filter(
@@ -2875,6 +2894,7 @@ class Round(TimeStampedModel):
         Appearance = apps.get_model('rmanager.appearance')
         Song = apps.get_model('rmanager.song')
         Score = apps.get_model('rmanager.score')
+        Chart = apps.get_model('bhs.chart')
 
         # Get the Groups
         group_ids = self.appearances.filter(
@@ -2953,6 +2973,8 @@ class Round(TimeStampedModel):
                     ),
                 )
                 for song in songs:
+                    chart = Chart.objects.get(id=song.chart_id)
+                    song.chart = chart
                     penalties_map = {
                         10: "†",
                         30: "‡",
@@ -3012,7 +3034,7 @@ class Round(TimeStampedModel):
         # use group_ids - these are the completeds
         is_missing = bool(Song.objects.filter(
             appearance__round__session=self.session,
-            chart__isnull=True,
+            chart_id__isnull=True,
             appearance__group__id__in=group_ids,
         ))
 
@@ -3157,6 +3179,7 @@ class Round(TimeStampedModel):
 
     def get_titles(self):
         Song = apps.get_model('rmanager.song')
+        Chart = apps.get_model('bhs.chart')
         appearances = self.appearances.filter(
             draw__gt=0,
         ).order_by(
@@ -3172,8 +3195,9 @@ class Round(TimeStampedModel):
             )
             titles = []
             for song in songs:
+                chart = Chart.objects.get(id=song.chart_id)
                 try:
-                    title = song.chart.title
+                    title = chart.title
                 except AttributeError:
                     title = "Unknown (Not in Repertory)"
                 row = "{0} Song {1}: {2}".format(
