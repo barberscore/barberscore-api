@@ -124,6 +124,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'participants',
         'description',
         'notes',
+        'owners',
     )
 
     list_display = (
@@ -155,6 +156,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     autocomplete_fields = [
         'session',
         # 'group',
+        'owners',
     ]
     readonly_fields = (
         'id',

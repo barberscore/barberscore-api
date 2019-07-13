@@ -22,6 +22,7 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 
 # Local
+from .filtersets import EntryFilterset
 from .filtersets import SessionFilterset
 
 from .models import Contest
@@ -158,8 +159,10 @@ class EntryViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'contestants',
         'statelogs',
+        'owners',
     ).order_by('id')
     serializer_class = EntrySerializer
+    filterset_class = EntryFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]

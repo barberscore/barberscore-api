@@ -82,6 +82,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'notes',
             'session',
             'group_id',
+            'owners',
             'contestants',
             'permissions',
             'statelogs',
