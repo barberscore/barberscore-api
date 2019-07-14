@@ -44,11 +44,11 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'run_total',
             'variance_report',
             'round',
-            'group',
+            'group_id',
             'songs',
             # 'songs__scores',
             # 'contenders',
-            'entry',
+            # 'entry',
             'permissions',
         )
         read_only_fields = [
