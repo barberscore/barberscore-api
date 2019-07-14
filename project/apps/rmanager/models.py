@@ -3636,8 +3636,8 @@ class Round(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.round.owners.filter(id__contains=request.user.id),
-                self.round.status != self.round.STATUS.published,
+                self.owners.filter(id__contains=request.user.id),
+                self.status != self.STATUS.published,
             ]),
         ])
 
@@ -4168,7 +4168,7 @@ class Score(TimeStampedModel):
         return str(self.pk)
 
 
-    # Permissions
+    # Score Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -4180,14 +4180,14 @@ class Score(TimeStampedModel):
     def has_object_read_permission(self, request):
         return any([
             # Assigned owners can always see
-            self.round.owners.filter(id__contains=request.user.id),
+            self.song.appearance.round.owners.filter(id__contains=request.user.id),
 
             # Panelists can always see their own scores
             self.panelist.user == request.user,
 
             # Panelists can see others' scores if Appearance is complete.
             all([
-                self.round.panelists.filter(user__contains=request.user),
+                self.song.appearance.round.panelists.filter(user=request.user),
                 self.song.appearance.status <= self.song.appearance.STATUS.completed
             ]),
 

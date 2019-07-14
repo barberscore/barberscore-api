@@ -77,8 +77,8 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
         'round',
-        'group',
-        'entry',
+        # 'group',
+        # 'entry',
     ).prefetch_related(
         'songs',
         # 'contenders',
