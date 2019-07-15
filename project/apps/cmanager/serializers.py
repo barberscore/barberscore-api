@@ -23,7 +23,6 @@ class AssignmentSerializer(serializers.ModelSerializer):
         model = Assignment
         fields = (
             'id',
-            'url',
             'status',
             'kind',
             'category',
@@ -47,7 +46,6 @@ class AwardSerializer(serializers.ModelSerializer):
         model = Award
         fields = [
             'id',
-            'url',
             'name',
             'status',
             'kind',
@@ -90,7 +88,6 @@ class ConventionSerializer(serializers.ModelSerializer):
         model = Convention
         fields = [
             'id',
-            'url',
             '__str__',
             'status',
             'name',

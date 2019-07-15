@@ -27,7 +27,6 @@ class AppearanceSerializer(serializers.ModelSerializer):
         model = Appearance
         fields = [
             'id',
-            'url',
             'status',
             'num',
             'draw',
@@ -67,7 +66,6 @@ class ContenderSerializer(serializers.ModelSerializer):
         model = Contender
         fields = [
             'id',
-            'url',
             'status',
             'appearance',
             'outcome',
@@ -85,7 +83,6 @@ class OutcomeSerializer(serializers.ModelSerializer):
         model = Outcome
         fields = [
             'id',
-            'url',
             'status',
             'num',
             'name',
@@ -108,7 +105,6 @@ class PanelistSerializer(serializers.ModelSerializer):
         model = Panelist
         fields = [
             'id',
-            'url',
             'status',
             'num',
             'kind',
@@ -143,7 +139,6 @@ class RoundSerializer(serializers.ModelSerializer):
         model = Round
         fields = [
             'id',
-            'url',
             'status',
             'kind',
             'num',
@@ -179,7 +174,6 @@ class ScoreSerializer(serializers.ModelSerializer):
         model = Score
         fields = [
             'id',
-            'url',
             'status',
             'points',
 
@@ -200,7 +194,6 @@ class SongSerializer(serializers.ModelSerializer):
         model = Song
         fields = [
             'id',
-            'url',
             'status',
             'num',
             'asterisks',

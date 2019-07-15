@@ -24,7 +24,6 @@ class ContestSerializer(serializers.ModelSerializer):
         model = Contest
         fields = [
             'id',
-            'url',
             'status',
             'is_primary',
             'result',
@@ -47,7 +46,6 @@ class ContestantSerializer(serializers.ModelSerializer):
         model = Contestant
         fields = [
             'id',
-            'url',
             'status',
             'entry',
             'contest',
@@ -66,7 +64,6 @@ class EntrySerializer(serializers.ModelSerializer):
         model = Entry
         fields = [
             'id',
-            'url',
             'status',
             'is_evaluation',
             'is_private',
@@ -114,7 +111,6 @@ class SessionSerializer(serializers.ModelSerializer):
         model = Session
         fields = [
             'id',
-            'url',
             'status',
             'kind',
             'num_rounds',
