@@ -102,9 +102,7 @@ class Contest(TimeStampedModel):
         resource_name = "contest"
 
     def __str__(self):
-        return "{0}".format(
-            self.award.name,
-        )
+        return str(self.id)
 
     def clean(self):
         if self.award.level == self.award.LEVEL.qualifier and self.group:
@@ -847,10 +845,7 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __str__(self):
-        return "{0} {1}".format(
-            self.convention,
-            self.get_kind_display(),
-        )
+        return str(self.id)
 
     def clean(self):
         pass

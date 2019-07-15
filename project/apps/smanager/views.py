@@ -63,10 +63,9 @@ class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
         'session',
         'award',
-        # 'group',
     ).prefetch_related(
         'contestants',
-        'statelogs',
+        # 'contestants__entry',
     ).order_by('id')
     serializer_class = ContestSerializer
     filterset_class = None
@@ -158,7 +157,6 @@ class EntryViewSet(viewsets.ModelViewSet):
         # 'group',
     ).prefetch_related(
         'contestants',
-        'statelogs',
         'owners',
     ).order_by('id')
     serializer_class = EntrySerializer
@@ -245,11 +243,11 @@ class EntryViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet):
     queryset = Session.objects.select_related(
         'convention',
+        'target',
     ).prefetch_related(
+        'owners',
         'contests',
         'entries',
-        'rounds',
-        'statelogs',
     ).order_by('id')
     serializer_class = SessionSerializer
     filterset_class = SessionFilterset

@@ -22,16 +22,17 @@ class ContestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contest
-        fields = (
+        fields = [
             'id',
             'url',
             'status',
+            'is_primary',
             'result',
             'session',
             'award',
             'contestants',
             'permissions',
-        )
+        ]
 
     class JSONAPIMeta:
         included_resources = [
@@ -44,28 +45,26 @@ class ContestantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contestant
-        fields = (
+        fields = [
             'id',
             'url',
             'status',
             'entry',
             'contest',
             'permissions',
-        )
+        ]
 
 
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     included_serializers = {
         'contestants': 'apps.smanager.serializers.ContestantSerializer',
-        # 'statelogs': 'django_fsm_log.serializers.StateLogSerializer',
-        # 'group': 'apps.bhs.serializers.GroupSerializer',
     }
 
     class Meta:
         model = Entry
-        fields = (
+        fields = [
             'id',
             'url',
             'status',
@@ -75,23 +74,25 @@ class EntrySerializer(serializers.ModelSerializer):
             'draw',
             'seed',
             'prelim',
+            'base',
             'participants',
             'pos',
             'representing',
             'description',
             'notes',
+
+            'owners',
             'session',
             'group_id',
-            'owners',
+
             'contestants',
             'permissions',
-            'statelogs',
-        )
+        ]
 
     class JSONAPIMeta:
         included_resources = [
             # 'appearances',
-            'contestants',
+            # 'contestants',
         ]
 
     def validate(self, data):
@@ -107,33 +108,35 @@ class SessionSerializer(serializers.ModelSerializer):
     included_serializers = {
         'contests': 'apps.smanager.serializers.ContestSerializer',
         'entries': 'apps.smanager.serializers.EntrySerializer',
-        # 'rounds': 'api.serializers.RoundSerializer',
     }
 
     class Meta:
         model = Session
-        fields = (
+        fields = [
             'id',
             'url',
             'status',
             'kind',
+            'num_rounds',
             'is_invitational',
-            'footnotes',
             'description',
             'notes',
+            'footnotes',
             'legacy_report',
             'drcj_report',
-            'num_rounds',
+
+            'owners',
             'convention',
+            'target',
+
             'contests',
             'entries',
-            'rounds',
+
             'permissions',
-        )
+        ]
 
     class JSONAPIMeta:
         included_resources = [
-            'contests',
-            'entries',
-            # 'rounds',
+            # 'contests',
+            # 'entries',
         ]
