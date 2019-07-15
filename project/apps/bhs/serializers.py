@@ -29,7 +29,6 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = [
             'id',
-            'url',
             'name',
             'status',
             'kind',
@@ -100,7 +99,6 @@ class MemberSerializer(serializers.ModelSerializer):
         model = Member
         fields = [
             'id',
-            'url',
             'status',
             'part',
             'start_date',
@@ -118,7 +116,6 @@ class OfficerSerializer(serializers.ModelSerializer):
         model = Officer
         fields = [
             'id',
-            'url',
             'status',
             'start_date',
             'end_date',
@@ -144,7 +141,6 @@ class PersonSerializer(serializers.ModelSerializer):
         model = Person
         fields = [
             'id',
-            'url',
             'status',
             'prefix',
             'first_name',
@@ -213,7 +209,6 @@ class ChartSerializer(serializers.ModelSerializer):
         model = Chart
         fields = [
             'id',
-            'url',
             'status',
             'title',
             'arrangers',
@@ -248,7 +243,6 @@ class RepertorySerializer(serializers.ModelSerializer):
         model = Repertory
         fields = [
             'id',
-            'url',
             'status',
             'group',
             'chart',
