@@ -128,7 +128,6 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     ]
     fields = [
         'id',
-        'is_mc',
         'name',
         'status',
         'kind',
@@ -177,7 +176,6 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'parent',
         'bhs_id',
         'code',
-        'is_mc',
         'status',
     ]
     list_select_related = [
@@ -185,7 +183,6 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     ]
     readonly_fields = [
         'id',
-        'is_mc',
         'international',
         'district',
         'chapter',
@@ -279,11 +276,6 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
             request
         ).prefetch_related('members')
 
-    def is_mc(self, instance):
-        return instance.is_mc
-    is_mc.boolean = True
-    is_mc.short_description = 'Is Member Center'
-
 
 @admin.register(Member)
 class MemberAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
@@ -296,7 +288,6 @@ class MemberAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'person',
         'group',
         'part',
-        'is_mc',
         'mc_pk',
         'start_date',
         'end_date',
@@ -312,12 +303,10 @@ class MemberAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'person',
         'group',
         'part',
-        'is_mc',
         'status',
     ]
     readonly_fields = [
         'id',
-        'is_mc',
         'part',
         'start_date',
         'end_date',
@@ -364,10 +353,6 @@ class MemberAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         StateLogInline,
     ]
 
-    def is_mc(self, instance):
-        return instance.is_mc
-    is_mc.boolean = True
-    is_mc.short_description = 'Is Member Center'
 
 
 @admin.register(Officer)
@@ -378,7 +363,6 @@ class OfficerAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
 
     fields = [
         'id',
-        'is_mc',
         'status',
         'person',
         'office',
@@ -392,12 +376,10 @@ class OfficerAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'person',
         'office',
         'group',
-        'is_mc',
         'status',
     ]
     readonly_fields = [
         'id',
-        'is_mc',
     ]
     list_select_related = [
         'person',
@@ -426,10 +408,6 @@ class OfficerAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
         'person__first_name',
     ]
 
-    def is_mc(self, instance):
-        return instance.is_mc
-    is_mc.boolean = True
-    is_mc.short_description = 'Is Member Center'
 
 
 @admin.register(Person)

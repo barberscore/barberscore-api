@@ -23,16 +23,7 @@ class GroupSerializer(serializers.ModelSerializer):
         'repertories': 'apps.bhs.serializers.RepertorySerializer',
         # 'members': 'apps.bhs.serializers.MemberSerializer',
         # 'officers': 'apps.bhs.serializers.OfficerSerializer',
-        # 'entries': 'api.serializers.EntrySerializer',
     }
-
-    image_id = serializers.SerializerMethodField()
-
-    def get_image_id(self, obj):
-        if obj.image:
-            return obj.image.name
-        else:
-            return 'missing_image'
 
     class Meta:
         model = Group
@@ -43,34 +34,50 @@ class GroupSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'gender',
-            'is_senior',
-            'is_youth',
             'division',
+            'bhs_id',
             'code',
+            'website',
+            'email',
+            'phone',
+            'fax_phone',
             'start_date',
             'end_date',
             'location',
-            'website',
             'facebook',
             'twitter',
-            'email',
-            'phone',
+            'youtube',
+            'pinterest',
+            'flickr',
+            'instagram',
+            'soundcloud',
             'image',
-            'image_id',
             'description',
+            'visitor_information',
             'participants',
-            'bhs_id',
+            'notes',
+            'mc_pk',
+
+            'tree_sort',
             'international',
             'district',
             'chapter',
-            'tree_sort',
-            'parent',
-            'children',
+            'is_senior',
+            'is_youth',
+            'is_divided',
+
             'owners',
-            # 'members',
-            # 'officers',
+            'parent',
+            # 'children',
+
             'repertories',
             'permissions',
+
+            'image_id',
+        ]
+
+        read_only_fields = [
+            'image_id',
         ]
 
     class JSONAPIMeta:
@@ -78,7 +85,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'repertories',
             # 'members',
             # 'officers',
-            # 'entries',
         ]
 
     # def to_representation(self, instance):
@@ -133,12 +139,6 @@ class OfficerSerializer(serializers.ModelSerializer):
 
 class PersonSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    image_id = serializers.SerializerMethodField()
-
-    def get_image_id(self, obj):
-        if obj.image:
-            return obj.image.name
-        return 'missing_image'
 
     class Meta:
         model = Person
@@ -171,7 +171,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'cell_phone',
             'airports',
             'image',
-            'image_id',
             'description',
             'notes',
             'bhs_id',
@@ -182,6 +181,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'common_name',
             'sort_name',
             'initials',
+            'image_id',
             # 'current_through',
             # 'current_status',
             # 'current_district',
@@ -195,6 +195,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'common_name',
             'sort_name',
             'initials',
+            'image_id',
             # 'current_through',
             # 'current_status',
             # 'current_district',
