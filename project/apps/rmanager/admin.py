@@ -245,7 +245,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'status',
         'oss',
-        # 'sa',
+        'sa',
         # 'legacy_oss',
         ('session', 'kind', 'num', 'spots',),
         # 'footnotes',
