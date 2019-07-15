@@ -204,17 +204,10 @@ class PersonSerializer(serializers.ModelSerializer):
 
 class ChartSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    image_id = serializers.SerializerMethodField()
-
-    def get_image_id(self, obj):
-        if obj.image:
-            return obj.image.name
-        else:
-            return 'missing_image'
 
     class Meta:
         model = Chart
-        fields = (
+        fields = [
             'id',
             'url',
             'status',
@@ -222,16 +215,21 @@ class ChartSerializer(serializers.ModelSerializer):
             'arrangers',
             'composers',
             'lyricists',
+            'holders',
             'description',
             'notes',
             'image',
-            'image_id',
-            'holders',
-            'repertories',
-            # 'songs',
-            'permissions',
-        )
 
+            'nomen',
+            'image_id',
+
+            'repertories',
+            'permissions',
+        ]
+        read_only_fields = [
+            'nomen',
+            'image_id',
+        ]
 
 class RepertorySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()

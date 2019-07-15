@@ -1462,6 +1462,10 @@ class Chart(TimeStampedModel):
             self.arrangers,
         )
 
+    @cached_property
+    def image_id(self):
+        return self.image.name or 'missing_image'
+
     def is_searchable(self):
         return bool(self.status == self.STATUS.active)
 
