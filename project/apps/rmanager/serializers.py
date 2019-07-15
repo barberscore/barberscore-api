@@ -48,16 +48,9 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'round',
             'group_id',
 
-            'round__kind',
-            # 'run_total',
-
             'songs',
 
             'permissions',
-        ]
-        read_only_fields = [
-            'round__kind',
-            'run_total',
         ]
 
 
@@ -122,8 +115,6 @@ class PanelistSerializer(serializers.ModelSerializer):
             'category',
             'psa',
             'representing',
-
-            'row_class',
 
             'round',
             'user',

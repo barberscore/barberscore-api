@@ -195,44 +195,6 @@ class Appearance(TimeStampedModel):
         related_query_name='appearances',
     )
 
-    @cached_property
-    def round__kind(self):
-        return self.round.kind
-
-    # @cached_property
-    # def run_total(self):
-    #     Score = apps.get_model('rmanager.score')
-    #     Panelist = apps.get_model('rmanager.panelist')
-    #     run_total = Score.objects.filter(
-    #         song__appearance__round__session=self.round.session,
-    #         song__appearance__round__num__lte=self.round.num,
-    #         song__appearance__group=self.group,
-    #         panelist__kind=Panelist.KIND.official,
-    #     ).aggregate(
-    #         sum=Sum('points'),
-    #         avg=Avg('points'),
-    #         mus=Sum(
-    #             'points',
-    #             filter=Q(
-    #                 panelist__category=Panelist.CATEGORY.music,
-    #             ),
-    #         ),
-    #         sng=Sum(
-    #             'points',
-    #             filter=Q(
-    #                 panelist__category=Panelist.CATEGORY.singing,
-    #             ),
-    #         ),
-    #         per=Sum(
-    #             'points',
-    #             filter=Q(
-    #                 panelist__category=Panelist.CATEGORY.performance,
-    #             ),
-    #         ),
-    #     )
-    #     return run_total
-
-
     # Appearance Internals
     objects = AppearanceManager()
 
@@ -1548,19 +1510,6 @@ class Panelist(TimeStampedModel):
         StateLog,
         related_query_name='panelists',
     )
-
-    @cached_property
-    def row_class(self):
-        if self.category == self.CATEGORY.music:
-            row_class = 'warning'
-        elif self.category == self.CATEGORY.performance:
-            row_class = 'success'
-        elif self.category == self.CATEGORY.singing:
-            row_class = 'info'
-        else:
-            row_class = None
-        return row_class
-
 
     # Internals
     objects = PanelistManager()

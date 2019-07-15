@@ -102,8 +102,8 @@ class SongManager(Manager):
             round__session__convention__season=item.season,
             round__session__convention__year=item.year,
             # round__session__convention__name=item.convention,
-            round__session__kind=item.session,
-            round__kind=item.round,
+            round__session__kind=item.session.kind,
+            round__kind=item.round.kind,
             num=item.appearance_num,
         )
         defaults = {
