@@ -66,20 +66,22 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.select_related(
+        # 'owner',
         'parent',
     ).prefetch_related(
-        'children',
+        'owners',
+        # 'children',
         # 'awards',
         # 'appearances',
         # 'conventions',
         # 'entries',
-        'members',
-        'members__person',
-        'officers',
-        'officers__person',
+        # 'members',
+        # 'members__person',
+        # 'officers',
+        # 'officers__person',
         'repertories',
         'repertories__chart',
-        'statelogs',
+        # 'statelogs',
     ).distinct()
     serializer_class = GroupSerializer
     filter_backends = [
@@ -303,6 +305,7 @@ class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.select_related(
     ).prefetch_related(
         'repertories',
+        'repertories__group',
         'statelogs',
     ).order_by('status', 'title')
     serializer_class = ChartSerializer

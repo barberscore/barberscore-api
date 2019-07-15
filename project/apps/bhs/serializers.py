@@ -205,6 +205,10 @@ class PersonSerializer(serializers.ModelSerializer):
 class ChartSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
+    included_serializers = {
+        'repertories': 'apps.bhs.serializers.RepertorySerializer',
+    }
+
     class Meta:
         model = Chart
         fields = [
@@ -231,19 +235,25 @@ class ChartSerializer(serializers.ModelSerializer):
             'image_id',
         ]
 
+    class JSONAPIMeta:
+        included_resources = [
+            'repertories',
+        ]
+
+
 class RepertorySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     class Meta:
         model = Repertory
-        fields = (
+        fields = [
             'id',
             'url',
             'status',
             'group',
             'chart',
             'permissions',
-        )
+        ]
         validators = [
             UniqueTogetherValidator(
                 queryset=Repertory.objects.all(),
