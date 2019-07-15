@@ -80,9 +80,10 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         # 'group',
         # 'entry',
     ).prefetch_related(
+        'owners',
         'songs',
         # 'contenders',
-        'statelogs',
+        # 'statelogs',
     ).order_by('id')
     serializer_class = AppearanceSerializer
     filterset_class = None
@@ -307,7 +308,7 @@ class OutcomeViewSet(viewsets.ModelViewSet):
         'round',
         'award',
     ).prefetch_related(
-        # 'contenders',
+        'contenders',
         'statelogs',
     ).order_by('id')
     serializer_class = OutcomeSerializer
@@ -324,9 +325,9 @@ class OutcomeViewSet(viewsets.ModelViewSet):
 class PanelistViewSet(viewsets.ModelViewSet):
     queryset = Panelist.objects.select_related(
         'round',
+        'user',
     ).prefetch_related(
         'scores',
-        'statelogs',
     ).order_by('id')
     serializer_class = PanelistSerializer
     filter_backends = [
@@ -364,11 +365,14 @@ class RoundViewSet(viewsets.ModelViewSet):
     queryset = Round.objects.select_related(
         'session',
     ).prefetch_related(
+        'owners',
         'appearances',
-        'panelists',
-        'outcomes',
-        'statelogs',
-    ).distinct().order_by('id')
+        'appearances__owners',
+        'appearances__songs',
+        'panelists__scores',
+        'outcomes__contenders',
+        'outcomes__award',
+    ).order_by('id')
     serializer_class = RoundSerializer
     filterset_class = RoundFilterset
     filter_backends = [
@@ -645,9 +649,9 @@ class ScoreViewSet(viewsets.ModelViewSet):
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'appearance',
-        # 'chart',
     ).prefetch_related(
         'scores',
+        'scores__panelist',
     ).order_by('id')
     serializer_class = SongSerializer
     filterset_class = None
@@ -659,4 +663,3 @@ class SongViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "song"
-

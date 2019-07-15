@@ -21,45 +21,49 @@ class AppearanceSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
         'songs': 'apps.rmanager.serializers.SongSerializer',
-        # 'songs__scores': 'apps.rmanager.serializers.ScoreSerializer',
     }
 
     class Meta:
         model = Appearance
-        fields = (
+        fields = [
             'id',
             'url',
             'status',
             'num',
             'draw',
+            'is_private',
+            'is_single',
+            'participants',
+            'representing',
             'onstage',
             'actual_start',
             'actual_finish',
-            'is_single',
-            'is_private',
-            'participants',
-            'representing',
             'pos',
             'stats',
-            'run_total',
+            'base',
             'variance_report',
+            'csa',
+
+            'owners',
             'round',
             'group_id',
+
+            'round__kind',
+            # 'run_total',
+
             'songs',
-            # 'songs__scores',
-            # 'contenders',
-            # 'entry',
+
             'permissions',
-        )
+        ]
         read_only_fields = [
+            'round__kind',
             'run_total',
         ]
 
 
     class JSONAPIMeta:
         included_resources = [
-            'songs',
-            # 'songs__scores',
+            # 'songs',
         ]
 
 
@@ -68,14 +72,14 @@ class ContenderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contender
-        fields = (
+        fields = [
             'id',
             'url',
             'status',
             'appearance',
             'outcome',
             'permissions',
-        )
+        ]
 
 
 class OutcomeSerializer(serializers.ModelSerializer):
@@ -86,19 +90,19 @@ class OutcomeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Outcome
-        fields = (
+        fields = [
             'id',
             'url',
             'status',
-            'round',
-            'award',
             'num',
             'name',
+
+            'round',
+            'award',
+
             'contenders',
-            'legacy_num',
-            'legacy_name',
             'permissions',
-        )
+        ]
 
 
 class PanelistSerializer(serializers.ModelSerializer):
@@ -109,18 +113,26 @@ class PanelistSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Panelist
-        fields = (
+        fields = [
             'id',
             'url',
             'status',
             'num',
             'kind',
             'category',
+            'psa',
+            'representing',
+
+            'row_class',
+
             'round',
+            'user',
+
             'person_id',
+
             'scores',
             'permissions',
-        )
+        ]
 
     # class JSONAPIMeta:
     #     included_resources = [
@@ -132,14 +144,13 @@ class RoundSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
         'appearances': 'apps.rmanager.serializers.AppearanceSerializer',
-        'members': 'apps.bhs.serializers.MemberSerializer',
         'outcomes': 'apps.rmanager.serializers.OutcomeSerializer',
         'panelists': 'apps.rmanager.serializers.PanelistSerializer',
     }
 
     class Meta:
         model = Round
-        fields = (
+        fields = [
             'id',
             'url',
             'status',
@@ -149,20 +160,24 @@ class RoundSerializer(serializers.ModelSerializer):
             'date',
             'footnotes',
             'oss',
+            'legacy_oss',
             'sa',
+            'is_reviewed',
+
+            'owners',
             'session',
+
             'appearances',
             'panelists',
             'outcomes',
             'permissions',
-        )
+        ]
 
     class JSONAPIMeta:
         included_resources = [
             'appearances',
             'panelists',
-            # 'members',
-            # 'outcomes',
+            'outcomes',
         ]
 
 
@@ -176,8 +191,10 @@ class ScoreSerializer(serializers.ModelSerializer):
             'url',
             'status',
             'points',
+
             'song',
             'panelist',
+
             'permissions',
         ]
 
@@ -190,21 +207,24 @@ class SongSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Song
-        fields = (
+        fields = [
             'id',
             'url',
             'status',
-            'legacy_chart',
             'num',
+            'asterisks',
+            'dixons',
             'penalties',
+            'stats',
+
             'appearance',
             'chart_id',
+
             'scores',
             'permissions',
-        )
+        ]
 
     class JSONAPIMeta:
         included_resources = [
             'scores',
         ]
-

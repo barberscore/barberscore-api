@@ -146,7 +146,7 @@ class OutcomeAdmin(admin.ModelAdmin):
         'award',
         'num',
         'name',
-        'legacy_name',
+        # 'legacy_name',
     ]
 
     list_display = [
@@ -155,7 +155,7 @@ class OutcomeAdmin(admin.ModelAdmin):
         'award',
         'num',
         'name',
-        'legacy_name',
+        # 'legacy_name',
     ]
 
     list_filter = (

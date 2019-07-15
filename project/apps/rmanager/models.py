@@ -148,12 +148,6 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    legacy_group = models.CharField(
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
     stats = JSONField(
         null=True,
         blank=True,
@@ -195,14 +189,6 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    entry = models.ForeignKey(
-        'smanager.entry',
-        related_name='appearances',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     # Relations
     statelogs = GenericRelation(
         StateLog,
@@ -213,38 +199,38 @@ class Appearance(TimeStampedModel):
     def round__kind(self):
         return self.round.kind
 
-    @cached_property
-    def run_total(self):
-        Score = apps.get_model('rmanager.score')
-        Panelist = apps.get_model('rmanager.panelist')
-        run_total = Score.objects.filter(
-            song__appearance__round__session=self.round.session,
-            song__appearance__round__num__lte=self.round.num,
-            song__appearance__group=self.group,
-            panelist__kind=Panelist.KIND.official,
-        ).aggregate(
-            sum=Sum('points'),
-            avg=Avg('points'),
-            mus=Sum(
-                'points',
-                filter=Q(
-                    panelist__category=Panelist.CATEGORY.music,
-                ),
-            ),
-            sng=Sum(
-                'points',
-                filter=Q(
-                    panelist__category=Panelist.CATEGORY.singing,
-                ),
-            ),
-            per=Sum(
-                'points',
-                filter=Q(
-                    panelist__category=Panelist.CATEGORY.performance,
-                ),
-            ),
-        )
-        return run_total
+    # @cached_property
+    # def run_total(self):
+    #     Score = apps.get_model('rmanager.score')
+    #     Panelist = apps.get_model('rmanager.panelist')
+    #     run_total = Score.objects.filter(
+    #         song__appearance__round__session=self.round.session,
+    #         song__appearance__round__num__lte=self.round.num,
+    #         song__appearance__group=self.group,
+    #         panelist__kind=Panelist.KIND.official,
+    #     ).aggregate(
+    #         sum=Sum('points'),
+    #         avg=Avg('points'),
+    #         mus=Sum(
+    #             'points',
+    #             filter=Q(
+    #                 panelist__category=Panelist.CATEGORY.music,
+    #             ),
+    #         ),
+    #         sng=Sum(
+    #             'points',
+    #             filter=Q(
+    #                 panelist__category=Panelist.CATEGORY.singing,
+    #             ),
+    #         ),
+    #         per=Sum(
+    #             'points',
+    #             filter=Q(
+    #                 panelist__category=Panelist.CATEGORY.performance,
+    #             ),
+    #         ),
+    #     )
+    #     return run_total
 
 
     # Appearance Internals
@@ -259,7 +245,6 @@ class Appearance(TimeStampedModel):
 
     class Meta:
         ordering = [
-            '-round__num',
             'num',
         ]
         # unique_together = (
@@ -722,7 +707,6 @@ class Appearance(TimeStampedModel):
         content = self.get_csa()
         return self.csa.save('csa', content)
 
-
     def get_complete_email(self):
         Panelist = apps.get_model('rmanager.panelist')
         Score = apps.get_model('rmanager.score')
@@ -1170,9 +1154,10 @@ class Contender(TimeStampedModel):
 
     # Internals
     class Meta:
-        ordering = (
-            'outcome__num',
-        )
+        pass
+        # ordering = (
+        #     'outcome__num',
+        # )
         # unique_together = (
         #     ('appearance', 'outcome',),
         # )
@@ -1253,17 +1238,6 @@ class Outcome(TimeStampedModel):
     )
 
     name = models.CharField(
-        max_length=1024,
-        null=True,
-        blank=True,
-    )
-
-    legacy_num = models.IntegerField(
-        blank=True,
-        null=True,
-    )
-
-    legacy_name = models.CharField(
         max_length=1024,
         null=True,
         blank=True,
@@ -1540,12 +1514,6 @@ class Panelist(TimeStampedModel):
         upload_to=FileUploadPath(),
         blank=True,
         default='',
-    )
-
-    legacy_person = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
     )
 
     representing = models.CharField(
@@ -1979,11 +1947,12 @@ class Round(TimeStampedModel):
         resource_name = "round"
 
     def __str__(self):
-        return "{0} {1} {2}".format(
-            self.session.convention,
-            self.session.get_kind_display(),
-            self.get_kind_display(),
-        )
+        return str(self.id)
+        # return "{0} {1} {2}".format(
+        #     self.session.convention,
+        #     self.session.get_kind_display(),
+        #     self.get_kind_display(),
+        # )
 
     # Methods
     def get_oss(self, zoom=1):
@@ -4162,7 +4131,7 @@ class Score(TimeStampedModel):
         resource_name = "score"
 
     def __str__(self):
-        return str(self.pk)
+        return str(self.id)
 
 
     # Score Permissions
@@ -4243,12 +4212,6 @@ class Song(TimeStampedModel):
     )
 
     num = models.IntegerField(
-    )
-
-    legacy_chart = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
     )
 
     asterisks = ArrayField(
