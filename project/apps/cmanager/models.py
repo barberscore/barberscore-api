@@ -494,9 +494,6 @@ class Convention(TimeStampedModel):
     )
 
     STATUS = Choices(
-        (-25, 'manual', 'Manual',),
-        (-20, 'incomplete', 'Incomplete',),
-        (-15, 'imported', 'Imported',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (5, 'built', 'Built',),
