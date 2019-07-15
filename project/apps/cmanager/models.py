@@ -23,6 +23,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.conf import settings
+from django.utils.functional import cached_property
 
 # Django
 from django.contrib.postgres.fields import DecimalRangeField
@@ -492,42 +493,6 @@ class Convention(TimeStampedModel):
         editable=False,
     )
 
-    name = models.CharField(
-        max_length=255,
-        default='Convention',
-    )
-
-    district = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
-    legacy_name = models.CharField(
-        max_length=255,
-        unique=True,
-        null=True,
-        blank=True,
-    )
-
-    legacy_selection = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
-    legacy_complete = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
-    legacy_venue = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
     STATUS = Choices(
         (-25, 'manual', 'Manual',),
         (-20, 'incomplete', 'Incomplete',),
@@ -542,6 +507,17 @@ class Convention(TimeStampedModel):
         help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        default='Convention',
+    )
+
+    district = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
     )
 
     SEASON = Choices(
@@ -714,6 +690,10 @@ class Convention(TimeStampedModel):
         StateLog,
         related_query_name='conventions',
     )
+
+    @cached_property
+    def image_id(self):
+        return self.image.name or 'missing_image'
 
     # Internals
     # class Meta:
