@@ -223,7 +223,6 @@ class Person(TimeStampedModel):
         editable=False,
     )
 
-
     airports = ArrayField(
         base_field=models.CharField(
             blank=True,
@@ -288,10 +287,6 @@ class Person(TimeStampedModel):
         )
 
     @cached_property
-    def is_mc(self):
-        return bool(self.mc_pk)
-
-    @cached_property
     def nomen(self):
         if self.nick_name:
             nick = "({0})".format(self.nick_name)
@@ -347,40 +342,39 @@ class Person(TimeStampedModel):
             self.last_name[0].upper(),
         )
 
-    @cached_property
-    def current_through(self):
-        try:
-            current_through = self.members.get(
-                group__bhs_id=1,
-            ).end_date
-        except self.members.model.DoesNotExist:
-            current_through = None
-        return current_through
+    # @cached_property
+    # def current_through(self):
+    #     try:
+    #         current_through = self.members.get(
+    #             group__bhs_id=1,
+    #         ).end_date
+    #     except self.members.model.DoesNotExist:
+    #         current_through = None
+    #     return current_through
 
-    @cached_property
-    def current_status(self):
-        today = now().date()
-        if self.current_through:
-            if self.current_through >= today:
-                return True
-            return False
-        return True
+    # @cached_property
+    # def current_status(self):
+    #     today = now().date()
+    #     if self.current_through:
+    #         if self.current_through >= today:
+    #             return True
+    #         return False
+    #     return True
 
-    @cached_property
-    def current_district(self):
-        return bool(
-            self.members.filter(
-                group__kind=11, # hardcoded for convenience
-                status__gt=0,
-            )
-        )
+    # @cached_property
+    # def current_district(self):
+    #     return bool(
+    #         self.members.filter(
+    #             group__kind=11, # hardcoded for convenience
+    #             status__gt=0,
+    #         )
+    #     )
 
     # Internals
     objects = PersonManager()
 
     class Meta:
         verbose_name_plural = 'Persons'
-
 
     class JSONAPIMeta:
         resource_name = "person"
@@ -2295,5 +2289,3 @@ class Join(models.Model):
         db_table = 'vwSubscriptions_Memberships'
         verbose_name = 'Join'
         verbose_name_plural = 'Joins'
-
-

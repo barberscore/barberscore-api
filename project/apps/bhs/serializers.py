@@ -133,35 +133,36 @@ class OfficerSerializer(serializers.ModelSerializer):
 
 class PersonSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    included_serializers = {
-        # 'assignments': 'apps.cmanager.serializers.AssignmentSerializer',
-        # 'members': 'apps.bhs.serializers.MemberSerializer',
-        # 'officers': 'apps.bhs.serializers.OfficerSerializer',
-        # 'panelists': 'api.serializers.PanelistSerializer',
-    }
     image_id = serializers.SerializerMethodField()
 
     def get_image_id(self, obj):
         if obj.image:
             return obj.image.name
-        else:
-            return 'missing_image'
-
+        return 'missing_image'
 
     class Meta:
         model = Person
-        fields = (
+        fields = [
             'id',
             'url',
+            'status',
+            'prefix',
             'first_name',
             'middle_name',
             'last_name',
             'nick_name',
-            'status',
+            'suffix',
             'birth_date',
             'spouse',
             'location',
             'part',
+            'mon',
+            'gender',
+            'district',
+            'is_deceased',
+            'is_honorary',
+            'is_suspended',
+            'is_expelled',
             'website',
             'email',
             'address',
@@ -172,32 +173,31 @@ class PersonSerializer(serializers.ModelSerializer):
             'image',
             'image_id',
             'description',
-            'gender',
+            'notes',
             'bhs_id',
-            'current_through',
-            'current_status',
-            'current_district',
+            'mc_pk',
+
+            'nomen',
             'full_name',
             'common_name',
             'sort_name',
-            'members',
-            'officers',
-            # 'panelists',
+            'initials',
+            # 'current_through',
+            # 'current_status',
+            # 'current_district',
+
             'user',
             'permissions',
-        )
-        read_only_fields = [
-            'common_name',
-            'full_name',
-            'sort_name',
         ]
-
-    class JSONAPIMeta:
-        included_resources = [
-            # 'assignments',
-            # 'members',
-            # 'officers',
-            # 'panelists',
+        read_only_fields = [
+            'nomen',
+            'full_name',
+            'common_name',
+            'sort_name',
+            'initials',
+            # 'current_through',
+            # 'current_status',
+            # 'current_district',
         ]
 
 

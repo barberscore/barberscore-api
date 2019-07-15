@@ -252,13 +252,13 @@ class OfficerViewSet(viewsets.ModelViewSet):
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
-        # 'user',
+        'user',
     ).prefetch_related(
         # 'assignments',
-        'members',
-        'officers',
+        # 'members',
+        # 'officers',
         # 'panelists',
-        'statelogs',
+        # 'statelogs',
     ).order_by('id')
     serializer_class = PersonSerializer
     filterset_class = PersonFilterset
