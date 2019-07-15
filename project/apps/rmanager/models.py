@@ -3828,8 +3828,7 @@ class Round(TimeStampedModel):
                 )
                 # Create and start group
                 appearance = self.appearances.create(
-                    entry=entry,
-                    group=entry.group,
+                    group_id=entry.group_id,
                     num=entry.draw,
                     is_single=is_single,
                     is_private=entry.is_private,
@@ -3852,8 +3851,7 @@ class Round(TimeStampedModel):
             for prior_appearance in prior_appearances:
                 # Create and start group
                 appearance = self.appearances.create(
-                    entry=prior_appearance.entry,
-                    group=prior_appearance.group,
+                    group_id=prior_appearance.group_id,
                     num=prior_appearance.draw,
                     is_single=prior_appearance.is_single,
                     is_private=prior_appearance.is_private,
@@ -3874,8 +3872,7 @@ class Round(TimeStampedModel):
             )
             for mt in mts:
                 appearance = self.appearances.create(
-                    entry=mt.entry,
-                    group=mt.group,
+                    group_id=mt.group_id,
                     num=mt.draw,
                     is_single=mt.is_single,
                     is_private=True,
