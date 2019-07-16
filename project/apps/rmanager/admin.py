@@ -196,7 +196,7 @@ class PanelistAdmin(admin.ModelAdmin):
         'person_id',
         'user',
         'category',
-        'psa',
+        'psa_report',
     ]
 
     list_display = [
@@ -204,7 +204,6 @@ class PanelistAdmin(admin.ModelAdmin):
         'kind',
         'category',
         'round',
-        'psa',
     ]
 
     list_filter = (

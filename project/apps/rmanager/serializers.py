@@ -110,8 +110,8 @@ class PanelistSerializer(serializers.ModelSerializer):
             'num',
             'kind',
             'category',
-            'psa',
             'representing',
+            'psa_report',
 
             'round',
             'user',

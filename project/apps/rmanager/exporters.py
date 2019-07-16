@@ -71,7 +71,7 @@ class PanelistSerializer(serializers.ModelSerializer):
             'num',
             'get_kind_display',
             'get_category_display',
-            'psa',
+            'psa_report',
             'legacy_person',
             'representing',
             'person_id',

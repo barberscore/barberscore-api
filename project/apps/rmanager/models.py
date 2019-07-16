@@ -1468,7 +1468,7 @@ class Panelist(TimeStampedModel):
         blank=True,
     )
 
-    psa = models.FileField(
+    psa_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
         default='',
@@ -1738,7 +1738,7 @@ class Panelist(TimeStampedModel):
 
     def save_psa(self):
         content = self.get_psa()
-        return self.psa.save('psa', content)
+        return self.psa_report.save('psa', content)
 
     def get_psa_email(self):
         Person = apps.get_model('bhs.person')
@@ -1752,8 +1752,8 @@ class Panelist(TimeStampedModel):
         to = ["{0} <{1}>".format(person.common_name, person.email)]
         cc = self.round.session.convention.get_ca_emails()
 
-        if self.psa:
-            pdf = self.psa.file
+        if self.psa_report:
+            pdf = self.psa_report.file
         else:
             pdf = self.get_psa()
         file_name = '{0} PSA.pdf'.format(self)

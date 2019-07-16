@@ -349,8 +349,8 @@ class PanelistViewSet(viewsets.ModelViewSet):
     )
     def psa(self, request, pk=None):
         panelist = Panelist.objects.get(pk=pk)
-        if panelist.psa:
-            pdf = panelist.psa.file
+        if panelist.psa_report:
+            pdf = panelist.psa_report.file
         else:
             pdf = panelist.get_psa()
         file_name = '{0} PSA.pdf'.format(panelist)
