@@ -92,6 +92,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     search_fields = [
         'round__session__convention__name',
+        'id',
     ]
     inlines = [
         SongInline,

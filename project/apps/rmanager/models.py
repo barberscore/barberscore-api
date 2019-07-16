@@ -1392,56 +1392,77 @@ class Outcome(TimeStampedModel):
         #     ).first().name
         if self.award.level == self.award.LEVEL.qualifier:
             threshold = self.award.threshold
-            group_ids = Group.objects.filter(
-                appearances__contenders__outcome=self,
-            ).values_list('id', flat=True)
+            # group_ids = self.contenders.filter(
+            #     status__gt=0,
+            # ).values_list(
+            #     'appearance__group_id',
+            #     flat=True,
+            # )
+            # qualifiers = Group.objects.filter(
+            #     id__in=group_ids,
+            # ).annotate(
+            #     avg=Avg(
+            #         'appearances__songs__scores__points',
+            #         filter=Q(
+            #             appearances__round__session=self.round.session,
+            #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #         ),
+            #     ),
+            # ).filter(
+            #     avg__gte=threshold,
+            # ).order_by(
+            #     'name',
+            # ).values_list('name', flat=True)
+            group_ids = self.contenders.filter(
+                status__gt=0,
+                appearances__stats__tot_score__gte=threshold,
+            ).values_list(
+                'appearance__group_id',
+                flat=True,
+            )
             qualifiers = Group.objects.filter(
                 id__in=group_ids,
-            ).annotate(
-                avg=Avg(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__round__session=self.round.session,
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    ),
-                ),
-            ).filter(
-                avg__gte=threshold,
-            ).order_by(
-                'name',
-            ).values_list('name', flat=True)
+            ).order_by('name').values('name')
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
         if self.award.level in [self.award.LEVEL.championship, self.award.LEVEL.representative]:
-            winner = Group.objects.filter(
-                appearances__contenders__outcome=self,
-            ).annotate(
-                tot=Sum(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    ),
-                ),
-                sng=Sum(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing
-                    ),
-                ),
-                per=Sum(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance
-                    ),
-                ),
-            ).earliest(
-                '-tot',
-                '-sng',
-                '-per',
-            )
+            group_id = self.contenders.filter(
+                # status__gt=0,
+            ).order_by(
+                'appearance__stats__tot_points',
+                'appearance__stats__sng_points',
+                'appearance__stats__per_points',
+            ).last().appearance.group_id
+            winner = Group.objects.get(id=group_id)
+            # winner = Group.objects.filter(
+            #     appearances__contenders__outcome=self,
+            # ).annotate(
+            #     tot=Sum(
+            #         'appearances__songs__scores__points',
+            #         filter=Q(
+            #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #         ),
+            #     ),
+            #     sng=Sum(
+            #         'appearances__songs__scores__points',
+            #         filter=Q(
+            #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing
+            #         ),
+            #     ),
+            #     per=Sum(
+            #         'appearances__songs__scores__points',
+            #         filter=Q(
+            #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance
+            #         ),
+            #     ),
+            # ).earliest(
+            #     '-tot',
+            #     '-sng',
+            #     '-per',
+            # )
             if winner:
                 return str(winner.name)
             return "(No Recipient)"
