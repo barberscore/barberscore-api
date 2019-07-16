@@ -61,16 +61,6 @@ class Contest(TimeStampedModel):
         default=STATUS.new,
     )
 
-    is_primary = models.BooleanField(
-        default=False,
-    )
-
-    result = models.CharField(
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
     # FKs
     session = models.ForeignKey(
         'Session',

@@ -25,8 +25,6 @@ class ContestSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'status',
-            'is_primary',
-            'result',
             'session',
             'award',
             'contestants',
