@@ -4140,15 +4140,6 @@ class Song(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'verified', 'Verified',),
-        # (20, 'entered', 'Entered',),
-        # (30, 'flagged', 'Flagged',),
-        # (35, 'verified', 'Verified',),
-        (38, 'finished', 'Finished',),
-        (40, 'confirmed', 'Confirmed',),
-        (50, 'final', 'Final',),
-        (90, 'announced', 'Announced',),
-        (95, 'archived', 'Archived',),
     )
 
     status = FSMIntegerField(
