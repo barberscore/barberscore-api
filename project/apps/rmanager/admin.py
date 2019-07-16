@@ -88,7 +88,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'stats',
         # 'csa',
-        'variance_report',
+        # 'variance_report',
     ]
     search_fields = [
         'round__session__convention__name',

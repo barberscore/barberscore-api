@@ -223,9 +223,12 @@ class Appearance(TimeStampedModel):
     def get_variance(self):
         Chart = apps.get_model('bhs.chart')
         Person = apps.get_model('bhs.person')
+        Group = apps.get_model('bhs.group')
         Score = apps.get_model('rmanager.score')
         Panelist = apps.get_model('rmanager.panelist')
 
+        # Group
+        group = Group.objects.get(id=self.group_id)
         # Songs Block
         songs = self.songs.annotate(
             tot_score=Avg(
@@ -255,7 +258,7 @@ class Appearance(TimeStampedModel):
             panelist.person = person
         variances = []
         for song in songs:
-            chart = Chart.objects.get(song.chart_id)
+            chart = Chart.objects.get(id=song.chart_id)
             song.chart = chart
             variances.extend(song.dixons)
             variances.extend(song.asterisks)
@@ -263,6 +266,7 @@ class Appearance(TimeStampedModel):
         tot_points = scores.aggregate(sum=Sum('points'))['sum']
         context = {
             'appearance': self,
+            'group': group,
             'songs': songs,
             'scores': scores,
             'panelists': panelists,
@@ -350,19 +354,20 @@ class Appearance(TimeStampedModel):
     def get_csa(self):
         Chart = apps.get_model('bhs.chart')
         Person = apps.get_model('bhs.person')
+        Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('rmanager.panelist')
         Song = apps.get_model('rmanager.song')
         Score = apps.get_model('rmanager.score')
 
         # Appearancers Block
-        group = self.group
+        group = Group.objects.get(id=self.group_id)
         stats = Score.objects.select_related(
             'song__appearance__group',
             'song__appearance__round__session',
             'song__appearance__round',
             'panelist',
         ).filter(
-            song__appearance__group=self.group,
+            song__appearance__group_id=self.group_id,
             song__appearance__round__session=self.round.session,
             panelist__kind=Panelist.KIND.official,
         ).aggregate(
@@ -413,14 +418,13 @@ class Appearance(TimeStampedModel):
             ),
         )
         appearances = Appearance.objects.select_related(
-            'group',
             'round',
             'round__session',
         ).prefetch_related(
             'songs__scores',
             'songs__scores__panelist',
         ).filter(
-            group=self.group,
+            group_id=self.group_id,
             round__session=self.round.session,
         ).annotate(
             tot_points=Sum(
@@ -545,6 +549,8 @@ class Appearance(TimeStampedModel):
                 ),
             )
             for song in songs:
+                chart = Chart.objects.get(id=song.chart_id)
+                song.chart = chart
                 penalties_map = {
                     10: "†",
                     30: "‡",
@@ -583,7 +589,7 @@ class Appearance(TimeStampedModel):
             category_count[panelist.get_category_display()] += 1
         songs = Song.objects.filter(
             appearance__round__session=self.round.session,
-            appearance__group=self.group,
+            appearance__group_id=self.group_id,
         ).order_by(
             'appearance__round__kind',
             'num',
@@ -619,7 +625,7 @@ class Appearance(TimeStampedModel):
         # Penalties Block
         array = Song.objects.filter(
             appearance__round__session=self.round.session,
-            appearance__group=self.group,
+            appearance__group_id=self.group_id,
             penalties__len__gt=0,
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
@@ -945,8 +951,11 @@ class Appearance(TimeStampedModel):
 
     # Appearance Conditions
     def can_verify(self):
+        Group = apps.get_model('bhs.group')
+        group = Group.objects.get(id=self.group_id)
+
         try:
-            if self.group.kind == self.group.KIND.chorus and not self.pos:
+            if group.kind == group.KIND.chorus and not self.pos:
                 is_pos = False
             else:
                 is_pos = True
@@ -1579,6 +1588,7 @@ class Panelist(TimeStampedModel):
     def get_psa(self):
         Group = apps.get_model('bhs.group')
         Chart = apps.get_model('bhs.chart')
+        Person = apps.get_model('bhs.person')
         Appearance = apps.get_model('rmanager.appearance')
         Score = apps.get_model('rmanager.score')
         # Score block
@@ -1680,7 +1690,7 @@ class Panelist(TimeStampedModel):
                 )
                 for song in songs:
                     chart = Chart.objects.get(id=song.chart_id)
-                    song.chart = song
+                    song.chart = chart
                     scores2 = song.scores.select_related(
                         'panelist',
                     ).filter(
