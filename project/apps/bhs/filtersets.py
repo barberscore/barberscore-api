@@ -12,9 +12,9 @@ class GroupFilterset(FilterSet):
     class Meta:
         model = Group
         fields = {
-            # 'owners': [
-            #     'in',
-            # ],
+            'owners': [
+                'exact',
+            ],
             'status': [
                 'exact',
                 'gt',
