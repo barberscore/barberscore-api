@@ -41,7 +41,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'stats',
             'base',
             'variance_report',
-            'csa',
+            'csa_report',
 
             'owners',
             'round',

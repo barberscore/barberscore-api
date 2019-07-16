@@ -166,7 +166,7 @@ class Appearance(TimeStampedModel):
         default='',
     )
 
-    csa = models.FileField(
+    csa_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
         default='',
@@ -887,8 +887,8 @@ class Appearance(TimeStampedModel):
         cc = self.round.session.convention.get_drcj_emails()
         cc.extend(self.round.session.convention.get_ca_emails())
 
-        if self.csa:
-            pdf = self.csa.file
+        if self.csa_report:
+            pdf = self.csa_report.file
         else:
             pdf = self.get_csa()
         file_name = '{0} CSA.pdf'.format(self)

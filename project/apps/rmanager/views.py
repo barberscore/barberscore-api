@@ -246,8 +246,8 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         Renders the Competitor Scoring Analysis in PDF
         """
         appearance = Appearance.objects.get(pk=pk)
-        if appearance.csa:
-            pdf = appearance.csa.file
+        if appearance.csa_report:
+            pdf = appearance.csa_report.file
         else:
             pdf = appearance.get_csa()
         file_name = '{0} CSA.pdf'.format(appearance)
