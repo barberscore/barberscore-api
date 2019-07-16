@@ -148,8 +148,8 @@ class RoundSerializer(serializers.ModelSerializer):
             'footnotes',
             'is_reviewed',
             'oss_report',
+            'sa_report',
             'legacy_oss',
-            'sa',
 
             'owners',
             'session',

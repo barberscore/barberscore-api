@@ -125,6 +125,7 @@ class SessionSerializer(serializers.ModelSerializer):
 
             'contests',
             'entries',
+            'rounds',
 
             'permissions',
         ]

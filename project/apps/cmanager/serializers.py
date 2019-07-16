@@ -111,6 +111,8 @@ class ConventionSerializer(serializers.ModelSerializer):
 
             'image_id',
 
+            'assignments',
+            'sessions',
             'permissions',
         ]
         read_only_fields = [
