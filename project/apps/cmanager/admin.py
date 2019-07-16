@@ -165,13 +165,13 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('panel', 'kinds', ),
         ('open_date', 'close_date', ),
         ('start_date', 'end_date', ),
+        'owners',
         'venue_name',
         'location',
         'timezone',
         'image',
         'description',
         'district',
-        'legacy_name',
     )
 
     list_display = (
@@ -220,6 +220,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     autocomplete_fields = [
         # 'group',
+        'owners',
     ]
 
     ordering = (

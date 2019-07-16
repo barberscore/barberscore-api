@@ -113,7 +113,7 @@ class Assignment(TimeStampedModel):
     def __str__(self):
         return str(self.id)
 
-    # Permissions
+    # Assignment Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -677,6 +677,11 @@ class Convention(TimeStampedModel):
     )
 
     # FKs
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='conventions',
+    )
+
     group_id = models.UUIDField(
         null=True,
         blank=True,
