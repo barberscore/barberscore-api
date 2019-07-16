@@ -1,4 +1,4 @@
-
+from builtins import round as rnd
 # Standard Library
 import logging
 import uuid
@@ -350,6 +350,77 @@ class Appearance(TimeStampedModel):
             if variance:
                 song.save()
         return variance
+
+    def get_stats(self):
+        session = self.round.session
+        stats = session.rounds.aggregate(
+            tot_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            sng_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            per_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            mus_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            tot_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            sng_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            per_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            mus_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+        )
+        for key, value in stats.items():
+            if key.endswith('_score'):
+                stats[key] = rnd(value, 1)
+        return stats
 
     def get_csa(self):
         Chart = apps.get_model('bhs.chart')
@@ -1030,6 +1101,7 @@ class Appearance(TimeStampedModel):
         # Variance is only checked once.
         else:
             variance = False
+        self.stats = self.get_stats()
         return self.STATUS.variance if variance else self.STATUS.verified
 
     @fsm_log_by
