@@ -142,7 +142,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     inlines = [
         # AppearanceInline,
         # ContestantInline,
-        # StateLogInline,
+        StateLogInline,
     ]
 
     search_fields = [

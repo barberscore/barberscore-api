@@ -53,7 +53,7 @@ class ContestantSerializer(serializers.ModelSerializer):
 
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    # statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     included_serializers = {
         'contestants': 'apps.smanager.serializers.ContestantSerializer',
     }
@@ -82,6 +82,7 @@ class EntrySerializer(serializers.ModelSerializer):
 
             'contestants',
             'permissions',
+            'statelogs',
         ]
 
     class JSONAPIMeta:

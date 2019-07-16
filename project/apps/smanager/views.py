@@ -157,6 +157,7 @@ class EntryViewSet(viewsets.ModelViewSet):
         # 'group',
     ).prefetch_related(
         'contestants',
+        'statelogs',
         'owners',
     ).order_by('id')
     serializer_class = EntrySerializer
