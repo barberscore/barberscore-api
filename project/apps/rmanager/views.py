@@ -490,8 +490,8 @@ class RoundViewSet(viewsets.ModelViewSet):
             'session',
             'session__convention',
         ).get(pk=pk)
-        if round.oss:
-            pdf = round.oss.file
+        if round.oss_report:
+            pdf = round.oss_report.file
         else:
             pdf = round.get_oss()
         file_name = '{0} OSS.pdf'.format(round)
@@ -587,8 +587,8 @@ class RoundViewSet(viewsets.ModelViewSet):
             'session',
             'session__convention',
         ).get(pk=pk)
-        if round.sa:
-            pdf = round.sa.file
+        if round.sa_report:
+            pdf = round.sa_report.file
         else:
             pdf = round.get_sa()
         file_name = '{0} {1} {2} SA'.format(

@@ -146,10 +146,10 @@ class RoundSerializer(serializers.ModelSerializer):
             'spots',
             'date',
             'footnotes',
-            'oss',
+            'is_reviewed',
+            'oss_report',
             'legacy_oss',
             'sa',
-            'is_reviewed',
 
             'owners',
             'session',

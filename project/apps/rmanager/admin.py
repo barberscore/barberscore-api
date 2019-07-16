@@ -55,7 +55,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'representing',
         'pos',
         'stats',
-        'csa',
+        'csa_report',
         'variance_report',
     ]
     list_display = [
@@ -235,9 +235,9 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        'oss',
+        'oss_report',
+        'sa_report',
         'owners',
-        # 'sa',
         # 'legacy_oss',
         ('session', 'kind', 'num', 'spots',),
         # 'footnotes',

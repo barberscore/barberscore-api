@@ -1840,22 +1840,23 @@ class Round(TimeStampedModel):
         blank=True,
     )
 
-    oss = models.FileField(
-        upload_to=FileUploadPath(),
-        blank=True,
-        default='',
-    )
-    legacy_oss = models.FileField(
-        upload_to=FileUploadPath(),
-        blank=True,
-        default='',
-    )
-    sa = models.FileField(
+    oss_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
         default='',
     )
 
+    sa_report = models.FileField(
+        upload_to=FileUploadPath(),
+        blank=True,
+        default='',
+    )
+
+    legacy_oss = models.FileField(
+        upload_to=FileUploadPath(),
+        blank=True,
+        default='',
+    )
     is_reviewed = models.BooleanField(
         help_text="""Reviewed for history app""",
         default=False,
@@ -2345,7 +2346,7 @@ class Round(TimeStampedModel):
 
     def save_oss(self):
         oss = self.get_oss()
-        return self.oss.save('oss', oss)
+        return self.oss_report.save('oss', oss)
 
     def get_sa(self):
         Group = apps.get_model('bhs.group')
@@ -2794,13 +2795,13 @@ class Round(TimeStampedModel):
 
     def save_sa(self):
         sa = self.get_sa()
-        return self.sa.save('sa', sa)
+        return self.sa_report.save('sa', sa)
 
     def save_reports(self):
         oss = self.get_oss()
-        self.oss.save('oss', oss, save=False)
+        self.oss_report.save('oss', oss, save=False)
         sa = self.get_sa()
-        self.sa.save('sa', sa, save=False)
+        self.sa_report.save('sa', sa, save=False)
         return self.save()
 
 
@@ -3457,8 +3458,8 @@ class Round(TimeStampedModel):
         cc.extend(self.get_judge_emails())
         bcc = self.session.get_participant_emails()
 
-        if self.oss:
-            pdf = self.oss.file
+        if self.oss_report:
+            pdf = self.oss_report.file
         else:
             pdf = self.get_oss()
         file_name = '{0} OSS.pdf'.format(self)
@@ -3498,8 +3499,8 @@ class Round(TimeStampedModel):
         cc = self.session.convention.get_drcj_emails()
         cc.extend(self.get_judge_emails())
         attachments = []
-        if self.sa:
-            pdf = self.sa.file
+        if self.sa_report:
+            pdf = self.sa_report.file
         else:
             pdf = self.get_sa()
         file_name = '{0} SA.pdf'.format(self)
@@ -3589,8 +3590,8 @@ class Round(TimeStampedModel):
         target=STATUS.new,
     )
     def reset(self, *args, **kwargs):
-        self.oss.delete()
-        self.sa.delete()
+        self.oss_report.delete()
+        self.sa_report.delete()
         panelists = self.panelists.all()
         appearances = self.appearances.all()
         outcomes = self.outcomes.all()
