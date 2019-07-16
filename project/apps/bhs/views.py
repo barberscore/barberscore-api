@@ -23,6 +23,7 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 
 # Local
+from .filtersets import GroupFilterset
 from .filtersets import MemberFilterset
 from .filtersets import OfficerFilterset
 from .filtersets import PersonFilterset
@@ -84,6 +85,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         # 'statelogs',
     ).distinct()
     serializer_class = GroupSerializer
+    filterset_class = GroupFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
