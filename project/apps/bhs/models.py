@@ -1010,7 +1010,7 @@ class Group(TimeStampedModel):
                             raise ValidationError("Division must be within SWD.")
         return
 
-    # Permissions
+    # Group Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -1044,18 +1044,13 @@ class Group(TimeStampedModel):
                 'Librarian' in request.user.roles,
             ]),
             all([
-                self.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
+                self.owners.filter(id__contains=request.user.id),
             ]),
         ])
 
     # Conditions:
     def can_activate(self):
-        return all([
-            bool(self.officers.filter(status__gt=0)),
-        ])
+        return
 
     # Transitions
     @fsm_log_by

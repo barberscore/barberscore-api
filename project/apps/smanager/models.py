@@ -686,7 +686,8 @@ class Entry(TimeStampedModel):
         source=[
             STATUS.built,
             STATUS.invited,
-            STATUS.submitted
+            STATUS.submitted,
+            STATUS.withdrawn,
         ],
         target=STATUS.submitted,
         conditions=[can_submit_entry],
