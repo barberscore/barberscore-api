@@ -82,7 +82,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
         'owners',
         'songs',
-        # 'contenders',
+        'contenders',
         # 'statelogs',
     ).order_by('id')
     serializer_class = AppearanceSerializer

@@ -47,6 +47,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'round',
             'group_id',
 
+            'contenders',
             'songs',
 
             'permissions',
