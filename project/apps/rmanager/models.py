@@ -3608,6 +3608,8 @@ class Round(TimeStampedModel):
         conditions=[can_build],
     )
     def build(self, *args, **kwargs):
+        """Build the Round"""
+
         # Reset for indempodence
         self.reset()
 
@@ -3637,7 +3639,7 @@ class Round(TimeStampedModel):
             self.panelists.create(
                 kind=ca.kind,
                 category=ca.category,
-                # person=ca.person,
+                person_id=ca.person_id,
             )
         officials = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
@@ -3657,7 +3659,7 @@ class Round(TimeStampedModel):
                 num=i,
                 kind=official.kind,
                 category=official.category,
-                # person=official.person,
+                person_id=official.person_id,
             )
 
         practices = self.session.convention.assignments.filter(
@@ -3678,7 +3680,7 @@ class Round(TimeStampedModel):
                 num=p,
                 kind=practice.kind,
                 category=practice.category,
-                # person=practice.person,
+                person_id=practice.person_id,
             )
 
         # Create Outcomes
