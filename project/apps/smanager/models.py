@@ -26,6 +26,7 @@ from django.db.models import Avg
 from django.db.models import Q
 from django.db.models import Func
 from django.db.models import F
+from django.conf import settings
 
 from .fields import FileUploadPath
 from .tasks import build_email
@@ -60,26 +61,6 @@ class Contest(TimeStampedModel):
         default=STATUS.new,
     )
 
-    is_primary = models.BooleanField(
-        default=False,
-    )
-
-    result = models.CharField(
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
-    # Private
-    group = models.ForeignKey(
-        'bhs.group',
-        help_text="""The Winner of the Contest.""",
-        related_name='contests',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -102,18 +83,16 @@ class Contest(TimeStampedModel):
     )
 
     # Internals
-    class Meta:
-        unique_together = (
-            ('session', 'award',)
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('session', 'award',)
+    #     )
 
     class JSONAPIMeta:
         resource_name = "contest"
 
     def __str__(self):
-        return "{0}".format(
-            self.award.name,
-        )
+        return str(self.id)
 
     def clean(self):
         if self.award.level == self.award.LEVEL.qualifier and self.group:
@@ -138,26 +117,21 @@ class Contest(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+            'DRCJ',
+        ]
+        return any([item in roles for item in request.user.roles])
 
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
+        if self.session.status >= self.session.STATUS.opened:
+            return False
         return any([
-            all([
-                self.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
-                # self.session.status < self.session.STATUS.opened,
-            ]),
+            'SCJC' in request.user.roles,
+            self.session.owners.filter(id__contains=request.user.id),
         ])
 
     # Transitions
@@ -211,13 +185,13 @@ class Contestant(TimeStampedModel):
     )
 
     # Internals
-    class Meta:
-        ordering = (
-            'contest__award__tree_sort',
-        )
-        unique_together = (
-            ('entry', 'contest',),
-        )
+    # class Meta:
+    #     ordering = (
+    #         'contest__award__tree_sort',
+    #     )
+    #     unique_together = (
+    #         ('entry', 'contest',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "contestant"
@@ -227,7 +201,7 @@ class Contestant(TimeStampedModel):
 
     # Methods
 
-    # Permissions
+    # Contestant Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -243,30 +217,26 @@ class Contestant(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=500,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'Manager',
+        ]
+        return any([item in roles for item in request.user.roles])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.contest.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
+                'SCJC' in request.user.roles,
+            ]),
+            all([
+                self.contest.session.owners.filter(id__contains=request.user.id),
                 self.contest.session.status < self.contest.session.STATUS.packaged,
             ]),
             all([
-                self.entry.group.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
+                self.entry.owners.filter(id__contains=request.user.id),
                 self.entry.status < self.entry.STATUS.approved,
             ]),
         ])
@@ -383,18 +353,20 @@ class Entry(TimeStampedModel):
     )
 
     # FKs
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='entries',
+    )
+
     session = models.ForeignKey(
         'Session',
         related_name='entries',
         on_delete=models.CASCADE,
     )
 
-    group = models.ForeignKey(
-        'bhs.group',
-        related_name='entries',
+    group_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     statelogs = GenericRelation(
@@ -407,9 +379,9 @@ class Entry(TimeStampedModel):
     # Internals
     class Meta:
         verbose_name_plural = 'entries'
-        unique_together = (
-            ('group', 'session',),
-        )
+        # unique_together = (
+        #     ('group', 'session',),
+        # )
 
     class JSONAPIMeta:
         resource_name = "entry"
@@ -428,7 +400,7 @@ class Entry(TimeStampedModel):
         #     )
 
 
-    # Permissions
+    # Entry Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -444,44 +416,41 @@ class Entry(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=500,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'Manager',
+        ]
+        return any([item in roles for item in request.user.roles])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
+            # For SCJC
+            'SCJC' in request.user.roles,
             # For DRCJs
             all([
-                self.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lt=10,
-                ),
+                self.session.owners.filter(id__contains=request.user.id),
                 self.session.status < self.session.STATUS.packaged,
             ]),
             # For Groups
             all([
-                self.group.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
+                self.owners.filter(id__contains=request.user.id),
                 self.status <= self.STATUS.approved,
             ]),
         ])
 
     # Methods
     def get_invite_email(self):
+        Group = apps.get_model('bhs.group')
+        group = Group.objects.get(id=self.group_id)
         template = 'emails/entry_invite.txt'
         context = {'entry': self}
         subject = "[Barberscore] Contest Invitation for {0}".format(
-            self.group.name,
+            group.name,
         )
-        to = self.group.get_officer_emails()
+        to = group.get_officer_emails()
         cc = self.session.convention.get_drcj_emails()
         cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
@@ -500,13 +469,15 @@ class Entry(TimeStampedModel):
 
 
     def get_withdraw_email(self):
+        Group = apps.get_model('bhs.group')
+        group = Group.objects.get(id=self.group_id)
         # Send confirmation email
         template = 'emails/entry_withdraw.txt'
         context = {'entry': self}
         subject = "[Barberscore] Withdrawl Notification for {0}".format(
-            self.group.name,
+            group.name,
         )
-        to = self.group.get_officer_emails()
+        to = group.get_officer_emails()
         cc = self.session.convention.get_drcj_emails()
         cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
@@ -525,6 +496,8 @@ class Entry(TimeStampedModel):
 
 
     def get_submit_email(self):
+        Group = apps.get_model('bhs.group')
+        group = Group.objects.get(id=self.group_id)
         template = 'emails/entry_submit.txt'
         contestants = self.contestants.filter(
             status__gt=0,
@@ -534,9 +507,9 @@ class Entry(TimeStampedModel):
             'contestants': contestants,
         }
         subject = "[Barberscore] Submission Notification for {0}".format(
-            self.group.name,
+            group.name,
         )
-        to = self.group.get_officer_emails()
+        to = group.get_officer_emails()
         cc = self.session.convention.get_drcj_emails()
         cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
@@ -555,8 +528,10 @@ class Entry(TimeStampedModel):
 
 
     def get_approve_email(self):
+        Group = apps.get_model('bhs.group')
+        group = Group.objects.get(id=self.group_id)
         template = 'emails/entry_approve.txt'
-        repertories = self.group.repertories.order_by(
+        repertories = group.repertories.order_by(
             'chart__title',
         )
         contestants = self.contestants.filter(
@@ -564,7 +539,7 @@ class Entry(TimeStampedModel):
         ).order_by(
             'contest__award__name',
         )
-        members = self.group.members.filter(
+        members = group.members.filter(
             status__gt=0,
         ).order_by(
             'person__last_name',
@@ -577,9 +552,9 @@ class Entry(TimeStampedModel):
             'members': members,
         }
         subject = "[Barberscore] Approval Notification for {0}".format(
-            self.group.name,
+            group.name,
         )
-        to = self.group.get_officer_emails()
+        to = group.get_officer_emails()
         cc = self.session.convention.get_drcj_emails()
         cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
@@ -602,20 +577,24 @@ class Entry(TimeStampedModel):
         return True
 
     def can_invite_entry(self):
+        Group = apps.get_model('bhs.group')
+        group = Group.objects.get(id=self.group_id)
         return all([
-            self.group.officers.filter(status__gt=0),
-            self.group.status == self.group.STATUS.active,
+            group.officers.filter(status__gt=0),
+            group.status == group.STATUS.active,
         ])
 
     def can_submit_entry(self):
+        Group = apps.get_model('bhs.group')
+        group = Group.objects.get(id=self.group_id)
         # Instantiate list
         checklist = []
 
         # Only active groups can submit.
-        checklist.append(bool(self.group.STATUS.active))
+        checklist.append(bool(group.STATUS.active))
 
         # check to ensure all fields are entered
-        if self.group.kind == self.group.KIND.chorus:
+        if group.kind == group.KIND.chorus:
             checklist.append(
                 all([
                     self.pos,
@@ -654,8 +633,6 @@ class Entry(TimeStampedModel):
                 status=self.contestants.model.STATUS.excluded,
                 contest=contest,
             )
-        self.representing = self.group.district
-        self.participants = self.group.participants
         return
 
     @fsm_log_by
@@ -709,7 +686,8 @@ class Entry(TimeStampedModel):
         source=[
             STATUS.built,
             STATUS.invited,
-            STATUS.submitted
+            STATUS.submitted,
+            STATUS.withdrawn,
         ],
         target=STATUS.submitted,
         conditions=[can_submit_entry],
@@ -820,6 +798,11 @@ class Session(TimeStampedModel):
     )
 
     # FKs
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='sessions',
+    )
+
     convention = models.ForeignKey(
         'cmanager.convention',
         related_name='sessions',
@@ -844,19 +827,16 @@ class Session(TimeStampedModel):
 
     # Properties
     # Internals
-    class Meta:
-        unique_together = (
-            ('convention', 'kind')
-        )
+    # class Meta:
+        # unique_together = (
+        #     ('convention', 'kind')
+        # )
 
     class JSONAPIMeta:
         resource_name = "session"
 
     def __str__(self):
-        return "{0} {1}".format(
-            self.convention,
-            self.get_kind_display(),
-        )
+        return str(self.id)
 
     def clean(self):
         pass
@@ -896,6 +876,7 @@ class Session(TimeStampedModel):
 
     def get_legacy(self):
         Entry = apps.get_model('smanager.entry')
+        Group = apps.get_model('bhs.group')
         wb = Workbook()
         ws = wb.active
         fieldnames = [
@@ -913,19 +894,20 @@ class Session(TimeStampedModel):
             ]
         ).order_by('draw')
         for entry in entries:
+            group = Group.objects.get(id=entry.group_id)
             oa = entry.draw
-            group_name = entry.group.name.encode('utf-8').strip()
-            group_type = entry.group.get_kind_display()
+            group_name = group.name.encode('utf-8').strip()
+            group_type = group.get_kind_display()
             if group_type == 'Quartet':
-                contestant_id = entry.group.bhs_id
+                contestant_id = group.bhs_id
             elif group_type == 'Chorus':
-                contestant_id = entry.group.code
+                contestant_id = group.code
             elif group_type == 'VLQ':
-                contestant_id = entry.group.code
+                contestant_id = group.code
             else:
-                raise RuntimeError("Improper Entity Type: {0}".format(entry.group.get_kind_display()))
+                raise RuntimeError("Improper Entity Type: {0}".format(group.get_kind_display()))
             i = 1
-            for repertory in entry.group.repertories.order_by('chart__title'):
+            for repertory in group.repertories.order_by('chart__title'):
                 song_number = i
                 song_title = repertory.chart.title.encode('utf-8').strip()
                 i += 1
@@ -980,21 +962,22 @@ class Session(TimeStampedModel):
             ]
         ).order_by('draw')
         for entry in entries:
+            group = Group.objects.get(id=entry.group_id)
             oa = entry.draw
-            group_name = entry.group.name
+            group_name = group.name
             representing = entry.representing
             evaluation = entry.is_evaluation
             is_private = entry.is_private
-            bhs_id = entry.group.bhs_id
-            repertory_count = entry.group.repertories.filter(
+            bhs_id = group.bhs_id
+            repertory_count = group.repertories.filter(
                 status__gt=0,
             ).count()
-            group_status = entry.group.get_status_display()
-            repertory_count = entry.group.repertories.filter(
+            group_status = group.get_status_display()
+            repertory_count = group.repertories.filter(
                 status__gt=0,
             ).count()
             participant_count = entry.pos
-            members = entry.group.members.filter(
+            members = group.members.filter(
                 status__gt=0,
             )
             # expiring_count = 0
@@ -1042,7 +1025,7 @@ class Session(TimeStampedModel):
                 member_detail = "\n".join(filter(None, member_list))
                 parts[part] = member_detail
                 part += 1
-            if entry.group.kind == entry.group.KIND.quartet:
+            if group.kind == group.KIND.quartet:
                 persons = members.values_list('person', flat=True)
                 cs = Group.objects.filter(
                     members__person__in=persons,
@@ -1056,12 +1039,12 @@ class Session(TimeStampedModel):
                     flat=True
                 )
                 chapters = "\n".join(cs)
-            elif entry.group.kind == entry.group.KIND.chorus:
+            elif group.kind == group.KIND.chorus:
                 try:
-                    chapters = entry.group.parent.name
+                    chapters = group.parent.name
                 except AttributeError:
                     chapters = None
-            admins = entry.group.officers.filter(
+            admins = group.officers.filter(
                 status__gt=0,
             )
             admins_list = []
@@ -1392,26 +1375,21 @@ class Session(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+            'DRCJ',
+        ]
+        return any([item in roles for item in request.user.roles])
 
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
+        if self.status >= self.STATUS.finished:
+            return False
         return any([
-            all([
-                self.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category=self.convention.assignments.model.CATEGORY.drcj,
-                ),
-                self.status < self.STATUS.finished,
-            ]),
+            'SCJC' in request.user.roles,
+            self.owners.filter(id__contains=request.user.id),
         ])
 
     # Session Conditions
@@ -1426,11 +1404,10 @@ class Session(TimeStampedModel):
         ])
 
     def can_open(self):
-        Contest = apps.get_model('smanager.contest')
         try:
             return all([
                 # self.convention.open_date <= datetime.date.today(),
-                self.contests.filter(status=Contest.STATUS.included),
+                self.contests.filter(status=self.contests.model.STATUS.included),
             ])
         except TypeError:
             return False
@@ -1476,8 +1453,10 @@ class Session(TimeStampedModel):
         self.drcj_report.delete()
         contests = self.contests.all()
         rounds = self.rounds.all()
+        entries = self.entries.all()
         contests.delete()
         rounds.delete()
+        entries.delete()
         return
 
     @fsm_log_by

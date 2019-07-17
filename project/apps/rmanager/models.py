@@ -1,4 +1,4 @@
-
+from builtins import round as rnd
 # Standard Library
 import logging
 import uuid
@@ -148,12 +148,6 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    legacy_group = models.CharField(
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
     stats = JSONField(
         null=True,
         blank=True,
@@ -172,33 +166,27 @@ class Appearance(TimeStampedModel):
         default='',
     )
 
-    csa = models.FileField(
+    csa_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
         default='',
     )
 
     # Appearance FKs
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='appearances',
+    )
+
     round = models.ForeignKey(
         'Round',
         related_name='appearances',
         on_delete=models.CASCADE,
     )
 
-    group = models.ForeignKey(
-        'bhs.group',
-        related_name='appearances',
+    group_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    entry = models.ForeignKey(
-        'smanager.entry',
-        related_name='appearances',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     # Relations
@@ -207,77 +195,40 @@ class Appearance(TimeStampedModel):
         related_query_name='appearances',
     )
 
-    @cached_property
-    def round__kind(self):
-        return self.round.kind
-
-    @cached_property
-    def run_total(self):
-        Score = apps.get_model('rmanager.score')
-        Panelist = apps.get_model('rmanager.panelist')
-        run_total = Score.objects.filter(
-            song__appearance__round__session=self.round.session,
-            song__appearance__round__num__lte=self.round.num,
-            song__appearance__group=self.group,
-            panelist__kind=Panelist.KIND.official,
-        ).aggregate(
-            sum=Sum('points'),
-            avg=Avg('points'),
-            mus=Sum(
-                'points',
-                filter=Q(
-                    panelist__category=Panelist.CATEGORY.music,
-                ),
-            ),
-            sng=Sum(
-                'points',
-                filter=Q(
-                    panelist__category=Panelist.CATEGORY.singing,
-                ),
-            ),
-            per=Sum(
-                'points',
-                filter=Q(
-                    panelist__category=Panelist.CATEGORY.performance,
-                ),
-            ),
-        )
-        return run_total
-
-
     # Appearance Internals
     objects = AppearanceManager()
 
     def clean(self):
-        if self.group.kind != self.group.KIND.vlq:
-            if self.group.kind != self.round.session.kind:
-                raise ValidationError(
-                    {'group': 'Group kind must match session'}
-                )
+        pass
 
     class Meta:
         ordering = [
-            '-round__num',
             'num',
         ]
-        unique_together = (
-            ('round', 'num'),
-        )
+        # unique_together = (
+        #     ('round', 'num'),
+        # )
 
     class JSONAPIMeta:
         resource_name = "appearance"
 
     def __str__(self):
-        return "{0} {1}".format(
-            self.round,
-            self.group,
-        )
+        return str(self.id)
+        # return "{0} {1}".format(
+        #     self.round,
+        #     self.group,
+        # )
 
     # Methods
     def get_variance(self):
+        Chart = apps.get_model('bhs.chart')
+        Person = apps.get_model('bhs.person')
+        Group = apps.get_model('bhs.group')
         Score = apps.get_model('rmanager.score')
         Panelist = apps.get_model('rmanager.panelist')
 
+        # Group
+        group = Group.objects.get(id=self.group_id)
         # Songs Block
         songs = self.songs.annotate(
             tot_score=Avg(
@@ -292,7 +243,7 @@ class Appearance(TimeStampedModel):
             song__appearance=self,
         ).order_by(
             'category',
-            'panelist__person__last_name',
+            # 'panelist__person__last_name',
             'song__num',
         )
         panelists = self.round.panelists.filter(
@@ -300,16 +251,22 @@ class Appearance(TimeStampedModel):
             category__gt=Panelist.CATEGORY.ca,
         ).order_by(
             'category',
-            'person__last_name',
+            # 'person__last_name',
         )
+        for panelist in panelists:
+            person = Person.objects.get(id=panelist.person_id)
+            panelist.person = person
         variances = []
         for song in songs:
+            chart = Chart.objects.get(id=song.chart_id)
+            song.chart = chart
             variances.extend(song.dixons)
             variances.extend(song.asterisks)
         variances = list(set(variances))
         tot_points = scores.aggregate(sum=Sum('points'))['sum']
         context = {
             'appearance': self,
+            'group': group,
             'songs': songs,
             'scores': scores,
             'panelists': panelists,
@@ -353,9 +310,9 @@ class Appearance(TimeStampedModel):
             ).latest('round__date').avg or randint(60, 70)
         songs = self.songs.all()
         for song in songs:
-            song.chart = Chart.objects.filter(
-                status=Chart.STATUS.active
-            ).order_by("?").first()
+            # song.chart = Chart.objects.filter(
+            #     status=Chart.STATUS.active
+            # ).order_by("?").first()
             song.save()
             scores = song.scores.all()
             for score in scores:
@@ -394,20 +351,94 @@ class Appearance(TimeStampedModel):
                 song.save()
         return variance
 
+    def get_stats(self):
+        session = self.round.session
+        stats = session.rounds.aggregate(
+            tot_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            sng_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            per_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            mus_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            tot_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            sng_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            per_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            mus_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+        )
+        for key, value in stats.items():
+            if key.endswith('_score'):
+                stats[key] = rnd(value, 1)
+        return stats
+
     def get_csa(self):
+        Chart = apps.get_model('bhs.chart')
+        Person = apps.get_model('bhs.person')
+        Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('rmanager.panelist')
         Song = apps.get_model('rmanager.song')
         Score = apps.get_model('rmanager.score')
 
         # Appearancers Block
-        group = self.group
+        group = Group.objects.get(id=self.group_id)
         stats = Score.objects.select_related(
             'song__appearance__group',
             'song__appearance__round__session',
             'song__appearance__round',
             'panelist',
         ).filter(
-            song__appearance__group=self.group,
+            song__appearance__group_id=self.group_id,
             song__appearance__round__session=self.round.session,
             panelist__kind=Panelist.KIND.official,
         ).aggregate(
@@ -458,14 +489,13 @@ class Appearance(TimeStampedModel):
             ),
         )
         appearances = Appearance.objects.select_related(
-            'group',
             'round',
             'round__session',
         ).prefetch_related(
             'songs__scores',
             'songs__scores__panelist',
         ).filter(
-            group=self.group,
+            group_id=self.group_id,
             round__session=self.round.session,
         ).annotate(
             tot_points=Sum(
@@ -590,6 +620,8 @@ class Appearance(TimeStampedModel):
                 ),
             )
             for song in songs:
+                chart = Chart.objects.get(id=song.chart_id)
+                song.chart = chart
                 penalties_map = {
                     10: "†",
                     30: "‡",
@@ -603,7 +635,7 @@ class Appearance(TimeStampedModel):
 
         # Panelists
         panelists = Panelist.objects.select_related(
-            'person',
+            # 'person',
         ).filter(
             kind=Panelist.KIND.official,
             round__session=self.round.session,
@@ -612,7 +644,11 @@ class Appearance(TimeStampedModel):
         ).order_by('num')
 
         # Score Block
-        initials = [x.person.initials for x in panelists]
+        initials = []
+        for panelist in panelists:
+            person = Person.objects.get(id=panelist.person_id)
+            initials.append(person.initials)
+
 
         # Hackalicious
         category_count = {
@@ -624,12 +660,14 @@ class Appearance(TimeStampedModel):
             category_count[panelist.get_category_display()] += 1
         songs = Song.objects.filter(
             appearance__round__session=self.round.session,
-            appearance__group=self.group,
+            appearance__group_id=self.group_id,
         ).order_by(
             'appearance__round__kind',
             'num',
         )
         for song in songs:
+            chart = Chart.objects.get(id=song.chart_id)
+            song.chart = chart
             scores = song.scores.filter(
                 panelist__kind=Panelist.KIND.official,
             ).order_by('panelist__num')
@@ -652,12 +690,13 @@ class Appearance(TimeStampedModel):
         # panelists from above
         for panelist in panelists:
             item = categories[panelist.get_category_display()]
-            item.append(panelist.person.common_name)
+            person = Person.objects.get(id=panelist.person_id)
+            item.append(person.common_name)
 
         # Penalties Block
         array = Song.objects.filter(
             appearance__round__session=self.round.session,
-            appearance__group=self.group,
+            appearance__group_id=self.group_id,
             penalties__len__gt=0,
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
@@ -703,10 +742,10 @@ class Appearance(TimeStampedModel):
         content = self.get_csa()
         return self.csa.save('csa', content)
 
-
     def get_complete_email(self):
         Panelist = apps.get_model('rmanager.panelist')
         Score = apps.get_model('rmanager.score')
+        Chart = apps.get_model('bhs.chart')
 
         # Context
         group = self.group
@@ -899,6 +938,8 @@ class Appearance(TimeStampedModel):
                 ),
             )
             for song in songs:
+                chart = Chart.objects.get(id=song.chart_id)
+                song.chart = chart
                 penalties_map = {
                     10: "†",
                     30: "‡",
@@ -919,8 +960,8 @@ class Appearance(TimeStampedModel):
         cc = self.round.session.convention.get_drcj_emails()
         cc.extend(self.round.session.convention.get_ca_emails())
 
-        if self.csa:
-            pdf = self.csa.file
+        if self.csa_report:
+            pdf = self.csa_report.file
         else:
             pdf = self.get_csa()
         file_name = '{0} CSA.pdf'.format(self)
@@ -957,11 +998,7 @@ class Appearance(TimeStampedModel):
     def has_object_read_permission(self, request):
         return any([
             self.round.status == self.round.STATUS.published,
-            self.round.session.convention.assignments.filter(
-                person__user=request.user,
-                status__gt=0,
-                category__lte=10,
-            ),
+            self.round.owners.filter(id__contains=request.user.id),
         ])
 
     @staticmethod
@@ -969,10 +1006,8 @@ class Appearance(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
 
     @allow_staff_or_superuser
@@ -980,19 +1015,18 @@ class Appearance(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.round.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
+                self.round.owners.filter(id__contains=request.user.id),
                 self.round.status != self.round.STATUS.published,
             ]),
         ])
 
     # Appearance Conditions
     def can_verify(self):
+        Group = apps.get_model('bhs.group')
+        group = Group.objects.get(id=self.group_id)
+
         try:
-            if self.group.kind == self.group.KIND.chorus and not self.pos:
+            if group.kind == group.KIND.chorus and not self.pos:
                 is_pos = False
             else:
                 is_pos = True
@@ -1067,6 +1101,7 @@ class Appearance(TimeStampedModel):
         # Variance is only checked once.
         else:
             variance = False
+        self.stats = self.get_stats()
         return self.STATUS.variance if variance else self.STATUS.verified
 
     @fsm_log_by
@@ -1158,12 +1193,13 @@ class Contender(TimeStampedModel):
 
     # Internals
     class Meta:
-        ordering = (
-            'outcome__num',
-        )
-        unique_together = (
-            ('appearance', 'outcome',),
-        )
+        pass
+        # ordering = (
+        #     'outcome__num',
+        # )
+        # unique_together = (
+        #     ('appearance', 'outcome',),
+        # )
 
     class JSONAPIMeta:
         resource_name = "contender"
@@ -1190,23 +1226,18 @@ class Contender(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=500,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
+            'SCJC' in request.user.roles,
             all([
-                self.outcome.round.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
-                self.outcome.round.status < self.outcome.round.STATUS.started,
+                self.outcome.round.owners.filter(id__contains=request.user.id),
+                self.outcome.round.status != self.outcome.round.STATUS.started,
             ]),
         ])
 
@@ -1246,17 +1277,6 @@ class Outcome(TimeStampedModel):
     )
 
     name = models.CharField(
-        max_length=1024,
-        null=True,
-        blank=True,
-    )
-
-    legacy_num = models.IntegerField(
-        blank=True,
-        null=True,
-    )
-
-    legacy_name = models.CharField(
         max_length=1024,
         null=True,
         blank=True,
@@ -1372,67 +1392,88 @@ class Outcome(TimeStampedModel):
         #     ).first().name
         if self.award.level == self.award.LEVEL.qualifier:
             threshold = self.award.threshold
-            group_ids = Group.objects.filter(
-                appearances__contenders__outcome=self,
-            ).values_list('id', flat=True)
+            # group_ids = self.contenders.filter(
+            #     status__gt=0,
+            # ).values_list(
+            #     'appearance__group_id',
+            #     flat=True,
+            # )
+            # qualifiers = Group.objects.filter(
+            #     id__in=group_ids,
+            # ).annotate(
+            #     avg=Avg(
+            #         'appearances__songs__scores__points',
+            #         filter=Q(
+            #             appearances__round__session=self.round.session,
+            #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #         ),
+            #     ),
+            # ).filter(
+            #     avg__gte=threshold,
+            # ).order_by(
+            #     'name',
+            # ).values_list('name', flat=True)
+            group_ids = self.contenders.filter(
+                status__gt=0,
+                appearances__stats__tot_score__gte=threshold,
+            ).values_list(
+                'appearance__group_id',
+                flat=True,
+            )
             qualifiers = Group.objects.filter(
                 id__in=group_ids,
-            ).annotate(
-                avg=Avg(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__round__session=self.round.session,
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    ),
-                ),
-            ).filter(
-                avg__gte=threshold,
-            ).order_by(
-                'name',
-            ).values_list('name', flat=True)
+            ).order_by('name').values('name')
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
         if self.award.level in [self.award.LEVEL.championship, self.award.LEVEL.representative]:
-            winner = Group.objects.filter(
-                appearances__contenders__outcome=self,
-            ).annotate(
-                tot=Sum(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    ),
-                ),
-                sng=Sum(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing
-                    ),
-                ),
-                per=Sum(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance
-                    ),
-                ),
-            ).earliest(
-                '-tot',
-                '-sng',
-                '-per',
-            )
+            group_id = self.contenders.filter(
+                # status__gt=0,
+            ).order_by(
+                'appearance__stats__tot_points',
+                'appearance__stats__sng_points',
+                'appearance__stats__per_points',
+            ).last().appearance.group_id
+            winner = Group.objects.get(id=group_id)
+            # winner = Group.objects.filter(
+            #     appearances__contenders__outcome=self,
+            # ).annotate(
+            #     tot=Sum(
+            #         'appearances__songs__scores__points',
+            #         filter=Q(
+            #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #         ),
+            #     ),
+            #     sng=Sum(
+            #         'appearances__songs__scores__points',
+            #         filter=Q(
+            #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing
+            #         ),
+            #     ),
+            #     per=Sum(
+            #         'appearances__songs__scores__points',
+            #         filter=Q(
+            #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance
+            #         ),
+            #     ),
+            # ).earliest(
+            #     '-tot',
+            #     '-sng',
+            #     '-per',
+            # )
             if winner:
                 return str(winner.name)
             return "(No Recipient)"
         raise RuntimeError("Level mismatch")
 
     # Internals
-    class Meta:
-        unique_together = (
-            ('round', 'award',),
-            ('round', 'num',),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('round', 'award',),
+    #         ('round', 'num',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "outcome"
@@ -1455,11 +1496,7 @@ class Outcome(TimeStampedModel):
     def has_object_read_permission(self, request):
         return any([
             self.round.status == self.round.STATUS.published,
-            self.round.session.convention.assignments.filter(
-                person__user=request.user,
-                status__gt=0,
-                category__lte=10,
-            ),
+            self.round.owners.filter(id__contains=request.user.id),
         ])
 
 
@@ -1468,22 +1505,17 @@ class Outcome(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
+
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.round.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
+                self.round.owners.filter(id__contains=request.user.id),
                 self.round.status < self.round.STATUS.verified,
             ]),
         ])
@@ -1538,16 +1570,10 @@ class Panelist(TimeStampedModel):
         blank=True,
     )
 
-    psa = models.FileField(
+    psa_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
         default='',
-    )
-
-    legacy_person = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
     )
 
     representing = models.CharField(
@@ -1563,12 +1589,18 @@ class Panelist(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    person = models.ForeignKey(
-        'bhs.person',
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         related_name='panelists',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+    )
+
+
+    person_id = models.UUIDField(
+        null=True,
+        blank=True,
     )
 
     # Relations
@@ -1577,36 +1609,24 @@ class Panelist(TimeStampedModel):
         related_query_name='panelists',
     )
 
-    @cached_property
-    def row_class(self):
-        if self.category == self.CATEGORY.music:
-            row_class = 'warning'
-        elif self.category == self.CATEGORY.performance:
-            row_class = 'success'
-        elif self.category == self.CATEGORY.singing:
-            row_class = 'info'
-        else:
-            row_class = None
-        return row_class
-
-
     # Internals
     objects = PanelistManager()
 
-    class Meta:
-        unique_together = (
-            ('round', 'num',),
-            ('round', 'person', 'category',),
-        )
+    # class Meta:
+        # unique_together = (
+        #     ('round', 'num',),
+        #     ('round', 'person', 'category',),
+        # )
 
     class JSONAPIMeta:
         resource_name = "panelist"
 
     def __str__(self):
-        return "{0} {1}".format(
-            self.round,
-            self.person,
-        )
+        return str(self.id)
+        # return "{0} {1}".format(
+        #     self.round,
+        #     self.person,
+        # )
 
     def clean(self):
         if self.kind > self.KIND.practice:
@@ -1643,30 +1663,27 @@ class Panelist(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
+
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.round.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
+                self.round.owners.filter(id__contains=request.user.id),
                 self.round.status < self.round.STATUS.started,
             ]),
         ])
 
     def get_psa(self):
+        Group = apps.get_model('bhs.group')
+        Chart = apps.get_model('bhs.chart')
+        Person = apps.get_model('bhs.person')
         Appearance = apps.get_model('rmanager.appearance')
         Score = apps.get_model('rmanager.score')
-        Group = apps.get_model('bhs.group')
         # Score block
         group_ids = self.round.appearances.exclude(
             # Don't include advancers or MTs on PSA
@@ -1765,6 +1782,8 @@ class Panelist(TimeStampedModel):
                     ),
                 )
                 for song in songs:
+                    chart = Chart.objects.get(id=song.chart_id)
+                    song.chart = chart
                     scores2 = song.scores.select_related(
                         'panelist',
                     ).filter(
@@ -1775,23 +1794,27 @@ class Panelist(TimeStampedModel):
                         if score.points == 0:
                             score.points = "00"
                         span_class = class_map[score.panelist.category]
-                        if score.panelist.person == self.person:
+                        if score.panelist == self:
                             span_class = "{0} black-font".format(span_class)
                         out.append((score.points, span_class))
                     song.scores_patched = out
                     panelist_score = song.scores.get(
-                        panelist__person=self.person,
+                        panelist=self,
                     )
                     category = self.get_category_display()
                     diff = panelist_score.points - getattr(song, category)
                     song.diff_patched = diff
-                    pp = song.scores.get(panelist__person=self.person).points
+                    pp = song.scores.get(panelist=self).points
                     song.pp = pp
                 appearance.songs_patched = songs
             group.appearances_patched = appearances
+        panelist = self
+        person = Person.objects.get(id=panelist.person_id)
+        panelist.person = person
+
 
         context = {
-            'panelist': self,
+            'panelist': panelist,
             'groups': groups,
         }
         rendered = render_to_string(
@@ -1818,20 +1841,22 @@ class Panelist(TimeStampedModel):
 
     def save_psa(self):
         content = self.get_psa()
-        return self.psa.save('psa', content)
+        return self.psa_report.save('psa', content)
 
     def get_psa_email(self):
+        Person = apps.get_model('bhs.person')
         context = {'panelist': self}
 
         template = 'emails/panelist_released.txt'
+        person = Person.objects.get(id=self.person_id)
         subject = "[Barberscore] PSA for {0}".format(
-            self.person.common_name,
+            person.common_name,
         )
-        to = ["{0} <{1}>".format(self.person.common_name, self.person.email)]
+        to = ["{0} <{1}>".format(person.common_name, person.email)]
         cc = self.round.session.convention.get_ca_emails()
 
-        if self.psa:
-            pdf = self.psa.file
+        if self.psa_report:
+            pdf = self.psa_report.file
         else:
             pdf = self.get_psa()
         file_name = '{0} PSA.pdf'.format(self)
@@ -1918,28 +1943,34 @@ class Round(TimeStampedModel):
         blank=True,
     )
 
-    oss = models.FileField(
-        upload_to=FileUploadPath(),
-        blank=True,
-        default='',
-    )
-    legacy_oss = models.FileField(
-        upload_to=FileUploadPath(),
-        blank=True,
-        default='',
-    )
-    sa = models.FileField(
+    oss_report = models.FileField(
         upload_to=FileUploadPath(),
         blank=True,
         default='',
     )
 
+    sa_report = models.FileField(
+        upload_to=FileUploadPath(),
+        blank=True,
+        default='',
+    )
+
+    legacy_oss = models.FileField(
+        upload_to=FileUploadPath(),
+        blank=True,
+        default='',
+    )
     is_reviewed = models.BooleanField(
         help_text="""Reviewed for history app""",
         default=False,
     )
 
     # FKs
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='rounds',
+    )
+
     session = models.ForeignKey(
         'smanager.session',
         related_name='rounds',
@@ -1954,9 +1985,9 @@ class Round(TimeStampedModel):
 
     # Internals
     class Meta:
-        unique_together = (
-            ('session', 'kind',),
-        )
+        # unique_together = (
+        #     ('session', 'kind',),
+        # )
         get_latest_by = [
             'num',
         ]
@@ -1965,21 +1996,24 @@ class Round(TimeStampedModel):
         resource_name = "round"
 
     def __str__(self):
-        return "{0} {1} {2}".format(
-            self.session.convention,
-            self.session.get_kind_display(),
-            self.get_kind_display(),
-        )
+        return str(self.id)
+        # return "{0} {1} {2}".format(
+        #     self.session.convention,
+        #     self.session.get_kind_display(),
+        #     self.get_kind_display(),
+        # )
 
     # Methods
     def get_oss(self, zoom=1):
         Group = apps.get_model('bhs.group')
+        Chart = apps.get_model('bhs.chart')
+        Person = apps.get_model('bhs.person')
         Panelist = apps.get_model('rmanager.panelist')
         Appearance = apps.get_model('rmanager.appearance')
         Song = apps.get_model('rmanager.song')
 
         # Score Block - get completeds
-        group_ids = self.appearances.filter(
+        publics = self.appearances.filter(
             is_private=False,
         ).exclude(
             # Don't include advancers on OSS
@@ -1993,111 +2027,123 @@ class Round(TimeStampedModel):
         ).exclude(
             # Don't include mic testers on OSS
             num__lte=0,
-        ).values_list('group__id', flat=True)
-        groups = Group.objects.filter(
-            id__in=group_ids,
-        ).prefetch_related(
-            'appearances',
-            'appearances__songs__scores',
-            'appearances__songs__scores__panelist',
-            'appearances__round__session',
-        ).annotate(
-            max_round=Max(
-                'appearances__round__num',
-                filter=Q(
-                    appearances__num__gt=0,
-                    appearances__round__session=self.session,
-                ),
-            ),
-            tot_points=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__session=self.session,
-                    appearances__round__num__lte=self.num,
-                ),
-            ),
-            sng_points=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    appearances__round__session=self.session,
-                    appearances__round__num__lte=self.num,
-                ),
-            ),
-            per_points=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    appearances__round__session=self.session,
-                    appearances__round__num__lte=self.num,
-                ),
-            ),
-            mus_points=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
-                    appearances__round__session=self.session,
-                    appearances__round__num__lte=self.num,
-                ),
-            ),
-            tot_score=Avg(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__session=self.session,
-                    appearances__round__num__lte=self.num,
-                ),
-            ),
-            mus_score=Avg(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
-                    appearances__round__session=self.session,
-                    appearances__round__num__lte=self.num,
-                ),
-            ),
-            per_score=Avg(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    appearances__round__session=self.session,
-                    appearances__round__num__lte=self.num,
-                ),
-            ),
-            sng_score=Avg(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    appearances__round__session=self.session,
-                    appearances__round__num__lte=self.num,
-                ),
-            ),
-            tot_rank=Window(
-                expression=RowNumber(),
-                order_by=(
-                    F('tot_points').desc(),
-                    F('sng_points').desc(),
-                    F('per_points').desc(),
-                )
-            ),
         ).order_by(
-            '-tot_points',
-            '-sng_points',
-            '-per_points',
+            '-stats__tot_points',
+            '-stats__sng_points',
+            '-stats__per_points',
         )
+        group_ids = publics.values_list('group_id', flat=True)
+
+
+
+
+
+        # groups = Group.objects.filter(
+        #     id__in=group_ids,
+        # ).prefetch_related(
+        #     'appearances',
+        #     'appearances__songs__scores',
+        #     'appearances__songs__scores__panelist',
+        #     'appearances__round__session',
+        # ).annotate(
+        #     max_round=Max(
+        #         'appearances__round__num',
+        #         filter=Q(
+        #             appearances__num__gt=0,
+        #             appearances__round__session=self.session,
+        #         ),
+        #     ),
+        #     tot_points=Sum(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     sng_points=Sum(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     per_points=Sum(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     mus_points=Sum(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     tot_score=Avg(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     mus_score=Avg(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     per_score=Avg(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     sng_score=Avg(
+        #         'appearances__songs__scores__points',
+        #         filter=Q(
+        #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+        #             appearances__round__session=self.session,
+        #             appearances__round__num__lte=self.num,
+        #         ),
+        #     ),
+        #     tot_rank=Window(
+        #         expression=RowNumber(),
+        #         order_by=(
+        #             F('tot_points').desc(),
+        #             F('sng_points').desc(),
+        #             F('per_points').desc(),
+        #         )
+        #     ),
+        # ).order_by(
+        #     '-tot_points',
+        #     '-sng_points',
+        #     '-per_points',
+        # )
 
         # Monkeypatching
-        for group in groups:
-            group.tot_rank = group.tot_rank + self.spots
-            appearances = group.appearances.filter(
-                num__gt=0,
+        i = self.spots
+        for public in publics:
+            i += 1
+            public.tot_rank = i
+            appearances = Appearance.objects.filter(
+                group_id=public.group_id,
                 round__session=self.session,
                 round__num__lte=self.num,
             ).prefetch_related(
@@ -2176,6 +2222,11 @@ class Round(TimeStampedModel):
                     ),
                 )
                 for song in songs:
+                    try:
+                        chart = Chart.objects.get(id=song.chart_id)
+                    except Chart.DoesNotExist:
+                        chart = None
+                    song.chart = chart
                     penalties_map = {
                         10: "†",
                         30: "‡",
@@ -2185,29 +2236,28 @@ class Round(TimeStampedModel):
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
                 appearance.songs_patched = songs
-            recent = appearances.get(round__num=self.num)
-            contesting = recent.contenders.order_by(
+            public.appearances_patched = appearances
+            contesting = public.contenders.order_by(
                 'outcome__num',
             ).values_list(
                 'outcome__num',
                 flat=True
             )
-            group.contesting_patched = ", ".join([str(x) for x in contesting])
-            group.pos_patched = recent.pos
-            group.representing_patched = recent.representing
-            group.participants_patched = recent.participants
-            group.appearances_patched = appearances
+            public.contesting_patched = ", ".join([str(x) for x in contesting])
+            public.pos_patched = public.pos
+            public.participants_patched = public.participants
+            group = Group.objects.get(id=public.group_id)
+            public.representing_patched = group.district
+            public.name = group.name
 
 
         # Penalties Block
         array = Song.objects.select_related(
-            'appearance__round',
-            'appearance__group',
         ).filter(
             appearance__round__session=self.session, # Using any session appearance
             penalties__len__gt=0, # Where there are penalties
             appearance__is_private=False, # If a public appearance
-            appearance__group__id__in=group_ids,  # Only completeds
+            appearance__in=publics,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
             10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
@@ -2221,47 +2271,56 @@ class Round(TimeStampedModel):
         # use group_ids - these are the completeds
         is_missing = bool(Song.objects.filter(
             appearance__round__session=self.session,
-            chart__isnull=True,
-            appearance__group__id__in=group_ids,
+            chart_id__isnull=True,
+            appearance__in=publics,
         ))
         # Eval Only Block
-        privates = self.appearances.prefetch_related(
-            'group',
+        private_group_ids = self.appearances.prefetch_related(
         ).filter(
             is_private=True,
         ).order_by(
-            'group__name',
-        ).values_list('group__name', flat=True)
+        ).values_list('group_id', flat=True)
+        privates = Group.objects.filter(
+            id__in=private_group_ids,
+        ).order_by(
+            'name',
+        ).values_list('name', flat=True)
         privates = list(privates)
 
         # Disqualification Block
-        disqualifications = self.appearances.prefetch_related(
-            'group',
+        disqualification_group_ids = self.appearances.prefetch_related(
         ).filter(
             status=Appearance.STATUS.disqualified,
         ).order_by(
-            'group__name',
-        ).values_list('group__name', flat=True)
+        ).values_list('group_id', flat=True)
+        disqualifications = Group.objects.filter(
+            id__in=disqualification_group_ids,
+        ).order_by(
+            'name',
+        ).values_list('name', flat=True)
         disqualifications = list(disqualifications)
 
         # Draw Block
         if self.kind != self.KIND.finals:
             # Get advancers
-            advancers = self.appearances.filter(
+            advancer_group_ids = self.appearances.filter(
                 draw__gt=0,
             ).select_related(
-                'group',
             ).order_by(
                 'draw',
             ).values_list(
                 'draw',
-                'group__name',
+                'group_id',
             )
-            advancers = list(advancers)
+            advancers = []
+            for draw, group_id in advancer_group_ids:
+                name = Group.objects.get(id=group_id)
+                advancers.append((draw, name))
             try:
-                mt = self.appearances.get(
+                mt_id = self.appearances.get(
                     draw=0,
-                ).group.name
+                ).group_id
+                mt = Group.objects.get(id=mt_id).name
                 advancers.append(('MT', mt))
             except self.appearances.model.DoesNotExist:
                 pass
@@ -2270,7 +2329,7 @@ class Round(TimeStampedModel):
 
         # Panelist Block
         panelists_raw = self.panelists.select_related(
-            'person',
+            # 'person',
         ).filter(
             kind=Panelist.KIND.official,
             category__gte=Panelist.CATEGORY.ca,
@@ -2288,17 +2347,18 @@ class Round(TimeStampedModel):
             sections = panelists_raw.filter(
                 category=key,
             ).select_related(
-                'person',
+                # 'person',
             ).order_by(
                 'num',
             )
             persons = []
             for x in sections:
                 try:
+                    person = Person.objects.get(id=x.person_id)
                     persons.append(
                         "{0} {1}".format(
-                            x.person.common_name,
-                            x.person.district,
+                            person.common_name,
+                            person.district,
                         )
                     )
                 except AttributeError:
@@ -2328,7 +2388,7 @@ class Round(TimeStampedModel):
 
         context = {
             'round': self,
-            'groups': groups,
+            'publics': publics,
             'penalties': penalties,
             'privates': privates,
             'disqualifications': disqualifications,
@@ -2348,18 +2408,18 @@ class Round(TimeStampedModel):
                 page_size = 'Letter'
         else:
             if self.session.rounds.count() == 1:
-                if groups.count() <= 15:
+                if publics.count() <= 15:
                     page_size = 'Letter'
                 else:
                     page_size = 'Legal'
             else:
                 if self.kind == self.KIND.finals:
-                    if groups.count() >= 8:
+                    if publics.count() >= 8:
                         page_size = 'Legal'
                     else:
                         page_size = 'Letter'
                 elif self.kind == self.KIND.semis:
-                    if groups.count() >= 8:
+                    if publics.count() >= 8:
                         page_size = 'Legal'
                     else:
                         page_size = 'Letter'
@@ -2412,14 +2472,15 @@ class Round(TimeStampedModel):
 
     def save_oss(self):
         oss = self.get_oss()
-        return self.oss.save('oss', oss)
+        return self.oss_report.save('oss', oss)
 
     def get_sa(self):
+        Group = apps.get_model('bhs.group')
+        Person = apps.get_model('bhs.person')
+        Chart = apps.get_model('bhs.chart')
         Appearance = apps.get_model('rmanager.appearance')
         Panelist = apps.get_model('rmanager.panelist')
         Song = apps.get_model('rmanager.song')
-        Group = apps.get_model('bhs.group')
-        Person = apps.get_model('bhs.person')
 
         # Score Block
         group_ids = self.appearances.exclude(
@@ -2557,6 +2618,7 @@ class Round(TimeStampedModel):
         for p in mus_persons_qs:
             practice = bool(p.panelists.get(round=self).kind == Panelist.KIND.practice)
             mus_persons.append((p.common_name, practice, p.initials))
+
         per_persons_qs = persons.filter(
             panelists__category=Panelist.CATEGORY.performance,
             panelists__round__session=self.session,
@@ -2567,6 +2629,7 @@ class Round(TimeStampedModel):
         for p in per_persons_qs:
             practice = bool(p.panelists.get(round=self).kind == Panelist.KIND.practice)
             per_persons.append((p.common_name, practice, p.initials))
+
         sng_persons_qs = persons.filter(
             panelists__category=Panelist.CATEGORY.singing,
             panelists__round__session=self.session,
@@ -2712,6 +2775,9 @@ class Round(TimeStampedModel):
 
 
                 for song in songs:
+                    chart = Chart.objects.get(id=song.chart_id)
+                    song.chart = chart
+
                     mus_scores = []
                     for person in mus_persons_qs:
                         raw_music_scores = song.scores.filter(
@@ -2828,7 +2894,6 @@ class Round(TimeStampedModel):
         context = {
             'round': self,
             'groups': groups,
-            'persons': persons,
             'mus_persons': mus_persons,
             'per_persons': per_persons,
             'sng_persons': sng_persons,
@@ -2856,17 +2921,19 @@ class Round(TimeStampedModel):
 
     def save_sa(self):
         sa = self.get_sa()
-        return self.sa.save('sa', sa)
+        return self.sa_report.save('sa', sa)
 
     def save_reports(self):
         oss = self.get_oss()
-        self.oss.save('oss', oss, save=False)
+        self.oss_report.save('oss', oss, save=False)
         sa = self.get_sa()
-        self.sa.save('sa', sa, save=False)
+        self.sa_report.save('sa', sa, save=False)
         return self.save()
 
 
     def get_legacy_oss(self):
+        Chart = apps.get_model('bhs.chart')
+        Person = apps.get_model('bhs.person')
         Panelist = apps.get_model('rmanager.panelist')
         Appearance = apps.get_model('rmanager.appearance')
         Song = apps.get_model('rmanager.song')
@@ -2949,6 +3016,8 @@ class Round(TimeStampedModel):
                     ),
                 )
                 for song in songs:
+                    chart = Chart.objects.get(id=song.chart_id)
+                    song.chart = chart
                     penalties_map = {
                         10: "†",
                         30: "‡",
@@ -3008,7 +3077,7 @@ class Round(TimeStampedModel):
         # use group_ids - these are the completeds
         is_missing = bool(Song.objects.filter(
             appearance__round__session=self.session,
-            chart__isnull=True,
+            chart_id__isnull=True,
             appearance__group__id__in=group_ids,
         ))
 
@@ -3048,7 +3117,7 @@ class Round(TimeStampedModel):
 
         # Panelist Block
         panelists_raw = self.panelists.select_related(
-            'person',
+            # 'person',
         ).filter(
             kind=Panelist.KIND.official,
             category__gte=Panelist.CATEGORY.ca,
@@ -3066,13 +3135,14 @@ class Round(TimeStampedModel):
             sections = panelists_raw.filter(
                 category=key,
             ).select_related(
-                'person',
+                # 'person',
             ).order_by(
                 'num',
             )
-            persons = [
-                "{0} - {1}".format(x.person.common_name, x.person.district) for x in sections
-            ]
+            persons = []
+            for x in sections:
+                person = Person.objects.get(id=x.person_id)
+                persons.append("{0} - {1}".format(person.common_name, person.district))
             panelists[value] = persons
 
 
@@ -3153,6 +3223,7 @@ class Round(TimeStampedModel):
 
     def get_titles(self):
         Song = apps.get_model('rmanager.song')
+        Chart = apps.get_model('bhs.chart')
         appearances = self.appearances.filter(
             draw__gt=0,
         ).order_by(
@@ -3168,8 +3239,9 @@ class Round(TimeStampedModel):
             )
             titles = []
             for song in songs:
+                chart = Chart.objects.get(id=song.chart_id)
                 try:
-                    title = song.chart.title
+                    title = chart.title
                 except AttributeError:
                     title = "Unknown (Not in Repertory)"
                 row = "{0} Song {1}: {2}".format(
@@ -3345,20 +3417,20 @@ class Round(TimeStampedModel):
         judges = self.panelists.filter(
             # status=Panelist.STATUS.active,
             category__gt=Panelist.CATEGORY.ca,
-            person__email__isnull=False,
+            # person__email__isnull=False,
         ).order_by(
             'kind',
             'category',
-            'person__last_name',
-            'person__first_name',
+            # 'person__last_name',
+            # 'person__first_name',
         )
         seen = set()
         result = [
-            "{0} ({1} {2}) <{3}>".format(judge.person.common_name, judge.get_kind_display(), judge.get_category_display(), judge.person.email,)
+            "{0} ({1} {2}) <{3}>".format(judge.user.common_name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,)
             for judge in judges
             if not (
-                "{0} ({1} {2}) <{3}>".format(judge.person.common_name, judge.get_kind_display(), judge.get_category_display(), judge.person.email,) in seen or seen.add(
-                    "{0} ({1} {2}) <{3}>".format(judge.person.common_name, judge.get_kind_display(), judge.get_category_display(), judge.person.email,)
+                "{0} ({1} {2}) <{3}>".format(judge.user.common_name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,) in seen or seen.add(
+                    "{0} ({1} {2}) <{3}>".format(judge.user.common_name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,)
                 )
             )
         ]
@@ -3512,8 +3584,8 @@ class Round(TimeStampedModel):
         cc.extend(self.get_judge_emails())
         bcc = self.session.get_participant_emails()
 
-        if self.oss:
-            pdf = self.oss.file
+        if self.oss_report:
+            pdf = self.oss_report.file
         else:
             pdf = self.get_oss()
         file_name = '{0} OSS.pdf'.format(self)
@@ -3553,8 +3625,8 @@ class Round(TimeStampedModel):
         cc = self.session.convention.get_drcj_emails()
         cc.extend(self.get_judge_emails())
         attachments = []
-        if self.sa:
-            pdf = self.sa.file
+        if self.sa_report:
+            pdf = self.sa_report.file
         else:
             pdf = self.get_sa()
         file_name = '{0} SA.pdf'.format(self)
@@ -3578,7 +3650,7 @@ class Round(TimeStampedModel):
         email = self.get_publish_report_email()
         return email.send()
 
-    # Permissions
+    # Round Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -3595,22 +3667,17 @@ class Round(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
+
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category=self.session.convention.assignments.model.CATEGORY.ca,
-                ),
+                self.owners.filter(id__contains=request.user.id),
                 self.status != self.STATUS.published,
             ]),
         ])
@@ -3649,8 +3716,8 @@ class Round(TimeStampedModel):
         target=STATUS.new,
     )
     def reset(self, *args, **kwargs):
-        self.oss.delete()
-        self.sa.delete()
+        self.oss_report.delete()
+        self.sa_report.delete()
         panelists = self.panelists.all()
         appearances = self.appearances.all()
         outcomes = self.outcomes.all()
@@ -3667,6 +3734,8 @@ class Round(TimeStampedModel):
         conditions=[can_build],
     )
     def build(self, *args, **kwargs):
+        """Build the Round"""
+
         # Reset for indempodence
         self.reset()
 
@@ -3688,15 +3757,15 @@ class Round(TimeStampedModel):
         ).order_by(
             'kind',
             'category',
-            'person__last_name',
-            'person__nick_name',
-            'person__first_name',
+            # 'person__last_name',
+            # 'person__nick_name',
+            # 'person__first_name',
         )
         for ca in cas:
             self.panelists.create(
                 kind=ca.kind,
                 category=ca.category,
-                person=ca.person,
+                person_id=ca.person_id,
             )
         officials = self.session.convention.assignments.filter(
             status=Assignment.STATUS.active,
@@ -3705,9 +3774,9 @@ class Round(TimeStampedModel):
         ).order_by(
             'kind',
             'category',
-            'person__last_name',
-            'person__nick_name',
-            'person__first_name',
+            # 'person__last_name',
+            # 'person__nick_name',
+            # 'person__first_name',
         )
         i = 0
         for official in officials:
@@ -3716,7 +3785,7 @@ class Round(TimeStampedModel):
                 num=i,
                 kind=official.kind,
                 category=official.category,
-                person=official.person,
+                person_id=official.person_id,
             )
 
         practices = self.session.convention.assignments.filter(
@@ -3726,9 +3795,9 @@ class Round(TimeStampedModel):
         ).order_by(
             'kind',
             'category',
-            'person__last_name',
-            'person__nick_name',
-            'person__first_name',
+            # 'person__last_name',
+            # 'person__nick_name',
+            # 'person__first_name',
         )
         p = 50
         for practice in practices:
@@ -3737,7 +3806,7 @@ class Round(TimeStampedModel):
                 num=p,
                 kind=practice.kind,
                 category=practice.category,
-                person=practice.person,
+                person_id=practice.person_id,
             )
 
         # Create Outcomes
@@ -3802,8 +3871,7 @@ class Round(TimeStampedModel):
                 )
                 # Create and start group
                 appearance = self.appearances.create(
-                    entry=entry,
-                    group=entry.group,
+                    group_id=entry.group_id,
                     num=entry.draw,
                     is_single=is_single,
                     is_private=entry.is_private,
@@ -3826,8 +3894,7 @@ class Round(TimeStampedModel):
             for prior_appearance in prior_appearances:
                 # Create and start group
                 appearance = self.appearances.create(
-                    entry=prior_appearance.entry,
-                    group=prior_appearance.group,
+                    group_id=prior_appearance.group_id,
                     num=prior_appearance.draw,
                     is_single=prior_appearance.is_single,
                     is_private=prior_appearance.is_private,
@@ -3848,8 +3915,7 @@ class Round(TimeStampedModel):
             )
             for mt in mts:
                 appearance = self.appearances.create(
-                    entry=mt.entry,
-                    group=mt.group,
+                    group_id=mt.group_id,
                     num=mt.draw,
                     is_single=mt.is_single,
                     is_private=True,
@@ -4130,19 +4196,19 @@ class Score(TimeStampedModel):
 
     objects = ScoreManager()
 
-    class Meta:
-        unique_together = (
-            ('song', 'panelist',),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         ('song', 'panelist',),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "score"
 
     def __str__(self):
-        return str(self.pk)
+        return str(self.id)
 
 
-    # Permissions
+    # Score Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -4152,35 +4218,22 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        # if not self.panelist:
-        #     return False
-        # if not self.panelist.person:
-        #     return False
-        # if not getattr(self.panelist.person, 'user', False):
-        #     return False
         return any([
-            # Assigned DRCJs and CAs can always see
-            self.song.appearance.round.session.convention.assignments.filter(
-                person__user=request.user,
-                status__gt=0,
-                category__lte=10,
-            ),
-            # Panelists can see their own scores
-            self.panelist.person.user == request.user,
+            # Assigned owners can always see
+            self.song.appearance.round.owners.filter(id__contains=request.user.id),
+
+            # Panelists can always see their own scores
+            self.panelist.user == request.user,
+
             # Panelists can see others' scores if Appearance is complete.
             all([
-                self.song.appearance.round.panelists.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
+                self.song.appearance.round.panelists.filter(user=request.user),
                 self.song.appearance.status <= self.song.appearance.STATUS.completed
             ]),
-            # Group members can see their own scores if complete.
+
+            # Group onwers can see their own scores if complete.
             all([
-                self.song.appearance.group.members.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
+                self.song.appearance.owners.filter(id__contains=request.user.id),
                 self.song.appearance.status <= self.song.appearance.STATUS.completed
             ]),
         ])
@@ -4190,22 +4243,17 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
+
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.song.appearance.round.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
+                self.song.appearance.round.owners.filter(id__contains=request.user.id),
                 self.song.appearance.round.status < self.song.appearance.round.STATUS.verified,
             ]),
         ])
@@ -4220,15 +4268,6 @@ class Song(TimeStampedModel):
 
     STATUS = Choices(
         (0, 'new', 'New',),
-        (10, 'verified', 'Verified',),
-        # (20, 'entered', 'Entered',),
-        # (30, 'flagged', 'Flagged',),
-        # (35, 'verified', 'Verified',),
-        (38, 'finished', 'Finished',),
-        (40, 'confirmed', 'Confirmed',),
-        (50, 'final', 'Final',),
-        (90, 'announced', 'Announced',),
-        (95, 'archived', 'Archived',),
     )
 
     status = FSMIntegerField(
@@ -4238,12 +4277,6 @@ class Song(TimeStampedModel):
     )
 
     num = models.IntegerField(
-    )
-
-    legacy_chart = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
     )
 
     asterisks = ArrayField(
@@ -4287,21 +4320,18 @@ class Song(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    chart = models.ForeignKey(
-        'bhs.chart',
-        related_name='songs',
+    chart_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     # Internals
     objects = SongManager()
 
     class Meta:
-        unique_together = (
-            ('appearance', 'num',),
-        )
+        # unique_together = (
+        #     ('appearance', 'num',),
+        # )
         get_latest_by = ['num']
 
     class JSONAPIMeta:
@@ -4397,7 +4427,7 @@ class Song(TimeStampedModel):
         return output
 
 
-    # Permissions
+    # Song Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -4409,11 +4439,7 @@ class Song(TimeStampedModel):
     def has_object_read_permission(self, request):
         return any([
             self.appearance.round.status == self.appearance.round.STATUS.published,
-            self.appearance.round.session.convention.assignments.filter(
-                person__user=request.user,
-                status__gt=0,
-                category__lte=10,
-            ),
+            self.appearance.round.owners.filter(id__contains=request.user.id),
         ])
 
     @staticmethod
@@ -4421,22 +4447,17 @@ class Song(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.person.officers.filter(
-                office__lt=300,
-                status__gt=0,
-            ),
+            'SCJC' in request.user.roles,
+            'CA' in request.user.roles,
         ])
+
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.appearance.round.session.convention.assignments.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                    category__lte=10,
-                ),
+                self.appearance.round.owners.filter(id__contains=request.user.id),
                 self.appearance.round.status < self.appearance.round.STATUS.verified,
             ]),
         ])

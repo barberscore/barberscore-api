@@ -22,25 +22,25 @@ class MCListFilter(admin.SimpleListFilter):
             )
 
 
-class MCUserListFilter(admin.SimpleListFilter):
-    title = 'Member Center'
-    parameter_name = 'is_mc'
+# class MCUserListFilter(admin.SimpleListFilter):
+#     title = 'Member Center'
+#     parameter_name = 'is_mc'
 
-    def lookups(self, request, model_admin):
-        return (
-            ('Yes', 'Yes'),
-            ('No', 'No'),
-        )
+#     def lookups(self, request, model_admin):
+#         return (
+#             ('Yes', 'Yes'),
+#             ('No', 'No'),
+#         )
 
-    def queryset(self, request, queryset):
-        if self.value() == 'Yes':
-            return queryset.filter(
-                person__mc_pk__isnull=False,
-            )
-        if self.value() == 'No':
-            return queryset.filter(
-                person__mc_pk__isnull=True,
-            )
+#     def queryset(self, request, queryset):
+#         if self.value() == 'Yes':
+#             return queryset.filter(
+#                 person__mc_pk__isnull=False,
+#             )
+#         if self.value() == 'No':
+#             return queryset.filter(
+#                 person__mc_pk__isnull=True,
+#             )
 
 
 class ConventionStatusListFilter(admin.SimpleListFilter):

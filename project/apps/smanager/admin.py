@@ -30,16 +30,14 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'award',
         'session',
-        'result',
-        'group',
+        # 'group',
     ]
 
     list_display = (
         'id',
         'award',
         'session',
-        'result',
-        'group',
+        # 'group',
     )
 
     list_filter = [
@@ -64,7 +62,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     autocomplete_fields = [
         'award',
         'session',
-        'group',
+        # 'group',
     ]
 
     search_fields = [
@@ -114,7 +112,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'status',
         'session',
-        'group',
+        # 'group',
         'representing',
         ('is_evaluation', 'is_private', 'is_mt'),
         'draw',
@@ -124,12 +122,13 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'participants',
         'description',
         'notes',
+        'owners',
     )
 
     list_display = (
         'status',
         'session',
-        'group',
+        # 'group',
     )
 
     list_filter = [
@@ -142,19 +141,20 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         # AppearanceInline,
-        ContestantInline,
+        # ContestantInline,
         StateLogInline,
     ]
 
     search_fields = [
         'id',
         'session__convention__name',
-        'group__name',
+        # 'group__name',
     ]
 
     autocomplete_fields = [
         'session',
-        'group',
+        # 'group',
+        'owners',
     ]
     readonly_fields = (
         'id',
@@ -181,6 +181,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'target',
         'legacy_report',
         'drcj_report',
+        'owners',
         # 'footnotes',
         'description',
         'notes',
@@ -208,6 +209,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     autocomplete_fields = [
         'convention',
         'target',
+        'owners',
     ]
 
     readonly_fields = [
@@ -230,7 +232,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ordering = (
         '-convention__year',
         'convention__season',
-        'convention__group__tree_sort',
+        # 'convention__group__tree_sort',
         'kind',
     )
 
@@ -238,3 +240,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'convention__name',
         'kind',
     ]
+
+    # raw_id_fields = [
+    #     'owners',
+    # ]

@@ -13,7 +13,7 @@ from django.conf import settings
 from .filters import AppearanceConventionStatusListFilter
 from .filters import ConventionStatusListFilter
 from .filters import MCListFilter
-from .filters import MCUserListFilter
+# from .filters import MCUserListFilter
 from .filters import SessionConventionStatusListFilter
 
 from .inlines import AppearanceInline
@@ -43,7 +43,8 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'onstage',
         'actual_start',
         'actual_finish',
-        'group',
+        'owners',
+        'group_id',
         'round',
         'num',
         'draw',
@@ -54,19 +55,17 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'representing',
         'pos',
         'stats',
-        'csa',
+        'csa_report',
         'variance_report',
     ]
     list_display = [
         'status',
-        'group',
         'round',
         'num',
         'draw',
         'status',
     ]
     list_select_related = [
-        'group',
         'round__session',
         'round__session__convention',
     ]
@@ -82,25 +81,23 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     save_on_top = True
     autocomplete_fields = [
-        'group',
         'round',
+        'owners',
     ]
     readonly_fields = [
         'id',
         'stats',
         # 'csa',
-        'variance_report',
+        # 'variance_report',
     ]
     search_fields = [
-        'group__name',
         'round__session__convention__name',
+        'id',
     ]
     inlines = [
         SongInline,
     ]
-    ordering = (
-        'group__name',
-    )
+
 
 
 @admin.register(Contender)
@@ -150,7 +147,7 @@ class OutcomeAdmin(admin.ModelAdmin):
         'award',
         'num',
         'name',
-        'legacy_name',
+        # 'legacy_name',
     ]
 
     list_display = [
@@ -159,7 +156,7 @@ class OutcomeAdmin(admin.ModelAdmin):
         'award',
         'num',
         'name',
-        'legacy_name',
+        # 'legacy_name',
     ]
 
     list_filter = (
@@ -197,23 +194,19 @@ class PanelistAdmin(admin.ModelAdmin):
         'num',
         'kind',
         'round',
-        'person',
+        'person_id',
+        'user',
         'category',
-        'psa',
+        'psa_report',
     ]
 
     list_display = [
         'num',
         'kind',
         'category',
-        'person',
         'round',
-        'psa',
     ]
 
-    list_editable = [
-        'person',
-    ]
     list_filter = (
         AppearanceConventionStatusListFilter,
         'status',
@@ -223,7 +216,6 @@ class PanelistAdmin(admin.ModelAdmin):
 
     list_select_related = [
         'round',
-        'person',
     ]
 
     search_fields = [
@@ -232,7 +224,7 @@ class PanelistAdmin(admin.ModelAdmin):
 
     autocomplete_fields = [
         'round',
-        'person',
+        'user',
     ]
     readonly_fields = [
         'id',
@@ -244,8 +236,9 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        'oss',
-        'sa',
+        'oss_report',
+        'sa_report',
+        'owners',
         # 'legacy_oss',
         ('session', 'kind', 'num', 'spots',),
         # 'footnotes',
@@ -294,6 +287,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     autocomplete_fields = [
         'session',
+        'owners',
     ]
 
     inlines = [
@@ -355,7 +349,7 @@ class SongAdmin(admin.ModelAdmin):
         # 'name',
         'stats',
         'appearance',
-        'chart',
+        'chart_id',
         'legacy_chart',
         'num',
         'penalties',
@@ -388,7 +382,7 @@ class SongAdmin(admin.ModelAdmin):
 
     autocomplete_fields = [
         'appearance',
-        'chart',
+        # 'chart',
     ]
 
     ordering = (

@@ -28,12 +28,13 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'kind',
         'convention',
-        'person',
+        'person_id',
+        'user',
         'category',
     ]
 
     list_display = [
-        'person',
+        'person_id',
         'convention',
         'kind',
         'category',
@@ -48,25 +49,23 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_select_related = [
         'convention',
-        'person',
     ]
 
     search_fields = [
         'id',
-        'person__first_name',
-        'person__last_name',
-        'person__bhs_id',
     ]
 
     autocomplete_fields = [
         'convention',
-        'person',
     ]
 
     readonly_fields = [
     ]
     inlines = [
         StateLogInline,
+    ]
+    raw_id_fields = [
+        'user',
     ]
 
 
@@ -80,9 +79,10 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'name',
         'status',
-        'group',
+        'group_id',
         'kind',
         'gender',
+        'district',
         'division',
         'age',
         'level',
@@ -99,7 +99,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'name',
         # 'size',
         # 'scope',
-        'group',
+        'group_id',
         'division',
         'kind',
         'age',
@@ -124,8 +124,9 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'kind',
         'level',
-        AwardQualifierLevelFilter,
+        # AwardQualifierLevelFilter,
         DistrictListFilter,
+        'district',
         'division',
         'age',
         'gender',
@@ -143,7 +144,6 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     autocomplete_fields = [
-        'group',
         'parent',
     ]
 
@@ -160,18 +160,18 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'legacy_complete',
         'status',
         'name',
-        ('group', 'divisions', ),
+        ('group_id', 'divisions', ),
         ('year', 'season', ),
         ('panel', 'kinds', ),
         ('open_date', 'close_date', ),
         ('start_date', 'end_date', ),
+        'owners',
         'venue_name',
         'location',
         'timezone',
         'image',
         'description',
         'district',
-        'legacy_name',
     )
 
     list_display = (
@@ -219,16 +219,17 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     autocomplete_fields = [
-        'group',
+        # 'group',
+        'owners',
     ]
 
     ordering = (
         '-year',
         'season',
-        'group__tree_sort',
+        # 'group__tree_sort',
     )
     list_select_related = [
-        'group',
+        # 'group',
     ]
 
     save_on_top = True

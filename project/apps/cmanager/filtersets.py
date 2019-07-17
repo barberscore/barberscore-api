@@ -8,7 +8,7 @@ class AssignmentFilterset(FilterSet):
     class Meta:
         model = Assignment
         fields = {
-            'person__user': [
+            'user': [
                 'exact',
             ],
             'status': [
@@ -24,7 +24,7 @@ class ConventionFilterset(FilterSet):
     class Meta:
         model = Convention
         fields = {
-            'assignments__person__user': [
+            'assignments__user': [
                 'exact',
             ],
             'assignments__status': [

@@ -23,10 +23,11 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 
 # Local
+from .filtersets import GroupFilterset
 from .filtersets import MemberFilterset
 from .filtersets import OfficerFilterset
 from .filtersets import PersonFilterset
-from .filterbackends import RepertoryFilterBackend
+# from .filterbackends import RepertoryFilterBackend
 from .models import Group
 from .models import Member
 from .models import Officer
@@ -66,22 +67,25 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.select_related(
+        # 'owner',
         'parent',
     ).prefetch_related(
-        'children',
+        'owners',
+        # 'children',
         # 'awards',
         # 'appearances',
         # 'conventions',
         # 'entries',
-        'members',
-        'members__person',
-        'officers',
-        'officers__person',
+        # 'members',
+        # 'members__person',
+        # 'officers',
+        # 'officers__person',
         'repertories',
         'repertories__chart',
-        'statelogs',
+        # 'statelogs',
     ).distinct()
     serializer_class = GroupSerializer
+    filterset_class = GroupFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -252,13 +256,13 @@ class OfficerViewSet(viewsets.ModelViewSet):
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
-        # 'user',
+        'user',
     ).prefetch_related(
         # 'assignments',
-        'members',
-        'officers',
+        # 'members',
+        # 'officers',
         # 'panelists',
-        'statelogs',
+        # 'statelogs',
     ).order_by('id')
     serializer_class = PersonSerializer
     filterset_class = PersonFilterset
@@ -303,6 +307,7 @@ class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.select_related(
     ).prefetch_related(
         'repertories',
+        'repertories__group',
         'statelogs',
     ).order_by('status', 'title')
     serializer_class = ChartSerializer
@@ -369,7 +374,7 @@ class RepertoryViewSet(viewsets.ModelViewSet):
     serializer_class = RepertorySerializer
     filter_backends = [
         DjangoFilterBackend,
-        RepertoryFilterBackend,
+        # RepertoryFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,

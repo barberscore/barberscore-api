@@ -22,10 +22,10 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 
 # Local
-from .filterbackends import AppearanceFilterBackend
-from .filterbackends import OutcomeFilterBackend
-from .filterbackends import ScoreFilterBackend
-from .filterbackends import SongFilterBackend
+# from .filterbackends import AppearanceFilterBackend
+# from .filterbackends import OutcomeFilterBackend
+# from .filterbackends import ScoreFilterBackend
+# from .filterbackends import SongFilterBackend
 
 from .filtersets import RoundFilterset
 from .filtersets import ScoreFilterset
@@ -77,18 +77,19 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 class AppearanceViewSet(viewsets.ModelViewSet):
     queryset = Appearance.objects.select_related(
         'round',
-        'group',
-        'entry',
+        # 'group',
+        # 'entry',
     ).prefetch_related(
+        'owners',
         'songs',
-        # 'contenders',
-        'statelogs',
+        'contenders',
+        # 'statelogs',
     ).order_by('id')
     serializer_class = AppearanceSerializer
     filterset_class = None
     filter_backends = [
         DjangoFilterBackend,
-        AppearanceFilterBackend,
+        # AppearanceFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -245,8 +246,8 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         Renders the Competitor Scoring Analysis in PDF
         """
         appearance = Appearance.objects.get(pk=pk)
-        if appearance.csa:
-            pdf = appearance.csa.file
+        if appearance.csa_report:
+            pdf = appearance.csa_report.file
         else:
             pdf = appearance.get_csa()
         file_name = '{0} CSA.pdf'.format(appearance)
@@ -307,13 +308,13 @@ class OutcomeViewSet(viewsets.ModelViewSet):
         'round',
         'award',
     ).prefetch_related(
-        # 'contenders',
+        'contenders',
         'statelogs',
     ).order_by('id')
     serializer_class = OutcomeSerializer
     filter_backends = [
         DjangoFilterBackend,
-        OutcomeFilterBackend,
+        # OutcomeFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -324,10 +325,9 @@ class OutcomeViewSet(viewsets.ModelViewSet):
 class PanelistViewSet(viewsets.ModelViewSet):
     queryset = Panelist.objects.select_related(
         'round',
-        'person',
+        'user',
     ).prefetch_related(
         'scores',
-        'statelogs',
     ).order_by('id')
     serializer_class = PanelistSerializer
     filter_backends = [
@@ -349,8 +349,8 @@ class PanelistViewSet(viewsets.ModelViewSet):
     )
     def psa(self, request, pk=None):
         panelist = Panelist.objects.get(pk=pk)
-        if panelist.psa:
-            pdf = panelist.psa.file
+        if panelist.psa_report:
+            pdf = panelist.psa_report.file
         else:
             pdf = panelist.get_psa()
         file_name = '{0} PSA.pdf'.format(panelist)
@@ -365,11 +365,14 @@ class RoundViewSet(viewsets.ModelViewSet):
     queryset = Round.objects.select_related(
         'session',
     ).prefetch_related(
+        'owners',
         'appearances',
-        'panelists',
-        'outcomes',
-        'statelogs',
-    ).distinct().order_by('id')
+        'appearances__owners',
+        'appearances__songs',
+        'panelists__scores',
+        'outcomes__contenders',
+        'outcomes__award',
+    ).order_by('id')
     serializer_class = RoundSerializer
     filterset_class = RoundFilterset
     filter_backends = [
@@ -487,8 +490,8 @@ class RoundViewSet(viewsets.ModelViewSet):
             'session',
             'session__convention',
         ).get(pk=pk)
-        if round.oss:
-            pdf = round.oss.file
+        if round.oss_report:
+            pdf = round.oss_report.file
         else:
             pdf = round.get_oss()
         file_name = '{0} OSS.pdf'.format(round)
@@ -584,8 +587,8 @@ class RoundViewSet(viewsets.ModelViewSet):
             'session',
             'session__convention',
         ).get(pk=pk)
-        if round.sa:
-            pdf = round.sa.file
+        if round.sa_report:
+            pdf = round.sa_report.file
         else:
             pdf = round.get_sa()
         file_name = '{0} {1} {2} SA'.format(
@@ -635,7 +638,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     filterset_class = ScoreFilterset
     filter_backends = [
         DjangoFilterBackend,
-        ScoreFilterBackend,
+        # ScoreFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
@@ -646,18 +649,17 @@ class ScoreViewSet(viewsets.ModelViewSet):
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.select_related(
         'appearance',
-        'chart',
     ).prefetch_related(
         'scores',
+        'scores__panelist',
     ).order_by('id')
     serializer_class = SongSerializer
     filterset_class = None
     filter_backends = [
         DjangoFilterBackend,
-        SongFilterBackend,
+        # SongFilterBackend,
     ]
     permission_classes = [
         DRYPermissions,
     ]
     resource_name = "song"
-

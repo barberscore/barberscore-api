@@ -22,6 +22,7 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 
 # Local
+from .filtersets import EntryFilterset
 from .filtersets import SessionFilterset
 
 from .models import Contest
@@ -62,10 +63,9 @@ class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
         'session',
         'award',
-        'group',
     ).prefetch_related(
         'contestants',
-        'statelogs',
+        # 'contestants__entry',
     ).order_by('id')
     serializer_class = ContestSerializer
     filterset_class = None
@@ -154,12 +154,14 @@ class ContestantViewSet(viewsets.ModelViewSet):
 class EntryViewSet(viewsets.ModelViewSet):
     queryset = Entry.objects.select_related(
         'session',
-        'group',
+        # 'group',
     ).prefetch_related(
         'contestants',
         'statelogs',
+        'owners',
     ).order_by('id')
     serializer_class = EntrySerializer
+    filterset_class = EntryFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -242,11 +244,11 @@ class EntryViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet):
     queryset = Session.objects.select_related(
         'convention',
+        'target',
     ).prefetch_related(
+        'owners',
         'contests',
         'entries',
-        'rounds',
-        'statelogs',
     ).order_by('id')
     serializer_class = SessionSerializer
     filterset_class = SessionFilterset

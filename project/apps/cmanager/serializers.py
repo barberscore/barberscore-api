@@ -23,12 +23,12 @@ class AssignmentSerializer(serializers.ModelSerializer):
         model = Assignment
         fields = (
             'id',
-            'url',
             'status',
             'kind',
             'category',
             'convention',
-            'person',
+            'person_id',
+            'user',
             'permissions',
         )
 
@@ -44,9 +44,8 @@ class AwardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Award
-        fields = (
+        fields = [
             'id',
-            'url',
             'name',
             'status',
             'kind',
@@ -60,46 +59,39 @@ class AwardSerializer(serializers.ModelSerializer):
             'spots',
             'description',
             'notes',
+            'district',
+            'division',
+
             'age',
+            'is_novice',
+
             'size',
             'size_range',
             'scope',
             'scope_range',
             'tree_sort',
-            'group',
+            'group_id',
             'parent',
-            'children',
-            'contests',
+            # 'children',
             'permissions',
-        )
+        ]
 
 
 class ConventionSerializer(serializers.ModelSerializer):
     timezone = TimezoneField(allow_null=True)
     permissions = DRYPermissionsField()
     included_serializers = {
-        # 'sessions': 'api.serializers.SessionSerializer',
-        # 'assignments': 'apps.cmanager.serializers.AssignmentSerializer',
-        # 'person': 'api.serializers.PersonSerializer',
+        'assignments': 'apps.cmanager.serializers.AssignmentSerializer',
     }
-
-    image_id = serializers.SerializerMethodField()
-
-    def get_image_id(self, obj):
-        if obj.image:
-            return obj.image.name
-        else:
-            return 'missing_image'
 
     class Meta:
         model = Convention
-        fields = (
+        fields = [
             'id',
-            'url',
-            'name',
             '__str__',
-            'district',
             'status',
+            'name',
+            'district',
             'season',
             'panel',
             'year',
@@ -111,19 +103,26 @@ class ConventionSerializer(serializers.ModelSerializer):
             'location',
             'timezone',
             'image',
-            'image_id',
             'description',
-            'group',
+            'divisions',
+            'kinds',
+
+            'group_id',
+
+            'image_id',
+
             'assignments',
             'sessions',
             'permissions',
-        )
+        ]
+        read_only_fields = [
+            '__str__'
+            'image_id',
+        ]
 
     class JSONAPIMeta:
         included_resources = [
-            # 'sessions',
-            # 'assignments',
-            # 'assignments.person',
+            'assignments',
         ]
 
 

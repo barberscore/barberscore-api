@@ -11,7 +11,7 @@ from .models import RawSong
 # from .models import Selection
 # from .inlines import FlatInline
 
-@admin.register(CleanPanelist)
+# @admin.register(CleanPanelist)
 class CleanPanelistAdmin(admin.ModelAdmin):
     fields = [
         'id',
@@ -59,7 +59,7 @@ class CleanPanelistAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(CleanSong)
+# @admin.register(CleanSong)
 class CleanSongAdmin(admin.ModelAdmin):
     fields = [
         'id',
@@ -109,7 +109,7 @@ class CleanSongAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(CleanFlat)
+# @admin.register(CleanFlat)
 class CleanFLatAdmin(admin.ModelAdmin):
     fields = [
         'id',
@@ -137,7 +137,7 @@ class CleanFLatAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(RawPanelist)
+# @admin.register(RawPanelist)
 class RawPanelistAdmin(admin.ModelAdmin):
     fields = [
         'id',
@@ -184,7 +184,7 @@ class RawPanelistAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(RawSong)
+# @admin.register(RawSong)
 class RawSongAdmin(admin.ModelAdmin):
     fields = [
         'id',

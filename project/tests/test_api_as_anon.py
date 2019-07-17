@@ -193,34 +193,34 @@ def test_group_endpoint(anon_api_client, group):
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_member_endpoint(anon_api_client, member):
-    path = reverse('member-list')
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.post(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    path = reverse('member-detail', args=(str(member.id),))
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.patch(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.delete(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+# def test_member_endpoint(anon_api_client, member):
+#     path = reverse('member-list')
+#     response = anon_api_client.get(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#     response = anon_api_client.post(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#     path = reverse('member-detail', args=(str(member.id),))
+#     response = anon_api_client.get(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#     response = anon_api_client.patch(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#     response = anon_api_client.delete(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_officer_endpoint(anon_api_client, officer):
-    path = reverse('officer-list')
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.post(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    path = reverse('officer-detail', args=(str(officer.id),))
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.patch(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.delete(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+# def test_officer_endpoint(anon_api_client, officer):
+#     path = reverse('officer-list')
+#     response = anon_api_client.get(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#     response = anon_api_client.post(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#     path = reverse('officer-detail', args=(str(officer.id),))
+#     response = anon_api_client.get(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#     response = anon_api_client.patch(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#     response = anon_api_client.delete(path)
+#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_outcome_endpoint(anon_api_client, outcome):

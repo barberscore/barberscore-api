@@ -15,8 +15,8 @@ router = routers.DefaultRouter(
 )
 
 router.register(r'group', GroupViewSet)
-router.register(r'member', MemberViewSet)
-router.register(r'officer', OfficerViewSet)
+# router.register(r'member', MemberViewSet)
+# router.register(r'officer', OfficerViewSet)
 router.register(r'person', PersonViewSet)
 router.register(r'chart', ChartViewSet)
 router.register(r'repertory', RepertoryViewSet)

@@ -22,65 +22,70 @@ class GroupSerializer(serializers.ModelSerializer):
     included_serializers = {
         'repertories': 'apps.bhs.serializers.RepertorySerializer',
         # 'members': 'apps.bhs.serializers.MemberSerializer',
-        'officers': 'apps.bhs.serializers.OfficerSerializer',
-        # 'entries': 'api.serializers.EntrySerializer',
+        # 'officers': 'apps.bhs.serializers.OfficerSerializer',
     }
-
-    # image_id = serializers.SerializerMethodField()
-
-    # def get_image_id(self, obj):
-    #     if obj.image:
-    #         return obj.image.name
-    #     else:
-    #         return 'missing_image'
 
     class Meta:
         model = Group
         fields = [
             'id',
-            'url',
             'name',
             'status',
             'kind',
             'gender',
-            'is_senior',
-            'is_youth',
             'division',
+            'bhs_id',
             'code',
+            'website',
+            'email',
+            'phone',
+            'fax_phone',
             'start_date',
             'end_date',
             'location',
-            'website',
             'facebook',
             'twitter',
-            'email',
-            'phone',
+            'youtube',
+            'pinterest',
+            'flickr',
+            'instagram',
+            'soundcloud',
             'image',
-            'image_id',
             'description',
+            'visitor_information',
             'participants',
-            'bhs_id',
+            'notes',
+            'mc_pk',
+
+            'tree_sort',
             'international',
             'district',
             'chapter',
-            'tree_sort',
+            'is_senior',
+            'is_youth',
+            'is_divided',
+
+            'owners',
             'parent',
-            'children',
-            'awards',
-            'conventions',
-            'entries',
-            # 'members',
-            'officers',
+            # 'children',
+
             'repertories',
             'permissions',
+
+            'nomen',
+            'image_id',
+        ]
+
+        read_only_fields = [
+            'nomen',
+            'image_id',
         ]
 
     class JSONAPIMeta:
         included_resources = [
             'repertories',
             # 'members',
-            'officers',
-            # 'entries',
+            # 'officers',
         ]
 
     # def to_representation(self, instance):
@@ -96,7 +101,6 @@ class MemberSerializer(serializers.ModelSerializer):
         model = Member
         fields = [
             'id',
-            'url',
             'status',
             'part',
             'start_date',
@@ -114,7 +118,6 @@ class OfficerSerializer(serializers.ModelSerializer):
         model = Officer
         fields = [
             'id',
-            'url',
             'status',
             'start_date',
             'end_date',
@@ -135,35 +138,29 @@ class OfficerSerializer(serializers.ModelSerializer):
 
 class PersonSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    included_serializers = {
-        # 'assignments': 'apps.cmanager.serializers.AssignmentSerializer',
-        # 'members': 'apps.bhs.serializers.MemberSerializer',
-        # 'officers': 'apps.bhs.serializers.OfficerSerializer',
-        # 'panelists': 'api.serializers.PanelistSerializer',
-    }
-    image_id = serializers.SerializerMethodField()
-
-    def get_image_id(self, obj):
-        if obj.image:
-            return obj.image.name
-        else:
-            return 'missing_image'
-
 
     class Meta:
         model = Person
-        fields = (
+        fields = [
             'id',
-            'url',
+            'status',
+            'prefix',
             'first_name',
             'middle_name',
             'last_name',
             'nick_name',
-            'status',
+            'suffix',
             'birth_date',
             'spouse',
             'location',
             'part',
+            'mon',
+            'gender',
+            'district',
+            'is_deceased',
+            'is_honorary',
+            'is_suspended',
+            'is_expelled',
             'website',
             'email',
             'address',
@@ -172,67 +169,73 @@ class PersonSerializer(serializers.ModelSerializer):
             'cell_phone',
             'airports',
             'image',
-            'image_id',
             'description',
-            'gender',
+            'notes',
             'bhs_id',
-            'current_through',
-            'current_status',
-            'current_district',
+            'mc_pk',
+
+            'nomen',
             'full_name',
             'common_name',
             'sort_name',
-            'assignments',
-            'members',
-            'officers',
-            # 'panelists',
+            'initials',
+            'image_id',
+            # 'current_through',
+            # 'current_status',
+            # 'current_district',
+
             'user',
             'permissions',
-        )
-        read_only_fields = [
-            'common_name',
-            'full_name',
-            'sort_name',
         ]
-
-    class JSONAPIMeta:
-        included_resources = [
-            # 'assignments',
-            # 'members',
-            # 'officers',
-            # 'panelists',
+        read_only_fields = [
+            'nomen',
+            'full_name',
+            'common_name',
+            'sort_name',
+            'initials',
+            'image_id',
+            # 'current_through',
+            # 'current_status',
+            # 'current_district',
         ]
 
 
 class ChartSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    image_id = serializers.SerializerMethodField()
 
-    def get_image_id(self, obj):
-        if obj.image:
-            return obj.image.name
-        else:
-            return 'missing_image'
+    included_serializers = {
+        'repertories': 'apps.bhs.serializers.RepertorySerializer',
+    }
 
     class Meta:
         model = Chart
-        fields = (
+        fields = [
             'id',
-            'url',
             'status',
             'title',
             'arrangers',
             'composers',
             'lyricists',
+            'holders',
             'description',
             'notes',
             'image',
+
+            'nomen',
             'image_id',
-            'holders',
+
             'repertories',
-            # 'songs',
             'permissions',
-        )
+        ]
+        read_only_fields = [
+            'nomen',
+            'image_id',
+        ]
+
+    class JSONAPIMeta:
+        included_resources = [
+            'repertories',
+        ]
 
 
 class RepertorySerializer(serializers.ModelSerializer):
@@ -240,14 +243,13 @@ class RepertorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Repertory
-        fields = (
+        fields = [
             'id',
-            'url',
             'status',
             'group',
             'chart',
             'permissions',
-        )
+        ]
         validators = [
             UniqueTogetherValidator(
                 queryset=Repertory.objects.all(),
@@ -255,6 +257,3 @@ class RepertorySerializer(serializers.ModelSerializer):
                 message='This chart already exists in your repertory.',
             )
         ]
-
-
-

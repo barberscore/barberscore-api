@@ -3,6 +3,7 @@ from django_filters.rest_framework import FilterSet
 
 # Local
 from .models import Session
+from .models import Entry
 
 
 class SessionFilterset(FilterSet):
@@ -18,13 +19,30 @@ class SessionFilterset(FilterSet):
             'is_invitational': [
                 'exact',
             ],
-            'convention__assignments__person__user': [
+            # 'convention__assignments__person__user': [
+            #     'exact',
+            # ],
+            # 'convention__status': [
+            #     'exact',
+            # ],
+            # 'convention__assignments__category': [
+            #     'exact',
+            # ],
+        }
+
+
+class EntryFilterset(FilterSet):
+    class Meta:
+        model = Entry
+        fields = {
+            'status': [
                 'exact',
             ],
-            'convention__status': [
+            'session__status': [
                 'exact',
+                'lt',
             ],
-            'convention__assignments__category': [
+            'group_id': [
                 'exact',
             ],
         }

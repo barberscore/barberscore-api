@@ -26,7 +26,7 @@ urlpatterns = [
     path('cmanager/', include('apps.cmanager.urls')),
     path('smanager/', include('apps.smanager.urls')),
     path('rmanager/', include('apps.rmanager.urls')),
-    path('api/', include('rest_framework_jwt.urls')),
+    path('jwt/', include('rest_framework_jwt.urls')),
     path('log/', include('django_fsm_log.urls')),
     path('rq/', include('django_rq.urls')),
     path('api-auth/', include('rest_framework.urls')),

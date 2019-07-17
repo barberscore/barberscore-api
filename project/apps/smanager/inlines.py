@@ -59,7 +59,7 @@ class EntryInline(admin.TabularInline):
     model = Entry
     fields = [
         'session',
-        'group',
+        # 'group',
         'base',
         'draw',
         'status',
@@ -69,10 +69,10 @@ class EntryInline(admin.TabularInline):
     ]
     autocomplete_fields = [
         'session',
-        'group',
+        # 'group',
     ]
     ordering = [
-        'group__name',
+        # 'group__name',
         'session__convention__year',
     ]
     show_change_link = True

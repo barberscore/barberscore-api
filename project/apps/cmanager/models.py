@@ -22,9 +22,11 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.conf import settings
+from django.utils.functional import cached_property
 
 # Django
-from django.contrib.postgres.fields import FloatRangeField
+from django.contrib.postgres.fields import DecimalRangeField
 from django.contrib.postgres.fields import IntegerRangeField
 
 # First-Party
@@ -85,8 +87,13 @@ class Assignment(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    person = models.ForeignKey(
-        'bhs.person',
+    person_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         related_name='assignments',
         null=True,
         blank=True,
@@ -106,7 +113,7 @@ class Assignment(TimeStampedModel):
     def __str__(self):
         return str(self.id)
 
-    # Permissions
+    # Assignment Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -122,22 +129,18 @@ class Assignment(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     # Transitions
     @fsm_log_by
@@ -281,6 +284,12 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
+    district = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
     DIVISION = Choices(
         (10, 'evgd1', 'EVG Division I'),
         (20, 'evgd2', 'EVG Division II'),
@@ -381,7 +390,7 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    scope_range = FloatRangeField(
+    scope_range = DecimalRangeField(
         null=True,
         blank=True,
     )
@@ -395,12 +404,9 @@ class Award(TimeStampedModel):
     )
 
     # FKs
-    group = models.ForeignKey(
-        'bhs.group',
-        related_name='awards',
+    group_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     parent = models.ForeignKey(
@@ -453,22 +459,18 @@ class Award(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+        ]
+        return any(item in request.user.roles for item in roles)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+        ]
+        return any(item in request.user.roles for item in roles)
 
     # Transitions
     @fsm_log_by
@@ -491,46 +493,7 @@ class Convention(TimeStampedModel):
         editable=False,
     )
 
-    name = models.CharField(
-        max_length=255,
-        default='Convention',
-    )
-
-    district = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
-    legacy_name = models.CharField(
-        max_length=255,
-        unique=True,
-        null=True,
-        blank=True,
-    )
-
-    legacy_selection = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
-    legacy_complete = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
-    legacy_venue = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
     STATUS = Choices(
-        (-25, 'manual', 'Manual',),
-        (-20, 'incomplete', 'Incomplete',),
-        (-15, 'imported', 'Imported',),
         (-10, 'inactive', 'Inactive',),
         (0, 'new', 'New',),
         (5, 'built', 'Built',),
@@ -541,6 +504,17 @@ class Convention(TimeStampedModel):
         help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
         choices=STATUS,
         default=STATUS.new,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        default='Convention',
+    )
+
+    district = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
     )
 
     SEASON = Choices(
@@ -703,10 +677,12 @@ class Convention(TimeStampedModel):
     )
 
     # FKs
-    group = models.ForeignKey(
-        'bhs.group',
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
         related_name='conventions',
-        on_delete=models.SET_NULL,
+    )
+
+    group_id = models.UUIDField(
         null=True,
         blank=True,
     )
@@ -717,16 +693,20 @@ class Convention(TimeStampedModel):
         related_query_name='conventions',
     )
 
+    @cached_property
+    def image_id(self):
+        return self.image.name or 'missing_image'
+
     # Internals
-    class Meta:
-        unique_together = (
-            (
-                'year',
-                'season',
-                'name',
-                'group',
-            ),
-        )
+    # class Meta:
+    #     unique_together = (
+    #         (
+    #             'year',
+    #             'season',
+    #             'name',
+    #             'group',
+    #         ),
+    #     )
 
     class JSONAPIMeta:
         resource_name = "convention"
@@ -746,31 +726,30 @@ class Convention(TimeStampedModel):
         ])
 
     def clean(self):
-        if self.group.kind > self.group.KIND.district:
-            raise ValidationError(
-                {'group': 'Owning group must be at least district'}
-            )
+        return
+        # if self.group.kind > self.group.KIND.district:
+        #     raise ValidationError(
+        #         {'group': 'Owning group must be at least district'}
+        #     )
 
     # Methods
     def get_drcj_emails(self):
-        Assignment = apps.get_model('cmanager.assignment')
         assignments = self.assignments.filter(
             status=Assignment.STATUS.active,
             category=Assignment.CATEGORY.drcj,
-            person__email__isnull=False,
         ).order_by(
             'kind',
             'category',
-            'person__last_name',
-            'person__first_name',
+            'user__family_name',
+            'user__given_name',
         )
         seen = set()
         result = [
-            "{0} ({1} {2}) <{3}>".format(assignment.person.common_name, assignment.get_kind_display(), assignment.get_category_display(), assignment.person.email,)
+            "{0} ({1} {2}) <{3}>".format(assignment.user.name, assignment.get_kind_display(), assignment.get_category_display(), assignment.user.email,)
             for assignment in assignments
             if not (
-                "{0} ({1} {2}) <{3}>".format(assignment.person.common_name, assignment.get_kind_display(), assignment.get_category_display(), assignment.person.email,) in seen or seen.add(
-                    "{0} ({1} {2}) <{3}>".format(assignment.person.common_name, assignment.get_kind_display(), assignment.get_category_display(), assignment.person.email,)
+                "{0} ({1} {2}) <{3}>".format(assignment.user.name, assignment.get_kind_display(), assignment.get_category_display(), assignment.user.email,) in seen or seen.add(
+                    "{0} ({1} {2}) <{3}>".format(assignment.user.name, assignment.get_kind_display(), assignment.get_category_display(), assignment.user.email,)
                 )
             )
         ]
@@ -778,24 +757,22 @@ class Convention(TimeStampedModel):
 
 
     def get_ca_emails(self):
-        Assignment = apps.get_model('cmanager.assignment')
         assignments = self.assignments.filter(
             status=Assignment.STATUS.active,
             category=Assignment.CATEGORY.ca,
-            person__email__isnull=False,
         ).order_by(
             'kind',
             'category',
-            'person__last_name',
-            'person__first_name',
+            'user__family_name',
+            'user__given_name',
         )
         seen = set()
         result = [
-            "{0} ({1} {2}) <{3}>".format(assignment.person.common_name, assignment.get_kind_display(), assignment.get_category_display(), assignment.person.email,)
+            "{0} ({1} {2}) <{3}>".format(assignment.user.name, assignment.get_kind_display(), assignment.get_category_display(), assignment.user.email,)
             for assignment in assignments
             if not (
-                "{0} ({1} {2}) <{3}>".format(assignment.person.common_name, assignment.get_kind_display(), assignment.get_category_display(), assignment.person.email,) in seen or seen.add(
-                    "{0} ({1} {2}) <{3}>".format(assignment.person.common_name, assignment.get_kind_display(), assignment.get_category_display(), assignment.person.email,)
+                "{0} ({1} {2}) <{3}>".format(assignment.user.name, assignment.get_kind_display(), assignment.get_category_display(), assignment.user.email,) in seen or seen.add(
+                    "{0} ({1} {2}) <{3}>".format(assignment.user.name, assignment.get_kind_display(), assignment.get_category_display(), assignment.user.email,)
                 )
             )
         ]
@@ -818,22 +795,18 @@ class Convention(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            ),
-        ])
+        roles = [
+            'SCJC',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     # Convention Transition Conditions
     def can_reset(self):
@@ -858,16 +831,13 @@ class Convention(TimeStampedModel):
                 self.start_date <= self.end_date,
                 self.location,
                 self.timezone,
-                self.sessions.count() > 0,
             ])
         except TypeError:
             return False
         return False
 
     def can_deactivate(self):
-        return all([
-            not self.sessions.exclude(status=self.sessions.model.STATUS.finished)
-        ])
+        return
 
     # Convention Transitions
     @fsm_log_by
@@ -879,9 +849,7 @@ class Convention(TimeStampedModel):
     )
     def reset(self, *args, **kwargs):
         assignments = self.assignments.all()
-        sessions = self.sessions.all()
         assignments.delete()
-        sessions.delete()
         return
 
     @fsm_log_by
@@ -897,49 +865,47 @@ class Convention(TimeStampedModel):
         # Reset for indempodence
         self.reset()
 
-        # Assignment = apps.get_model('cmanager.assignment')
-        Officer = apps.get_model('bhs.officer')
-        scjcs = Officer.objects.filter(
-            Q(office=Officer.OFFICE.scjc_chair) | Q(office=Officer.OFFICE.scjc_admin),
-            status__gt=0,
-        )
-        for scjc in scjcs:
-            self.assignments.create(
-                category=Assignment.CATEGORY.drcj,
-                status=Assignment.STATUS.active,
-                kind=Assignment.KIND.observer,
-                person=scjc.person,
-            )
-        drcjs = self.group.officers.filter(
-            office=Officer.OFFICE.drcj,
-            status__gt=0,
-        )
-        for drcj in drcjs:
-            self.assignments.create(
-                category=Assignment.CATEGORY.drcj,
-                status=Assignment.STATUS.active,
-                kind=Assignment.KIND.official,
-                person=drcj.person,
-            )
-        ca_specialists = Officer.objects.filter(
-            office=Officer.OFFICE.scjc_ca,
-            status__gt=0,
-        )
-        for ca_specialist in ca_specialists:
-            self.assignments.create(
-                category=Assignment.CATEGORY.ca,
-                status=Assignment.STATUS.active,
-                kind=Assignment.KIND.observer,
-                person=ca_specialist.person,
-            )
-        cas = ceil((self.panel + 1) / 2)
-        while cas > 0:
-            self.assignments.create(
-                category=Assignment.CATEGORY.ca,
-                status=Assignment.STATUS.active,
-                kind=Assignment.KIND.official,
-            )
-            cas -= 1
+        # scjcs = Officer.objects.filter(
+        #     Q(office=Officer.OFFICE.scjc_chair) | Q(office=Officer.OFFICE.scjc_admin),
+        #     status__gt=0,
+        # )
+        # for scjc in scjcs:
+        #     self.assignments.create(
+        #         category=Assignment.CATEGORY.drcj,
+        #         status=Assignment.STATUS.active,
+        #         kind=Assignment.KIND.observer,
+        #         person=scjc.person,
+        #     )
+        # drcjs = self.group.officers.filter(
+        #     office=Officer.OFFICE.drcj,
+        #     status__gt=0,
+        # )
+        # for drcj in drcjs:
+        #     self.assignments.create(
+        #         category=Assignment.CATEGORY.drcj,
+        #         status=Assignment.STATUS.active,
+        #         kind=Assignment.KIND.official,
+        #         person=drcj.person,
+        #     )
+        # ca_specialists = Officer.objects.filter(
+        #     office=Officer.OFFICE.scjc_ca,
+        #     status__gt=0,
+        # )
+        # for ca_specialist in ca_specialists:
+        #     self.assignments.create(
+        #         category=Assignment.CATEGORY.ca,
+        #         status=Assignment.STATUS.active,
+        #         kind=Assignment.KIND.observer,
+        #         person=ca_specialist.person,
+        #     )
+        # cas = ceil((self.panel + 1) / 2)
+        # while cas > 0:
+        #     self.assignments.create(
+        #         category=Assignment.CATEGORY.ca,
+        #         status=Assignment.STATUS.active,
+        #         kind=Assignment.KIND.official,
+        #     )
+        #     cas -= 1
         judges = self.panel
         while judges > 0:
             self.assignments.create(
@@ -958,10 +924,10 @@ class Convention(TimeStampedModel):
                 kind=Assignment.KIND.official,
             )
             judges -= 1
-        for kind in list(self.kinds):
-            self.sessions.create(
-                kind=kind,
-            )
+        # for kind in list(self.kinds):
+        #     self.sessions.create(
+        #         kind=kind,
+        #     )
         return
 
     @fsm_log_by

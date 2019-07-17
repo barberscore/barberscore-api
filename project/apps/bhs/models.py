@@ -14,7 +14,6 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
-from django.contrib.auth import get_user_model
 
 # Django
 from django.core.exceptions import ValidationError
@@ -25,6 +24,7 @@ from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.apps import apps
 from django.core.files.base import ContentFile
+from django.conf import settings
 
 # First-Party
 from .managers import HumanManager
@@ -45,7 +45,6 @@ from .fields import VoicePartField
 from .fields import NoPunctuationCharField
 from .fields import ImageUploadPath
 
-User = get_user_model()
 
 class Person(TimeStampedModel):
     id = models.UUIDField(
@@ -224,7 +223,6 @@ class Person(TimeStampedModel):
         editable=False,
     )
 
-
     airports = ArrayField(
         base_field=models.CharField(
             blank=True,
@@ -269,7 +267,7 @@ class Person(TimeStampedModel):
 
     # Relations
     user = models.OneToOneField(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name='person',
         on_delete=models.SET_NULL,
         null=True,
@@ -287,10 +285,6 @@ class Person(TimeStampedModel):
         return bool(
             self.members.filter(group__bhs_id=1)
         )
-
-    @cached_property
-    def is_mc(self):
-        return bool(self.mc_pk)
 
     @cached_property
     def nomen(self):
@@ -339,49 +333,53 @@ class Person(TimeStampedModel):
 
     @cached_property
     def initials(self):
-        if self.nick_name:
-            first = self.nick_name[0].upper()
-        else:
-            first = self.first_name[0].upper()
+        one = self.nick_name or self.first_name
+        two = str(self.last_name)
+        if not (one and two):
+            return "--"
         return "{0}{1}".format(
-            first,
-            self.last_name[0].upper(),
+            one[0].upper(),
+            two[0].upper(),
         )
 
     @cached_property
-    def current_through(self):
-        try:
-            current_through = self.members.get(
-                group__bhs_id=1,
-            ).end_date
-        except self.members.model.DoesNotExist:
-            current_through = None
-        return current_through
+    def image_id(self):
+        return self.image.name or 'missing_image'
 
-    @cached_property
-    def current_status(self):
-        today = now().date()
-        if self.current_through:
-            if self.current_through >= today:
-                return True
-            return False
-        return True
 
-    @cached_property
-    def current_district(self):
-        return bool(
-            self.members.filter(
-                group__kind=11, # hardcoded for convenience
-                status__gt=0,
-            )
-        )
+    # @cached_property
+    # def current_through(self):
+    #     try:
+    #         current_through = self.members.get(
+    #             group__bhs_id=1,
+    #         ).end_date
+    #     except self.members.model.DoesNotExist:
+    #         current_through = None
+    #     return current_through
+
+    # @cached_property
+    # def current_status(self):
+    #     today = now().date()
+    #     if self.current_through:
+    #         if self.current_through >= today:
+    #             return True
+    #         return False
+    #     return True
+
+    # @cached_property
+    # def current_district(self):
+    #     return bool(
+    #         self.members.filter(
+    #             group__kind=11, # hardcoded for convenience
+    #             status__gt=0,
+    #         )
+    #     )
 
     # Internals
     objects = PersonManager()
 
     class Meta:
         verbose_name_plural = 'Persons'
-
 
     class JSONAPIMeta:
         resource_name = "person"
@@ -408,26 +406,12 @@ class Person(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return True
+        return False
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        user = getattr(self, 'user', None)
-        return any([
-            all([
-                user == request.user,
-                self.status > 0,
-                self.mc_pk == None,
-            ]),
-            all([
-                self.members.filter(
-                    group__officers__person__user=request.user,
-                    group__officers__status__gt=0,
-                ),
-                self.mc_pk == None,
-            ]),
-        ])
+        return False
 
     # Transitions
     @fsm_log_by
@@ -638,30 +622,35 @@ class Group(TimeStampedModel):
         blank=True,
         default='',
     )
+
     pinterest = models.URLField(
         help_text="""
             The pinterest URL of the resource.""",
         blank=True,
         default='',
     )
+
     flickr = models.URLField(
         help_text="""
             The flickr URL of the resource.""",
         blank=True,
         default='',
     )
+
     instagram = models.URLField(
         help_text="""
             The instagram URL of the resource.""",
         blank=True,
         default='',
     )
+
     soundcloud = models.URLField(
         help_text="""
             The soundcloud URL of the resource.""",
         blank=True,
         default='',
     )
+
     image = models.ImageField(
         upload_to=ImageUploadPath(),
         null=True,
@@ -700,16 +689,6 @@ class Group(TimeStampedModel):
         max_length=36,
         unique=True,
         db_index=True,
-    )
-
-    # FKs
-    parent = models.ForeignKey(
-        'Group',
-        null=True,
-        blank=True,
-        related_name='children',
-        db_index=True,
-        on_delete=models.SET_NULL,
     )
 
     # Denormalizations
@@ -756,6 +735,21 @@ class Group(TimeStampedModel):
         default=False,
     )
 
+    # FKs
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='groups',
+    )
+
+    parent = models.ForeignKey(
+        'Group',
+        null=True,
+        blank=True,
+        related_name='children',
+        db_index=True,
+        on_delete=models.SET_NULL,
+    )
+
     # Relations
     statelogs = GenericRelation(
         StateLog,
@@ -781,17 +775,10 @@ class Group(TimeStampedModel):
         return " ".join(full)
 
     @cached_property
-    def is_mc(self):
-        return bool(self.mc_pk)
-
-    # Methods
-    @property
     def image_id(self):
-        if obj.image:
-            return obj.image.name
-        else:
-            return 'missing_image'
+        return self.image.name or 'missing_image'
 
+    # Group Methods
     def get_roster(self):
         Member = apps.get_model('bhs.member')
         wb = Workbook()
@@ -829,7 +816,6 @@ class Group(TimeStampedModel):
         # For Algolia indexing
         return bool(self.status == self.STATUS.active)
 
-
     def get_officer_emails(self):
         officers = self.officers.filter(
             status__gt=0,
@@ -849,6 +835,76 @@ class Group(TimeStampedModel):
             )
         ]
         return result
+
+    def denormalize(self):
+        parent = self.parent
+        if not parent:
+            self.international = ""
+            self.district = ""
+            self.chapter = ""
+        else:
+            international = parent
+            if international.kind >= self.KIND.international:
+                try:
+                    while international.kind != self.KIND.international:
+                        international = international.parent
+                    self.international = international.code
+                except AttributeError:
+                    self.international = ""
+            else:
+                self.international = ""
+            district = parent
+            if district.kind >= self.KIND.district:
+                try:
+                    while district.kind not in [
+                        self.KIND.district,
+                        self.KIND.noncomp,
+                        self.KIND.affiliate,
+                    ]:
+                        district = district.parent
+                    self.district = district.code
+                except AttributeError:
+                    self.district = ""
+            else:
+                self.district = ""
+            chapter = parent
+            if chapter.kind >= self.KIND.chapter:
+                try:
+                    while chapter.kind != self.KIND.chapter:
+                        chapter = chapter.parent
+                    self.chapter = chapter.name
+                except AttributeError:
+                    self.chapter = ""
+            else:
+                self.chapter = ""
+
+    def get_is_senior(self):
+        if self.kind != self.KIND.quartet:
+            raise ValueError('Must be quartet')
+        Person = apps.get_model('bhs.person')
+        midwinter = datetime.date(2020, 1, 11)
+        persons = Person.objects.filter(
+            members__group=self,
+            members__status__gt=0,
+        )
+        if persons.count() > 4:
+            return False
+        all_over_55 = True
+        total_years = 0
+        for person in persons:
+            try:
+                years = int((midwinter - person.birth_date).days / 365)
+            except TypeError:
+                return False
+            if years < 55:
+                all_over_55 = False
+            total_years += years
+        if all_over_55 and (total_years >= 240):
+            is_senior = True
+        else:
+            is_senior = False
+        return is_senior
+
 
 
     # Internals
@@ -954,77 +1010,7 @@ class Group(TimeStampedModel):
                             raise ValidationError("Division must be within SWD.")
         return
 
-    # Methods
-    def denormalize(self):
-        parent = self.parent
-        if not parent:
-            self.international = ""
-            self.district = ""
-            self.chapter = ""
-        else:
-            international = parent
-            if international.kind >= self.KIND.international:
-                try:
-                    while international.kind != self.KIND.international:
-                        international = international.parent
-                    self.international = international.code
-                except AttributeError:
-                    self.international = ""
-            else:
-                self.international = ""
-            district = parent
-            if district.kind >= self.KIND.district:
-                try:
-                    while district.kind not in [
-                        self.KIND.district,
-                        self.KIND.noncomp,
-                        self.KIND.affiliate,
-                    ]:
-                        district = district.parent
-                    self.district = district.code
-                except AttributeError:
-                    self.district = ""
-            else:
-                self.district = ""
-            chapter = parent
-            if chapter.kind >= self.KIND.chapter:
-                try:
-                    while chapter.kind != self.KIND.chapter:
-                        chapter = chapter.parent
-                    self.chapter = chapter.name
-                except AttributeError:
-                    self.chapter = ""
-            else:
-                self.chapter = ""
-
-    def get_is_senior(self):
-        if self.kind != self.KIND.quartet:
-            raise ValueError('Must be quartet')
-        Person = apps.get_model('bhs.person')
-        midwinter = datetime.date(2020, 1, 11)
-        persons = Person.objects.filter(
-            members__group=self,
-            members__status__gt=0,
-        )
-        if persons.count() > 4:
-            return False
-        all_over_55 = True
-        total_years = 0
-        for person in persons:
-            try:
-                years = int((midwinter - person.birth_date).days / 365)
-            except TypeError:
-                return False
-            if years < 55:
-                all_over_55 = False
-            total_years += years
-        if all_over_55 and (total_years >= 240):
-            is_senior = True
-        else:
-            is_senior = False
-        return is_senior
-
-    # Permissions
+    # Group Permissions
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
@@ -1040,27 +1026,31 @@ class Group(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return True
+        roles = [
+            'SCJC',
+            'Librarian',
+            'Manager',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                self.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-                self.status > 0,
-                # self.mc_pk == None,
-            ])
+                'SCJC' in request.user.roles,
+            ]),
+            all([
+                'Librarian' in request.user.roles,
+            ]),
+            all([
+                self.owners.filter(id__contains=request.user.id),
+            ]),
         ])
 
     # Conditions:
     def can_activate(self):
-        return all([
-            bool(self.officers.filter(status__gt=0)),
-        ])
+        return
 
     # Transitions
     @fsm_log_by
@@ -1084,11 +1074,15 @@ class Group(TimeStampedModel):
 
     @fsm_log_by
     @fsm_log_description
-    @transition(field=status, source=[
-        STATUS.active,
-        STATUS.inactive,
-        STATUS.new,
-    ], target=STATUS.inactive)
+    @transition(
+        field=status,
+        source=[
+            STATUS.active,
+            STATUS.inactive,
+            STATUS.new,
+        ],
+        target=STATUS.inactive,
+    )
     def deactivate(self, description=None, *args, **kwargs):
         """Deactivate the Group."""
         return
@@ -1201,25 +1195,12 @@ class Member(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__gt=300,
-                status__gt=0,
-            )
-        ])
+        return False
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            all([
-                self.group.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-                self.mc_pk == None,
-            ]),
-        ])
+        return False
 
     # Transitions
     @fsm_log_by
@@ -1383,25 +1364,12 @@ class Officer(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__lt=200,
-                status__gt=0,
-            )
-        ])
+        return False
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            all([
-                self.group.officers.filter(
-                    person__user=request.user,
-                    status__gt=0,
-                ),
-                self.mc_pk == None,
-            ]),
-        ])
+        return False
 
     # Transitions
     @fsm_log_by
@@ -1489,6 +1457,10 @@ class Chart(TimeStampedModel):
             self.arrangers,
         )
 
+    @cached_property
+    def image_id(self):
+        return self.image.name or 'missing_image'
+
     def is_searchable(self):
         return bool(self.status == self.STATUS.active)
 
@@ -1525,22 +1497,20 @@ class Chart(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__gt=300,
-                status__gt=0,
-            )
-        ])
+        roles = [
+            'SCJC',
+            'Librarian',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            request.user.person.officers.filter(
-                office=160,
-                status__gt=0,
-            )
-        ])
+        roles = [
+            'SCJC',
+            'Librarian',
+        ]
+        return any(item in roles for item in request.user.roles)
 
     # Transitions
     @fsm_log_by
@@ -1623,38 +1593,43 @@ class Repertory(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        Assignment = apps.get_model('cmanager.assignment')
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'CA',
+            'Librarian',
+        ]
         return any([
+            [item in roles for item in request.user.roles],
             self.group.officers.filter(
                 person__user=request.user,
                 status__gt=0,
             ),
-            self.group.members.filter(
-                person__user=request.user,
-                status__gt=0,
-            ),
-            self.group.appearances.filter(
-                round__session__convention__assignments__person__user=request.user,
-                round__session__convention__assignments__status__gt=0,
-                round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
-            )
         ])
 
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            request.user.person.officers.filter(
-                office__gt=300,
-                status__gt=0,
-            )
-        ])
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'Librarian',
+            'Manager',
+        ]
+        return any([item in roles for item in request.user.roles])
+
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'Librarian',
+        ]
         return any([
+            [item in roles for item in request.user.roles],
             self.group.officers.filter(
                 person__user=request.user,
                 status__gt=0,
@@ -2326,5 +2301,3 @@ class Join(models.Model):
         db_table = 'vwSubscriptions_Memberships'
         verbose_name = 'Join'
         verbose_name_plural = 'Joins'
-
-
