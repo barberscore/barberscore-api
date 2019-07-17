@@ -2310,7 +2310,7 @@ class Round(TimeStampedModel):
                 'draw',
             ).values_list(
                 'draw',
-                'group_ids',
+                'group_id',
             )
             advancers = []
             for draw, group_id in advancer_group_ids:
