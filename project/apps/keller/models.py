@@ -1532,12 +1532,9 @@ class Complete(models.Model):
         blank=True,
     )
 
-    person = models.ForeignKey(
-        'bhs.person',
-        related_name='completes',
+    person_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     panelist_id = models.UUIDField(
