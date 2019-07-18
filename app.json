@@ -57,10 +57,6 @@
       "description": "Auth0 API endpoint.",
       "required": true
     },
-    "BHS_DATABASE_URL": {
-      "description": "BHS Database.",
-      "required": true
-    },
     "CLOUDINARY_URL": {
       "description": "Cloudinary service.",
       "required": true
@@ -95,10 +91,7 @@
       "required": true
     },
     "HEROKU_APP_NAME": {
-        "required": true
-    },
-    "HEROKU_PARENT_APP_NAME": {
-        "required": true
+        "required": false
     }
   },
   "environments": {
