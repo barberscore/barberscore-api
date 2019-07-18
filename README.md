@@ -1,4 +1,3 @@
-1
 # Barberscore API
 
 This is the back-end API that powers the new scoring system for the Barbershop Harmony Society.
