@@ -90,10 +90,6 @@
       "generator": "secret",
       "required": true
     },
-    "WEB_CONCURRENCY": {
-      "value": "2",
-      "required": true
-    },
     "HEROKU_APP_NAME": {
         "required": false
     }
