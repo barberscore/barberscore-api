@@ -24,6 +24,9 @@
     "heroku-redis:hobby-dev",
     "heroku-postgresql:hobby-basic"
   ],
+  "scripts": {
+    "postdeploy": "django-admin loaddata fix.json"
+  },
   "env": {
     "ALGOLIASEARCH_API_KEY": {
       "description": "Algolia API key.",
