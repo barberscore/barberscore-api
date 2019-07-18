@@ -13,7 +13,6 @@ You will need the latest versions of the following core dependencies properly in
 * [Git](https://git-scm.com)
 * [Python 3](https://www.python.org)
 * [PostgreSQL](https://www.postgresql.org)
-* [MySQL](https://www.mysql.com)
 * [Redis](https://redis.io)
 * [Pipenv](https://docs.pipenv.org)
 
@@ -39,7 +38,6 @@ PYTHONPATH=project
 SECRET_KEY=(your secret here)
 
 DATABASE_URL=(your credentials here)
-BHS_DATABASE_URL=(your credentials here)
 REDIS_URL=(your credentials here)
 
 AUTH0_CLIENT_ID=(your credentials here)
@@ -55,12 +53,11 @@ WKHTMLTOPDF_PATH=/usr/local/bin/wkhtmltopdf (or your path)
 
 Run these commands to start the app.
 
-* `django-admin flush`
 * `django-admin migrate`
-* `django-admin seed_data`
+* `django-admin loaddata fix.json`
 * `django-admin runserver`
 * Visit your app at [http://localhost:8000](http://localhost:8000)
-* The initial login credentials are `admin@barberscore.com/password`
+* The initial login credentials are `admin/password`. 
 
 ### Support
 
