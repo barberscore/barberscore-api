@@ -13,16 +13,16 @@
   "formation": {
     "web": {
       "quantity": "1",
-      "size": "hobby"
+      "size": "standard-2x"
     },
     "worker": {
       "quantity": "1",
-      "size": "hobby"
+      "size": "standard-1x"
     }
   },
   "addons": [
     "heroku-redis:hobby-dev",
-    "heroku-postgresql:hobby-basic"
+    "heroku-postgresql:standard-0"
   ],
   "scripts": {
     "postdeploy": "django-admin migrate && django-admin loaddata fix.json"
