@@ -13,11 +13,11 @@
   "formation": {
     "web": {
       "quantity": "1",
-      "size": "free"
+      "size": "hobby"
     },
     "worker": {
       "quantity": "1",
-      "size": "free"
+      "size": "hobby"
     }
   },
   "addons": [
