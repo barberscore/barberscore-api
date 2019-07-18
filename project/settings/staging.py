@@ -6,8 +6,9 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.rq import RqIntegration
 
 # Core
-HEROKU_APP_NAME = get_env_variable("HEROKU_APP_NAME")
-HOST_NAME = '{0}.herokuapp.com'.format(HEROKU_APP_NAME)
+# HEROKU_APP_NAME = get_env_variable("HEROKU_APP_NAME")
+# HOST_NAME = '{0}.herokuapp.com'.format(HEROKU_APP_NAME)
+HOST_NAME = 'https://api.staging.barberscore.com'
 ALLOWED_HOSTS = [
     '.barberscore.com',
     '.herokuapp.com',
