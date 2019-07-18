@@ -1,4 +1,3 @@
-
 # Local
 from .base import *
 import sentry_sdk
@@ -6,8 +5,6 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.rq import RqIntegration
 
 # Core
-DEBUG = False
-HOST_NAME = 'https://api.barberscore.com'
 ALLOWED_HOSTS = [
     '.barberscore.com',
     '.herokuapp.com',
@@ -24,16 +21,6 @@ SECURE_SSL_REDIRECT = True
 #     'routers.BHSRouter',
 # ]
 
-# Email
-EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.sendgrid.net'
-# EMAIL_HOST_USER = 'apikey'
-# EMAIL_HOST_PASSWORD = get_env_variable("SENDGRID_API_KEY")
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-
 # Sentry
 sentry_sdk.init(
     dsn=get_env_variable("SENTRY_DSN"),
@@ -42,8 +29,16 @@ sentry_sdk.init(
         RqIntegration(),
     ],
     send_default_pii=True,
-    release=get_env_variable("HEROKU_RELEASE_VERSION")
+    release=get_env_variable("HEROKU_RELEASE_VERSION"),
+    environment=get_env_variable("DJANGO_SETTINGS_MODULE").partition(".")[2],
 )
+
+# Email
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
+
+# Search
+ALGOLIA['AUTO_INDEXING'] = True
 
 # Logging
 LOGGING = {

@@ -32,17 +32,8 @@
       "description": "Algolia API key.",
       "required": true
     },
-    "ALGOLIASEARCH_API_KEY_SEARCH": {
-      "description": "Algolia Search key.",
-      "required": true
-    },
     "ALGOLIASEARCH_APPLICATION_ID": {
       "description": "Algolia Application ID key.",
-      "required": true
-    },
-    "ALGOLIASEARCH_AUTO_INDEXING": {
-      "description": "Algolia API key.",
-      "value": "False",
       "required": true
     },
     "AUTH0_CLIENT_ID": {
@@ -65,16 +56,6 @@
       "description": "Sentry Bug Tracker.  Use production key.",
       "required": true
     },
-    "ENV": {
-      "description": "The Environment.",
-      "value": "staging",
-      "required": true
-    },
-    "REDIS_MAX_CONNECTIONS": {
-      "description": "Maximum Redis connections.",
-      "value": "20",
-      "required": true
-    },
     "DJANGO_SETTINGS_MODULE": {
       "description": "Configures the settings.  Do not edit.",
       "value": "settings.staging",
@@ -89,9 +70,6 @@
       "description": "Required by Django.  Auto-generated.",
       "generator": "secret",
       "required": true
-    },
-    "HEROKU_APP_NAME": {
-        "required": false
     }
   },
   "environments": {
@@ -106,11 +84,9 @@
         "SECRET_KEY": {
           "generator": "secret"
         },
-        "REDIS_MAX_CONNECTIONS": "40",
         "CLOUDINARY_URL": "test",
         "ALGOLIASEARCH_APPLICATION_ID": "test",
         "ALGOLIASEARCH_API_KEY": "test",
-        "ALGOLIASEARCH_AUTO_INDEXING": "test",
         "AUTH0_CLIENT_ID": "test",
         "AUTH0_CLIENT_SECRET": "test",
         "AUTH0_DOMAIN": "test"

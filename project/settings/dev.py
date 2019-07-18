@@ -1,11 +1,7 @@
-
-# Debug Toolbar
-
 # Local
 from .base import *
 
 DEBUG = True
-HOST_NAME = 'http://localhost:8000'
 ALLOWED_HOSTS = [
     'localhost',
 ]
@@ -33,13 +29,12 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
 
-# RQ Overwrite
+# Async settings
 RQ_QUEUES['default']['ASYNC'] = True
 RQ_QUEUES['high']['ASYNC'] = True
 RQ_QUEUES['low']['ASYNC'] = True
 
 # Algolia Overwrite
-ALGOLIA['AUTO_INDEXING'] = False
 ALGOLIA['INDEX_SUFFIX'] = 'dev'
 
 # Logging

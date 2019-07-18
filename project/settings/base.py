@@ -1,15 +1,10 @@
-
 # Standard Library
 import os
 
 # Third-Party
 import dj_database_url
-import requests
-from cryptography.hazmat.backends import default_backend
-from cryptography.x509 import load_pem_x509_certificate
 
 # Django
-from django.contrib.auth import authenticate
 from django.core.exceptions import ImproperlyConfigured
 
 
@@ -69,7 +64,7 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 STATIC_URL = '/static/'
-MEDIA_URL = '/api/'
+MEDIA_URL = '/media/'
 
 # Middleware
 MIDDLEWARE = [
@@ -125,7 +120,7 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
-                "max_connections": int(get_env_variable("REDIS_MAX_CONNECTIONS")),
+                "max_connections": 20,
             },
         }
     },
@@ -157,19 +152,11 @@ AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
 AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
 
-# JWT_AUTH = {
-#     # 'JWT_AUDIENCE': AUTH0_CLIENT_ID,
-#     # 'JWT_PAYLOAD_GET_USERNAME_HANDLER': jwt_get_username_from_payload_handler,
-#     # 'JWT_AUTH_HEADER_PREFIX': 'Bearer',
-#     # 'JWT_PUBLIC_KEY': jwt_public_key,
-#     # 'JWT_ALGORITHM': 'RS256',
-# }
-
 # Algolia
 ALGOLIA = {
     'APPLICATION_ID': get_env_variable("ALGOLIASEARCH_APPLICATION_ID"),
     'API_KEY': get_env_variable("ALGOLIASEARCH_API_KEY"),
-    'AUTO_INDEXING': get_env_variable("ALGOLIASEARCH_AUTO_INDEXING"),
+    'AUTO_INDEXING': False,
 }
 
 # Cloudinary
@@ -244,7 +231,6 @@ INSTALLED_APPS = [
     'reversion',
     'rest_framework_jwt',
     'corsheaders',
-    # 'api',
     'apps.bhs',
     'apps.cmanager',
     'apps.smanager',
