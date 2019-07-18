@@ -259,7 +259,7 @@ class Appearance(TimeStampedModel):
         variances = []
         for song in songs:
             chart = Chart.objects.get(id=song.chart_id)
-            song.chart = chart
+            song.chart_patched = chart
             variances.extend(song.dixons)
             variances.extend(song.asterisks)
         variances = list(set(variances))
@@ -291,28 +291,36 @@ class Appearance(TimeStampedModel):
     def mock(self):
         # Mock Appearance
         Chart = apps.get_model('bhs.chart')
+        Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('rmanager.panelist')
-        if self.group.kind == self.group.KIND.chorus:
-            pos = self.group.members.filter(
-                status=self.group.members.model.STATUS.active,
+        group = Group.objects.get(id=self.group_id)
+        if group.kind == group.KIND.chorus:
+            pos = group.members.filter(
+                status=group.members.model.STATUS.active,
             ).count()
             self.pos = pos
         # Try to approximate reality
-        prelim = getattr(getattr(self, "entry"), "prelim", None)
-        if not prelim:
-            prelim = self.group.appearances.annotate(
-                avg=Avg(
-                    'songs__scores__points',
-                    filter=Q(
-                        songs__scores__panelist__kind=Panelist.KIND.official,
-                    )
-                )
-            ).latest('round__date').avg or randint(60, 70)
+        # prelim = getattr(getattr(self, "entry"), "prelim", None)
+        # if not prelim:
+        #     prelim = group.appearances.annotate(
+        #         avg=Avg(
+        #             'songs__scores__points',
+        #             filter=Q(
+        #                 songs__scores__panelist__kind=Panelist.KIND.official,
+        #             )
+        #         )
+        #     ).latest('round__date').avg or randint(60, 70)
+        prelim = self.base or randint(55, 75)
         songs = self.songs.all()
         for song in songs:
-            # song.chart = Chart.objects.filter(
-            #     status=Chart.STATUS.active
-            # ).order_by("?").first()
+            if song.num == 1:
+                song.chart_id = group.repertories.order_by(
+                    'id',
+                ).first().chart.id
+            else:
+                song.chart_id = group.repertories.order_by(
+                    'id',
+                ).last().chart.id
             song.save()
             scores = song.scores.all()
             for score in scores:
@@ -621,7 +629,7 @@ class Appearance(TimeStampedModel):
             )
             for song in songs:
                 chart = Chart.objects.get(id=song.chart_id)
-                song.chart = chart
+                song.chart_patched = chart
                 penalties_map = {
                     10: "†",
                     30: "‡",
@@ -667,7 +675,7 @@ class Appearance(TimeStampedModel):
         )
         for song in songs:
             chart = Chart.objects.get(id=song.chart_id)
-            song.chart = chart
+            song.chart_patched = chart
             scores = song.scores.filter(
                 panelist__kind=Panelist.KIND.official,
             ).order_by('panelist__num')
@@ -939,7 +947,7 @@ class Appearance(TimeStampedModel):
             )
             for song in songs:
                 chart = Chart.objects.get(id=song.chart_id)
-                song.chart = chart
+                song.chart_patched = chart
                 penalties_map = {
                     10: "†",
                     30: "‡",
@@ -1783,7 +1791,7 @@ class Panelist(TimeStampedModel):
                 )
                 for song in songs:
                     chart = Chart.objects.get(id=song.chart_id)
-                    song.chart = chart
+                    song.chart_patched = chart
                     scores2 = song.scores.select_related(
                         'panelist',
                     ).filter(
@@ -2226,7 +2234,7 @@ class Round(TimeStampedModel):
                         chart = Chart.objects.get(id=song.chart_id)
                     except Chart.DoesNotExist:
                         chart = None
-                    song.chart = chart
+                    song.chart_patched = chart
                     penalties_map = {
                         10: "†",
                         30: "‡",
@@ -2314,7 +2322,7 @@ class Round(TimeStampedModel):
             )
             advancers = []
             for draw, group_id in advancer_group_ids:
-                name = Group.objects.get(id=group_id)
+                name = Group.objects.get(id=group_id).name
                 advancers.append((draw, name))
             try:
                 mt_id = self.appearances.get(
@@ -2776,7 +2784,7 @@ class Round(TimeStampedModel):
 
                 for song in songs:
                     chart = Chart.objects.get(id=song.chart_id)
-                    song.chart = chart
+                    song.chart_patched = chart
 
                     mus_scores = []
                     for person in mus_persons_qs:
@@ -3017,7 +3025,7 @@ class Round(TimeStampedModel):
                 )
                 for song in songs:
                     chart = Chart.objects.get(id=song.chart_id)
-                    song.chart = chart
+                    song.chart_patched = chart
                     penalties_map = {
                         10: "†",
                         30: "‡",
@@ -3222,21 +3230,16 @@ class Round(TimeStampedModel):
 
 
     def get_titles(self):
-        Song = apps.get_model('rmanager.song')
         Chart = apps.get_model('bhs.chart')
+        Group = apps.get_model('bhs.group')
+        Song = apps.get_model('rmanager.song')
         appearances = self.appearances.filter(
             draw__gt=0,
         ).order_by(
             'draw',
         )
         for appearance in appearances:
-            songs = Song.objects.filter(
-                appearance__group=appearance.group,
-                appearance__round__session=self.session,
-            ).distinct().order_by(
-                'appearance__round__num',
-                'num',
-            )
+            songs = appearance.songs.order_by('num')
             titles = []
             for song in songs:
                 chart = Chart.objects.get(id=song.chart_id)
@@ -3276,7 +3279,7 @@ class Round(TimeStampedModel):
         ).order_by(
             'draw',
         )
-        group_ids = appearances.values_list('group__id', flat=True)
+        group_ids = appearances.values_list('group_id', flat=True)
         mt = self.appearances.filter(
             draw=0,
         ).first()
@@ -3344,33 +3347,33 @@ class Round(TimeStampedModel):
         else:
             groups = None
         pos = self.appearances.aggregate(sum=Sum('pos'))['sum']
-        context = {
-            'round': self,
-            'appearances': appearances,
-            'mt': mt,
-            'outcomes': outcomes,
-            'groups': groups,
-            'pos': pos,
-        }
+        # context = {
+        #     'round': self,
+        #     'appearances': appearances,
+        #     'mt': mt,
+        #     'outcomes': outcomes,
+        #     'groups': groups,
+        #     'pos': pos,
+        # }
 
-        rendered = render_to_string('reports/announcements.html', context)
-        file = pydf.generate_pdf(
-            rendered,
-            page_size='Letter',
-            orientation='Portrait',
-            margin_top='5mm',
-            margin_bottom='5mm',
-        )
-        content = ContentFile(file)
+        # rendered = render_to_string('reports/announcements.html', context)
+        # file = pydf.generate_pdf(
+        #     rendered,
+        #     page_size='Letter',
+        #     orientation='Portrait',
+        #     margin_top='5mm',
+        #     margin_bottom='5mm',
+        # )
+        # content = ContentFile(file)
 
         document = Document()
 
-        document.add_heading(
-            'Announcements {0}'.format(self)
-        )
+        # document.add_heading(
+        #     'Announcements {0}'.format(self)
+        # )
         document.add_heading('Evaluations')
         document.add_paragraph(
-            "Remember to state Start time(s) for each round, Rotation time and general location. For choruses it is critical to provide location for each chorus. 'It's on your CSA or eval schedule' is only appropriate for quartets."
+            "Remember to state Start time(s) for each round, Rotation time and general location. "
         )
         document.add_heading('Administration')
         document.add_paragraph(
@@ -3386,12 +3389,14 @@ class Round(TimeStampedModel):
         if appearances:
             document.add_heading('Draw')
             for appearance in appearances:
+                group = Group.objects.get(id=appearance.group_id)
                 document.add_paragraph(
-                    "{0}: {1}".format(appearance.draw, appearance.group.name),
+                    "{0}: {1}".format(appearance.draw, group.name),
                     # style='List Bullet',
                 )
+            gp = Group.objects.get(id=mt.group_id)
             document.add_paragraph(
-                "MT: {0}".format(mt.group.name),
+                "MT: {0}".format(gp.name),
                 # style='List Bullet',
             )
         if groups:
