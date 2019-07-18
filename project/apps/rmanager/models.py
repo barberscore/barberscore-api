@@ -1422,15 +1422,14 @@ class Outcome(TimeStampedModel):
             #     'name',
             # ).values_list('name', flat=True)
             group_ids = self.contenders.filter(
-                status__gt=0,
-                appearances__stats__tot_score__gte=threshold,
+                appearance__stats__tot_score__gte=threshold,
             ).values_list(
                 'appearance__group_id',
                 flat=True,
             )
             qualifiers = Group.objects.filter(
                 id__in=group_ids,
-            ).order_by('name').values('name')
+            ).order_by('name').values_list('name', flat=True)
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
@@ -3287,65 +3286,77 @@ class Round(TimeStampedModel):
             '-num',
         )
         if self.kind == self.KIND.finals:
-            groups = Group.objects.filter(
-                appearances__round__session=self.session,
-            ).exclude(
+            winners = self.appearances.exclude(
                 status__in=[
                     Appearance.STATUS.disqualified,
                     Appearance.STATUS.scratched,
                 ],
-            ).prefetch_related(
-                'appearances__songs__scores',
-                'appearances__songs__scores__panelist',
-                'appearances__round__session',
-            ).annotate(
-                tot_points=Sum(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                        appearances__round__session=self.session,
-                        appearances__round__num__lte=self.num,
-                    ),
-                ),
-                sng_points=Sum(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                        appearances__round__session=self.session,
-                        appearances__round__num__lte=self.num,
-                    ),
-                ),
-                per_points=Sum(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                        appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                        appearances__round__session=self.session,
-                        appearances__round__num__lte=self.num,
-                    ),
-                ),
-                raw_score=Avg(
-                    'appearances__songs__scores__points',
-                    filter=Q(
-                        appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                        appearances__round__session=self.session,
-                        appearances__round__num__lte=self.num,
-                    ),
-                ),
-                tot_score=Func(
-                    F('raw_score'),
-                    function='ROUND',
-                    template='%(function)s(%(expressions)s, 1)'
-                ),
             ).order_by(
-                'tot_points',
-                'sng_points',
-                'per_points',
+                'stats__tot_points',
+                'stats__sng_points',
+                'stats__per_points',
             )
-            groups = list(groups)[-5:]
+
+
+            # groups = Group.objects.filter(
+            #     appearances__round__session=self.session,
+            # ).exclude(
+            #     status__in=[
+            #         Appearance.STATUS.disqualified,
+            #         Appearance.STATUS.scratched,
+            #     ],
+            # ).prefetch_related(
+            #     'appearances__songs__scores',
+            #     'appearances__songs__scores__panelist',
+            #     'appearances__round__session',
+            # ).annotate(
+            #     tot_points=Sum(
+            #         'appearances__songs__scores__points',
+            #         filter=Q(
+            #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #             appearances__round__session=self.session,
+            #             appearances__round__num__lte=self.num,
+            #         ),
+            #     ),
+            #     sng_points=Sum(
+            #         'appearances__songs__scores__points',
+            #         filter=Q(
+            #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+            #             appearances__round__session=self.session,
+            #             appearances__round__num__lte=self.num,
+            #         ),
+            #     ),
+            #     per_points=Sum(
+            #         'appearances__songs__scores__points',
+            #         filter=Q(
+            #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+            #             appearances__round__session=self.session,
+            #             appearances__round__num__lte=self.num,
+            #         ),
+            #     ),
+            #     raw_score=Avg(
+            #         'appearances__songs__scores__points',
+            #         filter=Q(
+            #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #             appearances__round__session=self.session,
+            #             appearances__round__num__lte=self.num,
+            #         ),
+            #     ),
+            #     tot_score=Func(
+            #         F('raw_score'),
+            #         function='ROUND',
+            #         template='%(function)s(%(expressions)s, 1)'
+            #     ),
+            # ).order_by(
+            #     'tot_points',
+            #     'sng_points',
+            #     'per_points',
+            # )
+            winners = list(winners)[-5:]
         else:
-            groups = None
+            winners = None
         pos = self.appearances.aggregate(sum=Sum('pos'))['sum']
         # context = {
         #     'round': self,
@@ -3399,13 +3410,14 @@ class Round(TimeStampedModel):
                 "MT: {0}".format(gp.name),
                 # style='List Bullet',
             )
-        if groups:
+        if winners:
             document.add_heading('Results')
-            for group in groups:
+            for winner in winners:
+                group = Group.objects.get(id=winner.group_id)
                 document.add_paragraph(
                     "With a score of {0}, a {1} average: {2}".format(
-                        group.tot_points,
-                        group.tot_score,
+                        winner.stats['tot_points'],
+                        winner.stats['tot_score'],
                         group.name,
                     ),
                     style='List Bullet',
@@ -3878,6 +3890,7 @@ class Round(TimeStampedModel):
                 appearance = self.appearances.create(
                     group_id=entry.group_id,
                     num=entry.draw,
+                    base=entry.base,
                     is_single=is_single,
                     is_private=entry.is_private,
                     participants=entry.participants,
@@ -3901,6 +3914,7 @@ class Round(TimeStampedModel):
                 appearance = self.appearances.create(
                     group_id=prior_appearance.group_id,
                     num=prior_appearance.draw,
+                    base=prior_appearance.base,
                     is_single=prior_appearance.is_single,
                     is_private=prior_appearance.is_private,
                     participants=prior_appearance.participants,

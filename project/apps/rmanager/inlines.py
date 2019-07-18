@@ -20,7 +20,7 @@ class AppearanceInline(admin.TabularInline):
         'status',
         'representing',
         'num',
-        # 'draw',
+        'base',
         # 'stats',
     ]
     readonly_fields = [
