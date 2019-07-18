@@ -42,7 +42,7 @@
     },
     "ALGOLIASEARCH_AUTO_INDEXING": {
       "description": "Algolia API key.",
-      "value": false,
+      "value": "False",
       "required": true
     },
     "AUTH0_CLIENT_ID": {
