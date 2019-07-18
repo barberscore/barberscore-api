@@ -25,7 +25,7 @@
     "heroku-postgresql:hobby-basic"
   ],
   "scripts": {
-    "postdeploy": "django-admin loaddata fix.json"
+    "postdeploy": "django-admin migrate && django-admin loaddata fix.json"
   },
   "env": {
     "ALGOLIASEARCH_API_KEY": {
