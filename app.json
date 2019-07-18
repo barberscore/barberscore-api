@@ -81,7 +81,7 @@
     },
     "DJANGO_SETTINGS_MODULE": {
       "description": "Configures the settings.  Do not edit.",
-      "value": "settings.dev",
+      "value": "settings.staging",
       "required": true
     },
     "PYTHONPATH": {
@@ -93,6 +93,12 @@
       "description": "Required by Django.  Auto-generated.",
       "generator": "secret",
       "required": true
+    },
+    "HEROKU_APP_NAME": {
+        "required": true
+    },
+    "HEROKU_PARENT_APP_NAME": {
+        "required": true
     }
   },
   "environments": {
