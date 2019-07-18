@@ -95,10 +95,11 @@ class Contest(TimeStampedModel):
         return str(self.id)
 
     def clean(self):
-        if self.award.level == self.award.LEVEL.qualifier and self.group:
-            raise ValidationError(
-                {'level': 'Qualifiers can not select winners'}
-            )
+        pass
+        # if self.award.level == self.award.LEVEL.qualifier and self.group:
+        #     raise ValidationError(
+        #         {'level': 'Qualifiers can not select winners'}
+        #     )
 
 
     # Contest Permissions
