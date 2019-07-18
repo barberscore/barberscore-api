@@ -72,7 +72,7 @@
     },
     "REDIS_MAX_CONNECTIONS": {
       "description": "Maximum Redis connections.",
-      "value": "40",
+      "value": "20",
       "required": true
     },
     "DJANGO_SETTINGS_MODULE": {
@@ -88,6 +88,10 @@
     "SECRET_KEY": {
       "description": "Required by Django.  Auto-generated.",
       "generator": "secret",
+      "required": true
+    },
+    "WEB_CONCURRENCY": {
+      "value": "2",
       "required": true
     },
     "HEROKU_APP_NAME": {
