@@ -73,6 +73,7 @@ MEDIA_URL = '/api/'
 
 # Middleware
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -112,6 +113,9 @@ DATABASES = {
         conn_max_age=600,
     ),
 }
+
+# CORS Configuration
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Caches
 CACHES = {
@@ -239,6 +243,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'reversion',
     'rest_framework_jwt',
+    'corsheaders',
     # 'api',
     'apps.bhs',
     'apps.cmanager',
