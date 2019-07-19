@@ -29,7 +29,7 @@ sentry_sdk.init(
         RqIntegration(),
     ],
     send_default_pii=True,
-    environment=get_env_variable("DJANGO_SETTINGS_MODULE").partition(".")[2],
+    environment=get_env_variable("HEROKU_APP_NAME"),
 )
 
 # Email
