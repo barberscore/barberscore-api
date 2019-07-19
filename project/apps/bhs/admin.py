@@ -58,7 +58,7 @@ class ReadOnlyAdmin(admin.ModelAdmin):
 
 
 @admin.register(Award)
-class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class AwardAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
     ]
@@ -136,7 +136,7 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Chart)
-class ChartAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
+class ChartAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
     ]
@@ -201,7 +201,7 @@ class ChartAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Group)
-class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
+class GroupAdmin(VersionAdmin, FSMTransitionMixin):
     save_on_top = True
     fsm_field = [
         'status',
@@ -358,7 +358,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Member)
-class MemberAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
+class MemberAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
     ]
@@ -434,9 +434,8 @@ class MemberAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     ]
 
 
-
 @admin.register(Officer)
-class OfficerAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
+class OfficerAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
     ]
@@ -489,9 +488,8 @@ class OfficerAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
     ]
 
 
-
 @admin.register(Person)
-class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
+class PersonAdmin(VersionAdmin, FSMTransitionMixin):
     fields = [
         'id',
         'status',
@@ -594,7 +592,7 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Repertory)
-class RepertoryAdmin(VersionAdmin, FSMTransitionMixin, admin.ModelAdmin):
+class RepertoryAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
     ]

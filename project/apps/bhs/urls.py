@@ -5,8 +5,8 @@ from rest_framework import routers
 # Local
 from .views import AwardViewSet
 from .views import GroupViewSet
-from .views import MemberViewSet
-from .views import OfficerViewSet
+# from .views import MemberViewSet
+# from .views import OfficerViewSet
 from .views import PersonViewSet
 from .views import ChartViewSet
 from .views import RepertoryViewSet
