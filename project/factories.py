@@ -22,16 +22,10 @@ from django.db.models.signals import pre_delete
 from django.db.models.signals import pre_save
 
 # First-Party
-from apps.rmanager.models import Appearance
-from apps.rmanager.models import Contender
-from apps.rmanager.models import Outcome
-from apps.rmanager.models import Panelist
-from apps.rmanager.models import Round
-from apps.rmanager.models import Score
-from apps.rmanager.models import Song
 
 from rest_framework_jwt.models import User
 
+from apps.bhs.models import Award
 from apps.bhs.models import Chart
 from apps.bhs.models import Group
 from apps.bhs.models import Member
@@ -40,13 +34,20 @@ from apps.bhs.models import Person
 from apps.bhs.models import Repertory
 
 from apps.cmanager.models import Assignment
-from apps.cmanager.models import Award
 from apps.cmanager.models import Convention
 
 from apps.smanager.models import Contest
 from apps.smanager.models import Contestant
 from apps.smanager.models import Entry
 from apps.smanager.models import Session
+
+from apps.rmanager.models import Appearance
+from apps.rmanager.models import Contender
+from apps.rmanager.models import Outcome
+from apps.rmanager.models import Panelist
+from apps.rmanager.models import Round
+from apps.rmanager.models import Score
+from apps.rmanager.models import Song
 
 class AppearanceFactory(DjangoModelFactory):
     status = Appearance.STATUS.new
@@ -100,7 +101,7 @@ class ChartFactory(DjangoModelFactory):
 class ContestFactory(DjangoModelFactory):
     status = Contest.STATUS.included
     session = SubFactory('factories.SessionFactory')
-    award = SubFactory('factories.AwardFactory')
+    # award = SubFactory('factories.AwardFactory')
 
     class Meta:
         model = Contest
@@ -248,7 +249,7 @@ class OfficerFactory(DjangoModelFactory):
 
 class OutcomeFactory(DjangoModelFactory):
     round = SubFactory('factories.RoundFactory')
-    award = SubFactory('factories.AwardFactory')
+    # award = SubFactory('factories.AwardFactory')
 
     class Meta:
         model = Outcome

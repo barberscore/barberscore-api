@@ -34,10 +34,10 @@ def test_assignment_admin(admin_django_client, assignment):
 
 
 def test_award_admin(admin_django_client, award):
-    path = reverse('admin:cmanager_award_changelist')
+    path = reverse('admin:bhs_award_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:cmanager_award_change', args=(str(award.id),))
+    path = reverse('admin:bhs_award_change', args=(str(award.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
