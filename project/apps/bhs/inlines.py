@@ -60,6 +60,7 @@ class RepertoryInline(admin.TabularInline):
         'chart__title',
     ]
 
+
 class MemberInline(admin.TabularInline):
     model = Member
     fields = [

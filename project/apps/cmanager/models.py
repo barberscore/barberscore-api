@@ -82,7 +82,7 @@ class Assignment(TimeStampedModel):
     # FKs
     convention = models.ForeignKey(
         'Convention',
-        related_name='assignments',
+        related_name='assignments_old',
         on_delete=models.CASCADE,
     )
 
@@ -93,7 +93,7 @@ class Assignment(TimeStampedModel):
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='assignments',
+        related_name='assignments_old',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -348,7 +348,7 @@ class Convention(TimeStampedModel):
     # FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='conventions',
+        related_name='conventions_old',
     )
 
     group_id = models.UUIDField(
