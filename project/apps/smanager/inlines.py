@@ -12,7 +12,7 @@ from .models import Session
 class ContestInline(admin.TabularInline):
     model = Contest
     fields = [
-        'award',
+        # 'award',
         # 'group',
         'session',
         'status',
@@ -21,7 +21,7 @@ class ContestInline(admin.TabularInline):
         'status',
     ]
     autocomplete_fields = [
-        'award',
+        # 'award',
         # 'group',
     ]
     show_change_link = True

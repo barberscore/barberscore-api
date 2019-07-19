@@ -81,11 +81,11 @@ class PanelistSerializer(serializers.ModelSerializer):
 
 class OutcomeSerializer(serializers.ModelSerializer):
     contenders = ContenderSerializer(read_only=True, many=True)
-    award = serializers.PrimaryKeyRelatedField(
-        read_only=True,
-        pk_field=UUIDField(format='hex_verbose'),
-        allow_null=True,
-    )
+    # award = serializers.PrimaryKeyRelatedField(
+    #     read_only=True,
+    #     pk_field=UUIDField(format='hex_verbose'),
+    #     allow_null=True,
+    # )
 
     class Meta:
         model = Outcome
@@ -93,7 +93,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'id',
             'num',
             'name',
-            'award',
+            # 'award',
             'contenders',
         )
 

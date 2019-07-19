@@ -6,10 +6,8 @@ from fsm_admin.mixins import FSMTransitionMixin
 from django.contrib import admin
 
 # Local
-from .filters import AwardQualifierLevelFilter
 from .inlines import AssignmentInline
 from .models import Assignment
-from .models import Award
 from .models import Convention
 
 from apps.smanager.inlines import SessionInline
@@ -67,84 +65,6 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     raw_id_fields = [
         'user',
     ]
-
-
-@admin.register(Award)
-class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-    save_on_top = True
-    fields = [
-        'id',
-        'name',
-        'status',
-        'group_id',
-        'kind',
-        'gender',
-        'district',
-        'division',
-        'age',
-        'level',
-        'season',
-        'is_single',
-        'is_novice',
-        ('threshold', 'minimum', 'advance', 'spots',),
-        'description',
-        'notes',
-    ]
-
-    list_display = [
-        'name',
-        # 'size',
-        # 'scope',
-        'group_id',
-        'division',
-        'kind',
-        'age',
-        'gender',
-        'level',
-        # 'size',
-        # 'scope',
-        # 'season',
-        # 'rounds',
-        # 'threshold',
-        # 'advance',
-        # 'minimum',
-        'status',
-    ]
-
-    # list_editable = [
-    #     'threshold',
-    #     'advance',
-    #     'minimum',
-    # ]
-    list_filter = [
-        'status',
-        'kind',
-        'level',
-        # AwardQualifierLevelFilter,
-        DistrictListFilter,
-        'district',
-        'division',
-        'age',
-        'gender',
-        'season',
-        'is_single',
-        'is_novice',
-    ]
-
-    readonly_fields = [
-        'id',
-    ]
-
-    search_fields = [
-        'name',
-    ]
-
-    ordering = (
-        'tree_sort',
-    )
 
 
 @admin.register(Convention)

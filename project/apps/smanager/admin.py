@@ -28,21 +28,37 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        'award',
+        'award_id',
+        'award_age',
+        'award_description',
+        'award_district',
+        'award_division',
+        'award_gender',
+        'award_is_novice',
+        'award_kind',
+        'award_level',
+        'award_name',
+        'award_scope',
+        'award_scope_range',
+        'award_season',
+        'award_size',
+        'award_size_range',
+        'award_tree_sort',
+
         'session',
         # 'group',
     ]
 
     list_display = (
         'id',
-        'award',
+        # 'award_id',
         'session',
         # 'group',
     )
 
     list_filter = [
         'status',
-        'award__kind',
+        # 'award__kind',
     ]
 
     save_on_top = True
@@ -57,16 +73,18 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
+        'award_tree_sort',
     ]
 
     autocomplete_fields = [
-        'award',
+        # 'award',
         'session',
         # 'group',
     ]
 
     search_fields = [
-        'award__name',
+        # 'award__name',
+        'id',
     ]
 
 

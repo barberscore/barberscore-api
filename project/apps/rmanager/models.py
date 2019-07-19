@@ -1297,12 +1297,9 @@ class Outcome(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    award = models.ForeignKey(
-        'cmanager.award',
-        related_name='outcomes',
+    award_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
     )
 
     # Relations
@@ -1313,15 +1310,17 @@ class Outcome(TimeStampedModel):
 
     # Methods
     def get_name(self):
+        Award = apps.get_model('bhs.award')
         Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('rmanager.panelist')
-        if self.round.kind != self.round.KIND.finals and not self.award.is_single:
+        award = Award.objects.get(self.award_id)
+        if self.round.kind != self.round.KIND.finals and not award.is_single:
             return "(Result determined in Finals)"
-        if self.award.level == self.award.LEVEL.deferred:
+        if award.level == award.LEVEL.deferred:
             return "(Result determined post-contest)"
-        if self.award.level in [self.award.LEVEL.manual, self.award.LEVEL.raw, self.award.LEVEL.standard]:
+        if award.level in [award.LEVEL.manual, award.LEVEL.raw, award.LEVEL.standard]:
             return "MUST ENTER WINNER MANUALLY"
-        # if self.award.level == self.award.LEVEL.raw:
+        # if award.level == award.LEVEL.raw:
         #     group_ids = Group.objects.filter(
         #         appearances__contenders__outcome=self,
         #     ).values_list('id', flat=True)
@@ -1366,7 +1365,7 @@ class Outcome(TimeStampedModel):
         #     except AttributeError:
         #         winner = "(No Award Winner)"
         #     return winner
-        # if self.award.level == self.award.LEVEL.standard:
+        # if award.level == award.LEVEL.standard:
         #     group_ids = Group.objects.filter(
         #         appearances__contenders__outcome=self,
         #     ).values_list('id', flat=True)
@@ -1398,8 +1397,8 @@ class Outcome(TimeStampedModel):
         #     ).order_by(
         #         '-diff',
         #     ).first().name
-        if self.award.level == self.award.LEVEL.qualifier:
-            threshold = self.award.threshold
+        if award.level == award.LEVEL.qualifier:
+            threshold = award.threshold
             # group_ids = self.contenders.filter(
             #     status__gt=0,
             # ).values_list(
@@ -1433,7 +1432,7 @@ class Outcome(TimeStampedModel):
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
-        if self.award.level in [self.award.LEVEL.championship, self.award.LEVEL.representative]:
+        if award.level in [award.LEVEL.championship, award.LEVEL.representative]:
             group_id = self.contenders.filter(
                 # status__gt=0,
             ).order_by(
@@ -2376,12 +2375,12 @@ class Round(TimeStampedModel):
 
         # Outcome Block
         items = self.outcomes.select_related(
-            'award',
+            # 'award',
         ).order_by(
             'num',
         ).values_list(
             'num',
-            'award__name',
+            # 'award__name',
             'name',
         )
         outcomes = []
@@ -3155,12 +3154,12 @@ class Round(TimeStampedModel):
 
         # Outcome Block
         items = self.outcomes.select_related(
-            'award',
+            # 'award',
         ).order_by(
             'num',
         ).values_list(
             'num',
-            'award__name',
+            # 'award__name',
             'name',
         )
         outcomes = []
@@ -3271,6 +3270,7 @@ class Round(TimeStampedModel):
 
     def get_announcements(self):
         Panelist = apps.get_model('rmanager.panelist')
+        Award = apps.get_model('bhs.award')
         Group = apps.get_model('bhs.group')
         Appearance = apps.get_model('rmanager.appearance')
         appearances = self.appearances.filter(
@@ -3396,7 +3396,8 @@ class Round(TimeStampedModel):
             )
         document.add_heading('Awards')
         for outcome in outcomes:
-            document.add_paragraph("{0}: {1}".format(outcome.award.name, outcome.name))
+            award = Award.objects.get(id=outcome.award_id)
+            document.add_paragraph("{0}: {1}".format(award.name, outcome.name))
         if appearances:
             document.add_heading('Draw')
             for appearance in appearances:
@@ -3569,12 +3570,12 @@ class Round(TimeStampedModel):
 
         # Outcome Block
         items = self.outcomes.select_related(
-            'award',
+            # 'award',
         ).order_by(
             'num',
         ).values_list(
             'num',
-            'award__name',
+            # 'award__name',
             'name',
         )
         outcomes = []
@@ -3753,6 +3754,7 @@ class Round(TimeStampedModel):
     def build(self, *args, **kwargs):
         """Build the Round"""
 
+        Award = apps.get_model('bhs.award')
         # Reset for indempodence
         self.reset()
 
@@ -3830,7 +3832,7 @@ class Round(TimeStampedModel):
         # Create from contests if no prior round
         if not prior_round:
             contests = self.session.contests.select_related(
-                'award',
+                # 'award',
             ).filter(
                 status__gt=0,
             ).annotate(
@@ -3843,24 +3845,27 @@ class Round(TimeStampedModel):
             ).exclude(
                 cnt=0,
             ).order_by(
-                'award__tree_sort',
+                # 'award__tree_sort',
             )
             i = 0
             for contest in contests:
                 i += 1
+                award = Award.objects.get(contest.award_id)
                 self.outcomes.create(
                     num=i,
-                    award=contest.award,
+                    award=award,
                 )
         else:
-            prior_outcomes = prior_round.outcomes.exclude(
-                award__is_single=True,
-            )
-            for prior_outcome in prior_outcomes:
-                new_outcome = self.outcomes.create(
-                    num=prior_outcome.num,
-                    award=prior_outcome.award,
-                )
+            raise RuntimeError("this needs to be fixed")
+            # prior_outcomes = prior_round.outcomes.exclude(
+            #     # award__is_single=True,
+            # )
+            # for prior_outcome in prior_outcomes:
+            #     award = Award.objects.get(prior_outcome.award_id)
+            #     new_outcome = self.outcomes.create(
+            #         num=prior_outcome.num,
+            #         award=award,
+            #     )
 
         # Create Appearances
         Appearance = apps.get_model('rmanager.appearance')
@@ -3881,9 +3886,10 @@ class Round(TimeStampedModel):
                     status__gt=0,
                 )
                 # Set is_single=True if they are only in single-round contests
+                raise RuntimeError("Fix")
                 is_single = not bool(
                     contestants.filter(
-                        contest__award__is_single=False,
+                        # contest__award__is_single=False,
                     )
                 )
                 # Create and start group
@@ -3897,8 +3903,8 @@ class Round(TimeStampedModel):
                     representing=entry.representing,
                 )
                 # Create contenders
-                awards = contestants.values_list('contest__award', flat=True)
-                outcomes = self.outcomes.filter(award__in=awards)
+                # awards = contestants.values_list('contest__award', flat=True)
+                # outcomes = self.outcomes.filter(award__in=awards)
                 for outcome in outcomes:
                     outcome.contenders.create(
                         appearance=appearance,
@@ -3922,7 +3928,7 @@ class Round(TimeStampedModel):
                 )
                 for new_outcome in new_outcomes:
                     curry = bool(
-                        prior_appearance.contenders.filter(outcome__award=new_outcome.award)
+                        # prior_appearance.contenders.filter(outcome__award=new_outcome.award)
                     )
                     if curry:
                         new_outcome.contenders.create(

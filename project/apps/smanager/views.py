@@ -62,7 +62,7 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
         'session',
-        'award',
+        # 'award',
     ).prefetch_related(
         'contestants',
         # 'contestants__entry',

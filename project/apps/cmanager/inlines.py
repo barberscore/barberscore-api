@@ -4,7 +4,6 @@ from django.contrib import admin
 
 # Local
 from .models import Assignment
-from .models import Award
 from .models import Convention
 
 
@@ -39,26 +38,6 @@ class AssignmentInline(admin.TabularInline):
     raw_id_fields = [
         'user',
     ]
-
-class AwardInline(admin.TabularInline):
-    model = Award
-    fields = [
-        'name',
-        'kind',
-        'gender',
-        'is_single',
-        'group',
-    ]
-    readonly_fields = [
-        'name',
-        'status',
-    ]
-    extra = 0
-    show_change_link = True
-    classes = [
-        'collapse',
-    ]
-
 
 class ConventionInline(admin.TabularInline):
     model = Convention

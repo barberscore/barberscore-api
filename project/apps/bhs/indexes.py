@@ -3,6 +3,25 @@
 from algoliasearch_django import AlgoliaIndex
 
 
+class AwardIndex(AlgoliaIndex):
+    fields = [
+        'name',
+        'get_kind_display',
+        'get_gender_display',
+    ]
+    settings = {
+        'searchableAttributes': [
+            'name',
+            'get_kind_display',
+            'get_gender_display',
+        ],
+        'attributesForFaceting': [
+            'get_kind_display',
+            'get_gender_display',
+        ]
+    }
+
+
 class GroupIndex(AlgoliaIndex):
     should_index = 'is_active'
     fields = [

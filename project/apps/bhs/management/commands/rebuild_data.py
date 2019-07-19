@@ -54,6 +54,6 @@ class Command(BaseCommand):
         Group.objects.denormalize(cursor=cursor)
         Group.objects.sort_tree()
         Group.objects.update_seniors()
-        Award = apps.get_model('cmanager.award')
+        Award = apps.get_model('bhs.award')
         Award.objects.sort_tree()
         return

@@ -8,6 +8,7 @@ from reversion.admin import VersionAdmin
 # Local
 
 
+from .models import Award
 from .models import Person
 from .models import Group
 from .models import Member
@@ -16,6 +17,7 @@ from .models import Chart
 from .models import Repertory
 
 from .inlines import RepertoryInline
+
 from .inlines import MemberInline
 from .inlines import OfficerInline
 
@@ -53,6 +55,84 @@ class ReadOnlyAdmin(admin.ModelAdmin):
         extra_context['show_save_and_continue'] = False
         extra_context['show_save'] = False
         return super().changeform_view(request, object_id, extra_context=extra_context)
+
+
+@admin.register(Award)
+class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fsm_field = [
+        'status',
+    ]
+    save_on_top = True
+    fields = [
+        'id',
+        'name',
+        'status',
+        'group_id',
+        'kind',
+        'gender',
+        'district',
+        'division',
+        'age',
+        'level',
+        'season',
+        'is_single',
+        'is_novice',
+        ('threshold', 'minimum', 'advance', 'spots',),
+        'description',
+        'notes',
+    ]
+
+    list_display = [
+        'name',
+        # 'size',
+        # 'scope',
+        'group_id',
+        'division',
+        'kind',
+        'age',
+        'gender',
+        'level',
+        # 'size',
+        # 'scope',
+        # 'season',
+        # 'rounds',
+        # 'threshold',
+        # 'advance',
+        # 'minimum',
+        'status',
+    ]
+
+    # list_editable = [
+    #     'threshold',
+    #     'advance',
+    #     'minimum',
+    # ]
+    list_filter = [
+        'status',
+        'kind',
+        'level',
+        # AwardQualifierLevelFilter,
+        DistrictListFilter,
+        'district',
+        'division',
+        'age',
+        'gender',
+        'season',
+        'is_single',
+        'is_novice',
+    ]
+
+    readonly_fields = [
+        'id',
+    ]
+
+    search_fields = [
+        'name',
+    ]
+
+    ordering = (
+        'tree_sort',
+    )
 
 
 @admin.register(Chart)

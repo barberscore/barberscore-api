@@ -144,7 +144,7 @@ class OutcomeAdmin(admin.ModelAdmin):
         'id',
         'status',
         'round',
-        'award',
+        # 'award_id',
         'num',
         'name',
         # 'legacy_name',
@@ -153,7 +153,7 @@ class OutcomeAdmin(admin.ModelAdmin):
     list_display = [
         'status',
         'round',
-        'award',
+        # 'award_id',
         'num',
         'name',
         # 'legacy_name',
@@ -165,12 +165,12 @@ class OutcomeAdmin(admin.ModelAdmin):
 
     list_select_related = [
         'round',
-        'award',
+        # 'award',
     ]
 
     autocomplete_fields = [
         'round',
-        'award',
+        # 'award',
     ]
 
     readonly_fields = [

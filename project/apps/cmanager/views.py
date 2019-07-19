@@ -17,10 +17,8 @@ from .responders import XLSXResponse
 from .filtersets import AssignmentFilterset
 from .filtersets import ConventionFilterset
 from .models import Assignment
-from .models import Award
 from .models import Convention
 from .serializers import AssignmentSerializer
-from .serializers import AwardSerializer
 from .serializers import ConventionSerializer
 
 
@@ -87,64 +85,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
-
-
-class AwardViewSet(viewsets.ModelViewSet):
-    queryset = Award.objects.select_related(
-    ).prefetch_related(
-    ).order_by('status', 'name')
-    serializer_class = AwardSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "award"
-
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(
-        methods=['get'],
-        detail=False,
-        renderer_classes=[XLSXRenderer],
-        permission_classes=[DRYPermissions],
-        content_negotiation_class=IgnoreClientContentNegotiation,
-    )
-    def portfolio(self, request):
-        xlsx = Award.objects.get_awards()
-        file_name = 'awards-report'
-        return XLSXResponse(
-            xlsx,
-            file_name=file_name,
-            status=status.HTTP_200_OK
-        )
 
 
 class ConventionViewSet(viewsets.ModelViewSet):

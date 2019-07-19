@@ -7,7 +7,6 @@ from rest_framework.serializers import SerializerMethodField
 from .fields import TimezoneField
 
 from .models import Assignment
-from .models import Award
 from .models import Convention
 
 
@@ -37,42 +36,6 @@ class AssignmentSerializer(serializers.ModelSerializer):
     #         'convention',
     #         'person',
     #     ]
-
-
-class AwardSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Award
-        fields = [
-            'id',
-            'name',
-            'status',
-            'kind',
-            'gender',
-            'level',
-            'season',
-            'is_single',
-            'threshold',
-            'minimum',
-            'advance',
-            'spots',
-            'description',
-            'notes',
-            'district',
-            'division',
-
-            'age',
-            'is_novice',
-
-            'size',
-            'size_range',
-            'scope',
-            'scope_range',
-            'tree_sort',
-            'group_id',
-            'permissions',
-        ]
 
 
 class ConventionSerializer(serializers.ModelSerializer):

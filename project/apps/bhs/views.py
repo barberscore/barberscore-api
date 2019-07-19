@@ -28,6 +28,7 @@ from .filtersets import MemberFilterset
 from .filtersets import OfficerFilterset
 from .filtersets import PersonFilterset
 # from .filterbackends import RepertoryFilterBackend
+from .models import Award
 from .models import Group
 from .models import Member
 from .models import Officer
@@ -44,6 +45,7 @@ from .serializers import OfficerSerializer
 from .serializers import PersonSerializer
 from .serializers import ChartSerializer
 from .serializers import RepertorySerializer
+from .serializers import AwardSerializer
 
 
 log = logging.getLogger(__name__)
@@ -63,6 +65,64 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
         Select the first renderer in the `.renderer_classes` list.
         """
         return (renderers[0], renderers[0].media_type)
+
+
+class AwardViewSet(viewsets.ModelViewSet):
+    queryset = Award.objects.select_related(
+    ).prefetch_related(
+    ).order_by('status', 'name')
+    serializer_class = AwardSerializer
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "award"
+
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(
+        methods=['get'],
+        detail=False,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
+    def portfolio(self, request):
+        xlsx = Award.objects.get_awards()
+        file_name = 'awards-report'
+        return XLSXResponse(
+            xlsx,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
 
 
 class GroupViewSet(viewsets.ModelViewSet):

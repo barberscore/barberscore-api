@@ -64,12 +64,10 @@ class OutcomeInline(admin.TabularInline):
     model = Outcome
     fields = [
         'num',
-        'award',
         'round',
         'name',
     ]
     autocomplete_fields = [
-        'award',
         'round',
     ]
     ordering = (
@@ -84,7 +82,7 @@ class OutcomeInline(admin.TabularInline):
     # def formfield_for_foreignkey(self, db_field, request, **kwargs):
     #     if db_field.name == 'award':
     #         try:
-    #             Award = apps.get_model('cmanager.award')
+    #             Award = apps.get_model('bhs.award')
     #             parent_obj_id = request.resolver_match.kwargs['object_id']
     #             round = Round.objects.get(id=parent_obj_id)
     #             kwargs["queryset"] = Award.objects.filter(

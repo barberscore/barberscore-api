@@ -31,6 +31,85 @@ User = get_user_model()
 
 from .tasks import get_accounts
 
+class AwardManager(Manager):
+    def sort_tree(self):
+        self.all().update(tree_sort=None)
+        awards = self.order_by(
+            '-status',  # Actives first
+            'group__tree_sort',  # Basic BHS Hierarchy
+            '-kind', # Quartet, Chorus
+            'gender', #Male, mixed
+            F('age').asc(nulls_first=True), # Null, Senior, Youth
+            'level', #Championship, qualifier
+            'is_novice',
+            'name', # alpha
+        )
+        i = 0
+        for award in awards:
+            i += 1
+            award.tree_sort = i
+            award.save()
+        return
+
+    def get_awards(self):
+        wb = Workbook()
+        ws = wb.active
+        fieldnames = [
+            'ID',
+            'District',
+            'Division',
+            'Name',
+            'Kind',
+            'Gender',
+            'Season',
+            'Level',
+            'Single',
+            'Spots',
+            'Threshold',
+            'Minimum',
+            'Advance',
+        ]
+        ws.append(fieldnames)
+        awards = self.select_related(
+            'group',
+        ).filter(
+            status__gt=0,
+        ).order_by('tree_sort')
+        for award in awards:
+            pk = str(award.id)
+            district = award.group.code
+            division = award.get_division_display()
+            name = award.name
+            kind = award.get_kind_display()
+            gender = award.get_gender_display()
+            season = award.get_season_display()
+            level = award.get_level_display()
+            single = award.is_single
+            spots = award.spots
+            threshold = award.threshold
+            minimum = award.minimum
+            advance = award.advance
+            row = [
+                pk,
+                district,
+                division,
+                name,
+                kind,
+                gender,
+                season,
+                level,
+                single,
+                spots,
+                threshold,
+                minimum,
+                advance,
+            ]
+            ws.append(row)
+        file = save_virtual_workbook(wb)
+        content = ContentFile(file)
+        return content
+
+
 class HumanManager(Manager):
     def export_values(self, cursor=None):
         hs = self.filter(

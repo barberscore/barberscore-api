@@ -27,6 +27,8 @@ from django.db.models import Q
 from django.db.models import Func
 from django.db.models import F
 from django.conf import settings
+from django.contrib.postgres.fields import DecimalRangeField
+from django.contrib.postgres.fields import IntegerRangeField
 
 from .fields import FileUploadPath
 from .tasks import build_email
@@ -61,19 +63,207 @@ class Contest(TimeStampedModel):
         default=STATUS.new,
     )
 
+    # Denormalized from BHS Award
+    award_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
+    award_name = models.CharField(
+        help_text="""Award Name.""",
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    AWARD_KIND = Choices(
+        (32, 'chorus', "Chorus"),
+        (41, 'quartet', "Quartet"),
+    )
+
+    award_kind = models.IntegerField(
+        choices=AWARD_KIND,
+        null=True,
+        blank=True,
+    )
+
+    AWARD_GENDER = Choices(
+        (10, 'male', "Male"),
+        (20, 'female', "Female"),
+        (30, 'mixed', "Mixed"),
+    )
+
+    award_gender = models.IntegerField(
+        help_text="""
+            The gender to which the award is restricted.  If unselected, this award is open to all combinations.
+        """,
+        choices=AWARD_GENDER,
+        null=True,
+        blank=True,
+    )
+
+    AWARD_LEVEL = Choices(
+        (10, 'championship', "Championship"),
+        (30, 'qualifier', "Qualifier"),
+        (45, 'representative', "Representative"),
+        (50, 'deferred', "Deferred"),
+        (60, 'manual', "Manual"),
+        (70, 'raw', "Improved - Raw"),
+        (80, 'standard', "Improved - Standard"),
+    )
+
+    award_level = models.IntegerField(
+        choices=AWARD_LEVEL,
+        null=True,
+        blank=True,
+    )
+
+    AWARD_SEASON = Choices(
+        (1, 'summer', 'Summer',),
+        (2, 'midwinter', 'Midwinter',),
+        (3, 'fall', 'Fall',),
+        (4, 'spring', 'Spring',),
+    )
+
+    award_season = models.IntegerField(
+        choices=AWARD_SEASON,
+        null=True,
+        blank=True,
+    )
+
+    award_description = models.TextField(
+        help_text="""
+            The Public description of the award.""",
+        max_length=1000,
+        null=True,
+        blank=True,
+    )
+
+    award_district = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    AWARD_DIVISION = Choices(
+        (10, 'evgd1', 'EVG Division I'),
+        (20, 'evgd2', 'EVG Division II'),
+        (30, 'evgd3', 'EVG Division III'),
+        (40, 'evgd4', 'EVG Division IV'),
+        (50, 'evgd5', 'EVG Division V'),
+        (60, 'fwdaz', 'FWD Arizona'),
+        (70, 'fwdne', 'FWD Northeast'),
+        (80, 'fwdnw', 'FWD Northwest'),
+        (90, 'fwdse', 'FWD Southeast'),
+        (100, 'fwdsw', 'FWD Southwest'),
+        (110, 'lol10l', 'LOL 10000 Lakes'),
+        (120, 'lolone', 'LOL Division One'),
+        (130, 'lolnp', 'LOL Northern Plains'),
+        (140, 'lolpkr', 'LOL Packerland'),
+        (150, 'lolsw', 'LOL Southwest'),
+        # (160, 'madatl', 'MAD Atlantic'),
+        (170, 'madcen', 'MAD Central'),
+        (180, 'madnth', 'MAD Northern'),
+        (190, 'madsth', 'MAD Southern'),
+        # (200, 'madwst', 'MAD Western'),
+        (210, 'nedgp', 'NED Granite and Pine'),
+        (220, 'nedmtn', 'NED Mountain'),
+        (230, 'nedpat', 'NED Patriot'),
+        (240, 'nedsun', 'NED Sunrise'),
+        (250, 'nedyke', 'NED Yankee'),
+        (260, 'swdne', 'SWD Northeast'),
+        (270, 'swdnw', 'SWD Northwest'),
+        (280, 'swdse', 'SWD Southeast'),
+        (290, 'swdsw', 'SWD Southwest'),
+    )
+
+    award_division = models.IntegerField(
+        choices=AWARD_DIVISION,
+        null=True,
+        blank=True,
+    )
+
+    AWARD_AGE = Choices(
+        (10, 'seniors', 'Seniors',),
+        (20, 'novice', 'Novice',),
+        (30, 'youth', 'Youth',),
+    )
+
+    award_age = models.IntegerField(
+        choices=AWARD_AGE,
+        null=True,
+        blank=True,
+    )
+
+    award_is_novice = models.BooleanField(
+        default=False,
+        null=True,
+        blank=True,
+    )
+
+    AWARD_SIZE = Choices(
+        (100, 'p1', 'Plateau 1',),
+        (110, 'p2', 'Plateau 2',),
+        (120, 'p3', 'Plateau 3',),
+        (130, 'p4', 'Plateau 4',),
+        (140, 'pa', 'Plateau A',),
+        (150, 'paa', 'Plateau AA',),
+        (160, 'paaa', 'Plateau AAA',),
+        (170, 'paaaa', 'Plateau AAAA',),
+        (180, 'pb', 'Plateau B',),
+        (190, 'pi', 'Plateau I',),
+        (200, 'pii', 'Plateau II',),
+        (210, 'piii', 'Plateau III',),
+        (220, 'piv', 'Plateau IV',),
+        (230, 'small', 'Small',),
+    )
+
+    award_size = models.IntegerField(
+        choices=AWARD_SIZE,
+        null=True,
+        blank=True,
+    )
+
+    award_size_range = IntegerRangeField(
+        null=True,
+        blank=True,
+    )
+
+    AWARD_SCOPE = Choices(
+        (100, 'p1', 'Plateau 1',),
+        (110, 'p2', 'Plateau 2',),
+        (120, 'p3', 'Plateau 3',),
+        (130, 'p4', 'Plateau 4',),
+        (140, 'pa', 'Plateau A',),
+        (150, 'paa', 'Plateau AA',),
+        (160, 'paaa', 'Plateau AAA',),
+        (170, 'paaaa', 'Plateau AAAA',),
+        (175, 'paaaaa', 'Plateau AAAAA',),
+    )
+
+    award_scope = models.IntegerField(
+        choices=AWARD_SCOPE,
+        null=True,
+        blank=True,
+    )
+
+    award_scope_range = DecimalRangeField(
+        null=True,
+        blank=True,
+    )
+
+    award_tree_sort = models.IntegerField(
+        # unique=True,
+        editable=False,
+        null=True,
+        blank=True,
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
         related_name='contests',
         on_delete=models.CASCADE,
-    )
-
-    award = models.ForeignKey(
-        'cmanager.award',
-        related_name='contests',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
 
     # Relations
@@ -502,7 +692,9 @@ class Entry(TimeStampedModel):
         template = 'emails/entry_submit.txt'
         contestants = self.contestants.filter(
             status__gt=0,
-        ).order_by('contest__award__name')
+        ).order_by(
+            # 'contest__award__name',
+        )
         context = {
             'entry': self,
             'contestants': contestants,
@@ -538,7 +730,7 @@ class Entry(TimeStampedModel):
         contestants = self.contestants.filter(
             status__gt=0,
         ).order_by(
-            'contest__award__name',
+            # 'contest__award__name',
         )
         members = group.members.filter(
             status__gt=0,
@@ -848,13 +1040,13 @@ class Session(TimeStampedModel):
         Panelist = apps.get_model('rmanager.panelist')
         target = self.contests.filter(
             status__gt=0,
-            award__children__isnull=False,
+            # award__children__isnull=False,
         ).distinct().first().award
         feeders = self.feeders.all()
         entries = Entry.objects.filter(
             session__in=feeders,
-            contestants__contest__award__parent=target,
-            contestants__contest__status__gt=0,
+            # contestants__contest__award__parent=target,
+            # contestants__contest__status__gt=0,
         ).annotate(
             raw_score=Avg(
                 'appearances__songs__scores__points',
@@ -932,6 +1124,7 @@ class Session(TimeStampedModel):
 
     def get_drcj(self):
         Entry = apps.get_model('smanager.entry')
+        Award = apps.get_model('bhs.award')
         Group = apps.get_model('bhs.group')
         Member = apps.get_model('bhs.member')
         wb = Workbook()
@@ -993,9 +1186,12 @@ class Session(TimeStampedModel):
             awards_list = []
             contestants = entry.contestants.filter(
                 status__gt=0,
-            ).order_by('contest__award__name')
+            ).order_by(
+                # 'contest__award__name',
+            )
             for contestant in contestants:
-                awards_list.append(contestant.contest.award.name)
+                award = Award.objects.get(id=contestant.contest.award_id)
+                awards_list.append(award.name)
             awards = "\n".join(filter(None, awards_list))
             parts = {}
             part = 1
@@ -1469,14 +1665,15 @@ class Session(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         """Build session contests."""
+        Award.objects.get_model('bhs.award')
 
         # Reset for indempotence
         self.reset()
 
         i = 0
         # Get all the active awards for the convention group
-        awards = self.convention.group.awards.filter(
-            status=self.convention.group.awards.model.STATUS.active,
+        awards = Award.filter(
+            status=Award.STATUS.active,
             kind=self.kind,
             season=self.convention.season,
             # division__in=self.convention.divisions,

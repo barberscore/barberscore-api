@@ -13,8 +13,45 @@ from .models import Member
 from .models import Officer
 from .models import Person
 
+from .models import Award
 from .models import Chart
 from .models import Repertory
+
+
+class AwardSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Award
+        fields = [
+            'id',
+            'name',
+            'status',
+            'kind',
+            'gender',
+            'level',
+            'season',
+            'is_single',
+            'threshold',
+            'minimum',
+            'advance',
+            'spots',
+            'description',
+            'notes',
+            'district',
+            'division',
+
+            'age',
+            'is_novice',
+
+            'size',
+            'size_range',
+            'scope',
+            'scope_range',
+            'tree_sort',
+            'group_id',
+            'permissions',
+        ]
 
 
 class GroupSerializer(serializers.ModelSerializer):

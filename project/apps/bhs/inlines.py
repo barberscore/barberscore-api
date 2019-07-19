@@ -11,10 +11,31 @@ from .models import Status
 from .models import Structure
 from .models import Subscription
 
+from .models import Award
 from .models import Repertory
 from .models import Group
 from .models import Member
 from .models import Officer
+
+class AwardInline(admin.TabularInline):
+    model = Award
+    fields = [
+        'name',
+        'kind',
+        'gender',
+        'is_single',
+        'group',
+    ]
+    readonly_fields = [
+        'name',
+        'status',
+    ]
+    extra = 0
+    show_change_link = True
+    classes = [
+        'collapse',
+    ]
+
 
 class StructureInline(admin.TabularInline):
     model = Structure
