@@ -71,8 +71,6 @@ class AwardSerializer(serializers.ModelSerializer):
             'scope_range',
             'tree_sort',
             'group_id',
-            'parent',
-            # 'children',
             'permissions',
         ]
 

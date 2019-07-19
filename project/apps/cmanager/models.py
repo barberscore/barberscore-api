@@ -409,16 +409,6 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    parent = models.ForeignKey(
-        'self',
-        help_text="""If a qualifier, this is the award qualifying for.""",
-        related_name='children',
-        null=True,
-        blank=True,
-        db_index=True,
-        on_delete=models.SET_NULL,
-    )
-
     # Internals
     objects = AwardManager()
 

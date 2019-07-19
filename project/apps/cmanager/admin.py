@@ -89,7 +89,6 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'season',
         'is_single',
         'is_novice',
-        'parent',
         ('threshold', 'minimum', 'advance', 'spots',),
         'description',
         'notes',
@@ -141,10 +140,6 @@ class AwardAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     search_fields = [
         'name',
-    ]
-
-    autocomplete_fields = [
-        'parent',
     ]
 
     ordering = (
