@@ -50,7 +50,7 @@ class ConventionSerializer(serializers.ModelSerializer):
     timezone = TimezoneField(allow_null=True)
     permissions = DRYPermissionsField()
     included_serializers = {
-        'assignments': 'apps.cmanager.serializers.AssignmentSerializer',
+        'assignments': 'apps.smanager.serializers.AssignmentSerializer',
     }
 
     class Meta:

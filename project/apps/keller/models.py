@@ -81,7 +81,7 @@ class CleanPanelist(models.Model):
     objects = CleanPanelistManager()
 
     def get_convention(self):
-        Convention = apps.get_model('cmanager.convention')
+        Convention = apps.get_model('smanager.convention')
         year = self.year
         name = self.convention
 
@@ -146,7 +146,7 @@ class CleanPanelist(models.Model):
 
     def get_panelist(self):
         Panelist = apps.get_model('rmanager.panelist')
-        Convention = apps.get_model('cmanager.convention')
+        Convention = apps.get_model('smanager.convention')
         Session = apps.get_model('smanager.session')
         Round = apps.get_model('rmanager.round')
 
@@ -657,7 +657,7 @@ class RawPanelist(models.Model):
     objects = RawPanelistManager()
 
     def get_convention(self):
-        Convention = apps.get_model('cmanager.convention')
+        Convention = apps.get_model('smanager.convention')
         year = self.year
         name = self.convention
 
@@ -722,7 +722,7 @@ class RawPanelist(models.Model):
 
     def get_panelist(self):
         Panelist = apps.get_model('rmanager.panelist')
-        Convention = apps.get_model('cmanager.convention')
+        Convention = apps.get_model('smanager.convention')
         Session = apps.get_model('smanager.session')
         Round = apps.get_model('rmanager.round')
 
@@ -1137,7 +1137,7 @@ class RawSong(models.Model):
     objects = RawSongManager()
 
     def get_convention(self):
-        Convention = apps.get_model('cmanager.convention')
+        Convention = apps.get_model('smanager.convention')
         year = self.year
         name = self.event
 
@@ -1190,7 +1190,7 @@ class RawSong(models.Model):
 
     def get_song(self):
         Song = apps.get_model('rmanager.song')
-        Convention = apps.get_model('cmanager.convention')
+        Convention = apps.get_model('smanager.convention')
         Session = apps.get_model('smanager.session')
         Round = apps.get_model('rmanager.round')
 

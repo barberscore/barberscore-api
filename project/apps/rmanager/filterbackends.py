@@ -1,7 +1,7 @@
 from dry_rest_permissions.generics import DRYPermissionFiltersBase
 from django.db.models import Q
 
-from apps.cmanager.models import Assignment
+from apps.smanager.models import Assignment
 
 from .models import Appearance
 from .models import Round

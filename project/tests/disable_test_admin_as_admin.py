@@ -25,10 +25,10 @@ def test_appearance_admin(admin_django_client, appearance):
 
 
 def test_assignment_admin(admin_django_client, assignment):
-    path = reverse('admin:cmanager_assignment_changelist')
+    path = reverse('admin:smanager_assignment_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:cmanager_assignment_change', args=(str(assignment.id),))
+    path = reverse('admin:smanager_assignment_change', args=(str(assignment.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
@@ -79,10 +79,10 @@ def test_contender_admin(admin_django_client, contender):
 
 
 def test_convention_admin(admin_django_client, convention):
-    path = reverse('admin:cmanager_convention_changelist')
+    path = reverse('admin:smanager_convention_changelist')
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:cmanager_convention_change', args=(str(convention.id),))
+    path = reverse('admin:smanager_convention_change', args=(str(convention.id),))
     response = admin_django_client.get(path)
     assert response.status_code == status.HTTP_200_OK
 
