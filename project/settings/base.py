@@ -232,9 +232,6 @@ INSTALLED_APPS = [
     'rest_framework_jwt',
     'corsheaders',
     'apps.bhs',
-    'apps.cmanager',
     'apps.smanager',
     'apps.rmanager',
-    'apps.stage',
-    'apps.keller',
 ]
