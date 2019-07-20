@@ -33,9 +33,8 @@ from apps.bhs.models import Officer
 from apps.bhs.models import Person
 from apps.bhs.models import Repertory
 
-from apps.cmanager.models import Assignment
-from apps.cmanager.models import Convention
-
+from apps.smanager.models import Assignment
+from apps.smanager.models import Convention
 from apps.smanager.models import Contest
 from apps.smanager.models import Contestant
 from apps.smanager.models import Entry
