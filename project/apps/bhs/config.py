@@ -5,7 +5,7 @@ from django.apps import AppConfig
 
 class BhsConfig(AppConfig):
     name = 'apps.bhs'
-    verbose_name = 'BHS'
+    verbose_name = 'BHS Member Center/Chart & Award Manager'
 
     def ready(self):
         # from .signals import user_post_save

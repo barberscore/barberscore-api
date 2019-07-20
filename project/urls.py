@@ -12,7 +12,6 @@ urlpatterns = [
     path('', lambda r: HttpResponseRedirect('admin/')),
     path('admin/', admin.site.urls),
     path('bhs/', include('apps.bhs.urls')),
-    path('cmanager/', include('apps.cmanager.urls')),
     path('smanager/', include('apps.smanager.urls')),
     path('rmanager/', include('apps.rmanager.urls')),
     path('jwt/', include('rest_framework_jwt.urls')),
