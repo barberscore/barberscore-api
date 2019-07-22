@@ -85,13 +85,13 @@ LOGGING = {
     },
 }
 # Database
-# DATABASES['bhs_db'] = dj_database_url.parse(
-#     get_env_variable("BHS_DATABASE_URL"),
-#     conn_max_age=600,
-# )
-# DATABASE_ROUTERS = [
-#     'routers.BHSRouter',
-# ]
+DATABASES['bhs_db'] = dj_database_url.parse(
+    get_env_variable("BHS_DATABASE_URL"),
+    conn_max_age=600,
+)
+DATABASE_ROUTERS = [
+    'routers.BHSRouter',
+]
 
 INSTALLED_APPS += [
     'debug_toolbar',
