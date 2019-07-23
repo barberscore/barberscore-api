@@ -179,11 +179,34 @@ class EntrySerializer(serializers.ModelSerializer):
 
             'owners',
             'session',
+
             'group_id',
+            'group_status',
+            'group_name',
+            'group_nomen',
+            'group_kind',
+            'group_gender',
+            'group_division',
+            'group_bhs_id',
+            'group_code',
+            # 'group_image_id',
+            'group_description',
+            'group_participants',
+            'group_tree_sort',
+            'group_international',
+            'group_district',
+            'group_chapter',
+            'group_is_senior',
+            'group_is_youth',
+            'group_is_divided',
+            'group_charts',
 
             'contestants',
             'permissions',
             'statelogs',
+        ]
+        read_only_fields = [
+            # 'group_image_id',
         ]
 
     class JSONAPIMeta:

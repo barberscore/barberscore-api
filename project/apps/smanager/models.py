@@ -31,9 +31,10 @@ from django.conf import settings
 from django.contrib.postgres.fields import DecimalRangeField
 from django.contrib.postgres.fields import IntegerRangeField
 from django.utils.functional import cached_property
+from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import JSONField
 
-from .fields import FileUploadPath
-from .fields import ImageUploadPath
+from .fields import UploadPath
 from .fields import DivisionsField
 from .tasks import build_email
 from .tasks import send_invite_email_from_entry
@@ -46,6 +47,8 @@ from .tasks import send_verify_email_from_session
 from .tasks import send_verify_report_email_from_session
 from .tasks import send_package_email_from_session
 from .tasks import send_package_report_email_from_session
+
+from django.apps import apps
 
 
 class Assignment(TimeStampedModel):
@@ -273,7 +276,8 @@ class Convention(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=ImageUploadPath(),
+        upload_to=UploadPath('image'),
+        max_length=255,
         null=True,
         blank=True,
     )
@@ -632,6 +636,7 @@ class Convention(TimeStampedModel):
     def deactivate(self, *args, **kwargs):
         """Archive convention and related sessions."""
         return
+
 
 class Contest(TimeStampedModel):
     id = models.UUIDField(
@@ -1132,6 +1137,235 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
+    image = models.ImageField(
+        upload_to=UploadPath('image'),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    # Denorm
+    group_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
+    GROUP_STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (-5, 'aic', 'AIC',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    group_status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=GROUP_STATUS,
+        null=True,
+        blank=True,
+    )
+
+    group_name = models.CharField(
+        help_text="""
+            The name of the resource.
+        """,
+        max_length=255,
+        default='',
+        blank=True,
+    )
+
+    group_nomen = models.CharField(
+        help_text="""
+            The combined name of the resource.
+        """,
+        max_length=255,
+        default='',
+        blank=True,
+    )
+
+    GROUP_KIND = Choices(
+        ('International', [
+            (1, 'international', "International"),
+        ]),
+        ('District', [
+            (11, 'district', "District"),
+            (12, 'noncomp', "Noncompetitive"),
+            (13, 'affiliate', "Affiliate"),
+        ]),
+        ('Chapter', [
+            (30, 'chapter', "Chapter"),
+        ]),
+        ('Group', [
+            (32, 'chorus', "Chorus"),
+            (41, 'quartet', "Quartet"),
+            (46, 'vlq', "VLQ"),
+        ]),
+    )
+
+    group_kind = models.IntegerField(
+        help_text="""
+            The kind of group.
+        """,
+        choices=GROUP_KIND,
+        null=True,
+        blank=True,
+    )
+
+    GROUP_GENDER = Choices(
+        (10, 'male', "Male"),
+        (20, 'female', "Female"),
+        (30, 'mixed', "Mixed"),
+    )
+
+    group_gender = models.IntegerField(
+        help_text="""
+            The gender of group.
+        """,
+        choices=GROUP_GENDER,
+        null=True,
+        blank=True,
+    )
+
+    GROUP_DIVISION = Choices(
+        ('EVG', [
+            (10, 'evgd1', 'EVG Division I'),
+            (20, 'evgd2', 'EVG Division II'),
+            (30, 'evgd3', 'EVG Division III'),
+            (40, 'evgd4', 'EVG Division IV'),
+            (50, 'evgd5', 'EVG Division V'),
+        ]),
+        ('FWD', [
+            (60, 'fwdaz', 'FWD Arizona'),
+            (70, 'fwdne', 'FWD Northeast'),
+            (80, 'fwdnw', 'FWD Northwest'),
+            (90, 'fwdse', 'FWD Southeast'),
+            (100, 'fwdsw', 'FWD Southwest'),
+        ]),
+        ('LOL', [
+            (110, 'lol10l', 'LOL 10000 Lakes'),
+            (120, 'lolone', 'LOL Division One'),
+            (130, 'lolnp', 'LOL Northern Plains'),
+            (140, 'lolpkr', 'LOL Packerland'),
+            (150, 'lolsw', 'LOL Southwest'),
+        ]),
+        ('MAD', [
+            # (160, 'madatl', 'MAD Atlantic'),
+            (170, 'madcen', 'MAD Central'),
+            (180, 'madnth', 'MAD Northern'),
+            (190, 'madsth', 'MAD Southern'),
+            # (200, 'madwst', 'MAD Western'),
+        ]),
+        ('NED', [
+            (210, 'nedgp', 'NED Granite and Pine'),
+            (220, 'nedmtn', 'NED Mountain'),
+            (230, 'nedpat', 'NED Patriot'),
+            (240, 'nedsun', 'NED Sunrise'),
+            (250, 'nedyke', 'NED Yankee'),
+        ]),
+        ('SWD', [
+            (260, 'swdne', 'SWD Northeast'),
+            (270, 'swdnw', 'SWD Northwest'),
+            (280, 'swdse', 'SWD Southeast'),
+            (290, 'swdsw', 'SWD Southwest'),
+        ]),
+    )
+
+    group_division = models.IntegerField(
+        choices=GROUP_DIVISION,
+        null=True,
+        blank=True,
+    )
+
+    group_bhs_id = models.IntegerField(
+        blank=True,
+        null=True,
+        unique=True,
+    )
+
+    group_code = models.CharField(
+        help_text="""
+            Short-form code.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    group_description = models.TextField(
+        help_text="""
+            A description of the group.  Max 1000 characters.""",
+        blank=True,
+        max_length=1000,
+        default='',
+    )
+
+    group_participants = models.CharField(
+        help_text='Director(s) or Members (listed TLBB)',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    group_tree_sort = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    group_international = models.TextField(
+        help_text="""
+            The denormalized international group.""",
+        blank=True,
+        max_length=255,
+        default='',
+    )
+
+    group_district = models.TextField(
+        help_text="""
+            The denormalized district group.""",
+        blank=True,
+        max_length=255,
+        default='',
+    )
+
+    group_chapter = models.TextField(
+        help_text="""
+            The denormalized chapter group.""",
+        blank=True,
+        max_length=255,
+        default='',
+    )
+
+    group_is_senior = models.BooleanField(
+        help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
+        default=False,
+    )
+
+    group_is_youth = models.BooleanField(
+        help_text="""Qualifies as a Youth Group.  Must be set manually.""",
+        default=False,
+    )
+
+    group_is_divided = models.BooleanField(
+        help_text="""This district has divisions.""",
+        default=False,
+    )
+
+    group_is_divided = models.BooleanField(
+        help_text="""This district has divisions.""",
+        default=False,
+    )
+
+    group_charts = ArrayField(
+        base_field=JSONField(
+            default=dict,
+            blank=True,
+            null=True,
+        ),
+        null=True,
+        blank=True,
+        default=list,
+    )
+
     # FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
@@ -1144,17 +1378,15 @@ class Entry(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    group_id = models.UUIDField(
-        null=True,
-        blank=True,
-    )
-
     statelogs = GenericRelation(
         StateLog,
         related_query_name='entries',
     )
 
     # Properties
+    @cached_property
+    def image_id(self):
+        return self.image.name or 'missing_image'
 
     # Internals
     class Meta:
@@ -1174,10 +1406,10 @@ class Entry(TimeStampedModel):
             raise ValidationError(
                 {'is_private': 'You may not compete for an award and remain private.'}
             )
-        # if self.session.status >= self.session.STATUS.packaged:
-        #     raise ValidationError(
-        #         {'session': 'You may not add entries after the Session has started.'}
-        #     )
+        if self.session.status >= self.session.STATUS.packaged:
+            raise ValidationError(
+                {'session': 'You may not add entries after the Session has been packaged.'}
+            )
 
 
     # Entry Permissions
@@ -1222,15 +1454,69 @@ class Entry(TimeStampedModel):
         ])
 
     # Methods
+    def update_from_group(self):
+        if self.group_id:
+            Group = apps.get_model('bhs.group')
+            group = Group.objects.get(id=self.group_id)
+            repertories = group.repertories.filter(
+                status__gt=0,
+            )
+            charts = [{
+                'id': str(repertory.chart.id),
+                'title': repertory.chart.title,
+                'arrangers': repertory.chart.arrangers,
+                'nomen': repertory.chart.nomen,
+            } for repertory in repertories]
+            self.group_name = group.name
+            self.group_status = group.status
+            self.group_nomen = group.nomen
+            self.group_kind = group.kind
+            self.group_gender = group.gender
+            self.group_division = group.division
+            self.group_bhs_id = group.bhs_id
+            self.group_code = group.code
+            self.group_description = group.description
+            self.group_participants = group.participants
+            self.group_tree_sort = group.tree_sort
+            self.group_international = group.international
+            self.group_district = group.district
+            self.group_chapter = group.chapter
+            self.group_is_senior = group.is_senior
+            self.group_is_youth = group.is_youth
+            self.group_is_divided = group.is_divided
+            self.group_charts = charts
+            self.owners.set(group.owners.all())
+            if group.image:
+                try:
+                    self.image.save('image', group.image.file, save=True)
+                except:
+                    pass
+        return
+
+    def get_owner_emails(self):
+        owners = self.owners.order_by(
+            'last_name',
+            'first_name',
+        )
+        seen = set()
+        result = [
+            "{0} ({1}) <{2}>".format(owner.name, self.group_name, owner.email)
+            for owner in owners
+            if not (
+                "{0} ({1}) <{2}>".format(owner.name, self.group_name, owner.email) in seen or seen.add(
+                    "{0} ({1}) <{2}>".format(owner.name, self.group_name, owner.email)
+                )
+            )
+        ]
+        return result
+
     def get_invite_email(self):
-        Group = apps.get_model('bhs.group')
-        group = Group.objects.get(id=self.group_id)
         template = 'emails/entry_invite.txt'
         context = {'entry': self}
         subject = "[Barberscore] Contest Invitation for {0}".format(
-            group.name,
+            self.group_name,
         )
-        to = group.get_officer_emails()
+        to = self.get_owner_emails()
         cc = self.session.convention.get_drcj_emails()
         cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
@@ -1249,15 +1535,13 @@ class Entry(TimeStampedModel):
 
 
     def get_withdraw_email(self):
-        Group = apps.get_model('bhs.group')
-        group = Group.objects.get(id=self.group_id)
         # Send confirmation email
         template = 'emails/entry_withdraw.txt'
         context = {'entry': self}
         subject = "[Barberscore] Withdrawl Notification for {0}".format(
-            group.name,
+            self.group_name,
         )
-        to = group.get_officer_emails()
+        to = self.get_owner_emails()
         cc = self.session.convention.get_drcj_emails()
         cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
@@ -1276,22 +1560,20 @@ class Entry(TimeStampedModel):
 
 
     def get_submit_email(self):
-        Group = apps.get_model('bhs.group')
-        group = Group.objects.get(id=self.group_id)
         template = 'emails/entry_submit.txt'
         contestants = self.contestants.filter(
             status__gt=0,
         ).order_by(
-            # 'contest__award__name',
+            'contest__award_name',
         )
         context = {
             'entry': self,
             'contestants': contestants,
         }
         subject = "[Barberscore] Submission Notification for {0}".format(
-            group.name,
+            self.group_name,
         )
-        to = group.get_officer_emails()
+        to = self.get_owner_emails()
         cc = self.session.convention.get_drcj_emails()
         cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
@@ -1310,33 +1592,22 @@ class Entry(TimeStampedModel):
 
 
     def get_approve_email(self):
-        Group = apps.get_model('bhs.group')
-        group = Group.objects.get(id=self.group_id)
         template = 'emails/entry_approve.txt'
-        repertories = group.repertories.order_by(
-            'chart__title',
-        )
+        repertories = sorted(self.group_charts)
         contestants = self.contestants.filter(
             status__gt=0,
         ).order_by(
-            # 'contest__award__name',
-        )
-        members = group.members.filter(
-            status__gt=0,
-        ).order_by(
-            'person__last_name',
-            'person__first_name',
+            'contest__award_name',
         )
         context = {
             'entry': self,
             'repertories': repertories,
             'contestants': contestants,
-            'members': members,
         }
         subject = "[Barberscore] Approval Notification for {0}".format(
-            group.name,
+            self.group_name,
         )
-        to = group.get_officer_emails()
+        to = self.group.get_officer_emails()
         cc = self.session.convention.get_drcj_emails()
         cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
@@ -1359,38 +1630,25 @@ class Entry(TimeStampedModel):
         return True
 
     def can_invite_entry(self):
-        Group = apps.get_model('bhs.group')
-        group = Group.objects.get(id=self.group_id)
         return all([
-            group.officers.filter(status__gt=0),
-            group.status == group.STATUS.active,
+            self.owners,
+            self.group_status == self.GROUP_STATUS.active,
         ])
 
     def can_submit_entry(self):
-        Group = apps.get_model('bhs.group')
-        group = Group.objects.get(id=self.group_id)
-        # Instantiate list
-        checklist = []
-
-        # Only active groups can submit.
-        checklist.append(bool(group.STATUS.active))
-
-        # check to ensure all fields are entered
-        if group.kind == group.KIND.chorus:
-            checklist.append(
-                all([
-                    self.pos,
-                    self.participants
-                ])
-            )
-        # ensure they can't submit a private while competiting.
-        checklist.append(
+        return all([
+            # Only active groups can submit.
+            self.group_status == self.GROUP_STATUS.active,
+            # Check POS for choruses only
+            self.pos if self.group_kind == self.GROUP_KIND.chorus else True,
+            # ensure they can't submit a private while competiting.
             not all([
                 self.is_private,
                 self.contestants.filter(status__gt=0).count() > 0,
             ]),
-        )
-        return all(checklist)
+            # Check participants
+            self.participants,
+        ])
 
     def can_approve(self):
         if self.is_private and self.contestants.filter(status__gt=0):
@@ -1406,6 +1664,8 @@ class Entry(TimeStampedModel):
         conditions=[can_build_entry],
     )
     def build(self, *args, **kwargs):
+        """Build Entry"""
+        self.update_from_group()
         contests = self.session.contests.filter(
             status=self.session.contests.model.STATUS.included,
         )
@@ -1566,14 +1826,14 @@ class Session(TimeStampedModel):
     )
 
     legacy_report = models.FileField(
-        upload_to=FileUploadPath(),
+        upload_to=UploadPath('legacy_report'),
         blank=True,
         default='',
         storage=RawMediaCloudinaryStorage(),
     )
 
     drcj_report = models.FileField(
-        upload_to=FileUploadPath(),
+        upload_to=UploadPath('drcj_report'),
         blank=True,
         default='',
         storage=RawMediaCloudinaryStorage(),

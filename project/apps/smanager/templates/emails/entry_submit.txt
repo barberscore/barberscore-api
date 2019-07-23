@@ -7,9 +7,9 @@ directly (cc'd on this email).
 
 ENTRY DETAILS
 
-Group: {{entry.group.name|safe}}
-{% if entry.group.bhs_id %}
-BHS ID: {{entry.group.bhs_id}}
+Group: {{entry.group_name|safe}}
+{% if entry.group_bhs_id %}
+BHS ID: {{entry.group_bhs_id}}
 {% endif %}
 
 Session: {{entry.session.convention|safe}} {{entry.session.get_kind_display}} Session
@@ -21,12 +21,12 @@ Score/Eval-Only: {{entry.is_private|yesno|title}}
 {% if not is_private %}
 You selected to enter the following contests/awards:
 {% for contestant in contestants %}
-    - {{contestant.contest.award.name|safe}}
+    - {{contestant.contest.award_name|safe}}
 {% empty %}
     Not competing for any awards (Score/Eval only).
 {% endfor %}
 {% endif %}
-{% if entry.group.kind == entry.group.KIND.quartet %}
+{% if entry.group_kind == entry.GROUP_KIND.quartet %}
 
 Members (TLBrBs): {{entry.participants|safe|default:"(No Members Specified)"}}
 
