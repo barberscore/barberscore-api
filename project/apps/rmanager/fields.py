@@ -16,32 +16,15 @@ from django.utils.deconstruct import deconstructible
 
 @deconstructible
 class UploadPath(object):
-    # Maintained to keep migrations
-    def __call__(self, instance, filename):
+
+    def __init__(self, name):
+        self.name = name
+
+    def __call__(self, instance):
         return os.path.join(
+            instance._meta.app_label,
             instance._meta.model_name,
-            str(instance.id),
-        )
-
-
-@deconstructible
-class ImageUploadPath(object):
-
-    def __call__(self, instance, filename):
-        return os.path.join(
-            instance._meta.model_name,
-            'image',
-            str(instance.id),
-        )
-
-
-@deconstructible
-class FileUploadPath(object):
-
-    def __call__(self, instance, filename):
-        return os.path.join(
-            instance._meta.model_name,
-            filename,
+            self.name,
             str(instance.id),
         )
 

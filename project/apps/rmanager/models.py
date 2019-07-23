@@ -44,7 +44,7 @@ from .tasks import save_psa_from_panelist
 from .tasks import send_complete_email_from_appearance
 from .tasks import save_reports_from_round
 
-from .fields import FileUploadPath
+from .fields import UploadPath
 
 
 from .managers import AppearanceManager
@@ -161,13 +161,13 @@ class Appearance(TimeStampedModel):
     )
 
     variance_report = models.FileField(
-        upload_to=FileUploadPath(),
+        upload_to=UploadPath('variance_report'),
         blank=True,
         default='',
     )
 
     csa_report = models.FileField(
-        upload_to=FileUploadPath(),
+        upload_to=UploadPath('csa_report'),
         blank=True,
         default='',
     )
@@ -1577,7 +1577,7 @@ class Panelist(TimeStampedModel):
     )
 
     psa_report = models.FileField(
-        upload_to=FileUploadPath(),
+        upload_to=UploadPath('psa_report'),
         blank=True,
         default='',
     )
@@ -1950,19 +1950,19 @@ class Round(TimeStampedModel):
     )
 
     oss_report = models.FileField(
-        upload_to=FileUploadPath(),
+        upload_to=UploadPath('oss_report'),
         blank=True,
         default='',
     )
 
     sa_report = models.FileField(
-        upload_to=FileUploadPath(),
+        upload_to=UploadPath('sa_report'),
         blank=True,
         default='',
     )
 
     legacy_oss = models.FileField(
-        upload_to=FileUploadPath(),
+        upload_to=UploadPath('legacy_oss'),
         blank=True,
         default='',
     )
