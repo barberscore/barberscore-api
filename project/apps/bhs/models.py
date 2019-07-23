@@ -236,7 +236,7 @@ class Person(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=ImageUploadPath(),
+        upload_to=ImageUploadPath('image'),
         null=True,
         blank=True,
     )
@@ -567,6 +567,7 @@ class Group(TimeStampedModel):
         help_text="""
             The website URL of the resource.""",
         blank=True,
+        default='',
     )
 
     email = LowerEmailField(
@@ -655,7 +656,7 @@ class Group(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=ImageUploadPath(),
+        upload_to=ImageUploadPath('image'),
         null=True,
         blank=True,
     )
@@ -1452,7 +1453,7 @@ class Chart(TimeStampedModel):
     )
 
     image = models.ImageField(
-        upload_to=ImageUploadPath(),
+        upload_to=ImageUploadPath('image'),
         null=True,
         blank=True,
     )

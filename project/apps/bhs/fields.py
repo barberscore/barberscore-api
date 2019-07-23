@@ -2,12 +2,14 @@ import os
 import string
 from datetime import date
 import phonenumbers
-
+import six
+import pytz
 from django.db.models import EmailField, CharField, DateField
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.utils.deconstruct import deconstructible
 from rest_framework_json_api import serializers
+
 
 class ValidatedPhoneField(CharField):
     def from_db_value(self, value, expression, connection):
@@ -70,12 +72,17 @@ class GenderField(CharField):
 @deconstructible
 class ImageUploadPath(object):
 
+    def __init__(self, name):
+        self.name = name
+
     def __call__(self, instance, filename):
         return os.path.join(
+            instance._meta.app_label,
             instance._meta.model_name,
-            'image',
+            self.name,
             str(instance.id),
         )
+
 
 
 class NoPunctuationCharField(CharField):
