@@ -1278,7 +1278,6 @@ class Entry(TimeStampedModel):
     group_bhs_id = models.IntegerField(
         blank=True,
         null=True,
-        unique=True,
     )
 
     group_code = models.CharField(
@@ -1305,7 +1304,6 @@ class Entry(TimeStampedModel):
     )
 
     group_tree_sort = models.IntegerField(
-        unique=True,
         blank=True,
         null=True,
         editable=False,
