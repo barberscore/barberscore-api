@@ -176,6 +176,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'representing',
             'description',
             'notes',
+            'image_id',
 
             'owners',
             'session',
@@ -206,7 +207,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'statelogs',
         ]
         read_only_fields = [
-            # 'group_image_id',
+            'image_id',
         ]
 
     class JSONAPIMeta:
