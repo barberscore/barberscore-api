@@ -98,6 +98,7 @@ class ConventionSerializer(serializers.ModelSerializer):
     def validate(self, data):
         return data
 
+
 class ContestSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
@@ -128,6 +129,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'award_size_range',
             'award_tree_sort',
 
+            'entries',
             'contestants',
             'permissions',
         ]
@@ -203,6 +205,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'group_is_divided',
             'group_charts',
 
+            'contests',
             'contestants',
             'permissions',
             'statelogs',
