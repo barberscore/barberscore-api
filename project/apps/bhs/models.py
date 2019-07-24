@@ -831,7 +831,7 @@ class Group(TimeStampedModel):
         return bool(self.status == self.STATUS.active)
 
     def owner_ids(self):
-        return self.owners.values_list('id', flat=True)
+        return [str(owner.id) for owner in self.owners.all()]
 
     def get_officer_emails(self):
         officers = self.officers.filter(
