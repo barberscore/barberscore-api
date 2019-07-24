@@ -30,7 +30,7 @@ class GroupIndex(AlgoliaIndex):
         'get_gender_display',
         'code',
         'district',
-        'image',
+        'image_url',
         'image_id',
         'bhs_id',
         'owner_ids',

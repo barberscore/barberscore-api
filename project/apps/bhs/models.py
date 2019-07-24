@@ -830,6 +830,12 @@ class Group(TimeStampedModel):
     def is_active(self):
         return bool(self.status == self.STATUS.active)
 
+    def image_url(self):
+        try:
+            return self.image.url
+        except ValueError:
+            return 'https://res.cloudinary.com/barberscore/image/upload/v1554830585/missing_image.jpg'
+
     def owner_ids(self):
         return [str(owner.id) for owner in self.owners.all()]
 
