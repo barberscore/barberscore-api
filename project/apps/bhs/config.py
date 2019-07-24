@@ -9,17 +9,21 @@ class BhsConfig(AppConfig):
 
     def ready(self):
         # from .signals import user_post_save
-        # import algoliasearch_django as algoliasearch
-        # from .indexes import AwardIndex
-        # from .indexes import ChartIndex
+        import algoliasearch_django as algoliasearch
+
+        from .indexes import AwardIndex
+        Award = self.get_model('award')
+        algoliasearch.register(Award, AwardIndex)
+
+        from .indexes import ChartIndex
+        Chart = self.get_model('chart')
+        algoliasearch.register(Chart, ChartIndex)
+
+        from .indexes import GroupIndex
+        Group = self.get_model('group')
+        algoliasearch.register(Group, GroupIndex)
+
         # from .indexes import PersonIndex
-        # from .indexes import GroupIndex
-        # Award = self.get_model('award')
-        # Chart = self.get_model('chart')
         # Person = self.get_model('person')
-        # Group = self.get_model('group')
-        # algoliasearch.register(Award, AwardIndex)
-        # algoliasearch.register(Chart, ChartIndex)
         # algoliasearch.register(Person, PersonIndex)
-        # algoliasearch.register(Group, GroupIndex)
         return
