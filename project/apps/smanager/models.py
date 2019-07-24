@@ -876,7 +876,10 @@ class Contest(TimeStampedModel):
         resource_name = "contest"
 
     def __str__(self):
-        return str(self.id)
+        return "{0}".format(
+            self.award_name,
+            # self.session,
+        )
 
     def clean(self):
         pass
@@ -1371,6 +1374,12 @@ class Entry(TimeStampedModel):
         related_name='entries',
     )
 
+    contests = models.ManyToManyField(
+        'Contest',
+        related_name='entries',
+        blank=True,
+    )
+
     session = models.ForeignKey(
         'Session',
         related_name='entries',
@@ -1398,7 +1407,9 @@ class Entry(TimeStampedModel):
         resource_name = "entry"
 
     def __str__(self):
-        return str(self.id)
+        return "{0}".format(
+            self.group_name,
+        )
 
     def clean(self):
         if self.is_private and self.contestants.filter(status__gt=0):
@@ -1880,7 +1891,7 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __str__(self):
-        return str(self.id)
+        return str(self.get_kind_display())
 
     def clean(self):
         pass
@@ -1918,9 +1929,7 @@ class Session(TimeStampedModel):
         return entries
 
 
-    def get_legacy(self):
-        Entry = apps.get_model('smanager.entry')
-        Group = apps.get_model('bhs.group')
+    def get_legacy_report(self):
         wb = Workbook()
         ws = wb.active
         fieldnames = [
@@ -1938,23 +1947,23 @@ class Session(TimeStampedModel):
             ]
         ).order_by('draw')
         for entry in entries:
-            group = Group.objects.get(id=entry.group_id)
             oa = entry.draw
-            group_name = group.name.encode('utf-8').strip()
-            group_type = group.get_kind_display()
+            group_name = entry.group_name
+            group_type = entry.get_group_kind_display()
             if group_type == 'Quartet':
-                contestant_id = group.bhs_id
+                contestant_id = entry.group_bhs_id
             elif group_type == 'Chorus':
-                contestant_id = group.code
+                contestant_id = entry.group_code
             elif group_type == 'VLQ':
-                contestant_id = group.code
+                contestant_id = entry.group_code
             else:
-                raise RuntimeError("Improper Entity Type: {0}".format(group.get_kind_display()))
-            i = 1
-            for repertory in group.repertories.order_by('chart__title'):
-                song_number = i
-                song_title = repertory.chart.title.encode('utf-8').strip()
+                raise RuntimeError("Improper Entity Type: {0}".format(entry.get_group_kind_display()))
+            i = 0
+            charts_sorted = sorted(entry.group_charts, key=lambda x: x['title'])
+            for chart in charts_sorted:
                 i += 1
+                song_number = i
+                song_title = chart['title']
                 row = [
                     oa,
                     contestant_id,
@@ -1968,36 +1977,26 @@ class Session(TimeStampedModel):
         content = ContentFile(file)
         return content
 
-    def save_legacy(self):
-        content = self.get_legacy()
+    def save_legacy_report(self):
+        content = self.get_legacy_report()
         self.legacy_report.save("legacy_report", content)
 
 
-    def get_drcj(self):
-        Entry = apps.get_model('smanager.entry')
-        Award = apps.get_model('bhs.award')
-        Group = apps.get_model('bhs.group')
-        Member = apps.get_model('bhs.member')
+    def get_drcj_report(self):
         wb = Workbook()
         ws = wb.active
         fieldnames = [
             'OA',
             'Group Name',
+            'BHS ID',
             'Representing',
+            'Chapter(s)',
+            'Director/Participant(s)',
+            'Estimated POS',
             'Evaluation?',
             'Score/Eval-Only?',
-            'BHS ID',
-            'Group Status',
-            'Repertory Count',
-            'Estimated MOS',
-            'Members Expiring',
-            'Tenor',
-            'Lead',
-            'Baritone',
-            'Bass',
-            'Director/Participant(s)',
             'Award(s)',
-            'Chapter(s)',
+            'Charts(s)',
             'Contacts(s)',
         ]
         ws.append(fieldnames)
@@ -2007,131 +2006,63 @@ class Session(TimeStampedModel):
             ]
         ).order_by('draw')
         for entry in entries:
-            group = Group.objects.get(id=entry.group_id)
             oa = entry.draw
-            group_name = group.name
+            group_name = entry.group_name
+            bhs_id = entry.group_bhs_id
             representing = entry.representing
-            evaluation = entry.is_evaluation
-            is_private = entry.is_private
-            bhs_id = group.bhs_id
-            repertory_count = group.repertories.filter(
-                status__gt=0,
-            ).count()
-            group_status = group.get_status_display()
-            repertory_count = group.repertories.filter(
-                status__gt=0,
-            ).count()
-            participant_count = entry.pos
-            members = group.members.filter(
-                status__gt=0,
-            )
-            # expiring_count = 0
-            # for member in members:
-            #     try:
-            #         if member.person.current_through <= self.convention.close_date:
-            #             expiring_count += 1
-            #     except TypeError:
-            #         continue
-            expiring_count = "N/A"
+
+            if entry.group_kind == entry.GROUP_KIND.chorus:
+                chapters = entry.group_chapter
+            else:
+                chapters = 'Available through MC'
+
             participants = entry.participants
-            awards_list = []
-            contestants = entry.contestants.filter(
-                status__gt=0,
-            ).order_by(
-                # 'contest__award__name',
+            pos = entry.pos
+            is_evaluation = entry.is_evaluation
+            is_private = entry.is_private
+
+            award_names = "\n".join(
+                filter(
+                    None,
+                    ["{0}".format(i.award_name) for i in entry.contests.order_by('award_tree_sort')],
+                )
             )
-            for contestant in contestants:
-                award = Award.objects.get(id=contestant.contest.award_id)
-                awards_list.append(award.name)
-            awards = "\n".join(filter(None, awards_list))
-            parts = {}
-            part = 1
-            while part <= 4:
-                try:
-                    member = members.get(
-                        part=part,
-                    )
-                except Member.DoesNotExist:
-                    parts[part] = None
-                    part += 1
-                    continue
-                except Member.MultipleObjectsReturned:
-                    parts[part] = None
-                    part += 1
-                    continue
-                member_list = []
-                member_list.append(
-                    member.person.nomen,
+
+            chart_titles = "\n".join(
+                filter(
+                    None,
+                    ["{0}".format(i['nomen']) for i in sorted(entry.group_charts, key=lambda x: x['nomen'])],
                 )
-                member_list.append(
-                    member.person.email,
-                )
-                phone = member.person.cell_phone.as_national if member.person.cell_phone else None
-                member_list.append(
-                    phone,
-                )
-                member_detail = "\n".join(filter(None, member_list))
-                parts[part] = member_detail
-                part += 1
-            if group.kind == group.KIND.quartet:
-                persons = members.values_list('person', flat=True)
-                cs = Group.objects.filter(
-                    members__person__in=persons,
-                    members__status__gt=0,
-                    kind=Group.KIND.chapter,
-                ).distinct(
-                ).order_by(
-                    'name',
-                ).values_list(
-                    'name',
-                    flat=True
-                )
-                chapters = "\n".join(cs)
-            elif group.kind == group.KIND.chorus:
-                try:
-                    chapters = group.parent.name
-                except AttributeError:
-                    chapters = None
-            admins = group.officers.filter(
-                status__gt=0,
             )
-            admins_list = []
-            for admin in admins:
-                phone = admin.person.cell_phone.as_national if admin.person.cell_phone else None
-                contact = "; ".join(filter(None, [
-                    admin.person.common_name,
-                    admin.person.email,
-                    phone,
-                ]))
-                admins_list.append(contact)
-            contacts = "\n".join(filter(None, admins_list))
+
+            contact_emails = "\n".join(
+                filter(
+                    None,
+                    ["{0} <{1}>".format(i.name, i.email) for i in entry.owners.order_by('family_name')],
+                )
+            )
+
             row = [
                 oa,
                 group_name,
-                representing,
-                evaluation,
-                is_private,
                 bhs_id,
-                group_status,
-                repertory_count,
-                participant_count,
-                expiring_count,
-                parts[1],
-                parts[2],
-                parts[3],
-                parts[4],
-                participants,
-                awards,
+                representing,
                 chapters,
-                contacts,
+                participants,
+                pos,
+                is_evaluation,
+                is_private,
+                award_names,
+                chart_titles,
+                contact_emails,
             ]
             ws.append(row)
         file = save_virtual_workbook(wb)
         content = ContentFile(file)
         return content
 
-    def save_drcj(self):
-        content = self.get_drcj()
+    def save_drcj_report(self):
+        content = self.get_drcj_report()
         self.drcj_report.save("drcj_report", content)
 
 
@@ -2296,7 +2227,7 @@ class Session(TimeStampedModel):
         if self.drcj_report:
             xlsx = self.drcj_report.file
         else:
-            xlsx = self.get_drcj()
+            xlsx = self.get_drcj_report()
         file_name = '{0} Session DRCJ Report DRAFT.xlsx'.format(self)
         attachments.append((
             file_name,
@@ -2306,7 +2237,7 @@ class Session(TimeStampedModel):
         if self.legacy_report:
             xlsx = self.legacy_report.file
         else:
-            xlsx = self.get_legacy()
+            xlsx = self.get_legacy_report()
         file_name = '{0} Session Legacy Report DRAFT.xlsx'.format(self)
         attachments.append((
             file_name,
@@ -2374,7 +2305,7 @@ class Session(TimeStampedModel):
         if self.drcj_report:
             xlsx = self.drcj_report.file
         else:
-            xlsx = self.get_drcj()
+            xlsx = self.get_drcj_report()
         file_name = '{0} Session DRCJ Report FINAL.xlsx'.format(self)
         attachments.append((
             file_name,
@@ -2384,7 +2315,7 @@ class Session(TimeStampedModel):
         if self.legacy_report:
             xlsx = self.legacy_report.file
         else:
-            xlsx = self.get_legacy()
+            xlsx = self.get_legacy_report()
         file_name = '{0} Session Legacy Report FINAL.xlsx'.format(self)
         attachments.append((
             file_name,
@@ -2634,8 +2565,8 @@ class Session(TimeStampedModel):
         """Button up session and transfer to CA."""
 
         # Save final reports
-        self.save_drcj()
-        self.save_legacy()
+        self.save_drcj_report()
+        self.save_legacy_report()
 
         #  Create and send the reports
         send_package_email_from_session.delay(self)

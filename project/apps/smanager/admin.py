@@ -222,8 +222,8 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        # 'award__name',
-        'id',
+        'award_name',
+        'award_district',
     ]
 
 
@@ -269,7 +269,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'id',
         'status',
         'session',
-        # 'group',
         'representing',
         ('is_evaluation', 'is_private', 'is_mt'),
         'draw',
@@ -281,13 +280,20 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'description',
         'notes',
         'owners',
+        'contests',
+        'group_charts',
     )
 
     list_display = (
-        'status',
+        '__str__',
         'session',
+        'status',
         # 'group',
     )
+
+    list_select_related = [
+        'session',
+    ]
 
     list_filter = [
         SessionConventionStatusListFilter,
@@ -311,7 +317,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     autocomplete_fields = [
         'session',
-        # 'group',
+        'contests',
         'owners',
     ]
     readonly_fields = (
@@ -322,6 +328,10 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     ordering = (
     )
+    class Media:
+        css = {
+            'all': ('css/admin.css',),
+        }
 
 
 @admin.register(Session)
@@ -340,6 +350,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'legacy_report',
         'drcj_report',
         'owners',
+        # 'contests',
         # 'footnotes',
         'description',
         'notes',
@@ -347,6 +358,8 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = [
         '__str__',
+        'convention',
+        # 'convention__district',
         'kind',
         'num_rounds',
         'is_invitational',

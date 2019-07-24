@@ -451,7 +451,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         if session.legacy_report:
             xlsx = session.legacy_report.file
         else:
-            xlsx = session.get_legacy()
+            xlsx = session.get_legacy_report()
         file_name = '{0} {1} Session Legacy Report'.format(
             session.convention,
             session.get_kind_display(),
@@ -474,7 +474,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         if session.drcj_report:
             xlsx = session.drcj_report.file
         else:
-            xlsx = session.get_drcj()
+            xlsx = session.get_drcj_report()
         file_name = '{0} {1} Session DRCJ Report'.format(
             session.convention,
             session.get_kind_display(),
