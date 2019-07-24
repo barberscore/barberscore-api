@@ -826,9 +826,12 @@ class Group(TimeStampedModel):
         content = ContentFile(file)
         return content
 
+    # Algolia
     def is_active(self):
-        # For Algolia indexing
         return bool(self.status == self.STATUS.active)
+
+    def owner_ids(self):
+        return self.owners.values_list('id', flat=True)
 
     def get_officer_emails(self):
         officers = self.officers.filter(
