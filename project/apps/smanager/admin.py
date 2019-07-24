@@ -270,6 +270,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'session',
         'representing',
+        'chapters',
         ('is_evaluation', 'is_private', 'is_mt'),
         'draw',
         'base',

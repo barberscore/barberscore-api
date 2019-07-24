@@ -1128,6 +1128,13 @@ class Entry(TimeStampedModel):
         default='',
     )
 
+    chapters = models.CharField(
+        help_text="""The Chapter(s) that the comprise the group members.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
     description = models.TextField(
         help_text="""
             Public Notes (usually from group).""",
@@ -1688,6 +1695,8 @@ class Entry(TimeStampedModel):
                 status=self.contestants.model.STATUS.excluded,
                 contest=contest,
             )
+        self.participants = self.group_participants
+        self.chapters = self.group_chapter
         return
 
     @fsm_log_by
@@ -2010,12 +2019,7 @@ class Session(TimeStampedModel):
             group_name = entry.group_name
             bhs_id = entry.group_bhs_id
             representing = entry.representing
-
-            if entry.group_kind == entry.GROUP_KIND.chorus:
-                chapters = entry.group_chapter
-            else:
-                chapters = 'Available through MC'
-
+            chapters = entry.chapters
             participants = entry.participants
             pos = entry.pos
             is_evaluation = entry.is_evaluation

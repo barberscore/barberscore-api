@@ -174,6 +174,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'participants',
             'pos',
             'representing',
+            'chapters',
             'description',
             'notes',
             'image_id',
