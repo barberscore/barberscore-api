@@ -455,11 +455,46 @@ class GroupManager(Manager):
         else:
             parent = None
 
+        if parent:
+            if parent.kind == 'organization':
+                representing_raw = legacy_code
+            elif parent.kind == 'district':
+                representing_raw = parent.legacy_code
+            elif parent.kind == 'chapter':
+                representing_raw = parent.parent.legacy_code
+        elif kind == 'organization':
+            representing_raw = 'BHS'
+        else:
+            representing_raw = None
+
+        representing_map = {
+            'BHS': self.model.REPRESENTING.bhs,
+            'CAR': self.model.REPRESENTING.car,
+            'CSD': self.model.REPRESENTING.csd,
+            'DIX': self.model.REPRESENTING.dix,
+            'EVG': self.model.REPRESENTING.evg,
+            'FWD': self.model.REPRESENTING.fwd,
+            'ILL': self.model.REPRESENTING.ill,
+            'JAD': self.model.REPRESENTING.jad,
+            'LOL': self.model.REPRESENTING.lol,
+            'MAD': self.model.REPRESENTING.mad,
+            'NED': self.model.REPRESENTING.ned,
+            'NSC': self.model.REPRESENTING.nsc,
+            'ONT': self.model.REPRESENTING.ont,
+            'PIO': self.model.REPRESENTING.pio,
+            'RMD': self.model.REPRESENTING.rmd,
+            'SLD': self.model.REPRESENTING.sld,
+            'SUN': self.model.REPRESENTING.sun,
+            'SWD': self.model.REPRESENTING.swd,
+        }
+        representing = representing_map.get(representing_raw, None)
+
         defaults = {
             'status': status,
             'name': name,
             'kind': kind,
             'gender': gender,
+            'representing': representing,
             'division': division,
             'bhs_id': bhs_id,
             'code': legacy_code,
@@ -563,7 +598,7 @@ class GroupManager(Manager):
             'Kind',
             'Organization',
             'District',
-            'Chapter',
+            'Chapter(s)',
             'Senior?',
             'BHS ID',
             'Code',
@@ -578,9 +613,9 @@ class GroupManager(Manager):
             pk = str(group.pk)
             name = group.name
             kind = group.get_kind_display()
-            organization = group.international
+            organization = "FIX"
             district = group.district
-            chapter = group.chapter
+            chapters = group.chapters
             is_senior = group.is_senior
             is_youth = group.is_youth
             bhs_id = group.bhs_id
@@ -592,7 +627,7 @@ class GroupManager(Manager):
                 kind,
                 organization,
                 district,
-                chapter,
+                chapters,
                 is_senior,
                 is_youth,
                 bhs_id,
@@ -651,7 +686,7 @@ class AwardManager(Manager):
         ).order_by('tree_sort')
         for award in awards:
             pk = str(award.id)
-            district = award.group.code
+            district = award.get_district_display()
             division = award.get_division_display()
             name = award.name
             kind = award.get_kind_display()
@@ -826,6 +861,7 @@ class StructureManager(Manager):
                     'name',
                     'kind',
                     'gender',
+                    'district',
                     'division',
                     'bhs_id',
                     'chapter_code',

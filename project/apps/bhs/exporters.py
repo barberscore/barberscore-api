@@ -36,10 +36,9 @@ class GroupSerializer(serializers.ModelSerializer):
             'is_senior',
             'is_youth',
             'code',
-            'international',
-            'district',
+            'get_representing_display',
             'get_division_display',
-            'chapter',
+            'chapters',
         ]
 
 class ChartSerializer(serializers.ModelSerializer):

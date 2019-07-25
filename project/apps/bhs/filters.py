@@ -21,48 +21,6 @@ class AwardQualifierLevelFilter(admin.SimpleListFilter):
             )
 
 
-class MCListFilter(admin.SimpleListFilter):
-    title = 'Member Center'
-    parameter_name = 'is_mc'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('Yes', 'Yes'),
-            ('No', 'No'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'Yes':
-            return queryset.filter(
-                mc_pk__isnull=False,
-            )
-        if self.value() == 'No':
-            return queryset.filter(
-                mc_pk__isnull=True,
-            )
-
-
-# class MCUserListFilter(admin.SimpleListFilter):
-#     title = 'Member Center'
-#     parameter_name = 'is_mc'
-
-#     def lookups(self, request, model_admin):
-#         return (
-#             ('Yes', 'Yes'),
-#             ('No', 'No'),
-#         )
-
-#     def queryset(self, request, queryset):
-#         if self.value() == 'Yes':
-#             return queryset.filter(
-#                 person__mc_pk__isnull=False,
-#             )
-#         if self.value() == 'No':
-#             return queryset.filter(
-#                 person__mc_pk__isnull=True,
-#             )
-
-
 class ConventionStatusListFilter(admin.SimpleListFilter):
     title = 'Convention Status'
     parameter_name = 'convention_status'
@@ -118,30 +76,6 @@ class AppearanceConventionStatusListFilter(admin.SimpleListFilter):
             return queryset.filter(
                 round__session__convention__status=status,
             )
-
-
-class DistrictListFilter(admin.SimpleListFilter):
-    title = 'district'
-    parameter_name = 'district'
-
-    def lookups(self, request, model_admin):
-        districts = Group.objects.filter(
-            kind__in=[
-                Group.KIND.district,
-                Group.KIND.noncomp,
-                Group.KIND.affiliate
-            ],
-            status=Group.STATUS.active,
-        ).order_by(
-            'tree_sort',
-        ).values_list('code', 'code')
-        return districts
-
-    def queryset(self, request, queryset):
-        district = request.GET.get('district')
-        if district:
-            return queryset.filter(district=district)
-        return queryset
 
 
 class GroupListFilter(admin.SimpleListFilter):

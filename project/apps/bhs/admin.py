@@ -33,10 +33,6 @@ from .inlines import OfficerInline
 # from .inlines import SubscriptionInline
 # from .inlines import StructureInline
 
-from .filters import MCListFilter
-from .filters import DistrictListFilter
-
-
 admin.site.disable_action('delete_selected')
 
 
@@ -70,7 +66,7 @@ class AwardAdmin(VersionAdmin, FSMTransitionMixin):
         'group_id',
         'kind',
         'gender',
-        'district',
+        'representing',
         'division',
         'age',
         'level',
@@ -87,6 +83,7 @@ class AwardAdmin(VersionAdmin, FSMTransitionMixin):
         # 'size',
         # 'scope',
         'group_id',
+        'representing',
         'division',
         'kind',
         'age',
@@ -111,9 +108,7 @@ class AwardAdmin(VersionAdmin, FSMTransitionMixin):
         'status',
         'kind',
         'level',
-        # AwardQualifierLevelFilter,
-        DistrictListFilter,
-        'district',
+        'representing',
         'division',
         'age',
         'gender',
@@ -212,12 +207,12 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         'status',
         'kind',
         'gender',
+        'representing',
         'division',
         'owners',
         ('is_senior', 'is_youth',),
         ('bhs_id', 'mc_pk', 'code',),
         'parent',
-        ('international', 'district', 'chapter',),
         'location',
         'email',
         'phone',
@@ -225,6 +220,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         'image',
         'description',
         'participants',
+        'chapters',
         'notes',
         ('created', 'modified',),
     ]
@@ -235,9 +231,8 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         'gender',
         'is_senior',
         'is_youth',
-        DistrictListFilter,
+        'representing',
         'division',
-        MCListFilter,
     ]
 
     search_fields = [
@@ -252,6 +247,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         'gender',
         'is_senior',
         'is_youth',
+        'representing',
         'division',
         'parent',
         'bhs_id',
@@ -263,7 +259,6 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
     ]
     readonly_fields = [
         'id',
-        'district',
         'created',
         'modified',
     ]
@@ -410,7 +405,6 @@ class MemberAdmin(VersionAdmin, FSMTransitionMixin):
     ]
     list_filter = [
         'status',
-        MCListFilter,
         'group__kind',
         'group__status',
         'part',
@@ -464,7 +458,6 @@ class OfficerAdmin(VersionAdmin, FSMTransitionMixin):
     ]
     list_filter = [
         'status',
-        MCListFilter,
         'group__kind',
         'office',
     ]
@@ -499,7 +492,7 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin):
         'mc_pk',
         'spouse',
         'location',
-        'district',
+        'representing',
         'website',
         'image',
         'description',

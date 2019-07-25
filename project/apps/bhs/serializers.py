@@ -38,7 +38,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'spots',
             'description',
             'notes',
-            'district',
+            'representing',
             'division',
 
             'age',
@@ -70,6 +70,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'gender',
+            'representing',
             'division',
             'bhs_id',
             'code',
@@ -91,13 +92,12 @@ class GroupSerializer(serializers.ModelSerializer):
             'description',
             'visitor_information',
             'participants',
+            'chapters',
             'notes',
             'mc_pk',
 
             'tree_sort',
-            'international',
-            'district',
-            'chapter',
+
             'is_senior',
             'is_youth',
             'is_divided',
