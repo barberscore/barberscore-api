@@ -286,7 +286,9 @@ class Person(TimeStampedModel):
     def is_active(self):
         # For Algolia indexing
         return bool(
-            self.members.filter(group__bhs_id=1)
+            self.officers.filter(
+                status__gt=0,
+            )
         )
 
     @cached_property
@@ -349,6 +351,11 @@ class Person(TimeStampedModel):
     def image_id(self):
         return self.image.name or 'missing_image'
 
+    def image_url(self):
+        try:
+            return self.image.url
+        except ValueError:
+            return 'https://res.cloudinary.com/barberscore/image/upload/v1554830585/missing_image.jpg'
 
     # @cached_property
     # def current_through(self):

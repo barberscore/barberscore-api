@@ -23,7 +23,7 @@ class BhsConfig(AppConfig):
         Group = self.get_model('group')
         algoliasearch.register(Group, GroupIndex)
 
-        # from .indexes import PersonIndex
-        # Person = self.get_model('person')
-        # algoliasearch.register(Person, PersonIndex)
+        from .indexes import PersonIndex
+        Person = self.get_model('person')
+        algoliasearch.register(Person, PersonIndex)
         return
