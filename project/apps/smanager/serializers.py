@@ -35,10 +35,28 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'category',
             'convention',
             'person_id',
+            'common_name',
+            'first_name',
+            'middle_name',
+            'last_name',
+            'nick_name',
+            'district',
+            'email',
+            'home_phone',
+            'work_phone',
+            'cell_phone',
+            'airports',
+            'image',
+            'bhs_id',
+            'image_id',
             'user',
             'permissions',
         )
 
+
+        read_only_fields = [
+            'image_id',
+        ]
     # class JSONAPIMeta:
     #     included_resources = [
     #         'convention',

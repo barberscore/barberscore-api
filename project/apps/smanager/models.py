@@ -17,6 +17,7 @@ from cloudinary_storage.storage import RawMediaCloudinaryStorage
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
 from timezone_field import TimeZoneField
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Django
 from django.apps import apps
@@ -36,6 +37,8 @@ from django.contrib.postgres.fields import JSONField
 
 from .fields import UploadPath
 from .fields import DivisionsField
+from .fields import LowerEmailField
+
 from .tasks import build_email
 from .tasks import send_invite_email_from_entry
 from .tasks import send_submit_email_from_entry
@@ -48,7 +51,6 @@ from .tasks import send_verify_report_email_from_session
 from .tasks import send_package_email_from_session
 from .tasks import send_package_report_email_from_session
 
-from django.apps import apps
 
 
 class Assignment(TimeStampedModel):
@@ -94,16 +96,114 @@ class Assignment(TimeStampedModel):
         blank=True,
     )
 
+    # Denorm
+    person_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
+    common_name = models.CharField(
+        help_text="""
+            The prefix of the person.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    first_name = models.CharField(
+        help_text="""
+            The first name of the person.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    middle_name = models.CharField(
+        help_text="""
+            The middle name of the person.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    last_name = models.CharField(
+        help_text="""
+            The last name of the person.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    nick_name = models.CharField(
+        help_text="""
+            The nickname of the person.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    district = models.CharField(
+        help_text="""
+            District""",
+        max_length=10,
+        blank=True,
+        default='',
+    )
+
+    email = LowerEmailField(
+        help_text="""
+            The contact email of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    home_phone = PhoneNumberField(
+        help_text="""
+            The home phone number of the resource.  Include country code.""",
+        blank=True,
+        null=True,
+    )
+
+    work_phone = PhoneNumberField(
+        help_text="""
+            The work phone number of the resource.  Include country code.""",
+        blank=True,
+        null=True,
+    )
+
+    cell_phone = PhoneNumberField(
+        help_text="""
+            The cell phone number of the resource.  Include country code.""",
+        blank=True,
+        null=True,
+    )
+
+    airports = ArrayField(
+        base_field=models.CharField(
+            blank=True,
+            max_length=3,
+        ),
+        null=True,
+        blank=True,
+        default=list,
+    )
+
+    image = models.ImageField(
+        upload_to=UploadPath('image'),
+        null=True,
+        blank=True,
+    )
+
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
     # FKs
     convention = models.ForeignKey(
         'Convention',
         related_name='assignments',
         on_delete=models.CASCADE,
-    )
-
-    person_id = models.UUIDField(
-        null=True,
-        blank=True,
     )
 
     user = models.ForeignKey(
@@ -126,6 +226,35 @@ class Assignment(TimeStampedModel):
 
     def __str__(self):
         return str(self.id)
+
+    @cached_property
+    def image_id(self):
+        return self.image.name or 'missing_image'
+
+    # Assignment Methods
+    def update_from_person(self):
+        if self.person_id:
+            Person = apps.get_model('bhs.person')
+            person = Person.objects.get(id=self.person_id)
+            self.common_name = person.common_name
+            self.first_name = person.first_name
+            self.middle_name = person.middle_name
+            self.last_name = person.last_name
+            self.nick_name = person.nick_name
+            self.district = person.district
+            self.email = person.email
+            self.home_phone = person.home_phone
+            self.work_phone = person.work_phone
+            self.cell_phone = person.cell_phone
+            self.bhs_id = person.bhs_id
+            self.airports = person.airports
+            if person.image:
+                try:
+                    self.image.save('image', person.image.file, save=True)
+                except:
+                    pass
+        return
+
 
     # Assignment Permissions
     @staticmethod
@@ -160,6 +289,7 @@ class Assignment(TimeStampedModel):
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.active)
     def activate(self, *args, **kwargs):
+        self.update_from_person()
         """Activate the Assignment."""
         return
 
