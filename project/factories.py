@@ -36,7 +36,6 @@ from apps.bhs.models import Repertory
 from apps.smanager.models import Assignment
 from apps.smanager.models import Convention
 from apps.smanager.models import Contest
-from apps.smanager.models import Contestant
 from apps.smanager.models import Entry
 from apps.smanager.models import Session
 
@@ -104,15 +103,6 @@ class ContestFactory(DjangoModelFactory):
 
     class Meta:
         model = Contest
-
-
-class ContestantFactory(DjangoModelFactory):
-    status = Contestant.STATUS.new
-    entry = SubFactory('factories.EntryFactory')
-    contest = SubFactory('factories.ContestFactory')
-
-    class Meta:
-        model = Contestant
 
 
 class ContenderFactory(DjangoModelFactory):

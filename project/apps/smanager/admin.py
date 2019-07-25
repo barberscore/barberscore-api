@@ -11,7 +11,6 @@ from .filters import SessionConventionStatusListFilter
 
 from .inlines import AssignmentInline
 from .inlines import ConventionInline
-from .inlines import ContestantInline
 from .inlines import ContestInline
 from .inlines import EntryInline
 from .inlines import SessionInline
@@ -19,7 +18,6 @@ from .inlines import SessionInline
 from .models import Assignment
 from .models import Convention
 from .models import Contest
-from .models import Contestant
 from .models import Entry
 from .models import Session
 
@@ -203,7 +201,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     save_on_top = True
 
     inlines = [
-        ContestantInline,
     ]
 
     fsm_field = [
@@ -225,38 +222,6 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'award_name',
         'award_district',
     ]
-
-
-@admin.register(Contestant)
-class ContestantAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    fields = [
-        'status',
-        'entry',
-        'contest',
-    ]
-
-    list_filter = (
-        'status',
-    )
-
-    readonly_fields = [
-    ]
-
-    autocomplete_fields = [
-        'entry',
-        'contest',
-    ]
-
-    search_fields = [
-        'id',
-    ]
-
-    ordering = (
-    )
 
 
 @admin.register(Entry)
@@ -306,7 +271,6 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     inlines = [
         # AppearanceInline,
-        # ContestantInline,
         StateLogInline,
     ]
 

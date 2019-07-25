@@ -17,8 +17,8 @@ Score/Eval-Only: {{entry.is_private|yesno|title}}
 
 {% if not is_private %}
 You are entered for the following contests/awards:
-{% for contestant in contestants %}
-    - {{contestant.contest.award.name}}
+{% for contest in contests %}
+    - {{contest.award.name}}
 {% empty %}
     Not competing for any awards. (Score/Eval only)
 {% endfor %}

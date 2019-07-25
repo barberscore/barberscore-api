@@ -60,15 +60,6 @@ def test_contest_admin(admin_django_client, contest):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_contestant_admin(admin_django_client, contestant):
-    path = reverse('admin:smanager_contestant_changelist')
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:smanager_contestant_change', args=(str(contestant.id),))
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_contender_admin(admin_django_client, contender):
     path = reverse('admin:rmanager_contender_changelist')
     response = admin_django_client.get(path)

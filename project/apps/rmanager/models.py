@@ -3838,9 +3838,9 @@ class Round(TimeStampedModel):
                 status__gt=0,
             ).annotate(
                 cnt=Count(
-                    'contestants',
+                    # 'contestants',
                     filter=Q(
-                        contestants__status=10,
+                        # contestants__status=10,
                     )
                 ),
             ).exclude(
@@ -3883,16 +3883,16 @@ class Round(TimeStampedModel):
                     entry.draw = z
                     z -= 1
                 # Pull active contestants
-                contestants = entry.contestants.filter(
-                    status__gt=0,
-                )
+                # contestants = entry.contestants.filter(
+                #     status__gt=0,
+                # )
                 # Set is_single=True if they are only in single-round contests
                 raise RuntimeError("Fix")
                 is_single = not bool(
-                    contestants.filter(
+                    # contestants.filter(
                         # contest__award__is_single=False,
                     )
-                )
+                # )
                 # Create and start group
                 appearance = self.appearances.create(
                     group_id=entry.group_id,
@@ -3904,8 +3904,6 @@ class Round(TimeStampedModel):
                     representing=entry.representing,
                 )
                 # Create contenders
-                # awards = contestants.values_list('contest__award', flat=True)
-                # outcomes = self.outcomes.filter(award__in=awards)
                 for outcome in outcomes:
                     outcome.contenders.create(
                         appearance=appearance,

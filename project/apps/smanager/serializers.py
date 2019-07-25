@@ -8,7 +8,6 @@ from rest_framework_json_api import serializers
 from .fields import TimezoneField
 
 from .models import Contest
-from .models import Contestant
 from .models import Entry
 from .models import Session
 
@@ -120,7 +119,6 @@ class ConventionSerializer(serializers.ModelSerializer):
 class ContestSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
-        'contestants': 'apps.smanager.serializers.ContestantSerializer',
     }
 
     class Meta:
@@ -148,27 +146,11 @@ class ContestSerializer(serializers.ModelSerializer):
             'award_tree_sort',
 
             'entries',
-            'contestants',
             'permissions',
         ]
 
     class JSONAPIMeta:
         included_resources = [
-            # 'contestants',
-        ]
-
-
-class ContestantSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Contestant
-        fields = [
-            'id',
-            'status',
-            'entry',
-            'contest',
-            'permissions',
         ]
 
 
@@ -176,7 +158,6 @@ class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     included_serializers = {
-        'contestants': 'apps.smanager.serializers.ContestantSerializer',
     }
 
     class Meta:
@@ -224,7 +205,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'group_charts',
 
             'contests',
-            'contestants',
             'permissions',
             'statelogs',
         ]
@@ -235,12 +215,11 @@ class EntrySerializer(serializers.ModelSerializer):
     class JSONAPIMeta:
         included_resources = [
             # 'appearances',
-            # 'contestants',
         ]
 
     def validate(self, data):
         """Check that the start is before the stop."""
-        # if data['is_private'] and data['contestants']:
+        # if data['is_private']:
         #     raise serializers.ValidationError("Can not be private and compete for an award.")
         return data
 

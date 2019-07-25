@@ -26,14 +26,12 @@ from .filtersets import EntryFilterset
 from .filtersets import SessionFilterset
 
 from .models import Contest
-from .models import Contestant
 from .models import Entry
 from .models import Session
 from .renderers import PDFRenderer
 from .renderers import XLSXRenderer
 from .responders import PDFResponse
 from .responders import XLSXResponse
-from .serializers import ContestantSerializer
 from .serializers import ContestSerializer
 from .serializers import EntrySerializer
 from .serializers import SessionSerializer
@@ -159,8 +157,6 @@ class ContestViewSet(viewsets.ModelViewSet):
         'session',
         # 'award',
     ).prefetch_related(
-        'contestants',
-        # 'contestants__entry',
     ).order_by('id')
     serializer_class = ContestSerializer
     filterset_class = None
@@ -201,57 +197,11 @@ class ContestViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class ContestantViewSet(viewsets.ModelViewSet):
-    queryset = Contestant.objects.select_related(
-        'entry',
-        'contest',
-    ).prefetch_related(
-        'statelogs',
-    ).order_by('id')
-    serializer_class = ContestantSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "contestant"
-
-    @action(methods=['post'], detail=True)
-    def include(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.include(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def exclude(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.exclude(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-
 class EntryViewSet(viewsets.ModelViewSet):
     queryset = Entry.objects.select_related(
         'session',
         # 'group',
     ).prefetch_related(
-        'contestants',
         'statelogs',
         'owners',
     ).order_by('id')

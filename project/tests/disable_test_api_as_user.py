@@ -60,15 +60,6 @@ def test_contest_endpoint(user_api_client, contest):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_contestant_endpoint(user_api_client, contestant):
-    path = reverse('contestant-list')
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('contestant-detail', args=(str(contestant.id),))
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_contender_endpoint(user_api_client, contender):
     path = reverse('contender-list')
     response = user_api_client.get(path)

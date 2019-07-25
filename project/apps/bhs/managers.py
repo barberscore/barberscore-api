@@ -1061,7 +1061,6 @@ class PersonManager(Manager):
         orphans.delete()
         return t
 
-
     def link_from_user(self, instance):
         # Delete Orphans
         i = 0

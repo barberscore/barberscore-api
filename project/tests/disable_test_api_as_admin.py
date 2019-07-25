@@ -71,17 +71,6 @@ def test_contest_endpoint(admin_api_client, contest, django_assert_max_num_queri
         assert response.status_code == status.HTTP_200_OK
 
 
-def test_contestant_endpoint(admin_api_client, contestant, django_assert_max_num_queries):
-    with django_assert_max_num_queries(10):
-        path = reverse('contestant-list')
-        response = admin_api_client.get(path)
-        assert response.status_code == status.HTTP_200_OK
-    with django_assert_max_num_queries(10):
-        path = reverse('contestant-detail', args=(str(contestant.id),))
-        response = admin_api_client.get(path)
-        assert response.status_code == status.HTTP_200_OK
-
-
 def test_contender_endpoint(admin_api_client, contender, django_assert_max_num_queries):
     with django_assert_max_num_queries(10):
         path = reverse('contender-list')

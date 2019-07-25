@@ -1088,114 +1088,6 @@ class Contest(TimeStampedModel):
         return
 
 
-class Contestant(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (-10, 'excluded', 'Excluded',),
-        (0, 'new', 'New',),
-        (10, 'included', 'Included',),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    # FKs
-    entry = models.ForeignKey(
-        'Entry',
-        related_name='contestants',
-        on_delete=models.CASCADE,
-    )
-
-    contest = models.ForeignKey(
-        'Contest',
-        related_name='contestants',
-        on_delete=models.CASCADE,
-    )
-
-    # Relations
-    statelogs = GenericRelation(
-        StateLog,
-        related_query_name='contestants',
-    )
-
-    # Internals
-    # class Meta:
-    #     ordering = (
-    #         'contest__award__tree_sort',
-    #     )
-    #     unique_together = (
-    #         ('entry', 'contest',),
-    #     )
-
-    class JSONAPIMeta:
-        resource_name = "contestant"
-
-    def __str__(self):
-        return str(self.id)
-
-    # Methods
-
-    # Contestant Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_read_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_write_permission(request):
-        roles = [
-            'SCJC',
-            'DRCJ',
-            'Manager',
-        ]
-        return any([item in roles for item in request.user.roles])
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_write_permission(self, request):
-        return any([
-            all([
-                'SCJC' in request.user.roles,
-                self.contest.session.status < self.contest.session.STATUS.packaged,
-            ]),
-            all([
-                self.contest.session.owners.filter(id__contains=request.user.id),
-                self.contest.session.status < self.contest.session.STATUS.packaged,
-            ]),
-            all([
-                self.entry.owners.filter(id__contains=request.user.id),
-                self.entry.status < self.entry.STATUS.approved,
-            ]),
-        ])
-
-    # Contestant Transitions
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.included)
-    def include(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.excluded)
-    def exclude(self, *args, **kwargs):
-        return
-
-
 class Entry(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1573,7 +1465,7 @@ class Entry(TimeStampedModel):
         )
 
     def clean(self):
-        if self.is_private and self.contestants.filter(status__gt=0):
+        if self.is_private and self.contests.all():
             raise ValidationError(
                 {'is_private': 'You may not compete for an award and remain private.'}
             )
@@ -1735,14 +1627,12 @@ class Entry(TimeStampedModel):
 
     def get_submit_email(self):
         template = 'emails/entry_submit.txt'
-        contestants = self.contestants.filter(
-            status__gt=0,
-        ).order_by(
-            'contest__award_name',
+        contests = self.contests.order_by(
+            'award_name',
         )
         context = {
             'entry': self,
-            'contestants': contestants,
+            'contests': contests,
         }
         subject = "[Barberscore] Submission Notification for {0}".format(
             self.group_name,
@@ -1768,15 +1658,13 @@ class Entry(TimeStampedModel):
     def get_approve_email(self):
         template = 'emails/entry_approve.txt'
         repertories = sorted(self.group_charts)
-        contestants = self.contestants.filter(
-            status__gt=0,
-        ).order_by(
-            'contest__award_name',
+        contests = self.contests.order_by(
+            'award_name',
         )
         context = {
             'entry': self,
             'repertories': repertories,
-            'contestants': contestants,
+            'contests': contests,
         }
         subject = "[Barberscore] Approval Notification for {0}".format(
             self.group_name,
@@ -1818,14 +1706,14 @@ class Entry(TimeStampedModel):
             # ensure they can't submit a private while competiting.
             not all([
                 self.is_private,
-                self.contestants.filter(status__gt=0).count() > 0,
+                self.contests.all(),
             ]),
             # Check participants
             self.participants,
         ])
 
     def can_approve(self):
-        if self.is_private and self.contestants.filter(status__gt=0):
+        if self.is_private and self.contests.all():
             return False
         return True
 
@@ -1843,12 +1731,6 @@ class Entry(TimeStampedModel):
         contests = self.session.contests.filter(
             status=self.session.contests.model.STATUS.included,
         )
-        for contest in contests:
-            # Could also do some default logic here.
-            self.contestants.create(
-                status=self.contestants.model.STATUS.excluded,
-                contest=contest,
-            )
         self.participants = self.group_participants
         self.chapters = self.group_chapter
         return
@@ -1889,11 +1771,6 @@ class Entry(TimeStampedModel):
             for entry in remains:
                 entry.draw = entry.draw - 1
                 entry.save()
-        # Remove from all contestants
-        contestants = self.contestants.filter(status__gte=0)
-        for contestant in contestants:
-            contestant.exclude()
-            contestant.save()
         # Queue email
         send_withdraw_email_from_entry.delay(self)
         return
@@ -2070,8 +1947,6 @@ class Session(TimeStampedModel):
         feeders = self.feeders.all()
         entries = Entry.objects.filter(
             session__in=feeders,
-            # contestants__contest__award__parent=target,
-            # contestants__contest__status__gt=0,
         ).annotate(
             raw_score=Avg(
                 'appearances__songs__scores__points',
@@ -2097,7 +1972,7 @@ class Session(TimeStampedModel):
         ws = wb.active
         fieldnames = [
             'oa',
-            'contestant_id',
+            'group_id',
             'group_name',
             'group_type',
             'song_number',
@@ -2114,11 +1989,11 @@ class Session(TimeStampedModel):
             group_name = entry.group_name
             group_type = entry.get_group_kind_display()
             if group_type == 'Quartet':
-                contestant_id = entry.group_bhs_id
+                group_id = entry.group_bhs_id
             elif group_type == 'Chorus':
-                contestant_id = entry.group_code
+                group_id = entry.group_code
             elif group_type == 'VLQ':
-                contestant_id = entry.group_code
+                group_id = entry.group_code
             else:
                 raise RuntimeError("Improper Entity Type: {0}".format(entry.get_group_kind_display()))
             i = 0
@@ -2129,7 +2004,7 @@ class Session(TimeStampedModel):
                 song_title = chart['title']
                 row = [
                     oa,
-                    contestant_id,
+                    group_id,
                     group_name,
                     group_type,
                     song_number,

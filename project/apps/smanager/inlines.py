@@ -4,7 +4,6 @@ from django.contrib import admin
 
 # Local
 from .models import Contest
-from .models import Contestant
 from .models import Entry
 from .models import Session
 
@@ -79,30 +78,6 @@ class ContestInline(admin.TabularInline):
     extra = 0
     classes = [
         'collapse',
-    ]
-
-
-class ContestantInline(admin.TabularInline):
-    model = Contestant
-    fields = [
-        'entry',
-        'contest',
-        'status',
-    ]
-    readonly_fields = [
-        'status',
-    ]
-    autocomplete_fields = [
-        # 'contest',
-        'entry',
-    ]
-    show_change_link = True
-    extra = 0
-    classes = [
-        'collapse',
-    ]
-    raw_id_fields = [
-        'contest',
     ]
 
 
