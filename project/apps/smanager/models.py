@@ -274,16 +274,25 @@ class Assignment(TimeStampedModel):
     def has_write_permission(request):
         roles = [
             'SCJC',
+            'DRCJ',
+            'CA',
         ]
         return any(item in roles for item in request.user.roles)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        roles = [
-            'SCJC',
-        ]
-        return any(item in roles for item in request.user.roles)
+        return any([
+            # For SCJC
+            all([
+                'SCJC' in request.user.roles,
+            ]),
+            # For all others
+            all([
+                self.convention.owners.filter(id__contains=request.user.id),
+                self.convention.status != self.convention.STATUS.inactive,
+            ]),
+        ])
 
     # Transitions
     @fsm_log_by
@@ -612,16 +621,25 @@ class Convention(TimeStampedModel):
     def has_write_permission(request):
         roles = [
             'SCJC',
+            'DRCJ',
+            'CA',
         ]
         return any(item in roles for item in request.user.roles)
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        roles = [
-            'SCJC',
-        ]
-        return any(item in roles for item in request.user.roles)
+        return any([
+            # For SCJC
+            all([
+                'SCJC' in request.user.roles,
+            ]),
+            # For all others
+            all([
+                self.owners.filter(id__contains=request.user.id),
+                self.status != self.STATUS.inactive,
+            ]),
+        ])
 
     # Convention Transition Conditions
     def can_reset(self):
@@ -1048,8 +1066,14 @@ class Contest(TimeStampedModel):
         if self.session.status >= self.session.STATUS.opened:
             return False
         return any([
-            'SCJC' in request.user.roles,
-            self.session.owners.filter(id__contains=request.user.id),
+            # For SCJC
+            all([
+                'SCJC' in request.user.roles,
+            ]),
+            # For all others
+            all([
+                self.session.owners.filter(id__contains=request.user.id),
+            ]),
         ])
 
     # Transitions
