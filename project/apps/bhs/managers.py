@@ -462,6 +462,8 @@ class GroupManager(Manager):
                 representing_raw = parent.legacy_code
             elif parent.kind == 'chapter':
                 representing_raw = parent.parent.legacy_code
+            else:
+                representing_raw = None
         elif kind == 'organization':
             representing_raw = 'BHS'
         else:
@@ -861,7 +863,6 @@ class StructureManager(Manager):
                     'name',
                     'kind',
                     'gender',
-                    'district',
                     'division',
                     'bhs_id',
                     'chapter_code',
