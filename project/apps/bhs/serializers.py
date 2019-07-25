@@ -193,7 +193,7 @@ class PersonSerializer(serializers.ModelSerializer):
             'part',
             'mon',
             'gender',
-            'district',
+            'representing',
             'is_deceased',
             'is_honorary',
             'is_suspended',

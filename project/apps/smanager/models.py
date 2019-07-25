@@ -241,7 +241,7 @@ class Assignment(TimeStampedModel):
             self.middle_name = person.middle_name
             self.last_name = person.last_name
             self.nick_name = person.nick_name
-            self.district = person.district
+            self.district = person.get_representing_display()
             self.email = person.email
             self.home_phone = person.home_phone
             self.work_phone = person.work_phone
@@ -1548,10 +1548,9 @@ class Entry(TimeStampedModel):
             self.group_code = group.code
             self.group_description = group.description
             self.group_participants = group.participants
+            self.group_chapter = group.chapters
             self.group_tree_sort = group.tree_sort
-            self.group_international = group.international
-            self.group_district = group.district
-            self.group_chapter = group.chapter
+            self.group_district = group.get_representing_display()
             self.group_is_senior = group.is_senior
             self.group_is_youth = group.is_youth
             self.group_is_divided = group.is_divided
