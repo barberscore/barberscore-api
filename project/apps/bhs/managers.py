@@ -306,6 +306,7 @@ class GroupManager(Manager):
 
         # AIC
         aic_map = {
+            503061: "Signature",
             500983: "After Hours",
             501972: "Main Street",
             501329: "Forefront",
