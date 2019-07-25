@@ -160,6 +160,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ordering = (
         '-year',
         'season',
+        'district',
         # 'group__tree_sort',
     )
     list_select_related = [
@@ -174,30 +175,30 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        'award_id',
+        'award_name',
+        'award_level',
+        'award_kind',
+        'session',
         'award_age',
         'award_description',
         'award_district',
         'award_division',
         'award_gender',
         'award_is_novice',
-        'award_kind',
-        'award_level',
-        'award_name',
         'award_scope',
         'award_scope_range',
         'award_season',
         'award_size',
         'award_size_range',
         'award_tree_sort',
+        'award_id',
 
-        'session',
         # 'group',
     ]
 
     list_display = (
-        'id',
-        # 'award_id',
+        'award_name',
+        'convention_name',
         'session',
         # 'group',
     )
@@ -219,6 +220,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'id',
         'award_tree_sort',
+        'convention_name',
     ]
 
     autocomplete_fields = [

@@ -1001,6 +1001,10 @@ class Contest(TimeStampedModel):
         blank=True,
     )
 
+    @property
+    def convention_name(self):
+        return self.session.convention.name
+
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -1891,6 +1895,10 @@ class Session(TimeStampedModel):
         default='',
         storage=RawMediaCloudinaryStorage(),
     )
+
+    @property
+    def convention_name(self):
+        return self.convention.name
 
     # FKs
     owners = models.ManyToManyField(
