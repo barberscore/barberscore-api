@@ -619,12 +619,9 @@ class Convention(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        roles = [
-            'SCJC',
-            'DRCJ',
-            'CA',
-        ]
-        return any(item in roles for item in request.user.roles)
+        return any([
+            'SCJC' in request.user.roles,
+        ])
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -635,10 +632,10 @@ class Convention(TimeStampedModel):
                 'SCJC' in request.user.roles,
             ]),
             # For all others
-            all([
-                self.owners.filter(id__contains=request.user.id),
-                self.status != self.STATUS.inactive,
-            ]),
+            # all([
+            #     self.owners.filter(id__contains=request.user.id),
+            #     self.status != self.STATUS.inactive,
+            # ]),
         ])
 
     # Convention Transition Conditions
