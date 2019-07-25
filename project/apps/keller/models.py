@@ -1,6 +1,8 @@
 import uuid
 
 from model_utils import Choices
+from model_utils.models import TimeStampedModel
+from phonenumber_field.modelfields import PhoneNumberField
 
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.fields import JSONField
@@ -15,6 +17,580 @@ from .managers import CleanSongManager
 from .managers import CleanFlatManager
 from .managers import CompleteManager
 from .managers import SelectionManager
+
+
+class Person(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    status = models.IntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=STATUS,
+        default=STATUS.active,
+    )
+
+    prefix = models.CharField(
+        help_text="""
+            The prefix of the person.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    first_name = models.CharField(
+        help_text="""
+            The first name of the person.""",
+        max_length=255,
+        editable=False,
+    )
+
+    middle_name = models.CharField(
+        help_text="""
+            The middle name of the person.""",
+        max_length=255,
+        editable=False,
+    )
+
+    last_name = models.CharField(
+        help_text="""
+            The last name of the person.""",
+        max_length=255,
+        editable=False,
+    )
+
+    nick_name = models.CharField(
+        help_text="""
+            The nickname of the person.""",
+        max_length=255,
+        editable=False,
+    )
+
+    suffix = models.CharField(
+        help_text="""
+            The suffix of the person.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    birth_date = models.DateField(
+        null=True,
+        editable=False,
+    )
+
+    spouse = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    location = models.CharField(
+        help_text="""
+            The geographical location of the resource.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    PART = Choices(
+        (1, 'tenor', 'Tenor'),
+        (2, 'lead', 'Lead'),
+        (3, 'baritone', 'Baritone'),
+        (4, 'bass', 'Bass'),
+    )
+
+    part = models.IntegerField(
+        choices=PART,
+        null=True,
+        editable=False,
+    )
+
+    mon = models.IntegerField(
+        help_text="""
+            Men of Note.""",
+        null=True,
+        editable=False,
+    )
+
+    GENDER = Choices(
+        (10, 'male', 'Male'),
+        (20, 'female', 'Female'),
+    )
+
+    gender = models.IntegerField(
+        choices=GENDER,
+        null=True,
+        editable=False,
+    )
+
+    district = models.CharField(
+        help_text="""
+            District (used primarily for judges.)""",
+        max_length=10,
+        blank=True,
+        default='',
+    )
+
+    is_deceased = models.BooleanField(
+        default=False,
+        editable=False,
+    )
+    is_honorary = models.BooleanField(
+        default=False,
+        editable=False,
+    )
+    is_suspended = models.BooleanField(
+        default=False,
+        editable=False,
+    )
+    is_expelled = models.BooleanField(
+        default=False,
+        editable=False,
+    )
+    website = models.URLField(
+        help_text="""
+            The website URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    email = models.EmailField(
+        help_text="""
+            The contact email of the resource.""",
+        null=True,
+        editable=False,
+    )
+
+    address = models.TextField(
+        help_text="""
+            The complete address of the resource.""",
+        blank=True,
+        max_length=1000,
+        default='',
+    )
+
+    home_phone = PhoneNumberField(
+        help_text="""
+            The home phone number of the resource.  Include country code.""",
+        editable=False,
+    )
+
+    work_phone = PhoneNumberField(
+        help_text="""
+            The work phone number of the resource.  Include country code.""",
+        editable=False,
+    )
+
+    cell_phone = PhoneNumberField(
+        help_text="""
+            The cell phone number of the resource.  Include country code.""",
+        editable=False,
+    )
+
+    airports = ArrayField(
+        base_field=models.CharField(
+            blank=True,
+            max_length=3,
+        ),
+        null=True,
+        blank=True,
+    )
+
+    image = models.URLField(
+        max_length=255,
+        blank=True,
+    )
+
+    description = models.TextField(
+        help_text="""
+            A bio of the person.  Max 1000 characters.""",
+        blank=True,
+        max_length=1000,
+        default='',
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Notes (for internal use only).""",
+        blank=True,
+        default='',
+    )
+
+    bhs_id = models.IntegerField(
+        editable=False,
+    )
+
+    mc_pk = models.CharField(
+        null=True,
+        blank=True,
+        max_length=36,
+        unique=True,
+        db_index=True,
+    )
+
+
+    # Properties
+    @property
+    def nomen(self):
+        if self.nick_name:
+            nick = "({0})".format(self.nick_name)
+        else:
+            nick = ""
+        if self.bhs_id:
+            suffix = "[{0}]".format(self.bhs_id)
+        else:
+            suffix = "[No BHS ID]"
+        full = "{0} {1} {2} {3} {4}".format(
+            self.first_name,
+            self.middle_name,
+            self.last_name,
+            nick,
+            suffix,
+        )
+        return " ".join(full.split())
+
+    @property
+    def full_name(self):
+        if self.nick_name:
+            nick = "({0})".format(self.nick_name)
+        else:
+            nick = ""
+        full = "{0} {1} {2} {3}".format(
+            self.first_name,
+            self.middle_name,
+            self.last_name,
+            nick,
+        )
+        return " ".join(full.split())
+
+    @property
+    def common_name(self):
+        if self.nick_name:
+            first = self.nick_name
+        else:
+            first = self.first_name
+        return "{0} {1}".format(first, self.last_name)
+
+    @property
+    def sort_name(self):
+        return "{0}, {1}".format(self.last_name, self.first_name)
+
+    @property
+    def initials(self):
+        one = self.nick_name or self.first_name
+        two = str(self.last_name)
+        if not (one and two):
+            return "--"
+        return "{0}{1}".format(
+            one[0].upper(),
+            two[0].upper(),
+        )
+
+
+    class Meta:
+        verbose_name_plural = 'Persons'
+
+    def clean(self):
+        pass
+
+    def __str__(self):
+        return self.nomen
+
+
+class Group(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        help_text="""
+            The name of the resource.
+        """,
+        max_length=255,
+        default='UNKNOWN',
+    )
+
+    KIND = Choices(
+        ('International', [
+            (1, 'international', "International"),
+        ]),
+        ('District', [
+            (11, 'district', "District"),
+            (12, 'noncomp', "Noncompetitive"),
+            (13, 'affiliate', "Affiliate"),
+        ]),
+        ('Chapter', [
+            (30, 'chapter', "Chapter"),
+        ]),
+        ('Group', [
+            (32, 'chorus', "Chorus"),
+            (41, 'quartet', "Quartet"),
+            (46, 'vlq', "VLQ"),
+        ]),
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            The kind of group.
+        """,
+        choices=KIND,
+    )
+
+    GENDER = Choices(
+        (10, 'male', "Male"),
+        (20, 'female', "Female"),
+        (30, 'mixed', "Mixed"),
+    )
+
+    gender = models.IntegerField(
+        help_text="""
+            The gender of group.
+        """,
+        choices=GENDER,
+        default=GENDER.male,
+    )
+
+    DIVISION = Choices(
+        ('EVG', [
+            (10, 'evgd1', 'EVG Division I'),
+            (20, 'evgd2', 'EVG Division II'),
+            (30, 'evgd3', 'EVG Division III'),
+            (40, 'evgd4', 'EVG Division IV'),
+            (50, 'evgd5', 'EVG Division V'),
+        ]),
+        ('FWD', [
+            (60, 'fwdaz', 'FWD Arizona'),
+            (70, 'fwdne', 'FWD Northeast'),
+            (80, 'fwdnw', 'FWD Northwest'),
+            (90, 'fwdse', 'FWD Southeast'),
+            (100, 'fwdsw', 'FWD Southwest'),
+        ]),
+        ('LOL', [
+            (110, 'lol10l', 'LOL 10000 Lakes'),
+            (120, 'lolone', 'LOL Division One'),
+            (130, 'lolnp', 'LOL Northern Plains'),
+            (140, 'lolpkr', 'LOL Packerland'),
+            (150, 'lolsw', 'LOL Southwest'),
+        ]),
+        ('MAD', [
+            # (160, 'madatl', 'MAD Atlantic'),
+            (170, 'madcen', 'MAD Central'),
+            (180, 'madnth', 'MAD Northern'),
+            (190, 'madsth', 'MAD Southern'),
+            # (200, 'madwst', 'MAD Western'),
+        ]),
+        ('NED', [
+            (210, 'nedgp', 'NED Granite and Pine'),
+            (220, 'nedmtn', 'NED Mountain'),
+            (230, 'nedpat', 'NED Patriot'),
+            (240, 'nedsun', 'NED Sunrise'),
+            (250, 'nedyke', 'NED Yankee'),
+        ]),
+        ('SWD', [
+            (260, 'swdne', 'SWD Northeast'),
+            (270, 'swdnw', 'SWD Northwest'),
+            (280, 'swdse', 'SWD Southeast'),
+            (290, 'swdsw', 'SWD Southwest'),
+        ]),
+    )
+
+    division = models.IntegerField(
+        choices=DIVISION,
+        null=True,
+        blank=True,
+    )
+
+    bhs_id = models.IntegerField(
+        blank=True,
+        null=True,
+        unique=True,
+    )
+
+    code = models.CharField(
+        help_text="""
+            Short-form code.""",
+        max_length=255,
+        blank=True,
+    )
+
+    website = models.URLField(
+        help_text="""
+            The website URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    email = models.EmailField(
+        help_text="""
+            The contact email of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    phone = models.CharField(
+        help_text="""
+            The phone number of the resource.  Include country code.""",
+        blank=True,
+        max_length=25,
+    )
+
+    fax_phone = models.CharField(
+        help_text="""
+            The fax number of the resource.  Include country code.""",
+        blank=True,
+        max_length=25,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    location = models.CharField(
+        help_text="""
+            The geographical location of the resource.""",
+        max_length=255,
+        blank=True,
+    )
+
+    facebook = models.URLField(
+        help_text="""
+            The facebook URL of the resource.""",
+        blank=True,
+    )
+
+    twitter = models.URLField(
+        help_text="""
+            The twitter URL of the resource.""",
+        blank=True,
+    )
+
+    youtube = models.URLField(
+        help_text="""
+            The youtube URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    pinterest = models.URLField(
+        help_text="""
+            The pinterest URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    flickr = models.URLField(
+        help_text="""
+            The flickr URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    instagram = models.URLField(
+        help_text="""
+            The instagram URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    soundcloud = models.URLField(
+        help_text="""
+            The soundcloud URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    image = models.URLField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    description = models.TextField(
+        help_text="""
+            A description of the group.  Max 1000 characters.""",
+        blank=True,
+        max_length=1000,
+    )
+
+    participants = models.CharField(
+        help_text='Director(s) or Members (listed TLBB)',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Notes (for internal use only).""",
+        blank=True,
+    )
+
+    # Denormalizations
+    international = models.TextField(
+        help_text="""
+            The denormalized international group.""",
+        blank=True,
+        max_length=255,
+    )
+
+    district = models.TextField(
+        help_text="""
+            The denormalized district group.""",
+        blank=True,
+        max_length=255,
+    )
+
+    chapter = models.TextField(
+        help_text="""
+            The denormalized chapter group.""",
+        blank=True,
+        max_length=255,
+    )
+
+
+    # Properties
+    @property
+    def nomen(self):
+        if self.bhs_id:
+            suffix = "[{0}]".format(self.bhs_id)
+        else:
+            suffix = "[No BHS ID]"
+        if self.code:
+            code = "({0})".format(self.code)
+        else:
+            code = ""
+        full = [
+            self.name,
+            code,
+            suffix,
+        ]
+        return " ".join(full)
+
+    class Meta:
+        verbose_name_plural = 'Groups'
+
+    class JSONAPIMeta:
+        resource_name = "group"
+
+    def __str__(self):
+        return self.nomen
 
 
 class CleanPanelist(models.Model):
