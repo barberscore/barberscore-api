@@ -162,6 +162,33 @@ class Person(TimeStampedModel):
         editable=False,
     )
 
+    REPRESENTING = Choices(
+        (110, 'bhs', 'BHS'),
+        (200, 'car', 'CAR'),
+        (205, 'csd', 'CSD'),
+        (210, 'dix', 'DIX'),
+        (215, 'evg', 'EVG'),
+        (220, 'fwd', 'FWD'),
+        (225, 'ill', 'ILL'),
+        (230, 'jad', 'JAD'),
+        (235, 'lol', 'LOL'),
+        (240, 'mad', 'MAD'),
+        (345, 'ned', 'NED'),
+        (350, 'nsc', 'NSC'),
+        (355, 'ont', 'ONT'),
+        (360, 'pio', 'PIO'),
+        (365, 'rmd', 'RMD'),
+        (370, 'sld', 'SLD'),
+        (375, 'sun', 'SUN'),
+        (380, 'swd', 'SWD'),
+    )
+
+    representing = models.IntegerField(
+        choices=REPRESENTING,
+        null=True,
+        blank=True,
+    )
+
     district = models.CharField(
         help_text="""
             District (used primarily for judges.)""",
@@ -507,6 +534,33 @@ class Group(TimeStampedModel):
         default=GENDER.male,
     )
 
+    REPRESENTING = Choices(
+        (110, 'bhs', 'BHS'),
+        (200, 'car', 'CAR'),
+        (205, 'csd', 'CSD'),
+        (210, 'dix', 'DIX'),
+        (215, 'evg', 'EVG'),
+        (220, 'fwd', 'FWD'),
+        (225, 'ill', 'ILL'),
+        (230, 'jad', 'JAD'),
+        (235, 'lol', 'LOL'),
+        (240, 'mad', 'MAD'),
+        (345, 'ned', 'NED'),
+        (350, 'nsc', 'NSC'),
+        (355, 'ont', 'ONT'),
+        (360, 'pio', 'PIO'),
+        (365, 'rmd', 'RMD'),
+        (370, 'sld', 'SLD'),
+        (375, 'sun', 'SUN'),
+        (380, 'swd', 'SWD'),
+    )
+
+    representing = models.IntegerField(
+        choices=REPRESENTING,
+        null=True,
+        blank=True,
+    )
+
     DIVISION = Choices(
         ('EVG', [
             (10, 'evgd1', 'EVG Division I'),
@@ -688,6 +742,13 @@ class Group(TimeStampedModel):
         default='',
     )
 
+    chapters = models.CharField(
+        help_text="""
+            The denormalized chapter group.""",
+        blank=True,
+        max_length=255,
+    )
+
     notes = models.TextField(
         help_text="""
             Notes (for internal use only).""",
@@ -710,23 +771,9 @@ class Group(TimeStampedModel):
         editable=False,
     )
 
-    international = models.TextField(
-        help_text="""
-            The denormalized international group.""",
-        blank=True,
-        max_length=255,
-    )
-
     district = models.TextField(
         help_text="""
             The denormalized district group.""",
-        blank=True,
-        max_length=255,
-    )
-
-    chapter = models.TextField(
-        help_text="""
-            The denormalized chapter group.""",
         blank=True,
         max_length=255,
     )
@@ -865,48 +912,6 @@ class Group(TimeStampedModel):
             )
         ]
         return result
-
-    def denormalize(self):
-        parent = self.parent
-        if not parent:
-            self.international = ""
-            self.district = ""
-            self.chapter = ""
-        else:
-            international = parent
-            if international.kind >= self.KIND.international:
-                try:
-                    while international.kind != self.KIND.international:
-                        international = international.parent
-                    self.international = international.code
-                except AttributeError:
-                    self.international = ""
-            else:
-                self.international = ""
-            district = parent
-            if district.kind >= self.KIND.district:
-                try:
-                    while district.kind not in [
-                        self.KIND.district,
-                        self.KIND.noncomp,
-                        self.KIND.affiliate,
-                    ]:
-                        district = district.parent
-                    self.district = district.code
-                except AttributeError:
-                    self.district = ""
-            else:
-                self.district = ""
-            chapter = parent
-            if chapter.kind >= self.KIND.chapter:
-                try:
-                    while chapter.kind != self.KIND.chapter:
-                        chapter = chapter.parent
-                    self.chapter = chapter.name
-                except AttributeError:
-                    self.chapter = ""
-            else:
-                self.chapter = ""
 
     def get_is_senior(self):
         if self.kind != self.KIND.quartet:
@@ -1810,6 +1815,33 @@ class Award(TimeStampedModel):
 
     district = models.CharField(
         max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    REPRESENTING = Choices(
+        (110, 'bhs', 'BHS'),
+        (200, 'car', 'CAR'),
+        (205, 'csd', 'CSD'),
+        (210, 'dix', 'DIX'),
+        (215, 'evg', 'EVG'),
+        (220, 'fwd', 'FWD'),
+        (225, 'ill', 'ILL'),
+        (230, 'jad', 'JAD'),
+        (235, 'lol', 'LOL'),
+        (240, 'mad', 'MAD'),
+        (345, 'ned', 'NED'),
+        (350, 'nsc', 'NSC'),
+        (355, 'ont', 'ONT'),
+        (360, 'pio', 'PIO'),
+        (365, 'rmd', 'RMD'),
+        (370, 'sld', 'SLD'),
+        (375, 'sun', 'SUN'),
+        (380, 'swd', 'SWD'),
+    )
+
+    representing = models.IntegerField(
+        choices=REPRESENTING,
         null=True,
         blank=True,
     )

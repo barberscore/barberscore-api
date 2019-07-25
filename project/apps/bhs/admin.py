@@ -263,9 +263,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
     ]
     readonly_fields = [
         'id',
-        'international',
         'district',
-        'chapter',
         'created',
         'modified',
     ]
