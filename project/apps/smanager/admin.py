@@ -233,7 +233,14 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'award_name',
         'award_district',
     ]
-
+    ordering = [
+        '-session__convention__year',
+        'session__convention__season',
+        'session__convention__district',
+        'session__convention__name',
+        'session__kind',
+        'award_name',
+    ]
 
 @admin.register(Entry)
 class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
@@ -263,6 +270,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         '__str__',
+        'convention_name',
         'session',
         'status',
         # 'group',
@@ -298,16 +306,20 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     readonly_fields = (
         'id',
+        'convention_name',
     )
 
     save_on_top = True
 
-    ordering = (
-    )
-    class Media:
-        css = {
-            'all': ('css/admin.css',),
-        }
+    ordering = [
+        '-session__convention__year',
+        'session__convention__season',
+        'session__convention__district',
+        'session__convention__name',
+        'session__kind',
+        'group_name',
+    ]
+
 
 
 @admin.register(Session)
@@ -333,7 +345,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        '__str__',
+        'id',
         'convention',
         # 'convention__district',
         'kind',
@@ -382,6 +394,13 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'convention__group__tree_sort',
         'kind',
     )
+    ordering = [
+        '-convention__year',
+        'convention__season',
+        'convention__district',
+        'convention__name',
+        'kind',
+    ]
 
     search_fields = [
         'convention__name',

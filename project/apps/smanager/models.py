@@ -1003,7 +1003,7 @@ class Contest(TimeStampedModel):
 
     @property
     def convention_name(self):
-        return self.session.convention.name
+        return self.session.convention.__str__
 
     # FKs
     session = models.ForeignKey(
@@ -1424,6 +1424,10 @@ class Entry(TimeStampedModel):
         blank=True,
         default=list,
     )
+
+    @property
+    def convention_name(self):
+        return self.session.convention.__str__
 
     # FKs
     owners = models.ManyToManyField(
@@ -1898,7 +1902,7 @@ class Session(TimeStampedModel):
 
     @property
     def convention_name(self):
-        return self.convention.name
+        return self.convention.__str__
 
     # FKs
     owners = models.ManyToManyField(
