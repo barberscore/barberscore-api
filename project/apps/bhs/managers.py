@@ -31,122 +31,147 @@ User = get_user_model()
 
 from .tasks import get_accounts
 
-class AwardManager(Manager):
-    def sort_tree(self):
-        self.all().update(tree_sort=None)
-        awards = self.order_by(
-            '-status',  # Actives first
-            'group__tree_sort',  # Basic BHS Hierarchy
-            '-kind', # Quartet, Chorus
-            'gender', #Male, mixed
-            F('age').asc(nulls_first=True), # Null, Senior, Youth
-            'level', #Championship, qualifier
-            'is_novice',
-            'name', # alpha
+
+class PersonManager(Manager):
+    def update_or_create_from_human(self, human):
+        # Extract
+        if isinstance(human, dict):
+            mc_pk = human['id']
+            first_name = human['first_name']
+            middle_name = human['middle_name']
+            last_name = human['last_name']
+            nick_name = human['nick_name']
+            email = human['email']
+            birth_date = human['birth_date']
+            home_phone = human['home_phone']
+            cell_phone = human['cell_phone']
+            work_phone = human['work_phone']
+            bhs_id = human['bhs_id']
+            gender = human['gender']
+            part = human['part']
+            mon = human['mon']
+            is_deceased = human['is_deceased']
+            is_honorary = human['is_honorary']
+            is_suspended = human['is_suspended']
+            is_expelled = human['is_expelled']
+        else:
+            mc_pk = str(human.id)
+            first_name = human.first_name
+            middle_name = human.middle_name
+            last_name = human.last_name
+            nick_name = human.nick_name
+            email = human.email
+            birth_date = human.birth_date
+            home_phone = human.home_phone
+            cell_phone = human.cell_phone
+            work_phone = human.work_phone
+            bhs_id = human.bhs_id
+            gender = human.gender
+            part = human.part
+            mon = human.mon
+            is_deceased = human.is_deceased
+            is_honorary = human.is_honorary
+            is_suspended = human.is_suspended
+            is_expelled = human.is_expelled
+
+        # Transform
+        inactive = any([
+            is_deceased,
+            is_honorary,
+            is_suspended,
+            is_expelled,
+        ])
+        if inactive:
+            status = self.model.STATUS.inactive
+        else:
+            status = self.model.STATUS.active
+
+        prefix = first_name.rpartition('Dr.')[1].strip()
+        first_name = first_name.rpartition('Dr.')[2].strip()
+        last_name = last_name.partition('II')[0].strip()
+        suffix = last_name.partition('II')[1].strip()
+        last_name = last_name.partition('III')[0].strip()
+        suffix = last_name.partition('III')[1].strip()
+        last_name = last_name.partition('DDS')[0].strip()
+        suffix = last_name.partition('DDS')[1].strip()
+        last_name = last_name.partition('Sr')[0].strip()
+        suffix = last_name.partition('Sr')[1].strip()
+        last_name = last_name.partition('Jr')[0].strip()
+        suffix = last_name.partition('Jr')[1].strip()
+        last_name = last_name.partition('M.D.')[0].strip()
+        suffix = last_name.partition('M.D.')[1].strip()
+        if nick_name == first_name:
+            nick_name = ""
+
+        try:
+            validate_international_phonenumber(home_phone)
+        except ValidationError:
+            home_phone = ""
+        try:
+            validate_international_phonenumber(cell_phone)
+        except ValidationError:
+            cell_phone = ""
+        try:
+            validate_international_phonenumber(work_phone)
+        except ValidationError:
+            work_phone = ""
+
+        if gender:
+            gender = getattr(self.model.GENDER, gender, None)
+        else:
+            gender = None
+        if part:
+            part = getattr(self.model.PART, part, None)
+        else:
+            part = None
+
+        try:
+            validate_international_phonenumber(home_phone)
+        except ValidationError:
+            home_phone = ""
+
+        try:
+            validate_international_phonenumber(cell_phone)
+        except ValidationError:
+            cell_phone = ""
+
+        try:
+            validate_international_phonenumber(work_phone)
+        except ValidationError:
+            work_phone = ""
+
+        is_deceased = bool(is_deceased)
+
+
+        defaults = {
+            'status': status,
+            'prefix': prefix,
+            'first_name': first_name,
+            'middle_name': middle_name,
+            'last_name': last_name,
+            'suffix': suffix,
+            'nick_name': nick_name,
+            'email': email,
+            'birth_date': birth_date,
+            'home_phone': home_phone,
+            'cell_phone': cell_phone,
+            'work_phone': work_phone,
+            'bhs_id': bhs_id,
+            'gender': gender,
+            'part': part,
+            'is_deceased': is_deceased,
+            'mon': mon,
+        }
+        # Update or create
+        person, created = self.update_or_create(
+            mc_pk=mc_pk,
+            defaults=defaults,
         )
-        i = 0
-        for award in awards:
-            i += 1
-            award.tree_sort = i
-            award.save()
-        return
+        return person, created
 
-    def get_awards(self):
-        wb = Workbook()
-        ws = wb.active
-        fieldnames = [
-            'ID',
-            'District',
-            'Division',
-            'Name',
-            'Kind',
-            'Gender',
-            'Season',
-            'Level',
-            'Single',
-            'Spots',
-            'Threshold',
-            'Minimum',
-            'Advance',
-        ]
-        ws.append(fieldnames)
-        awards = self.select_related(
-            'group',
-        ).filter(
-            status__gt=0,
-        ).order_by('tree_sort')
-        for award in awards:
-            pk = str(award.id)
-            district = award.group.code
-            division = award.get_division_display()
-            name = award.name
-            kind = award.get_kind_display()
-            gender = award.get_gender_display()
-            season = award.get_season_display()
-            level = award.get_level_display()
-            single = award.is_single
-            spots = award.spots
-            threshold = award.threshold
-            minimum = award.minimum
-            advance = award.advance
-            row = [
-                pk,
-                district,
-                division,
-                name,
-                kind,
-                gender,
-                season,
-                level,
-                single,
-                spots,
-                threshold,
-                minimum,
-                advance,
-            ]
-            ws.append(row)
-        file = save_virtual_workbook(wb)
-        content = ContentFile(file)
-        return content
-
-
-class HumanManager(Manager):
-    def export_values(self, cursor=None):
-        hs = self.filter(
-            Q(merged_id="") | Q(merged_id=None),
-            Q(deleted_id="") | Q(deleted_id=None),
-        )
-        if cursor:
-            hs = hs.filter(
-                modified__gte=cursor,
-            )
-        return list(hs.values(
-            'id',
-            'first_name',
-            'middle_name',
-            'last_name',
-            'nick_name',
-            'email',
-            'birth_date',
-            'home_phone',
-            'cell_phone',
-            'work_phone',
-            'bhs_id',
-            'gender',
-            'part',
-            'mon',
-            'is_deceased',
-            'is_honorary',
-            'is_suspended',
-            'is_expelled',
-        ))
-
-    def delete_orphans(self):
-        # Get base
-        humans = list(self.values_list('id', flat=True))
+    def delete_orphans(self, humans):
         # Delete Orphans
-        Person = apps.get_model('bhs.person')
-        orphans = Person.objects.filter(
+        orphans = self.filter(
             mc_pk__isnull=False,
         ).exclude(
             mc_pk__in=humans,
@@ -155,247 +180,48 @@ class HumanManager(Manager):
         orphans.delete()
         return t
 
-
-    def get_account_orphans(self):
-        # Get humans
-        humans = list(self.values_list('id', flat=True))
-        # Get accounts
-        accounts = get_accounts()
-        mc_pks = [x['app_metadata']['mc_pk'] for x in accounts]
-        # Get orphans
-        orphans = [{'id': item} for item in mc_pks if item not in humans]
-        return orphans
-
-
-    def get_account_adoptions(self):
-        # Get accounts
-        accounts = get_accounts()
-        mc_pks = [x['app_metadata']['mc_pk'] for x in accounts]
-        # Get current
-        human_values = list(self.values(
-            'id',
-            'first_name',
-            'last_name',
-            'nick_name',
-            'email',
-            'bhs_id',
-        ))
-        # Rebuild list for verified emails only.
-        # Can skip this part if we trust MC data (which we don't currently)
-        humans = [x for x in human_values if x['email']]
-        # Get adoptions
-        adoptions = [item for item in humans if item['id'] not in mc_pks]
-        return adoptions
-
-
-class StructureManager(Manager):
-    def export_values(self, cursor=None):
-        output = []
-        types = [
-            'organization',
-            'district',
-            'group',
-            'chapter',
-            'chorus',
-            'quartet',
-        ]
-        for t in types:
-            ss = self.filter(
-                Q(kind=t),
-                Q(deleted_id="") | Q(deleted_id=None),
-            )
-            if cursor:
-                ss = ss.filter(
-                    modified__gte=cursor,
-                )
-            output.extend(
-                list(ss.values(
-                    'id',
-                    'name',
-                    'kind',
-                    'gender',
-                    'division',
-                    'bhs_id',
-                    'chapter_code',
-                    'website',
-                    'email',
-                    'phone',
-                    'fax',
-                    'facebook',
-                    'twitter',
-                    'youtube',
-                    'pinterest',
-                    'flickr',
-                    'instagram',
-                    'soundcloud',
-                    'preferred_name',
-                    'visitor_information',
-                    'established_date',
-                    'status_id',
-                    'parent_id',
-                ))
-            )
-        return output
-
-    def delete_orphans(self):
-        # Get base
-        structures = list(self.values_list('id', flat=True))
+    def link_from_user(self, instance):
         # Delete Orphans
-        Group = apps.get_model('bhs.group')
-        orphans = Group.objects.filter(
-            mc_pk__isnull=False,
-        ).exclude(
-            mc_pk__in=structures,
+        i = 0
+        while i <= 3:
+            time.sleep(i)
+            user = User.objects.get(
+                id=instance.id,
+            )
+            email = user.email
+            if email:
+                break
+            i += 1
+        if not email:
+            return None
+        person = self.get(
+            email=email,
         )
-        t = orphans.count()
-        orphans.delete()
-        return t
+        person.user = user
+        person.save()
+        return person
 
-
-class JoinManager(Manager):
-    def export_values(self, cursor=None):
-        Structure = apps.get_model('bhs.structure')
-        today = date.today()
-        js = self.select_related(
-            'structure',
-            'membership',
-            'subscription',
-            'subscription__human',
-        ).filter(
-            Q(paid=True),
-            Q(deleted__isnull=True),
-            Q(membership__deleted_id="") | Q(membership__deleted_id=None),
-            Q(subscription__deleted=None),
-            Q(structure__deleted_id="") | Q(structure__deleted_id=None),
-            Q(subscription__human__merged_id="") | Q(subscription__human__merged_id=None),
-            Q(subscription__human__deleted_id="") | Q(subscription__human__deleted_id=None),
+    def export_orphans(self, cursor=None):
+        ps = self.filter(
+            email__isnull=True,
+            user__isnull=False,
         )
         if cursor:
-            js = js.filter(
-                Q(modified__gte=cursor) |
-                Q(membership__modified__gte=cursor) |
-                Q(subscription__modified__gte=cursor)
-            )
-        js = js.values(
-            'structure__id',
-            'subscription__human__id',
-        )
-        js = js.annotate(
-            id=Max('id'),
-            vocal_part=Subquery(
-                self.filter(
-                    structure__id=OuterRef('structure__id'),
-                    subscription__human__id=OuterRef('subscription__human__id'),
-                ).order_by(
-                    '-modified',
-                ).values('part')[:1],
-                output_field=CharField()
-            ),
-            inactivist_date=Subquery(
-                self.filter(
-                    structure__id=OuterRef('structure__id'),
-                    subscription__human__id=OuterRef('subscription__human__id'),
-                ).order_by(
-                    F('inactive_date').desc(nulls_first=True)
-                ).values('inactive_date')[:1],
-                output_field=DateField()
-            ),
-            currentest_date=Subquery(
-                self.filter(
-                    structure__id=OuterRef('structure__id'),
-                    subscription__human__id=OuterRef('subscription__human__id'),
-                ).order_by(
-                    F('subscription__current_through').desc(nulls_first=True)
-                ).values('subscription__current_through')[:1],
-                output_field=DateField()
-            ),
-            startest_date=Min('established_date'),
-            endest_date=Case(
-                When(
-                    Q(
-                        structure__kind__in=[
-                            Structure.KIND.chorus,
-                            Structure.KIND.chapter,
-                        ],
-                    ),
-                    then=F('inactivist_date'),
-                ),
-                default=F('currentest_date'),
-                output_field=DateField(),
-            ),
-            status=Case(
-                When(endest_date__isnull=True, then=10),
-                When(endest_date__gte=today, then=10),
-                default=-10,
-                output_field=IntegerField(),
-            ),
-        ).values(
-            'structure__id',
-            'subscription__human__id',
-            'id',
-            'vocal_part',
-            'startest_date',
-            'endest_date',
-            'status',
-        )
-        return list(js)
-
-    def delete_orphans(self):
-        # Get base
-        joins = list(self.values_list('id', flat=True))
-        # Delete Orphans
-        Member = apps.get_model('bhs.member')
-        orphans = Member.objects.filter(
-            mc_pk__isnull=False,
-        ).exclude(
-            mc_pk__in=joins,
-        )
-        t = orphans.count()
-        orphans.delete()
-        return t
-
-
-class RoleManager(Manager):
-    def export_values(self, cursor=None):
-        today = date.today()
-        rs = self.filter(
-            Q(structure__deleted_id="") | Q(structure__deleted_id=None),
-            Q(human__merged_id="") | Q(human__merged_id=None),
-            Q(human__deleted_id="") | Q(human__deleted_id=None),
-        )
-        if cursor:
-            rs = rs.filter(
+            ps = ps.filter(
                 modified__gte=cursor,
             )
-        return list(rs.values(
-            'name',
-            'human_id',
-            'structure_id',
-        ).annotate(
-            id=Max('id'),
-            startest_date=Min('start_date'),
-            endest_date=Max('end_date'),
-            status=Case(
-                When(endest_date=None, then=10),
-                When(endest_date__gte=today, then=10),
-                default=-10,
-                output_field=IntegerField(),
-            ),
-        ))
+        return ps
 
-    def delete_orphans(self):
-        # Get base
-        roles = list(self.values_list('id', flat=True))
-        # Delete Orphans
-        Officer = apps.get_model('bhs.officer')
-        orphans = Officer.objects.filter(
-            mc_pk__isnull=False,
-        ).exclude(
-            mc_pk__in=roles,
+    def export_adoptions(self, cursor=None):
+        ps = self.filter(
+            email__isnull=False,
+            user__isnull=True,
         )
-        t = orphans.count()
-        orphans.delete()
-        return t
+        if cursor:
+            ps = ps.filter(
+                modified__gte=cursor,
+            )
+        return ps
 
 
 class GroupManager(Manager):
@@ -778,6 +604,308 @@ class GroupManager(Manager):
         return content
 
 
+class AwardManager(Manager):
+    def sort_tree(self):
+        self.all().update(tree_sort=None)
+        awards = self.order_by(
+            '-status',  # Actives first
+            'group__tree_sort',  # Basic BHS Hierarchy
+            '-kind', # Quartet, Chorus
+            'gender', #Male, mixed
+            F('age').asc(nulls_first=True), # Null, Senior, Youth
+            'level', #Championship, qualifier
+            'is_novice',
+            'name', # alpha
+        )
+        i = 0
+        for award in awards:
+            i += 1
+            award.tree_sort = i
+            award.save()
+        return
+
+    def get_awards(self):
+        wb = Workbook()
+        ws = wb.active
+        fieldnames = [
+            'ID',
+            'District',
+            'Division',
+            'Name',
+            'Kind',
+            'Gender',
+            'Season',
+            'Level',
+            'Single',
+            'Spots',
+            'Threshold',
+            'Minimum',
+            'Advance',
+        ]
+        ws.append(fieldnames)
+        awards = self.select_related(
+            'group',
+        ).filter(
+            status__gt=0,
+        ).order_by('tree_sort')
+        for award in awards:
+            pk = str(award.id)
+            district = award.group.code
+            division = award.get_division_display()
+            name = award.name
+            kind = award.get_kind_display()
+            gender = award.get_gender_display()
+            season = award.get_season_display()
+            level = award.get_level_display()
+            single = award.is_single
+            spots = award.spots
+            threshold = award.threshold
+            minimum = award.minimum
+            advance = award.advance
+            row = [
+                pk,
+                district,
+                division,
+                name,
+                kind,
+                gender,
+                season,
+                level,
+                single,
+                spots,
+                threshold,
+                minimum,
+                advance,
+            ]
+            ws.append(row)
+        file = save_virtual_workbook(wb)
+        content = ContentFile(file)
+        return content
+
+
+class ChartManager(Manager):
+    def get_report(self):
+        wb = Workbook()
+        ws = wb.active
+        fieldnames = [
+            'PK',
+            'Title',
+            'Arrangers',
+            'Composers',
+            'Lyricists',
+            'Holders',
+            'Status',
+        ]
+        ws.append(fieldnames)
+        charts = self.order_by('title', 'arrangers')
+        for chart in charts:
+            pk = str(chart.pk)
+            title = chart.title
+            arrangers = chart.arrangers
+            composers = chart.composers
+            lyricists = chart.lyricists
+            holders = chart.holders
+            status = chart.get_status_display()
+            row = [
+                pk,
+                title,
+                arrangers,
+                composers,
+                lyricists,
+                holders,
+                status,
+            ]
+            ws.append(row)
+        file = save_virtual_workbook(wb)
+        content = ContentFile(file)
+        return content
+
+
+class HumanManager(Manager):
+    def export_values(self, cursor=None):
+        hs = self.filter(
+            Q(merged_id="") | Q(merged_id=None),
+            Q(deleted_id="") | Q(deleted_id=None),
+        )
+        if cursor:
+            hs = hs.filter(
+                modified__gte=cursor,
+            )
+        return list(hs.values(
+            'id',
+            'first_name',
+            'middle_name',
+            'last_name',
+            'nick_name',
+            'email',
+            'birth_date',
+            'home_phone',
+            'cell_phone',
+            'work_phone',
+            'bhs_id',
+            'gender',
+            'part',
+            'mon',
+            'is_deceased',
+            'is_honorary',
+            'is_suspended',
+            'is_expelled',
+        ))
+
+    def delete_orphans(self):
+        # Get base
+        humans = list(self.values_list('id', flat=True))
+        # Delete Orphans
+        Person = apps.get_model('bhs.person')
+        orphans = Person.objects.filter(
+            mc_pk__isnull=False,
+        ).exclude(
+            mc_pk__in=humans,
+        )
+        t = orphans.count()
+        orphans.delete()
+        return t
+
+
+    def get_account_orphans(self):
+        # Get humans
+        humans = list(self.values_list('id', flat=True))
+        # Get accounts
+        accounts = get_accounts()
+        mc_pks = [x['app_metadata']['mc_pk'] for x in accounts]
+        # Get orphans
+        orphans = [{'id': item} for item in mc_pks if item not in humans]
+        return orphans
+
+
+    def get_account_adoptions(self):
+        # Get accounts
+        accounts = get_accounts()
+        mc_pks = [x['app_metadata']['mc_pk'] for x in accounts]
+        # Get current
+        human_values = list(self.values(
+            'id',
+            'first_name',
+            'last_name',
+            'nick_name',
+            'email',
+            'bhs_id',
+        ))
+        # Rebuild list for verified emails only.
+        # Can skip this part if we trust MC data (which we don't currently)
+        humans = [x for x in human_values if x['email']]
+        # Get adoptions
+        adoptions = [item for item in humans if item['id'] not in mc_pks]
+        return adoptions
+
+
+class StructureManager(Manager):
+    def export_values(self, cursor=None):
+        output = []
+        types = [
+            'organization',
+            'district',
+            'group',
+            'chapter',
+            'chorus',
+            'quartet',
+        ]
+        for t in types:
+            ss = self.filter(
+                Q(kind=t),
+                Q(deleted_id="") | Q(deleted_id=None),
+            )
+            if cursor:
+                ss = ss.filter(
+                    modified__gte=cursor,
+                )
+            output.extend(
+                list(ss.values(
+                    'id',
+                    'name',
+                    'kind',
+                    'gender',
+                    'division',
+                    'bhs_id',
+                    'chapter_code',
+                    'website',
+                    'email',
+                    'phone',
+                    'fax',
+                    'facebook',
+                    'twitter',
+                    'youtube',
+                    'pinterest',
+                    'flickr',
+                    'instagram',
+                    'soundcloud',
+                    'preferred_name',
+                    'visitor_information',
+                    'established_date',
+                    'status_id',
+                    'parent_id',
+                ))
+            )
+        return output
+
+    def delete_orphans(self):
+        # Get base
+        structures = list(self.values_list('id', flat=True))
+        # Delete Orphans
+        Group = apps.get_model('bhs.group')
+        orphans = Group.objects.filter(
+            mc_pk__isnull=False,
+        ).exclude(
+            mc_pk__in=structures,
+        )
+        t = orphans.count()
+        orphans.delete()
+        return t
+
+
+class RoleManager(Manager):
+    def export_values(self, cursor=None):
+        today = date.today()
+        rs = self.filter(
+            Q(structure__deleted_id="") | Q(structure__deleted_id=None),
+            Q(human__merged_id="") | Q(human__merged_id=None),
+            Q(human__deleted_id="") | Q(human__deleted_id=None),
+        )
+        if cursor:
+            rs = rs.filter(
+                modified__gte=cursor,
+            )
+        return list(rs.values(
+            'name',
+            'human_id',
+            'structure_id',
+        ).annotate(
+            id=Max('id'),
+            startest_date=Min('start_date'),
+            endest_date=Max('end_date'),
+            status=Case(
+                When(endest_date=None, then=10),
+                When(endest_date__gte=today, then=10),
+                default=-10,
+                output_field=IntegerField(),
+            ),
+        ))
+
+    def delete_orphans(self):
+        # Get base
+        roles = list(self.values_list('id', flat=True))
+        # Delete Orphans
+        Officer = apps.get_model('bhs.officer')
+        orphans = Officer.objects.filter(
+            mc_pk__isnull=False,
+        ).exclude(
+            mc_pk__in=roles,
+        )
+        t = orphans.count()
+        orphans.delete()
+        return t
+
+
 class MemberManager(Manager):
     def update_or_create_from_join(self, join):
         # Extract
@@ -824,6 +952,109 @@ class MemberManager(Manager):
     def delete_orphans(self, joins):
         # Delete Orphans
         orphans = self.filter(
+            mc_pk__isnull=False,
+        ).exclude(
+            mc_pk__in=joins,
+        )
+        t = orphans.count()
+        orphans.delete()
+        return t
+
+
+class JoinManager(Manager):
+    def export_values(self, cursor=None):
+        Structure = apps.get_model('bhs.structure')
+        today = date.today()
+        js = self.select_related(
+            'structure',
+            'membership',
+            'subscription',
+            'subscription__human',
+        ).filter(
+            Q(paid=True),
+            Q(deleted__isnull=True),
+            Q(membership__deleted_id="") | Q(membership__deleted_id=None),
+            Q(subscription__deleted=None),
+            Q(structure__deleted_id="") | Q(structure__deleted_id=None),
+            Q(subscription__human__merged_id="") | Q(subscription__human__merged_id=None),
+            Q(subscription__human__deleted_id="") | Q(subscription__human__deleted_id=None),
+        )
+        if cursor:
+            js = js.filter(
+                Q(modified__gte=cursor) |
+                Q(membership__modified__gte=cursor) |
+                Q(subscription__modified__gte=cursor)
+            )
+        js = js.values(
+            'structure__id',
+            'subscription__human__id',
+        )
+        js = js.annotate(
+            id=Max('id'),
+            vocal_part=Subquery(
+                self.filter(
+                    structure__id=OuterRef('structure__id'),
+                    subscription__human__id=OuterRef('subscription__human__id'),
+                ).order_by(
+                    '-modified',
+                ).values('part')[:1],
+                output_field=CharField()
+            ),
+            inactivist_date=Subquery(
+                self.filter(
+                    structure__id=OuterRef('structure__id'),
+                    subscription__human__id=OuterRef('subscription__human__id'),
+                ).order_by(
+                    F('inactive_date').desc(nulls_first=True)
+                ).values('inactive_date')[:1],
+                output_field=DateField()
+            ),
+            currentest_date=Subquery(
+                self.filter(
+                    structure__id=OuterRef('structure__id'),
+                    subscription__human__id=OuterRef('subscription__human__id'),
+                ).order_by(
+                    F('subscription__current_through').desc(nulls_first=True)
+                ).values('subscription__current_through')[:1],
+                output_field=DateField()
+            ),
+            startest_date=Min('established_date'),
+            endest_date=Case(
+                When(
+                    Q(
+                        structure__kind__in=[
+                            Structure.KIND.chorus,
+                            Structure.KIND.chapter,
+                        ],
+                    ),
+                    then=F('inactivist_date'),
+                ),
+                default=F('currentest_date'),
+                output_field=DateField(),
+            ),
+            status=Case(
+                When(endest_date__isnull=True, then=10),
+                When(endest_date__gte=today, then=10),
+                default=-10,
+                output_field=IntegerField(),
+            ),
+        ).values(
+            'structure__id',
+            'subscription__human__id',
+            'id',
+            'vocal_part',
+            'startest_date',
+            'endest_date',
+            'status',
+        )
+        return list(js)
+
+    def delete_orphans(self):
+        # Get base
+        joins = list(self.values_list('id', flat=True))
+        # Delete Orphans
+        Member = apps.get_model('bhs.member')
+        orphans = Member.objects.filter(
             mc_pk__isnull=False,
         ).exclude(
             mc_pk__in=joins,
@@ -889,234 +1120,3 @@ class OfficerManager(Manager):
         t = orphans.count()
         orphans.delete()
         return t
-
-
-class PersonManager(Manager):
-    def export_orphans(self, cursor=None):
-        ps = self.filter(
-            email__isnull=True,
-            user__isnull=False,
-        )
-        if cursor:
-            ps = ps.filter(
-                modified__gte=cursor,
-            )
-        return ps
-
-    def export_adoptions(self, cursor=None):
-        ps = self.filter(
-            email__isnull=False,
-            user__isnull=True,
-        )
-        if cursor:
-            ps = ps.filter(
-                modified__gte=cursor,
-            )
-        return ps
-
-    def update_or_create_from_human(self, human):
-        # Extract
-        if isinstance(human, dict):
-            mc_pk = human['id']
-            first_name = human['first_name']
-            middle_name = human['middle_name']
-            last_name = human['last_name']
-            nick_name = human['nick_name']
-            email = human['email']
-            birth_date = human['birth_date']
-            home_phone = human['home_phone']
-            cell_phone = human['cell_phone']
-            work_phone = human['work_phone']
-            bhs_id = human['bhs_id']
-            gender = human['gender']
-            part = human['part']
-            mon = human['mon']
-            is_deceased = human['is_deceased']
-            is_honorary = human['is_honorary']
-            is_suspended = human['is_suspended']
-            is_expelled = human['is_expelled']
-        else:
-            mc_pk = str(human.id)
-            first_name = human.first_name
-            middle_name = human.middle_name
-            last_name = human.last_name
-            nick_name = human.nick_name
-            email = human.email
-            birth_date = human.birth_date
-            home_phone = human.home_phone
-            cell_phone = human.cell_phone
-            work_phone = human.work_phone
-            bhs_id = human.bhs_id
-            gender = human.gender
-            part = human.part
-            mon = human.mon
-            is_deceased = human.is_deceased
-            is_honorary = human.is_honorary
-            is_suspended = human.is_suspended
-            is_expelled = human.is_expelled
-
-        # Transform
-        inactive = any([
-            is_deceased,
-            is_honorary,
-            is_suspended,
-            is_expelled,
-        ])
-        if inactive:
-            status = self.model.STATUS.inactive
-        else:
-            status = self.model.STATUS.active
-
-        prefix = first_name.rpartition('Dr.')[1].strip()
-        first_name = first_name.rpartition('Dr.')[2].strip()
-        last_name = last_name.partition('II')[0].strip()
-        suffix = last_name.partition('II')[1].strip()
-        last_name = last_name.partition('III')[0].strip()
-        suffix = last_name.partition('III')[1].strip()
-        last_name = last_name.partition('DDS')[0].strip()
-        suffix = last_name.partition('DDS')[1].strip()
-        last_name = last_name.partition('Sr')[0].strip()
-        suffix = last_name.partition('Sr')[1].strip()
-        last_name = last_name.partition('Jr')[0].strip()
-        suffix = last_name.partition('Jr')[1].strip()
-        last_name = last_name.partition('M.D.')[0].strip()
-        suffix = last_name.partition('M.D.')[1].strip()
-        if nick_name == first_name:
-            nick_name = ""
-
-        try:
-            validate_international_phonenumber(home_phone)
-        except ValidationError:
-            home_phone = ""
-        try:
-            validate_international_phonenumber(cell_phone)
-        except ValidationError:
-            cell_phone = ""
-        try:
-            validate_international_phonenumber(work_phone)
-        except ValidationError:
-            work_phone = ""
-
-        if gender:
-            gender = getattr(self.model.GENDER, gender, None)
-        else:
-            gender = None
-        if part:
-            part = getattr(self.model.PART, part, None)
-        else:
-            part = None
-
-        try:
-            validate_international_phonenumber(home_phone)
-        except ValidationError:
-            home_phone = ""
-
-        try:
-            validate_international_phonenumber(cell_phone)
-        except ValidationError:
-            cell_phone = ""
-
-        try:
-            validate_international_phonenumber(work_phone)
-        except ValidationError:
-            work_phone = ""
-
-        is_deceased = bool(is_deceased)
-
-
-        defaults = {
-            'status': status,
-            'prefix': prefix,
-            'first_name': first_name,
-            'middle_name': middle_name,
-            'last_name': last_name,
-            'suffix': suffix,
-            'nick_name': nick_name,
-            'email': email,
-            'birth_date': birth_date,
-            'home_phone': home_phone,
-            'cell_phone': cell_phone,
-            'work_phone': work_phone,
-            'bhs_id': bhs_id,
-            'gender': gender,
-            'part': part,
-            'is_deceased': is_deceased,
-            'mon': mon,
-        }
-        # Update or create
-        person, created = self.update_or_create(
-            mc_pk=mc_pk,
-            defaults=defaults,
-        )
-        return person, created
-
-    def delete_orphans(self, humans):
-        # Delete Orphans
-        orphans = self.filter(
-            mc_pk__isnull=False,
-        ).exclude(
-            mc_pk__in=humans,
-        )
-        t = orphans.count()
-        orphans.delete()
-        return t
-
-    def link_from_user(self, instance):
-        # Delete Orphans
-        i = 0
-        while i <= 3:
-            time.sleep(i)
-            user = User.objects.get(
-                id=instance.id,
-            )
-            email = user.email
-            if email:
-                break
-            i += 1
-        if not email:
-            return None
-        person = self.get(
-            email=email,
-        )
-        person.user = user
-        person.save()
-        return person
-
-
-class ChartManager(Manager):
-    def get_report(self):
-        wb = Workbook()
-        ws = wb.active
-        fieldnames = [
-            'PK',
-            'Title',
-            'Arrangers',
-            'Composers',
-            'Lyricists',
-            'Holders',
-            'Status',
-        ]
-        ws.append(fieldnames)
-        charts = self.order_by('title', 'arrangers')
-        for chart in charts:
-            pk = str(chart.pk)
-            title = chart.title
-            arrangers = chart.arrangers
-            composers = chart.composers
-            lyricists = chart.lyricists
-            holders = chart.holders
-            status = chart.get_status_display()
-            row = [
-                pk,
-                title,
-                arrangers,
-                composers,
-                lyricists,
-                holders,
-                status,
-            ]
-            ws.append(row)
-        file = save_virtual_workbook(wb)
-        content = ContentFile(file)
-        return content
-
