@@ -47,6 +47,29 @@ class ConventionStatusListFilter(admin.SimpleListFilter):
             )
 
 
+class ActiveConventionListFilter(admin.SimpleListFilter):
+    title = 'Active Conventions'
+    parameter_name = 'active_conventions'
+
+    def lookups(self, request, model_admin):
+        Convention = apps.get_model('smanager.convention')
+        conventions = Convention.objects.filter(
+            status__gte=0,
+        ).order_by(
+            'year',
+            'season',
+            'district',
+        )
+        conventions_tuple = [(x.id, x.__str__) for x in conventions]
+        return conventions_tuple
+
+    def queryset(self, request, queryset):
+        convention_id = request.GET.get('active_conventions')
+        if convention_id:
+            return queryset.filter(convention__id=convention_id)
+        return queryset
+
+
 class SessionConventionStatusListFilter(admin.SimpleListFilter):
     title = 'Convention Status'
     parameter_name = 'convention_status'

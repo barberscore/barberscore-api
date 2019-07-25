@@ -8,9 +8,9 @@ from django.contrib import admin
 # Local
 from .filters import ConventionStatusListFilter
 from .filters import SessionConventionStatusListFilter
-
+from .filters import ActiveConventionListFilter
 from .inlines import AssignmentInline
-from .inlines import ConventionInline
+# from .inlines import ConventionInline
 from .inlines import ContestInline
 from .inlines import EntryInline
 from .inlines import SessionInline
@@ -42,10 +42,11 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_display = [
-        'person_id',
+        'common_name',
+        'bhs_id',
         'convention',
-        'kind',
         'category',
+        'kind',
         'status',
     ]
 
@@ -53,6 +54,7 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'kind',
         'category',
+        ActiveConventionListFilter,
     )
 
     list_select_related = [
@@ -74,6 +76,13 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     raw_id_fields = [
         'user',
+    ]
+    ordering = [
+        '-convention__start_date',
+        'category',
+        'kind',
+        'last_name',
+        'first_name',
     ]
 
 
