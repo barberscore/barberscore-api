@@ -1273,40 +1273,12 @@ class Officer(TimeStampedModel):
     )
 
     OFFICE = Choices(
-        ('International', [
-            (100, 'scjc_chair', "SCJC Chair"),
-            (110, 'scjc_past', "SCJC Chair Past"),
-            (120, 'scjc_ca', "SCJC CA"),
-            (130, 'scjc_mus', "SCJC MUS"),
-            (140, 'scjc_per', "SCJC PER"),
-            (150, 'scjc_sng', "SCJC SNG"),
-            (160, 'scjc_chart', "SCJC Chart"),
-            (170, 'scjc_admin', "SCJC Admin"),
-            (230, 'judge_ca', "JUDGE CA"),
-            (240, 'judge_mus', "JUDGE MUS"),
-            (250, 'judge_per', "JUDGE PER"),
-            (260, 'judge_sng', "JUDGE SNG"),
-            (270, 'candidate_ca', "CANDIDATE CA"),
-            (280, 'candidate_mus', "CANDIDATE MUS"),
-            (290, 'candidate_per', "CANDIDATE PER"),
-            (295, 'candidate_sng', "CANDIDATE SNG"),
-        ]),
-        ('District', [
-            (210, 'drcj', "DRCJ"),
-            (220, 'drcj_asst', "DRCJ Assistant"),
-        ]),
-        ('Chapter', [
-            (310, 'chapter_pres', "CPRES"),
-            (320, 'chapter_sec', "CSEC"),
-        ]),
-        ('Chorus', [
-            (330, 'chorus_dir', "KDIR"),
-            (340, 'chorus_asst', "KASS"),
-            (350, 'chorus_man', "KMAN"),
-        ]),
-        ('Quartet', [
-            (410, 'quartet_admin', "QADM"),
-        ]),
+        (10, 'scjc', 'SCJC'),
+        (20, 'drcj', 'DRCJ'),
+        (30, 'ca', 'CA'),
+        (40, 'judge', 'Judge'),
+        (50, 'manager', 'Manager'),
+        (60, 'librarian', 'Librarian'),
     )
 
     office = models.IntegerField(
@@ -1359,9 +1331,6 @@ class Officer(TimeStampedModel):
 
     # Internals
     class Meta:
-        unique_together = (
-            ('group', 'person', 'office'),
-        )
         verbose_name_plural = 'Officers'
 
     class JSONAPIMeta:
