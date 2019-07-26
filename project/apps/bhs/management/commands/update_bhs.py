@@ -75,10 +75,13 @@ class Command(BaseCommand):
         i = 0
         for human in humans:
             i += 1
-            if i != t:
-                self.stdout.flush()
+            self.stdout.flush()
             self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
-            Person.objects.update_or_create_from_human(human)
+            person, new_person = Person.objects.update_or_create_from_human(human)
+            # Only create accounts if there are officers attached
+            if person.officers.filter(status__gt=0):
+                person.update_or_create_user(new_person)
+        self.stdout.write("")
         self.stdout.write("Updated {0} Persons.".format(t))
         if not cursor:
             humans = list(Human.objects.values_list('id', flat=True))
@@ -94,10 +97,10 @@ class Command(BaseCommand):
         i = 0
         for structure in structures:
             i += 1
-            if i != t:
-                self.stdout.flush()
+            self.stdout.flush()
             self.stdout.write("Updating {0} of {1} Groups...".format(i, t), ending='\r')
             Group.objects.update_or_create_from_structure(structure)
+        self.stdout.write("")
         self.stdout.write("Updated {0} Groups.".format(t))
         if not cursor:
             self.stdout.write("Deleting Orphans...")
@@ -113,10 +116,11 @@ class Command(BaseCommand):
         i = 0
         for role in roles:
             i += 1
-            if i != t:
-                self.stdout.flush()
+            self.stdout.flush()
             self.stdout.write("Updating {0} of {1} Officers...".format(i, t), ending='\r')
-            Officer.objects.update_or_create_from_role(role)
+            officer, new_officer = Officer.objects.update_or_create_from_role(role)
+            officer.update_or_create_group_owners(new_officer)
+        self.stdout.write("")
         self.stdout.write("Updated {0} Officers.".format(t))
         if not cursor:
             self.stdout.write("Deleting orphans...")
