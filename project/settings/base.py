@@ -57,6 +57,16 @@ REQUIRED_FIELDS = [
 LOGIN_URL = 'admin:login'
 LOGIN_REDIRECT_URL = 'admin:index'
 LOGOUT_REDIRECT_URL = 'admin:login'
+JWT_AUTH = {
+    'AUTH0_CLIENT_ID': get_env_variable("AUTH0_CLIENT_ID"),
+    'AUTH0_CLIENT_SECRET': get_env_variable("AUTH0_CLIENT_SECRET"),
+    'AUTH0_DOMAIN': get_env_variable("AUTH0_DOMAIN"),
+    'AUTH0_AUDIENCE': get_env_variable("AUTH0_AUDIENCE"),
+}
+#         if api_settings.AUTH0_DOMAIN.startswith('login'):
+#             audience = "https://barberscore.auth0.com/api/v2/"
+#         else:
+#             audience = "https://{0}/api/v2/".format(api_settings.AUTH0_DOMAIN)
 
 # File Management
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
@@ -146,11 +156,6 @@ RQ_QUEUES = {
     },
 }
 RQ_SHOW_ADMIN_LINK = True
-
-# Auth0
-AUTH0_CLIENT_ID = get_env_variable("AUTH0_CLIENT_ID")
-AUTH0_CLIENT_SECRET = get_env_variable("AUTH0_CLIENT_SECRET")
-AUTH0_DOMAIN = get_env_variable("AUTH0_DOMAIN")
 
 # Algolia
 ALGOLIA = {
