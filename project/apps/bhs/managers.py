@@ -2,8 +2,6 @@ import time
 from datetime import date
 
 # Third-Party
-import django_rq
-from django_fsm_log.models import StateLog
 from algoliasearch_django.decorators import disable_auto_indexing
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
@@ -28,8 +26,6 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-
-from .tasks import get_accounts
 
 
 class PersonManager(Manager):
@@ -642,6 +638,55 @@ class GroupManager(Manager):
         return content
 
 
+class OfficerManager(Manager):
+    def update_or_create_from_role(self, role):
+        # Extract
+        if not isinstance(role, dict):
+            raise RuntimeError("Must be pre-processed")
+        mc_pk = role['id']
+        # name = role['name']
+        start_date = role['startest_date']
+        end_date = role['endest_date']
+        person_pk = role['human_id']
+        group_pk = role['structure_id']
+        status = role['status']
+
+        # Transform
+        Person = apps.get_model('bhs.person')
+        Group = apps.get_model('bhs.group')
+
+        defaults = {
+            'mc_pk': mc_pk,
+            'status': status,
+            'start_date': start_date,
+            'end_date': end_date,
+        }
+
+        person = Person.objects.get(mc_pk=person_pk)
+        group = Group.objects.get(mc_pk=group_pk)
+        office = self.model.OFFICE.manager
+
+        # Load
+        officer, created = self.update_or_create(
+            person=person,
+            group=group,
+            office=office,
+            defaults=defaults,
+        )
+        return officer, created
+
+    def delete_orphans(self, roles):
+        # Delete Orphans
+        orphans = self.filter(
+            mc_pk__isnull=False,
+        ).exclude(
+            mc_pk__in=roles,
+        )
+        t = orphans.count()
+        orphans.delete()
+        return t
+
+
 class AwardManager(Manager):
     def sort_tree(self):
         self.all().update(tree_sort=None)
@@ -1096,55 +1141,6 @@ class JoinManager(Manager):
             mc_pk__isnull=False,
         ).exclude(
             mc_pk__in=joins,
-        )
-        t = orphans.count()
-        orphans.delete()
-        return t
-
-
-class OfficerManager(Manager):
-    def update_or_create_from_role(self, role):
-        # Extract
-        if not isinstance(role, dict):
-            raise RuntimeError("Must be pre-processed")
-        mc_pk = role['id']
-        # name = role['name']
-        start_date = role['startest_date']
-        end_date = role['endest_date']
-        person_pk = role['human_id']
-        group_pk = role['structure_id']
-        status = role['status']
-
-        # Transform
-        Person = apps.get_model('bhs.person')
-        Group = apps.get_model('bhs.group')
-
-        defaults = {
-            'mc_pk': mc_pk,
-            'status': status,
-            'start_date': start_date,
-            'end_date': end_date,
-        }
-
-        person = Person.objects.get(mc_pk=person_pk)
-        group = Group.objects.get(mc_pk=group_pk)
-        office = self.model.OFFICE.manager
-
-        # Load
-        officer, created = self.update_or_create(
-            person=person,
-            group=group,
-            office=office,
-            defaults=defaults,
-        )
-        return officer, created
-
-    def delete_orphans(self, roles):
-        # Delete Orphans
-        orphans = self.filter(
-            mc_pk__isnull=False,
-        ).exclude(
-            mc_pk__in=roles,
         )
         t = orphans.count()
         orphans.delete()
