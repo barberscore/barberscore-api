@@ -176,27 +176,6 @@ class PersonManager(Manager):
         orphans.delete()
         return t
 
-    def link_from_user(self, instance):
-        # Delete Orphans
-        i = 0
-        while i <= 3:
-            time.sleep(i)
-            user = User.objects.get(
-                id=instance.id,
-            )
-            email = user.email
-            if email:
-                break
-            i += 1
-        if not email:
-            return None
-        person = self.get(
-            email=email,
-        )
-        person.user = user
-        person.save()
-        return person
-
     def export_orphans(self, cursor=None):
         ps = self.filter(
             email__isnull=True,

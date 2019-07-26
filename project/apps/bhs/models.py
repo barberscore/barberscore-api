@@ -412,20 +412,6 @@ class Person(TimeStampedModel):
     #         )
     #     )
 
-    def link_user(self):
-        """Link User to Person"""
-        # Check for email
-        User = get_user_model()
-
-        if not self.email:
-            raise ValidationError("User requires valid email")
-        user, _ = User.objects.get_or_create_user_from_email(self.email)
-        self.user = user
-        self.save()
-        return
-
-
-
     # Internals
     objects = PersonManager()
 
