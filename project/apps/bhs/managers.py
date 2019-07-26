@@ -1108,7 +1108,7 @@ class OfficerManager(Manager):
         if not isinstance(role, dict):
             raise RuntimeError("Must be pre-processed")
         mc_pk = role['id']
-        name = role['name']
+        # name = role['name']
         start_date = role['startest_date']
         end_date = role['endest_date']
         person_pk = role['human_id']
@@ -1128,16 +1128,7 @@ class OfficerManager(Manager):
 
         person = Person.objects.get(mc_pk=person_pk)
         group = Group.objects.get(mc_pk=group_pk)
-
-        office_map = {
-            'Chapter President': self.model.OFFICE.chapter_pres,
-            'Chapter Secretary': self.model.OFFICE.chapter_sec,
-            'Chorus Associate or Assistant Director': self.model.OFFICE.chorus_asst,
-            'Chorus Director': self.model.OFFICE.chorus_dir,
-            'Chorus Manager': self.model.OFFICE.chorus_man,
-            'Quartet Admin': self.model.OFFICE.quartet_admin,
-        }
-        office = office_map.get(name)
+        office = self.model.OFFICE.manager
 
         # Load
         officer, created = self.update_or_create(

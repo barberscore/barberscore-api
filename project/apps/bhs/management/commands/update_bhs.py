@@ -70,8 +70,8 @@ class Command(BaseCommand):
             cursor = None
 
         # Sync Persons
-        self.stdout.write("Updating Persons and Accounts.")
-        self.stdout.write("Fetching Humans...")
+        self.stdout.write("Updating Persons.")
+        self.stdout.write("Fetching Humans from Member Center...")
         humans = Human.objects.export_values(cursor=cursor)
         t = len(humans)
         i = 0
@@ -79,34 +79,18 @@ class Command(BaseCommand):
             i += 1
             if i != t:
                 self.stdout.flush()
-            self.stdout.write("Updating {0} of {1} Persons/Accounts/Users...".format(i, t), ending='\r')
+            self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
             Person.objects.update_or_create_from_human(human)
-            # try:
-            #     account, created = create_or_update_account_from_human(human)
-            # except Exception as e:
-            #     log.error((e, human))
-            #     continue
-            # if created:
-            #     User.objects.create_user(
-            #         username=account['user_id'],
-            #         person=person,
-            #     )
-        self.stdout.write("Updated {0} Accounts.".format(t))
+        self.stdout.write("Updated {0} Persons.".format(t))
         if not cursor:
             humans = list(Human.objects.values_list('id', flat=True))
             self.stdout.write("Deleting Person orphans...")
             t = Person.objects.delete_orphans(humans)
             self.stdout.write("Deleted {0} Person orphans.".format(t))
-            # self.stdout.write("Deleting Account orphans...")
-            # orphans = get_account_orphans()
-            # t = len(orphans)
-            # for orphan in orphans:
-            #     delete_account_from_human(orphan)
-            # self.stdout.write("Deleted {0} Account orphans.".format(t))
 
         # Sync Groups
         self.stdout.write("Updating Groups.")
-        self.stdout.write("Fetching Structures...")
+        self.stdout.write("Fetching Structures from Member Center...")
         structures = Structure.objects.export_values(cursor=cursor)
         t = len(structures)
         i = 0
@@ -123,9 +107,9 @@ class Command(BaseCommand):
             t = Group.objects.delete_orphans(structures)
             self.stdout.write("Deleted {0} Group orphans.".format(t))
 
-        # # Sync Officers
+        # Sync Officers
         self.stdout.write("Updating Officers.")
-        self.stdout.write("Fetching Roles...")
+        self.stdout.write("Fetching Roles from Member Center...")
         roles = Role.objects.export_values(cursor=cursor)
         t = len(roles)
         i = 0
@@ -141,8 +125,6 @@ class Command(BaseCommand):
             roles = list(Role.objects.values_list('id', flat=True))
             t = Officer.objects.delete_orphans(roles)
             self.stdout.write("Deleted {0} Officer orphans.".format(t))
-
-        # Sync Officers and Owners
 
 
         # # Sync Members
