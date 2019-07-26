@@ -17,9 +17,7 @@ from apps.bhs.models import Join
 from apps.bhs.models import Role
 from apps.bhs.models import Structure
 from apps.bhs.models import Subscription
-from apps.bhs.tasks import create_or_update_account_from_human
-from apps.bhs.tasks import delete_account_from_human
-from apps.bhs.tasks import get_account_orphans
+
 
 User = get_user_model()
 

@@ -8,7 +8,9 @@ class BhsConfig(AppConfig):
     verbose_name = 'BHS Member Center/Chart & Award Manager'
 
     def ready(self):
-        # from .signals import user_post_save
+        from .signals import person_post_save
+        from .signals import officer_post_save
+
         import algoliasearch_django as algoliasearch
 
         from .indexes import AwardIndex
