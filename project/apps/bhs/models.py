@@ -27,6 +27,7 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 from django.contrib.postgres.fields import DecimalRangeField
 from django.contrib.postgres.fields import IntegerRangeField
+from django.contrib.auth import get_user_model
 
 # First-Party
 from .managers import AwardManager
@@ -47,7 +48,6 @@ from .fields import ReasonableBirthDate
 from .fields import VoicePartField
 from .fields import NoPunctuationCharField
 from .fields import ImageUploadPath
-
 
 class Person(TimeStampedModel):
     id = models.UUIDField(
@@ -411,6 +411,20 @@ class Person(TimeStampedModel):
     #             status__gt=0,
     #         )
     #     )
+
+    def link_user(self):
+        """Link User to Person"""
+        # Check for email
+        User = get_user_model()
+
+        if not self.email:
+            raise ValidationError("User requires valid email")
+        user, _ = User.objects.get_or_create_user_from_email(self.email)
+        self.user = user
+        self.save()
+        return
+
+
 
     # Internals
     objects = PersonManager()
