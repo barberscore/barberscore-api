@@ -7,19 +7,19 @@ import logging
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.apps import apps
+
 # First-Party
-from apps.bhs.models import Person
-from apps.bhs.models import Group
-from apps.bhs.models import Member
-from apps.bhs.models import Officer
-from apps.bhs.models import Human
-from apps.bhs.models import Join
-from apps.bhs.models import Role
-from apps.bhs.models import Structure
-from apps.bhs.models import Subscription
-
-
 User = get_user_model()
+Person = apps.get_model('bhs.person')
+Group = apps.get_model('bhs.group')
+Officer = apps.get_model('bhs.officer')
+Human = apps.get_model('bhs.human')
+Structure = apps.get_model('bhs.structure')
+Role = apps.get_model('bhs.role')
+# Member = apps.get_model('bhs.member')
+# Subscription = apps.get_model('bhs.subscription')
+# Join = apps.get_model('bhs.join')
 
 
 log = logging.getLogger('updater')
@@ -68,7 +68,6 @@ class Command(BaseCommand):
             cursor = None
 
         # Sync Persons
-        self.stdout.write("Updating Persons.")
         self.stdout.write("Fetching Humans from Member Center...")
         humans = Human.objects.export_values(cursor=cursor)
         t = len(humans)
@@ -77,10 +76,12 @@ class Command(BaseCommand):
             i += 1
             self.stdout.flush()
             self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
-            person, new_person = Person.objects.update_or_create_from_human(human)
-            # Only create accounts if there are officers attached
-            if person.officers.filter(status__gt=0):
-                person.update_or_create_user(new_person)
+            person, _ = Person.objects.update_or_create_from_human(human)
+            # Only link user if there are officers and an email
+            if person.email and person.officers.filter(status__gt=0):
+                user, _ = User.objects.get_or_create(email=person.email)
+                person.user = user
+                person.save()
         self.stdout.write("")
         self.stdout.write("Updated {0} Persons.".format(t))
         if not cursor:
@@ -90,7 +91,6 @@ class Command(BaseCommand):
             self.stdout.write("Deleted {0} Person orphans.".format(t))
 
         # Sync Groups
-        self.stdout.write("Updating Groups.")
         self.stdout.write("Fetching Structures from Member Center...")
         structures = Structure.objects.export_values(cursor=cursor)
         t = len(structures)
@@ -109,7 +109,6 @@ class Command(BaseCommand):
             self.stdout.write("Deleted {0} Group orphans.".format(t))
 
         # Sync Officers
-        self.stdout.write("Updating Officers.")
         self.stdout.write("Fetching Roles from Member Center...")
         roles = Role.objects.export_values(cursor=cursor)
         t = len(roles)
@@ -118,8 +117,11 @@ class Command(BaseCommand):
             i += 1
             self.stdout.flush()
             self.stdout.write("Updating {0} of {1} Officers...".format(i, t), ending='\r')
-            officer, new_officer = Officer.objects.update_or_create_from_role(role)
-            officer.update_or_create_group_owners(new_officer)
+            officer, _ = Officer.objects.update_or_create_from_role(role)
+            if officer.person.email:
+                user, _ = User.objects.get_or_create(email=person.email)
+                officer.group.owners.add(user)
+
         self.stdout.write("")
         self.stdout.write("Updated {0} Officers.".format(t))
         if not cursor:
