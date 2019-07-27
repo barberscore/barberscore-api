@@ -277,7 +277,7 @@ class Assignment(TimeStampedModel):
             'DRCJ',
             'CA',
         ]
-        return any(item in roles for item in request.user.roles)
+        return any(item in roles for item in request.user.roles.values_list('name'))
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -285,7 +285,7 @@ class Assignment(TimeStampedModel):
         return any([
             # For SCJC
             all([
-                'SCJC' in request.user.roles,
+                'SCJC' in request.user.roles.values_list('name'),
             ]),
             # For all others
             all([
@@ -620,7 +620,7 @@ class Convention(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            'SCJC' in request.user.roles,
+            'SCJC' in request.user.roles.values_list('name'),
         ])
 
     @allow_staff_or_superuser
@@ -629,7 +629,7 @@ class Convention(TimeStampedModel):
         return any([
             # For SCJC
             all([
-                'SCJC' in request.user.roles,
+                'SCJC' in request.user.roles.values_list('name'),
             ]),
             # For all others
             # all([
@@ -1058,7 +1058,7 @@ class Contest(TimeStampedModel):
             'SCJC',
             'DRCJ',
         ]
-        return any([item in roles for item in request.user.roles])
+        return any([item in roles for item in request.user.roles.values_list('name')])
 
 
     @allow_staff_or_superuser
@@ -1069,7 +1069,7 @@ class Contest(TimeStampedModel):
         return any([
             # For SCJC
             all([
-                'SCJC' in request.user.roles,
+                'SCJC' in request.user.roles.values_list('name'),
             ]),
             # For all others
             all([
@@ -1501,7 +1501,7 @@ class Entry(TimeStampedModel):
             'DRCJ',
             'Manager',
         ]
-        return any([item in roles for item in request.user.roles])
+        return any([item in roles for item in request.user.roles.values_list('name')])
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -1509,7 +1509,7 @@ class Entry(TimeStampedModel):
         return any([
             # For SCJC
             all([
-                'SCJC' in request.user.roles,
+                'SCJC' in request.user.roles.values_list('name'),
                 self.session.status < self.session.STATUS.packaged,
             ]),
             # For DRCJs
@@ -2399,7 +2399,7 @@ class Session(TimeStampedModel):
             'SCJC',
             'DRCJ',
         ]
-        return any([item in roles for item in request.user.roles])
+        return any([item in roles for item in request.user.roles.values_list('name')])
 
 
     @allow_staff_or_superuser
@@ -2408,7 +2408,7 @@ class Session(TimeStampedModel):
         if self.status >= self.STATUS.finished:
             return False
         return any([
-            'SCJC' in request.user.roles,
+            'SCJC' in request.user.roles.values_list('name'),
             self.owners.filter(id__contains=request.user.id),
         ])
 

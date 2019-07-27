@@ -1058,17 +1058,17 @@ class Group(TimeStampedModel):
             'Librarian',
             'Manager',
         ]
-        return any(item in roles for item in request.user.roles)
+        return any(item in roles for item in request.user.roles.values_list('name'))
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
             all([
-                'SCJC' in request.user.roles,
+                'SCJC' in request.user.roles.values_list('name'),
             ]),
             all([
-                'Librarian' in request.user.roles,
+                'Librarian' in request.user.roles.values_list('name'),
             ]),
             all([
                 self.owners.filter(id__contains=request.user.id),
@@ -1497,7 +1497,7 @@ class Chart(TimeStampedModel):
             'SCJC',
             'Librarian',
         ]
-        return any(item in roles for item in request.user.roles)
+        return any(item in roles for item in request.user.roles.values_list('name'))
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -1506,7 +1506,7 @@ class Chart(TimeStampedModel):
             'SCJC',
             'Librarian',
         ]
-        return any(item in roles for item in request.user.roles)
+        return any(item in roles for item in request.user.roles.values_list('name'))
 
     # Transitions
     @fsm_log_by
@@ -1596,7 +1596,7 @@ class Repertory(TimeStampedModel):
             'Librarian',
         ]
         return any([
-            [item in roles for item in request.user.roles],
+            [item in roles for item in request.user.roles.values_list('name')],
             # self.group.officers.filter(
             #     person__user=request.user,
             #     status__gt=0,
@@ -1613,7 +1613,7 @@ class Repertory(TimeStampedModel):
             'Librarian',
             'Manager',
         ]
-        return any([item in roles for item in request.user.roles])
+        return any([item in roles for item in request.user.roles.values_list('name')])
 
 
     @allow_staff_or_superuser
@@ -1625,7 +1625,7 @@ class Repertory(TimeStampedModel):
             'Librarian',
         ]
         return any([
-            [item in roles for item in request.user.roles],
+            [item in roles for item in request.user.roles.values_list('name')],
             # self.group.officers.filter(
             #     person__user=request.user,
             #     status__gt=0,
@@ -1969,7 +1969,7 @@ class Award(TimeStampedModel):
         roles = [
             'SCJC',
         ]
-        return any(item in request.user.roles for item in roles)
+        return any(item in request.user.roles.values_list('name') for item in roles)
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -1977,7 +1977,7 @@ class Award(TimeStampedModel):
         roles = [
             'SCJC',
         ]
-        return any(item in request.user.roles for item in roles)
+        return any(item in request.user.roles.values_list('name') for item in roles)
 
     # Transitions
     @fsm_log_by

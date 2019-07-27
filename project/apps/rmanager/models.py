@@ -1014,8 +1014,8 @@ class Appearance(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            'SCJC' in request.user.roles,
-            'CA' in request.user.roles,
+            'SCJC' in request.user.roles.values_list('name'),
+            'CA' in request.user.roles.values_list('name'),
         ])
 
     @allow_staff_or_superuser
@@ -1234,15 +1234,15 @@ class Contender(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            'SCJC' in request.user.roles,
-            'CA' in request.user.roles,
+            'SCJC' in request.user.roles.values_list('name'),
+            'CA' in request.user.roles.values_list('name'),
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            'SCJC' in request.user.roles,
+            'SCJC' in request.user.roles.values_list('name'),
             all([
                 self.outcome.round.owners.filter(id__contains=request.user.id),
                 self.outcome.round.status != self.outcome.round.STATUS.started,
@@ -1511,8 +1511,8 @@ class Outcome(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            'SCJC' in request.user.roles,
-            'CA' in request.user.roles,
+            'SCJC' in request.user.roles.values_list('name'),
+            'CA' in request.user.roles.values_list('name'),
         ])
 
 
@@ -1669,8 +1669,8 @@ class Panelist(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            'SCJC' in request.user.roles,
-            'CA' in request.user.roles,
+            'SCJC' in request.user.roles.values_list('name'),
+            'CA' in request.user.roles.values_list('name'),
         ])
 
 
@@ -3685,8 +3685,8 @@ class Round(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            'SCJC' in request.user.roles,
-            'CA' in request.user.roles,
+            'SCJC' in request.user.roles.values_list('name'),
+            'CA' in request.user.roles.values_list('name'),
         ])
 
 
@@ -4267,8 +4267,8 @@ class Score(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            'SCJC' in request.user.roles,
-            'CA' in request.user.roles,
+            'SCJC' in request.user.roles.values_list('name'),
+            'CA' in request.user.roles.values_list('name'),
         ])
 
 
@@ -4471,8 +4471,8 @@ class Song(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            'SCJC' in request.user.roles,
-            'CA' in request.user.roles,
+            'SCJC' in request.user.roles.values_list('name'),
+            'CA' in request.user.roles.values_list('name'),
         ])
 
 
