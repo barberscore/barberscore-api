@@ -51,6 +51,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 USERNAME_FIELD = 'username'
 REQUIRED_FIELDS = [
+    'name',
     'email',
 ]
 LOGIN_URL = 'admin:login'
