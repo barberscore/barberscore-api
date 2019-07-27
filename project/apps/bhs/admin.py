@@ -498,7 +498,7 @@ class PersonAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
         'description',
         'notes',
         ('created', 'modified',),
-        'user',
+        # 'user',
     ]
 
     list_display = [
@@ -518,7 +518,7 @@ class PersonAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
     ]
 
     raw_id_fields = [
-        'user',
+        # 'user',
     ]
 
     readonly_fields = [

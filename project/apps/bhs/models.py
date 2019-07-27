@@ -296,14 +296,6 @@ class Person(TimeStampedModel):
     )
 
     # Relations
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        related_name='person',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
-
     statelogs = GenericRelation(
         StateLog,
         related_query_name='persons',
@@ -837,15 +829,15 @@ class Group(TimeStampedModel):
         return self.image.name or 'missing_image'
 
     # Group Methods
-    def update_owners(self):
-        officers = self.officers.filter(
-            status__gt=0,
-        )
-        for officer in officers:
-            self.owners.add(
-                officer.person.user,
-            )
-        return
+    # def update_owners(self):
+    #     officers = self.officers.filter(
+    #         status__gt=0,
+    #     )
+    #     for officer in officers:
+    #         self.owners.add(
+    #             officer.person.user,
+    #         )
+    #     return
 
     def get_roster(self):
         Member = apps.get_model('bhs.member')
@@ -1605,10 +1597,10 @@ class Repertory(TimeStampedModel):
         ]
         return any([
             [item in roles for item in request.user.roles],
-            self.group.officers.filter(
-                person__user=request.user,
-                status__gt=0,
-            ),
+            # self.group.officers.filter(
+            #     person__user=request.user,
+            #     status__gt=0,
+            # ),
         ])
 
     @staticmethod
@@ -1634,10 +1626,10 @@ class Repertory(TimeStampedModel):
         ]
         return any([
             [item in roles for item in request.user.roles],
-            self.group.officers.filter(
-                person__user=request.user,
-                status__gt=0,
-            ),
+            # self.group.officers.filter(
+            #     person__user=request.user,
+            #     status__gt=0,
+            # ),
         ])
 
     # Transitions

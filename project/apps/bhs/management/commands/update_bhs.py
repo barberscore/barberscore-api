@@ -80,7 +80,7 @@ class Command(BaseCommand):
             # Only link user if there are officers and an email
             if person.email and person.officers.filter(status__gt=0):
                 user, _ = User.objects.get_or_create(email=person.email)
-                person.user = user
+                # person.user = user
                 person.save()
         self.stdout.write("")
         self.stdout.write("Updated {0} Persons.".format(t))

@@ -53,15 +53,6 @@ class SessionFilterset(FilterSet):
             'is_invitational': [
                 'exact',
             ],
-            # 'convention__assignments__person__user': [
-            #     'exact',
-            # ],
-            # 'convention__status': [
-            #     'exact',
-            # ],
-            # 'convention__assignments__category': [
-            #     'exact',
-            # ],
         }
 
 
