@@ -11,14 +11,14 @@ from reversion.admin import VersionAdmin
 from .models import Award
 from .models import Person
 from .models import Group
-from .models import Member
+# from .models import Member
 from .models import Officer
 from .models import Chart
 from .models import Repertory
 
 from .inlines import RepertoryInline
 
-from .inlines import MemberInline
+# from .inlines import MemberInline
 from .inlines import OfficerInline
 
 # from .models import Human
@@ -196,7 +196,7 @@ class ChartAdmin(VersionAdmin, FSMTransitionMixin):
 
 
 @admin.register(Group)
-class GroupAdmin(VersionAdmin, FSMTransitionMixin):
+class GroupAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
     save_on_top = True
     fsm_field = [
         'status',
@@ -313,14 +313,14 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
             StateLogInline,
         ],
         'Quartet': [
-            MemberInline,
+            # MemberInline,
             OfficerInline,
             RepertoryInline,
             # EntryInline,
             StateLogInline,
         ],
         'VLQ': [
-            MemberInline,
+            # MemberInline,
             OfficerInline,
             RepertoryInline,
             # EntryInline,
@@ -350,84 +350,84 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         ).prefetch_related('members')
 
 
-@admin.register(Member)
-class MemberAdmin(VersionAdmin, FSMTransitionMixin):
-    fsm_field = [
-        'status',
-    ]
-    fields = [
-        'id',
-        'status',
-        'person',
-        'group',
-        'part',
-        'mc_pk',
-        'start_date',
-        'end_date',
-        # 'inactive_date',
-        # 'inactive_reason',
-        # 'sub_status',
-        # 'mem_code',
-        # 'mem_status',
-        'created',
-        'modified',
-    ]
-    list_display = [
-        'person',
-        'group',
-        'part',
-        'status',
-    ]
-    readonly_fields = [
-        'id',
-        'part',
-        'start_date',
-        'end_date',
-        # 'inactive_date',
-        # 'inactive_reason',
-        # 'sub_status',
-        # 'mem_code',
-        # 'mem_status',
-        'created',
-        'modified',
-    ]
+# @admin.register(Member)
+# class MemberAdmin(VersionAdmin, FSMTransitionMixin):
+#     fsm_field = [
+#         'status',
+#     ]
+#     fields = [
+#         'id',
+#         'status',
+#         'person',
+#         'group',
+#         'part',
+#         'mc_pk',
+#         'start_date',
+#         'end_date',
+#         # 'inactive_date',
+#         # 'inactive_reason',
+#         # 'sub_status',
+#         # 'mem_code',
+#         # 'mem_status',
+#         'created',
+#         'modified',
+#     ]
+#     list_display = [
+#         'person',
+#         'group',
+#         'part',
+#         'status',
+#     ]
+#     readonly_fields = [
+#         'id',
+#         'part',
+#         'start_date',
+#         'end_date',
+#         # 'inactive_date',
+#         # 'inactive_reason',
+#         # 'sub_status',
+#         # 'mem_code',
+#         # 'mem_status',
+#         'created',
+#         'modified',
+#     ]
 
-    autocomplete_fields = [
-        'person',
-        'group',
-    ]
-    search_fields = [
-        'person__first_name',
-        'person__last_name',
-        'group__name',
-        'person__bhs_id',
-        'group__bhs_id',
-    ]
-    list_filter = [
-        'status',
-        'group__kind',
-        'group__status',
-        'part',
-        'start_date',
-        'end_date',
-        # 'inactive_date',
-        # 'inactive_reason',
-        # 'sub_status',
-        # 'mem_code',
-        # 'mem_status',
-        'created',
-    ]
-    list_select_related = [
-        'person',
-        'group',
-    ]
-    inlines = [
-        StateLogInline,
-    ]
+#     autocomplete_fields = [
+#         'person',
+#         'group',
+#     ]
+#     search_fields = [
+#         'person__first_name',
+#         'person__last_name',
+#         'group__name',
+#         'person__bhs_id',
+#         'group__bhs_id',
+#     ]
+#     list_filter = [
+#         'status',
+#         'group__kind',
+#         'group__status',
+#         'part',
+#         'start_date',
+#         'end_date',
+#         # 'inactive_date',
+#         # 'inactive_reason',
+#         # 'sub_status',
+#         # 'mem_code',
+#         # 'mem_status',
+#         'created',
+#     ]
+#     list_select_related = [
+#         'person',
+#         'group',
+#     ]
+#     inlines = [
+#         StateLogInline,
+#     ]
 
 
 @admin.register(Officer)
-class OfficerAdmin(VersionAdmin, FSMTransitionMixin):
+class OfficerAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
     ]
@@ -480,7 +480,7 @@ class OfficerAdmin(VersionAdmin, FSMTransitionMixin):
 
 
 @admin.register(Person)
-class PersonAdmin(VersionAdmin, FSMTransitionMixin):
+class PersonAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
     fields = [
         'id',
         'status',
@@ -566,7 +566,7 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin):
     save_on_top = True
 
     inlines = [
-        MemberInline,
+        # MemberInline,
         OfficerInline,
         # AssignmentInline,
         # PanelistInline,

@@ -13,8 +13,7 @@ from django.contrib import admin
 
 from .models import Award
 from .models import Repertory
-from .models import Group
-from .models import Member
+# from .models import Member
 from .models import Officer
 
 class AwardInline(admin.TabularInline):
@@ -61,35 +60,35 @@ class RepertoryInline(admin.TabularInline):
     ]
 
 
-class MemberInline(admin.TabularInline):
-    model = Member
-    fields = [
-        'person',
-        'group',
-        'part',
-        'start_date',
-        'end_date',
-        'status',
-    ]
-    autocomplete_fields = [
-        'person',
-        'group',
-    ]
-    ordering = (
-        '-status',
-        'part',
-        'person__last_name',
-        'person__first_name',
-    )
-    readonly_fields = [
-        'status',
-    ]
+# class MemberInline(admin.TabularInline):
+#     model = Member
+#     fields = [
+#         'person',
+#         'group',
+#         'part',
+#         'start_date',
+#         'end_date',
+#         'status',
+#     ]
+#     autocomplete_fields = [
+#         'person',
+#         'group',
+#     ]
+#     ordering = (
+#         '-status',
+#         'part',
+#         'person__last_name',
+#         'person__first_name',
+#     )
+#     readonly_fields = [
+#         'status',
+#     ]
 
-    show_change_link = True
-    extra = 0
-    classes = [
-        'collapse',
-    ]
+#     show_change_link = True
+#     extra = 0
+#     classes = [
+#         'collapse',
+#     ]
 
 
 class OfficerInline(admin.TabularInline):
