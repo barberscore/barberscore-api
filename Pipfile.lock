@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9cd466072a40dc9b70ef156f817281bbb700672283b9b71581a6504b7cf128cf"
+            "sha256": "1539b95c3fb63364a811e6010cb75f0735990bcfa7dac2fc75c754b23f7b44e0"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -331,8 +331,8 @@
             "version": "==2.8.0"
         },
         "djangorestframework-jwt": {
-            "git": "https://github.com/barberscore/django-fsm-log.git",
-            "ref": "dce2ff3963fa7574823a80ea6c2eb089701587f1"
+            "git": "https://github.com/barberscore/django-rest-framework-jwt.git",
+            "ref": "98dd0a9a16e567e1f755f683e70ac09c9e6e97b1"
         },
         "dry-rest-permissions": {
             "hashes": [

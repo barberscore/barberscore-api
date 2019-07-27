@@ -28,7 +28,7 @@ django-rq = "*"
 django-timezone-field = "*"
 djangorestframework = "*"
 djangorestframework-jsonapi = "*"
-djangorestframework-jwt = {git = "https://github.com/barberscore/django-fsm-log.git"}
+djangorestframework-jwt = {git = "https://github.com/barberscore/django-rest-framework-jwt.git"}
 dry-rest-permissions = "*"
 gunicorn = "*"
 ipython = "*"
