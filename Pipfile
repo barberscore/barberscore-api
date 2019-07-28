@@ -20,7 +20,6 @@ django-filter = "*"
 django-fsm = "*"
 django-fsm-admin = "*"
 django-fsm-log = {git = "https://github.com/barberscore/django-fsm-log.git"}
-# django-fsm-log = {editable = true, path = "./../django-fsm-log"}
 django-model-utils = "*"
 django-phonenumber-field = "*"
 django-redis = "*"
