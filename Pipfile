@@ -13,6 +13,7 @@ cloudinary = "*"
 cryptography = "*"
 dj-database-url = "*"
 django = "*"
+django-prettyjson = '*'
 django-cloudinary-storage = "*"
 django-cors-headers = "*"
 django-filter = "*"

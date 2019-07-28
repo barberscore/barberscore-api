@@ -235,6 +235,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'reversion',
     'rest_framework_jwt',
+    'prettyjson',
     'corsheaders',
     'apps.bhs',
     'apps.smanager',
