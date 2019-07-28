@@ -1995,9 +1995,180 @@ class Session(TimeStampedModel):
         storage=RawMediaCloudinaryStorage(),
     )
 
-    @property
-    def convention_name(self):
-        return self.convention.__str__
+    # Denorm
+    name = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    REPRESENTING = Choices(
+        (110, 'bhs', 'BHS'),
+        (200, 'car', 'CAR'),
+        (205, 'csd', 'CSD'),
+        (210, 'dix', 'DIX'),
+        (215, 'evg', 'EVG'),
+        (220, 'fwd', 'FWD'),
+        (225, 'ill', 'ILL'),
+        (230, 'jad', 'JAD'),
+        (235, 'lol', 'LOL'),
+        (240, 'mad', 'MAD'),
+        (345, 'ned', 'NED'),
+        (350, 'nsc', 'NSC'),
+        (355, 'ont', 'ONT'),
+        (360, 'pio', 'PIO'),
+        (365, 'rmd', 'RMD'),
+        (370, 'sld', 'SLD'),
+        (375, 'sun', 'SUN'),
+        (380, 'swd', 'SWD'),
+    )
+
+    representing = models.IntegerField(
+        choices=REPRESENTING,
+        blank=True,
+        null=True,
+    )
+
+    SEASON = Choices(
+        # (1, 'summer', 'Summer',),
+        # (2, 'midwinter', 'Midwinter',),
+        (3, 'fall', 'Fall',),
+        (4, 'spring', 'Spring',),
+    )
+
+    season = models.IntegerField(
+        choices=SEASON,
+        blank=True,
+        null=True,
+    )
+
+    PANEL = Choices(
+        (1, 'single', "Single"),
+        (2, 'double', "Double"),
+        (3, 'triple', "Triple"),
+        (4, 'quadruple', "Quadruple"),
+        (5, 'quintiple', "Quintiple"),
+    )
+
+    panel = models.IntegerField(
+        choices=PANEL,
+        blank=True,
+        null=True,
+    )
+
+    YEAR_CHOICES = []
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+        YEAR_CHOICES.append((r, r))
+
+    year = models.IntegerField(
+        choices=YEAR_CHOICES,
+        blank=True,
+        null=True,
+    )
+
+    open_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    close_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    venue_name = models.CharField(
+        help_text="""
+            The venue name (when available).""",
+        max_length=255,
+        blank=True,
+        default='(TBD)',
+    )
+
+    location = models.CharField(
+        help_text="""
+            The general location in the form "City, State".""",
+        max_length=255,
+        blank=True,
+        default='(TBD)',
+    )
+
+    timezone = TimeZoneField(
+        help_text="""
+            The local timezone of the convention.""",
+        null=True,
+        blank=True,
+    )
+
+    image = models.ImageField(
+        upload_to=UploadPath('image'),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    DIVISION = Choices(
+        ('EVG', [
+            (10, 'evgd1', 'EVG Division I'),
+            (20, 'evgd2', 'EVG Division II'),
+            (30, 'evgd3', 'EVG Division III'),
+            (40, 'evgd4', 'EVG Division IV'),
+            (50, 'evgd5', 'EVG Division V'),
+        ]),
+        ('FWD', [
+            (60, 'fwdaz', 'FWD Arizona'),
+            (70, 'fwdne', 'FWD Northeast'),
+            (80, 'fwdnw', 'FWD Northwest'),
+            (90, 'fwdse', 'FWD Southeast'),
+            (100, 'fwdsw', 'FWD Southwest'),
+        ]),
+        ('LOL', [
+            (110, 'lol10l', 'LOL 10000 Lakes'),
+            (120, 'lolone', 'LOL Division One'),
+            (130, 'lolnp', 'LOL Northern Plains'),
+            (140, 'lolpkr', 'LOL Packerland'),
+            (150, 'lolsw', 'LOL Southwest'),
+        ]),
+        ('MAD', [
+            # (160, 'madatl', 'MAD Atlantic'),
+            (170, 'madcen', 'MAD Central'),
+            (180, 'madnth', 'MAD Northern'),
+            (190, 'madsth', 'MAD Southern'),
+            # (200, 'madwst', 'MAD Western'),
+        ]),
+        ('NED', [
+            (210, 'nedgp', 'NED Granite and Pine'),
+            (220, 'nedmtn', 'NED Mountain'),
+            (230, 'nedpat', 'NED Patriot'),
+            (240, 'nedsun', 'NED Sunrise'),
+            (250, 'nedyke', 'NED Yankee'),
+        ]),
+        ('SWD', [
+            (260, 'swdne', 'SWD Northeast'),
+            (270, 'swdnw', 'SWD Northwest'),
+            (280, 'swdse', 'SWD Southeast'),
+            (290, 'swdsw', 'SWD Southwest'),
+        ]),
+    )
+
+    divisions = DivisionsField(
+        help_text="""Only select divisions if required.  If it is a district-wide convention do not select any.""",
+        base_field=models.IntegerField(
+            choices=DIVISION,
+        ),
+        default=list,
+        blank=True,
+    )
+
 
     # FKs
     owners = models.ManyToManyField(

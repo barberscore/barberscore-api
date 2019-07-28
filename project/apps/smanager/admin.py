@@ -390,6 +390,21 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'footnotes',
         'description',
         'notes',
+
+        'name',
+        'representing',
+        'divisions',
+        ('year', 'season', ),
+        'panel',
+        ('open_date', 'close_date', ),
+        ('start_date', 'end_date', ),
+        'venue_name',
+        'location',
+        'timezone',
+        'image',
+
+
+
     ]
 
     list_display = [
