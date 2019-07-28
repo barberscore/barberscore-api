@@ -46,7 +46,6 @@ class GroupIndex(AlgoliaIndex):
         'image_url',
         'image_id',
         'bhs_id',
-        'owner_ids',
     ]
     settings = {
         'searchableAttributes': [
