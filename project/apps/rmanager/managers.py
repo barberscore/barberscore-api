@@ -106,9 +106,9 @@ class SongManager(Manager):
             round__kind=item.round.kind,
             num=item.appearance_num,
         )
-        defaults = {
-            'legacy_chart': item.legacy_chart,
-        }
+        # defaults = {
+        #     'legacy_chart': item.legacy_chart,
+        # }
         return self.update_or_create(
             appearance=appearance,
             num=item.song_num,

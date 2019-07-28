@@ -2251,9 +2251,10 @@ class Session(TimeStampedModel):
         ])
 
     def can_finish(self):
-        return all([
-            not self.rounds.exclude(status=self.rounds.model.STATUS.published)
-        ])
+        return True
+        # return all([
+        #     not self.rounds.exclude(status=self.rounds.model.STATUS.published)
+        # ])
 
     # Session Transitions
     @fsm_log_by

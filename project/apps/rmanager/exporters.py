@@ -38,7 +38,7 @@ class SongSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'num',
-            'legacy_chart',
+            # 'legacy_chart',
             'asterisks',
             'dixons',
             'penalties',

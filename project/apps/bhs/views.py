@@ -24,14 +24,10 @@ from django.utils.text import slugify
 
 # Local
 from .filtersets import GroupFilterset
-from .filtersets import MemberFilterset
-from .filtersets import OfficerFilterset
 from .filtersets import PersonFilterset
 # from .filterbackends import RepertoryFilterBackend
 from .models import Award
 from .models import Group
-from .models import Member
-from .models import Officer
 from .models import Person
 from .models import Chart
 from .renderers import PDFRenderer
@@ -39,8 +35,6 @@ from .renderers import XLSXRenderer
 from .responders import PDFResponse
 from .responders import XLSXResponse
 from .serializers import GroupSerializer
-from .serializers import MemberSerializer
-from .serializers import OfficerSerializer
 from .serializers import PersonSerializer
 from .serializers import ChartSerializer
 from .serializers import AwardSerializer
@@ -54,11 +48,25 @@ log = logging.getLogger(__name__)
 
 from rest_framework.negotiation import BaseContentNegotiation
 
+class IgnoreClientContentNegotiation(BaseContentNegotiation):
+    def select_parser(self, request, parsers):
+        """
+        Select the first parser in the `.parser_classes` list.
+        """
+        return parsers[0]
+
+    def select_renderer(self, request, renderers, format_suffix):
+        """
+        Select the first renderer in the `.renderer_classes` list.
+        """
+        return (renderers[0], renderers[0].media_type)
+
+
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.select_related(
         # 'user',
     ).prefetch_related(
-        'assignments',
+        # 'assignments',
     ).order_by('id')
     serializer_class = ConventionSerializer
     filterset_class = ConventionFilterset
@@ -97,20 +105,6 @@ class ConventionViewSet(viewsets.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
-
-class IgnoreClientContentNegotiation(BaseContentNegotiation):
-    def select_parser(self, request, parsers):
-        """
-        Select the first parser in the `.parser_classes` list.
-        """
-        return parsers[0]
-
-    def select_renderer(self, request, renderers, format_suffix):
-        """
-        Select the first renderer in the `.renderer_classes` list.
-        """
-        return (renderers[0], renderers[0].media_type)
-
 
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
@@ -265,98 +259,6 @@ class GroupViewSet(viewsets.ModelViewSet):
             file_name=file_name,
             status=status.HTTP_200_OK
         )
-
-
-class MemberViewSet(viewsets.ModelViewSet):
-    queryset = Member.objects.select_related(
-        'group',
-        'person',
-    ).prefetch_related(
-        'statelogs',
-    ).order_by('id')
-    serializer_class = MemberSerializer
-    filterset_class = MemberFilterset
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "member"
-
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-
-class OfficerViewSet(viewsets.ModelViewSet):
-    queryset = Officer.objects.select_related(
-        'person',
-        'group',
-    ).prefetch_related(
-        'statelogs',
-    ).order_by('id')
-    serializer_class = OfficerSerializer
-    filterset_class = OfficerFilterset
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "officer"
-
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
 
 
 class PersonViewSet(viewsets.ModelViewSet):

@@ -9,8 +9,6 @@ from rest_framework.serializers import SerializerMethodField
 from .fields import TimezoneField
 
 from .models import Group
-from .models import Member
-from .models import Officer
 from .models import Person
 
 from .models import Award
@@ -182,48 +180,6 @@ class GroupSerializer(serializers.ModelSerializer):
     #     if instance.kind <= 30:
     #         self.fields.pop('members')
     #     return super().to_representation(instance)
-
-
-class MemberSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Member
-        fields = [
-            'id',
-            'status',
-            'part',
-            'start_date',
-            'end_date',
-            'group',
-            'person',
-            'permissions',
-        ]
-
-
-class OfficerSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Officer
-        fields = [
-            'id',
-            'status',
-            'start_date',
-            'end_date',
-            'office',
-            'person',
-            'group',
-            'permissions',
-        ]
-
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Officer.objects.all(),
-                fields=('person', 'office'),
-                message='This person already holds this office.',
-            )
-        ]
 
 
 class PersonSerializer(serializers.ModelSerializer):

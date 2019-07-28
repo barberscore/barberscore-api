@@ -317,7 +317,7 @@ class SongAdmin(admin.ModelAdmin):
         'stats',
         'appearance',
         'chart_id',
-        'legacy_chart',
+        # 'legacy_chart',
         'num',
         'penalties',
         # 'title',

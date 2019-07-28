@@ -5,7 +5,7 @@ from django.apps import AppConfig
 
 class BhsConfig(AppConfig):
     name = 'apps.bhs'
-    verbose_name = 'BHS'
+    verbose_name = 'Base'
 
     def ready(self):
         import algoliasearch_django as algoliasearch
