@@ -45,14 +45,14 @@ class AssignmentInline(admin.TabularInline):
         'kind',
         # 'person_id',
         'user',
-        'convention',
+        # 'convention',
     ]
     readonly_fields = [
         'status',
     ]
     autocomplete_fields = [
         # 'person',
-        'convention',
+        # 'convention',
     ]
     ordering = (
         'category',

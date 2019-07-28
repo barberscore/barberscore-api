@@ -45,9 +45,9 @@ class AssignmentFilterset(FilterSet):
             'status': [
                 'exact',
             ],
-            'convention__status': [
-                'exact',
-            ],
+            # 'convention__status': [
+            #     'exact',
+            # ],
         }
 
 
@@ -55,12 +55,12 @@ class ConventionFilterset(FilterSet):
     class Meta:
         model = Convention
         fields = {
-            'assignments__user': [
-                'exact',
-            ],
-            'assignments__status': [
-                'exact',
-            ],
+            # 'assignments__user': [
+            #     'exact',
+            # ],
+            # 'assignments__status': [
+            #     'exact',
+            # ],
             'status': [
                 'exact',
             ],

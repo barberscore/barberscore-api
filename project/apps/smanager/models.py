@@ -102,7 +102,7 @@ class Assignment(TimeStampedModel):
         blank=True,
     )
 
-    common_name = models.CharField(
+    name = models.CharField(
         help_text="""
             The prefix of the person.""",
         max_length=255,
@@ -118,14 +118,6 @@ class Assignment(TimeStampedModel):
         default='',
     )
 
-    middle_name = models.CharField(
-        help_text="""
-            The middle name of the person.""",
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
     last_name = models.CharField(
         help_text="""
             The last name of the person.""",
@@ -134,15 +126,7 @@ class Assignment(TimeStampedModel):
         default='',
     )
 
-    nick_name = models.CharField(
-        help_text="""
-            The nickname of the person.""",
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
-    district = models.CharField(
+    representing = models.CharField(
         help_text="""
             District""",
         max_length=10,
@@ -153,20 +137,6 @@ class Assignment(TimeStampedModel):
     email = LowerEmailField(
         help_text="""
             The contact email of the resource.""",
-        blank=True,
-        null=True,
-    )
-
-    home_phone = PhoneNumberField(
-        help_text="""
-            The home phone number of the resource.  Include country code.""",
-        blank=True,
-        null=True,
-    )
-
-    work_phone = PhoneNumberField(
-        help_text="""
-            The work phone number of the resource.  Include country code.""",
         blank=True,
         null=True,
     )
@@ -200,10 +170,12 @@ class Assignment(TimeStampedModel):
     )
 
     # FKs
-    convention = models.ForeignKey(
-        'Convention',
+    session = models.ForeignKey(
+        'Session',
         related_name='assignments',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     user = models.ForeignKey(
@@ -289,8 +261,8 @@ class Assignment(TimeStampedModel):
             ]),
             # For all others
             all([
-                self.convention.owners.filter(id__contains=request.user.id),
-                self.convention.status != self.convention.STATUS.inactive,
+                # self.convention.owners.filter(id__contains=request.user.id),
+                # self.convention.status != self.convention.STATUS.inactive,
             ]),
         ])
 

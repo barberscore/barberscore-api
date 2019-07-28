@@ -84,16 +84,16 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'status',
         'kind',
-        'convention',
+        'session',
         'person_id',
         'user',
         'category',
     ]
 
     list_display = [
-        'common_name',
+        'name',
         'bhs_id',
-        'convention',
+        'session',
         'category',
         'kind',
         'status',
@@ -107,7 +107,7 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_select_related = [
-        'convention',
+        'session',
     ]
 
     search_fields = [
@@ -115,7 +115,7 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     autocomplete_fields = [
-        'convention',
+        'session',
     ]
 
     readonly_fields = [
@@ -127,8 +127,7 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'user',
     ]
     ordering = [
-        '-convention__start_date',
-        'category',
+        'session',
         'kind',
         'last_name',
         'first_name',
@@ -193,7 +192,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
-        AssignmentInline,
+        # AssignmentInline,
         SessionInline,
     ]
 
