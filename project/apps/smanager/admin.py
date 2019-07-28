@@ -6,9 +6,9 @@ from fsm_admin.mixins import FSMTransitionMixin
 from django.contrib import admin
 
 # Local
-from .filters import ConventionStatusListFilter
-from .filters import SessionConventionStatusListFilter
-from .filters import ActiveConventionListFilter
+# from .filters import ConventionStatusListFilter
+# from .filters import SessionConventionStatusListFilter
+# from .filters import ActiveConventionListFilter
 from .inlines import AssignmentInline
 # from .inlines import ConventionInline
 from .inlines import ContestInline
@@ -16,14 +16,61 @@ from .inlines import EntryInline
 from .inlines import SessionInline
 
 from .models import Assignment
-from .models import Convention
 from .models import Contest
 from .models import Entry
 from .models import Session
+from .models import Repertory
+from reversion.admin import VersionAdmin
+
+from .inlines import RepertoryInline
 
 # from api.inlines import RoundInline
 
 admin.site.site_header = 'Barberscore Admin Backend'
+
+
+@admin.register(Repertory)
+class RepertoryAdmin(VersionAdmin, FSMTransitionMixin):
+    fsm_field = [
+        'status',
+    ]
+
+    fields = [
+        'id',
+        'status',
+        'entry',
+        # 'chart',
+        'title',
+    ]
+
+    list_display = [
+        'entry',
+        # 'chart',
+        'title',
+        'status',
+    ]
+
+    save_on_top = True
+
+    readonly_fields = [
+        'id',
+    ]
+
+    autocomplete_fields = [
+        'entry',
+        # 'title',
+        # 'chart',
+    ]
+
+    inlines = [
+        StateLogInline,
+    ]
+
+    search_fields = [
+        # 'group__name',
+        # 'chart__title',
+        'title',
+    ]
 
 
 @admin.register(Assignment)
@@ -35,16 +82,16 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'status',
         'kind',
-        'convention',
+        'session',
         'person_id',
         'user',
         'category',
     ]
 
     list_display = [
-        'common_name',
+        'name',
         'bhs_id',
-        'convention',
+        'session',
         'category',
         'kind',
         'status',
@@ -54,11 +101,11 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'kind',
         'category',
-        ActiveConventionListFilter,
+        # ActiveConventionListFilter,
     )
 
     list_select_related = [
-        'convention',
+        'session',
     ]
 
     search_fields = [
@@ -66,7 +113,7 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     autocomplete_fields = [
-        'convention',
+        'session',
     ]
 
     readonly_fields = [
@@ -78,96 +125,11 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'user',
     ]
     ordering = [
-        '-convention__start_date',
-        'category',
+        'session',
         'kind',
         'last_name',
         'first_name',
     ]
-
-
-@admin.register(Convention)
-class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fields = (
-        'id',
-        # 'legacy_selection',
-        # 'legacy_complete',
-        'status',
-        'name',
-        ('group_id', 'divisions', ),
-        ('year', 'season', ),
-        ('panel', 'kinds', ),
-        ('open_date', 'close_date', ),
-        ('start_date', 'end_date', ),
-        'owners',
-        'venue_name',
-        'location',
-        'timezone',
-        'image',
-        'description',
-        'district',
-    )
-
-    list_display = (
-        '__str__',
-        'year',
-        'season',
-        'district',
-        'name',
-        # 'location',
-        # 'timezone',
-        # 'start_date',
-        # 'end_date',
-        # 'status',
-    )
-
-    list_editable = [
-        'name',
-        # 'location',
-        # 'start_date',
-        # 'end_date',
-    ]
-
-    list_filter = (
-        'status',
-        'season',
-        'district',
-        'year',
-    )
-
-    fsm_field = [
-        'status',
-    ]
-
-    search_fields = [
-        'name',
-    ]
-
-    inlines = [
-        AssignmentInline,
-        SessionInline,
-    ]
-
-    readonly_fields = (
-        'id',
-    )
-
-    autocomplete_fields = [
-        # 'group',
-        'owners',
-    ]
-
-    ordering = (
-        '-year',
-        'season',
-        'district',
-        # 'group__tree_sort',
-    )
-    list_select_related = [
-        # 'group',
-    ]
-
-    save_on_top = True
 
 
 @admin.register(Contest)
@@ -198,7 +160,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         'award_name',
-        'convention_name',
+        # 'convention_name',
         'session',
         # 'group',
     )
@@ -220,7 +182,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     readonly_fields = [
         'id',
         'award_tree_sort',
-        'convention_name',
+        # 'convention_name',
     ]
 
     autocomplete_fields = [
@@ -234,10 +196,10 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'award_district',
     ]
     ordering = [
-        '-session__convention__year',
-        'session__convention__season',
-        'session__convention__district',
-        'session__convention__name',
+        # '-session__convention__year',
+        # 'session__convention__season',
+        # 'session__convention__district',
+        # 'session__convention__name',
         'session__kind',
         'award_name',
     ]
@@ -270,7 +232,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = (
         '__str__',
-        'convention_name',
+        # 'convention_name',
         'session',
         'status',
         # 'group',
@@ -281,11 +243,11 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_filter = [
-        SessionConventionStatusListFilter,
+        # SessionConventionStatusListFilter,
         'status',
         'session__kind',
-        'session__convention__season',
-        'session__convention__year',
+        # 'session__convention__season',
+        # 'session__convention__year',
     ]
 
     inlines = [
@@ -295,7 +257,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     search_fields = [
         'id',
-        'session__convention__name',
+        # 'session__convention__name',
         # 'group__name',
     ]
 
@@ -306,16 +268,16 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     readonly_fields = (
         'id',
-        'convention_name',
+        # 'convention_name',
     )
 
     save_on_top = True
 
     ordering = [
-        '-session__convention__year',
-        'session__convention__season',
-        'session__convention__district',
-        'session__convention__name',
+        # '-session__convention__year',
+        # 'session__convention__season',
+        # 'session__convention__district',
+        # 'session__convention__name',
         'session__kind',
         'group_name',
     ]
@@ -331,8 +293,9 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        'convention',
+        # 'convention',
         'kind',
+        'convention_id',
         ('num_rounds', 'is_invitational',),
         'target',
         'legacy_report',
@@ -342,11 +305,26 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'footnotes',
         'description',
         'notes',
+
+        'name',
+        'representing',
+        'divisions',
+        ('year', 'season', ),
+        'panel',
+        ('open_date', 'close_date', ),
+        ('start_date', 'end_date', ),
+        'venue_name',
+        'location',
+        'timezone',
+        'image',
+
+
+
     ]
 
     list_display = [
         'id',
-        'convention',
+        # 'convention',
         # 'convention__district',
         'kind',
         'num_rounds',
@@ -355,18 +333,18 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_filter = (
-        ConventionStatusListFilter,
+        # ConventionStatusListFilter,
         'status',
         'kind',
         'num_rounds',
         'is_invitational',
-        'convention__season',
-        'convention__district',
-        'convention__year',
+        # 'convention__season',
+        # 'convention__district',
+        # 'convention__year',
     )
 
     autocomplete_fields = [
-        'convention',
+        # 'convention',
         'target',
         'owners',
     ]
@@ -385,25 +363,25 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     list_select_related = [
-        'convention',
+        # 'convention',
     ]
 
     ordering = (
-        '-convention__year',
-        'convention__season',
+        # '-convention__year',
+        # 'convention__season',
         # 'convention__group__tree_sort',
         'kind',
     )
     ordering = [
-        '-convention__year',
-        'convention__season',
-        'convention__district',
-        'convention__name',
+        # '-convention__year',
+        # 'convention__season',
+        # 'convention__district',
+        # 'convention__name',
         'kind',
     ]
 
     search_fields = [
-        'convention__name',
+        # 'convention__name',
         'kind',
     ]
 

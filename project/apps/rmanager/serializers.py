@@ -8,7 +8,6 @@ from rest_framework_json_api import serializers
 from .fields import TimezoneField
 
 from .models import Appearance
-from .models import Contender
 from .models import Outcome
 from .models import Panelist
 from .models import Round
@@ -47,7 +46,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'round',
             'group_id',
 
-            'contenders',
+
             'songs',
 
             'permissions',
@@ -60,25 +59,10 @@ class AppearanceSerializer(serializers.ModelSerializer):
         ]
 
 
-class ContenderSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Contender
-        fields = [
-            'id',
-            'status',
-            'appearance',
-            'outcome',
-            'permissions',
-        ]
 
 
 class OutcomeSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    # included_serializers = {
-    #     'contenders': 'apps.rmanager.serializers.ContenderSerializer',
-    # }
 
     class Meta:
         model = Outcome
@@ -91,7 +75,6 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'round',
             'award',
 
-            'contenders',
             'permissions',
         ]
 

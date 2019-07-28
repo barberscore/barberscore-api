@@ -5,7 +5,6 @@ from django.apps import apps
 
 # Local
 from .models import Appearance
-from .models import Contender
 from .models import Outcome
 from .models import Panelist
 from .models import Round
@@ -38,26 +37,6 @@ class AppearanceInline(admin.TabularInline):
         'collapse',
     ]
 
-
-class ContenderInline(admin.TabularInline):
-    model = Contender
-    fields = [
-        'appearance',
-        'outcome',
-        'status',
-    ]
-    readonly_fields = [
-        'status',
-    ]
-    autocomplete_fields = [
-        'appearance',
-        'outcome',
-    ]
-    show_change_link = True
-    extra = 0
-    classes = [
-        'collapse',
-    ]
 
 
 class OutcomeInline(admin.TabularInline):

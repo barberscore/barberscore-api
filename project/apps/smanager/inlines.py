@@ -9,7 +9,31 @@ from .models import Session
 
 
 from .models import Assignment
-from .models import Convention
+from .models import Repertory
+
+
+class RepertoryInline(admin.TabularInline):
+    model = Repertory
+    fields = [
+        'chart',
+        'group',
+        'status',
+    ]
+    autocomplete_fields = [
+        'chart',
+        'group',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+    readonly_fields = [
+        'status',
+    ]
+    ordering = [
+        'chart__title',
+    ]
 
 
 class AssignmentInline(admin.TabularInline):
@@ -20,14 +44,14 @@ class AssignmentInline(admin.TabularInline):
         'kind',
         # 'person_id',
         'user',
-        'convention',
+        # 'convention',
     ]
     readonly_fields = [
         'status',
     ]
     autocomplete_fields = [
         # 'person',
-        'convention',
+        # 'convention',
     ]
     ordering = (
         'category',
@@ -42,21 +66,6 @@ class AssignmentInline(admin.TabularInline):
     ]
     raw_id_fields = [
         'user',
-    ]
-
-class ConventionInline(admin.TabularInline):
-    model = Convention
-    fields = [
-        'name',
-        'group',
-    ]
-    autocomplete_fields = [
-        'group',
-    ]
-    show_change_link = True
-    extra = 0
-    classes = [
-        'collapse',
     ]
 
 class ContestInline(admin.TabularInline):
@@ -99,7 +108,7 @@ class EntryInline(admin.TabularInline):
     ]
     ordering = [
         # 'group__name',
-        'session__convention__year',
+        # 'session__convention__year',
     ]
     show_change_link = True
     extra = 0
@@ -111,12 +120,13 @@ class EntryInline(admin.TabularInline):
 class SessionInline(admin.TabularInline):
     model = Session
     fields = [
-        'convention',
+        # 'convention',
         'kind',
         # 'num_rounds',
     ]
     autocomplete_fields = [
-        'convention',
+        # 'convention',
+        'id',
     ]
     show_change_link = True
     extra = 0

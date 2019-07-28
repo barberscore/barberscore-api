@@ -12,7 +12,6 @@ from factories import AppearanceFactory
 from factories import AssignmentFactory
 from factories import AwardFactory
 from factories import ChartFactory
-from factories import ContenderFactory
 from factories import ContestFactory
 from factories import ConventionFactory
 from factories import EntryFactory
@@ -96,11 +95,6 @@ def chart():
 @pytest.fixture
 def contest():
     return ContestFactory()
-
-
-@pytest.fixture
-def contender():
-    return ContenderFactory()
 
 
 @pytest.fixture

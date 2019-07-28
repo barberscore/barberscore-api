@@ -14,6 +14,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
+from timezone_field import TimeZoneField
 
 # Django
 from django.core.exceptions import ValidationError
@@ -48,6 +49,383 @@ from .fields import ReasonableBirthDate
 from .fields import VoicePartField
 from .fields import NoPunctuationCharField
 from .fields import ImageUploadPath
+from .fields import UploadPath
+from .fields import DivisionsField
+
+
+class Convention(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
+        (5, 'built', 'Built',),
+        (10, 'active', 'Active',),
+    )
+
+    status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        default='Convention',
+    )
+
+    REPRESENTING = Choices(
+        (110, 'bhs', 'BHS'),
+        (200, 'car', 'CAR'),
+        (205, 'csd', 'CSD'),
+        (210, 'dix', 'DIX'),
+        (215, 'evg', 'EVG'),
+        (220, 'fwd', 'FWD'),
+        (225, 'ill', 'ILL'),
+        (230, 'jad', 'JAD'),
+        (235, 'lol', 'LOL'),
+        (240, 'mad', 'MAD'),
+        (345, 'ned', 'NED'),
+        (350, 'nsc', 'NSC'),
+        (355, 'ont', 'ONT'),
+        (360, 'pio', 'PIO'),
+        (365, 'rmd', 'RMD'),
+        (370, 'sld', 'SLD'),
+        (375, 'sun', 'SUN'),
+        (380, 'swd', 'SWD'),
+    )
+
+    representing = models.IntegerField(
+        choices=REPRESENTING,
+        blank=True,
+        null=True,
+    )
+
+    SEASON = Choices(
+        (3, 'fall', 'Fall',),
+        (4, 'spring', 'Spring',),
+    )
+
+    season = models.IntegerField(
+        choices=SEASON,
+    )
+
+    PANEL = Choices(
+        (1, 'single', "Single"),
+        (2, 'double', "Double"),
+        (3, 'triple', "Triple"),
+        (4, 'quadruple', "Quadruple"),
+        (5, 'quintiple', "Quintiple"),
+    )
+
+    panel = models.IntegerField(
+        choices=PANEL,
+        null=True,
+        blank=True,
+    )
+
+    YEAR_CHOICES = []
+    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+        YEAR_CHOICES.append((r, r))
+
+    year = models.IntegerField(
+        choices=YEAR_CHOICES,
+    )
+
+    open_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    close_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    venue_name = models.CharField(
+        help_text="""
+            The venue name (when available).""",
+        max_length=255,
+        default='(TBD)',
+    )
+
+    location = models.CharField(
+        help_text="""
+            The general location in the form "City, State".""",
+        max_length=255,
+        default='(TBD)',
+    )
+
+    timezone = TimeZoneField(
+        help_text="""
+            The local timezone of the convention.""",
+        null=True,
+        blank=True,
+    )
+
+    image = models.ImageField(
+        upload_to=UploadPath('image'),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    description = models.TextField(
+        help_text="""
+            A general description field; usually used for hotel and venue info.""",
+        blank=True,
+        max_length=1000,
+    )
+
+    DIVISION = Choices(
+        ('EVG', [
+            (10, 'evgd1', 'EVG Division I'),
+            (20, 'evgd2', 'EVG Division II'),
+            (30, 'evgd3', 'EVG Division III'),
+            (40, 'evgd4', 'EVG Division IV'),
+            (50, 'evgd5', 'EVG Division V'),
+        ]),
+        ('FWD', [
+            (60, 'fwdaz', 'FWD Arizona'),
+            (70, 'fwdne', 'FWD Northeast'),
+            (80, 'fwdnw', 'FWD Northwest'),
+            (90, 'fwdse', 'FWD Southeast'),
+            (100, 'fwdsw', 'FWD Southwest'),
+        ]),
+        ('LOL', [
+            (110, 'lol10l', 'LOL 10000 Lakes'),
+            (120, 'lolone', 'LOL Division One'),
+            (130, 'lolnp', 'LOL Northern Plains'),
+            (140, 'lolpkr', 'LOL Packerland'),
+            (150, 'lolsw', 'LOL Southwest'),
+        ]),
+        ('MAD', [
+            # (160, 'madatl', 'MAD Atlantic'),
+            (170, 'madcen', 'MAD Central'),
+            (180, 'madnth', 'MAD Northern'),
+            (190, 'madsth', 'MAD Southern'),
+            # (200, 'madwst', 'MAD Western'),
+        ]),
+        ('NED', [
+            (210, 'nedgp', 'NED Granite and Pine'),
+            (220, 'nedmtn', 'NED Mountain'),
+            (230, 'nedpat', 'NED Patriot'),
+            (240, 'nedsun', 'NED Sunrise'),
+            (250, 'nedyke', 'NED Yankee'),
+        ]),
+        ('SWD', [
+            (260, 'swdne', 'SWD Northeast'),
+            (270, 'swdnw', 'SWD Northwest'),
+            (280, 'swdse', 'SWD Southeast'),
+            (290, 'swdsw', 'SWD Southwest'),
+        ]),
+    )
+
+    divisions = DivisionsField(
+        help_text="""Only select divisions if required.  If it is a district-wide convention do not select any.""",
+        base_field=models.IntegerField(
+            choices=DIVISION,
+        ),
+        default=list,
+        blank=True,
+    )
+
+    KINDS = Choices(
+        (32, 'chorus', "Chorus"),
+        (41, 'quartet', "Quartet"),
+        (42, 'mixed', "Mixed"),
+        (43, 'senior', "Senior"),
+        (44, 'youth', "Youth"),
+        (45, 'unknown', "Unknown"),
+        (46, 'vlq', "VLQ"),
+    )
+
+    kinds = DivisionsField(
+        help_text="""The session kind(s) created at build time.""",
+        base_field=models.IntegerField(
+            choices=KINDS,
+        ),
+        default=list,
+        blank=True,
+    )
+
+    # FKs
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='conventions',
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='conventions',
+    )
+
+    @cached_property
+    def image_id(self):
+        return self.image.name or 'missing_image'
+
+    # Internals
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                name='unique_convention',
+                fields=[
+                    'year',
+                    'season',
+                    'name',
+                    'representing',
+                ]
+            )
+        ]
+
+    class JSONAPIMeta:
+        resource_name = "convention"
+
+    def __str__(self):
+        if self.representing == self.REPRESENTING.bhs:
+            return " ".join([
+                self.get_representing_display(),
+                str(self.year),
+                self.name,
+            ])
+        return " ".join([
+            self.get_representing_display(),
+            self.get_season_display(),
+            str(self.year),
+            self.name,
+        ])
+
+    def clean(self):
+        return
+
+    def get_owners_emails(self):
+        owners = self.owners.order_by(
+            'last_name',
+            'first_name',
+        )
+        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+
+    # Methods
+    # Convention Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.roles.filter(name='SCJC')
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            request.user.roles.filter(name='SCJC')
+        ])
+
+    # Convention Transition Conditions
+    def can_reset(self):
+        if self.status <= self.STATUS.built:
+            return True
+        return False
+
+    def can_build(self):
+        if self.kinds and self.panel:
+            return True
+        return False
+
+    def can_activate(self):
+        try:
+            return all([
+                self.open_date,
+                self.close_date,
+                self.start_date,
+                self.end_date,
+                self.open_date < self.close_date,
+                self.close_date < self.start_date,
+                self.start_date <= self.end_date,
+                self.location,
+                self.timezone,
+            ])
+        except TypeError:
+            return False
+        return False
+
+    def can_deactivate(self):
+        return
+
+    # Convention Transitions
+    @fsm_log_by
+    @transition(
+        field=status,
+        source='*',
+        target=STATUS.new,
+        conditions=[can_reset],
+    )
+    def reset(self, *args, **kwargs):
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=STATUS.new,
+        target=STATUS.built,
+        conditions=[can_build],
+    )
+    def build(self, *args, **kwargs):
+        """Build convention and related sessions."""
+
+        # Reset for indempodence
+        self.reset()
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=STATUS.built,
+        target=STATUS.active,
+        conditions=[can_activate],
+    )
+    def activate(self, *args, **kwargs):
+        """Activate convention."""
+        return
+
+    @fsm_log_by
+    @transition(
+        field=status,
+        source=STATUS.active,
+        target=STATUS.inactive,
+        conditions=[can_deactivate],
+    )
+    def deactivate(self, *args, **kwargs):
+        """Archive convention and related sessions."""
+        return
+
 
 class Person(TimeStampedModel):
     id = models.UUIDField(
@@ -839,38 +1217,38 @@ class Group(TimeStampedModel):
     #         )
     #     return
 
-    def get_roster(self):
-        Member = apps.get_model('bhs.member')
-        wb = Workbook()
-        ws = wb.active
-        fieldnames = [
-            'BHS ID',
-            'First Name',
-            'Last Name',
-            'Expiration Date',
-            'Status',
-        ]
-        ws.append(fieldnames)
-        members = self.members.filter(
-            status=Member.STATUS.active,
-        ).order_by('person__last_name', 'person__first_name')
-        for member in members:
-            bhs_id = member.person.bhs_id
-            first_name = member.person.first_name
-            last_name = member.person.last_name
-            expiration = member.person.current_through
-            status = member.person.get_status_display()
-            row = [
-                bhs_id,
-                first_name,
-                last_name,
-                expiration,
-                status,
-            ]
-            ws.append(row)
-        file = save_virtual_workbook(wb)
-        content = ContentFile(file)
-        return content
+    # def get_roster(self):
+    #     Member = apps.get_model('bhs.member')
+    #     wb = Workbook()
+    #     ws = wb.active
+    #     fieldnames = [
+    #         'BHS ID',
+    #         'First Name',
+    #         'Last Name',
+    #         'Expiration Date',
+    #         'Status',
+    #     ]
+    #     ws.append(fieldnames)
+    #     members = self.members.filter(
+    #         status=Member.STATUS.active,
+    #     ).order_by('person__last_name', 'person__first_name')
+    #     for member in members:
+    #         bhs_id = member.person.bhs_id
+    #         first_name = member.person.first_name
+    #         last_name = member.person.last_name
+    #         expiration = member.person.current_through
+    #         status = member.person.get_status_display()
+    #         row = [
+    #             bhs_id,
+    #             first_name,
+    #             last_name,
+    #             expiration,
+    #             status,
+    #         ]
+    #         ws.append(row)
+    #     file = save_virtual_workbook(wb)
+    #     content = ContentFile(file)
+    #     return content
 
     # Algolia
     def is_active(self):
@@ -882,55 +1260,39 @@ class Group(TimeStampedModel):
         except ValueError:
             return 'https://res.cloudinary.com/barberscore/image/upload/v1554830585/missing_image.jpg'
 
-    def owner_ids(self):
-        return [str(owner.id) for owner in self.owners.all()]
-
-    def get_officer_emails(self):
-        officers = self.officers.filter(
-            status__gt=0,
-            person__email__isnull=False,
-        ).order_by(
-            'person__last_name',
-            'person__first_name',
+    def get_owners_emails(self):
+        owners = self.owners.order_by(
+            'last_name',
+            'first_name',
         )
-        seen = set()
-        result = [
-            "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,)
-            for officer in officers
-            if not (
-                "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,) in seen or seen.add(
-                    "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,)
-                )
-            )
-        ]
-        return result
+        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
 
-    def get_is_senior(self):
-        if self.kind != self.KIND.quartet:
-            raise ValueError('Must be quartet')
-        Person = apps.get_model('bhs.person')
-        midwinter = datetime.date(2020, 1, 11)
-        persons = Person.objects.filter(
-            members__group=self,
-            members__status__gt=0,
-        )
-        if persons.count() > 4:
-            return False
-        all_over_55 = True
-        total_years = 0
-        for person in persons:
-            try:
-                years = int((midwinter - person.birth_date).days / 365)
-            except TypeError:
-                return False
-            if years < 55:
-                all_over_55 = False
-            total_years += years
-        if all_over_55 and (total_years >= 240):
-            is_senior = True
-        else:
-            is_senior = False
-        return is_senior
+    # def get_is_senior(self):
+    #     if self.kind != self.KIND.quartet:
+    #         raise ValueError('Must be quartet')
+    #     Person = apps.get_model('bhs.person')
+    #     midwinter = datetime.date(2020, 1, 11)
+    #     persons = Person.objects.filter(
+    #         members__group=self,
+    #         members__status__gt=0,
+    #     )
+    #     if persons.count() > 4:
+    #         return False
+    #     all_over_55 = True
+    #     total_years = 0
+    #     for person in persons:
+    #         try:
+    #             years = int((midwinter - person.birth_date).days / 365)
+    #         except TypeError:
+    #             return False
+    #         if years < 55:
+    #             all_over_55 = False
+    #         total_years += years
+    #     if all_over_55 and (total_years >= 240):
+    #         is_senior = True
+    #     else:
+    #         is_senior = False
+    #     return is_senior
 
 
 
@@ -938,11 +1300,18 @@ class Group(TimeStampedModel):
     objects = GroupManager()
 
     class Meta:
-        ordering = ['tree_sort']
+        # ordering = ['tree_sort']
         verbose_name_plural = 'Groups'
-        unique_together = (
-            ('bhs_id', 'kind'),
-        )
+        constraints = [
+            models.UniqueConstraint(
+                name='unique_group',
+                fields=[
+                    'bhs_id',
+                    'kind',
+                ]
+            )
+        ]
+
 
     class JSONAPIMeta:
         resource_name = "group"
@@ -950,92 +1319,92 @@ class Group(TimeStampedModel):
     def __str__(self):
         return self.nomen
 
-    def clean(self):
-        if self.mc_pk and self.status == self.STATUS.active:
-            if self.kind == self.KIND.international:
-                if self.parent:
-                    raise ValidationError("Toplevel must be Root")
-            if self.kind in [
-                self.KIND.district,
-                self.KIND.noncomp,
-                self.KIND.affiliate,
-            ]:
-                if self.parent.kind != self.KIND.international:
-                    raise ValidationError("Districts must have International parent.")
-            if self.kind in [
-                self.KIND.chapter,
-            ]:
-                if self.parent.kind not in [
-                    self.KIND.district,
-                ]:
-                    raise ValidationError("Chapter must have District parent.")
-                if self.division and not self.parent.is_divided:
-                        raise ValidationError("Non-divisionals should not have divisions.")
-                if not self.division and self.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
-                        raise ValidationError("Divisionals should have divisions.")
-                if self.division:
-                    if self.parent.code == 'EVG' and not 10 <= self.division <= 50:
-                            raise ValidationError("Division must be within EVG.")
-                    elif self.parent.code == 'FWD' and not 60 <= self.division <= 100:
-                            raise ValidationError("Division must be within FWD.")
-                    elif self.parent.code == 'LOL' and not 110 <= self.division <= 150:
-                            raise ValidationError("Division must be within LOL.")
-                    elif self.parent.code == 'MAD' and not 160 <= self.division <= 200:
-                            raise ValidationError("Division must be within MAD.")
-                    elif self.parent.code == 'NED' and not 210 <= self.division <= 250:
-                            raise ValidationError("Division must be within NED.")
-                    elif self.parent.code == 'SWD' and not 260 <= self.division <= 290:
-                            raise ValidationError("Division must be within SWD.")
-            if self.kind in [
-                self.KIND.chorus,
-                self.KIND.vlq,
-            ]:
-                if self.parent.kind not in [
-                    self.KIND.chapter,
-                ]:
-                    raise ValidationError("Chorus/VLQ must have Chapter parent.")
-                if self.division and not self.parent.parent.is_divided:
-                        raise ValidationError("Non-divisionals should not have divisions.")
-                if not self.division and self.parent.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
-                        raise ValidationError("Divisionals should have divisions.")
-                if self.division:
-                    if self.parent.parent.code == 'EVG' and not 10 <= self.division <= 50:
-                            raise ValidationError("Division must be within EVG.")
-                    elif self.parent.parent.code == 'FWD' and not 60 <= self.division <= 100:
-                            raise ValidationError("Division must be within FWD.")
-                    elif self.parent.parent.code == 'LOL' and not 110 <= self.division <= 150:
-                            raise ValidationError("Division must be within LOL.")
-                    elif self.parent.parent.code == 'MAD' and not 160 <= self.division <= 200:
-                            raise ValidationError("Division must be within MAD.")
-                    elif self.parent.parent.code == 'NED' and not 210 <= self.division <= 250:
-                            raise ValidationError("Division must be within NED.")
-                    elif self.parent.parent.code == 'SWD' and not 260 <= self.division <= 290:
-                            raise ValidationError("Division must be within SWD.")
-            if self.kind in [
-                self.KIND.quartet,
-            ] and self.parent:
-                if self.parent.kind not in [
-                    self.KIND.district,
-                ]:
-                    raise ValidationError("Quartet must have District parent.")
-                if self.division and not self.parent.is_divided:
-                        raise ValidationError("Non-divisionals should not have divisions.")
-                if not self.division and self.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
-                        raise ValidationError("Divisionals should have divisions.")
-                if self.division:
-                    if self.parent.code == 'EVG' and not 10 <= self.division <= 50:
-                            raise ValidationError("Division must be within EVG.")
-                    elif self.parent.code == 'FWD' and not 60 <= self.division <= 100:
-                            raise ValidationError("Division must be within FWD.")
-                    elif self.parent.code == 'LOL' and not 110 <= self.division <= 150:
-                            raise ValidationError("Division must be within LOL.")
-                    elif self.parent.code == 'MAD' and not 160 <= self.division <= 200:
-                            raise ValidationError("Division must be within MAD.")
-                    elif self.parent.code == 'NED' and not 210 <= self.division <= 250:
-                            raise ValidationError("Division must be within NED.")
-                    elif self.parent.code == 'SWD' and not 260 <= self.division <= 290:
-                            raise ValidationError("Division must be within SWD.")
-        return
+    # def clean(self):
+    #     if self.mc_pk and self.status == self.STATUS.active:
+    #         if self.kind == self.KIND.international:
+    #             if self.parent:
+    #                 raise ValidationError("Toplevel must be Root")
+    #         if self.kind in [
+    #             self.KIND.district,
+    #             self.KIND.noncomp,
+    #             self.KIND.affiliate,
+    #         ]:
+    #             if self.parent.kind != self.KIND.international:
+    #                 raise ValidationError("Districts must have International parent.")
+    #         if self.kind in [
+    #             self.KIND.chapter,
+    #         ]:
+    #             if self.parent.kind not in [
+    #                 self.KIND.district,
+    #             ]:
+    #                 raise ValidationError("Chapter must have District parent.")
+    #             if self.division and not self.parent.is_divided:
+    #                     raise ValidationError("Non-divisionals should not have divisions.")
+    #             if not self.division and self.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
+    #                     raise ValidationError("Divisionals should have divisions.")
+    #             if self.division:
+    #                 if self.parent.code == 'EVG' and not 10 <= self.division <= 50:
+    #                         raise ValidationError("Division must be within EVG.")
+    #                 elif self.parent.code == 'FWD' and not 60 <= self.division <= 100:
+    #                         raise ValidationError("Division must be within FWD.")
+    #                 elif self.parent.code == 'LOL' and not 110 <= self.division <= 150:
+    #                         raise ValidationError("Division must be within LOL.")
+    #                 elif self.parent.code == 'MAD' and not 160 <= self.division <= 200:
+    #                         raise ValidationError("Division must be within MAD.")
+    #                 elif self.parent.code == 'NED' and not 210 <= self.division <= 250:
+    #                         raise ValidationError("Division must be within NED.")
+    #                 elif self.parent.code == 'SWD' and not 260 <= self.division <= 290:
+    #                         raise ValidationError("Division must be within SWD.")
+    #         if self.kind in [
+    #             self.KIND.chorus,
+    #             self.KIND.vlq,
+    #         ]:
+    #             if self.parent.kind not in [
+    #                 self.KIND.chapter,
+    #             ]:
+    #                 raise ValidationError("Chorus/VLQ must have Chapter parent.")
+    #             if self.division and not self.parent.parent.is_divided:
+    #                     raise ValidationError("Non-divisionals should not have divisions.")
+    #             if not self.division and self.parent.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
+    #                     raise ValidationError("Divisionals should have divisions.")
+    #             if self.division:
+    #                 if self.parent.parent.code == 'EVG' and not 10 <= self.division <= 50:
+    #                         raise ValidationError("Division must be within EVG.")
+    #                 elif self.parent.parent.code == 'FWD' and not 60 <= self.division <= 100:
+    #                         raise ValidationError("Division must be within FWD.")
+    #                 elif self.parent.parent.code == 'LOL' and not 110 <= self.division <= 150:
+    #                         raise ValidationError("Division must be within LOL.")
+    #                 elif self.parent.parent.code == 'MAD' and not 160 <= self.division <= 200:
+    #                         raise ValidationError("Division must be within MAD.")
+    #                 elif self.parent.parent.code == 'NED' and not 210 <= self.division <= 250:
+    #                         raise ValidationError("Division must be within NED.")
+    #                 elif self.parent.parent.code == 'SWD' and not 260 <= self.division <= 290:
+    #                         raise ValidationError("Division must be within SWD.")
+    #         if self.kind in [
+    #             self.KIND.quartet,
+    #         ] and self.parent:
+    #             if self.parent.kind not in [
+    #                 self.KIND.district,
+    #             ]:
+    #                 raise ValidationError("Quartet must have District parent.")
+    #             if self.division and not self.parent.is_divided:
+    #                     raise ValidationError("Non-divisionals should not have divisions.")
+    #             if not self.division and self.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
+    #                     raise ValidationError("Divisionals should have divisions.")
+    #             if self.division:
+    #                 if self.parent.code == 'EVG' and not 10 <= self.division <= 50:
+    #                         raise ValidationError("Division must be within EVG.")
+    #                 elif self.parent.code == 'FWD' and not 60 <= self.division <= 100:
+    #                         raise ValidationError("Division must be within FWD.")
+    #                 elif self.parent.code == 'LOL' and not 110 <= self.division <= 150:
+    #                         raise ValidationError("Division must be within LOL.")
+    #                 elif self.parent.code == 'MAD' and not 160 <= self.division <= 200:
+    #                         raise ValidationError("Division must be within MAD.")
+    #                 elif self.parent.code == 'NED' and not 210 <= self.division <= 250:
+    #                         raise ValidationError("Division must be within NED.")
+    #                 elif self.parent.code == 'SWD' and not 260 <= self.division <= 290:
+    #                         raise ValidationError("Division must be within SWD.")
+    #     return
 
     # Group Permissions
     @staticmethod
@@ -1053,26 +1422,25 @@ class Group(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        roles = [
-            'SCJC',
-            'Librarian',
-            'Manager',
-        ]
-        return any(item in roles for item in request.user.roles.values_list('name'))
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'Librarian',
+                'Manager',
+            ]
+        )
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            all([
-                'SCJC' in request.user.roles.values_list('name'),
-            ]),
-            all([
-                'Librarian' in request.user.roles.values_list('name'),
-            ]),
-            all([
-                self.owners.filter(id__contains=request.user.id),
-            ]),
+            request.user.roles.filter(
+                name__in=[
+                    'SCJC',
+                    'Librarian',
+                ]
+            ),
+            request.user in self.owners.all(),
         ])
 
     # Conditions:
@@ -1464,9 +1832,15 @@ class Chart(TimeStampedModel):
     objects = ChartManager()
 
     class Meta:
-        unique_together = (
-            ('title', 'arrangers',)
-        )
+        constraints = [
+            models.UniqueConstraint(
+                name='unique_chart',
+                fields=[
+                    'title',
+                    'arrangers',
+                ]
+            )
+        ]
 
     class JSONAPIMeta:
         resource_name = "chart"
@@ -1493,20 +1867,26 @@ class Chart(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        roles = [
-            'SCJC',
-            'Librarian',
-        ]
-        return any(item in roles for item in request.user.roles.values_list('name'))
+        return any([
+            request.user.roles.filter(
+                name__in=[
+                    'SCJC',
+                    'Librarian',
+                ],
+            )
+        ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        roles = [
-            'SCJC',
-            'Librarian',
-        ]
-        return any(item in roles for item in request.user.roles.values_list('name'))
+        return any([
+            request.user.roles.filter(
+                name__in=[
+                    'SCJC',
+                    'Librarian',
+                ],
+            )
+        ])
 
     # Transitions
     @fsm_log_by
@@ -1525,124 +1905,6 @@ class Chart(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.protected)
     def protect(self, *args, **kwargs):
         """Protect the Chart."""
-        return
-
-
-class Repertory(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (0, 'new', 'New'),
-        (10, 'active', 'Active'),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.active,
-    )
-
-    # FKs
-    group = models.ForeignKey(
-        'Group',
-        related_name='repertories',
-        on_delete=models.CASCADE,
-    )
-
-    chart = models.ForeignKey(
-        'Chart',
-        related_name='repertories',
-        on_delete=models.CASCADE,
-    )
-
-    # Relations
-    statelogs = GenericRelation(
-        StateLog,
-        related_query_name='repertories',
-    )
-
-    # Internals
-    class Meta:
-        verbose_name_plural = 'repertories'
-        unique_together = (
-            ('group', 'chart',),
-        )
-
-    class JSONAPIMeta:
-        resource_name = "repertory"
-
-    def __str__(self):
-        return str(self.id)
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_read_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_read_permission(self, request):
-        roles = [
-            'SCJC',
-            'DRCJ',
-            'CA',
-            'Librarian',
-        ]
-        return any([
-            [item in roles for item in request.user.roles.values_list('name')],
-            # self.group.officers.filter(
-            #     person__user=request.user,
-            #     status__gt=0,
-            # ),
-        ])
-
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_write_permission(request):
-        roles = [
-            'SCJC',
-            'DRCJ',
-            'Librarian',
-            'Manager',
-        ]
-        return any([item in roles for item in request.user.roles.values_list('name')])
-
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_write_permission(self, request):
-        roles = [
-            'SCJC',
-            'DRCJ',
-            'Librarian',
-        ]
-        return any([
-            [item in roles for item in request.user.roles.values_list('name')],
-            # self.group.officers.filter(
-            #     person__user=request.user,
-            #     status__gt=0,
-            # ),
-        ])
-
-    # Transitions
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.active)
-    def activate(self, *args, **kwargs):
-        """Activate the Repertory."""
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.inactive)
-    def deactivate(self, *args, **kwargs):
-        """Deactivate the Repertory."""
         return
 
 
@@ -1930,9 +2192,10 @@ class Award(TimeStampedModel):
     objects = AwardManager()
 
     class Meta:
-        ordering = [
-            'tree_sort',
-        ]
+        pass
+        # ordering = [
+        #     'tree_sort',
+        # ]
 
     class JSONAPIMeta:
         resource_name = "award"
@@ -1966,18 +2229,20 @@ class Award(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        roles = [
-            'SCJC',
-        ]
-        return any(item in request.user.roles.values_list('name') for item in roles)
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+            ]
+        )
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        roles = [
-            'SCJC',
-        ]
-        return any(item in request.user.roles.values_list('name') for item in roles)
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+            ]
+        )
 
     # Transitions
     @fsm_log_by

@@ -6,7 +6,23 @@ from .models import Group
 from .models import Member
 from .models import Officer
 from .models import Person
+from .models import Convention
 
+
+class ConventionFilterset(FilterSet):
+    class Meta:
+        model = Convention
+        fields = {
+            # 'assignments__user': [
+            #     'exact',
+            # ],
+            # 'assignments__status': [
+            #     'exact',
+            # ],
+            'status': [
+                'exact',
+            ],
+        }
 
 class GroupFilterset(FilterSet):
     class Meta:
