@@ -28,13 +28,11 @@ from rest_framework_jwt.models import User
 from apps.bhs.models import Award
 from apps.bhs.models import Chart
 from apps.bhs.models import Group
-from apps.bhs.models import Member
-from apps.bhs.models import Officer
 from apps.bhs.models import Person
-from apps.smanager.models import Repertory
-
-from apps.smanager.models import Assignment
 from apps.bhs.models import Convention
+
+from apps.smanager.models import Repertory
+from apps.smanager.models import Assignment
 from apps.smanager.models import Contest
 from apps.smanager.models import Entry
 from apps.smanager.models import Session
@@ -45,6 +43,7 @@ from apps.rmanager.models import Panelist
 from apps.rmanager.models import Round
 from apps.rmanager.models import Score
 from apps.rmanager.models import Song
+
 
 class AppearanceFactory(DjangoModelFactory):
     status = Appearance.STATUS.new
@@ -102,8 +101,6 @@ class ContestFactory(DjangoModelFactory):
 
     class Meta:
         model = Contest
-
-
 
 
 
@@ -200,33 +197,6 @@ class GroupFactory(DjangoModelFactory):
     #     if create:
     #         for i in range(6):
     #             RepertoryFactory.create(group=self)
-
-
-class MemberFactory(DjangoModelFactory):
-    status = Member.STATUS.active
-    part = Iterator([
-        Member.PART.tenor,
-        Member.PART.lead,
-        Member.PART.baritone,
-        Member.PART.bass,
-    ])
-    group = SubFactory('factories.GroupFactory')
-    person = SubFactory('factories.PersonFactory')
-
-    class Meta:
-        model = Member
-
-
-class OfficerFactory(DjangoModelFactory):
-    status = Officer.STATUS.new
-    start_date = None
-    end_date = None
-    office = 410
-    person = SubFactory('factories.PersonFactory')
-    group = SubFactory('factories.GroupFactory')
-
-    class Meta:
-        model = Officer
 
 
 class OutcomeFactory(DjangoModelFactory):

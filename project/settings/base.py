@@ -63,10 +63,6 @@ JWT_AUTH = {
     'AUTH0_DOMAIN': get_env_variable("AUTH0_DOMAIN"),
     'AUTH0_AUDIENCE': get_env_variable("AUTH0_AUDIENCE"),
 }
-#         if api_settings.AUTH0_DOMAIN.startswith('login'):
-#             audience = "https://barberscore.auth0.com/api/v2/"
-#         else:
-#             audience = "https://{0}/api/v2/".format(api_settings.AUTH0_DOMAIN)
 
 # File Management
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'

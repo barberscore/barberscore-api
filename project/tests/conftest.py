@@ -16,8 +16,6 @@ from factories import ContestFactory
 from factories import ConventionFactory
 from factories import EntryFactory
 from factories import GroupFactory
-from factories import MemberFactory
-from factories import OfficerFactory
 from factories import OutcomeFactory
 from factories import PanelistFactory
 from factories import PersonFactory
@@ -28,10 +26,6 @@ from factories import SessionFactory
 from factories import SongFactory
 from factories import UserFactory
 
-# @pytest.fixture(scope='session')
-# def django_db_modify_db_settings():
-#     from django.conf import settings
-#     settings.DATABASES.pop('bhs_db')
 
 
 @pytest.fixture
@@ -110,16 +104,6 @@ def entry():
 @pytest.fixture
 def group():
     return GroupFactory()
-
-
-@pytest.fixture
-def member():
-    return MemberFactory()
-
-
-@pytest.fixture
-def officer():
-    return OfficerFactory()
 
 
 @pytest.fixture
