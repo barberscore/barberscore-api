@@ -965,8 +965,8 @@ class Appearance(TimeStampedModel):
             self.group.name,
         )
         to = self.group.get_officer_emails()
-        cc = self.round.session.convention.get_drcj_emails()
-        cc.extend(self.round.session.convention.get_ca_emails())
+        # cc = self.round.session.convention.get_drcj_emails()
+        # cc.extend(self.round.session.convention.get_ca_emails())
 
         if self.csa_report:
             pdf = self.csa_report.file
@@ -1859,7 +1859,7 @@ class Panelist(TimeStampedModel):
             person.common_name,
         )
         to = ["{0} <{1}>".format(person.common_name, person.email)]
-        cc = self.round.session.convention.get_ca_emails()
+        # cc = self.round.session.convention.get_ca_emails()
 
         if self.psa_report:
             pdf = self.psa_report.file
@@ -2405,32 +2405,32 @@ class Round(TimeStampedModel):
         }
         rendered = render_to_string('reports/oss.html', context)
 
-        if self.session.convention.district == 'BHS':
-            if self.session.convention.name == 'International Youth Convention':
-                page_size = 'Legal'
-            elif self.session.kind == self.session.KIND.quartet and self.kind == self.KIND.semis:
-                page_size = 'Legal'
-            else:
-                page_size = 'Letter'
-        else:
-            if self.session.rounds.count() == 1:
-                if publics.count() <= 15:
-                    page_size = 'Letter'
-                else:
-                    page_size = 'Legal'
-            else:
-                if self.kind == self.KIND.finals:
-                    if publics.count() >= 8:
-                        page_size = 'Legal'
-                    else:
-                        page_size = 'Letter'
-                elif self.kind == self.KIND.semis:
-                    if publics.count() >= 8:
-                        page_size = 'Legal'
-                    else:
-                        page_size = 'Letter'
-                else:
-                    page_size = 'Legal'
+        # if self.session.convention.district == 'BHS':
+        #     if self.session.convention.name == 'International Youth Convention':
+        #         page_size = 'Legal'
+        #     elif self.session.kind == self.session.KIND.quartet and self.kind == self.KIND.semis:
+        #         page_size = 'Legal'
+        #     else:
+        #         page_size = 'Letter'
+        # else:
+        #     if self.session.rounds.count() == 1:
+        #         if publics.count() <= 15:
+        #             page_size = 'Letter'
+        #         else:
+        #             page_size = 'Legal'
+        #     else:
+        #         if self.kind == self.KIND.finals:
+        #             if publics.count() >= 8:
+        #                 page_size = 'Legal'
+        #             else:
+        #                 page_size = 'Letter'
+        #         elif self.kind == self.KIND.semis:
+        #             if publics.count() >= 8:
+        #                 page_size = 'Legal'
+        #             else:
+        #                 page_size = 'Letter'
+        #         else:
+        #             page_size = 'Legal'
         try:
             statelog = self.statelogs.latest('timestamp')
             footer = 'Published by {0} at {1}'.format(
@@ -3597,8 +3597,8 @@ class Round(TimeStampedModel):
         subject = "[Barberscore] {0} Results and OSS".format(
             self,
         )
-        to = self.session.convention.get_ca_emails()
-        cc = self.session.convention.get_drcj_emails()
+        # to = self.session.convention.get_ca_emails()
+        # cc = self.session.convention.get_drcj_emails()
         cc.extend(self.get_judge_emails())
         bcc = self.session.get_participant_emails()
 
@@ -3639,8 +3639,8 @@ class Round(TimeStampedModel):
         subject = "[Barberscore] {0} Reports and SA".format(
             self,
         )
-        to = self.session.convention.get_ca_emails()
-        cc = self.session.convention.get_drcj_emails()
+        # to = self.session.convention.get_ca_emails()
+        # cc = self.session.convention.get_drcj_emails()
         cc.extend(self.get_judge_emails())
         attachments = []
         if self.sa_report:
@@ -3767,20 +3767,20 @@ class Round(TimeStampedModel):
         # Create Panelsists
         raise RuntimeError("fix")
         # Assignment = apps.get_model('smanager.assignment')
-        cas = self.session.convention.assignments.filter(
-            status=Assignment.STATUS.active,
-            kind__in=[
-                Assignment.KIND.official,
-                Assignment.KIND.practice,
-            ],
-            category=Assignment.CATEGORY.ca,
-        ).order_by(
-            'kind',
-            'category',
-            # 'person__last_name',
-            # 'person__nick_name',
-            # 'person__first_name',
-        )
+        # cas = self.session.convention.assignments.filter(
+        #     status=Assignment.STATUS.active,
+        #     kind__in=[
+        #         Assignment.KIND.official,
+        #         Assignment.KIND.practice,
+        #     ],
+        #     category=Assignment.CATEGORY.ca,
+        # ).order_by(
+        #     'kind',
+        #     'category',
+        #     # 'person__last_name',
+        #     # 'person__nick_name',
+        #     # 'person__first_name',
+        # )
         for ca in cas:
             self.panelists.create(
                 kind=ca.kind,
@@ -3808,17 +3808,17 @@ class Round(TimeStampedModel):
                 person_id=official.person_id,
             )
 
-        practices = self.session.convention.assignments.filter(
-            status=Assignment.STATUS.active,
-            kind=Assignment.KIND.practice,
-            category__gt=Assignment.CATEGORY.ca,
-        ).order_by(
-            'kind',
-            'category',
-            # 'person__last_name',
-            # 'person__nick_name',
-            # 'person__first_name',
-        )
+        # practices = self.session.convention.assignments.filter(
+        #     status=Assignment.STATUS.active,
+        #     kind=Assignment.KIND.practice,
+        #     category__gt=Assignment.CATEGORY.ca,
+        # ).order_by(
+        #     'kind',
+        #     'category',
+        #     # 'person__last_name',
+        #     # 'person__nick_name',
+        #     # 'person__first_name',
+        # )
         p = 50
         for practice in practices:
             p += 1
@@ -3965,118 +3965,119 @@ class Round(TimeStampedModel):
         target=STATUS.completed,
         conditions=[can_complete],)
     def complete(self, *args, **kwargs):
-        Appearance = apps.get_model('rmanager.appearance')
-        Panelist = apps.get_model('rmanager.panelist')
-        # Run outcomes
-        outcomes = self.outcomes.all()
-        for outcome in outcomes:
-            outcome.name = outcome.get_name()
-            outcome.save()
+        return
+        # Appearance = apps.get_model('rmanager.appearance')
+        # Panelist = apps.get_model('rmanager.panelist')
+        # # Run outcomes
+        # outcomes = self.outcomes.all()
+        # for outcome in outcomes:
+        #     outcome.name = outcome.get_name()
+        #     outcome.save()
 
-        # If there is no next round simply return
-        if self.kind == self.KIND.finals:
-            return
+        # # If there is no next round simply return
+        # if self.kind == self.KIND.finals:
+        #     return
 
-        # Otherwise, figure out the Draw.
-        # First, get spots available
-        spots = self.spots
+        # # Otherwise, figure out the Draw.
+        # # First, get spots available
+        # spots = self.spots
 
-        # Get all multi appearances and annotate average.
-        multis = self.appearances.filter(
-            status=Appearance.STATUS.verified,
-            is_single=False,
-        ).annotate(
-            avg=Avg(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                )
-            ),
-            tot_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                )
-            ),
-            sng_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                )
-            ),
-            per_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                )
-            ),
-        )
-        # If spots are constricted, find those who advance
-        if spots:
+        # # Get all multi appearances and annotate average.
+        # multis = self.appearances.filter(
+        #     status=Appearance.STATUS.verified,
+        #     is_single=False,
+        # ).annotate(
+        #     avg=Avg(
+        #         'songs__scores__points',
+        #         filter=Q(
+        #             songs__scores__panelist__kind=Panelist.KIND.official,
+        #         )
+        #     ),
+        #     tot_points=Sum(
+        #         'songs__scores__points',
+        #         filter=Q(
+        #             songs__scores__panelist__kind=Panelist.KIND.official,
+        #         )
+        #     ),
+        #     sng_points=Sum(
+        #         'songs__scores__points',
+        #         filter=Q(
+        #             songs__scores__panelist__kind=Panelist.KIND.official,
+        #             songs__scores__panelist__category=Panelist.CATEGORY.singing,
+        #         )
+        #     ),
+        #     per_points=Sum(
+        #         'songs__scores__points',
+        #         filter=Q(
+        #             songs__scores__panelist__kind=Panelist.KIND.official,
+        #             songs__scores__panelist__category=Panelist.CATEGORY.performance,
+        #         )
+        #     ),
+        # )
+        # # If spots are constricted, find those who advance
+        # if spots:
             # All those above 73.0 advance automatically, regardless of spots available
-            if self.session.convention.district == 'BHS':
-                ordered = multis.order_by(
-                    '-tot_points',
-                    '-sng_points',
-                    '-per_points',
-                )
-                advancer__ids = [x.id for x in ordered[:spots]]
-                mt = ordered[spots:spots+1][0]
-            else:
-                automatics = multis.filter(
-                    avg__gte=73.0,
-                )
-                # generate list of the advancers, as appearance IDs
-                advancer__ids = [x.id for x in automatics]
-                # Generate remaining multi appearances
-                remains = multis.exclude(
-                    id__in=advancer__ids,
-                ).order_by(
-                    '-tot_points',
-                    '-sng_points',
-                    '-per_points',
-                )
-                # Figure out remaining spots
-                diff = spots - automatics.count()
-                # If there are additional remaining spots, add them up to available
-                if diff > 0:
-                    adds = remains[:diff]
-                    for a in adds:
-                        advancer__ids.append(a.id)
-                    try:
-                        mt = remains[diff:diff+1][0]
-                    except IndexError:
-                        mt = None
-                else:
-                    # If MT available add, otherwise none
-                    try:
-                        mt = remains.first()
-                    except AttributeError:
-                        mt = None
+            # if self.session.convention.district == 'BHS':
+            #     ordered = multis.order_by(
+            #         '-tot_points',
+            #         '-sng_points',
+            #         '-per_points',
+            #     )
+            #     advancer__ids = [x.id for x in ordered[:spots]]
+            #     mt = ordered[spots:spots+1][0]
+            # else:
+            #     automatics = multis.filter(
+            #         avg__gte=73.0,
+            #     )
+            #     # generate list of the advancers, as appearance IDs
+            #     advancer__ids = [x.id for x in automatics]
+            #     # Generate remaining multi appearances
+            #     remains = multis.exclude(
+            #         id__in=advancer__ids,
+            #     ).order_by(
+            #         '-tot_points',
+            #         '-sng_points',
+            #         '-per_points',
+            #     )
+            #     # Figure out remaining spots
+            #     diff = spots - automatics.count()
+            #     # If there are additional remaining spots, add them up to available
+            #     if diff > 0:
+            #         adds = remains[:diff]
+            #         for a in adds:
+            #             advancer__ids.append(a.id)
+            #         try:
+            #             mt = remains[diff:diff+1][0]
+            #         except IndexError:
+            #             mt = None
+            #     else:
+            #         # If MT available add, otherwise none
+            #         try:
+            #             mt = remains.first()
+            #         except AttributeError:
+            #             mt = None
         # Otherwise, advance all
-        else:
-            advancer__ids = [a.id for a in multis]
-            mt = None
+        # else:
+        #     advancer__ids = [a.id for a in multis]
+        #     mt = None
 
         # Reset draw
-        self.appearances.update(draw=None)
+        # self.appearances.update(draw=None)
 
         # Randomize the advancers and set the initial draw
-        appearances = self.appearances.filter(
-            id__in=advancer__ids,
-        ).order_by('?')
-        i = 1
-        for appearance in appearances:
-            appearance.draw = i
-            appearance.save()
-            i += 1
-        # create Mic Tester at draw 0
-        if mt:
-            mt.draw = 0
-            mt.save()
-        return
+        # appearances = self.appearances.filter(
+        #     id__in=advancer__ids,
+        # ).order_by('?')
+        # i = 1
+        # for appearance in appearances:
+        #     appearance.draw = i
+        #     appearance.save()
+        #     i += 1
+        # # create Mic Tester at draw 0
+        # if mt:
+        #     mt.draw = 0
+        #     mt.save()
+        # return
 
     @fsm_log_by
     @transition(

@@ -488,7 +488,7 @@ class RoundViewSet(viewsets.ModelViewSet):
     def oss(self, request, pk=None):
         round = Round.objects.select_related(
             'session',
-            'session__convention',
+            # 'session__convention',
         ).get(pk=pk)
         if round.oss_report:
             pdf = round.oss_report.file
@@ -564,7 +564,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         ).get(pk=pk)
         pdf = round.get_titles()
         file_name = '{0} {1} {2} Titles Report'.format(
-            round.session.convention,
+            # round.session.convention,
             round.session.get_kind_display(),
             round.get_kind_display(),
         )
@@ -585,14 +585,14 @@ class RoundViewSet(viewsets.ModelViewSet):
     def sa(self, request, pk=None):
         round = Round.objects.select_related(
             'session',
-            'session__convention',
+            # 'session__convention',
         ).get(pk=pk)
         if round.sa_report:
             pdf = round.sa_report.file
         else:
             pdf = round.get_sa()
         file_name = '{0} {1} {2} SA'.format(
-            round.session.convention,
+            # round.session.convention,
             round.session.get_kind_display(),
             round.get_kind_display(),
         )
@@ -617,7 +617,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         ).get(pk=pk)
         docx = round.get_announcements()
         file_name = '{0} {1} {2} Announcements'.format(
-            round.session.convention,
+            # round.session.convention,
             round.session.get_kind_display(),
             round.get_kind_display(),
         )

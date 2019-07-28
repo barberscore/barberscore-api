@@ -10,11 +10,11 @@ from django.contrib import messages
 from django.apps import apps
 from django.conf import settings
 # Local
-from .filters import AppearanceConventionStatusListFilter
-from .filters import ConventionStatusListFilter
-from .filters import MCListFilter
+# from .filters import AppearanceConventionStatusListFilter
+# from .filters import ConventionStatusListFilter
+# from .filters import MCListFilter
 # from .filters import MCUserListFilter
-from .filters import SessionConventionStatusListFilter
+# from .filters import SessionConventionStatusListFilter
 
 from .inlines import AppearanceInline
 from .inlines import ContenderInline
@@ -70,7 +70,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'round__session__convention',
     ]
     list_filter = [
-        AppearanceConventionStatusListFilter,
+        # AppearanceConventionStatusListFilter,
         'status',
         'round__session__kind',
         # 'round__session__convention__season',
@@ -208,7 +208,7 @@ class PanelistAdmin(admin.ModelAdmin):
     ]
 
     list_filter = (
-        AppearanceConventionStatusListFilter,
+        # AppearanceConventionStatusListFilter,
         'status',
         'kind',
         'category',
@@ -255,7 +255,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
     list_filter = [
-        SessionConventionStatusListFilter,
+        # SessionConventionStatusListFilter,
         'status',
         'kind',
         'session__kind',

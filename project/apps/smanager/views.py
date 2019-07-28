@@ -111,7 +111,7 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
         'user',
-        'convention',
+        # 'convention',
     ).prefetch_related(
     ).order_by('id')
     serializer_class = AssignmentSerializer
@@ -289,7 +289,7 @@ class EntryViewSet(viewsets.ModelViewSet):
 
 class SessionViewSet(viewsets.ModelViewSet):
     queryset = Session.objects.select_related(
-        'convention',
+        # 'convention',
         'target',
     ).prefetch_related(
         'owners',
@@ -404,7 +404,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         else:
             xlsx = session.get_legacy_report()
         file_name = '{0} {1} Session Legacy Report'.format(
-            session.convention,
+            # session.convention,
             session.get_kind_display(),
         )
         return XLSXResponse(

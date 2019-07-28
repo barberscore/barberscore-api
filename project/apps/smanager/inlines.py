@@ -108,7 +108,7 @@ class EntryInline(admin.TabularInline):
     ]
     ordering = [
         # 'group__name',
-        'session__convention__year',
+        # 'session__convention__year',
     ]
     show_change_link = True
     extra = 0
@@ -120,12 +120,13 @@ class EntryInline(admin.TabularInline):
 class SessionInline(admin.TabularInline):
     model = Session
     fields = [
-        'convention',
+        # 'convention',
         'kind',
         # 'num_rounds',
     ]
     autocomplete_fields = [
-        'convention',
+        # 'convention',
+        'id',
     ]
     show_change_link = True
     extra = 0

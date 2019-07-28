@@ -52,7 +52,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'category',
-            'convention',
+            # 'convention',
             'person_id',
             'common_name',
             'first_name',
@@ -214,7 +214,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'drcj_report',
 
             'owners',
-            'convention',
+            # 'convention',
             'target',
 
             'contests',

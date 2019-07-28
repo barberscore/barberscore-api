@@ -295,6 +295,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         # 'convention',
         'kind',
+        'convention_id',
         ('num_rounds', 'is_invitational',),
         'target',
         'legacy_report',

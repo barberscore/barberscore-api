@@ -508,7 +508,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
 #     ]
 
 
-@admin.register(Officer)
+# @admin.register(Officer)
 class OfficerAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
