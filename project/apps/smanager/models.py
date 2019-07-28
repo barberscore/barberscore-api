@@ -475,7 +475,7 @@ class Convention(TimeStampedModel):
     # FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='conventions',
+        related_name='conventions_old',
     )
 
     group_id = models.UUIDField(
@@ -486,7 +486,7 @@ class Convention(TimeStampedModel):
     # Relations
     statelogs = GenericRelation(
         StateLog,
-        related_query_name='conventions',
+        related_query_name='conventions_old',
     )
 
     @cached_property
@@ -2176,12 +2176,9 @@ class Session(TimeStampedModel):
         related_name='sessions',
     )
 
-    convention = models.ForeignKey(
-        'Convention',
-        related_name='sessions',
+    convention_id = models.UUIDField(
         null=True,
         blank=True,
-        on_delete=models.CASCADE,
     )
 
     target = models.ForeignKey(

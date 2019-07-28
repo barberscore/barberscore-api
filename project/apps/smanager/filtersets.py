@@ -7,7 +7,6 @@ from .models import Entry
 
 
 from .models import Assignment
-from .models import Convention
 
 from dry_rest_permissions.generics import DRYPermissionFiltersBase
 from django.db.models import Q
@@ -50,21 +49,6 @@ class AssignmentFilterset(FilterSet):
             # ],
         }
 
-
-class ConventionFilterset(FilterSet):
-    class Meta:
-        model = Convention
-        fields = {
-            # 'assignments__user': [
-            #     'exact',
-            # ],
-            # 'assignments__status': [
-            #     'exact',
-            # ],
-            'status': [
-                'exact',
-            ],
-        }
 
 class SessionFilterset(FilterSet):
     class Meta:

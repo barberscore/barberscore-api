@@ -9,7 +9,6 @@ from .models import Session
 
 
 from .models import Assignment
-from .models import Convention
 from .models import Repertory
 
 
@@ -67,21 +66,6 @@ class AssignmentInline(admin.TabularInline):
     ]
     raw_id_fields = [
         'user',
-    ]
-
-class ConventionInline(admin.TabularInline):
-    model = Convention
-    fields = [
-        'name',
-        'group',
-    ]
-    autocomplete_fields = [
-        'group',
-    ]
-    show_change_link = True
-    extra = 0
-    classes = [
-        'collapse',
     ]
 
 class ContestInline(admin.TabularInline):

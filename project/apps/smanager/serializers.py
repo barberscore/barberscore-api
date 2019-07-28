@@ -15,7 +15,6 @@ from .models import Repertory
 
 
 from .models import Assignment
-from .models import Convention
 
 
 
@@ -82,59 +81,6 @@ class AssignmentSerializer(serializers.ModelSerializer):
     #         'convention',
     #         'person',
     #     ]
-
-
-class ConventionSerializer(serializers.ModelSerializer):
-    timezone = TimezoneField(allow_null=True)
-    permissions = DRYPermissionsField()
-    included_serializers = {
-        'assignments': 'apps.smanager.serializers.AssignmentSerializer',
-    }
-
-    class Meta:
-        model = Convention
-        fields = [
-            'id',
-            '__str__',
-            'status',
-            'name',
-            'district',
-            'season',
-            'panel',
-            'year',
-            'open_date',
-            'close_date',
-            'start_date',
-            'end_date',
-            'venue_name',
-            'location',
-            'timezone',
-            'image',
-            'description',
-            'divisions',
-            'kinds',
-
-            'group_id',
-
-            'image_id',
-
-            'assignments',
-            'sessions',
-            'permissions',
-        ]
-        read_only_fields = [
-            '__str__'
-            'image_id',
-        ]
-
-    class JSONAPIMeta:
-        included_resources = [
-            'assignments',
-        ]
-
-
-    def validate(self, data):
-        return data
 
 
 class ContestSerializer(serializers.ModelSerializer):

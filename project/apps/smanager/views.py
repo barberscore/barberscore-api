@@ -36,11 +36,8 @@ from .serializers import ContestSerializer
 from .serializers import EntrySerializer
 from .serializers import SessionSerializer
 from .filtersets import AssignmentFilterset
-from .filtersets import ConventionFilterset
 from .models import Assignment
-from .models import Convention
 from .serializers import AssignmentSerializer
-from .serializers import ConventionSerializer
 from .serializers import RepertorySerializer
 
 
@@ -155,50 +152,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
-
-class ConventionViewSet(viewsets.ModelViewSet):
-    queryset = Convention.objects.select_related(
-        # 'user',
-    ).prefetch_related(
-        'assignments',
-    ).order_by('id')
-    serializer_class = ConventionSerializer
-    filterset_class = ConventionFilterset
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "convention"
-
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
 
 class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(

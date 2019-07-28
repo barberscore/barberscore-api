@@ -14,6 +14,7 @@ from .models import Group
 # from .models import Member
 from .models import Officer
 from .models import Chart
+from .models import Convention
 
 # from .inlines import MemberInline
 from .inlines import OfficerInline
@@ -48,6 +49,90 @@ class ReadOnlyAdmin(admin.ModelAdmin):
         extra_context['show_save_and_continue'] = False
         extra_context['show_save'] = False
         return super().changeform_view(request, object_id, extra_context=extra_context)
+
+
+@admin.register(Convention)
+class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fields = (
+        'id',
+        # 'legacy_selection',
+        # 'legacy_complete',
+        'status',
+        'name',
+        ('group_id', 'divisions', ),
+        ('year', 'season', ),
+        ('panel', 'kinds', ),
+        ('open_date', 'close_date', ),
+        ('start_date', 'end_date', ),
+        'owners',
+        'venue_name',
+        'location',
+        'timezone',
+        'image',
+        'description',
+        # 'district',
+    )
+
+    list_display = (
+        '__str__',
+        'year',
+        'season',
+        # 'district',
+        'name',
+        # 'location',
+        # 'timezone',
+        # 'start_date',
+        # 'end_date',
+        # 'status',
+    )
+
+    list_editable = [
+        'name',
+        # 'location',
+        # 'start_date',
+        # 'end_date',
+    ]
+
+    list_filter = (
+        'status',
+        'season',
+        # 'district',
+        'year',
+    )
+
+    fsm_field = [
+        'status',
+    ]
+
+    search_fields = [
+        'name',
+    ]
+
+    inlines = [
+        # AssignmentInline,
+        # SessionInline,
+    ]
+
+    readonly_fields = (
+        'id',
+    )
+
+    autocomplete_fields = [
+        # 'group',
+        'owners',
+    ]
+
+    ordering = (
+        '-year',
+        'season',
+        # 'district',
+        # 'group__tree_sort',
+    )
+    list_select_related = [
+        # 'group',
+    ]
+
+    save_on_top = True
 
 
 @admin.register(Award)

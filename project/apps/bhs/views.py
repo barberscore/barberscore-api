@@ -44,12 +44,59 @@ from .serializers import OfficerSerializer
 from .serializers import PersonSerializer
 from .serializers import ChartSerializer
 from .serializers import AwardSerializer
+from .filtersets import ConventionFilterset
+from .models import Convention
+from .serializers import ConventionSerializer
 
 
 log = logging.getLogger(__name__)
 
 
 from rest_framework.negotiation import BaseContentNegotiation
+
+class ConventionViewSet(viewsets.ModelViewSet):
+    queryset = Convention.objects.select_related(
+        # 'user',
+    ).prefetch_related(
+        'assignments',
+    ).order_by('id')
+    serializer_class = ConventionSerializer
+    filterset_class = ConventionFilterset
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "convention"
+
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
 class IgnoreClientContentNegotiation(BaseContentNegotiation):
     def select_parser(self, request, parsers):

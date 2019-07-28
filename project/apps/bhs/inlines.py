@@ -14,6 +14,22 @@ from django.contrib import admin
 from .models import Award
 # from .models import Member
 from .models import Officer
+from .models import Convention
+
+class ConventionInline(admin.TabularInline):
+    model = Convention
+    fields = [
+        'name',
+        'group',
+    ]
+    autocomplete_fields = [
+        'group',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
 
 class AwardInline(admin.TabularInline):
     model = Award

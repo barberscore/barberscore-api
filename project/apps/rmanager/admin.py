@@ -67,14 +67,14 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     list_select_related = [
         'round__session',
-        'round__session__convention',
+        # 'round__session__convention',
     ]
     list_filter = [
         AppearanceConventionStatusListFilter,
         'status',
         'round__session__kind',
-        'round__session__convention__season',
-        'round__session__convention__year',
+        # 'round__session__convention__season',
+        # 'round__session__convention__year',
     ]
     fsm_field = [
         'status',
@@ -91,7 +91,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'variance_report',
     ]
     search_fields = [
-        'round__session__convention__name',
+        # 'round__session__convention__name',
         'id',
     ]
     inlines = [
@@ -259,9 +259,9 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
         'kind',
         'session__kind',
-        'session__convention__season',
-        'session__convention__district',
-        'session__convention__year',
+        # 'session__convention__season',
+        # 'session__convention__district',
+        # 'session__convention__year',
         # 'is_reviewed',
     ]
 
@@ -270,8 +270,8 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     ordering = (
-        '-session__convention__year',
-        'session__convention__name',
+        # '-session__convention__year',
+        # 'session__convention__name',
         '-session__kind',
         'kind',
     )
@@ -298,7 +298,8 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'session__convention__name',
+        'id',
+        # 'session__convention__name',
     ]
 
 
