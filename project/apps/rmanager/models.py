@@ -184,6 +184,12 @@ class Appearance(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    outcomes = models.ManyToManyField(
+        'Outcome',
+        related_name='appearances',
+        blank=True,
+    )
+
     group_id = models.UUIDField(
         null=True,
         blank=True,
@@ -1161,106 +1167,6 @@ class Appearance(TimeStampedModel):
         return
 
 
-class Contender(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (-10, 'excluded', 'Excluded',),
-        (0, 'new', 'New',),
-        (10, 'included', 'Included',),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    # FKs
-    appearance = models.ForeignKey(
-        'Appearance',
-        related_name='contenders',
-        on_delete=models.CASCADE,
-    )
-
-    outcome = models.ForeignKey(
-        'Outcome',
-        related_name='contenders',
-        on_delete=models.CASCADE,
-    )
-
-    # Relations
-    statelogs = GenericRelation(
-        StateLog,
-        related_query_name='contenders',
-    )
-
-    # Internals
-    class Meta:
-        pass
-        # ordering = (
-        #     'outcome__num',
-        # )
-        # unique_together = (
-        #     ('appearance', 'outcome',),
-        # )
-
-    class JSONAPIMeta:
-        resource_name = "contender"
-
-    def __str__(self):
-        return str(self.id)
-
-    # Methods
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_read_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_write_permission(request):
-        return any([
-            'SCJC' in request.user.roles.values_list('name'),
-            'CA' in request.user.roles.values_list('name'),
-        ])
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_write_permission(self, request):
-        return any([
-            'SCJC' in request.user.roles.values_list('name'),
-            all([
-                self.outcome.round.owners.filter(id__contains=request.user.id),
-                self.outcome.round.status != self.outcome.round.STATUS.started,
-            ]),
-        ])
-
-    # contender Transitions
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.included)
-    def include(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.excluded)
-    def exclude(self, *args, **kwargs):
-        return
-
-
 class Outcome(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1288,6 +1194,12 @@ class Outcome(TimeStampedModel):
         max_length=1024,
         null=True,
         blank=True,
+    )
+
+    award_name = models.CharField(
+        max_length=1024,
+        blank=True,
+        default='',
     )
 
     # FKs
@@ -1420,12 +1332,13 @@ class Outcome(TimeStampedModel):
             # ).order_by(
             #     'name',
             # ).values_list('name', flat=True)
-            group_ids = self.contenders.filter(
-                appearance__stats__tot_score__gte=threshold,
-            ).values_list(
-                'appearance__group_id',
-                flat=True,
-            )
+            raise RuntimeError('contender')
+            # group_ids = self.contenders.filter(
+            #     appearance__stats__tot_score__gte=threshold,
+            # ).values_list(
+            #     'appearance__group_id',
+            #     flat=True,
+            # )
             qualifiers = Group.objects.filter(
                 id__in=group_ids,
             ).order_by('name').values_list('name', flat=True)
@@ -1433,6 +1346,7 @@ class Outcome(TimeStampedModel):
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
         if award.level in [award.LEVEL.championship, award.LEVEL.representative]:
+            raise RuntimeError('contender')
             group_id = self.contenders.filter(
                 # status__gt=0,
             ).order_by(
@@ -1485,7 +1399,7 @@ class Outcome(TimeStampedModel):
         resource_name = "outcome"
 
     def __str__(self):
-        return str(self.id)
+        return self.award_name or str(self.id)
 
     def clean(self):
         pass
@@ -1977,10 +1891,9 @@ class Round(TimeStampedModel):
         related_name='rounds',
     )
 
-    session = models.ForeignKey(
-        'smanager.session',
-        related_name='rounds',
-        on_delete=models.CASCADE,
+    session_id = models.UUIDField(
+        null=True,
+        blank=True,
     )
 
     # Relations
@@ -2243,6 +2156,7 @@ class Round(TimeStampedModel):
                     song.penalties_patched = items
                 appearance.songs_patched = songs
             public.appearances_patched = appearances
+            raise RuntimeError('contender')
             contesting = public.contenders.order_by(
                 'outcome__num',
             ).values_list(
@@ -3032,6 +2946,7 @@ class Round(TimeStampedModel):
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
+                raise RuntimeError('contender')
                 contesting = appearance.contenders.order_by(
                     'outcome__num',
                 ).values_list('outcome__num', flat=True)
@@ -3904,6 +3819,8 @@ class Round(TimeStampedModel):
                     representing=entry.representing,
                 )
                 # Create contenders
+                raise RuntimeError('contender')
+
                 for outcome in outcomes:
                     outcome.contenders.create(
                         appearance=appearance,
@@ -3930,9 +3847,10 @@ class Round(TimeStampedModel):
                         # prior_appearance.contenders.filter(outcome__award=new_outcome.award)
                     )
                     if curry:
-                        new_outcome.contenders.create(
-                            appearance=appearance,
-                        )
+                        raise RuntimeError('contender')
+                        # new_outcome.contenders.create(
+                        #     appearance=appearance,
+                        # )
 
             mts = prior_round.appearances.filter(
                 draw__lte=0,

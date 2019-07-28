@@ -4,7 +4,6 @@ from rest_framework import routers
 
 # Local
 from .views import AppearanceViewSet
-from .views import ContenderViewSet
 from .views import OutcomeViewSet
 from .views import PanelistViewSet
 from .views import RoundViewSet
@@ -16,7 +15,6 @@ router = routers.DefaultRouter(
 )
 
 router.register(r'appearance', AppearanceViewSet)
-router.register(r'contender', ContenderViewSet)
 router.register(r'outcome', OutcomeViewSet)
 router.register(r'panelist', PanelistViewSet)
 router.register(r'round', RoundViewSet)

@@ -2,56 +2,57 @@
 
 from django.db import migrations
 
-def forward(apps, schema_editor):
-    Convention = apps.get_model('smanager.convention')
-    New = apps.get_model('bhs.convention')
-    cs = Convention.objects.all()
-
-    REPRESENTING = {
-        'BHS': 110,
-        'CAR': 200,
-        'CSD': 205,
-        'DIX': 210,
-        'EVG': 215,
-        'FWD': 220,
-        'ILL': 225,
-        'JAD': 230,
-        'LOL': 235,
-        'MAD': 240,
-        'NED': 345,
-        'NSC': 350,
-        'ONT': 355,
-        'PIO': 360,
-        'RMD': 365,
-        'SLD': 370,
-        'SUN': 375,
-        'SWD': 380,
-    }
-
-    for c in cs:
-        representing = REPRESENTING.get(c.district)
-        new = New(
-            name=c.name,
-            representing=representing,
-            season=c.season,
-            panel=c.panel,
-            year=c.year,
-            open_date=c.open_date,
-            close_date=c.close_date,
-            start_date=c.start_date,
-            end_date=c.end_date,
-            venue_name=c.venue_name,
-            location=c.location,
-            timezone=c.timezone,
-            divisions=c.divisions,
-        )
-        new.image.name = c.image.name
-        new.save()
-
 
 class Migration(migrations.Migration):
+    def forward(apps, schema_editor):
+        Convention = apps.get_model('smanager.convention')
+        New = apps.get_model('bhs.convention')
+        cs = Convention.objects.all()
+
+        REPRESENTING = {
+            'BHS': 110,
+            'CAR': 200,
+            'CSD': 205,
+            'DIX': 210,
+            'EVG': 215,
+            'FWD': 220,
+            'ILL': 225,
+            'JAD': 230,
+            'LOL': 235,
+            'MAD': 240,
+            'NED': 345,
+            'NSC': 350,
+            'ONT': 355,
+            'PIO': 360,
+            'RMD': 365,
+            'SLD': 370,
+            'SUN': 375,
+            'SWD': 380,
+        }
+
+        for c in cs:
+            representing = REPRESENTING.get(c.district)
+            new = New(
+                name=c.name,
+                representing=representing,
+                season=c.season,
+                panel=c.panel,
+                year=c.year,
+                open_date=c.open_date,
+                close_date=c.close_date,
+                start_date=c.start_date,
+                end_date=c.end_date,
+                venue_name=c.venue_name,
+                location=c.location,
+                timezone=c.timezone,
+                divisions=c.divisions,
+            )
+            new.image.name = c.image.name
+            new.save()
+
 
     dependencies = [
+        ('smanager', '0021_auto_20190728_1041'),
         ('bhs', '0011_convention'),
     ]
 

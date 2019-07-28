@@ -17,7 +17,6 @@ from django.conf import settings
 # from .filters import SessionConventionStatusListFilter
 
 from .inlines import AppearanceInline
-from .inlines import ContenderInline
 from .inlines import OutcomeInline
 from .inlines import PanelistInline
 from .inlines import RoundInline
@@ -25,7 +24,6 @@ from .inlines import ScoreInline
 from .inlines import SongInline
 
 from .models import Appearance
-from .models import Contender
 from .models import Outcome
 from .models import Panelist
 from .models import Round
@@ -57,6 +55,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'stats',
         'csa_report',
         'variance_report',
+        'outcomes',
     ]
     list_display = [
         'status',
@@ -66,13 +65,13 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'status',
     ]
     list_select_related = [
-        'round__session',
+        # 'round__session',
         # 'round__session__convention',
     ]
     list_filter = [
         # AppearanceConventionStatusListFilter,
         'status',
-        'round__session__kind',
+        # 'round__session__kind',
         # 'round__session__convention__season',
         # 'round__session__convention__year',
     ]
@@ -83,6 +82,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     autocomplete_fields = [
         'round',
         'owners',
+        'outcomes',
     ]
     readonly_fields = [
         'id',
@@ -100,41 +100,6 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 
-@admin.register(Contender)
-class ContenderAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
-
-    fields = [
-        'status',
-        # 'appearance',
-        # 'outcome',
-    ]
-
-    list_display = [
-        'id',
-    ]
-
-
-    list_filter = (
-        'status',
-    )
-
-    readonly_fields = [
-    ]
-
-    # autocomplete_fields = [
-    #     'appearance',
-    #     'outcome',
-    # ]
-
-    search_fields = [
-        'id',
-    ]
-
-    ordering = (
-    )
 
 
 @admin.register(Outcome)
@@ -144,6 +109,7 @@ class OutcomeAdmin(admin.ModelAdmin):
         'id',
         'status',
         'round',
+        'award_name',
         # 'award_id',
         'num',
         'name',
@@ -153,6 +119,7 @@ class OutcomeAdmin(admin.ModelAdmin):
     list_display = [
         'status',
         'round',
+        'award_name',
         # 'award_id',
         'num',
         'name',
@@ -170,7 +137,6 @@ class OutcomeAdmin(admin.ModelAdmin):
 
     autocomplete_fields = [
         'round',
-        # 'award',
     ]
 
     readonly_fields = [
@@ -181,7 +147,6 @@ class OutcomeAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
-        ContenderInline,
     ]
 
 
@@ -240,7 +205,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'sa_report',
         'owners',
         # 'legacy_oss',
-        ('session', 'kind', 'num', 'spots',),
+        ('kind', 'num', 'spots',),
         # 'footnotes',
         '__str__',
         # 'session__kind',
@@ -250,6 +215,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         '__str__',
         'status',
+        'session_id',
         'legacy_oss',
     ]
 
@@ -258,7 +224,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # SessionConventionStatusListFilter,
         'status',
         'kind',
-        'session__kind',
+        # 'session__kind',
         # 'session__convention__season',
         # 'session__convention__district',
         # 'session__convention__year',
@@ -272,7 +238,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ordering = (
         # '-session__convention__year',
         # 'session__convention__name',
-        '-session__kind',
+        # '-session__kind',
         'kind',
     )
 
@@ -286,7 +252,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     autocomplete_fields = [
-        'session',
+        # 'session',
         'owners',
     ]
 
