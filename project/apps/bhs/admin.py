@@ -196,7 +196,7 @@ class ChartAdmin(VersionAdmin, FSMTransitionMixin):
 
 
 @admin.register(Group)
-class GroupAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
+class GroupAdmin(VersionAdmin, FSMTransitionMixin):
     save_on_top = True
     fsm_field = [
         'status',
@@ -427,7 +427,7 @@ class GroupAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
 
 
 @admin.register(Officer)
-class OfficerAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
+class OfficerAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
     ]
@@ -480,7 +480,7 @@ class OfficerAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
 
 
 @admin.register(Person)
-class PersonAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
+class PersonAdmin(VersionAdmin, FSMTransitionMixin):
     fields = [
         'id',
         'status',
