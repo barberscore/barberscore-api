@@ -7,7 +7,6 @@ from .models import Officer
 from .models import Person
 
 from .models import Chart
-from .models import Repertory
 
 
 class PersonSerializer(serializers.ModelSerializer):

@@ -10,6 +10,7 @@ from .fields import TimezoneField
 from .models import Contest
 from .models import Entry
 from .models import Session
+from .models import Repertory
 
 
 
@@ -17,6 +18,26 @@ from .models import Assignment
 from .models import Convention
 
 
+
+class RepertorySerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Repertory
+        fields = [
+            'id',
+            'status',
+            'group',
+            'chart',
+            'permissions',
+        ]
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Repertory.objects.all(),
+                fields=('group', 'chart'),
+                message='This chart already exists in your repertory.',
+            )
+        ]
 
 class AssignmentSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()

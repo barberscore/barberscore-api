@@ -41,12 +41,60 @@ from .models import Assignment
 from .models import Convention
 from .serializers import AssignmentSerializer
 from .serializers import ConventionSerializer
+from .serializers import RepertorySerializer
 
 
 log = logging.getLogger(__name__)
 
 
 from rest_framework.negotiation import BaseContentNegotiation
+
+from .models import Repertory
+
+class RepertoryViewSet(viewsets.ModelViewSet):
+    queryset = Repertory.objects.select_related(
+        'group',
+        'chart',
+    ).prefetch_related(
+        'statelogs',
+    ).order_by('id')
+    serializer_class = RepertorySerializer
+    filter_backends = [
+        DjangoFilterBackend,
+        # RepertoryFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "repertory"
+
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
 
 class IgnoreClientContentNegotiation(BaseContentNegotiation):

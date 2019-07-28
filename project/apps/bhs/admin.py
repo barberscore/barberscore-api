@@ -14,9 +14,6 @@ from .models import Group
 # from .models import Member
 from .models import Officer
 from .models import Chart
-from .models import Repertory
-
-from .inlines import RepertoryInline
 
 # from .inlines import MemberInline
 from .inlines import OfficerInline
@@ -175,7 +172,7 @@ class ChartAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
     inlines = [
-        RepertoryInline,
+        # RepertoryInline,
         StateLogInline,
     ]
 
@@ -308,21 +305,21 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         'Chorus': [
             OfficerInline,
             # MemberInline,
-            RepertoryInline,
+            # RepertoryInline,
             # EntryInline,
             StateLogInline,
         ],
         'Quartet': [
             # MemberInline,
             OfficerInline,
-            RepertoryInline,
+            # RepertoryInline,
             # EntryInline,
             StateLogInline,
         ],
         'VLQ': [
             # MemberInline,
             OfficerInline,
-            RepertoryInline,
+            # RepertoryInline,
             # EntryInline,
             StateLogInline,
         ],
@@ -580,46 +577,6 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin):
     # readonly_fields = [
     #     'common_name',
     # ]
-
-
-@admin.register(Repertory)
-class RepertoryAdmin(VersionAdmin, FSMTransitionMixin):
-    fsm_field = [
-        'status',
-    ]
-
-    fields = [
-        'id',
-        'status',
-        'group',
-        'chart',
-    ]
-
-    list_display = [
-        'group',
-        'chart',
-        'status',
-    ]
-
-    save_on_top = True
-
-    readonly_fields = [
-        'id',
-    ]
-
-    autocomplete_fields = [
-        'group',
-        'chart',
-    ]
-
-    inlines = [
-        StateLogInline,
-    ]
-
-    search_fields = [
-        'group__name',
-        'chart__title',
-    ]
 
 
 # @admin.register(Human)

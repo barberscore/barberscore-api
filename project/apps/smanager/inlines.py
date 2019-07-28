@@ -10,6 +10,31 @@ from .models import Session
 
 from .models import Assignment
 from .models import Convention
+from .models import Repertory
+
+
+class RepertoryInline(admin.TabularInline):
+    model = Repertory
+    fields = [
+        'chart',
+        'group',
+        'status',
+    ]
+    autocomplete_fields = [
+        'chart',
+        'group',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+    readonly_fields = [
+        'status',
+    ]
+    ordering = [
+        'chart__title',
+    ]
 
 
 class AssignmentInline(admin.TabularInline):

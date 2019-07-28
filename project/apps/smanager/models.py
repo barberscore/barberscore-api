@@ -1814,6 +1814,133 @@ class Entry(TimeStampedModel):
         return
 
 
+class Repertory(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New'),
+        (10, 'active', 'Active'),
+    )
+
+    status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=STATUS,
+        default=STATUS.active,
+    )
+
+    title = models.CharField(
+        max_length=255,
+    )
+
+    arrangers = models.CharField(
+        max_length=255,
+    )
+
+    # FKs
+    chart_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
+    entry = models.ForeignKey(
+        'Entry',
+        related_name='repertories',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='repertories',
+    )
+
+    # Internals
+    class Meta:
+        verbose_name_plural = 'repertories'
+        # unique_together = (
+        #     ('group', 'chart',),
+        # )
+
+    class JSONAPIMeta:
+        resource_name = "repertory"
+
+    def __str__(self):
+        return str(self.id)
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'CA',
+            'Librarian',
+        ]
+        return any([
+            [item in roles for item in request.user.roles.values_list('name')],
+            # self.group.officers.filter(
+            #     person__user=request.user,
+            #     status__gt=0,
+            # ),
+        ])
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'Librarian',
+            'Manager',
+        ]
+        return any([item in roles for item in request.user.roles.values_list('name')])
+
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        roles = [
+            'SCJC',
+            'DRCJ',
+            'Librarian',
+        ]
+        return any([
+            [item in roles for item in request.user.roles.values_list('name')],
+            # self.group.officers.filter(
+            #     person__user=request.user,
+            #     status__gt=0,
+            # ),
+        ])
+
+    # Transitions
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, *args, **kwargs):
+        """Activate the Repertory."""
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, *args, **kwargs):
+        """Deactivate the Repertory."""
+        return
+
+
 class Session(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,

@@ -12,7 +12,6 @@ from django.contrib import admin
 # from .models import Subscription
 
 from .models import Award
-from .models import Repertory
 # from .models import Member
 from .models import Officer
 
@@ -33,30 +32,6 @@ class AwardInline(admin.TabularInline):
     show_change_link = True
     classes = [
         'collapse',
-    ]
-
-
-class RepertoryInline(admin.TabularInline):
-    model = Repertory
-    fields = [
-        'chart',
-        'group',
-        'status',
-    ]
-    autocomplete_fields = [
-        'chart',
-        'group',
-    ]
-    show_change_link = True
-    extra = 0
-    classes = [
-        'collapse',
-    ]
-    readonly_fields = [
-        'status',
-    ]
-    ordering = [
-        'chart__title',
     ]
 
 

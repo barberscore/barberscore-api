@@ -20,10 +20,59 @@ from .models import Convention
 from .models import Contest
 from .models import Entry
 from .models import Session
+from .models import Repertory
+from reversion.admin import VersionAdmin
+from .models import Repertory
+
+from .inlines import RepertoryInline
 
 # from api.inlines import RoundInline
 
 admin.site.site_header = 'Barberscore Admin Backend'
+
+
+@admin.register(Repertory)
+class RepertoryAdmin(VersionAdmin, FSMTransitionMixin):
+    fsm_field = [
+        'status',
+    ]
+
+    fields = [
+        'id',
+        'status',
+        'entry',
+        # 'chart',
+        'title',
+    ]
+
+    list_display = [
+        'entry',
+        # 'chart',
+        'title',
+        'status',
+    ]
+
+    save_on_top = True
+
+    readonly_fields = [
+        'id',
+    ]
+
+    autocomplete_fields = [
+        'entry',
+        # 'title',
+        # 'chart',
+    ]
+
+    inlines = [
+        StateLogInline,
+    ]
+
+    search_fields = [
+        # 'group__name',
+        # 'chart__title',
+        'title',
+    ]
 
 
 @admin.register(Assignment)
