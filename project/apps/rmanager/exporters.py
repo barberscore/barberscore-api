@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from rest_framework.fields import UUIDField
 from .models import Round
-from .models import Contender
 from .models import Outcome
 
 from .models import Panelist
@@ -25,12 +24,6 @@ class ScoreSerializer(serializers.ModelSerializer):
         )
 
 
-class ContenderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Contender
-        fields = (
-            'id',
-        )
 
 class SongSerializer(serializers.ModelSerializer):
     scores = ScoreSerializer(read_only=True, many=True)
@@ -80,7 +73,6 @@ class PanelistSerializer(serializers.ModelSerializer):
 
 
 class OutcomeSerializer(serializers.ModelSerializer):
-    contenders = ContenderSerializer(read_only=True, many=True)
     # award = serializers.PrimaryKeyRelatedField(
     #     read_only=True,
     #     pk_field=UUIDField(format='hex_verbose'),
@@ -94,12 +86,10 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'num',
             'name',
             # 'award',
-            'contenders',
         )
 
 
 class AppearanceSerializer(serializers.ModelSerializer):
-    contenders = ContenderSerializer(read_only=True, many=True)
     songs = SongSerializer(read_only=True, many=True)
     group = serializers.PrimaryKeyRelatedField(
         read_only=True,
@@ -134,7 +124,6 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'variance_report',
             'group',
             'entry',
-            'contenders',
             'songs',
         )
 

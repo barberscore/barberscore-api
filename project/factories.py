@@ -31,16 +31,15 @@ from apps.bhs.models import Group
 from apps.bhs.models import Member
 from apps.bhs.models import Officer
 from apps.bhs.models import Person
-from apps.bhs.models import Repertory
+from apps.smanager.models import Repertory
 
 from apps.smanager.models import Assignment
-from apps.smanager.models import Convention
+from apps.bhs.models import Convention
 from apps.smanager.models import Contest
 from apps.smanager.models import Entry
 from apps.smanager.models import Session
 
 from apps.rmanager.models import Appearance
-from apps.rmanager.models import Contender
 from apps.rmanager.models import Outcome
 from apps.rmanager.models import Panelist
 from apps.rmanager.models import Round
@@ -105,13 +104,7 @@ class ContestFactory(DjangoModelFactory):
         model = Contest
 
 
-class ContenderFactory(DjangoModelFactory):
-    status = Contender.STATUS.new
-    appearance = SubFactory('factories.AppearanceFactory')
-    outcome = SubFactory('factories.OutcomeFactory')
 
-    class Meta:
-        model = Contender
 
 
 class ConventionFactory(DjangoModelFactory):

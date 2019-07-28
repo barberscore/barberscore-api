@@ -36,17 +36,62 @@ from .serializers import ContestSerializer
 from .serializers import EntrySerializer
 from .serializers import SessionSerializer
 from .filtersets import AssignmentFilterset
-from .filtersets import ConventionFilterset
 from .models import Assignment
-from .models import Convention
 from .serializers import AssignmentSerializer
-from .serializers import ConventionSerializer
+from .serializers import RepertorySerializer
 
 
 log = logging.getLogger(__name__)
 
 
 from rest_framework.negotiation import BaseContentNegotiation
+
+from .models import Repertory
+
+class RepertoryViewSet(viewsets.ModelViewSet):
+    queryset = Repertory.objects.select_related(
+        'group',
+        'chart',
+    ).prefetch_related(
+        'statelogs',
+    ).order_by('id')
+    serializer_class = RepertorySerializer
+    filter_backends = [
+        DjangoFilterBackend,
+        # RepertoryFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "repertory"
+
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
 
 class IgnoreClientContentNegotiation(BaseContentNegotiation):
@@ -66,7 +111,7 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
         'user',
-        'convention',
+        # 'convention',
     ).prefetch_related(
     ).order_by('id')
     serializer_class = AssignmentSerializer
@@ -107,50 +152,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
-
-class ConventionViewSet(viewsets.ModelViewSet):
-    queryset = Convention.objects.select_related(
-        # 'user',
-    ).prefetch_related(
-        'assignments',
-    ).order_by('id')
-    serializer_class = ConventionSerializer
-    filterset_class = ConventionFilterset
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "convention"
-
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
 
 class ContestViewSet(viewsets.ModelViewSet):
     queryset = Contest.objects.select_related(
@@ -288,7 +289,7 @@ class EntryViewSet(viewsets.ModelViewSet):
 
 class SessionViewSet(viewsets.ModelViewSet):
     queryset = Session.objects.select_related(
-        'convention',
+        # 'convention',
         'target',
     ).prefetch_related(
         'owners',
@@ -403,7 +404,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         else:
             xlsx = session.get_legacy_report()
         file_name = '{0} {1} Session Legacy Report'.format(
-            session.convention,
+            # session.convention,
             session.get_kind_display(),
         )
         return XLSXResponse(

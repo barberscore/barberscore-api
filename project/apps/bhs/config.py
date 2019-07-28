@@ -5,7 +5,7 @@ from django.apps import AppConfig
 
 class BhsConfig(AppConfig):
     name = 'apps.bhs'
-    verbose_name = 'BHS Member Center/Chart & Award Manager'
+    verbose_name = 'BHS'
 
     def ready(self):
         import algoliasearch_django as algoliasearch

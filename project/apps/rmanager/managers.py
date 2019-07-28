@@ -53,9 +53,9 @@ class AppearanceManager(Manager):
     def update_or_create_from_clean(self, item):
         Round = apps.get_model('rmanager.round')
         round = Round.objects.get(
-            session__convention__district=item.district,
-            session__convention__season=item.season,
-            session__convention__year=item.year,
+            # session__convention__district=item.district,
+            # session__convention__season=item.season,
+            # session__convention__year=item.year,
             # session__convention__name=item.convention,
             session__kind=item.session,
             kind=item.round,
@@ -74,9 +74,9 @@ class PanelistManager(Manager):
     def update_or_create_from_clean(self, item):
         Round = apps.get_model('rmanager.round')
         round = Round.objects.get(
-            session__convention__district=item.district,
-            session__convention__season=item.season,
-            session__convention__year=item.year,
+            # session__convention__district=item.district,
+            # session__convention__season=item.season,
+            # session__convention__year=item.year,
             # session__convention__name=item.convention,
             session__kind=item.session,
             kind=item.round,
@@ -98,9 +98,9 @@ class SongManager(Manager):
     def update_or_create_from_clean(self, item):
         Appearance = apps.get_model('rmanager.appearance')
         appearance = Appearance.objects.get(
-            round__session__convention__district=item.district,
-            round__session__convention__season=item.season,
-            round__session__convention__year=item.year,
+            # round__session__convention__district=item.district,
+            # round__session__convention__season=item.season,
+            # round__session__convention__year=item.year,
             # round__session__convention__name=item.convention,
             round__session__kind=item.session.kind,
             round__kind=item.round.kind,

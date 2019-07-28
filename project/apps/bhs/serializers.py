@@ -15,7 +15,60 @@ from .models import Person
 
 from .models import Award
 from .models import Chart
-from .models import Repertory
+from .models import Convention
+
+
+class ConventionSerializer(serializers.ModelSerializer):
+    timezone = TimezoneField(allow_null=True)
+    permissions = DRYPermissionsField()
+    included_serializers = {
+        'assignments': 'apps.smanager.serializers.AssignmentSerializer',
+    }
+
+    class Meta:
+        model = Convention
+        fields = [
+            'id',
+            '__str__',
+            'status',
+            'name',
+            'district',
+            'season',
+            'panel',
+            'year',
+            'open_date',
+            'close_date',
+            'start_date',
+            'end_date',
+            'venue_name',
+            'location',
+            'timezone',
+            'image',
+            'description',
+            'divisions',
+            'kinds',
+
+            'group_id',
+
+            'image_id',
+
+            'assignments',
+            'sessions',
+            'permissions',
+        ]
+        read_only_fields = [
+            '__str__'
+            'image_id',
+        ]
+
+    class JSONAPIMeta:
+        included_resources = [
+            'assignments',
+        ]
+
+
+    def validate(self, data):
+        return data
 
 
 class AwardSerializer(serializers.ModelSerializer):
@@ -57,7 +110,7 @@ class AwardSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
-        'repertories': 'apps.bhs.serializers.RepertorySerializer',
+        # 'repertories': 'apps.bhs.serializers.RepertorySerializer',
         # 'members': 'apps.bhs.serializers.MemberSerializer',
         # 'officers': 'apps.bhs.serializers.OfficerSerializer',
     }
@@ -106,7 +159,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'parent',
             # 'children',
 
-            'repertories',
+            # 'repertories',
             'permissions',
 
             'nomen',
@@ -120,7 +173,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            'repertories',
+            # 'repertories',
             # 'members',
             # 'officers',
         ]
@@ -241,7 +294,7 @@ class ChartSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     included_serializers = {
-        'repertories': 'apps.bhs.serializers.RepertorySerializer',
+        # 'repertories': 'apps.bhs.serializers.RepertorySerializer',
     }
 
     class Meta:
@@ -261,7 +314,7 @@ class ChartSerializer(serializers.ModelSerializer):
             'nomen',
             'image_id',
 
-            'repertories',
+            # 'repertories',
             'permissions',
         ]
         read_only_fields = [
@@ -271,26 +324,7 @@ class ChartSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            'repertories',
+            # 'repertories',
         ]
 
 
-class RepertorySerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Repertory
-        fields = [
-            'id',
-            'status',
-            'group',
-            'chart',
-            'permissions',
-        ]
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Repertory.objects.all(),
-                fields=('group', 'chart'),
-                message='This chart already exists in your repertory.',
-            )
-        ]

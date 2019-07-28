@@ -14,9 +14,7 @@ from .models import Group
 # from .models import Member
 from .models import Officer
 from .models import Chart
-from .models import Repertory
-
-from .inlines import RepertoryInline
+from .models import Convention
 
 # from .inlines import MemberInline
 from .inlines import OfficerInline
@@ -51,6 +49,90 @@ class ReadOnlyAdmin(admin.ModelAdmin):
         extra_context['show_save_and_continue'] = False
         extra_context['show_save'] = False
         return super().changeform_view(request, object_id, extra_context=extra_context)
+
+
+@admin.register(Convention)
+class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fields = (
+        'id',
+        # 'legacy_selection',
+        # 'legacy_complete',
+        'status',
+        'name',
+        ('group_id', 'divisions', ),
+        ('year', 'season', ),
+        ('panel', 'kinds', ),
+        ('open_date', 'close_date', ),
+        ('start_date', 'end_date', ),
+        'owners',
+        'venue_name',
+        'location',
+        'timezone',
+        'image',
+        'description',
+        # 'district',
+    )
+
+    list_display = (
+        '__str__',
+        'year',
+        'season',
+        # 'district',
+        'name',
+        # 'location',
+        # 'timezone',
+        # 'start_date',
+        # 'end_date',
+        # 'status',
+    )
+
+    list_editable = [
+        'name',
+        # 'location',
+        # 'start_date',
+        # 'end_date',
+    ]
+
+    list_filter = (
+        'status',
+        'season',
+        # 'district',
+        'year',
+    )
+
+    fsm_field = [
+        'status',
+    ]
+
+    search_fields = [
+        'name',
+    ]
+
+    inlines = [
+        # AssignmentInline,
+        # SessionInline,
+    ]
+
+    readonly_fields = (
+        'id',
+    )
+
+    autocomplete_fields = [
+        # 'group',
+        'owners',
+    ]
+
+    ordering = (
+        '-year',
+        'season',
+        # 'district',
+        # 'group__tree_sort',
+    )
+    list_select_related = [
+        # 'group',
+    ]
+
+    save_on_top = True
 
 
 @admin.register(Award)
@@ -175,7 +257,7 @@ class ChartAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
     inlines = [
-        RepertoryInline,
+        # RepertoryInline,
         StateLogInline,
     ]
 
@@ -196,7 +278,7 @@ class ChartAdmin(VersionAdmin, FSMTransitionMixin):
 
 
 @admin.register(Group)
-class GroupAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
+class GroupAdmin(VersionAdmin, FSMTransitionMixin):
     save_on_top = True
     fsm_field = [
         'status',
@@ -308,21 +390,21 @@ class GroupAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
         'Chorus': [
             OfficerInline,
             # MemberInline,
-            RepertoryInline,
+            # RepertoryInline,
             # EntryInline,
             StateLogInline,
         ],
         'Quartet': [
             # MemberInline,
             OfficerInline,
-            RepertoryInline,
+            # RepertoryInline,
             # EntryInline,
             StateLogInline,
         ],
         'VLQ': [
             # MemberInline,
             OfficerInline,
-            RepertoryInline,
+            # RepertoryInline,
             # EntryInline,
             StateLogInline,
         ],
@@ -426,8 +508,8 @@ class GroupAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
 #     ]
 
 
-@admin.register(Officer)
-class OfficerAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
+# @admin.register(Officer)
+class OfficerAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
     ]
@@ -480,7 +562,7 @@ class OfficerAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
 
 
 @admin.register(Person)
-class PersonAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
+class PersonAdmin(VersionAdmin, FSMTransitionMixin):
     fields = [
         'id',
         'status',
@@ -580,46 +662,6 @@ class PersonAdmin(ReadOnlyAdmin, VersionAdmin, FSMTransitionMixin):
     # readonly_fields = [
     #     'common_name',
     # ]
-
-
-@admin.register(Repertory)
-class RepertoryAdmin(VersionAdmin, FSMTransitionMixin):
-    fsm_field = [
-        'status',
-    ]
-
-    fields = [
-        'id',
-        'status',
-        'group',
-        'chart',
-    ]
-
-    list_display = [
-        'group',
-        'chart',
-        'status',
-    ]
-
-    save_on_top = True
-
-    readonly_fields = [
-        'id',
-    ]
-
-    autocomplete_fields = [
-        'group',
-        'chart',
-    ]
-
-    inlines = [
-        StateLogInline,
-    ]
-
-    search_fields = [
-        'group__name',
-        'chart__title',
-    ]
 
 
 # @admin.register(Human)

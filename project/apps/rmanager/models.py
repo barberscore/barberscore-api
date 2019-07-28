@@ -184,6 +184,12 @@ class Appearance(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
+    outcomes = models.ManyToManyField(
+        'Outcome',
+        related_name='appearances',
+        blank=True,
+    )
+
     group_id = models.UUIDField(
         null=True,
         blank=True,
@@ -965,8 +971,8 @@ class Appearance(TimeStampedModel):
             self.group.name,
         )
         to = self.group.get_officer_emails()
-        cc = self.round.session.convention.get_drcj_emails()
-        cc.extend(self.round.session.convention.get_ca_emails())
+        # cc = self.round.session.convention.get_drcj_emails()
+        # cc.extend(self.round.session.convention.get_ca_emails())
 
         if self.csa_report:
             pdf = self.csa_report.file
@@ -1161,106 +1167,6 @@ class Appearance(TimeStampedModel):
         return
 
 
-class Contender(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (-10, 'excluded', 'Excluded',),
-        (0, 'new', 'New',),
-        (10, 'included', 'Included',),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    # FKs
-    appearance = models.ForeignKey(
-        'Appearance',
-        related_name='contenders',
-        on_delete=models.CASCADE,
-    )
-
-    outcome = models.ForeignKey(
-        'Outcome',
-        related_name='contenders',
-        on_delete=models.CASCADE,
-    )
-
-    # Relations
-    statelogs = GenericRelation(
-        StateLog,
-        related_query_name='contenders',
-    )
-
-    # Internals
-    class Meta:
-        pass
-        # ordering = (
-        #     'outcome__num',
-        # )
-        # unique_together = (
-        #     ('appearance', 'outcome',),
-        # )
-
-    class JSONAPIMeta:
-        resource_name = "contender"
-
-    def __str__(self):
-        return str(self.id)
-
-    # Methods
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_read_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_write_permission(request):
-        return any([
-            'SCJC' in request.user.roles.values_list('name'),
-            'CA' in request.user.roles.values_list('name'),
-        ])
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_write_permission(self, request):
-        return any([
-            'SCJC' in request.user.roles.values_list('name'),
-            all([
-                self.outcome.round.owners.filter(id__contains=request.user.id),
-                self.outcome.round.status != self.outcome.round.STATUS.started,
-            ]),
-        ])
-
-    # contender Transitions
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.included)
-    def include(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.excluded)
-    def exclude(self, *args, **kwargs):
-        return
-
-
 class Outcome(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -1288,6 +1194,12 @@ class Outcome(TimeStampedModel):
         max_length=1024,
         null=True,
         blank=True,
+    )
+
+    award_name = models.CharField(
+        max_length=1024,
+        blank=True,
+        default='',
     )
 
     # FKs
@@ -1420,12 +1332,13 @@ class Outcome(TimeStampedModel):
             # ).order_by(
             #     'name',
             # ).values_list('name', flat=True)
-            group_ids = self.contenders.filter(
-                appearance__stats__tot_score__gte=threshold,
-            ).values_list(
-                'appearance__group_id',
-                flat=True,
-            )
+            raise RuntimeError('contender')
+            # group_ids = self.contenders.filter(
+            #     appearance__stats__tot_score__gte=threshold,
+            # ).values_list(
+            #     'appearance__group_id',
+            #     flat=True,
+            # )
             qualifiers = Group.objects.filter(
                 id__in=group_ids,
             ).order_by('name').values_list('name', flat=True)
@@ -1433,6 +1346,7 @@ class Outcome(TimeStampedModel):
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
         if award.level in [award.LEVEL.championship, award.LEVEL.representative]:
+            raise RuntimeError('contender')
             group_id = self.contenders.filter(
                 # status__gt=0,
             ).order_by(
@@ -1485,7 +1399,7 @@ class Outcome(TimeStampedModel):
         resource_name = "outcome"
 
     def __str__(self):
-        return str(self.id)
+        return self.award_name or str(self.id)
 
     def clean(self):
         pass
@@ -1859,7 +1773,7 @@ class Panelist(TimeStampedModel):
             person.common_name,
         )
         to = ["{0} <{1}>".format(person.common_name, person.email)]
-        cc = self.round.session.convention.get_ca_emails()
+        # cc = self.round.session.convention.get_ca_emails()
 
         if self.psa_report:
             pdf = self.psa_report.file
@@ -1977,10 +1891,9 @@ class Round(TimeStampedModel):
         related_name='rounds',
     )
 
-    session = models.ForeignKey(
-        'smanager.session',
-        related_name='rounds',
-        on_delete=models.CASCADE,
+    session_id = models.UUIDField(
+        null=True,
+        blank=True,
     )
 
     # Relations
@@ -2243,6 +2156,7 @@ class Round(TimeStampedModel):
                     song.penalties_patched = items
                 appearance.songs_patched = songs
             public.appearances_patched = appearances
+            raise RuntimeError('contender')
             contesting = public.contenders.order_by(
                 'outcome__num',
             ).values_list(
@@ -2405,32 +2319,32 @@ class Round(TimeStampedModel):
         }
         rendered = render_to_string('reports/oss.html', context)
 
-        if self.session.convention.district == 'BHS':
-            if self.session.convention.name == 'International Youth Convention':
-                page_size = 'Legal'
-            elif self.session.kind == self.session.KIND.quartet and self.kind == self.KIND.semis:
-                page_size = 'Legal'
-            else:
-                page_size = 'Letter'
-        else:
-            if self.session.rounds.count() == 1:
-                if publics.count() <= 15:
-                    page_size = 'Letter'
-                else:
-                    page_size = 'Legal'
-            else:
-                if self.kind == self.KIND.finals:
-                    if publics.count() >= 8:
-                        page_size = 'Legal'
-                    else:
-                        page_size = 'Letter'
-                elif self.kind == self.KIND.semis:
-                    if publics.count() >= 8:
-                        page_size = 'Legal'
-                    else:
-                        page_size = 'Letter'
-                else:
-                    page_size = 'Legal'
+        # if self.session.convention.district == 'BHS':
+        #     if self.session.convention.name == 'International Youth Convention':
+        #         page_size = 'Legal'
+        #     elif self.session.kind == self.session.KIND.quartet and self.kind == self.KIND.semis:
+        #         page_size = 'Legal'
+        #     else:
+        #         page_size = 'Letter'
+        # else:
+        #     if self.session.rounds.count() == 1:
+        #         if publics.count() <= 15:
+        #             page_size = 'Letter'
+        #         else:
+        #             page_size = 'Legal'
+        #     else:
+        #         if self.kind == self.KIND.finals:
+        #             if publics.count() >= 8:
+        #                 page_size = 'Legal'
+        #             else:
+        #                 page_size = 'Letter'
+        #         elif self.kind == self.KIND.semis:
+        #             if publics.count() >= 8:
+        #                 page_size = 'Legal'
+        #             else:
+        #                 page_size = 'Letter'
+        #         else:
+        #             page_size = 'Legal'
         try:
             statelog = self.statelogs.latest('timestamp')
             footer = 'Published by {0} at {1}'.format(
@@ -3032,6 +2946,7 @@ class Round(TimeStampedModel):
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
+                raise RuntimeError('contender')
                 contesting = appearance.contenders.order_by(
                     'outcome__num',
                 ).values_list('outcome__num', flat=True)
@@ -3597,8 +3512,8 @@ class Round(TimeStampedModel):
         subject = "[Barberscore] {0} Results and OSS".format(
             self,
         )
-        to = self.session.convention.get_ca_emails()
-        cc = self.session.convention.get_drcj_emails()
+        # to = self.session.convention.get_ca_emails()
+        # cc = self.session.convention.get_drcj_emails()
         cc.extend(self.get_judge_emails())
         bcc = self.session.get_participant_emails()
 
@@ -3639,8 +3554,8 @@ class Round(TimeStampedModel):
         subject = "[Barberscore] {0} Reports and SA".format(
             self,
         )
-        to = self.session.convention.get_ca_emails()
-        cc = self.session.convention.get_drcj_emails()
+        # to = self.session.convention.get_ca_emails()
+        # cc = self.session.convention.get_drcj_emails()
         cc.extend(self.get_judge_emails())
         attachments = []
         if self.sa_report:
@@ -3767,20 +3682,20 @@ class Round(TimeStampedModel):
         # Create Panelsists
         raise RuntimeError("fix")
         # Assignment = apps.get_model('smanager.assignment')
-        cas = self.session.convention.assignments.filter(
-            status=Assignment.STATUS.active,
-            kind__in=[
-                Assignment.KIND.official,
-                Assignment.KIND.practice,
-            ],
-            category=Assignment.CATEGORY.ca,
-        ).order_by(
-            'kind',
-            'category',
-            # 'person__last_name',
-            # 'person__nick_name',
-            # 'person__first_name',
-        )
+        # cas = self.session.convention.assignments.filter(
+        #     status=Assignment.STATUS.active,
+        #     kind__in=[
+        #         Assignment.KIND.official,
+        #         Assignment.KIND.practice,
+        #     ],
+        #     category=Assignment.CATEGORY.ca,
+        # ).order_by(
+        #     'kind',
+        #     'category',
+        #     # 'person__last_name',
+        #     # 'person__nick_name',
+        #     # 'person__first_name',
+        # )
         for ca in cas:
             self.panelists.create(
                 kind=ca.kind,
@@ -3808,17 +3723,17 @@ class Round(TimeStampedModel):
                 person_id=official.person_id,
             )
 
-        practices = self.session.convention.assignments.filter(
-            status=Assignment.STATUS.active,
-            kind=Assignment.KIND.practice,
-            category__gt=Assignment.CATEGORY.ca,
-        ).order_by(
-            'kind',
-            'category',
-            # 'person__last_name',
-            # 'person__nick_name',
-            # 'person__first_name',
-        )
+        # practices = self.session.convention.assignments.filter(
+        #     status=Assignment.STATUS.active,
+        #     kind=Assignment.KIND.practice,
+        #     category__gt=Assignment.CATEGORY.ca,
+        # ).order_by(
+        #     'kind',
+        #     'category',
+        #     # 'person__last_name',
+        #     # 'person__nick_name',
+        #     # 'person__first_name',
+        # )
         p = 50
         for practice in practices:
             p += 1
@@ -3904,6 +3819,8 @@ class Round(TimeStampedModel):
                     representing=entry.representing,
                 )
                 # Create contenders
+                raise RuntimeError('contender')
+
                 for outcome in outcomes:
                     outcome.contenders.create(
                         appearance=appearance,
@@ -3930,9 +3847,10 @@ class Round(TimeStampedModel):
                         # prior_appearance.contenders.filter(outcome__award=new_outcome.award)
                     )
                     if curry:
-                        new_outcome.contenders.create(
-                            appearance=appearance,
-                        )
+                        raise RuntimeError('contender')
+                        # new_outcome.contenders.create(
+                        #     appearance=appearance,
+                        # )
 
             mts = prior_round.appearances.filter(
                 draw__lte=0,
@@ -3965,118 +3883,119 @@ class Round(TimeStampedModel):
         target=STATUS.completed,
         conditions=[can_complete],)
     def complete(self, *args, **kwargs):
-        Appearance = apps.get_model('rmanager.appearance')
-        Panelist = apps.get_model('rmanager.panelist')
-        # Run outcomes
-        outcomes = self.outcomes.all()
-        for outcome in outcomes:
-            outcome.name = outcome.get_name()
-            outcome.save()
+        return
+        # Appearance = apps.get_model('rmanager.appearance')
+        # Panelist = apps.get_model('rmanager.panelist')
+        # # Run outcomes
+        # outcomes = self.outcomes.all()
+        # for outcome in outcomes:
+        #     outcome.name = outcome.get_name()
+        #     outcome.save()
 
-        # If there is no next round simply return
-        if self.kind == self.KIND.finals:
-            return
+        # # If there is no next round simply return
+        # if self.kind == self.KIND.finals:
+        #     return
 
-        # Otherwise, figure out the Draw.
-        # First, get spots available
-        spots = self.spots
+        # # Otherwise, figure out the Draw.
+        # # First, get spots available
+        # spots = self.spots
 
-        # Get all multi appearances and annotate average.
-        multis = self.appearances.filter(
-            status=Appearance.STATUS.verified,
-            is_single=False,
-        ).annotate(
-            avg=Avg(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                )
-            ),
-            tot_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                )
-            ),
-            sng_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                )
-            ),
-            per_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                )
-            ),
-        )
-        # If spots are constricted, find those who advance
-        if spots:
+        # # Get all multi appearances and annotate average.
+        # multis = self.appearances.filter(
+        #     status=Appearance.STATUS.verified,
+        #     is_single=False,
+        # ).annotate(
+        #     avg=Avg(
+        #         'songs__scores__points',
+        #         filter=Q(
+        #             songs__scores__panelist__kind=Panelist.KIND.official,
+        #         )
+        #     ),
+        #     tot_points=Sum(
+        #         'songs__scores__points',
+        #         filter=Q(
+        #             songs__scores__panelist__kind=Panelist.KIND.official,
+        #         )
+        #     ),
+        #     sng_points=Sum(
+        #         'songs__scores__points',
+        #         filter=Q(
+        #             songs__scores__panelist__kind=Panelist.KIND.official,
+        #             songs__scores__panelist__category=Panelist.CATEGORY.singing,
+        #         )
+        #     ),
+        #     per_points=Sum(
+        #         'songs__scores__points',
+        #         filter=Q(
+        #             songs__scores__panelist__kind=Panelist.KIND.official,
+        #             songs__scores__panelist__category=Panelist.CATEGORY.performance,
+        #         )
+        #     ),
+        # )
+        # # If spots are constricted, find those who advance
+        # if spots:
             # All those above 73.0 advance automatically, regardless of spots available
-            if self.session.convention.district == 'BHS':
-                ordered = multis.order_by(
-                    '-tot_points',
-                    '-sng_points',
-                    '-per_points',
-                )
-                advancer__ids = [x.id for x in ordered[:spots]]
-                mt = ordered[spots:spots+1][0]
-            else:
-                automatics = multis.filter(
-                    avg__gte=73.0,
-                )
-                # generate list of the advancers, as appearance IDs
-                advancer__ids = [x.id for x in automatics]
-                # Generate remaining multi appearances
-                remains = multis.exclude(
-                    id__in=advancer__ids,
-                ).order_by(
-                    '-tot_points',
-                    '-sng_points',
-                    '-per_points',
-                )
-                # Figure out remaining spots
-                diff = spots - automatics.count()
-                # If there are additional remaining spots, add them up to available
-                if diff > 0:
-                    adds = remains[:diff]
-                    for a in adds:
-                        advancer__ids.append(a.id)
-                    try:
-                        mt = remains[diff:diff+1][0]
-                    except IndexError:
-                        mt = None
-                else:
-                    # If MT available add, otherwise none
-                    try:
-                        mt = remains.first()
-                    except AttributeError:
-                        mt = None
+            # if self.session.convention.district == 'BHS':
+            #     ordered = multis.order_by(
+            #         '-tot_points',
+            #         '-sng_points',
+            #         '-per_points',
+            #     )
+            #     advancer__ids = [x.id for x in ordered[:spots]]
+            #     mt = ordered[spots:spots+1][0]
+            # else:
+            #     automatics = multis.filter(
+            #         avg__gte=73.0,
+            #     )
+            #     # generate list of the advancers, as appearance IDs
+            #     advancer__ids = [x.id for x in automatics]
+            #     # Generate remaining multi appearances
+            #     remains = multis.exclude(
+            #         id__in=advancer__ids,
+            #     ).order_by(
+            #         '-tot_points',
+            #         '-sng_points',
+            #         '-per_points',
+            #     )
+            #     # Figure out remaining spots
+            #     diff = spots - automatics.count()
+            #     # If there are additional remaining spots, add them up to available
+            #     if diff > 0:
+            #         adds = remains[:diff]
+            #         for a in adds:
+            #             advancer__ids.append(a.id)
+            #         try:
+            #             mt = remains[diff:diff+1][0]
+            #         except IndexError:
+            #             mt = None
+            #     else:
+            #         # If MT available add, otherwise none
+            #         try:
+            #             mt = remains.first()
+            #         except AttributeError:
+            #             mt = None
         # Otherwise, advance all
-        else:
-            advancer__ids = [a.id for a in multis]
-            mt = None
+        # else:
+        #     advancer__ids = [a.id for a in multis]
+        #     mt = None
 
         # Reset draw
-        self.appearances.update(draw=None)
+        # self.appearances.update(draw=None)
 
         # Randomize the advancers and set the initial draw
-        appearances = self.appearances.filter(
-            id__in=advancer__ids,
-        ).order_by('?')
-        i = 1
-        for appearance in appearances:
-            appearance.draw = i
-            appearance.save()
-            i += 1
-        # create Mic Tester at draw 0
-        if mt:
-            mt.draw = 0
-            mt.save()
-        return
+        # appearances = self.appearances.filter(
+        #     id__in=advancer__ids,
+        # ).order_by('?')
+        # i = 1
+        # for appearance in appearances:
+        #     appearance.draw = i
+        #     appearance.save()
+        #     i += 1
+        # # create Mic Tester at draw 0
+        # if mt:
+        #     mt.draw = 0
+        #     mt.save()
+        # return
 
     @fsm_log_by
     @transition(

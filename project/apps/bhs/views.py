@@ -34,7 +34,6 @@ from .models import Member
 from .models import Officer
 from .models import Person
 from .models import Chart
-from .models import Repertory
 from .renderers import PDFRenderer
 from .renderers import XLSXRenderer
 from .responders import PDFResponse
@@ -44,14 +43,60 @@ from .serializers import MemberSerializer
 from .serializers import OfficerSerializer
 from .serializers import PersonSerializer
 from .serializers import ChartSerializer
-from .serializers import RepertorySerializer
 from .serializers import AwardSerializer
+from .filtersets import ConventionFilterset
+from .models import Convention
+from .serializers import ConventionSerializer
 
 
 log = logging.getLogger(__name__)
 
 
 from rest_framework.negotiation import BaseContentNegotiation
+
+class ConventionViewSet(viewsets.ModelViewSet):
+    queryset = Convention.objects.select_related(
+        # 'user',
+    ).prefetch_related(
+        'assignments',
+    ).order_by('id')
+    serializer_class = ConventionSerializer
+    filterset_class = ConventionFilterset
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "convention"
+
+    @action(methods=['post'], detail=True)
+    def activate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.activate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.deactivate(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
 class IgnoreClientContentNegotiation(BaseContentNegotiation):
     def select_parser(self, request, parsers):
@@ -140,8 +185,8 @@ class GroupViewSet(viewsets.ModelViewSet):
         # 'members__person',
         # 'officers',
         # 'officers__person',
-        'repertories',
-        'repertories__chart',
+        # 'repertories',
+        # 'repertories__chart',
         # 'statelogs',
     ).distinct()
     serializer_class = GroupSerializer
@@ -366,8 +411,8 @@ class PersonViewSet(viewsets.ModelViewSet):
 class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.select_related(
     ).prefetch_related(
-        'repertories',
-        'repertories__group',
+        # 'repertories',
+        # 'repertories__group',
         'statelogs',
     ).order_by('status', 'title')
     serializer_class = ChartSerializer
@@ -422,51 +467,5 @@ class ChartViewSet(viewsets.ModelViewSet):
             file_name=file_name,
             status=status.HTTP_200_OK
         )
-
-
-class RepertoryViewSet(viewsets.ModelViewSet):
-    queryset = Repertory.objects.select_related(
-        'group',
-        'chart',
-    ).prefetch_related(
-        'statelogs',
-    ).order_by('id')
-    serializer_class = RepertorySerializer
-    filter_backends = [
-        DjangoFilterBackend,
-        # RepertoryFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "repertory"
-
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
 
 
