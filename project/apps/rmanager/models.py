@@ -4162,18 +4162,18 @@ class Score(TimeStampedModel):
             self.song.appearance.round.owners.filter(id__contains=request.user.id),
 
             # Panelists can always see their own scores
-            self.panelist.user == request.user,
+            # self.panelist.user == request.user,
 
             # Panelists can see others' scores if Appearance is complete.
             all([
-                self.song.appearance.round.panelists.filter(user=request.user),
-                self.song.appearance.status <= self.song.appearance.STATUS.completed
+                # self.song.appearance.round.panelists.filter(user=request.user),
+                # self.song.appearance.status <= self.song.appearance.STATUS.completed
             ]),
 
             # Group onwers can see their own scores if complete.
             all([
-                self.song.appearance.owners.filter(id__contains=request.user.id),
-                self.song.appearance.status <= self.song.appearance.STATUS.completed
+                # self.song.appearance.owners.filter(id__contains=request.user.id),
+                # self.song.appearance.status <= self.song.appearance.STATUS.completed
             ]),
         ])
 

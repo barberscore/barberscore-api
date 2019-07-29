@@ -258,7 +258,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
 class OutcomeViewSet(viewsets.ModelViewSet):
     queryset = Outcome.objects.select_related(
         'round',
-        'award',
+        # 'award',
     ).prefetch_related(
         'statelogs',
     ).order_by('id')
@@ -276,7 +276,7 @@ class OutcomeViewSet(viewsets.ModelViewSet):
 class PanelistViewSet(viewsets.ModelViewSet):
     queryset = Panelist.objects.select_related(
         'round',
-        'user',
+        # 'user',
     ).prefetch_related(
         'scores',
     ).order_by('id')
@@ -314,14 +314,14 @@ class PanelistViewSet(viewsets.ModelViewSet):
 
 class RoundViewSet(viewsets.ModelViewSet):
     queryset = Round.objects.select_related(
-        'session',
+        # 'session',
     ).prefetch_related(
         'owners',
         'appearances',
-        'appearances__owners',
-        'appearances__songs',
-        'panelists__scores',
-        'outcomes__award',
+        # 'appearances__owners',
+        # 'appearances__songs',
+        # 'panelists__scores',
+        # 'outcomes__award',
     ).order_by('id')
     serializer_class = RoundSerializer
     filterset_class = RoundFilterset
@@ -437,7 +437,7 @@ class RoundViewSet(viewsets.ModelViewSet):
     )
     def oss(self, request, pk=None):
         round = Round.objects.select_related(
-            'session',
+            # 'session',
             # 'session__convention',
         ).get(pk=pk)
         if round.oss_report:
@@ -534,7 +534,7 @@ class RoundViewSet(viewsets.ModelViewSet):
     )
     def sa(self, request, pk=None):
         round = Round.objects.select_related(
-            'session',
+            # 'session',
             # 'session__convention',
         ).get(pk=pk)
         if round.sa_report:

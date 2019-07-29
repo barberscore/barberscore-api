@@ -73,7 +73,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'name',
 
             'round',
-            'award',
+            # 'award',
 
             'permissions',
         ]
@@ -97,7 +97,7 @@ class PanelistSerializer(serializers.ModelSerializer):
             'psa_report',
 
             'round',
-            'user',
+            # 'user',
 
             'person_id',
 
@@ -135,7 +135,7 @@ class RoundSerializer(serializers.ModelSerializer):
             'legacy_oss',
 
             'owners',
-            'session',
+            # 'session',
 
             'appearances',
             'panelists',
