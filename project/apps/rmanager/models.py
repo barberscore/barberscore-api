@@ -1509,14 +1509,10 @@ class Panelist(TimeStampedModel):
         on_delete=models.CASCADE,
     )
 
-    user = models.ForeignKey(
+    owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='panelists',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
     )
-
 
     person_id = models.UUIDField(
         null=True,

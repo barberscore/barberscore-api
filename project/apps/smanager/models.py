@@ -178,14 +178,6 @@ class Assignment(TimeStampedModel):
         blank=True,
     )
 
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name='assignments',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
     # Relations
     statelogs = GenericRelation(
         StateLog,

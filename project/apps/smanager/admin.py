@@ -84,7 +84,7 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'kind',
         'session',
         'person_id',
-        'user',
+        # 'user',
         'category',
     ]
 
@@ -122,7 +122,7 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
         StateLogInline,
     ]
     raw_id_fields = [
-        'user',
+        # 'user',
     ]
     ordering = [
         'session',

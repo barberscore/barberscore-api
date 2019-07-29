@@ -38,9 +38,9 @@ class AssignmentFilterset(FilterSet):
     class Meta:
         model = Assignment
         fields = {
-            'user': [
-                'exact',
-            ],
+            # 'user': [
+            #     'exact',
+            # ],
             'status': [
                 'exact',
             ],

@@ -668,6 +668,11 @@ class Person(TimeStampedModel):
     )
 
     # Relations
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='persons',
+    )
+
     statelogs = GenericRelation(
         StateLog,
         related_query_name='persons',

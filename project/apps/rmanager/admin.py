@@ -160,7 +160,7 @@ class PanelistAdmin(admin.ModelAdmin):
         'kind',
         'round',
         'person_id',
-        'user',
+        # 'user',
         'category',
         'psa_report',
     ]
@@ -189,7 +189,7 @@ class PanelistAdmin(admin.ModelAdmin):
 
     autocomplete_fields = [
         'round',
-        'user',
+        # 'user',
     ]
     readonly_fields = [
         'id',
