@@ -88,7 +88,9 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'name',
 
             'round',
-            # 'award',
+
+            'award_id',
+            'award_name',
 
             'permissions',
         ]
@@ -108,11 +110,11 @@ class PanelistSerializer(serializers.ModelSerializer):
             'num',
             'kind',
             'category',
-            'representing',
             'psa_report',
+            'representing',
 
             'round',
-            # 'user',
+            'owners',
 
             'person_id',
 
@@ -129,9 +131,9 @@ class PanelistSerializer(serializers.ModelSerializer):
 class RoundSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
-        'appearances': 'apps.rmanager.serializers.AppearanceSerializer',
-        'outcomes': 'apps.rmanager.serializers.OutcomeSerializer',
-        'panelists': 'apps.rmanager.serializers.PanelistSerializer',
+        # 'appearances': 'apps.rmanager.serializers.AppearanceSerializer',
+        # 'outcomes': 'apps.rmanager.serializers.OutcomeSerializer',
+        # 'panelists': 'apps.rmanager.serializers.PanelistSerializer',
     }
 
     class Meta:
@@ -144,13 +146,13 @@ class RoundSerializer(serializers.ModelSerializer):
             'spots',
             'date',
             'footnotes',
-            'is_reviewed',
             'oss_report',
             'sa_report',
             'legacy_oss',
+            'is_reviewed',
 
             'owners',
-            # 'session',
+            'session_id',
 
             'appearances',
             'panelists',
@@ -160,9 +162,9 @@ class RoundSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            'appearances',
-            'panelists',
-            'outcomes',
+            # 'appearances',
+            # 'panelists',
+            # 'outcomes',
         ]
 
 

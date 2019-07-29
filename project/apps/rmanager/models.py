@@ -1399,6 +1399,11 @@ class Outcome(TimeStampedModel):
         blank=True,
     )
 
+    award_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
     award_name = models.CharField(
         max_length=1024,
         blank=True,
@@ -1410,11 +1415,6 @@ class Outcome(TimeStampedModel):
         'Round',
         related_name='outcomes',
         on_delete=models.CASCADE,
-    )
-
-    award_id = models.UUIDField(
-        null=True,
-        blank=True,
     )
 
     # Relations
