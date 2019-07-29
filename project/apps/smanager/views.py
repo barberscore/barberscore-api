@@ -50,8 +50,8 @@ from .models import Repertory
 
 class RepertoryViewSet(viewsets.ModelViewSet):
     queryset = Repertory.objects.select_related(
-        'group',
-        'chart',
+        # 'group',
+        # 'chart',
     ).prefetch_related(
         'statelogs',
     ).order_by('id')
@@ -110,7 +110,7 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.select_related(
-        'user',
+        # 'user',
         # 'convention',
     ).prefetch_related(
     ).order_by('id')

@@ -26,17 +26,17 @@ class RepertorySerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'status',
-            'group',
-            'chart',
+            # 'group',
+            # 'chart',
             'permissions',
         ]
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Repertory.objects.all(),
-                fields=('group', 'chart'),
-                message='This chart already exists in your repertory.',
-            )
-        ]
+        # validators = [
+        #     UniqueTogetherValidator(
+        #         queryset=Repertory.objects.all(),
+        #         fields=('group', 'chart'),
+        #         message='This chart already exists in your repertory.',
+        #     )
+        # ]
 
 class AssignmentSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
@@ -54,21 +54,21 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'category',
             # 'convention',
             'person_id',
-            'common_name',
+            'name',
             'first_name',
-            'middle_name',
+            # 'middle_name',
             'last_name',
-            'nick_name',
-            'district',
+            # 'nick_name',
+            'representing',
             'email',
-            'home_phone',
-            'work_phone',
+            # 'home_phone',
+            # 'work_phone',
             'cell_phone',
             'airports',
             'image',
             'bhs_id',
             'image_id',
-            'user',
+            # 'user',
             'permissions',
         )
 
@@ -219,7 +219,7 @@ class SessionSerializer(serializers.ModelSerializer):
 
             'contests',
             'entries',
-            'rounds',
+            # 'rounds',
 
             'permissions',
         ]
