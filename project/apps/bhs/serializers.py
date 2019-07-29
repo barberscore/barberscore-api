@@ -30,7 +30,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             '__str__',
             'status',
             'name',
-            'district',
+            'representing',
             'season',
             'panel',
             'year',
@@ -46,12 +46,9 @@ class ConventionSerializer(serializers.ModelSerializer):
             'divisions',
             'kinds',
 
-            'group_id',
 
             'image_id',
 
-            'assignments',
-            'sessions',
             'permissions',
         ]
         read_only_fields = [
@@ -230,7 +227,7 @@ class PersonSerializer(serializers.ModelSerializer):
             # 'current_status',
             # 'current_district',
 
-            'user',
+            'owners',
             'permissions',
         ]
         read_only_fields = [

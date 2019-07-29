@@ -263,7 +263,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.select_related(
-        'user',
+        # 'user',
     ).prefetch_related(
         # 'assignments',
         # 'members',
