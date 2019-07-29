@@ -15,11 +15,10 @@ from .models import Score
 from .models import Song
 
 
-
 class AppearanceSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
-        'songs': 'apps.rmanager.serializers.SongSerializer',
+        # 'songs': 'apps.rmanager.serializers.SongSerializer',
     }
 
     class Meta:
@@ -44,11 +43,11 @@ class AppearanceSerializer(serializers.ModelSerializer):
 
             'owners',
             'round',
+            'outcomes',
             'group_id',
 
 
             'songs',
-
             'permissions',
         ]
 
@@ -57,8 +56,6 @@ class AppearanceSerializer(serializers.ModelSerializer):
         included_resources = [
             # 'songs',
         ]
-
-
 
 
 class OutcomeSerializer(serializers.ModelSerializer):

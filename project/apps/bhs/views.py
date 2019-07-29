@@ -106,6 +106,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
+
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.select_related(
     ).prefetch_related(
@@ -167,9 +168,9 @@ class AwardViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.select_related(
         # 'owner',
-        'parent',
+        # 'parent',
     ).prefetch_related(
-        'owners',
+        # 'owners',
         # 'children',
         # 'awards',
         # 'appearances',
@@ -369,5 +370,4 @@ class ChartViewSet(viewsets.ModelViewSet):
             file_name=file_name,
             status=status.HTTP_200_OK
         )
-
 

@@ -1515,6 +1515,11 @@ class Session(TimeStampedModel):
     )
 
     # Denorm
+    convention_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
     name = models.CharField(
         max_length=255,
         blank=True,
@@ -1693,11 +1698,6 @@ class Session(TimeStampedModel):
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='sessions',
-    )
-
-    convention_id = models.UUIDField(
-        null=True,
-        blank=True,
     )
 
     target = models.ForeignKey(

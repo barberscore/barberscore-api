@@ -47,6 +47,515 @@ from .fields import UploadPath
 from .fields import DivisionsField
 
 
+class Award(TimeStampedModel):
+    """
+    Award Model.
+
+    The specific award conferred by a Group.
+    """
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        help_text="""Award Name.""",
+        max_length=255,
+    )
+
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    KIND = Choices(
+        (32, 'chorus', "Chorus"),
+        (41, 'quartet', "Quartet"),
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+    )
+
+    GENDER = Choices(
+        (10, 'male', "Male"),
+        (20, 'female', "Female"),
+        (30, 'mixed', "Mixed"),
+    )
+
+    gender = models.IntegerField(
+        help_text="""
+            The gender to which the award is restricted.  If unselected, this award is open to all combinations.
+        """,
+        choices=GENDER,
+        null=True,
+        blank=True,
+    )
+
+    LEVEL = Choices(
+        (10, 'championship', "Championship"),
+        (30, 'qualifier', "Qualifier"),
+        (45, 'representative', "Representative"),
+        (50, 'deferred', "Deferred"),
+        (60, 'manual', "Manual"),
+        (70, 'raw', "Improved - Raw"),
+        (80, 'standard', "Improved - Standard"),
+    )
+
+    level = models.IntegerField(
+        choices=LEVEL,
+    )
+
+    SEASON = Choices(
+        (1, 'summer', 'Summer',),
+        (2, 'midwinter', 'Midwinter',),
+        (3, 'fall', 'Fall',),
+        (4, 'spring', 'Spring',),
+    )
+
+    season = models.IntegerField(
+        choices=SEASON,
+    )
+
+    is_single = models.BooleanField(
+        help_text="""Single-round award""",
+        default=False,
+    )
+
+    threshold = models.FloatField(
+        help_text="""
+            The score threshold for automatic qualification (if any.)
+        """,
+        null=True,
+        blank=True,
+    )
+
+    minimum = models.FloatField(
+        help_text="""
+            The minimum score required for qualification (if any.)
+        """,
+        null=True,
+        blank=True,
+    )
+
+    advance = models.FloatField(
+        help_text="""
+            The score threshold to advance to next round (if any) in
+            multi-round qualification.
+        """,
+        null=True,
+        blank=True,
+    )
+
+    spots = models.IntegerField(
+        help_text="""Number of top spots which qualify""",
+        null=True,
+        blank=True,
+    )
+
+    description = models.TextField(
+        help_text="""
+            The Public description of the award.""",
+        blank=True,
+        max_length=1000,
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Private Notes (for internal use only).""",
+        blank=True,
+    )
+
+    district = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    REPRESENTING = Choices(
+        (110, 'bhs', 'BHS'),
+        (200, 'car', 'CAR'),
+        (205, 'csd', 'CSD'),
+        (210, 'dix', 'DIX'),
+        (215, 'evg', 'EVG'),
+        (220, 'fwd', 'FWD'),
+        (225, 'ill', 'ILL'),
+        (230, 'jad', 'JAD'),
+        (235, 'lol', 'LOL'),
+        (240, 'mad', 'MAD'),
+        (345, 'ned', 'NED'),
+        (350, 'nsc', 'NSC'),
+        (355, 'ont', 'ONT'),
+        (360, 'pio', 'PIO'),
+        (365, 'rmd', 'RMD'),
+        (370, 'sld', 'SLD'),
+        (375, 'sun', 'SUN'),
+        (380, 'swd', 'SWD'),
+    )
+
+    representing = models.IntegerField(
+        choices=REPRESENTING,
+        null=True,
+        blank=True,
+    )
+
+    DIVISION = Choices(
+        (10, 'evgd1', 'EVG Division I'),
+        (20, 'evgd2', 'EVG Division II'),
+        (30, 'evgd3', 'EVG Division III'),
+        (40, 'evgd4', 'EVG Division IV'),
+        (50, 'evgd5', 'EVG Division V'),
+        (60, 'fwdaz', 'FWD Arizona'),
+        (70, 'fwdne', 'FWD Northeast'),
+        (80, 'fwdnw', 'FWD Northwest'),
+        (90, 'fwdse', 'FWD Southeast'),
+        (100, 'fwdsw', 'FWD Southwest'),
+        (110, 'lol10l', 'LOL 10000 Lakes'),
+        (120, 'lolone', 'LOL Division One'),
+        (130, 'lolnp', 'LOL Northern Plains'),
+        (140, 'lolpkr', 'LOL Packerland'),
+        (150, 'lolsw', 'LOL Southwest'),
+        # (160, 'madatl', 'MAD Atlantic'),
+        (170, 'madcen', 'MAD Central'),
+        (180, 'madnth', 'MAD Northern'),
+        (190, 'madsth', 'MAD Southern'),
+        # (200, 'madwst', 'MAD Western'),
+        (210, 'nedgp', 'NED Granite and Pine'),
+        (220, 'nedmtn', 'NED Mountain'),
+        (230, 'nedpat', 'NED Patriot'),
+        (240, 'nedsun', 'NED Sunrise'),
+        (250, 'nedyke', 'NED Yankee'),
+        (260, 'swdne', 'SWD Northeast'),
+        (270, 'swdnw', 'SWD Northwest'),
+        (280, 'swdse', 'SWD Southeast'),
+        (290, 'swdsw', 'SWD Southwest'),
+    )
+
+    division = models.IntegerField(
+        choices=DIVISION,
+        null=True,
+        blank=True,
+    )
+
+    AGE = Choices(
+        (10, 'seniors', 'Seniors',),
+        (20, 'novice', 'Novice',),
+        (30, 'youth', 'Youth',),
+    )
+
+    age = models.IntegerField(
+        choices=AGE,
+        null=True,
+        blank=True,
+    )
+
+    is_novice = models.BooleanField(
+        default=False,
+    )
+
+    SIZE = Choices(
+        (100, 'p1', 'Plateau 1',),
+        (110, 'p2', 'Plateau 2',),
+        (120, 'p3', 'Plateau 3',),
+        (130, 'p4', 'Plateau 4',),
+        (140, 'pa', 'Plateau A',),
+        (150, 'paa', 'Plateau AA',),
+        (160, 'paaa', 'Plateau AAA',),
+        (170, 'paaaa', 'Plateau AAAA',),
+        (180, 'pb', 'Plateau B',),
+        (190, 'pi', 'Plateau I',),
+        (200, 'pii', 'Plateau II',),
+        (210, 'piii', 'Plateau III',),
+        (220, 'piv', 'Plateau IV',),
+        (230, 'small', 'Small',),
+    )
+
+    size = models.IntegerField(
+        choices=SIZE,
+        null=True,
+        blank=True,
+    )
+
+    size_range = IntegerRangeField(
+        null=True,
+        blank=True,
+    )
+
+    SCOPE = Choices(
+        (100, 'p1', 'Plateau 1',),
+        (110, 'p2', 'Plateau 2',),
+        (120, 'p3', 'Plateau 3',),
+        (130, 'p4', 'Plateau 4',),
+        (140, 'pa', 'Plateau A',),
+        (150, 'paa', 'Plateau AA',),
+        (160, 'paaa', 'Plateau AAA',),
+        (170, 'paaaa', 'Plateau AAAA',),
+        (175, 'paaaaa', 'Plateau AAAAA',),
+    )
+
+    scope = models.IntegerField(
+        choices=SCOPE,
+        null=True,
+        blank=True,
+    )
+
+    scope_range = DecimalRangeField(
+        null=True,
+        blank=True,
+    )
+
+    # Denormalizations
+    tree_sort = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    # FKs
+    group_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
+    # Internals
+    objects = AwardManager()
+
+    class Meta:
+        pass
+        # ordering = [
+        #     'tree_sort',
+        # ]
+
+    class JSONAPIMeta:
+        resource_name = "award"
+
+    def __str__(self):
+        return self.name
+
+    def clean(self):
+        if self.level == self.LEVEL.qualifier and not self.threshold:
+            raise ValidationError(
+                {'level': 'Qualifiers must have thresholds'}
+            )
+        # if self.level != self.LEVEL.qualifier and self.threshold:
+        #     raise ValidationError(
+        #         {'level': 'Non-Qualifiers must not have thresholds'}
+        #     )
+
+    # Award Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+            ]
+        )
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+            ]
+        )
+
+    # Transitions
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, *args, **kwargs):
+        """Activate the Award."""
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, *args, **kwargs):
+        """Deactivate the Award."""
+        return
+
+
+class Chart(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    STATUS = Choices(
+        (-20, 'protected', 'Protected',),
+        (-10, 'inactive', 'Inactive',),
+        (0, 'new', 'New'),
+        (10, 'active', 'Active'),
+    )
+
+    status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    title = models.CharField(
+        max_length=255,
+    )
+
+    arrangers = models.CharField(
+        max_length=255,
+    )
+
+    composers = models.CharField(
+        max_length=255,
+    )
+
+    lyricists = models.CharField(
+        max_length=255,
+    )
+
+    holders = models.TextField(
+        blank=True,
+    )
+
+    description = models.TextField(
+        help_text="""
+            Fun or interesting facts to share about the chart (ie, 'from Disney's Lion King, first sung by Elton John'.)""",
+        blank=True,
+        max_length=1000,
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Private Notes (for internal use only).""",
+        blank=True,
+    )
+
+    image = models.ImageField(
+        upload_to=ImageUploadPath('image'),
+        null=True,
+        blank=True,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='charts',
+    )
+
+    @cached_property
+    def nomen(self):
+        return "{0} [{1}]".format(
+            self.title,
+            self.arrangers,
+        )
+
+    @cached_property
+    def image_id(self):
+        return self.image.name or 'missing_image'
+
+    def is_searchable(self):
+        return bool(self.status == self.STATUS.active)
+
+    # Internals
+    objects = ChartManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                name='unique_chart',
+                fields=[
+                    'title',
+                    'arrangers',
+                ]
+            )
+        ]
+
+    class JSONAPIMeta:
+        resource_name = "chart"
+
+    def __str__(self):
+        return "{0} [{1}]".format(
+            self.title,
+            self.arrangers,
+        )
+
+    # Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return any([
+            request.user.roles.filter(
+                name__in=[
+                    'SCJC',
+                    'Librarian',
+                ],
+            )
+        ])
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            request.user.roles.filter(
+                name__in=[
+                    'SCJC',
+                    'Librarian',
+                ],
+            )
+        ])
+
+    # Transitions
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.active)
+    def activate(self, *args, **kwargs):
+        """Activate the Chart."""
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.inactive)
+    def deactivate(self, *args, **kwargs):
+        """Deactivate the Chart."""
+        return
+
+    @fsm_log_by
+    @transition(field=status, source='*', target=STATUS.protected)
+    def protect(self, *args, **kwargs):
+        """Protect the Chart."""
+        return
+
+
 class Convention(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -418,6 +927,646 @@ class Convention(TimeStampedModel):
     )
     def deactivate(self, *args, **kwargs):
         """Archive convention and related sessions."""
+        return
+
+
+class Group(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        help_text="""
+            The name of the resource.
+        """,
+        max_length=255,
+        default='UNKNOWN',
+    )
+
+    STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (-5, 'aic', 'AIC',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=STATUS,
+        default=STATUS.new,
+    )
+
+    KIND = Choices(
+        ('International', [
+            (1, 'international', "International"),
+        ]),
+        ('District', [
+            (11, 'district', "District"),
+            (12, 'noncomp', "Noncompetitive"),
+            (13, 'affiliate', "Affiliate"),
+        ]),
+        ('Chapter', [
+            (30, 'chapter', "Chapter"),
+        ]),
+        ('Group', [
+            (32, 'chorus', "Chorus"),
+            (41, 'quartet', "Quartet"),
+            (46, 'vlq', "VLQ"),
+        ]),
+    )
+
+    kind = models.IntegerField(
+        help_text="""
+            The kind of group.
+        """,
+        choices=KIND,
+    )
+
+    GENDER = Choices(
+        (10, 'male', "Male"),
+        (20, 'female', "Female"),
+        (30, 'mixed', "Mixed"),
+    )
+
+    gender = models.IntegerField(
+        help_text="""
+            The gender of group.
+        """,
+        choices=GENDER,
+        default=GENDER.male,
+    )
+
+    REPRESENTING = Choices(
+        (110, 'bhs', 'BHS'),
+        (200, 'car', 'CAR'),
+        (205, 'csd', 'CSD'),
+        (210, 'dix', 'DIX'),
+        (215, 'evg', 'EVG'),
+        (220, 'fwd', 'FWD'),
+        (225, 'ill', 'ILL'),
+        (230, 'jad', 'JAD'),
+        (235, 'lol', 'LOL'),
+        (240, 'mad', 'MAD'),
+        (345, 'ned', 'NED'),
+        (350, 'nsc', 'NSC'),
+        (355, 'ont', 'ONT'),
+        (360, 'pio', 'PIO'),
+        (365, 'rmd', 'RMD'),
+        (370, 'sld', 'SLD'),
+        (375, 'sun', 'SUN'),
+        (380, 'swd', 'SWD'),
+    )
+
+    representing = models.IntegerField(
+        choices=REPRESENTING,
+        null=True,
+        blank=True,
+    )
+
+    DIVISION = Choices(
+        ('EVG', [
+            (10, 'evgd1', 'EVG Division I'),
+            (20, 'evgd2', 'EVG Division II'),
+            (30, 'evgd3', 'EVG Division III'),
+            (40, 'evgd4', 'EVG Division IV'),
+            (50, 'evgd5', 'EVG Division V'),
+        ]),
+        ('FWD', [
+            (60, 'fwdaz', 'FWD Arizona'),
+            (70, 'fwdne', 'FWD Northeast'),
+            (80, 'fwdnw', 'FWD Northwest'),
+            (90, 'fwdse', 'FWD Southeast'),
+            (100, 'fwdsw', 'FWD Southwest'),
+        ]),
+        ('LOL', [
+            (110, 'lol10l', 'LOL 10000 Lakes'),
+            (120, 'lolone', 'LOL Division One'),
+            (130, 'lolnp', 'LOL Northern Plains'),
+            (140, 'lolpkr', 'LOL Packerland'),
+            (150, 'lolsw', 'LOL Southwest'),
+        ]),
+        ('MAD', [
+            # (160, 'madatl', 'MAD Atlantic'),
+            (170, 'madcen', 'MAD Central'),
+            (180, 'madnth', 'MAD Northern'),
+            (190, 'madsth', 'MAD Southern'),
+            # (200, 'madwst', 'MAD Western'),
+        ]),
+        ('NED', [
+            (210, 'nedgp', 'NED Granite and Pine'),
+            (220, 'nedmtn', 'NED Mountain'),
+            (230, 'nedpat', 'NED Patriot'),
+            (240, 'nedsun', 'NED Sunrise'),
+            (250, 'nedyke', 'NED Yankee'),
+        ]),
+        ('SWD', [
+            (260, 'swdne', 'SWD Northeast'),
+            (270, 'swdnw', 'SWD Northwest'),
+            (280, 'swdse', 'SWD Southeast'),
+            (290, 'swdsw', 'SWD Southwest'),
+        ]),
+    )
+
+    division = models.IntegerField(
+        choices=DIVISION,
+        null=True,
+        blank=True,
+    )
+
+    bhs_id = models.IntegerField(
+        blank=True,
+        null=True,
+        unique=True,
+    )
+
+    code = models.CharField(
+        help_text="""
+            Short-form code.""",
+        max_length=255,
+        blank=True,
+    )
+
+    website = models.URLField(
+        help_text="""
+            The website URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    email = LowerEmailField(
+        help_text="""
+            The contact email of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    phone = models.CharField(
+        help_text="""
+            The phone number of the resource.  Include country code.""",
+        blank=True,
+        max_length=25,
+    )
+
+    fax_phone = models.CharField(
+        help_text="""
+            The fax number of the resource.  Include country code.""",
+        blank=True,
+        max_length=25,
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    location = models.CharField(
+        help_text="""
+            The geographical location of the resource.""",
+        max_length=255,
+        blank=True,
+    )
+
+    facebook = models.URLField(
+        help_text="""
+            The facebook URL of the resource.""",
+        blank=True,
+    )
+
+    twitter = models.URLField(
+        help_text="""
+            The twitter URL of the resource.""",
+        blank=True,
+    )
+
+    youtube = models.URLField(
+        help_text="""
+            The youtube URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    pinterest = models.URLField(
+        help_text="""
+            The pinterest URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    flickr = models.URLField(
+        help_text="""
+            The flickr URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    instagram = models.URLField(
+        help_text="""
+            The instagram URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    soundcloud = models.URLField(
+        help_text="""
+            The soundcloud URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    image = models.ImageField(
+        upload_to=ImageUploadPath('image'),
+        null=True,
+        blank=True,
+    )
+
+    description = models.TextField(
+        help_text="""
+            A description of the group.  Max 1000 characters.""",
+        blank=True,
+        max_length=1000,
+    )
+
+    visitor_information = models.TextField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    participants = models.CharField(
+        help_text='Director(s) or Members (listed TLBB)',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    chapters = models.CharField(
+        help_text="""
+            The denormalized chapter group.""",
+        blank=True,
+        max_length=255,
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Notes (for internal use only).""",
+        blank=True,
+    )
+
+    mc_pk = models.CharField(
+        null=True,
+        blank=True,
+        max_length=36,
+        unique=True,
+        db_index=True,
+    )
+
+    # Denormalizations
+    tree_sort = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    is_senior = models.BooleanField(
+        help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
+        default=False,
+    )
+
+    is_youth = models.BooleanField(
+        help_text="""Qualifies as a Youth Group.  Must be set manually.""",
+        default=False,
+    )
+
+    is_divided = models.BooleanField(
+        help_text="""This district has divisions.""",
+        default=False,
+    )
+
+    # FKs
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='groups',
+    )
+
+    parent = models.ForeignKey(
+        'Group',
+        null=True,
+        blank=True,
+        related_name='children',
+        db_index=True,
+        on_delete=models.SET_NULL,
+    )
+
+    # Relations
+    statelogs = GenericRelation(
+        StateLog,
+        related_query_name='groups',
+    )
+
+    # Properties
+    @cached_property
+    def nomen(self):
+        if self.bhs_id:
+            suffix = "[{0}]".format(self.bhs_id)
+        else:
+            suffix = "[No BHS ID]"
+        if self.code:
+            code = "({0})".format(self.code)
+        else:
+            code = ""
+        full = [
+            self.name,
+            code,
+            suffix,
+        ]
+        return " ".join(full)
+
+    @cached_property
+    def image_id(self):
+        return self.image.name or 'missing_image'
+
+    # Group Methods
+    # def update_owners(self):
+    #     officers = self.officers.filter(
+    #         status__gt=0,
+    #     )
+    #     for officer in officers:
+    #         self.owners.add(
+    #             officer.person.user,
+    #         )
+    #     return
+
+    # def get_roster(self):
+    #     Member = apps.get_model('bhs.member')
+    #     wb = Workbook()
+    #     ws = wb.active
+    #     fieldnames = [
+    #         'BHS ID',
+    #         'First Name',
+    #         'Last Name',
+    #         'Expiration Date',
+    #         'Status',
+    #     ]
+    #     ws.append(fieldnames)
+    #     members = self.members.filter(
+    #         status=Member.STATUS.active,
+    #     ).order_by('person__last_name', 'person__first_name')
+    #     for member in members:
+    #         bhs_id = member.person.bhs_id
+    #         first_name = member.person.first_name
+    #         last_name = member.person.last_name
+    #         expiration = member.person.current_through
+    #         status = member.person.get_status_display()
+    #         row = [
+    #             bhs_id,
+    #             first_name,
+    #             last_name,
+    #             expiration,
+    #             status,
+    #         ]
+    #         ws.append(row)
+    #     file = save_virtual_workbook(wb)
+    #     content = ContentFile(file)
+    #     return content
+
+    # Algolia
+    def is_active(self):
+        return bool(self.status == self.STATUS.active)
+
+    def image_url(self):
+        try:
+            return self.image.url
+        except ValueError:
+            return 'https://res.cloudinary.com/barberscore/image/upload/v1554830585/missing_image.jpg'
+
+    def get_owners_emails(self):
+        owners = self.owners.order_by(
+            'last_name',
+            'first_name',
+        )
+        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+
+    # def get_is_senior(self):
+    #     if self.kind != self.KIND.quartet:
+    #         raise ValueError('Must be quartet')
+    #     Person = apps.get_model('bhs.person')
+    #     midwinter = datetime.date(2020, 1, 11)
+    #     persons = Person.objects.filter(
+    #         members__group=self,
+    #         members__status__gt=0,
+    #     )
+    #     if persons.count() > 4:
+    #         return False
+    #     all_over_55 = True
+    #     total_years = 0
+    #     for person in persons:
+    #         try:
+    #             years = int((midwinter - person.birth_date).days / 365)
+    #         except TypeError:
+    #             return False
+    #         if years < 55:
+    #             all_over_55 = False
+    #         total_years += years
+    #     if all_over_55 and (total_years >= 240):
+    #         is_senior = True
+    #     else:
+    #         is_senior = False
+    #     return is_senior
+
+
+
+    # Internals
+    objects = GroupManager()
+
+    class Meta:
+        # ordering = ['tree_sort']
+        verbose_name_plural = 'Groups'
+        constraints = [
+            models.UniqueConstraint(
+                name='unique_group',
+                fields=[
+                    'bhs_id',
+                    'kind',
+                ]
+            )
+        ]
+
+
+    class JSONAPIMeta:
+        resource_name = "group"
+
+    def __str__(self):
+        return self.nomen
+
+    # def clean(self):
+    #     if self.mc_pk and self.status == self.STATUS.active:
+    #         if self.kind == self.KIND.international:
+    #             if self.parent:
+    #                 raise ValidationError("Toplevel must be Root")
+    #         if self.kind in [
+    #             self.KIND.district,
+    #             self.KIND.noncomp,
+    #             self.KIND.affiliate,
+    #         ]:
+    #             if self.parent.kind != self.KIND.international:
+    #                 raise ValidationError("Districts must have International parent.")
+    #         if self.kind in [
+    #             self.KIND.chapter,
+    #         ]:
+    #             if self.parent.kind not in [
+    #                 self.KIND.district,
+    #             ]:
+    #                 raise ValidationError("Chapter must have District parent.")
+    #             if self.division and not self.parent.is_divided:
+    #                     raise ValidationError("Non-divisionals should not have divisions.")
+    #             if not self.division and self.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
+    #                     raise ValidationError("Divisionals should have divisions.")
+    #             if self.division:
+    #                 if self.parent.code == 'EVG' and not 10 <= self.division <= 50:
+    #                         raise ValidationError("Division must be within EVG.")
+    #                 elif self.parent.code == 'FWD' and not 60 <= self.division <= 100:
+    #                         raise ValidationError("Division must be within FWD.")
+    #                 elif self.parent.code == 'LOL' and not 110 <= self.division <= 150:
+    #                         raise ValidationError("Division must be within LOL.")
+    #                 elif self.parent.code == 'MAD' and not 160 <= self.division <= 200:
+    #                         raise ValidationError("Division must be within MAD.")
+    #                 elif self.parent.code == 'NED' and not 210 <= self.division <= 250:
+    #                         raise ValidationError("Division must be within NED.")
+    #                 elif self.parent.code == 'SWD' and not 260 <= self.division <= 290:
+    #                         raise ValidationError("Division must be within SWD.")
+    #         if self.kind in [
+    #             self.KIND.chorus,
+    #             self.KIND.vlq,
+    #         ]:
+    #             if self.parent.kind not in [
+    #                 self.KIND.chapter,
+    #             ]:
+    #                 raise ValidationError("Chorus/VLQ must have Chapter parent.")
+    #             if self.division and not self.parent.parent.is_divided:
+    #                     raise ValidationError("Non-divisionals should not have divisions.")
+    #             if not self.division and self.parent.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
+    #                     raise ValidationError("Divisionals should have divisions.")
+    #             if self.division:
+    #                 if self.parent.parent.code == 'EVG' and not 10 <= self.division <= 50:
+    #                         raise ValidationError("Division must be within EVG.")
+    #                 elif self.parent.parent.code == 'FWD' and not 60 <= self.division <= 100:
+    #                         raise ValidationError("Division must be within FWD.")
+    #                 elif self.parent.parent.code == 'LOL' and not 110 <= self.division <= 150:
+    #                         raise ValidationError("Division must be within LOL.")
+    #                 elif self.parent.parent.code == 'MAD' and not 160 <= self.division <= 200:
+    #                         raise ValidationError("Division must be within MAD.")
+    #                 elif self.parent.parent.code == 'NED' and not 210 <= self.division <= 250:
+    #                         raise ValidationError("Division must be within NED.")
+    #                 elif self.parent.parent.code == 'SWD' and not 260 <= self.division <= 290:
+    #                         raise ValidationError("Division must be within SWD.")
+    #         if self.kind in [
+    #             self.KIND.quartet,
+    #         ] and self.parent:
+    #             if self.parent.kind not in [
+    #                 self.KIND.district,
+    #             ]:
+    #                 raise ValidationError("Quartet must have District parent.")
+    #             if self.division and not self.parent.is_divided:
+    #                     raise ValidationError("Non-divisionals should not have divisions.")
+    #             if not self.division and self.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
+    #                     raise ValidationError("Divisionals should have divisions.")
+    #             if self.division:
+    #                 if self.parent.code == 'EVG' and not 10 <= self.division <= 50:
+    #                         raise ValidationError("Division must be within EVG.")
+    #                 elif self.parent.code == 'FWD' and not 60 <= self.division <= 100:
+    #                         raise ValidationError("Division must be within FWD.")
+    #                 elif self.parent.code == 'LOL' and not 110 <= self.division <= 150:
+    #                         raise ValidationError("Division must be within LOL.")
+    #                 elif self.parent.code == 'MAD' and not 160 <= self.division <= 200:
+    #                         raise ValidationError("Division must be within MAD.")
+    #                 elif self.parent.code == 'NED' and not 210 <= self.division <= 250:
+    #                         raise ValidationError("Division must be within NED.")
+    #                 elif self.parent.code == 'SWD' and not 260 <= self.division <= 290:
+    #                         raise ValidationError("Division must be within SWD.")
+    #     return
+
+    # Group Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_write_permission(request):
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'Librarian',
+                'Manager',
+            ]
+        )
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_write_permission(self, request):
+        return any([
+            request.user.roles.filter(
+                name__in=[
+                    'SCJC',
+                    'Librarian',
+                ]
+            ),
+            request.user in self.owners.all(),
+        ])
+
+    # Conditions:
+    def can_activate(self):
+        return
+
+    # Transitions
+    @fsm_log_by
+    @fsm_log_description
+    @transition(
+        field=status,
+        source=[
+            STATUS.active,
+            STATUS.inactive,
+            STATUS.new,
+        ],
+        target=STATUS.active,
+        conditions=[
+            can_activate,
+        ]
+    )
+    def activate(self, description=None, *args, **kwargs):
+        """Activate the Group."""
+        self.denormalize()
+        return
+
+    @fsm_log_by
+    @fsm_log_description
+    @transition(
+        field=status,
+        source=[
+            STATUS.active,
+            STATUS.inactive,
+            STATUS.new,
+        ],
+        target=STATUS.inactive,
+    )
+    def deactivate(self, description=None, *args, **kwargs):
+        """Deactivate the Group."""
         return
 
 
@@ -832,1160 +1981,4 @@ class Person(TimeStampedModel):
     @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, description=None, *args, **kwargs):
         """Deactivate the Person."""
-        return
-
-
-class Group(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        help_text="""
-            The name of the resource.
-        """,
-        max_length=255,
-        default='UNKNOWN',
-    )
-
-    STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (-5, 'aic', 'AIC',),
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    KIND = Choices(
-        ('International', [
-            (1, 'international', "International"),
-        ]),
-        ('District', [
-            (11, 'district', "District"),
-            (12, 'noncomp', "Noncompetitive"),
-            (13, 'affiliate', "Affiliate"),
-        ]),
-        ('Chapter', [
-            (30, 'chapter', "Chapter"),
-        ]),
-        ('Group', [
-            (32, 'chorus', "Chorus"),
-            (41, 'quartet', "Quartet"),
-            (46, 'vlq', "VLQ"),
-        ]),
-    )
-
-    kind = models.IntegerField(
-        help_text="""
-            The kind of group.
-        """,
-        choices=KIND,
-    )
-
-    GENDER = Choices(
-        (10, 'male', "Male"),
-        (20, 'female', "Female"),
-        (30, 'mixed', "Mixed"),
-    )
-
-    gender = models.IntegerField(
-        help_text="""
-            The gender of group.
-        """,
-        choices=GENDER,
-        default=GENDER.male,
-    )
-
-    REPRESENTING = Choices(
-        (110, 'bhs', 'BHS'),
-        (200, 'car', 'CAR'),
-        (205, 'csd', 'CSD'),
-        (210, 'dix', 'DIX'),
-        (215, 'evg', 'EVG'),
-        (220, 'fwd', 'FWD'),
-        (225, 'ill', 'ILL'),
-        (230, 'jad', 'JAD'),
-        (235, 'lol', 'LOL'),
-        (240, 'mad', 'MAD'),
-        (345, 'ned', 'NED'),
-        (350, 'nsc', 'NSC'),
-        (355, 'ont', 'ONT'),
-        (360, 'pio', 'PIO'),
-        (365, 'rmd', 'RMD'),
-        (370, 'sld', 'SLD'),
-        (375, 'sun', 'SUN'),
-        (380, 'swd', 'SWD'),
-    )
-
-    representing = models.IntegerField(
-        choices=REPRESENTING,
-        null=True,
-        blank=True,
-    )
-
-    DIVISION = Choices(
-        ('EVG', [
-            (10, 'evgd1', 'EVG Division I'),
-            (20, 'evgd2', 'EVG Division II'),
-            (30, 'evgd3', 'EVG Division III'),
-            (40, 'evgd4', 'EVG Division IV'),
-            (50, 'evgd5', 'EVG Division V'),
-        ]),
-        ('FWD', [
-            (60, 'fwdaz', 'FWD Arizona'),
-            (70, 'fwdne', 'FWD Northeast'),
-            (80, 'fwdnw', 'FWD Northwest'),
-            (90, 'fwdse', 'FWD Southeast'),
-            (100, 'fwdsw', 'FWD Southwest'),
-        ]),
-        ('LOL', [
-            (110, 'lol10l', 'LOL 10000 Lakes'),
-            (120, 'lolone', 'LOL Division One'),
-            (130, 'lolnp', 'LOL Northern Plains'),
-            (140, 'lolpkr', 'LOL Packerland'),
-            (150, 'lolsw', 'LOL Southwest'),
-        ]),
-        ('MAD', [
-            # (160, 'madatl', 'MAD Atlantic'),
-            (170, 'madcen', 'MAD Central'),
-            (180, 'madnth', 'MAD Northern'),
-            (190, 'madsth', 'MAD Southern'),
-            # (200, 'madwst', 'MAD Western'),
-        ]),
-        ('NED', [
-            (210, 'nedgp', 'NED Granite and Pine'),
-            (220, 'nedmtn', 'NED Mountain'),
-            (230, 'nedpat', 'NED Patriot'),
-            (240, 'nedsun', 'NED Sunrise'),
-            (250, 'nedyke', 'NED Yankee'),
-        ]),
-        ('SWD', [
-            (260, 'swdne', 'SWD Northeast'),
-            (270, 'swdnw', 'SWD Northwest'),
-            (280, 'swdse', 'SWD Southeast'),
-            (290, 'swdsw', 'SWD Southwest'),
-        ]),
-    )
-
-    division = models.IntegerField(
-        choices=DIVISION,
-        null=True,
-        blank=True,
-    )
-
-    bhs_id = models.IntegerField(
-        blank=True,
-        null=True,
-        unique=True,
-    )
-
-    code = models.CharField(
-        help_text="""
-            Short-form code.""",
-        max_length=255,
-        blank=True,
-    )
-
-    website = models.URLField(
-        help_text="""
-            The website URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    email = LowerEmailField(
-        help_text="""
-            The contact email of the resource.""",
-        blank=True,
-        null=True,
-    )
-
-    phone = models.CharField(
-        help_text="""
-            The phone number of the resource.  Include country code.""",
-        blank=True,
-        max_length=25,
-    )
-
-    fax_phone = models.CharField(
-        help_text="""
-            The fax number of the resource.  Include country code.""",
-        blank=True,
-        max_length=25,
-    )
-
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    location = models.CharField(
-        help_text="""
-            The geographical location of the resource.""",
-        max_length=255,
-        blank=True,
-    )
-
-    facebook = models.URLField(
-        help_text="""
-            The facebook URL of the resource.""",
-        blank=True,
-    )
-
-    twitter = models.URLField(
-        help_text="""
-            The twitter URL of the resource.""",
-        blank=True,
-    )
-
-    youtube = models.URLField(
-        help_text="""
-            The youtube URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    pinterest = models.URLField(
-        help_text="""
-            The pinterest URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    flickr = models.URLField(
-        help_text="""
-            The flickr URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    instagram = models.URLField(
-        help_text="""
-            The instagram URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    soundcloud = models.URLField(
-        help_text="""
-            The soundcloud URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    image = models.ImageField(
-        upload_to=ImageUploadPath('image'),
-        null=True,
-        blank=True,
-    )
-
-    description = models.TextField(
-        help_text="""
-            A description of the group.  Max 1000 characters.""",
-        blank=True,
-        max_length=1000,
-    )
-
-    visitor_information = models.TextField(
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
-    participants = models.CharField(
-        help_text='Director(s) or Members (listed TLBB)',
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
-    chapters = models.CharField(
-        help_text="""
-            The denormalized chapter group.""",
-        blank=True,
-        max_length=255,
-    )
-
-    notes = models.TextField(
-        help_text="""
-            Notes (for internal use only).""",
-        blank=True,
-    )
-
-    mc_pk = models.CharField(
-        null=True,
-        blank=True,
-        max_length=36,
-        unique=True,
-        db_index=True,
-    )
-
-    # Denormalizations
-    tree_sort = models.IntegerField(
-        unique=True,
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    district = models.TextField(
-        help_text="""
-            The denormalized district group.""",
-        blank=True,
-        max_length=255,
-    )
-
-    is_senior = models.BooleanField(
-        help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
-        default=False,
-    )
-
-    is_youth = models.BooleanField(
-        help_text="""Qualifies as a Youth Group.  Must be set manually.""",
-        default=False,
-    )
-
-    is_divided = models.BooleanField(
-        help_text="""This district has divisions.""",
-        default=False,
-    )
-
-    # FKs
-    owners = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name='groups',
-    )
-
-    parent = models.ForeignKey(
-        'Group',
-        null=True,
-        blank=True,
-        related_name='children',
-        db_index=True,
-        on_delete=models.SET_NULL,
-    )
-
-    # Relations
-    statelogs = GenericRelation(
-        StateLog,
-        related_query_name='groups',
-    )
-
-    # Properties
-    @cached_property
-    def nomen(self):
-        if self.bhs_id:
-            suffix = "[{0}]".format(self.bhs_id)
-        else:
-            suffix = "[No BHS ID]"
-        if self.code:
-            code = "({0})".format(self.code)
-        else:
-            code = ""
-        full = [
-            self.name,
-            code,
-            suffix,
-        ]
-        return " ".join(full)
-
-    @cached_property
-    def image_id(self):
-        return self.image.name or 'missing_image'
-
-    # Group Methods
-    # def update_owners(self):
-    #     officers = self.officers.filter(
-    #         status__gt=0,
-    #     )
-    #     for officer in officers:
-    #         self.owners.add(
-    #             officer.person.user,
-    #         )
-    #     return
-
-    # def get_roster(self):
-    #     Member = apps.get_model('bhs.member')
-    #     wb = Workbook()
-    #     ws = wb.active
-    #     fieldnames = [
-    #         'BHS ID',
-    #         'First Name',
-    #         'Last Name',
-    #         'Expiration Date',
-    #         'Status',
-    #     ]
-    #     ws.append(fieldnames)
-    #     members = self.members.filter(
-    #         status=Member.STATUS.active,
-    #     ).order_by('person__last_name', 'person__first_name')
-    #     for member in members:
-    #         bhs_id = member.person.bhs_id
-    #         first_name = member.person.first_name
-    #         last_name = member.person.last_name
-    #         expiration = member.person.current_through
-    #         status = member.person.get_status_display()
-    #         row = [
-    #             bhs_id,
-    #             first_name,
-    #             last_name,
-    #             expiration,
-    #             status,
-    #         ]
-    #         ws.append(row)
-    #     file = save_virtual_workbook(wb)
-    #     content = ContentFile(file)
-    #     return content
-
-    # Algolia
-    def is_active(self):
-        return bool(self.status == self.STATUS.active)
-
-    def image_url(self):
-        try:
-            return self.image.url
-        except ValueError:
-            return 'https://res.cloudinary.com/barberscore/image/upload/v1554830585/missing_image.jpg'
-
-    def get_owners_emails(self):
-        owners = self.owners.order_by(
-            'last_name',
-            'first_name',
-        )
-        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
-
-    # def get_is_senior(self):
-    #     if self.kind != self.KIND.quartet:
-    #         raise ValueError('Must be quartet')
-    #     Person = apps.get_model('bhs.person')
-    #     midwinter = datetime.date(2020, 1, 11)
-    #     persons = Person.objects.filter(
-    #         members__group=self,
-    #         members__status__gt=0,
-    #     )
-    #     if persons.count() > 4:
-    #         return False
-    #     all_over_55 = True
-    #     total_years = 0
-    #     for person in persons:
-    #         try:
-    #             years = int((midwinter - person.birth_date).days / 365)
-    #         except TypeError:
-    #             return False
-    #         if years < 55:
-    #             all_over_55 = False
-    #         total_years += years
-    #     if all_over_55 and (total_years >= 240):
-    #         is_senior = True
-    #     else:
-    #         is_senior = False
-    #     return is_senior
-
-
-
-    # Internals
-    objects = GroupManager()
-
-    class Meta:
-        # ordering = ['tree_sort']
-        verbose_name_plural = 'Groups'
-        constraints = [
-            models.UniqueConstraint(
-                name='unique_group',
-                fields=[
-                    'bhs_id',
-                    'kind',
-                ]
-            )
-        ]
-
-
-    class JSONAPIMeta:
-        resource_name = "group"
-
-    def __str__(self):
-        return self.nomen
-
-    # def clean(self):
-    #     if self.mc_pk and self.status == self.STATUS.active:
-    #         if self.kind == self.KIND.international:
-    #             if self.parent:
-    #                 raise ValidationError("Toplevel must be Root")
-    #         if self.kind in [
-    #             self.KIND.district,
-    #             self.KIND.noncomp,
-    #             self.KIND.affiliate,
-    #         ]:
-    #             if self.parent.kind != self.KIND.international:
-    #                 raise ValidationError("Districts must have International parent.")
-    #         if self.kind in [
-    #             self.KIND.chapter,
-    #         ]:
-    #             if self.parent.kind not in [
-    #                 self.KIND.district,
-    #             ]:
-    #                 raise ValidationError("Chapter must have District parent.")
-    #             if self.division and not self.parent.is_divided:
-    #                     raise ValidationError("Non-divisionals should not have divisions.")
-    #             if not self.division and self.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
-    #                     raise ValidationError("Divisionals should have divisions.")
-    #             if self.division:
-    #                 if self.parent.code == 'EVG' and not 10 <= self.division <= 50:
-    #                         raise ValidationError("Division must be within EVG.")
-    #                 elif self.parent.code == 'FWD' and not 60 <= self.division <= 100:
-    #                         raise ValidationError("Division must be within FWD.")
-    #                 elif self.parent.code == 'LOL' and not 110 <= self.division <= 150:
-    #                         raise ValidationError("Division must be within LOL.")
-    #                 elif self.parent.code == 'MAD' and not 160 <= self.division <= 200:
-    #                         raise ValidationError("Division must be within MAD.")
-    #                 elif self.parent.code == 'NED' and not 210 <= self.division <= 250:
-    #                         raise ValidationError("Division must be within NED.")
-    #                 elif self.parent.code == 'SWD' and not 260 <= self.division <= 290:
-    #                         raise ValidationError("Division must be within SWD.")
-    #         if self.kind in [
-    #             self.KIND.chorus,
-    #             self.KIND.vlq,
-    #         ]:
-    #             if self.parent.kind not in [
-    #                 self.KIND.chapter,
-    #             ]:
-    #                 raise ValidationError("Chorus/VLQ must have Chapter parent.")
-    #             if self.division and not self.parent.parent.is_divided:
-    #                     raise ValidationError("Non-divisionals should not have divisions.")
-    #             if not self.division and self.parent.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
-    #                     raise ValidationError("Divisionals should have divisions.")
-    #             if self.division:
-    #                 if self.parent.parent.code == 'EVG' and not 10 <= self.division <= 50:
-    #                         raise ValidationError("Division must be within EVG.")
-    #                 elif self.parent.parent.code == 'FWD' and not 60 <= self.division <= 100:
-    #                         raise ValidationError("Division must be within FWD.")
-    #                 elif self.parent.parent.code == 'LOL' and not 110 <= self.division <= 150:
-    #                         raise ValidationError("Division must be within LOL.")
-    #                 elif self.parent.parent.code == 'MAD' and not 160 <= self.division <= 200:
-    #                         raise ValidationError("Division must be within MAD.")
-    #                 elif self.parent.parent.code == 'NED' and not 210 <= self.division <= 250:
-    #                         raise ValidationError("Division must be within NED.")
-    #                 elif self.parent.parent.code == 'SWD' and not 260 <= self.division <= 290:
-    #                         raise ValidationError("Division must be within SWD.")
-    #         if self.kind in [
-    #             self.KIND.quartet,
-    #         ] and self.parent:
-    #             if self.parent.kind not in [
-    #                 self.KIND.district,
-    #             ]:
-    #                 raise ValidationError("Quartet must have District parent.")
-    #             if self.division and not self.parent.is_divided:
-    #                     raise ValidationError("Non-divisionals should not have divisions.")
-    #             if not self.division and self.parent.is_divided and not self.name.startswith("Frank Thorne") and self.bhs_id not in [505990, 505883, 505789, 505863, 505936, 505442]:
-    #                     raise ValidationError("Divisionals should have divisions.")
-    #             if self.division:
-    #                 if self.parent.code == 'EVG' and not 10 <= self.division <= 50:
-    #                         raise ValidationError("Division must be within EVG.")
-    #                 elif self.parent.code == 'FWD' and not 60 <= self.division <= 100:
-    #                         raise ValidationError("Division must be within FWD.")
-    #                 elif self.parent.code == 'LOL' and not 110 <= self.division <= 150:
-    #                         raise ValidationError("Division must be within LOL.")
-    #                 elif self.parent.code == 'MAD' and not 160 <= self.division <= 200:
-    #                         raise ValidationError("Division must be within MAD.")
-    #                 elif self.parent.code == 'NED' and not 210 <= self.division <= 250:
-    #                         raise ValidationError("Division must be within NED.")
-    #                 elif self.parent.code == 'SWD' and not 260 <= self.division <= 290:
-    #                         raise ValidationError("Division must be within SWD.")
-    #     return
-
-    # Group Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_read_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_write_permission(request):
-        return request.user.roles.filter(
-            name__in=[
-                'SCJC',
-                'Librarian',
-                'Manager',
-            ]
-        )
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_write_permission(self, request):
-        return any([
-            request.user.roles.filter(
-                name__in=[
-                    'SCJC',
-                    'Librarian',
-                ]
-            ),
-            request.user in self.owners.all(),
-        ])
-
-    # Conditions:
-    def can_activate(self):
-        return
-
-    # Transitions
-    @fsm_log_by
-    @fsm_log_description
-    @transition(
-        field=status,
-        source=[
-            STATUS.active,
-            STATUS.inactive,
-            STATUS.new,
-        ],
-        target=STATUS.active,
-        conditions=[
-            can_activate,
-        ]
-    )
-    def activate(self, description=None, *args, **kwargs):
-        """Activate the Group."""
-        self.denormalize()
-        return
-
-    @fsm_log_by
-    @fsm_log_description
-    @transition(
-        field=status,
-        source=[
-            STATUS.active,
-            STATUS.inactive,
-            STATUS.new,
-        ],
-        target=STATUS.inactive,
-    )
-    def deactivate(self, description=None, *args, **kwargs):
-        """Deactivate the Group."""
-        return
-
-
-class Chart(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    STATUS = Choices(
-        (-20, 'protected', 'Protected',),
-        (-10, 'inactive', 'Inactive',),
-        (0, 'new', 'New'),
-        (10, 'active', 'Active'),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    title = models.CharField(
-        max_length=255,
-    )
-
-    arrangers = models.CharField(
-        max_length=255,
-    )
-
-    composers = models.CharField(
-        max_length=255,
-    )
-
-    lyricists = models.CharField(
-        max_length=255,
-    )
-
-    holders = models.TextField(
-        blank=True,
-    )
-
-    description = models.TextField(
-        help_text="""
-            Fun or interesting facts to share about the chart (ie, 'from Disney's Lion King, first sung by Elton John'.)""",
-        blank=True,
-        max_length=1000,
-    )
-
-    notes = models.TextField(
-        help_text="""
-            Private Notes (for internal use only).""",
-        blank=True,
-    )
-
-    image = models.ImageField(
-        upload_to=ImageUploadPath('image'),
-        null=True,
-        blank=True,
-    )
-
-    # Relations
-    statelogs = GenericRelation(
-        StateLog,
-        related_query_name='charts',
-    )
-
-    @cached_property
-    def nomen(self):
-        return "{0} [{1}]".format(
-            self.title,
-            self.arrangers,
-        )
-
-    @cached_property
-    def image_id(self):
-        return self.image.name or 'missing_image'
-
-    def is_searchable(self):
-        return bool(self.status == self.STATUS.active)
-
-    # Internals
-    objects = ChartManager()
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                name='unique_chart',
-                fields=[
-                    'title',
-                    'arrangers',
-                ]
-            )
-        ]
-
-    class JSONAPIMeta:
-        resource_name = "chart"
-
-    def __str__(self):
-        return "{0} [{1}]".format(
-            self.title,
-            self.arrangers,
-        )
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_read_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_write_permission(request):
-        return any([
-            request.user.roles.filter(
-                name__in=[
-                    'SCJC',
-                    'Librarian',
-                ],
-            )
-        ])
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_write_permission(self, request):
-        return any([
-            request.user.roles.filter(
-                name__in=[
-                    'SCJC',
-                    'Librarian',
-                ],
-            )
-        ])
-
-    # Transitions
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.active)
-    def activate(self, *args, **kwargs):
-        """Activate the Chart."""
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.inactive)
-    def deactivate(self, *args, **kwargs):
-        """Deactivate the Chart."""
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.protected)
-    def protect(self, *args, **kwargs):
-        """Protect the Chart."""
-        return
-
-
-class Award(TimeStampedModel):
-    """
-    Award Model.
-
-    The specific award conferred by a Group.
-    """
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    name = models.CharField(
-        help_text="""Award Name.""",
-        max_length=255,
-    )
-
-    STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.new,
-    )
-
-    KIND = Choices(
-        (32, 'chorus', "Chorus"),
-        (41, 'quartet', "Quartet"),
-    )
-
-    kind = models.IntegerField(
-        choices=KIND,
-    )
-
-    GENDER = Choices(
-        (10, 'male', "Male"),
-        (20, 'female', "Female"),
-        (30, 'mixed', "Mixed"),
-    )
-
-    gender = models.IntegerField(
-        help_text="""
-            The gender to which the award is restricted.  If unselected, this award is open to all combinations.
-        """,
-        choices=GENDER,
-        null=True,
-        blank=True,
-    )
-
-    LEVEL = Choices(
-        (10, 'championship', "Championship"),
-        (30, 'qualifier', "Qualifier"),
-        (45, 'representative', "Representative"),
-        (50, 'deferred', "Deferred"),
-        (60, 'manual', "Manual"),
-        (70, 'raw', "Improved - Raw"),
-        (80, 'standard', "Improved - Standard"),
-    )
-
-    level = models.IntegerField(
-        choices=LEVEL,
-    )
-
-    SEASON = Choices(
-        (1, 'summer', 'Summer',),
-        (2, 'midwinter', 'Midwinter',),
-        (3, 'fall', 'Fall',),
-        (4, 'spring', 'Spring',),
-    )
-
-    season = models.IntegerField(
-        choices=SEASON,
-    )
-
-    is_single = models.BooleanField(
-        help_text="""Single-round award""",
-        default=False,
-    )
-
-    threshold = models.FloatField(
-        help_text="""
-            The score threshold for automatic qualification (if any.)
-        """,
-        null=True,
-        blank=True,
-    )
-
-    minimum = models.FloatField(
-        help_text="""
-            The minimum score required for qualification (if any.)
-        """,
-        null=True,
-        blank=True,
-    )
-
-    advance = models.FloatField(
-        help_text="""
-            The score threshold to advance to next round (if any) in
-            multi-round qualification.
-        """,
-        null=True,
-        blank=True,
-    )
-
-    spots = models.IntegerField(
-        help_text="""Number of top spots which qualify""",
-        null=True,
-        blank=True,
-    )
-
-    description = models.TextField(
-        help_text="""
-            The Public description of the award.""",
-        blank=True,
-        max_length=1000,
-    )
-
-    notes = models.TextField(
-        help_text="""
-            Private Notes (for internal use only).""",
-        blank=True,
-    )
-
-    district = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
-    REPRESENTING = Choices(
-        (110, 'bhs', 'BHS'),
-        (200, 'car', 'CAR'),
-        (205, 'csd', 'CSD'),
-        (210, 'dix', 'DIX'),
-        (215, 'evg', 'EVG'),
-        (220, 'fwd', 'FWD'),
-        (225, 'ill', 'ILL'),
-        (230, 'jad', 'JAD'),
-        (235, 'lol', 'LOL'),
-        (240, 'mad', 'MAD'),
-        (345, 'ned', 'NED'),
-        (350, 'nsc', 'NSC'),
-        (355, 'ont', 'ONT'),
-        (360, 'pio', 'PIO'),
-        (365, 'rmd', 'RMD'),
-        (370, 'sld', 'SLD'),
-        (375, 'sun', 'SUN'),
-        (380, 'swd', 'SWD'),
-    )
-
-    representing = models.IntegerField(
-        choices=REPRESENTING,
-        null=True,
-        blank=True,
-    )
-
-    DIVISION = Choices(
-        (10, 'evgd1', 'EVG Division I'),
-        (20, 'evgd2', 'EVG Division II'),
-        (30, 'evgd3', 'EVG Division III'),
-        (40, 'evgd4', 'EVG Division IV'),
-        (50, 'evgd5', 'EVG Division V'),
-        (60, 'fwdaz', 'FWD Arizona'),
-        (70, 'fwdne', 'FWD Northeast'),
-        (80, 'fwdnw', 'FWD Northwest'),
-        (90, 'fwdse', 'FWD Southeast'),
-        (100, 'fwdsw', 'FWD Southwest'),
-        (110, 'lol10l', 'LOL 10000 Lakes'),
-        (120, 'lolone', 'LOL Division One'),
-        (130, 'lolnp', 'LOL Northern Plains'),
-        (140, 'lolpkr', 'LOL Packerland'),
-        (150, 'lolsw', 'LOL Southwest'),
-        # (160, 'madatl', 'MAD Atlantic'),
-        (170, 'madcen', 'MAD Central'),
-        (180, 'madnth', 'MAD Northern'),
-        (190, 'madsth', 'MAD Southern'),
-        # (200, 'madwst', 'MAD Western'),
-        (210, 'nedgp', 'NED Granite and Pine'),
-        (220, 'nedmtn', 'NED Mountain'),
-        (230, 'nedpat', 'NED Patriot'),
-        (240, 'nedsun', 'NED Sunrise'),
-        (250, 'nedyke', 'NED Yankee'),
-        (260, 'swdne', 'SWD Northeast'),
-        (270, 'swdnw', 'SWD Northwest'),
-        (280, 'swdse', 'SWD Southeast'),
-        (290, 'swdsw', 'SWD Southwest'),
-    )
-
-    division = models.IntegerField(
-        choices=DIVISION,
-        null=True,
-        blank=True,
-    )
-
-    AGE = Choices(
-        (10, 'seniors', 'Seniors',),
-        (20, 'novice', 'Novice',),
-        (30, 'youth', 'Youth',),
-    )
-
-    age = models.IntegerField(
-        choices=AGE,
-        null=True,
-        blank=True,
-    )
-
-    is_novice = models.BooleanField(
-        default=False,
-    )
-
-    SIZE = Choices(
-        (100, 'p1', 'Plateau 1',),
-        (110, 'p2', 'Plateau 2',),
-        (120, 'p3', 'Plateau 3',),
-        (130, 'p4', 'Plateau 4',),
-        (140, 'pa', 'Plateau A',),
-        (150, 'paa', 'Plateau AA',),
-        (160, 'paaa', 'Plateau AAA',),
-        (170, 'paaaa', 'Plateau AAAA',),
-        (180, 'pb', 'Plateau B',),
-        (190, 'pi', 'Plateau I',),
-        (200, 'pii', 'Plateau II',),
-        (210, 'piii', 'Plateau III',),
-        (220, 'piv', 'Plateau IV',),
-        (230, 'small', 'Small',),
-    )
-
-    size = models.IntegerField(
-        choices=SIZE,
-        null=True,
-        blank=True,
-    )
-
-    size_range = IntegerRangeField(
-        null=True,
-        blank=True,
-    )
-
-    SCOPE = Choices(
-        (100, 'p1', 'Plateau 1',),
-        (110, 'p2', 'Plateau 2',),
-        (120, 'p3', 'Plateau 3',),
-        (130, 'p4', 'Plateau 4',),
-        (140, 'pa', 'Plateau A',),
-        (150, 'paa', 'Plateau AA',),
-        (160, 'paaa', 'Plateau AAA',),
-        (170, 'paaaa', 'Plateau AAAA',),
-        (175, 'paaaaa', 'Plateau AAAAA',),
-    )
-
-    scope = models.IntegerField(
-        choices=SCOPE,
-        null=True,
-        blank=True,
-    )
-
-    scope_range = DecimalRangeField(
-        null=True,
-        blank=True,
-    )
-
-    # Denormalizations
-    tree_sort = models.IntegerField(
-        unique=True,
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    # FKs
-    group_id = models.UUIDField(
-        null=True,
-        blank=True,
-    )
-
-    # Internals
-    objects = AwardManager()
-
-    class Meta:
-        pass
-        # ordering = [
-        #     'tree_sort',
-        # ]
-
-    class JSONAPIMeta:
-        resource_name = "award"
-
-    def __str__(self):
-        return self.name
-
-    def clean(self):
-        if self.level == self.LEVEL.qualifier and not self.threshold:
-            raise ValidationError(
-                {'level': 'Qualifiers must have thresholds'}
-            )
-        # if self.level != self.LEVEL.qualifier and self.threshold:
-        #     raise ValidationError(
-        #         {'level': 'Non-Qualifiers must not have thresholds'}
-        #     )
-
-    # Award Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_read_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_read_permission(self, request):
-        return True
-
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_write_permission(request):
-        return request.user.roles.filter(
-            name__in=[
-                'SCJC',
-            ]
-        )
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_write_permission(self, request):
-        return request.user.roles.filter(
-            name__in=[
-                'SCJC',
-            ]
-        )
-
-    # Transitions
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.active)
-    def activate(self, *args, **kwargs):
-        """Activate the Award."""
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.inactive)
-    def deactivate(self, *args, **kwargs):
-        """Deactivate the Award."""
         return

@@ -1,42 +1,16 @@
 
 # Third-Party
 from dry_rest_permissions.generics import DRYPermissionsField
-from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_json_api import serializers
 
 # Local
-from .fields import TimezoneField
-
-from .models import Contest
-from .models import Entry
-from .models import Session
-from .models import Repertory
-
-
 
 from .models import Assignment
+from .models import Contest
+from .models import Entry
+from .models import Repertory
+from .models import Session
 
-
-
-class RepertorySerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Repertory
-        fields = [
-            'id',
-            'status',
-            # 'group',
-            # 'chart',
-            'permissions',
-        ]
-        # validators = [
-        #     UniqueTogetherValidator(
-        #         queryset=Repertory.objects.all(),
-        #         fields=('group', 'chart'),
-        #         message='This chart already exists in your repertory.',
-        #     )
-        # ]
 
 class AssignmentSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
@@ -52,23 +26,20 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'category',
-            # 'convention',
+
             'person_id',
             'name',
             'first_name',
-            # 'middle_name',
             'last_name',
-            # 'nick_name',
             'representing',
             'email',
-            # 'home_phone',
-            # 'work_phone',
             'cell_phone',
             'airports',
-            'image',
+
             'bhs_id',
             'image_id',
             # 'user',
+            'sessions',
             'permissions',
         )
 
@@ -93,7 +64,6 @@ class ContestSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'status',
-            'session',
 
             'award_id',
             'award_age',
@@ -112,7 +82,8 @@ class ContestSerializer(serializers.ModelSerializer):
             'award_size_range',
             'award_tree_sort',
 
-            'entries',
+            'session',
+            'entry',
             'permissions',
         ]
 
@@ -123,7 +94,10 @@ class ContestSerializer(serializers.ModelSerializer):
 
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    statelogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    statelogs = serializers.PrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+    )
     included_serializers = {
     }
 
@@ -147,9 +121,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'notes',
             'image_id',
 
-            'owners',
-            'session',
-
             'group_id',
             'group_status',
             'group_name',
@@ -169,11 +140,14 @@ class EntrySerializer(serializers.ModelSerializer):
             'group_is_senior',
             'group_is_youth',
             'group_is_divided',
-            'group_charts',
+            # 'group_charts',
 
+            'owners',
             'contests',
-            'permissions',
+            'session',
+
             'statelogs',
+            'permissions',
         ]
         read_only_fields = [
             'image_id',
@@ -191,12 +165,36 @@ class EntrySerializer(serializers.ModelSerializer):
         return data
 
 
+class RepertorySerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Repertory
+        fields = [
+            'id',
+            'status',
+            'title',
+            'arrangers',
+
+            'chart_id',
+            'entry',
+            'permissions',
+        ]
+        # validators = [
+        #     UniqueTogetherValidator(
+        #         queryset=Repertory.objects.all(),
+        #         fields=('group', 'chart'),
+        #         message='This chart already exists in your repertory.',
+        #     )
+        # ]
+
+
 class SessionSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     included_serializers = {
-        'contests': 'apps.smanager.serializers.ContestSerializer',
-        'entries': 'apps.smanager.serializers.EntrySerializer',
+        # 'contests': 'apps.smanager.serializers.ContestSerializer',
+        # 'entries': 'apps.smanager.serializers.EntrySerializer',
     }
 
     class Meta:
@@ -213,13 +211,26 @@ class SessionSerializer(serializers.ModelSerializer):
             'legacy_report',
             'drcj_report',
 
+            'convention_id',
+            'name',
+            'representing',
+            'season',
+            'panel',
+            'year',
+            'open_date',
+            'close_date',
+            'start_date',
+            'end_date',
+            'venue_name',
+            'location',
+            'timezone',
+            'imageId',
+            'divisions',
+
             'owners',
-            # 'convention',
-            'target',
 
             'contests',
             'entries',
-            # 'rounds',
 
             'permissions',
         ]

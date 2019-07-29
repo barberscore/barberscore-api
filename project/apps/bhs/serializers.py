@@ -1,69 +1,16 @@
 
 # Third-Party
 from dry_rest_permissions.generics import DRYPermissionsField
-from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_json_api import serializers
-from rest_framework.serializers import SerializerMethodField
 
 # Local
 from .fields import TimezoneField
 
-from .models import Group
-from .models import Person
-
 from .models import Award
 from .models import Chart
 from .models import Convention
-
-
-class ConventionSerializer(serializers.ModelSerializer):
-    timezone = TimezoneField(allow_null=True)
-    permissions = DRYPermissionsField()
-    included_serializers = {
-        'assignments': 'apps.smanager.serializers.AssignmentSerializer',
-    }
-
-    class Meta:
-        model = Convention
-        fields = [
-            'id',
-            '__str__',
-            'status',
-            'name',
-            'representing',
-            'season',
-            'panel',
-            'year',
-            'open_date',
-            'close_date',
-            'start_date',
-            'end_date',
-            'venue_name',
-            'location',
-            'timezone',
-            'image',
-            'description',
-            'divisions',
-            'kinds',
-
-
-            'image_id',
-
-            'permissions',
-        ]
-        read_only_fields = [
-            '__str__'
-            'image_id',
-        ]
-
-    class JSONAPIMeta:
-        included_resources = [
-            'assignments',
-        ]
-
-
-    def validate(self, data):
-        return data
+from .models import Group
+from .models import Person
 
 
 class AwardSerializer(serializers.ModelSerializer):
@@ -91,15 +38,93 @@ class AwardSerializer(serializers.ModelSerializer):
 
             'age',
             'is_novice',
-
             'size',
             'size_range',
             'scope',
             'scope_range',
             'tree_sort',
-            'group_id',
             'permissions',
         ]
+
+
+class ChartSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
+
+    included_serializers = {
+        # 'repertories': 'apps.bhs.serializers.RepertorySerializer',
+    }
+
+    class Meta:
+        model = Chart
+        fields = [
+            'id',
+            'status',
+            'title',
+            'arrangers',
+            'composers',
+            'lyricists',
+            'holders',
+            'description',
+            'notes',
+
+            'nomen',
+            'image_id',
+
+            # 'repertories',
+            'permissions',
+        ]
+        read_only_fields = [
+            'nomen',
+            'image_id',
+        ]
+
+    class JSONAPIMeta:
+        included_resources = [
+            # 'repertories',
+        ]
+
+
+class ConventionSerializer(serializers.ModelSerializer):
+    timezone = TimezoneField(allow_null=True)
+    permissions = DRYPermissionsField()
+
+    class Meta:
+        model = Convention
+        fields = [
+            'id',
+            '__str__',
+            'status',
+            'name',
+            'representing',
+            'season',
+            'panel',
+            'year',
+            'open_date',
+            'close_date',
+            'start_date',
+            'end_date',
+            'venue_name',
+            'location',
+            'timezone',
+            'description',
+            'divisions',
+            'kinds',
+            'image_id',
+            'owners',
+            'permissions',
+        ]
+        read_only_fields = [
+            '__str__'
+            'image_id',
+        ]
+
+    class JSONAPIMeta:
+        included_resources = [
+        ]
+
+
+    def validate(self, data):
+        return data
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -136,7 +161,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'flickr',
             'instagram',
             'soundcloud',
-            'image',
             'description',
             'visitor_information',
             'participants',
@@ -211,7 +235,6 @@ class PersonSerializer(serializers.ModelSerializer):
             'work_phone',
             'cell_phone',
             'airports',
-            'image',
             'description',
             'notes',
             'bhs_id',
@@ -241,43 +264,3 @@ class PersonSerializer(serializers.ModelSerializer):
             # 'current_status',
             # 'current_district',
         ]
-
-
-class ChartSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    included_serializers = {
-        # 'repertories': 'apps.bhs.serializers.RepertorySerializer',
-    }
-
-    class Meta:
-        model = Chart
-        fields = [
-            'id',
-            'status',
-            'title',
-            'arrangers',
-            'composers',
-            'lyricists',
-            'holders',
-            'description',
-            'notes',
-            'image',
-
-            'nomen',
-            'image_id',
-
-            # 'repertories',
-            'permissions',
-        ]
-        read_only_fields = [
-            'nomen',
-            'image_id',
-        ]
-
-    class JSONAPIMeta:
-        included_resources = [
-            # 'repertories',
-        ]
-
-
