@@ -195,6 +195,209 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    GROUP_STATUS = Choices(
+        (-10, 'inactive', 'Inactive',),
+        (-5, 'aic', 'AIC',),
+        (0, 'new', 'New',),
+        (10, 'active', 'Active',),
+    )
+
+    group_status = FSMIntegerField(
+        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
+        choices=GROUP_STATUS,
+        null=True,
+        blank=True,
+    )
+
+    group_name = models.CharField(
+        help_text="""
+            The name of the resource.
+        """,
+        max_length=255,
+        default='',
+        blank=True,
+    )
+
+    group_nomen = models.CharField(
+        help_text="""
+            The combined name of the resource.
+        """,
+        max_length=255,
+        default='',
+        blank=True,
+    )
+
+    GROUP_KIND = Choices(
+        ('International', [
+            (1, 'international', "International"),
+        ]),
+        ('District', [
+            (11, 'district', "District"),
+            (12, 'noncomp', "Noncompetitive"),
+            (13, 'affiliate', "Affiliate"),
+        ]),
+        ('Chapter', [
+            (30, 'chapter', "Chapter"),
+        ]),
+        ('Group', [
+            (32, 'chorus', "Chorus"),
+            (41, 'quartet', "Quartet"),
+            (46, 'vlq', "VLQ"),
+        ]),
+    )
+
+    group_kind = models.IntegerField(
+        help_text="""
+            The kind of group.
+        """,
+        choices=GROUP_KIND,
+        null=True,
+        blank=True,
+    )
+
+    GROUP_GENDER = Choices(
+        (10, 'male', "Male"),
+        (20, 'female', "Female"),
+        (30, 'mixed', "Mixed"),
+    )
+
+    group_gender = models.IntegerField(
+        help_text="""
+            The gender of group.
+        """,
+        choices=GROUP_GENDER,
+        null=True,
+        blank=True,
+    )
+
+    GROUP_DIVISION = Choices(
+        ('EVG', [
+            (10, 'evgd1', 'EVG Division I'),
+            (20, 'evgd2', 'EVG Division II'),
+            (30, 'evgd3', 'EVG Division III'),
+            (40, 'evgd4', 'EVG Division IV'),
+            (50, 'evgd5', 'EVG Division V'),
+        ]),
+        ('FWD', [
+            (60, 'fwdaz', 'FWD Arizona'),
+            (70, 'fwdne', 'FWD Northeast'),
+            (80, 'fwdnw', 'FWD Northwest'),
+            (90, 'fwdse', 'FWD Southeast'),
+            (100, 'fwdsw', 'FWD Southwest'),
+        ]),
+        ('LOL', [
+            (110, 'lol10l', 'LOL 10000 Lakes'),
+            (120, 'lolone', 'LOL Division One'),
+            (130, 'lolnp', 'LOL Northern Plains'),
+            (140, 'lolpkr', 'LOL Packerland'),
+            (150, 'lolsw', 'LOL Southwest'),
+        ]),
+        ('MAD', [
+            # (160, 'madatl', 'MAD Atlantic'),
+            (170, 'madcen', 'MAD Central'),
+            (180, 'madnth', 'MAD Northern'),
+            (190, 'madsth', 'MAD Southern'),
+            # (200, 'madwst', 'MAD Western'),
+        ]),
+        ('NED', [
+            (210, 'nedgp', 'NED Granite and Pine'),
+            (220, 'nedmtn', 'NED Mountain'),
+            (230, 'nedpat', 'NED Patriot'),
+            (240, 'nedsun', 'NED Sunrise'),
+            (250, 'nedyke', 'NED Yankee'),
+        ]),
+        ('SWD', [
+            (260, 'swdne', 'SWD Northeast'),
+            (270, 'swdnw', 'SWD Northwest'),
+            (280, 'swdse', 'SWD Southeast'),
+            (290, 'swdsw', 'SWD Southwest'),
+        ]),
+    )
+
+    group_division = models.IntegerField(
+        choices=GROUP_DIVISION,
+        null=True,
+        blank=True,
+    )
+
+    group_bhs_id = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
+    group_code = models.CharField(
+        help_text="""
+            Short-form code.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    group_description = models.TextField(
+        help_text="""
+            A description of the group.  Max 1000 characters.""",
+        blank=True,
+        max_length=1000,
+        default='',
+    )
+
+    group_participants = models.CharField(
+        help_text='Director(s) or Members (listed TLBB)',
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    group_tree_sort = models.IntegerField(
+        blank=True,
+        null=True,
+        editable=False,
+    )
+
+    group_international = models.TextField(
+        help_text="""
+            The denormalized international group.""",
+        blank=True,
+        max_length=255,
+        default='',
+    )
+
+    group_district = models.TextField(
+        help_text="""
+            The denormalized district group.""",
+        blank=True,
+        max_length=255,
+        default='',
+    )
+
+    group_chapter = models.TextField(
+        help_text="""
+            The denormalized chapter group.""",
+        blank=True,
+        max_length=255,
+        default='',
+    )
+
+    group_is_senior = models.BooleanField(
+        help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
+        default=False,
+    )
+
+    group_is_youth = models.BooleanField(
+        help_text="""Qualifies as a Youth Group.  Must be set manually.""",
+        default=False,
+    )
+
+    group_is_divided = models.BooleanField(
+        help_text="""This district has divisions.""",
+        default=False,
+    )
+
+    group_is_divided = models.BooleanField(
+        help_text="""This district has divisions.""",
+        default=False,
+    )
+
     # Relations
     statelogs = GenericRelation(
         StateLog,
