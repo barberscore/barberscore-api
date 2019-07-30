@@ -1325,7 +1325,7 @@ class Outcome(TimeStampedModel):
         null=True,
     )
 
-    name = models.CharField(
+    winner = models.CharField(
         max_length=1024,
         null=True,
         blank=True,

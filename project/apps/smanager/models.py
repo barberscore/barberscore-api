@@ -457,6 +457,12 @@ class Contest(TimeStampedModel):
         blank=True,
     )
 
+    is_single = models.BooleanField(
+        default=False,
+        null=True,
+        blank=True,
+    )
+
     SIZE = Choices(
         (100, 'p1', 'Plateau 1',),
         (110, 'p2', 'Plateau 2',),

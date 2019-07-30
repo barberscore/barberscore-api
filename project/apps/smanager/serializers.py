@@ -35,10 +35,9 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'email',
             'cell_phone',
             'airports',
-
             'bhs_id',
+
             'image_id',
-            # 'user',
             'session',
             'permissions',
         )
@@ -76,6 +75,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'division',
             'age',
             'is_novice',
+            'is_single',
             'size',
             'size_range',
             'scope',

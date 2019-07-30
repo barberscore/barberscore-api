@@ -74,7 +74,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'id',
             'status',
             'num',
-            'name',
+            'winner',
 
             'award_id',
             'name',

@@ -104,6 +104,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'description',
             'divisions',
             'kinds',
+
             'image_id',
             'owners',
             'permissions',
