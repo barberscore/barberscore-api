@@ -19,90 +19,6 @@ from .models import Convention
 admin.site.disable_action('delete_selected')
 
 
-@admin.register(Convention)
-class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fields = (
-        'id',
-        # 'legacy_selection',
-        # 'legacy_complete',
-        'status',
-        'name',
-        ('divisions', ),
-        ('year', 'season', ),
-        ('panel', 'kinds', ),
-        ('open_date', 'close_date', ),
-        ('start_date', 'end_date', ),
-        'owners',
-        'venue_name',
-        'location',
-        'timezone',
-        'image',
-        'description',
-        # 'district',
-    )
-
-    list_display = (
-        '__str__',
-        'year',
-        'season',
-        # 'district',
-        'name',
-        # 'location',
-        # 'timezone',
-        # 'start_date',
-        # 'end_date',
-        # 'status',
-    )
-
-    list_editable = [
-        'name',
-        # 'location',
-        # 'start_date',
-        # 'end_date',
-    ]
-
-    list_filter = (
-        'status',
-        'season',
-        # 'district',
-        'year',
-    )
-
-    fsm_field = [
-        'status',
-    ]
-
-    search_fields = [
-        'name',
-    ]
-
-    inlines = [
-        # AssignmentInline,
-        # SessionInline,
-    ]
-
-    readonly_fields = (
-        'id',
-    )
-
-    autocomplete_fields = [
-        # 'group',
-        'owners',
-    ]
-
-    ordering = (
-        '-year',
-        'season',
-        # 'district',
-        # 'group__tree_sort',
-    )
-    list_select_related = [
-        # 'group',
-    ]
-
-    save_on_top = True
-
-
 @admin.register(Award)
 class AwardAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
@@ -113,10 +29,9 @@ class AwardAdmin(VersionAdmin, FSMTransitionMixin):
         'id',
         'name',
         'status',
-        'group_id',
         'kind',
         'gender',
-        'representing',
+        'district',
         'division',
         'age',
         'level',
@@ -129,11 +44,12 @@ class AwardAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
     list_display = [
+        # 'district',
+
         'name',
         # 'size',
         # 'scope',
-        'group_id',
-        'representing',
+        'district',
         'division',
         'kind',
         'age',
@@ -158,7 +74,7 @@ class AwardAdmin(VersionAdmin, FSMTransitionMixin):
         'status',
         'kind',
         'level',
-        'representing',
+        'district',
         'division',
         'age',
         'gender',
@@ -189,44 +105,19 @@ class ChartAdmin(VersionAdmin, FSMTransitionMixin):
     fields = [
         'status',
         'title',
-        'composers',
-        'lyricists',
         'arrangers',
-        'holders',
-        'image',
-        'description',
-        'notes',
         'created',
         'modified',
-        # 'gender',
-        # 'tempo',
-        # 'is_medley',
-        # 'is_learning',
-        # 'voicing',
     ]
 
     list_display = [
         'status',
         'title',
         'arrangers',
-        'composers',
-        'lyricists',
-    ]
-
-    list_editable = [
-        'title',
-        'arrangers',
-        'composers',
-        'lyricists',
     ]
 
     list_filter = [
         'status',
-    ]
-
-    inlines = [
-        # RepertoryInline,
-        StateLogInline,
     ]
 
     readonly_fields = [
@@ -239,10 +130,89 @@ class ChartAdmin(VersionAdmin, FSMTransitionMixin):
         'arrangers',
     ]
 
-    ordering = (
+    ordering = [
         'title',
         'arrangers',
+    ]
+
+
+@admin.register(Convention)
+class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
+    fields = (
+        'id',
+        # 'legacy_selection',
+        # 'legacy_complete',
+        'status',
+        'name',
+        ('district', 'divisions', ),
+        ('year', 'season', ),
+        ('panel', 'kinds', ),
+        ('open_date', 'close_date', ),
+        ('start_date', 'end_date', ),
+        'owners',
+        'venue_name',
+        'location',
+        'timezone',
+        'image',
+        'description',
     )
+
+    list_display = (
+        'year',
+        'district',
+        'season',
+        'divisions',
+        'name',
+        'location',
+        # 'timezone',
+        'start_date',
+        'end_date',
+        # 'status',
+    )
+
+    list_editable = [
+        'name',
+        # 'location',
+        # 'start_date',
+        # 'end_date',
+    ]
+
+    list_filter = (
+        'status',
+        'season',
+        'district',
+        'year',
+    )
+
+    fsm_field = [
+        'status',
+    ]
+
+    search_fields = [
+        'name',
+    ]
+
+    inlines = [
+    ]
+
+    readonly_fields = (
+        'id',
+    )
+
+    autocomplete_fields = [
+        'owners',
+    ]
+
+    ordering = [
+        '-year',
+        'season',
+        'district',
+    ]
+    list_select_related = [
+    ]
+
+    save_on_top = True
+
 
 
 @admin.register(Group)
@@ -257,15 +227,12 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         'status',
         'kind',
         'gender',
-        'representing',
+        'district',
         'division',
         'owners',
         ('is_senior', 'is_youth',),
-        ('bhs_id', 'mc_pk', 'code',),
-        'parent',
+        ('bhs_id', 'source_id', 'code',),
         'location',
-        'email',
-        'phone',
         'website',
         'image',
         'description',
@@ -276,12 +243,14 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
     list_filter = [
+        # 'district',
+
         'status',
         'kind',
         'gender',
         'is_senior',
         'is_youth',
-        'representing',
+        'district',
         'division',
     ]
 
@@ -297,15 +266,14 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         'gender',
         'is_senior',
         'is_youth',
-        'representing',
+        'chapters',
+        'district',
         'division',
-        'parent',
         'bhs_id',
         'code',
         'status',
     ]
     list_select_related = [
-        'parent',
     ]
     readonly_fields = [
         'id',
@@ -315,14 +283,13 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
 
     autocomplete_fields = [
         'owners',
-        # 'parent',
     ]
     raw_id_fields = [
-        'parent',
     ]
 
     ordering = [
-        'tree_sort',
+        'kind',
+        'name',
     ]
 
     INLINES = {
@@ -404,65 +371,39 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin):
     fields = [
         'id',
         'status',
-        ('first_name', 'middle_name', 'last_name', 'nick_name',),
-        ('email', 'bhs_id', 'birth_date',),
+        ('name', 'first_name', 'last_name',),
+        ('email', 'bhs_id',),
         ('home_phone', 'work_phone', 'cell_phone',),
         ('part', 'gender',),
-        ('is_deceased', 'is_honorary', 'is_suspended', 'is_expelled',),
-        'mc_pk',
-        'spouse',
-        'location',
-        'representing',
-        'website',
+        'source_id',
         'image',
         'description',
         'notes',
         ('created', 'modified',),
-        # 'user',
+        'owners',
     ]
 
     list_display = [
-        'common_name',
-        'email',
-        'cell_phone',
-        'part',
-        'gender',
-        'status',
+        'district',
+
+        'name',
+        # 'district',
+        # 'email',
+        # 'cell_phone',
+        # 'part',
+        # 'gender',
+        # 'bhs_id',
     ]
 
     list_filter = [
         'status',
+        'district',
         'gender',
         'part',
-        'is_deceased',
-    ]
-
-    raw_id_fields = [
-        # 'user',
     ]
 
     readonly_fields = [
         'id',
-        'first_name',
-        'middle_name',
-        'last_name',
-        'nick_name',
-        'email',
-        'is_deceased',
-        'bhs_id',
-        'mc_pk',
-        'birth_date',
-        'part',
-        'mon',
-        'gender',
-        'home_phone',
-        'work_phone',
-        'cell_phone',
-        'common_name',
-        'is_deceased',
-        'is_honorary',
-        'is_suspended',
-        'is_expelled',
         'created',
         'modified',
     ]
@@ -472,31 +413,24 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
     search_fields = [
+        'name',
         'last_name',
         'first_name',
-        'nick_name',
         'bhs_id',
         'email',
+        'bhs_id',
     ]
 
-    # autocomplete_fields = [
-    #     'user',
-    # ]
+    autocomplete_fields = [
+        'owners',
+    ]
 
     save_on_top = True
 
     inlines = [
-        # MemberInline,
-        # AssignmentInline,
-        # PanelistInline,
-        StateLogInline,
     ]
 
     ordering = [
         'last_name',
         'first_name',
     ]
-    # readonly_fields = [
-    #     'common_name',
-    # ]
-

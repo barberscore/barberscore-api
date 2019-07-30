@@ -44,7 +44,6 @@ class AwardFactory(DjangoModelFactory):
     threshold = None
     minimum = None
     advance = None
-    # group = SubFactory('factories.GroupFactory')
 
     class Meta:
         model = Award
@@ -54,8 +53,6 @@ class ChartFactory(DjangoModelFactory):
     status = Chart.STATUS.active
     title = Faker('word')
     arrangers = Faker('name_male')
-    composers = Faker('name_male')
-    lyricists = Faker('name_male')
 
     class Meta:
         model = Chart
@@ -63,7 +60,7 @@ class ChartFactory(DjangoModelFactory):
 
 class ConventionFactory(DjangoModelFactory):
     name = Faker('city')
-    representing = Convention.REPRESENTING.bhs
+    district = Convention.DISTRICT.bhs
     status = Convention.STATUS.new
     season = Convention.SEASON.spring
     panel = Convention.PANEL.quintiple
@@ -75,7 +72,6 @@ class ConventionFactory(DjangoModelFactory):
     venue_name = "Grand Ole Opry"
     location = "Nashville, TN"
     timezone = 'US/Central'
-    # group = SubFactory('factories.GroupFactory')
 
     class Meta:
         model = Convention
@@ -111,19 +107,11 @@ class GroupFactory(DjangoModelFactory):
     status = Group.STATUS.active
     kind = Group.KIND.quartet
     code = ''
-    start_date = None
-    end_date = None
-    email = Faker('email')
-    phone = Faker('phone_number')
-    location = ''
     website = ''
-    facebook = ''
-    twitter = ''
     image = ''
     description = ''
     notes = ''
     bhs_id = Sequence(lambda x: x)
-    parent = None
 
     class Meta:
         model = Group
@@ -146,15 +134,10 @@ class GroupFactory(DjangoModelFactory):
 
 
 class PersonFactory(DjangoModelFactory):
-    # name = Faker('name_male')
+    name = Faker('name_male')
     first_name = Faker('first_name_male')
-    middle_name = ''
     last_name = Faker('last_name_male')
-    nick_name = ''
     status = Person.STATUS.active
-    birth_date = None
-    location = ''
-    website = ''
     email = None
     image = ''
     description = ''

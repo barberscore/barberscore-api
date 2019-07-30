@@ -39,7 +39,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'bhs_id',
             'image_id',
             # 'user',
-            'sessions',
+            'session',
             'permissions',
         )
 
@@ -83,7 +83,7 @@ class ContestSerializer(serializers.ModelSerializer):
             'award_tree_sort',
 
             'session',
-            'entry',
+            'entries',
             'permissions',
         ]
 
@@ -224,7 +224,6 @@ class SessionSerializer(serializers.ModelSerializer):
             'venue_name',
             'location',
             'timezone',
-            'imageId',
             'divisions',
 
             'owners',
@@ -233,6 +232,8 @@ class SessionSerializer(serializers.ModelSerializer):
             'entries',
 
             'permissions',
+        ]
+        read_only_fields = [
         ]
 
     class JSONAPIMeta:

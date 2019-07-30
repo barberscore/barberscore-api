@@ -20,6 +20,7 @@ class AwardSerializer(serializers.ModelSerializer):
         model = Award
         fields = [
             'id',
+            # 'nomen',
             'name',
             'status',
             'kind',
@@ -33,7 +34,7 @@ class AwardSerializer(serializers.ModelSerializer):
             'spots',
             'description',
             'notes',
-            'representing',
+            'district',
             'division',
 
             'age',
@@ -46,31 +47,26 @@ class AwardSerializer(serializers.ModelSerializer):
             'permissions',
         ]
 
+        read_only_fields = [
+            # 'nomen',
+        ]
+
 
 class ChartSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
 
     included_serializers = {
-        # 'repertories': 'apps.bhs.serializers.RepertorySerializer',
     }
 
     class Meta:
         model = Chart
         fields = [
             'id',
+            'nomen',
             'status',
             'title',
             'arrangers',
-            'composers',
-            'lyricists',
-            'holders',
-            'description',
-            'notes',
-
-            'nomen',
             'image_id',
-
-            # 'repertories',
             'permissions',
         ]
         read_only_fields = [
@@ -80,7 +76,6 @@ class ChartSerializer(serializers.ModelSerializer):
 
     class JSONAPIMeta:
         included_resources = [
-            # 'repertories',
         ]
 
 
@@ -92,10 +87,10 @@ class ConventionSerializer(serializers.ModelSerializer):
         model = Convention
         fields = [
             'id',
-            '__str__',
+            'nomen',
             'status',
             'name',
-            'representing',
+            'district',
             'season',
             'panel',
             'year',
@@ -114,7 +109,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'permissions',
         ]
         read_only_fields = [
-            '__str__'
+            'nomen'
             'image_id',
         ]
 
@@ -143,46 +138,26 @@ class GroupSerializer(serializers.ModelSerializer):
             'status',
             'kind',
             'gender',
-            'representing',
+            'district',
             'division',
             'bhs_id',
             'code',
             'website',
-            'email',
-            'phone',
-            'fax_phone',
-            'start_date',
-            'end_date',
             'location',
-            'facebook',
-            'twitter',
-            'youtube',
-            'pinterest',
-            'flickr',
-            'instagram',
-            'soundcloud',
-            'description',
-            'visitor_information',
             'participants',
             'chapters',
-            'notes',
-            'mc_pk',
-
-            'tree_sort',
-
             'is_senior',
             'is_youth',
-            'is_divided',
-
-            'owners',
-            'parent',
-            # 'children',
-
-            # 'repertories',
-            'permissions',
+            'description',
+            'notes',
+            'source_id',
 
             'nomen',
             'image_id',
+
+            'owners',
+            'permissions',
+
         ]
 
         read_only_fields = [
@@ -211,24 +186,12 @@ class PersonSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'status',
-            'prefix',
+            'name',
             'first_name',
-            'middle_name',
             'last_name',
-            'nick_name',
-            'suffix',
-            'birth_date',
-            'spouse',
-            'location',
             'part',
-            'mon',
             'gender',
-            'representing',
-            'is_deceased',
-            'is_honorary',
-            'is_suspended',
-            'is_expelled',
-            'website',
+            'district',
             'email',
             'address',
             'home_phone',
@@ -238,29 +201,15 @@ class PersonSerializer(serializers.ModelSerializer):
             'description',
             'notes',
             'bhs_id',
-            'mc_pk',
+            'source_id',
 
             'nomen',
-            'full_name',
-            'common_name',
-            'sort_name',
-            'initials',
             'image_id',
-            # 'current_through',
-            # 'current_status',
-            # 'current_district',
 
             'owners',
             'permissions',
         ]
         read_only_fields = [
             'nomen',
-            'full_name',
-            'common_name',
-            'sort_name',
-            'initials',
             'image_id',
-            # 'current_through',
-            # 'current_status',
-            # 'current_district',
         ]

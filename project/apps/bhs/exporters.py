@@ -35,7 +35,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'is_senior',
             'is_youth',
             'code',
-            'get_representing_display',
+            'get_district_display',
             'get_division_display',
             'chapters',
         ]

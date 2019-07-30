@@ -183,7 +183,10 @@ class GroupViewSet(viewsets.ModelViewSet):
         # 'repertories',
         # 'repertories__chart',
         # 'statelogs',
-    ).distinct()
+    ).order_by(
+        'kind',
+        'name',
+    )
     serializer_class = GroupSerializer
     filterset_class = GroupFilterset
     filter_backends = [

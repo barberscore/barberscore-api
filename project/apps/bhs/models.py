@@ -12,8 +12,6 @@ from django_fsm_log.decorators import fsm_log_description
 from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
-from openpyxl import Workbook
-from openpyxl.writer.excel import save_virtual_workbook
 from timezone_field import TimeZoneField
 
 # Django
@@ -22,13 +20,9 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.utils.functional import cached_property
-from django.utils.timezone import now
-from django.apps import apps
-from django.core.files.base import ContentFile
 from django.conf import settings
 from django.contrib.postgres.fields import DecimalRangeField
 from django.contrib.postgres.fields import IntegerRangeField
-from django.contrib.auth import get_user_model
 
 # First-Party
 from .managers import AwardManager
@@ -37,11 +31,7 @@ from .managers import PersonManager
 from .managers import GroupManager
 from .managers import ChartManager
 
-from .fields import ValidatedPhoneField
 from .fields import LowerEmailField
-from .fields import ReasonableBirthDate
-from .fields import VoicePartField
-from .fields import NoPunctuationCharField
 from .fields import ImageUploadPath
 from .fields import UploadPath
 from .fields import DivisionsField
@@ -175,13 +165,8 @@ class Award(TimeStampedModel):
         blank=True,
     )
 
-    district = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
 
-    REPRESENTING = Choices(
+    DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
@@ -202,8 +187,8 @@ class Award(TimeStampedModel):
         (380, 'swd', 'SWD'),
     )
 
-    representing = models.IntegerField(
-        choices=REPRESENTING,
+    district = models.IntegerField(
+        choices=DISTRICT,
         null=True,
         blank=True,
     )
@@ -321,20 +306,11 @@ class Award(TimeStampedModel):
         editable=False,
     )
 
-    # FKs
-    group_id = models.UUIDField(
-        null=True,
-        blank=True,
-    )
-
     # Internals
     objects = AwardManager()
 
     class Meta:
         pass
-        # ordering = [
-        #     'tree_sort',
-        # ]
 
     class JSONAPIMeta:
         resource_name = "award"
@@ -351,6 +327,9 @@ class Award(TimeStampedModel):
         #     raise ValidationError(
         #         {'level': 'Non-Qualifiers must not have thresholds'}
         #     )
+
+    def is_searchable(self):
+        return bool(self.status == self.STATUS.active)
 
     # Award Permissions
     @staticmethod
@@ -425,37 +404,6 @@ class Chart(TimeStampedModel):
         max_length=255,
     )
 
-    composers = models.CharField(
-        max_length=255,
-    )
-
-    lyricists = models.CharField(
-        max_length=255,
-    )
-
-    holders = models.TextField(
-        blank=True,
-    )
-
-    description = models.TextField(
-        help_text="""
-            Fun or interesting facts to share about the chart (ie, 'from Disney's Lion King, first sung by Elton John'.)""",
-        blank=True,
-        max_length=1000,
-    )
-
-    notes = models.TextField(
-        help_text="""
-            Private Notes (for internal use only).""",
-        blank=True,
-    )
-
-    image = models.ImageField(
-        upload_to=ImageUploadPath('image'),
-        null=True,
-        blank=True,
-    )
-
     # Relations
     statelogs = GenericRelation(
         StateLog,
@@ -494,10 +442,7 @@ class Chart(TimeStampedModel):
         resource_name = "chart"
 
     def __str__(self):
-        return "{0} [{1}]".format(
-            self.title,
-            self.arrangers,
-        )
+        return self.nomen
 
     # Permissions
     @staticmethod
@@ -581,7 +526,7 @@ class Convention(TimeStampedModel):
         default='Convention',
     )
 
-    REPRESENTING = Choices(
+    DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
@@ -602,8 +547,8 @@ class Convention(TimeStampedModel):
         (380, 'swd', 'SWD'),
     )
 
-    representing = models.IntegerField(
-        choices=REPRESENTING,
+    district = models.IntegerField(
+        choices=DISTRICT,
         blank=True,
         null=True,
     )
@@ -676,13 +621,6 @@ class Convention(TimeStampedModel):
     timezone = TimeZoneField(
         help_text="""
             The local timezone of the convention.""",
-        null=True,
-        blank=True,
-    )
-
-    image = models.ImageField(
-        upload_to=UploadPath('image'),
-        max_length=255,
         null=True,
         blank=True,
     )
@@ -766,6 +704,13 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    image = models.ImageField(
+        upload_to=UploadPath('image'),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
     # FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
@@ -782,6 +727,21 @@ class Convention(TimeStampedModel):
     def image_id(self):
         return self.image.name or 'missing_image'
 
+    @cached_property
+    def nomen(self):
+        if self.district == self.DISTRICT.bhs:
+            return " ".join([
+                self.get_district_display(),
+                str(self.year),
+                self.name,
+            ])
+        return " ".join([
+            self.get_district_display(),
+            self.get_season_display(),
+            str(self.year),
+            self.name,
+        ])
+
     # Internals
     class Meta:
         constraints = [
@@ -791,7 +751,7 @@ class Convention(TimeStampedModel):
                     'year',
                     'season',
                     'name',
-                    'representing',
+                    'district',
                 ]
             )
         ]
@@ -800,18 +760,7 @@ class Convention(TimeStampedModel):
         resource_name = "convention"
 
     def __str__(self):
-        if self.representing == self.REPRESENTING.bhs:
-            return " ".join([
-                self.get_representing_display(),
-                str(self.year),
-                self.name,
-            ])
-        return " ".join([
-            self.get_representing_display(),
-            self.get_season_display(),
-            str(self.year),
-            self.name,
-        ])
+        return self.nomen
 
     def clean(self):
         return
@@ -841,14 +790,19 @@ class Convention(TimeStampedModel):
     @authenticated_users
     def has_write_permission(request):
         return any([
-            request.user.roles.filter(name='SCJC')
+            request.user.roles.filter(name__in=[
+                'SCJC',
+                ]
+            )
         ])
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            request.user.roles.filter(name='SCJC')
+            request.user.roles.filter(name__in=[
+                'SCJC',
+            ])
         ])
 
     # Convention Transition Conditions
@@ -938,11 +892,8 @@ class Group(TimeStampedModel):
     )
 
     name = models.CharField(
-        help_text="""
-            The name of the resource.
-        """,
+        help_text="""The name of the quartet/chorus.""",
         max_length=255,
-        default='UNKNOWN',
     )
 
     STATUS = Choices(
@@ -959,22 +910,9 @@ class Group(TimeStampedModel):
     )
 
     KIND = Choices(
-        ('International', [
-            (1, 'international', "International"),
-        ]),
-        ('District', [
-            (11, 'district', "District"),
-            (12, 'noncomp', "Noncompetitive"),
-            (13, 'affiliate', "Affiliate"),
-        ]),
-        ('Chapter', [
-            (30, 'chapter', "Chapter"),
-        ]),
-        ('Group', [
-            (32, 'chorus', "Chorus"),
-            (41, 'quartet', "Quartet"),
-            (46, 'vlq', "VLQ"),
-        ]),
+        (32, 'chorus', "Chorus"),
+        (41, 'quartet', "Quartet"),
+        (46, 'vlq', "VLQ"),
     )
 
     kind = models.IntegerField(
@@ -998,7 +936,7 @@ class Group(TimeStampedModel):
         default=GENDER.male,
     )
 
-    REPRESENTING = Choices(
+    DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
@@ -1019,8 +957,8 @@ class Group(TimeStampedModel):
         (380, 'swd', 'SWD'),
     )
 
-    representing = models.IntegerField(
-        choices=REPRESENTING,
+    district = models.IntegerField(
+        choices=DISTRICT,
         null=True,
         blank=True,
     )
@@ -1083,7 +1021,7 @@ class Group(TimeStampedModel):
 
     code = models.CharField(
         help_text="""
-            Short-form code.""",
+            Legacy Short-form code (chapters only).""",
         max_length=255,
         blank=True,
     )
@@ -1095,108 +1033,11 @@ class Group(TimeStampedModel):
         default='',
     )
 
-    email = LowerEmailField(
-        help_text="""
-            The contact email of the resource.""",
-        blank=True,
-        null=True,
-    )
-
-    phone = models.CharField(
-        help_text="""
-            The phone number of the resource.  Include country code.""",
-        blank=True,
-        max_length=25,
-    )
-
-    fax_phone = models.CharField(
-        help_text="""
-            The fax number of the resource.  Include country code.""",
-        blank=True,
-        max_length=25,
-    )
-
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
     location = models.CharField(
         help_text="""
             The geographical location of the resource.""",
         max_length=255,
         blank=True,
-    )
-
-    facebook = models.URLField(
-        help_text="""
-            The facebook URL of the resource.""",
-        blank=True,
-    )
-
-    twitter = models.URLField(
-        help_text="""
-            The twitter URL of the resource.""",
-        blank=True,
-    )
-
-    youtube = models.URLField(
-        help_text="""
-            The youtube URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    pinterest = models.URLField(
-        help_text="""
-            The pinterest URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    flickr = models.URLField(
-        help_text="""
-            The flickr URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    instagram = models.URLField(
-        help_text="""
-            The instagram URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    soundcloud = models.URLField(
-        help_text="""
-            The soundcloud URL of the resource.""",
-        blank=True,
-        default='',
-    )
-
-    image = models.ImageField(
-        upload_to=ImageUploadPath('image'),
-        null=True,
-        blank=True,
-    )
-
-    description = models.TextField(
-        help_text="""
-            A description of the group.  Max 1000 characters.""",
-        blank=True,
-        max_length=1000,
-    )
-
-    visitor_information = models.TextField(
-        max_length=255,
-        blank=True,
-        default='',
     )
 
     participants = models.CharField(
@@ -1213,30 +1054,8 @@ class Group(TimeStampedModel):
         max_length=255,
     )
 
-    notes = models.TextField(
-        help_text="""
-            Notes (for internal use only).""",
-        blank=True,
-    )
-
-    mc_pk = models.CharField(
-        null=True,
-        blank=True,
-        max_length=36,
-        unique=True,
-        db_index=True,
-    )
-
-    # Denormalizations
-    tree_sort = models.IntegerField(
-        unique=True,
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
     is_senior = models.BooleanField(
-        help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
+        help_text="""Qualifies as a Senior Group.  Must be set manually.""",
         default=False,
     )
 
@@ -1245,24 +1064,38 @@ class Group(TimeStampedModel):
         default=False,
     )
 
-    is_divided = models.BooleanField(
-        help_text="""This district has divisions.""",
-        default=False,
+    description = models.TextField(
+        help_text="""
+            A description of the group.  Max 1000 characters.""",
+        blank=True,
+        max_length=1000,
     )
+
+    notes = models.TextField(
+        help_text="""
+            Notes (for internal use only).""",
+        blank=True,
+    )
+
+    source_id = models.CharField(
+        null=True,
+        blank=True,
+        max_length=36,
+        unique=True,
+        db_index=True,
+    )
+
+    image = models.ImageField(
+        upload_to=ImageUploadPath('image'),
+        null=True,
+        blank=True,
+    )
+
 
     # FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='groups',
-    )
-
-    parent = models.ForeignKey(
-        'Group',
-        null=True,
-        blank=True,
-        related_name='children',
-        db_index=True,
-        on_delete=models.SET_NULL,
     )
 
     # Relations
@@ -1279,15 +1112,8 @@ class Group(TimeStampedModel):
         else:
             suffix = "[No BHS ID]"
         if self.code:
-            code = "({0})".format(self.code)
-        else:
-            code = ""
-        full = [
-            self.name,
-            code,
-            suffix,
-        ]
-        return " ".join(full)
+            suffix = "({0}) {1}".format(self.code, suffix)
+        return "{0} {1}".format(self.name, suffix)
 
     @cached_property
     def image_id(self):
@@ -1387,17 +1213,7 @@ class Group(TimeStampedModel):
     objects = GroupManager()
 
     class Meta:
-        # ordering = ['tree_sort']
         verbose_name_plural = 'Groups'
-        constraints = [
-            models.UniqueConstraint(
-                name='unique_group',
-                fields=[
-                    'bhs_id',
-                    'kind',
-                ]
-            )
-        ]
 
 
     class JSONAPIMeta:
@@ -1589,67 +1405,22 @@ class Person(TimeStampedModel):
         default=STATUS.active,
     )
 
-    prefix = models.CharField(
+    name = models.CharField(
         help_text="""
-            The prefix of the person.""",
+            The common name of the person.""",
         max_length=255,
-        blank=True,
-        default='',
     )
 
     first_name = models.CharField(
         help_text="""
             The first name of the person.""",
         max_length=255,
-        editable=False,
-    )
-
-    middle_name = models.CharField(
-        help_text="""
-            The middle name of the person.""",
-        max_length=255,
-        editable=False,
     )
 
     last_name = models.CharField(
         help_text="""
             The last name of the person.""",
         max_length=255,
-        editable=False,
-    )
-
-    nick_name = models.CharField(
-        help_text="""
-            The nickname of the person.""",
-        max_length=255,
-        editable=False,
-    )
-
-    suffix = models.CharField(
-        help_text="""
-            The suffix of the person.""",
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
-    birth_date = models.DateField(
-        null=True,
-        editable=False,
-    )
-
-    spouse = models.CharField(
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
-    location = models.CharField(
-        help_text="""
-            The geographical location of the resource.""",
-        max_length=255,
-        blank=True,
-        default='',
     )
 
     PART = Choices(
@@ -1661,15 +1432,8 @@ class Person(TimeStampedModel):
 
     part = models.IntegerField(
         choices=PART,
+        blank=True,
         null=True,
-        editable=False,
-    )
-
-    mon = models.IntegerField(
-        help_text="""
-            Men of Note.""",
-        null=True,
-        editable=False,
     )
 
     GENDER = Choices(
@@ -1679,11 +1443,11 @@ class Person(TimeStampedModel):
 
     gender = models.IntegerField(
         choices=GENDER,
+        blank=True,
         null=True,
-        editable=False,
     )
 
-    REPRESENTING = Choices(
+    DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
@@ -1704,74 +1468,43 @@ class Person(TimeStampedModel):
         (380, 'swd', 'SWD'),
     )
 
-    representing = models.IntegerField(
-        choices=REPRESENTING,
+    district = models.IntegerField(
+        choices=DISTRICT,
         null=True,
         blank=True,
-    )
-
-    district = models.CharField(
-        help_text="""
-            District (used primarily for judges.)""",
-        max_length=10,
-        blank=True,
-        default='',
-    )
-
-    is_deceased = models.BooleanField(
-        default=False,
-        editable=False,
-    )
-    is_honorary = models.BooleanField(
-        default=False,
-        editable=False,
-    )
-    is_suspended = models.BooleanField(
-        default=False,
-        editable=False,
-    )
-    is_expelled = models.BooleanField(
-        default=False,
-        editable=False,
-    )
-    website = models.URLField(
-        help_text="""
-            The website URL of the resource.""",
-        blank=True,
-        default='',
     )
 
     email = LowerEmailField(
         help_text="""
             The contact email of the resource.""",
+        blank=True,
         null=True,
-        editable=False,
     )
 
     address = models.TextField(
         help_text="""
             The complete address of the resource.""",
-        blank=True,
         max_length=1000,
+        blank=True,
         default='',
     )
 
     home_phone = PhoneNumberField(
         help_text="""
             The home phone number of the resource.  Include country code.""",
-        editable=False,
+        blank=True,
     )
 
     work_phone = PhoneNumberField(
         help_text="""
             The work phone number of the resource.  Include country code.""",
-        editable=False,
+        blank=True,
     )
 
     cell_phone = PhoneNumberField(
         help_text="""
             The cell phone number of the resource.  Include country code.""",
-        editable=False,
+        blank=True,
     )
 
     airports = ArrayField(
@@ -1779,21 +1512,15 @@ class Person(TimeStampedModel):
             blank=True,
             max_length=3,
         ),
-        null=True,
         blank=True,
-    )
-
-    image = models.ImageField(
-        upload_to=ImageUploadPath('image'),
-        null=True,
-        blank=True,
+        default=list,
     )
 
     description = models.TextField(
         help_text="""
             A bio of the person.  Max 1000 characters.""",
-        blank=True,
         max_length=1000,
+        blank=True,
         default='',
     )
 
@@ -1805,10 +1532,11 @@ class Person(TimeStampedModel):
     )
 
     bhs_id = models.IntegerField(
-        editable=False,
+        blank=True,
+        null=True,
     )
 
-    mc_pk = models.CharField(
+    source_id = models.CharField(
         null=True,
         blank=True,
         max_length=36,
@@ -1816,10 +1544,18 @@ class Person(TimeStampedModel):
         db_index=True,
     )
 
+    image = models.ImageField(
+        upload_to=ImageUploadPath('image'),
+        null=True,
+        blank=True,
+    )
+
     # Relations
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='persons',
+        blank=True,
+
     )
 
     statelogs = GenericRelation(
@@ -1828,107 +1564,31 @@ class Person(TimeStampedModel):
     )
 
     # Properties
-    def is_active(self):
-        # For Algolia indexing
-        return bool(
-            self.officers.filter(
-                status__gt=0,
-            )
-        )
+    def is_searchable(self):
+        return self.district
 
     @cached_property
     def nomen(self):
-        if self.nick_name:
-            nick = "({0})".format(self.nick_name)
-        else:
-            nick = ""
         if self.bhs_id:
             suffix = "[{0}]".format(self.bhs_id)
         else:
             suffix = "[No BHS ID]"
-        full = "{0} {1} {2} {3} {4}".format(
-            self.first_name,
-            self.middle_name,
-            self.last_name,
-            nick,
-            suffix,
-        )
-        return " ".join(full.split())
-
-    @cached_property
-    def full_name(self):
-        if self.nick_name:
-            nick = "({0})".format(self.nick_name)
-        else:
-            nick = ""
-        full = "{0} {1} {2} {3}".format(
-            self.first_name,
-            self.middle_name,
-            self.last_name,
-            nick,
-        )
-        return " ".join(full.split())
-
-    @cached_property
-    def common_name(self):
-        if self.nick_name:
-            first = self.nick_name
-        else:
-            first = self.first_name
-        return "{0} {1}".format(first, self.last_name)
-
-    @cached_property
-    def sort_name(self):
-        return "{0}, {1}".format(self.last_name, self.first_name)
-
-    @cached_property
-    def initials(self):
-        one = self.nick_name or self.first_name
-        two = str(self.last_name)
-        if not (one and two):
-            return "--"
-        return "{0}{1}".format(
-            one[0].upper(),
-            two[0].upper(),
+        return "{0} {1}".format(
+            self.name,
+            suffix
         )
 
     @cached_property
     def image_id(self):
         return self.image.name or 'missing_image'
 
+    @cached_property
     def image_url(self):
         try:
             return self.image.url
         except ValueError:
             return 'https://res.cloudinary.com/barberscore/image/upload/v1554830585/missing_image.jpg'
 
-    # @cached_property
-    # def current_through(self):
-    #     try:
-    #         current_through = self.members.get(
-    #             group__bhs_id=1,
-    #         ).end_date
-    #     except self.members.model.DoesNotExist:
-    #         current_through = None
-    #     return current_through
-
-    # @cached_property
-    # def current_status(self):
-    #     today = now().date()
-    #     if self.current_through:
-    #         if self.current_through >= today:
-    #             return True
-    #         return False
-    #     return True
-
-    # @cached_property
-    # def current_district(self):
-    #     return bool(
-    #         self.members.filter(
-    #             group__kind=11, # hardcoded for convenience
-    #             status__gt=0,
-    #         )
-    #     )
 
     # Internals
     objects = PersonManager()
@@ -1961,12 +1621,20 @@ class Person(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return False
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+            ]
+        )
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return False
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+            ]
+        )
 
     # Transitions
     @fsm_log_by

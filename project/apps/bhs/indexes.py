@@ -18,14 +18,14 @@ class AwardIndex(AlgoliaIndex):
         'name',
         'get_kind_display',
         'get_gender_display',
-        'get_representing_display',
+        'get_district_display',
     ]
     settings = {
         'searchableAttributes': [
             'name',
             'get_kind_display',
             'get_gender_display',
-            'get_representing_display',
+            'get_district_display',
         ],
         'attributesForFaceting': [
             'get_kind_display',
@@ -41,7 +41,7 @@ class GroupIndex(AlgoliaIndex):
         'get_kind_display',
         'get_gender_display',
         'code',
-        'get_representing_display',
+        'get_district_display',
         'get_division_display',
         'image_url',
         'image_id',
@@ -52,7 +52,7 @@ class GroupIndex(AlgoliaIndex):
             'name',
             'code',
             'bhs_id',
-            'get_representing_display',
+            'get_district_display',
             'get_division_display',
             'get_kind_display',
         ],
@@ -71,7 +71,7 @@ class PersonIndex(AlgoliaIndex):
         'nick_name',
         'get_gender_display',
         'get_part_display',
-        'get_representing_display',
+        'get_district_display',
         'email',
         'image_url',
         'image_id',
@@ -84,7 +84,7 @@ class PersonIndex(AlgoliaIndex):
             'bhs_id,full_name',
             'get_gender_display',
             'get_part_display',
-            'get_representing_display',
+            'get_district_display',
             'email',
         ]
     }
