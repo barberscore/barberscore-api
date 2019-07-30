@@ -29,49 +29,6 @@ from .inlines import RepertoryInline
 admin.site.site_header = 'Barberscore Admin Backend'
 
 
-@admin.register(Repertory)
-class RepertoryAdmin(VersionAdmin, FSMTransitionMixin):
-    fsm_field = [
-        'status',
-    ]
-
-    fields = [
-        'id',
-        'status',
-        'entry',
-        # 'chart',
-        'title',
-    ]
-
-    list_display = [
-        'entry',
-        # 'chart',
-        'title',
-        'status',
-    ]
-
-    save_on_top = True
-
-    readonly_fields = [
-        'id',
-    ]
-
-    autocomplete_fields = [
-        'entry',
-        # 'title',
-        # 'chart',
-    ]
-
-    inlines = [
-        StateLogInline,
-    ]
-
-    search_fields = [
-        # 'group__name',
-        # 'chart__title',
-        'title',
-    ]
-
 
 @admin.register(Assignment)
 class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
@@ -137,29 +94,28 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
         'status',
-        'award_name',
-        'award_level',
-        'award_kind',
-        'session',
-        'award_age',
-        'award_description',
-        'award_district',
-        'award_division',
-        'award_gender',
-        'award_is_novice',
-        'award_scope',
-        'award_scope_range',
-        'award_season',
-        'award_size',
-        'award_size_range',
-        'award_tree_sort',
         'award_id',
+        'name',
+        'level',
+        'kind',
+        'age',
+        'description',
+        'district',
+        'division',
+        'gender',
+        'is_novice',
+        'scope',
+        'scope_range',
+        'season',
+        'size',
+        'size_range',
+        'tree_sort',
+        'session',
 
-        # 'group',
     ]
 
     list_display = (
-        'award_name',
+        'name',
         # 'convention_name',
         'session',
         # 'group',
@@ -181,7 +137,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
         'id',
-        'award_tree_sort',
+        'tree_sort',
         # 'convention_name',
     ]
 
@@ -192,17 +148,18 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'award_name',
-        'award_district',
+        'name',
+        'district',
     ]
     ordering = [
         # '-session__convention__year',
         # 'session__convention__season',
         # 'session__convention__district',
         # 'session__convention__name',
-        'session__kind',
-        'award_name',
+        'session',
+        'name',
     ]
+
 
 @admin.register(Entry)
 class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
@@ -245,7 +202,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_filter = [
         # SessionConventionStatusListFilter,
         'status',
-        'session__kind',
+        'session',
         # 'session__convention__season',
         # 'session__convention__year',
     ]
@@ -278,8 +235,52 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'session__convention__season',
         # 'session__convention__district',
         # 'session__convention__name',
-        'session__kind',
-        'group_name',
+        'session',
+    ]
+
+
+@admin.register(Repertory)
+class RepertoryAdmin(VersionAdmin, FSMTransitionMixin):
+    fsm_field = [
+        'status',
+    ]
+
+    fields = [
+        'id',
+        'status',
+        'title',
+        'arrangers',
+        'chart_id'
+    ]
+
+    list_display = [
+        'id',
+        'status',
+        'title',
+        'arrangers',
+        'chart_id'
+    ]
+
+    save_on_top = True
+
+    readonly_fields = [
+        'id',
+    ]
+
+    autocomplete_fields = [
+        # 'entry',
+        # 'title',
+        # 'chart',
+    ]
+
+    inlines = [
+        StateLogInline,
+    ]
+
+    search_fields = [
+        # 'group__name',
+        # 'chart__title',
+        'title',
     ]
 
 

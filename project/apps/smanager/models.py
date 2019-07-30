@@ -126,6 +126,33 @@ class Assignment(TimeStampedModel):
         default='',
     )
 
+    DISTRICT = Choices(
+        (110, 'bhs', 'BHS'),
+        (200, 'car', 'CAR'),
+        (205, 'csd', 'CSD'),
+        (210, 'dix', 'DIX'),
+        (215, 'evg', 'EVG'),
+        (220, 'fwd', 'FWD'),
+        (225, 'ill', 'ILL'),
+        (230, 'jad', 'JAD'),
+        (235, 'lol', 'LOL'),
+        (240, 'mad', 'MAD'),
+        (345, 'ned', 'NED'),
+        (350, 'nsc', 'NSC'),
+        (355, 'ont', 'ONT'),
+        (360, 'pio', 'PIO'),
+        (365, 'rmd', 'RMD'),
+        (370, 'sld', 'SLD'),
+        (375, 'sun', 'SUN'),
+        (380, 'swd', 'SWD'),
+    )
+
+    district = models.IntegerField(
+        choices=DISTRICT,
+        null=True,
+        blank=True,
+    )
+
     representing = models.CharField(
         help_text="""
             District""",
@@ -298,40 +325,40 @@ class Contest(TimeStampedModel):
         blank=True,
     )
 
-    award_name = models.CharField(
+    name = models.CharField(
         help_text="""Award Name.""",
         max_length=255,
         null=True,
         blank=True,
     )
 
-    AWARD_KIND = Choices(
+    KIND = Choices(
         (32, 'chorus', "Chorus"),
         (41, 'quartet', "Quartet"),
     )
 
-    award_kind = models.IntegerField(
-        choices=AWARD_KIND,
+    kind = models.IntegerField(
+        choices=KIND,
         null=True,
         blank=True,
     )
 
-    AWARD_GENDER = Choices(
+    GENDER = Choices(
         (10, 'male', "Male"),
         (20, 'female', "Female"),
         (30, 'mixed', "Mixed"),
     )
 
-    award_gender = models.IntegerField(
+    gender = models.IntegerField(
         help_text="""
             The gender to which the award is restricted.  If unselected, this award is open to all combinations.
         """,
-        choices=AWARD_GENDER,
+        choices=GENDER,
         null=True,
         blank=True,
     )
 
-    AWARD_LEVEL = Choices(
+    LEVEL = Choices(
         (10, 'championship', "Championship"),
         (30, 'qualifier', "Qualifier"),
         (45, 'representative', "Representative"),
@@ -341,26 +368,26 @@ class Contest(TimeStampedModel):
         (80, 'standard', "Improved - Standard"),
     )
 
-    award_level = models.IntegerField(
-        choices=AWARD_LEVEL,
+    level = models.IntegerField(
+        choices=LEVEL,
         null=True,
         blank=True,
     )
 
-    AWARD_SEASON = Choices(
+    SEASON = Choices(
         (1, 'summer', 'Summer',),
         (2, 'midwinter', 'Midwinter',),
         (3, 'fall', 'Fall',),
         (4, 'spring', 'Spring',),
     )
 
-    award_season = models.IntegerField(
-        choices=AWARD_SEASON,
+    season = models.IntegerField(
+        choices=SEASON,
         null=True,
         blank=True,
     )
 
-    award_description = models.TextField(
+    description = models.TextField(
         help_text="""
             The Public description of the award.""",
         max_length=1000,
@@ -368,13 +395,13 @@ class Contest(TimeStampedModel):
         blank=True,
     )
 
-    award_district = models.CharField(
+    district = models.CharField(
         max_length=255,
         null=True,
         blank=True,
     )
 
-    AWARD_DIVISION = Choices(
+    DIVISION = Choices(
         (10, 'evgd1', 'EVG Division I'),
         (20, 'evgd2', 'EVG Division II'),
         (30, 'evgd3', 'EVG Division III'),
@@ -406,31 +433,31 @@ class Contest(TimeStampedModel):
         (290, 'swdsw', 'SWD Southwest'),
     )
 
-    award_division = models.IntegerField(
-        choices=AWARD_DIVISION,
+    division = models.IntegerField(
+        choices=DIVISION,
         null=True,
         blank=True,
     )
 
-    AWARD_AGE = Choices(
+    AGE = Choices(
         (10, 'seniors', 'Seniors',),
         (20, 'novice', 'Novice',),
         (30, 'youth', 'Youth',),
     )
 
-    award_age = models.IntegerField(
-        choices=AWARD_AGE,
+    age = models.IntegerField(
+        choices=AGE,
         null=True,
         blank=True,
     )
 
-    award_is_novice = models.BooleanField(
+    is_novice = models.BooleanField(
         default=False,
         null=True,
         blank=True,
     )
 
-    AWARD_SIZE = Choices(
+    SIZE = Choices(
         (100, 'p1', 'Plateau 1',),
         (110, 'p2', 'Plateau 2',),
         (120, 'p3', 'Plateau 3',),
@@ -447,18 +474,18 @@ class Contest(TimeStampedModel):
         (230, 'small', 'Small',),
     )
 
-    award_size = models.IntegerField(
-        choices=AWARD_SIZE,
+    size = models.IntegerField(
+        choices=SIZE,
         null=True,
         blank=True,
     )
 
-    award_size_range = IntegerRangeField(
+    size_range = IntegerRangeField(
         null=True,
         blank=True,
     )
 
-    AWARD_SCOPE = Choices(
+    SCOPE = Choices(
         (100, 'p1', 'Plateau 1',),
         (110, 'p2', 'Plateau 2',),
         (120, 'p3', 'Plateau 3',),
@@ -470,18 +497,18 @@ class Contest(TimeStampedModel):
         (175, 'paaaaa', 'Plateau AAAAA',),
     )
 
-    award_scope = models.IntegerField(
-        choices=AWARD_SCOPE,
+    scope = models.IntegerField(
+        choices=SCOPE,
         null=True,
         blank=True,
     )
 
-    award_scope_range = DecimalRangeField(
+    scope_range = DecimalRangeField(
         null=True,
         blank=True,
     )
 
-    award_tree_sort = models.IntegerField(
+    tree_sort = models.IntegerField(
         # unique=True,
         editable=False,
         null=True,
@@ -620,6 +647,15 @@ class Entry(TimeStampedModel):
         default=False,
     )
 
+    group_is_senior = models.BooleanField(
+        help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
+        default=False,
+    )
+
+    group_is_youth = models.BooleanField(
+        help_text="""Qualifies as a Youth Group.  Must be set manually.""",
+        default=False,
+    )
     draw = models.IntegerField(
         help_text="""
             The draw for the initial round only.""",
@@ -699,21 +735,7 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
-    GROUP_STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (-5, 'aic', 'AIC',),
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-    )
-
-    group_status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=GROUP_STATUS,
-        null=True,
-        blank=True,
-    )
-
-    group_name = models.CharField(
+    name = models.CharField(
         help_text="""
             The name of the resource.
         """,
@@ -722,16 +744,7 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
-    group_nomen = models.CharField(
-        help_text="""
-            The combined name of the resource.
-        """,
-        max_length=255,
-        default='',
-        blank=True,
-    )
-
-    GROUP_KIND = Choices(
+    KIND = Choices(
         ('International', [
             (1, 'international', "International"),
         ]),
@@ -750,31 +763,58 @@ class Entry(TimeStampedModel):
         ]),
     )
 
-    group_kind = models.IntegerField(
+    kind = models.IntegerField(
         help_text="""
             The kind of group.
         """,
-        choices=GROUP_KIND,
+        choices=KIND,
         null=True,
         blank=True,
     )
 
-    GROUP_GENDER = Choices(
+    GENDER = Choices(
         (10, 'male', "Male"),
         (20, 'female', "Female"),
         (30, 'mixed', "Mixed"),
     )
 
-    group_gender = models.IntegerField(
+    gender = models.IntegerField(
         help_text="""
             The gender of group.
         """,
-        choices=GROUP_GENDER,
+        choices=GENDER,
         null=True,
         blank=True,
     )
 
-    GROUP_DIVISION = Choices(
+    DISTRICT = Choices(
+        (110, 'bhs', 'BHS'),
+        (200, 'car', 'CAR'),
+        (205, 'csd', 'CSD'),
+        (210, 'dix', 'DIX'),
+        (215, 'evg', 'EVG'),
+        (220, 'fwd', 'FWD'),
+        (225, 'ill', 'ILL'),
+        (230, 'jad', 'JAD'),
+        (235, 'lol', 'LOL'),
+        (240, 'mad', 'MAD'),
+        (345, 'ned', 'NED'),
+        (350, 'nsc', 'NSC'),
+        (355, 'ont', 'ONT'),
+        (360, 'pio', 'PIO'),
+        (365, 'rmd', 'RMD'),
+        (370, 'sld', 'SLD'),
+        (375, 'sun', 'SUN'),
+        (380, 'swd', 'SWD'),
+    )
+
+    district = models.IntegerField(
+        choices=DISTRICT,
+        null=True,
+        blank=True,
+    )
+
+    DIVISION = Choices(
         ('EVG', [
             (10, 'evgd1', 'EVG Division I'),
             (20, 'evgd2', 'EVG Division II'),
@@ -818,104 +858,24 @@ class Entry(TimeStampedModel):
         ]),
     )
 
-    group_division = models.IntegerField(
-        choices=GROUP_DIVISION,
+    division = models.IntegerField(
+        choices=DIVISION,
         null=True,
         blank=True,
     )
 
-    group_bhs_id = models.IntegerField(
+    bhs_id = models.IntegerField(
         blank=True,
         null=True,
     )
 
-    group_code = models.CharField(
+    code = models.CharField(
         help_text="""
             Short-form code.""",
         max_length=255,
         blank=True,
         default='',
     )
-
-    group_description = models.TextField(
-        help_text="""
-            A description of the group.  Max 1000 characters.""",
-        blank=True,
-        max_length=1000,
-        default='',
-    )
-
-    group_participants = models.CharField(
-        help_text='Director(s) or Members (listed TLBB)',
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
-    group_tree_sort = models.IntegerField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    group_international = models.TextField(
-        help_text="""
-            The denormalized international group.""",
-        blank=True,
-        max_length=255,
-        default='',
-    )
-
-    group_district = models.TextField(
-        help_text="""
-            The denormalized district group.""",
-        blank=True,
-        max_length=255,
-        default='',
-    )
-
-    group_chapter = models.TextField(
-        help_text="""
-            The denormalized chapter group.""",
-        blank=True,
-        max_length=255,
-        default='',
-    )
-
-    group_is_senior = models.BooleanField(
-        help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
-        default=False,
-    )
-
-    group_is_youth = models.BooleanField(
-        help_text="""Qualifies as a Youth Group.  Must be set manually.""",
-        default=False,
-    )
-
-    group_is_divided = models.BooleanField(
-        help_text="""This district has divisions.""",
-        default=False,
-    )
-
-    group_is_divided = models.BooleanField(
-        help_text="""This district has divisions.""",
-        default=False,
-    )
-
-    group_charts = ArrayField(
-        base_field=JSONField(
-            default=dict,
-            blank=True,
-            null=True,
-        ),
-        null=True,
-        blank=True,
-        default=list,
-    )
-
-    # @property
-    # def convention_name(self):
-    #     return self.session.convention.__str__
 
     # FKs
     owners = models.ManyToManyField(
@@ -1526,7 +1486,7 @@ class Session(TimeStampedModel):
         default='',
     )
 
-    REPRESENTING = Choices(
+    DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
@@ -1547,8 +1507,8 @@ class Session(TimeStampedModel):
         (380, 'swd', 'SWD'),
     )
 
-    representing = models.IntegerField(
-        choices=REPRESENTING,
+    district = models.IntegerField(
+        choices=DISTRICT,
         blank=True,
         null=True,
     )
