@@ -106,6 +106,7 @@ class ChartAdmin(VersionAdmin, FSMTransitionMixin):
         'status',
         'title',
         'arrangers',
+        # 'groups',
         'created',
         'modified',
     ]
@@ -240,6 +241,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         'description',
         'participants',
         'chapters',
+        'charts',
         'notes',
         ('created', 'modified',),
     ]

@@ -715,6 +715,7 @@ class Convention(TimeStampedModel):
     persons = models.ManyToManyField(
         'Person',
         related_name='conventions',
+        blank=True,
     )
 
     owners = models.ManyToManyField(
@@ -1098,6 +1099,12 @@ class Group(TimeStampedModel):
 
 
     # FKs
+    charts = models.ManyToManyField(
+        'Chart',
+        related_name='groups',
+        blank=True,
+    )
+
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='groups',

@@ -67,6 +67,7 @@ class ChartSerializer(serializers.ModelSerializer):
             'title',
             'arrangers',
             'image_id',
+            'groups',
             'permissions',
         ]
         read_only_fields = [
@@ -158,6 +159,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'image_id',
 
             'owners',
+            'charts',
             'permissions',
 
         ]
