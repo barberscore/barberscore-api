@@ -41,29 +41,18 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'variance_report',
             'csa_report',
 
+            'group_id',
+            'name',
+            'kind',
+            'gender',
+            'district',
+            'division',
+            'bhs_id',
+            'code',
+
             'owners',
             'round',
             'outcomes',
-
-            'group_id',
-            'group_status',
-            'group_name',
-            'group_nomen',
-            'group_kind',
-            'group_gender',
-            'group_division',
-            'group_bhs_id',
-            'group_code',
-            # 'group_image_id',
-            'group_description',
-            'group_participants',
-            'group_tree_sort',
-            'group_international',
-            'group_district',
-            'group_chapter',
-            'group_is_senior',
-            'group_is_youth',
-            'group_is_divided',
 
             'songs',
             'permissions',
@@ -87,10 +76,25 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'num',
             'name',
 
-            'round',
-
             'award_id',
-            'award_name',
+            'name',
+            'kind',
+            'gender',
+            'level',
+            'season',
+            'description',
+            'district',
+            'division',
+            'age',
+            'is_novice',
+            'size',
+            'size_range',
+            'scope',
+            'scope_range',
+            'tree_sort',
+
+            'round',
+            'appearances',
 
             'permissions',
         ]
@@ -117,6 +121,13 @@ class PanelistSerializer(serializers.ModelSerializer):
             'owners',
 
             'person_id',
+            'name',
+            'first_name',
+            'last_name',
+            'district',
+            'email',
+            'cell_phone',
+            'airports',
 
             'scores',
             'permissions',
@@ -151,9 +162,15 @@ class RoundSerializer(serializers.ModelSerializer):
             'legacy_oss',
             'is_reviewed',
 
-            'owners',
-            'session_id',
+            'convention_id',
+            'nomen',
+            'timezone',
+            'image_id',
 
+            'session_id',
+            'session_kind',
+
+            'owners',
             'appearances',
             'panelists',
             'outcomes',
@@ -202,9 +219,11 @@ class SongSerializer(serializers.ModelSerializer):
             'penalties',
             'stats',
 
-            'appearance',
             'chart_id',
+            'title',
+            'arrangers',
 
+            'appearance',
             'scores',
             'permissions',
         ]

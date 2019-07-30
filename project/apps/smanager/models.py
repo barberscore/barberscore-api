@@ -185,13 +185,13 @@ class Assignment(TimeStampedModel):
         default=list,
     )
 
-    image = models.ImageField(
-        upload_to=UploadPath('image'),
+    bhs_id = models.IntegerField(
         null=True,
         blank=True,
     )
 
-    bhs_id = models.IntegerField(
+    image = models.ImageField(
+        upload_to=UploadPath('image'),
         null=True,
         blank=True,
     )
@@ -515,11 +515,6 @@ class Contest(TimeStampedModel):
         blank=True,
     )
 
-    @property
-    def convention_name(self):
-        return str(self.id)
-        # return self.session.convention.__str__
-
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -544,7 +539,7 @@ class Contest(TimeStampedModel):
 
     def __str__(self):
         return "{0}".format(
-            self.award_name,
+            self.name,
             # self.session,
         )
 
@@ -647,15 +642,16 @@ class Entry(TimeStampedModel):
         default=False,
     )
 
-    group_is_senior = models.BooleanField(
+    is_senior = models.BooleanField(
         help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
         default=False,
     )
 
-    group_is_youth = models.BooleanField(
+    is_youth = models.BooleanField(
         help_text="""Qualifies as a Youth Group.  Must be set manually.""",
         default=False,
     )
+
     draw = models.IntegerField(
         help_text="""
             The draw for the initial round only.""",
@@ -917,7 +913,7 @@ class Entry(TimeStampedModel):
 
     def __str__(self):
         return "{0}".format(
-            self.group_name,
+            self.name,
         )
 
     def clean(self):
@@ -989,23 +985,22 @@ class Entry(TimeStampedModel):
                 'arrangers': repertory.chart.arrangers,
                 'nomen': repertory.chart.nomen,
             } for repertory in repertories]
-            self.group_name = group.name
-            self.group_status = group.status
-            self.group_nomen = group.nomen
-            self.group_kind = group.kind
-            self.group_gender = group.gender
-            self.group_division = group.division
-            self.group_bhs_id = group.bhs_id
-            self.group_code = group.code
-            self.group_description = group.description
-            self.group_participants = group.participants
-            self.group_chapter = group.chapters
-            self.group_tree_sort = group.tree_sort
-            self.group_district = group.get_representing_display()
-            self.group_is_senior = group.is_senior
-            self.group_is_youth = group.is_youth
-            self.group_is_divided = group.is_divided
-            self.group_charts = charts
+            self.name = group.name
+            # self.group_nomen = group.nomen
+            # self.group_kind = group.kind
+            # self.group_gender = group.gender
+            # self.group_division = group.division
+            # self.group_bhs_id = group.bhs_id
+            # self.group_code = group.code
+            # self.group_description = group.description
+            # self.group_participants = group.participants
+            # self.group_chapter = group.chapters
+            # self.group_tree_sort = group.tree_sort
+            # self.group_district = group.get_representing_display()
+            # self.group_is_senior = group.is_senior
+            # self.group_is_youth = group.is_youth
+            # self.group_is_divided = group.is_divided
+            # self.group_charts = charts
             self.owners.set(group.owners.all())
             if group.image:
                 try:
@@ -1083,7 +1078,7 @@ class Entry(TimeStampedModel):
     def get_submit_email(self):
         template = 'emails/entry_submit.txt'
         contests = self.contests.order_by(
-            'award_name',
+            'name',
         )
         context = {
             'entry': self,
@@ -1114,7 +1109,7 @@ class Entry(TimeStampedModel):
         template = 'emails/entry_approve.txt'
         repertories = sorted(self.group_charts)
         contests = self.contests.order_by(
-            'award_name',
+            'name',
         )
         context = {
             'entry': self,
@@ -1149,13 +1144,13 @@ class Entry(TimeStampedModel):
     def can_invite_entry(self):
         return all([
             self.owners,
-            self.group_status == self.GROUP_STATUS.active,
+            # self.group_status == self.GROUP_STATUS.active,
         ])
 
     def can_submit_entry(self):
         return all([
             # Only active groups can submit.
-            self.group_status == self.GROUP_STATUS.active,
+            # self.group_status == self.GROUP_STATUS.active,
             # Check POS for choruses only
             self.pos if self.group_kind == self.GROUP_KIND.chorus else True,
             # ensure they can't submit a private while competiting.
@@ -1284,6 +1279,12 @@ class Repertory(TimeStampedModel):
         default=STATUS.active,
     )
 
+    # Chart Denorm
+    chart_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
     title = models.CharField(
         max_length=255,
     )
@@ -1293,11 +1294,6 @@ class Repertory(TimeStampedModel):
     )
 
     # FKs
-    chart_id = models.UUIDField(
-        null=True,
-        blank=True,
-    )
-
     entry = models.ForeignKey(
         'Entry',
         related_name='repertories',
@@ -1593,13 +1589,6 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-    image = models.ImageField(
-        upload_to=UploadPath('image'),
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
     DIVISION = Choices(
         ('EVG', [
             (10, 'evgd1', 'EVG Division I'),
@@ -1653,6 +1642,13 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    image = models.ImageField(
+        upload_to=UploadPath('image'),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
 
     # FKs
     owners = models.ManyToManyField(
@@ -1689,6 +1685,10 @@ class Session(TimeStampedModel):
 
     def clean(self):
         pass
+
+    @cached_property
+    def image_id(self):
+        return self.image.name or 'missing_image'
 
     # Methods
     def get_invitees(self):
@@ -1811,7 +1811,7 @@ class Session(TimeStampedModel):
             award_names = "\n".join(
                 filter(
                     None,
-                    ["{0}".format(i.award_name) for i in entry.contests.order_by('award_tree_sort')],
+                    ["{0}".format(i.name) for i in entry.contests.order_by('award_tree_sort')],
                 )
             )
 

@@ -99,9 +99,6 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
 
-
-
-
 @admin.register(Outcome)
 class OutcomeAdmin(admin.ModelAdmin):
     save_on_top = True
@@ -109,7 +106,6 @@ class OutcomeAdmin(admin.ModelAdmin):
         'id',
         'status',
         'round',
-        'award_name',
         # 'award_id',
         'num',
         'name',
@@ -119,7 +115,6 @@ class OutcomeAdmin(admin.ModelAdmin):
     list_display = [
         'status',
         'round',
-        'award_name',
         # 'award_id',
         'num',
         'name',

@@ -184,7 +184,7 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'notes',
         'owners',
         'contests',
-        'group_charts',
+        # 'group_charts',
     )
 
     list_display = (
@@ -308,7 +308,7 @@ class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'notes',
 
         'name',
-        'representing',
+        # 'representing',
         'divisions',
         ('year', 'season', ),
         'panel',

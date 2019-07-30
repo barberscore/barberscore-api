@@ -4,6 +4,7 @@ import logging
 import uuid
 from random import randint
 from io import BytesIO
+from timezone_field import TimeZoneField
 
 # Third-Party
 import pydf
@@ -35,6 +36,9 @@ from django.template.loader import render_to_string
 from django.utils.functional import cached_property
 from django.conf import settings
 from django.utils.timezone import now
+from django.contrib.postgres.fields import DecimalRangeField
+from django.contrib.postgres.fields import IntegerRangeField
+from phonenumber_field.modelfields import PhoneNumberField
 
 from .tasks import build_email
 from .tasks import send_publish_email_from_round
@@ -45,6 +49,7 @@ from .tasks import send_complete_email_from_appearance
 from .tasks import save_reports_from_round
 
 from .fields import UploadPath
+from .fields import LowerEmailField
 
 
 from .managers import AppearanceManager
@@ -172,44 +177,13 @@ class Appearance(TimeStampedModel):
         default='',
     )
 
-    # Appearance FKs
-    owners = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name='appearances',
-    )
-
-    round = models.ForeignKey(
-        'Round',
-        related_name='appearances',
-        on_delete=models.CASCADE,
-    )
-
-    outcomes = models.ManyToManyField(
-        'Outcome',
-        related_name='appearances',
-        blank=True,
-    )
-
+    # Denorm
     group_id = models.UUIDField(
         null=True,
         blank=True,
     )
 
-    GROUP_STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (-5, 'aic', 'AIC',),
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-    )
-
-    group_status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=GROUP_STATUS,
-        null=True,
-        blank=True,
-    )
-
-    group_name = models.CharField(
+    name = models.CharField(
         help_text="""
             The name of the resource.
         """,
@@ -218,59 +192,64 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
-    group_nomen = models.CharField(
-        help_text="""
-            The combined name of the resource.
-        """,
-        max_length=255,
-        default='',
-        blank=True,
+    KIND = Choices(
+        (32, 'chorus', "Chorus"),
+        (41, 'quartet', "Quartet"),
+        (46, 'vlq', "VLQ"),
     )
 
-    GROUP_KIND = Choices(
-        ('International', [
-            (1, 'international', "International"),
-        ]),
-        ('District', [
-            (11, 'district', "District"),
-            (12, 'noncomp', "Noncompetitive"),
-            (13, 'affiliate', "Affiliate"),
-        ]),
-        ('Chapter', [
-            (30, 'chapter', "Chapter"),
-        ]),
-        ('Group', [
-            (32, 'chorus', "Chorus"),
-            (41, 'quartet', "Quartet"),
-            (46, 'vlq', "VLQ"),
-        ]),
-    )
-
-    group_kind = models.IntegerField(
+    kind = models.IntegerField(
         help_text="""
             The kind of group.
         """,
-        choices=GROUP_KIND,
+        choices=KIND,
         null=True,
         blank=True,
     )
 
-    GROUP_GENDER = Choices(
+    GENDER = Choices(
         (10, 'male', "Male"),
         (20, 'female', "Female"),
         (30, 'mixed', "Mixed"),
     )
 
-    group_gender = models.IntegerField(
+    gender = models.IntegerField(
         help_text="""
             The gender of group.
         """,
-        choices=GROUP_GENDER,
+        choices=GENDER,
         null=True,
         blank=True,
     )
 
-    GROUP_DIVISION = Choices(
+    DISTRICT = Choices(
+        (110, 'bhs', 'BHS'),
+        (200, 'car', 'CAR'),
+        (205, 'csd', 'CSD'),
+        (210, 'dix', 'DIX'),
+        (215, 'evg', 'EVG'),
+        (220, 'fwd', 'FWD'),
+        (225, 'ill', 'ILL'),
+        (230, 'jad', 'JAD'),
+        (235, 'lol', 'LOL'),
+        (240, 'mad', 'MAD'),
+        (345, 'ned', 'NED'),
+        (350, 'nsc', 'NSC'),
+        (355, 'ont', 'ONT'),
+        (360, 'pio', 'PIO'),
+        (365, 'rmd', 'RMD'),
+        (370, 'sld', 'SLD'),
+        (375, 'sun', 'SUN'),
+        (380, 'swd', 'SWD'),
+    )
+
+    district = models.IntegerField(
+        choices=DISTRICT,
+        null=True,
+        blank=True,
+    )
+
+    DIVISION = Choices(
         ('EVG', [
             (10, 'evgd1', 'EVG Division I'),
             (20, 'evgd2', 'EVG Division II'),
@@ -314,18 +293,18 @@ class Appearance(TimeStampedModel):
         ]),
     )
 
-    group_division = models.IntegerField(
-        choices=GROUP_DIVISION,
+    division = models.IntegerField(
+        choices=DIVISION,
         null=True,
         blank=True,
     )
 
-    group_bhs_id = models.IntegerField(
+    bhs_id = models.IntegerField(
         blank=True,
         null=True,
     )
 
-    group_code = models.CharField(
+    code = models.CharField(
         help_text="""
             Short-form code.""",
         max_length=255,
@@ -333,69 +312,22 @@ class Appearance(TimeStampedModel):
         default='',
     )
 
-    group_description = models.TextField(
-        help_text="""
-            A description of the group.  Max 1000 characters.""",
+    # Appearance FKs
+    owners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='appearances',
+    )
+
+    round = models.ForeignKey(
+        'Round',
+        related_name='appearances',
+        on_delete=models.CASCADE,
+    )
+
+    outcomes = models.ManyToManyField(
+        'Outcome',
+        related_name='appearances',
         blank=True,
-        max_length=1000,
-        default='',
-    )
-
-    group_participants = models.CharField(
-        help_text='Director(s) or Members (listed TLBB)',
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
-    group_tree_sort = models.IntegerField(
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
-    group_international = models.TextField(
-        help_text="""
-            The denormalized international group.""",
-        blank=True,
-        max_length=255,
-        default='',
-    )
-
-    group_district = models.TextField(
-        help_text="""
-            The denormalized district group.""",
-        blank=True,
-        max_length=255,
-        default='',
-    )
-
-    group_chapter = models.TextField(
-        help_text="""
-            The denormalized chapter group.""",
-        blank=True,
-        max_length=255,
-        default='',
-    )
-
-    group_is_senior = models.BooleanField(
-        help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
-        default=False,
-    )
-
-    group_is_youth = models.BooleanField(
-        help_text="""Qualifies as a Youth Group.  Must be set manually.""",
-        default=False,
-    )
-
-    group_is_divided = models.BooleanField(
-        help_text="""This district has divisions.""",
-        default=False,
-    )
-
-    group_is_divided = models.BooleanField(
-        help_text="""This district has divisions.""",
-        default=False,
     )
 
     # Relations
@@ -1399,15 +1331,200 @@ class Outcome(TimeStampedModel):
         blank=True,
     )
 
+    # Denormalized from BHS Award
     award_id = models.UUIDField(
         null=True,
         blank=True,
     )
 
-    award_name = models.CharField(
-        max_length=1024,
+    name = models.CharField(
+        help_text="""Award Name.""",
+        max_length=255,
+        null=True,
         blank=True,
-        default='',
+    )
+
+    KIND = Choices(
+        (32, 'chorus', "Chorus"),
+        (41, 'quartet', "Quartet"),
+    )
+
+    kind = models.IntegerField(
+        choices=KIND,
+        null=True,
+        blank=True,
+    )
+
+    GENDER = Choices(
+        (10, 'male', "Male"),
+        (20, 'female', "Female"),
+        (30, 'mixed', "Mixed"),
+    )
+
+    gender = models.IntegerField(
+        help_text="""
+            The gender to which the award is restricted.  If unselected, this award is open to all combinations.
+        """,
+        choices=GENDER,
+        null=True,
+        blank=True,
+    )
+
+    LEVEL = Choices(
+        (10, 'championship', "Championship"),
+        (30, 'qualifier', "Qualifier"),
+        (45, 'representative', "Representative"),
+        (50, 'deferred', "Deferred"),
+        (60, 'manual', "Manual"),
+        (70, 'raw', "Improved - Raw"),
+        (80, 'standard', "Improved - Standard"),
+    )
+
+    level = models.IntegerField(
+        choices=LEVEL,
+        null=True,
+        blank=True,
+    )
+
+    SEASON = Choices(
+        (1, 'summer', 'Summer',),
+        (2, 'midwinter', 'Midwinter',),
+        (3, 'fall', 'Fall',),
+        (4, 'spring', 'Spring',),
+    )
+
+    season = models.IntegerField(
+        choices=SEASON,
+        null=True,
+        blank=True,
+    )
+
+    description = models.TextField(
+        help_text="""
+            The Public description of the award.""",
+        max_length=1000,
+        null=True,
+        blank=True,
+    )
+
+    district = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    DIVISION = Choices(
+        (10, 'evgd1', 'EVG Division I'),
+        (20, 'evgd2', 'EVG Division II'),
+        (30, 'evgd3', 'EVG Division III'),
+        (40, 'evgd4', 'EVG Division IV'),
+        (50, 'evgd5', 'EVG Division V'),
+        (60, 'fwdaz', 'FWD Arizona'),
+        (70, 'fwdne', 'FWD Northeast'),
+        (80, 'fwdnw', 'FWD Northwest'),
+        (90, 'fwdse', 'FWD Southeast'),
+        (100, 'fwdsw', 'FWD Southwest'),
+        (110, 'lol10l', 'LOL 10000 Lakes'),
+        (120, 'lolone', 'LOL Division One'),
+        (130, 'lolnp', 'LOL Northern Plains'),
+        (140, 'lolpkr', 'LOL Packerland'),
+        (150, 'lolsw', 'LOL Southwest'),
+        # (160, 'madatl', 'MAD Atlantic'),
+        (170, 'madcen', 'MAD Central'),
+        (180, 'madnth', 'MAD Northern'),
+        (190, 'madsth', 'MAD Southern'),
+        # (200, 'madwst', 'MAD Western'),
+        (210, 'nedgp', 'NED Granite and Pine'),
+        (220, 'nedmtn', 'NED Mountain'),
+        (230, 'nedpat', 'NED Patriot'),
+        (240, 'nedsun', 'NED Sunrise'),
+        (250, 'nedyke', 'NED Yankee'),
+        (260, 'swdne', 'SWD Northeast'),
+        (270, 'swdnw', 'SWD Northwest'),
+        (280, 'swdse', 'SWD Southeast'),
+        (290, 'swdsw', 'SWD Southwest'),
+    )
+
+    division = models.IntegerField(
+        choices=DIVISION,
+        null=True,
+        blank=True,
+    )
+
+    AGE = Choices(
+        (10, 'seniors', 'Seniors',),
+        (20, 'novice', 'Novice',),
+        (30, 'youth', 'Youth',),
+    )
+
+    age = models.IntegerField(
+        choices=AGE,
+        null=True,
+        blank=True,
+    )
+
+    is_novice = models.BooleanField(
+        default=False,
+        null=True,
+        blank=True,
+    )
+
+    SIZE = Choices(
+        (100, 'p1', 'Plateau 1',),
+        (110, 'p2', 'Plateau 2',),
+        (120, 'p3', 'Plateau 3',),
+        (130, 'p4', 'Plateau 4',),
+        (140, 'pa', 'Plateau A',),
+        (150, 'paa', 'Plateau AA',),
+        (160, 'paaa', 'Plateau AAA',),
+        (170, 'paaaa', 'Plateau AAAA',),
+        (180, 'pb', 'Plateau B',),
+        (190, 'pi', 'Plateau I',),
+        (200, 'pii', 'Plateau II',),
+        (210, 'piii', 'Plateau III',),
+        (220, 'piv', 'Plateau IV',),
+        (230, 'small', 'Small',),
+    )
+
+    size = models.IntegerField(
+        choices=SIZE,
+        null=True,
+        blank=True,
+    )
+
+    size_range = IntegerRangeField(
+        null=True,
+        blank=True,
+    )
+
+    SCOPE = Choices(
+        (100, 'p1', 'Plateau 1',),
+        (110, 'p2', 'Plateau 2',),
+        (120, 'p3', 'Plateau 3',),
+        (130, 'p4', 'Plateau 4',),
+        (140, 'pa', 'Plateau A',),
+        (150, 'paa', 'Plateau AA',),
+        (160, 'paaa', 'Plateau AAA',),
+        (170, 'paaaa', 'Plateau AAAA',),
+        (175, 'paaaaa', 'Plateau AAAAA',),
+    )
+
+    scope = models.IntegerField(
+        choices=SCOPE,
+        null=True,
+        blank=True,
+    )
+
+    scope_range = DecimalRangeField(
+        null=True,
+        blank=True,
+    )
+
+    tree_sort = models.IntegerField(
+        # unique=True,
+        editable=False,
+        null=True,
+        blank=True,
     )
 
     # FKs
@@ -1602,7 +1719,7 @@ class Outcome(TimeStampedModel):
         resource_name = "outcome"
 
     def __str__(self):
-        return self.award_name or str(self.id)
+        return self.name or str(self.id)
 
     def clean(self):
         pass
@@ -1699,10 +1816,103 @@ class Panelist(TimeStampedModel):
         default='',
     )
 
-    representing = models.CharField(
+    person_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
+    name = models.CharField(
+        help_text="""
+            The prefix of the person.""",
         max_length=255,
         blank=True,
         default='',
+    )
+
+    first_name = models.CharField(
+        help_text="""
+            The first name of the person.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    last_name = models.CharField(
+        help_text="""
+            The last name of the person.""",
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    DISTRICT = Choices(
+        (110, 'bhs', 'BHS'),
+        (200, 'car', 'CAR'),
+        (205, 'csd', 'CSD'),
+        (210, 'dix', 'DIX'),
+        (215, 'evg', 'EVG'),
+        (220, 'fwd', 'FWD'),
+        (225, 'ill', 'ILL'),
+        (230, 'jad', 'JAD'),
+        (235, 'lol', 'LOL'),
+        (240, 'mad', 'MAD'),
+        (345, 'ned', 'NED'),
+        (350, 'nsc', 'NSC'),
+        (355, 'ont', 'ONT'),
+        (360, 'pio', 'PIO'),
+        (365, 'rmd', 'RMD'),
+        (370, 'sld', 'SLD'),
+        (375, 'sun', 'SUN'),
+        (380, 'swd', 'SWD'),
+    )
+
+    district = models.IntegerField(
+        choices=DISTRICT,
+        null=True,
+        blank=True,
+    )
+
+    representing = models.CharField(
+        help_text="""
+            District""",
+        max_length=10,
+        blank=True,
+        default='',
+    )
+
+    email = LowerEmailField(
+        help_text="""
+            The contact email of the resource.""",
+        blank=True,
+        null=True,
+    )
+
+    cell_phone = PhoneNumberField(
+        help_text="""
+            The cell phone number of the resource.  Include country code.""",
+        blank=True,
+        null=True,
+    )
+
+    airports = ArrayField(
+        base_field=models.CharField(
+            blank=True,
+            max_length=3,
+        ),
+        null=True,
+        blank=True,
+        default=list,
+    )
+
+    image = models.ImageField(
+        upload_to=UploadPath('image'),
+        null=True,
+        blank=True,
+    )
+
+    bhs_id = models.IntegerField(
+        null=True,
+        blank=True,
     )
 
     # FKs
@@ -1715,11 +1925,6 @@ class Panelist(TimeStampedModel):
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='panelists',
-    )
-
-    person_id = models.UUIDField(
-        null=True,
-        blank=True,
     )
 
     # Relations
@@ -2079,20 +2284,67 @@ class Round(TimeStampedModel):
         blank=True,
         default='',
     )
+
     is_reviewed = models.BooleanField(
         help_text="""Reviewed for history app""",
         default=False,
+    )
+
+    # Convention Denorm
+    convention_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
+    nomen = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    timezone = TimeZoneField(
+        help_text="""
+            The local timezone of the convention.""",
+        null=True,
+        blank=True,
+    )
+
+    image = models.ImageField(
+        upload_to=UploadPath('image'),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    # Session Denorm
+    session_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
+    SESSION_KIND = Choices(
+        (32, 'chorus', "Chorus"),
+        (41, 'quartet', "Quartet"),
+        (42, 'mixed', "Mixed"),
+        (43, 'senior', "Senior"),
+        (44, 'youth', "Youth"),
+        (45, 'unknown', "Unknown"),
+        (46, 'vlq', "VLQ"),
+    )
+
+    session_kind = models.IntegerField(
+        help_text="""
+            The kind of session.  Generally this will be either quartet or chorus.
+        """,
+        choices=SESSION_KIND,
+        blank=True,
+        null=True,
     )
 
     # FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='rounds',
-    )
-
-    session_id = models.UUIDField(
-        null=True,
-        blank=True,
     )
 
     # Relations
@@ -2120,6 +2372,10 @@ class Round(TimeStampedModel):
         #     self.session.get_kind_display(),
         #     self.get_kind_display(),
         # )
+
+    @cached_property
+    def image_id(self):
+        return self.image.name or 'missing_image'
 
     # Methods
     def get_oss(self, zoom=1):
@@ -4455,16 +4711,29 @@ class Song(TimeStampedModel):
         blank=True,
     )
 
+    # Chart Denorm
+    chart_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
+    title = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    arrangers = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
     # FKs
     appearance = models.ForeignKey(
         'Appearance',
         related_name='songs',
         on_delete=models.CASCADE,
-    )
-
-    chart_id = models.UUIDField(
-        null=True,
-        blank=True,
     )
 
     # Internals

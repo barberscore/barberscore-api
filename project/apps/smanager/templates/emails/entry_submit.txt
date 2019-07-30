@@ -21,7 +21,7 @@ Score/Eval-Only: {{entry.is_private|yesno|title}}
 {% if not is_private %}
 You selected to enter the following contests/awards:
 {% for contest in contests %}
-    - {{contest.award_name|safe}}
+    - {{contest.name|safe}}
 {% empty %}
     Not competing for any awards (Score/Eval only).
 {% endfor %}
