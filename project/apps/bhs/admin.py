@@ -287,6 +287,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
 
     autocomplete_fields = [
         'owners',
+        'charts',
     ]
     raw_id_fields = [
     ]
