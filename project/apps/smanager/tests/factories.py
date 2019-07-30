@@ -33,7 +33,7 @@ from rest_framework_jwt.models import User
 
 
 class AssignmentFactory(DjangoModelFactory):
-    status = Assignment.STATUS.active
+    # status = Assignment.STATUS.active
     kind = Assignment.KIND.official
     # convention = SubFactory('factories.ConventionFactory')
     # person = SubFactory('factories.PersonFactory')
@@ -43,7 +43,7 @@ class AssignmentFactory(DjangoModelFactory):
 
 
 class ContestFactory(DjangoModelFactory):
-    status = Contest.STATUS.included
+    # status = Contest.STATUS.included
     session = SubFactory('apps.smanager.tests.factories.SessionFactory')
     # award = SubFactory('factories.AwardFactory')
 
@@ -63,9 +63,9 @@ class EntryFactory(DjangoModelFactory):
 
 
 class RepertoryFactory(DjangoModelFactory):
-    status = Repertory.STATUS.active
+    # status = Repertory.STATUS.active
     # group = SubFactory('factories.GroupFactory')
-    # chart = SubFactory('factories.ChartFactory')
+    entry = SubFactory('apps.smanager.tests.factories.EntryFactory')
 
     class Meta:
         model = Repertory

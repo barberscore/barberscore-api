@@ -4,44 +4,35 @@ from fsm_admin.mixins import FSMTransitionMixin
 
 # Django
 from django.contrib import admin
+from reversion.admin import VersionAdmin
 
 # Local
 # from .filters import ConventionStatusListFilter
 # from .filters import SessionConventionStatusListFilter
 # from .filters import ActiveConventionListFilter
-from .inlines import AssignmentInline
 # from .inlines import ConventionInline
 from .inlines import ContestInline
 from .inlines import EntryInline
-from .inlines import SessionInline
 
 from .models import Assignment
 from .models import Contest
 from .models import Entry
 from .models import Session
 from .models import Repertory
-from reversion.admin import VersionAdmin
 
-from .inlines import RepertoryInline
 
-# from api.inlines import RoundInline
 
 admin.site.site_header = 'Barberscore Admin Backend'
 
 
 
 @admin.register(Assignment)
-class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fsm_field = [
-        'status',
-    ]
+class AssignmentAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
-        'status',
         'kind',
         'session',
         'person_id',
-        # 'user',
         'category',
     ]
 
@@ -51,11 +42,9 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'session',
         'category',
         'kind',
-        'status',
     ]
 
     list_filter = (
-        'status',
         'kind',
         'category',
         # ActiveConventionListFilter,
@@ -75,9 +64,7 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     readonly_fields = [
     ]
-    inlines = [
-        StateLogInline,
-    ]
+
     raw_id_fields = [
         # 'user',
     ]
@@ -90,10 +77,9 @@ class AssignmentAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Contest)
-class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class ContestAdmin(admin.ModelAdmin):
     fields = [
         'id',
-        'status',
         'award_id',
         'name',
         'level',
@@ -122,17 +108,12 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     list_filter = [
-        'status',
         # 'award__kind',
     ]
 
     save_on_top = True
 
     inlines = [
-    ]
-
-    fsm_field = [
-        'status',
     ]
 
     readonly_fields = [
@@ -162,7 +143,7 @@ class ContestAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Entry)
-class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class EntryAdmin(FSMTransitionMixin, VersionAdmin):
     fsm_field = [
         'status',
     ]
@@ -240,14 +221,10 @@ class EntryAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Repertory)
-class RepertoryAdmin(VersionAdmin, FSMTransitionMixin):
-    fsm_field = [
-        'status',
-    ]
+class RepertoryAdmin(admin.ModelAdmin):
 
     fields = [
         'id',
-        'status',
         'title',
         'arrangers',
         'chart_id'
@@ -255,7 +232,6 @@ class RepertoryAdmin(VersionAdmin, FSMTransitionMixin):
 
     list_display = [
         'id',
-        'status',
         'title',
         'arrangers',
         'chart_id'
@@ -274,7 +250,6 @@ class RepertoryAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
     inlines = [
-        StateLogInline,
     ]
 
     search_fields = [
@@ -284,9 +259,8 @@ class RepertoryAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
 
-
 @admin.register(Session)
-class SessionAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class SessionAdmin(FSMTransitionMixin, VersionAdmin):
     fsm_field = [
         'status',
     ]

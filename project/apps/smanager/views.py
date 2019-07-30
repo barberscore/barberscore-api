@@ -35,7 +35,7 @@ from .responders import XLSXResponse
 from .serializers import ContestSerializer
 from .serializers import EntrySerializer
 from .serializers import SessionSerializer
-from .filtersets import AssignmentFilterset
+# from .filtersets import AssignmentFilterset
 from .models import Assignment
 from .serializers import AssignmentSerializer
 from .serializers import RepertorySerializer
@@ -47,52 +47,6 @@ log = logging.getLogger(__name__)
 from rest_framework.negotiation import BaseContentNegotiation
 
 from .models import Repertory
-
-class RepertoryViewSet(viewsets.ModelViewSet):
-    queryset = Repertory.objects.select_related(
-        # 'group',
-        # 'chart',
-    ).prefetch_related(
-        'statelogs',
-    ).order_by('id')
-    serializer_class = RepertorySerializer
-    filter_backends = [
-        DjangoFilterBackend,
-        # RepertoryFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
-    ]
-    resource_name = "repertory"
-
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
-
 
 class IgnoreClientContentNegotiation(BaseContentNegotiation):
     def select_parser(self, request, parsers):
@@ -115,7 +69,7 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     ).prefetch_related(
     ).order_by('id')
     serializer_class = AssignmentSerializer
-    filterset_class = AssignmentFilterset
+    # filterset_class = AssignmentFilterset
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -124,33 +78,33 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "assignment"
 
-    @action(methods=['post'], detail=True)
-    def activate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.activate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
+    # @action(methods=['post'], detail=True)
+    # def activate(self, request, pk=None, **kwargs):
+    #     object = self.get_object()
+    #     try:
+    #         object.activate(by=self.request.user)
+    #     except TransitionNotAllowed:
+    #         return Response(
+    #             {'status': 'Transition conditions not met.'},
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+    #     object.save()
+    #     serializer = self.get_serializer(object)
+    #     return Response(serializer.data)
 
-    @action(methods=['post'], detail=True)
-    def deactivate(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.deactivate(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
+    # @action(methods=['post'], detail=True)
+    # def deactivate(self, request, pk=None, **kwargs):
+    #     object = self.get_object()
+    #     try:
+    #         object.deactivate(by=self.request.user)
+    #     except TransitionNotAllowed:
+    #         return Response(
+    #             {'status': 'Transition conditions not met.'},
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+    #     object.save()
+    #     serializer = self.get_serializer(object)
+    #     return Response(serializer.data)
 
 
 class ContestViewSet(viewsets.ModelViewSet):
@@ -169,33 +123,33 @@ class ContestViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "contest"
 
-    @action(methods=['post'], detail=True)
-    def include(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.include(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
+    # @action(methods=['post'], detail=True)
+    # def include(self, request, pk=None, **kwargs):
+    #     object = self.get_object()
+    #     try:
+    #         object.include(by=self.request.user)
+    #     except TransitionNotAllowed:
+    #         return Response(
+    #             {'status': 'Transition conditions not met.'},
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+    #     object.save()
+    #     serializer = self.get_serializer(object)
+    #     return Response(serializer.data)
 
-    @action(methods=['post'], detail=True)
-    def exclude(self, request, pk=None, **kwargs):
-        object = self.get_object()
-        try:
-            object.exclude(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Transition conditions not met.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
-        serializer = self.get_serializer(object)
-        return Response(serializer.data)
+    # @action(methods=['post'], detail=True)
+    # def exclude(self, request, pk=None, **kwargs):
+    #     object = self.get_object()
+    #     try:
+    #         object.exclude(by=self.request.user)
+    #     except TransitionNotAllowed:
+    #         return Response(
+    #             {'status': 'Transition conditions not met.'},
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+    #     object.save()
+    #     serializer = self.get_serializer(object)
+    #     return Response(serializer.data)
 
 
 class EntryViewSet(viewsets.ModelViewSet):
@@ -285,6 +239,52 @@ class EntryViewSet(viewsets.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
+
+
+class RepertoryViewSet(viewsets.ModelViewSet):
+    queryset = Repertory.objects.select_related(
+        # 'group',
+        # 'chart',
+    ).prefetch_related(
+        'statelogs',
+    ).order_by('id')
+    serializer_class = RepertorySerializer
+    filter_backends = [
+        DjangoFilterBackend,
+        # RepertoryFilterBackend,
+    ]
+    permission_classes = [
+        DRYPermissions,
+    ]
+    resource_name = "repertory"
+
+    # @action(methods=['post'], detail=True)
+    # def activate(self, request, pk=None, **kwargs):
+    #     object = self.get_object()
+    #     try:
+    #         object.activate(by=self.request.user)
+    #     except TransitionNotAllowed:
+    #         return Response(
+    #             {'status': 'Transition conditions not met.'},
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+    #     object.save()
+    #     serializer = self.get_serializer(object)
+    #     return Response(serializer.data)
+
+    # @action(methods=['post'], detail=True)
+    # def deactivate(self, request, pk=None, **kwargs):
+    #     object = self.get_object()
+    #     try:
+    #         object.deactivate(by=self.request.user)
+    #     except TransitionNotAllowed:
+    #         return Response(
+    #             {'status': 'Transition conditions not met.'},
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+    #     object.save()
+    #     serializer = self.get_serializer(object)
+    #     return Response(serializer.data)
 
 
 class SessionViewSet(viewsets.ModelViewSet):

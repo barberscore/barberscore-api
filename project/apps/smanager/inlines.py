@@ -17,7 +17,7 @@ class RepertoryInline(admin.TabularInline):
     fields = [
         'chart',
         'group',
-        'status',
+        # 'status',
     ]
     autocomplete_fields = [
         'chart',
@@ -28,9 +28,9 @@ class RepertoryInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
-    readonly_fields = [
-        'status',
-    ]
+    # readonly_fields = [
+    #     'status',
+    # ]
     ordering = [
         'chart__title',
     ]
@@ -39,16 +39,16 @@ class RepertoryInline(admin.TabularInline):
 class AssignmentInline(admin.TabularInline):
     model = Assignment
     fields = [
-        'status',
+        # 'status',
         'category',
         'kind',
         # 'person_id',
         'user',
         # 'convention',
     ]
-    readonly_fields = [
-        'status',
-    ]
+    # readonly_fields = [
+    #     'status',
+    # ]
     autocomplete_fields = [
         # 'person',
         # 'convention',
@@ -74,11 +74,11 @@ class ContestInline(admin.TabularInline):
         # 'award',
         # 'group',
         'session',
-        'status',
+        # 'status',
     ]
-    readonly_fields = [
-        'status',
-    ]
+    # readonly_fields = [
+    #     'status',
+    # ]
     autocomplete_fields = [
         # 'award',
         # 'group',

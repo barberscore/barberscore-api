@@ -34,20 +34,20 @@ from django.db.models import Q
 #         ).distinct()
 #         return queryset
 
-class AssignmentFilterset(FilterSet):
-    class Meta:
-        model = Assignment
-        fields = {
-            # 'user': [
-            #     'exact',
-            # ],
-            'status': [
-                'exact',
-            ],
-            # 'convention__status': [
-            #     'exact',
-            # ],
-        }
+# class AssignmentFilterset(FilterSet):
+#     class Meta:
+#         model = Assignment
+#         fields = {
+#             # 'user': [
+#             #     'exact',
+#             # ],
+#             # 'status': [
+#             #     'exact',
+#             # ],
+#             # 'convention__status': [
+#             #     'exact',
+#             # ],
+#         }
 
 
 class SessionFilterset(FilterSet):

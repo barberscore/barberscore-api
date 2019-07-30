@@ -33,7 +33,6 @@ from django.contrib.postgres.fields import DecimalRangeField
 from django.contrib.postgres.fields import IntegerRangeField
 from django.utils.functional import cached_property
 from django.contrib.postgres.fields import ArrayField
-from django.contrib.postgres.fields import JSONField
 
 from .fields import UploadPath
 from .fields import DivisionsField
@@ -58,18 +57,6 @@ class Assignment(TimeStampedModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
-    )
-
-    STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (0, 'new', 'New',),
-        (10, 'active', 'Active',),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.active,
     )
 
     KIND = Choices(
@@ -222,31 +209,6 @@ class Assignment(TimeStampedModel):
     def image_id(self):
         return self.image.name or 'missing_image'
 
-    # Assignment Methods
-    def update_from_person(self):
-        if self.person_id:
-            Person = apps.get_model('bhs.person')
-            person = Person.objects.get(id=self.person_id)
-            self.common_name = person.common_name
-            self.first_name = person.first_name
-            self.middle_name = person.middle_name
-            self.last_name = person.last_name
-            self.nick_name = person.nick_name
-            self.district = person.get_representing_display()
-            self.email = person.email
-            self.home_phone = person.home_phone
-            self.work_phone = person.work_phone
-            self.cell_phone = person.cell_phone
-            self.bhs_id = person.bhs_id
-            self.airports = person.airports
-            if person.image:
-                try:
-                    self.image.save('image', person.image.file, save=True)
-                except:
-                    pass
-        return
-
-
     # Assignment Permissions
     @staticmethod
     @allow_staff_or_superuser
@@ -263,41 +225,19 @@ class Assignment(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        roles = [
-            'SCJC',
-            'DRCJ',
-            'CA',
-        ]
-        return any(item in roles for item in request.user.roles.values_list('name'))
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+            ]
+        )
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
         return any([
-            # For SCJC
-            all([
-                'SCJC' in request.user.roles.values_list('name'),
-            ]),
-            # For all others
-            all([
-                # self.convention.owners.filter(id__contains=request.user.id),
-                # self.convention.status != self.convention.STATUS.inactive,
-            ]),
+            request.user in self.session.owners.all(),
         ])
 
-    # Transitions
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.active)
-    def activate(self, *args, **kwargs):
-        self.update_from_person()
-        """Activate the Assignment."""
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.inactive)
-    def deactivate(self, *args, **kwargs):
-        """Withdraw the Assignment."""
-        return
 
 
 class Contest(TimeStampedModel):
@@ -305,18 +245,6 @@ class Contest(TimeStampedModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
-    )
-
-    STATUS = Choices(
-        (-10, 'excluded', 'Excluded',),
-        (0, 'new', 'New',),
-        (10, 'included', 'Included',),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.new,
     )
 
     # Denormalized from BHS Award
@@ -573,12 +501,12 @@ class Contest(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        roles = [
-            'SCJC',
-            'DRCJ',
-        ]
-        return any([item in roles for item in request.user.roles.values_list('name')])
-
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'DRCJ',
+            ]
+        ),
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -586,26 +514,8 @@ class Contest(TimeStampedModel):
         if self.session.status >= self.session.STATUS.opened:
             return False
         return any([
-            # For SCJC
-            all([
-                'SCJC' in request.user.roles.values_list('name'),
-            ]),
-            # For all others
-            all([
-                self.session.owners.filter(id__contains=request.user.id),
-            ]),
+            request.user in self.session.owners.all(),
         ])
-
-    # Transitions
-    @fsm_log_by
-    @transition(field=status, source=[STATUS.new, STATUS.excluded], target=STATUS.included)
-    def include(self, *args, **kwargs):
-        return
-
-    @fsm_log_by
-    @transition(field=status, source=[STATUS.new, STATUS.included], target=STATUS.excluded)
-    def exclude(self, *args, **kwargs):
-        return
 
 
 class Entry(TimeStampedModel):
@@ -949,31 +859,24 @@ class Entry(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        roles = [
-            'SCJC',
-            'DRCJ',
-            'Manager',
-        ]
-        return any([item in roles for item in request.user.roles.values_list('name')])
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'DRCJ',
+                'Manager',
+            ]
+        ),
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
+        if self.session.status >= self.session.STATUS.packaged:
+            return False
         return any([
-            # For SCJC
+            request.user in self.session.owners.all(),
             all([
-                'SCJC' in request.user.roles.values_list('name'),
-                self.session.status < self.session.STATUS.packaged,
-            ]),
-            # For DRCJs
-            all([
-                self.session.owners.filter(id__contains=request.user.id),
-                self.session.status < self.session.STATUS.packaged,
-            ]),
-            # For Groups
-            all([
-                self.owners.filter(id__contains=request.user.id),
-                self.status <= self.STATUS.approved,
+                request.user in self.owners.all(),
+                self.status < self.STATUS.approved,
             ]),
         ])
 
@@ -1015,22 +918,12 @@ class Entry(TimeStampedModel):
                     pass
         return
 
-    def get_owner_emails(self):
+    def get_owners_emails(self):
         owners = self.owners.order_by(
             'last_name',
             'first_name',
         )
-        seen = set()
-        result = [
-            "{0} ({1}) <{2}>".format(owner.name, self.group_name, owner.email)
-            for owner in owners
-            if not (
-                "{0} ({1}) <{2}>".format(owner.name, self.group_name, owner.email) in seen or seen.add(
-                    "{0} ({1}) <{2}>".format(owner.name, self.group_name, owner.email)
-                )
-            )
-        ]
-        return result
+        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
 
     def get_invite_email(self):
         template = 'emails/entry_invite.txt'
@@ -1050,11 +943,9 @@ class Entry(TimeStampedModel):
         )
         return email
 
-
     def send_invite_email(self):
         email = self.get_invite_email()
         return email.send()
-
 
     def get_withdraw_email(self):
         # Send confirmation email
@@ -1075,11 +966,9 @@ class Entry(TimeStampedModel):
         )
         return email
 
-
     def send_withdraw_email(self):
         email = self.get_withdraw_email()
         return email.send()
-
 
     def get_submit_email(self):
         template = 'emails/entry_submit.txt'
@@ -1105,11 +994,9 @@ class Entry(TimeStampedModel):
         )
         return email
 
-
     def send_submit_email(self):
         email = self.get_submit_email()
         return email.send()
-
 
     def get_approve_email(self):
         template = 'emails/entry_approve.txt'
@@ -1136,7 +1023,6 @@ class Entry(TimeStampedModel):
             cc=cc,
         )
         return email
-
 
     def send_approve_email(self):
         email = self.get_approve_email()
@@ -1273,18 +1159,6 @@ class Repertory(TimeStampedModel):
         editable=False,
     )
 
-    STATUS = Choices(
-        (-10, 'inactive', 'Inactive',),
-        (0, 'new', 'New'),
-        (10, 'active', 'Active'),
-    )
-
-    status = FSMIntegerField(
-        help_text="""DO NOT CHANGE MANUALLY unless correcting a mistake.  Use the buttons to change state.""",
-        choices=STATUS,
-        default=STATUS.active,
-    )
-
     # Chart Denorm
     chart_id = models.UUIDField(
         null=True,
@@ -1337,61 +1211,30 @@ class Repertory(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        roles = [
-            'SCJC',
-            'DRCJ',
-            'CA',
-            'Librarian',
-        ]
         return any([
-            [item in roles for item in request.user.roles.values_list('name')],
-            # self.group.officers.filter(
-            #     person__user=request.user,
-            #     status__gt=0,
-            # ),
+            request.user in self.entry.session.owners.all(),
+            request.user in self.entry.owners.all(),
         ])
 
     @staticmethod
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        roles = [
-            'SCJC',
-            'DRCJ',
-            'Librarian',
-            'Manager',
-        ]
-        return any([item in roles for item in request.user.roles.values_list('name')])
-
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'Librarian',
+                'Manager',
+            ]
+        ),
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        roles = [
-            'SCJC',
-            'DRCJ',
-            'Librarian',
-        ]
         return any([
-            [item in roles for item in request.user.roles.values_list('name')],
-            # self.group.officers.filter(
-            #     person__user=request.user,
-            #     status__gt=0,
-            # ),
+            request.user in self.entry.owners.all(),
+            request.user.roles.filter(name='Librarian'),
         ])
-
-    # Transitions
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.active)
-    def activate(self, *args, **kwargs):
-        """Activate the Repertory."""
-        return
-
-    @fsm_log_by
-    @transition(field=status, source='*', target=STATUS.inactive)
-    def deactivate(self, *args, **kwargs):
-        """Deactivate the Repertory."""
-        return
 
 
 class Session(TimeStampedModel):
@@ -1676,9 +1519,11 @@ class Session(TimeStampedModel):
         related_query_name='sessions',
     )
 
-    # Properties
-    # Internals
-    # class Meta:
+    # Session Properties
+
+    # Session Internals
+    class Meta:
+        pass
         # unique_together = (
         #     ('convention', 'kind')
         # )
@@ -1725,7 +1570,6 @@ class Session(TimeStampedModel):
             '-tot_score',
         )
         return entries
-
 
     def get_legacy_report(self):
         wb = Workbook()
@@ -1778,7 +1622,6 @@ class Session(TimeStampedModel):
     def save_legacy_report(self):
         content = self.get_legacy_report()
         self.legacy_report.save("legacy_report", content)
-
 
     def get_drcj_report(self):
         wb = Workbook()
@@ -1858,7 +1701,6 @@ class Session(TimeStampedModel):
         content = self.get_drcj_report()
         self.drcj_report.save("drcj_report", content)
 
-
     def get_district_emails(self):
         Officer = apps.get_model('bhs.officer')
         Group = apps.get_model('bhs.group')
@@ -1900,7 +1742,6 @@ class Session(TimeStampedModel):
             )
         ]
         return result
-
 
     def get_participant_emails(self):
         Officer = apps.get_model('bhs.officer')
@@ -1948,7 +1789,6 @@ class Session(TimeStampedModel):
         email = self.get_open_email()
         return email.send()
 
-
     def get_close_email(self):
         template = 'emails/session_close.txt'
         context = {'session': self}
@@ -1969,11 +1809,9 @@ class Session(TimeStampedModel):
         )
         return email
 
-
     def send_close_email(self):
         email = self.get_close_email()
         return email.send()
-
 
     def get_verify_email(self):
         template = 'emails/session_verify.txt'
@@ -2004,7 +1842,6 @@ class Session(TimeStampedModel):
     def send_verify_email(self):
         email = self.get_verify_email()
         return email.send()
-
 
     def get_verify_report_email(self):
         template = 'emails/session_verify_report.txt'
@@ -2051,7 +1888,6 @@ class Session(TimeStampedModel):
         email = self.get_verify_report_email()
         return email.send()
 
-
     def get_package_email(self):
         template = 'emails/session_package.txt'
         approved_entries = self.entries.filter(
@@ -2081,7 +1917,6 @@ class Session(TimeStampedModel):
     def send_package_email(self):
         email = self.get_package_email()
         return email.send()
-
 
     def get_package_report_email(self):
         template = 'emails/session_package_report.txt'
@@ -2125,7 +1960,6 @@ class Session(TimeStampedModel):
         )
         return email
 
-
     def send_package_report_email(self):
         email = self.get_package_report_email()
         return email.send()
@@ -2147,22 +1981,22 @@ class Session(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        roles = [
-            'SCJC',
-            'DRCJ',
-        ]
-        return any([item in roles for item in request.user.roles.values_list('name')])
-
+        return request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'DRCJ',
+            ]
+        )
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        if self.status >= self.STATUS.finished:
+        if self.status >= self.STATUS.packaged:
             return False
         return any([
-            'SCJC' in request.user.roles.values_list('name'),
-            self.owners.filter(id__contains=request.user.id),
+            request.user in self.owners.all(),
         ])
+
 
     # Session Conditions
     def can_reset(self):
@@ -2176,13 +2010,14 @@ class Session(TimeStampedModel):
         ])
 
     def can_open(self):
-        try:
-            return all([
-                # self.convention.open_date <= datetime.date.today(),
-                self.contests.filter(status=self.contests.model.STATUS.included),
-            ])
-        except TypeError:
-            return False
+        return True
+        # try:
+        #     return all([
+        #         # # self.convention.open_date <= datetime.date.today(),
+        #         # self.contests.filter(status=self.contests.model.STATUS.included),
+        #     ])
+        # except TypeError:
+        #     return False
 
     def can_close(self):
         return True
@@ -2241,46 +2076,47 @@ class Session(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         """Build session contests."""
-        Award.objects.get_model('bhs.award')
+        raise RuntimeError("Can not build")
+        # Award.objects.get_model('bhs.award')
 
-        # Reset for indempotence
-        self.reset()
+        # # Reset for indempotence
+        # self.reset()
 
-        i = 0
-        # Get all the active awards for the convention group
-        awards = Award.filter(
-            status=Award.STATUS.active,
-            kind=self.kind,
-            season=self.convention.season,
-            # division__in=self.convention.divisions,
-        ).order_by('tree_sort')
-        if self.convention.divisions:
-            awards = awards.filter(
-                division__in=self.convention.divisions,
-            ).order_by('tree_sort')
-        for award in awards:
-            # Create contests for each active award.
-            # Could also do some logic here for more precision
-            self.contests.create(
-                status=self.contests.model.STATUS.included,
-                award=award,
-            )
-        # Create the rounds for the session, along with default # spots
-        # for next round.
-        for i in range(self.num_rounds):
-            num = i + 1
-            kind = self.num_rounds - i
-            if kind == 3: # Unique to International
-                spots = 20
-            elif num == 2 and kind != 1: # All Semis
-                spots = 10
-            else:
-                spots = 0
-            self.rounds.create(
-                num=num,
-                kind=kind,
-                spots=spots,
-            )
+        # i = 0
+        # # Get all the active awards for the convention group
+        # awards = Award.filter(
+        #     status=Award.STATUS.active,
+        #     kind=self.kind,
+        #     season=self.convention.season,
+        #     # division__in=self.convention.divisions,
+        # ).order_by('tree_sort')
+        # if self.convention.divisions:
+        #     awards = awards.filter(
+        #         division__in=self.convention.divisions,
+        #     ).order_by('tree_sort')
+        # for award in awards:
+        #     # Create contests for each active award.
+        #     # Could also do some logic here for more precision
+        #     self.contests.create(
+        #         status=self.contests.model.STATUS.included,
+        #         award=award,
+        #     )
+        # # Create the rounds for the session, along with default # spots
+        # # for next round.
+        # for i in range(self.num_rounds):
+        #     num = i + 1
+        #     kind = self.num_rounds - i
+        #     if kind == 3: # Unique to International
+        #         spots = 20
+        #     elif num == 2 and kind != 1: # All Semis
+        #         spots = 10
+        #     else:
+        #         spots = 0
+        #     self.rounds.create(
+        #         num=num,
+        #         kind=kind,
+        #         spots=spots,
+        #     )
         return
 
     @fsm_log_by

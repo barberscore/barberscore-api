@@ -23,7 +23,6 @@ class AssignmentSerializer(serializers.ModelSerializer):
         model = Assignment
         fields = (
             'id',
-            'status',
             'kind',
             'category',
 
@@ -62,7 +61,6 @@ class ContestSerializer(serializers.ModelSerializer):
         model = Contest
         fields = [
             'id',
-            'status',
 
             'award_id',
             'name',
@@ -162,7 +160,6 @@ class RepertorySerializer(serializers.ModelSerializer):
         model = Repertory
         fields = [
             'id',
-            'status',
             'chart_id',
             'title',
             'arrangers',
