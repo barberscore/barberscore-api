@@ -213,7 +213,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'end_date',
             'venue_name',
             'location',
-            'timezone',
+            # 'timezone',
             'divisions',
 
             'image_id',
