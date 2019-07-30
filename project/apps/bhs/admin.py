@@ -193,6 +193,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     inlines = [
+        StateLogInline,
     ]
 
     readonly_fields = (
@@ -212,7 +213,6 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
 
     save_on_top = True
-
 
 
 @admin.register(Group)
