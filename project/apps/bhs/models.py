@@ -712,6 +712,11 @@ class Convention(TimeStampedModel):
     )
 
     # FKs
+    persons = models.ManyToManyField(
+        'Person',
+        related_name='conventions',
+    )
+
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='conventions',

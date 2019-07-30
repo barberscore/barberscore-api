@@ -106,6 +106,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'kinds',
 
             'image_id',
+            'persons',
             'owners',
             'permissions',
         ]

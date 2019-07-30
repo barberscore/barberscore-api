@@ -154,6 +154,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'location',
         'timezone',
         'image',
+        'persons',
         'description',
     )
 
@@ -201,6 +202,7 @@ class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
     )
 
     autocomplete_fields = [
+        'persons',
         'owners',
     ]
 
