@@ -55,6 +55,11 @@ class SessionFilterset(FilterSet):
         model = Session
         fields = {
             'status': [
+                'lt',
+                'gt',
+                'exact',
+            ],
+            'owners': [
                 'exact',
             ],
             'kind': [

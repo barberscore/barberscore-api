@@ -14,9 +14,9 @@ class ConventionFilterset(FilterSet):
             # 'assignments__user': [
             #     'exact',
             # ],
-            # 'assignments__status': [
-            #     'exact',
-            # ],
+            'persons__owners': [
+                'exact',
+            ],
             'status': [
                 'exact',
             ],
