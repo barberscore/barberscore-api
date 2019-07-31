@@ -138,7 +138,7 @@ class ChartAdmin(VersionAdmin, FSMTransitionMixin):
 
 
 @admin.register(Convention)
-class ConventionAdmin(FSMTransitionMixin, admin.ModelAdmin):
+class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
     fields = (
         'id',
         # 'legacy_selection',
@@ -368,7 +368,6 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
             request
         )
         # ).prefetch_related('members')
-
 
 
 @admin.register(Person)

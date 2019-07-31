@@ -143,7 +143,7 @@ class ContestAdmin(admin.ModelAdmin):
 
 
 @admin.register(Entry)
-class EntryAdmin(FSMTransitionMixin, VersionAdmin):
+class EntryAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
     ]
@@ -260,7 +260,7 @@ class RepertoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Session)
-class SessionAdmin(FSMTransitionMixin, VersionAdmin):
+class SessionAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
     ]
