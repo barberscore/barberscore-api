@@ -652,27 +652,14 @@ class Entry(TimeStampedModel):
             The name of the resource.
         """,
         max_length=255,
-        default='',
         blank=True,
+        default='',
     )
 
     KIND = Choices(
-        ('International', [
-            (1, 'international', "International"),
-        ]),
-        ('District', [
-            (11, 'district', "District"),
-            (12, 'noncomp', "Noncompetitive"),
-            (13, 'affiliate', "Affiliate"),
-        ]),
-        ('Chapter', [
-            (30, 'chapter', "Chapter"),
-        ]),
-        ('Group', [
-            (32, 'chorus', "Chorus"),
-            (41, 'quartet', "Quartet"),
-            (46, 'vlq', "VLQ"),
-        ]),
+        (32, 'chorus', "Chorus"),
+        (41, 'quartet', "Quartet"),
+        (46, 'vlq', "VLQ"),
     )
 
     kind = models.IntegerField(
@@ -793,6 +780,8 @@ class Entry(TimeStampedModel):
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='entries',
+        blank=True,
+        null=True,
     )
 
     contests = models.ManyToManyField(
@@ -881,6 +870,28 @@ class Entry(TimeStampedModel):
         ])
 
     # Methods
+    def update_from_group(self):
+        Group = apps.get_model('bhs.group')
+        group = Group.objects.get(id=self.group_id)
+        self.name = group.name
+        self.kind = group.kind
+        self.gender = group.gender
+        self.district = group.district
+        self.division = group.division
+        self.participants = group.participants
+        self.chapters = group.chapters
+        self.image.name = group.image.name
+        self.bhs_id = group.bhs_id
+        self.code = group.code
+        self.owners.set(group.owners.all())
+        for chart in group.charts.all():
+            self.repertories.create(
+                chart_id=chart.id,
+                title=chart.title,
+                arrangers=chart.arrangers,
+            )
+        return
+
     def get_owners_emails(self):
         owners = self.owners.order_by(
             'last_name',
@@ -1035,12 +1046,8 @@ class Entry(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         """Build Entry"""
-        self.update_from_group()
-        contests = self.session.contests.filter(
-            status=self.session.contests.model.STATUS.included,
-        )
-        self.participants = self.group_participants
-        self.chapters = self.group_chapter
+        if self.group_id:
+            self.update_from_group()
         return
 
     @fsm_log_by
@@ -1686,18 +1693,19 @@ class Session(TimeStampedModel):
     def get_open_email(self):
         template = 'emails/session_open.txt'
         context = {'session': self}
-        subject = "[Barberscore] {0} Session is OPEN".format(
+        subject = "[Barberscore] {0} {1} is OPEN".format(
+            self.get_district_display(),
             self.name,
         )
         to = self.get_owners_emails()
-        bcc = self.group_owners
+        bcc = self.group_emails
         # context['bcc'] = [x.partition(" <")[0] for x in bcc]
         email = build_email(
             template=template,
             context=context,
             subject=subject,
             to=to,
-            bcc=bcc,
+            cc=bcc,
         )
         return email
 

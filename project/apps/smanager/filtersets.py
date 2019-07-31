@@ -68,6 +68,9 @@ class SessionFilterset(FilterSet):
             'is_invitational': [
                 'exact',
             ],
+            'convention_id': [
+                'exact',
+            ],
         }
 
 

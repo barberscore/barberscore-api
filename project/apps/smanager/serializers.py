@@ -125,13 +125,14 @@ class EntrySerializer(serializers.ModelSerializer):
             'name',
             'kind',
             'gender',
-            'district',
+            # 'district',
             'division',
             'bhs_id',
             'code',
 
             'owners',
             'contests',
+            'repertories',
             'session',
 
             'statelogs',
