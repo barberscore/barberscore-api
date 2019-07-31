@@ -268,7 +268,7 @@ class SessionAdmin(FSMTransitionMixin, VersionAdmin):
     fields = [
         'id',
         'status',
-        # 'convention',
+        'name',
         'kind',
         'convention_id',
         ('num_rounds', 'is_invitational',),
@@ -282,7 +282,7 @@ class SessionAdmin(FSMTransitionMixin, VersionAdmin):
         'description',
         'notes',
 
-        'name',
+        # 'name',
         # 'representing',
         'divisions',
         ('year', 'season', ),
@@ -300,7 +300,8 @@ class SessionAdmin(FSMTransitionMixin, VersionAdmin):
 
     list_display = [
         'id',
-        # 'convention',
+        'district',
+        'name',
         # 'convention__district',
         'kind',
         'num_rounds',
