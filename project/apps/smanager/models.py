@@ -239,7 +239,6 @@ class Assignment(TimeStampedModel):
         ])
 
 
-
 class Contest(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -463,10 +462,11 @@ class Contest(TimeStampedModel):
     )
 
     # Internals
-    # class Meta:
-    #     unique_together = (
-    #         ('session', 'award',)
-    #     )
+    class Meta:
+        pass
+        # unique_together = (
+        #     ('session', 'award',)
+        # )
 
     class JSONAPIMeta:
         resource_name = "contest"
@@ -881,43 +881,6 @@ class Entry(TimeStampedModel):
         ])
 
     # Methods
-    def update_from_group(self):
-        if self.group_id:
-            Group = apps.get_model('bhs.group')
-            group = Group.objects.get(id=self.group_id)
-            repertories = group.repertories.filter(
-                status__gt=0,
-            )
-            charts = [{
-                'id': str(repertory.chart.id),
-                'title': repertory.chart.title,
-                'arrangers': repertory.chart.arrangers,
-                'nomen': repertory.chart.nomen,
-            } for repertory in repertories]
-            self.name = group.name
-            # self.group_nomen = group.nomen
-            # self.group_kind = group.kind
-            # self.group_gender = group.gender
-            # self.group_division = group.division
-            # self.group_bhs_id = group.bhs_id
-            # self.group_code = group.code
-            # self.group_description = group.description
-            # self.group_participants = group.participants
-            # self.group_chapter = group.chapters
-            # self.group_tree_sort = group.tree_sort
-            # self.group_district = group.get_representing_display()
-            # self.group_is_senior = group.is_senior
-            # self.group_is_youth = group.is_youth
-            # self.group_is_divided = group.is_divided
-            # self.group_charts = charts
-            self.owners.set(group.owners.all())
-            if group.image:
-                try:
-                    self.image.save('image', group.image.file, save=True)
-                except:
-                    pass
-        return
-
     def get_owners_emails(self):
         owners = self.owners.order_by(
             'last_name',
@@ -929,11 +892,11 @@ class Entry(TimeStampedModel):
         template = 'emails/entry_invite.txt'
         context = {'entry': self}
         subject = "[Barberscore] Contest Invitation for {0}".format(
-            self.group_name,
+            self.name,
         )
         to = self.get_owner_emails()
-        cc = self.session.convention.get_drcj_emails()
-        cc.extend(self.session.convention.get_ca_emails())
+        cc = self.session.get_owner_emails()
+        # cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
             template=template,
             context=context,
@@ -952,11 +915,11 @@ class Entry(TimeStampedModel):
         template = 'emails/entry_withdraw.txt'
         context = {'entry': self}
         subject = "[Barberscore] Withdrawl Notification for {0}".format(
-            self.group_name,
+            self.name,
         )
         to = self.get_owner_emails()
-        cc = self.session.convention.get_drcj_emails()
-        cc.extend(self.session.convention.get_ca_emails())
+        cc = self.session.get_owner_emails()
+        # cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
             template=template,
             context=context,
@@ -980,11 +943,11 @@ class Entry(TimeStampedModel):
             'contests': contests,
         }
         subject = "[Barberscore] Submission Notification for {0}".format(
-            self.group_name,
+            self.name,
         )
         to = self.get_owner_emails()
-        cc = self.session.convention.get_drcj_emails()
-        cc.extend(self.session.convention.get_ca_emails())
+        cc = self.session.get_owner_emails()
+        # cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
             template=template,
             context=context,
@@ -1000,9 +963,12 @@ class Entry(TimeStampedModel):
 
     def get_approve_email(self):
         template = 'emails/entry_approve.txt'
-        repertories = sorted(self.group_charts)
+        repertories = self.repertories.order_by(
+            'title',
+            'arrangers',
+        )
         contests = self.contests.order_by(
-            'name',
+            'tree_sort',
         )
         context = {
             'entry': self,
@@ -1010,11 +976,11 @@ class Entry(TimeStampedModel):
             'contests': contests,
         }
         subject = "[Barberscore] Approval Notification for {0}".format(
-            self.group_name,
+            self.name,
         )
-        to = self.group.get_officer_emails()
-        cc = self.session.convention.get_drcj_emails()
-        cc.extend(self.session.convention.get_ca_emails())
+        to = self.get_owner_emails()
+        cc = self.session.get_owner_emails()
+        # cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
             template=template,
             context=context,
@@ -1284,6 +1250,13 @@ class Session(TimeStampedModel):
     is_invitational = models.BooleanField(
         help_text="""Invite-only (v. Open).""",
         default=False,
+    )
+
+    group_emails = ArrayField(
+        base_field=models.EmailField(
+        ),
+        blank=True,
+        default=list,
     )
 
     description = models.TextField(
@@ -1701,86 +1674,27 @@ class Session(TimeStampedModel):
         content = self.get_drcj_report()
         self.drcj_report.save("drcj_report", content)
 
-    def get_district_emails(self):
-        Officer = apps.get_model('bhs.officer')
-        Group = apps.get_model('bhs.group')
-        officers = Officer.objects.filter(
-            status=Officer.STATUS.active,
-            group__status=Group.STATUS.active,
-            person__email__isnull=False,
+    def get_owners_emails(self):
+        owners = self.owners.order_by(
+            'last_name',
+            'first_name',
         )
-        if self.kind == self.KIND.quartet:
-            officers = officers.filter(
-                group__parent=self.convention.group,
-                group__kind=self.KIND.quartet,
-            )
-        else:
-            officers = officers.filter(
-                group__parent__parent=self.convention.group,
-            ).exclude(
-                group__kind=self.KIND.quartet,
-            )
-        if self.convention.divisions:
-            officers = officers.filter(
-                group__division__in=self.convention.divisions,
-            )
-        officers = officers.order_by(
-            'group__name',
-            'person__last_name',
-            'person__first_name',
-        )
-        # Remove duplicates whilst preserving order.
-        # http://www.martinbroadhurst.com/removing-duplicates-from-a-list-while-preserving-order-in-python.html
-        seen = set()
-        result = [
-            "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,)
-            for officer in officers
-            if not (
-                "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,) in seen or seen.add(
-                    "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,)
-                )
-            )
-        ]
-        return result
-
-    def get_participant_emails(self):
-        Officer = apps.get_model('bhs.officer')
-        Entry = apps.get_model('smanager.entry')
-        officers = Officer.objects.filter(
-            group__entries__in=self.entries.filter(status=Entry.STATUS.approved),
-        ).order_by(
-            'group__name',
-            'person__last_name',
-            'person__first_name',
-        )
-        seen = set()
-        result = [
-            "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,)
-            for officer in officers
-            if not (
-                "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,) in seen or seen.add(
-                    "{0} ({1}) <{2}>".format(officer.person.common_name, officer.group.name, officer.person.email,)
-                )
-            )
-        ]
-        return result
+        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
 
     def get_open_email(self):
         template = 'emails/session_open.txt'
         context = {'session': self}
         subject = "[Barberscore] {0} Session is OPEN".format(
-            self,
+            self.name,
         )
-        to = self.convention.get_drcj_emails()
-        cc = self.convention.get_ca_emails()
-        bcc = self.get_district_emails()
-        context['bcc'] = [x.partition(" <")[0] for x in bcc]
+        to = self.get_owners_emails()
+        bcc = self.group_owners
+        # context['bcc'] = [x.partition(" <")[0] for x in bcc]
         email = build_email(
             template=template,
             context=context,
             subject=subject,
             to=to,
-            cc=cc,
             bcc=bcc,
         )
         return email

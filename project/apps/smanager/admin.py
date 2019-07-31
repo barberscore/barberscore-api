@@ -276,6 +276,7 @@ class SessionAdmin(FSMTransitionMixin, VersionAdmin):
         'legacy_report',
         'drcj_report',
         'owners',
+        'group_emails',
         # 'contests',
         # 'footnotes',
         'description',

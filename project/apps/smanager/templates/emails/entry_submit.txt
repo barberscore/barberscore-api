@@ -7,12 +7,12 @@ directly (cc'd on this email).
 
 ENTRY DETAILS
 
-Group: {{entry.group_name|safe}}
-{% if entry.group_bhs_id %}
-BHS ID: {{entry.group_bhs_id}}
+Group: {{entry.name|safe}}
+{% if entry.bhs_id %}
+BHS ID: {{entry.bhs_id}}
 {% endif %}
 
-Session: {{entry.session.convention|safe}} {{entry.session.get_kind_display}} Session
+Session: {{entry.session.name|safe}} {{entry.session.get_kind_display}} Session
 
 Requested Evaluation: {{entry.is_evaluation|yesno|title}}
 
@@ -26,7 +26,7 @@ You selected to enter the following contests/awards:
     Not competing for any awards (Score/Eval only).
 {% endfor %}
 {% endif %}
-{% if entry.group_kind == entry.GROUP_KIND.quartet %}
+{% if entry.kind == entry.KIND.quartet %}
 
 Members (TLBrBs): {{entry.participants|safe|default:"(No Members Specified)"}}
 
