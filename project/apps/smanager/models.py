@@ -781,7 +781,6 @@ class Entry(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         related_name='entries',
         blank=True,
-        null=True,
     )
 
     contests = models.ManyToManyField(
