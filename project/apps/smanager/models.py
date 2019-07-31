@@ -904,8 +904,8 @@ class Entry(TimeStampedModel):
         subject = "[Barberscore] Contest Invitation for {0}".format(
             self.name,
         )
-        to = self.get_owner_emails()
-        cc = self.session.get_owner_emails()
+        to = self.get_owners_emails()
+        cc = self.session.get_owners_emails()
         # cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
             template=template,
@@ -927,8 +927,8 @@ class Entry(TimeStampedModel):
         subject = "[Barberscore] Withdrawl Notification for {0}".format(
             self.name,
         )
-        to = self.get_owner_emails()
-        cc = self.session.get_owner_emails()
+        to = self.get_owners_emails()
+        cc = self.session.get_owners_emails()
         # cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
             template=template,
@@ -955,8 +955,8 @@ class Entry(TimeStampedModel):
         subject = "[Barberscore] Submission Notification for {0}".format(
             self.name,
         )
-        to = self.get_owner_emails()
-        cc = self.session.get_owner_emails()
+        to = self.get_owners_emails()
+        cc = self.session.get_owners_emails()
         # cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
             template=template,
@@ -988,8 +988,8 @@ class Entry(TimeStampedModel):
         subject = "[Barberscore] Approval Notification for {0}".format(
             self.name,
         )
-        to = self.get_owner_emails()
-        cc = self.session.get_owner_emails()
+        to = self.get_owners_emails()
+        cc = self.session.get_owners_emails()
         # cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
             template=template,
@@ -1020,7 +1020,7 @@ class Entry(TimeStampedModel):
             # Only active groups can submit.
             # self.group_status == self.GROUP_STATUS.active,
             # Check POS for choruses only
-            self.pos if self.group_kind == self.GROUP_KIND.chorus else True,
+            self.pos if self.kind == self.KIND.chorus else True,
             # ensure they can't submit a private while competiting.
             not all([
                 self.is_private,
