@@ -1253,10 +1253,12 @@ class Session(TimeStampedModel):
     )
 
     group_emails = ArrayField(
-        base_field=models.EmailField(
+        base_field=models.CharField(
+            blank=True,
+            max_length=100,
         ),
+        null=True,
         blank=True,
-        default=list,
     )
 
     description = models.TextField(
