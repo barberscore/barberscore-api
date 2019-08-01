@@ -116,56 +116,6 @@ class Award(TimeStampedModel):
         choices=SEASON,
     )
 
-    is_single = models.BooleanField(
-        help_text="""Single-round award""",
-        default=False,
-    )
-
-    threshold = models.FloatField(
-        help_text="""
-            The score threshold for automatic qualification (if any.)
-        """,
-        null=True,
-        blank=True,
-    )
-
-    minimum = models.FloatField(
-        help_text="""
-            The minimum score required for qualification (if any.)
-        """,
-        null=True,
-        blank=True,
-    )
-
-    advance = models.FloatField(
-        help_text="""
-            The score threshold to advance to next round (if any) in
-            multi-round qualification.
-        """,
-        null=True,
-        blank=True,
-    )
-
-    spots = models.IntegerField(
-        help_text="""Number of top spots which qualify""",
-        null=True,
-        blank=True,
-    )
-
-    description = models.TextField(
-        help_text="""
-            The Public description of the award.""",
-        blank=True,
-        max_length=1000,
-    )
-
-    notes = models.TextField(
-        help_text="""
-            Private Notes (for internal use only).""",
-        blank=True,
-    )
-
-
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
@@ -228,6 +178,55 @@ class Award(TimeStampedModel):
     division = models.IntegerField(
         choices=DIVISION,
         null=True,
+        blank=True,
+    )
+
+    is_single = models.BooleanField(
+        help_text="""Single-round award""",
+        default=False,
+    )
+
+    threshold = models.FloatField(
+        help_text="""
+            The score threshold for automatic qualification (if any.)
+        """,
+        null=True,
+        blank=True,
+    )
+
+    minimum = models.FloatField(
+        help_text="""
+            The minimum score required for qualification (if any.)
+        """,
+        null=True,
+        blank=True,
+    )
+
+    advance = models.FloatField(
+        help_text="""
+            The score threshold to advance to next round (if any) in
+            multi-round qualification.
+        """,
+        null=True,
+        blank=True,
+    )
+
+    spots = models.IntegerField(
+        help_text="""Number of top spots which qualify""",
+        null=True,
+        blank=True,
+    )
+
+    description = models.TextField(
+        help_text="""
+            The Public description of the award.""",
+        blank=True,
+        max_length=1000,
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Private Notes (for internal use only).""",
         blank=True,
     )
 
@@ -729,6 +728,9 @@ class Convention(TimeStampedModel):
         related_query_name='conventions',
     )
 
+    def is_searchable(self):
+        return bool(self.status == self.STATUS.active)
+
     @cached_property
     def image_id(self):
         return self.image.name or 'missing_image'
@@ -1176,7 +1178,7 @@ class Group(TimeStampedModel):
     #     return content
 
     # Algolia
-    def is_active(self):
+    def is_searchable(self):
         return bool(self.status == self.STATUS.active)
 
     def image_url(self):
