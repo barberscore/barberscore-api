@@ -416,12 +416,20 @@ class Chart(TimeStampedModel):
             self.arrangers,
         )
 
+    def is_searchable(self):
+        return self.district
+
     @cached_property
     def image_id(self):
         return self.image.name or 'missing_image'
 
-    def is_searchable(self):
-        return bool(self.status == self.STATUS.active)
+    @cached_property
+    def image_url(self):
+        try:
+            return self.image.url
+        except ValueError:
+            return 'https://res.cloudinary.com/barberscore/image/upload/v1554830585/missing_image.jpg'
+
 
     # Internals
     objects = ChartManager()
@@ -728,13 +736,6 @@ class Convention(TimeStampedModel):
         related_query_name='conventions',
     )
 
-    def is_searchable(self):
-        return bool(self.status == self.STATUS.active)
-
-    @cached_property
-    def image_id(self):
-        return self.image.name or 'missing_image'
-
     @cached_property
     def nomen(self):
         if self.district == self.DISTRICT.bhs:
@@ -749,6 +750,21 @@ class Convention(TimeStampedModel):
             str(self.year),
             self.name,
         ])
+
+    def is_searchable(self):
+        return self.district
+
+    @cached_property
+    def image_id(self):
+        return self.image.name or 'missing_image'
+
+    @cached_property
+    def image_url(self):
+        try:
+            return self.image.url
+        except ValueError:
+            return 'https://res.cloudinary.com/barberscore/image/upload/v1554830585/missing_image.jpg'
+
 
     # Internals
     class Meta:
@@ -1129,58 +1145,14 @@ class Group(TimeStampedModel):
             suffix = "({0}) {1}".format(self.code, suffix)
         return "{0} {1}".format(self.name, suffix)
 
+    def is_searchable(self):
+        return self.district
+
     @cached_property
     def image_id(self):
         return self.image.name or 'missing_image'
 
-    # Group Methods
-    # def update_owners(self):
-    #     officers = self.officers.filter(
-    #         status__gt=0,
-    #     )
-    #     for officer in officers:
-    #         self.owners.add(
-    #             officer.person.user,
-    #         )
-    #     return
-
-    # def get_roster(self):
-    #     Member = apps.get_model('bhs.member')
-    #     wb = Workbook()
-    #     ws = wb.active
-    #     fieldnames = [
-    #         'BHS ID',
-    #         'First Name',
-    #         'Last Name',
-    #         'Expiration Date',
-    #         'Status',
-    #     ]
-    #     ws.append(fieldnames)
-    #     members = self.members.filter(
-    #         status=Member.STATUS.active,
-    #     ).order_by('person__last_name', 'person__first_name')
-    #     for member in members:
-    #         bhs_id = member.person.bhs_id
-    #         first_name = member.person.first_name
-    #         last_name = member.person.last_name
-    #         expiration = member.person.current_through
-    #         status = member.person.get_status_display()
-    #         row = [
-    #             bhs_id,
-    #             first_name,
-    #             last_name,
-    #             expiration,
-    #             status,
-    #         ]
-    #         ws.append(row)
-    #     file = save_virtual_workbook(wb)
-    #     content = ContentFile(file)
-    #     return content
-
-    # Algolia
-    def is_searchable(self):
-        return bool(self.status == self.STATUS.active)
-
+    @cached_property
     def image_url(self):
         try:
             return self.image.url
@@ -1228,7 +1200,6 @@ class Group(TimeStampedModel):
 
     class Meta:
         verbose_name_plural = 'Groups'
-
 
     class JSONAPIMeta:
         resource_name = "group"
@@ -1578,9 +1549,6 @@ class Person(TimeStampedModel):
     )
 
     # Properties
-    def is_searchable(self):
-        return self.district
-
     @cached_property
     def nomen(self):
         if self.bhs_id:
@@ -1591,6 +1559,9 @@ class Person(TimeStampedModel):
             self.name,
             suffix
         )
+
+    def is_searchable(self):
+        return self.district
 
     @cached_property
     def image_id(self):

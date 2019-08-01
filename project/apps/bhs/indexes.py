@@ -96,7 +96,7 @@ class GroupIndex(AlgoliaIndex):
         'chapters',
         'is_senior',
         'is_youth',
-        'description'
+        'description',
         'image_url',
         'image_id',
     ]
@@ -166,4 +166,3 @@ class PersonIndex(AlgoliaIndex):
         ]
     }
     should_index = 'is_searchable'
-
