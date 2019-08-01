@@ -20,6 +20,8 @@ sentry_sdk.init(
         RqIntegration(),
     ],
     send_default_pii=True,
+    request_bodies='always',
+    release=get_env_variable("HEROKU_SLUG_COMMIT"),
     environment=get_env_variable("HEROKU_APP_NAME"),
 )
 
