@@ -106,7 +106,14 @@ class ChartAdmin(VersionAdmin, FSMTransitionMixin):
         'status',
         'title',
         'arrangers',
-        # 'groups',
+
+        'composers',
+        'lyricists',
+        'holders',
+        'description',
+        'notes',
+        'image',
+
         'created',
         'modified',
     ]

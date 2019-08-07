@@ -403,6 +403,44 @@ class Chart(TimeStampedModel):
         max_length=255,
     )
 
+    composers = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    lyricists = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    holders = models.TextField(
+        blank=True,
+        default='',
+    )
+
+    description = models.TextField(
+        help_text="""
+            Fun or interesting facts to share about the chart (ie, 'from Disney's Lion King, first sung by Elton John'.)""",
+        blank=True,
+        max_length=1000,
+        default='',
+    )
+
+    notes = models.TextField(
+        help_text="""
+            Private Notes (for internal use only).""",
+        blank=True,
+        default='',
+    )
+
+    image = models.ImageField(
+        upload_to=ImageUploadPath('image'),
+        null=True,
+        blank=True,
+    )
+
     # Relations
     statelogs = GenericRelation(
         StateLog,
@@ -417,7 +455,7 @@ class Chart(TimeStampedModel):
         )
 
     def is_searchable(self):
-        return self.district
+        return self.status == self.STATUS.active
 
     @cached_property
     def image_id(self):
