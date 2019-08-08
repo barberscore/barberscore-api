@@ -1562,7 +1562,7 @@ class Person(TimeStampedModel):
     source_id = models.CharField(
         null=True,
         blank=True,
-        max_length=36,
+        max_length=100,
         unique=True,
         db_index=True,
     )
