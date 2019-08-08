@@ -1164,6 +1164,7 @@ class Group(TimeStampedModel):
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='groups',
+        blank=True,
     )
 
     # Relations
