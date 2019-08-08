@@ -1142,7 +1142,7 @@ class Group(TimeStampedModel):
     source_id = models.CharField(
         null=True,
         blank=True,
-        max_length=36,
+        max_length=100,
         unique=True,
         db_index=True,
     )
@@ -1536,6 +1536,7 @@ class Person(TimeStampedModel):
             max_length=3,
         ),
         blank=True,
+        null=True,
         default=list,
     )
 
@@ -1627,6 +1628,9 @@ class Person(TimeStampedModel):
 
     def __str__(self):
         return self.nomen
+
+    # Person Methods
+
 
     # Permissions
     @staticmethod
