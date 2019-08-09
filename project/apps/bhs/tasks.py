@@ -6,7 +6,8 @@ from django.conf import settings
 #
 from .serializers import PersonSerializer
 from .serializers import GroupSerializer
-
+from rest_framework_json_api.parsers import JSONParser
+from django.contrib.auth import get_user_model
 # @job('low')
 # def create_or_update_group_from_structure(structure):
 #     Group = apps.get_model('bhs.group')
@@ -26,23 +27,31 @@ from .serializers import GroupSerializer
 
 # @job('low')
 def update_person_from_source(person):
+    User = get_user_model()
     source_type, _, source_pk = person.source_id.partition("|")
     if source_type != 'bhs':
         return
     response = requests.get('http://localhost:8000/bhs/person/{0}'.format(source_pk))
     human = response.json()
-    serialized = PersonSerializer(person, data=human['data']['attributes'])
+    parsed = JSONParser().parse_attributes(human['data'])
+    serialized = PersonSerializer(person, data=parsed)
     if serialized.is_valid():
-        return serialized.save()
+        usernames = parsed['usernames']
+        owners = User.objects.filter(email__in=usernames).values_list('id', flat=True)
+        return serialized.save(owners=owners)
     return serialized.errors
 
 def update_group_from_source(group):
+    User = get_user_model()
     source_type, _, source_pk = group.source_id.partition("|")
     if source_type != 'bhs':
         return
     response = requests.get('http://localhost:8000/bhs/group/{0}'.format(source_pk))
-    structure = response.json()
-    serialized = GroupSerializer(group, data=structure['data']['attributes'])
+    human = response.json()
+    parsed = JSONParser().parse_attributes(human['data'])
+    serialized = GroupSerializer(group, data=parsed)
     if serialized.is_valid():
-        return serialized.save()
+        usernames = parsed['usernames']
+        owners = User.objects.filter(email__in=usernames).values_list('id', flat=True)
+        return serialized.save(owners=owners)
     return serialized.errors

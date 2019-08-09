@@ -2,6 +2,8 @@
 # Third-Party
 from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework_json_api import serializers
+from rest_framework_json_api.relations import ResourceRelatedField
+from django.contrib.auth import get_user_model
 
 # Local
 from .fields import TimezoneField
@@ -12,6 +14,7 @@ from .models import Convention
 from .models import Group
 from .models import Person
 
+User = get_user_model()
 
 class AwardSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
@@ -184,7 +187,14 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class PersonSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+    # owners = ResourceRelatedField(
+    #     queryset=User.objects,
+    #     many=True,
+    #     read_only=False,
+    #     related_link_lookup_field='username',
+    # )
 
+    # owners = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     class Meta:
         model = Person
         fields = [
