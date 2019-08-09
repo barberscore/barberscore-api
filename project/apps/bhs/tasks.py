@@ -144,15 +144,15 @@ def get_membercenter_token():
 def update_person_from_source(person):
     User = get_user_model()
     source_type, _, source_pk = person.source_id.partition("|")
-    # if source_type != 'bhs':
-    #     return
-    access_token = get_membercenter_token()
-    headers = {
-        'Authorization': 'Bearer {0}'.format(access_token)
-    }
+    if source_type != 'bhs':
+        return
+    # access_token = get_membercenter_token()
+    # headers = {
+    #     'Authorization': 'Bearer {0}'.format(access_token)
+    # }
     response = requests.get(
-        'http://localhost:8000/bhs/person/{0}'.format(source_pk),
-        headers=headers,
+        'https://membercenter-api.herokuapp.com/bhs/person/{0}'.format(source_pk),
+        # headers=headers,
     )
     human = response.json()
     parsed = JSONParser().parse_attributes(human['data'])
@@ -168,13 +168,13 @@ def update_group_from_source(group):
     source_type, _, source_pk = group.source_id.partition("|")
     if source_type != 'bhs':
         return
-    access_token = get_membercenter_token()
-    headers = {
-        'Authorization': 'Bearer {0}'.format(access_token)
-    }
+    # access_token = get_membercenter_token()
+    # headers = {
+    #     'Authorization': 'Bearer {0}'.format(access_token)
+    # }
     response = requests.get(
-        'http://localhost:8000/bhs/group/{0}'.format(source_pk),
-        headers=headers,
+        'https://membercenter-api.herokuapp.com/bhs/group/{0}'.format(source_pk),
+        # headers=headers,
     )
     structure = response.json()
     parsed = JSONParser().parse_attributes(structure['data'])
