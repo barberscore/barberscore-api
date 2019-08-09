@@ -36,11 +36,11 @@
       "description": "Algolia Application ID key.",
       "required": true
     },
-    "AUTH0_CLIENT_ID": {
+    "BARBERSCORE_CLIENT_ID": {
       "description": "Auth0 Client id.",
       "required": true
     },
-    "AUTH0_CLIENT_SECRET": {
+    "BARBERSCORE_CLIENT_SECRET": {
       "description": "Auth0 Client secret.",
       "required": true
     },
@@ -88,8 +88,8 @@
         "ALGOLIASEARCH_APPLICATION_ID": "test",
         "ALGOLIASEARCH_API_KEY": "test",
         "AUTH0_AUDIENCE": "test",
-        "AUTH0_CLIENT_ID": "test",
-        "AUTH0_CLIENT_SECRET": "test",
+        "BARBERSCORE_CLIENT_ID": "test",
+        "BARBERSCORE_CLIENT_SECRET": "test",
         "AUTH0_DOMAIN": "login.barberscore.com"
       },
       "stack": "heroku-18",

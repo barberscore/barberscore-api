@@ -40,8 +40,8 @@ SECRET_KEY=(your secret here)
 DATABASE_URL=(your credentials here)
 REDIS_URL=(your credentials here)
 
-AUTH0_CLIENT_ID=(your credentials here)
-AUTH0_CLIENT_SECRET=(your credentials here)
+BARBERSCORE_CLIENT_ID=(your credentials here)
+BARBERSCORE_CLIENT_SECRET=(your credentials here)
 AUTH0_DOMAIN=(your credentials here)
 
 CLOUDINARY_URL=(your credentials here)
