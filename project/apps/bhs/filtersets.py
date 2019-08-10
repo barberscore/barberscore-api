@@ -17,6 +17,9 @@ class ConventionFilterset(FilterSet):
             'persons__owners': [
                 'exact',
             ],
+            'owners': [
+                'exact',
+            ],
             'status': [
                 'exact',
             ],
