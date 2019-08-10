@@ -52,6 +52,10 @@
       "description": "Cloudinary service.",
       "required": true
     },
+    "MEMBERCENTER_API": {
+      "description": "BHS Membercenter service.",
+      "required": true
+    },
     "SENTRY_DSN": {
       "description": "Sentry Bug Tracker.  Use production key.",
       "required": true
