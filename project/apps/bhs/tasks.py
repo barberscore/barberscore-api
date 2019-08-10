@@ -52,6 +52,51 @@ def get_membercenter_token():
     return membercenter_api_access_token
 
 
+def get_membercenter_response(source):
+    source_type, _, source_pk = source.source_id.partition("|")
+    if source_type != 'bhs':
+        return ValueError("Source must be BHS")
+    endpoint, _, token = settings.MEMBERCENTER_URL.partition('@')
+    url = "{0}/bhs/{1}/{2}".format(
+        endpoint,
+        source._meta.model_name,
+        source_pk,
+    )
+    headers = {
+        'Authorization': 'Token {0}'.format(token)
+    }
+    response = requests.get(
+        url,
+        headers=headers,
+    )
+    return response
+
+# @job('low')
+def update_person_from_source(person):
+    User = get_user_model()
+    response = get_membercenter_response(person)
+    human = response.json()
+    parsed = JSONParser().parse_attributes(human['data'])
+    serialized = PersonSerializer(person, data=parsed)
+    if serialized.is_valid():
+        usernames = parsed['usernames']
+        owners = User.objects.filter(email__in=usernames).values_list('id', flat=True)
+        return serialized.save(owners=owners)
+    return serialized.errors
+
+def update_group_from_source(group):
+    User = get_user_model()
+    response = get_membercenter_response(group)
+    structure = response.json()
+    parsed = JSONParser().parse_attributes(structure['data'])
+    serialized = GroupSerializer(group, data=parsed)
+    if serialized.is_valid():
+        usernames = parsed['usernames']
+        owners = User.objects.filter(email__in=usernames).values_list('id', flat=True)
+        return serialized.save(owners=owners)
+    return serialized.errors
+
+
 # def get_or_create_account_from_email(email):
 #     auth0 = get_auth0()
 #     results = auth0.users_by_email.search_users_by_email(email)
@@ -140,47 +185,3 @@ def get_membercenter_token():
 #     Officer = apps.get_model('bhs.officer')
 #     return Officer.objects.update_or_create_from_role(role)
 
-# @job('low')
-def update_person_from_source(person):
-    User = get_user_model()
-    source_type, _, source_pk = person.source_id.partition("|")
-    if source_type != 'bhs':
-        return
-    # access_token = get_membercenter_token()
-    # headers = {
-    #     'Authorization': 'Bearer {0}'.format(access_token)
-    # }
-    response = requests.get(
-        'https://membercenter-api.herokuapp.com/bhs/person/{0}'.format(source_pk),
-        # headers=headers,
-    )
-    human = response.json()
-    parsed = JSONParser().parse_attributes(human['data'])
-    serialized = PersonSerializer(person, data=parsed)
-    if serialized.is_valid():
-        usernames = parsed['usernames']
-        owners = User.objects.filter(email__in=usernames).values_list('id', flat=True)
-        return serialized.save(owners=owners)
-    return serialized.errors
-
-def update_group_from_source(group):
-    User = get_user_model()
-    source_type, _, source_pk = group.source_id.partition("|")
-    if source_type != 'bhs':
-        return
-    # access_token = get_membercenter_token()
-    # headers = {
-    #     'Authorization': 'Bearer {0}'.format(access_token)
-    # }
-    response = requests.get(
-        'https://membercenter-api.herokuapp.com/bhs/group/{0}'.format(source_pk),
-        # headers=headers,
-    )
-    structure = response.json()
-    parsed = JSONParser().parse_attributes(structure['data'])
-    serialized = GroupSerializer(group, data=parsed)
-    if serialized.is_valid():
-        usernames = parsed['usernames']
-        owners = User.objects.filter(email__in=usernames).values_list('id', flat=True)
-        return serialized.save(owners=owners)
-    return serialized.errors

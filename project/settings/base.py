@@ -65,6 +65,9 @@ JWT_AUTH = {
     'JWT_AUDIENCE': get_env_variable("AUTH0_CLIENT_ID"),
 }
 
+# BHS MemberCenter
+MEMBERCENTER_URL = get_env_variable("MEMBERCENTER_URL")
+
 # File Management
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
