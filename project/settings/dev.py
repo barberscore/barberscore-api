@@ -9,9 +9,6 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
-#  Membercenter API
-BHS_URL = get_env_variable("BHS_URL")
-
 # Mailhog
 EMAIL_PORT = 1025
 

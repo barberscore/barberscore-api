@@ -340,7 +340,7 @@
         },
         "djangorestframework-jwt": {
             "git": "https://github.com/barberscore/django-rest-framework-jwt.git",
-            "ref": "9e274fd46fead8d899d9ab6aeb22a643de673ca1"
+            "ref": "8683245d4249bca99677b8ece32120e4828caa4c"
         },
         "dry-rest-permissions": {
             "hashes": [
@@ -462,12 +462,10 @@
         },
         "mysqlclient": {
             "hashes": [
-                "sha256:425e733b05e359a714d6007c0fc44582be66b63e5a3df0a50949274ae16f4bc6",
-                "sha256:62e4770b6a797b9416bcf70488365b7d6b9c9066878108499c559293bb464380",
-                "sha256:f257d250f2675d0ef99bd318906f3cfc05cef4a2f385ea695ff32a3f04b9f9a7"
+                "sha256:0d3eeb97534c9f42e9b65bd35c1a35fadc2f6d7ea5d9fdbda5339a569156344b"
             ],
             "index": "pypi",
-            "version": "==1.4.2.post1"
+            "version": "==1.4.3"
         },
         "openpyxl": {
             "hashes": [
@@ -504,11 +502,11 @@
         },
         "phonenumberslite": {
             "hashes": [
-                "sha256:13e02bd6f29fca60b33c6c879fe864aa2f0d8aa60d997667fc49ecced2a75beb",
-                "sha256:39fc87237032641a9341d3b4447326b90e36c5ba82331cf4ae80640ec7b761f8"
+                "sha256:42aa4997b5517ef1f330ab0473885ab0d69ab5c9b9736187a81b7d7dd05e8c31",
+                "sha256:a5dc378d5929c3857abac362ee324e64d70cf26e2ddb1e7478060d7f4bab3ecf"
             ],
             "index": "pypi",
-            "version": "==8.10.15"
+            "version": "==8.10.16"
         },
         "pickleshare": {
             "hashes": [
@@ -655,11 +653,11 @@
         },
         "redis": {
             "hashes": [
-                "sha256:1f2493b72f669a096c59ca7cf7f4067b1ab58a0a3c6bef51d5d8fd384298c6a2",
-                "sha256:b851b0ef53b6d416f1dc692dc168f3d390b37995925bfe29351b3a869976598c"
+                "sha256:45682ecf226c7611efe731974c4fa3390170ba045b9cdb26f0051114a5c2a68b",
+                "sha256:f2609a85e5f37f489ba3b5652e1175dc3711c4d7a7818c4f657615810afd23df"
             ],
             "index": "pypi",
-            "version": "==3.3.4"
+            "version": "==3.3.6"
         },
         "regex": {
             "hashes": [

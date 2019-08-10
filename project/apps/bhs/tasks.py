@@ -39,9 +39,9 @@ def get_membercenter_token():
     if not membercenter_api_access_token:
         client = GetToken(api_settings.AUTH0_DOMAIN)
         response = client.client_credentials(
-            api_settings.BARBERSCORE_CLIENT_ID,
-            api_settings.BARBERSCORE_CLIENT_SECRET,
-            'https://membercenter-api.herokuapp.com',
+            api_settings.AUTH0_CLIENT_ID,
+            api_settings.AUTH0_CLIENT_SECRET,
+            api_settings.AUTH0_AUDIENCE,
         )
         cache.set(
             'membercenter_api_access_token',
