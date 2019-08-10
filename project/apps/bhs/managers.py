@@ -657,7 +657,7 @@ class AwardManager(Manager):
         ]
         ws.append(fieldnames)
         awards = self.select_related(
-            'group',
+            # 'group',
         ).filter(
             status__gt=0,
         ).order_by('tree_sort')
