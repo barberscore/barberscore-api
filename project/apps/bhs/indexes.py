@@ -83,7 +83,6 @@ class ConventionIndex(AlgoliaIndex):
 
 
 class GroupIndex(AlgoliaIndex):
-    should_index = 'is_active'
     fields = [
         'name',
         'get_kind_display',
@@ -125,7 +124,6 @@ class GroupIndex(AlgoliaIndex):
 
 
 class PersonIndex(AlgoliaIndex):
-    should_index = 'is_active'
     fields = [
         'name',
         'first_name',
