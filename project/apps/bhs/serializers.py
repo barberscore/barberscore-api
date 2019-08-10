@@ -148,7 +148,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'division',
             'bhs_id',
             'code',
-            'website',
+            # 'website',
             'location',
             'participants',
             'chapters',
