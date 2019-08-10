@@ -72,7 +72,7 @@ class ContestInline(admin.TabularInline):
     model = Contest
     fields = [
         # 'award',
-        # 'group',
+        'name',
         'session',
         # 'status',
     ]
@@ -88,7 +88,9 @@ class ContestInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
-
+    ordering = [
+        'tree_sort',
+    ]
 
 class EntryInline(admin.TabularInline):
     model = Entry

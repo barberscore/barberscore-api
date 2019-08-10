@@ -622,7 +622,7 @@ class AwardManager(Manager):
         self.all().update(tree_sort=None)
         awards = self.order_by(
             '-status',  # Actives first
-            'group__tree_sort',  # Basic BHS Hierarchy
+            'district',  # Basic BHS Hierarchy
             '-kind', # Quartet, Chorus
             'gender', #Male, mixed
             F('age').asc(nulls_first=True), # Null, Senior, Youth

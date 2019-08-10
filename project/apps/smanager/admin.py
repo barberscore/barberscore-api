@@ -269,6 +269,7 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
         'id',
         'status',
         'name',
+        'district',
         'kind',
         'convention_id',
         ('num_rounds', 'is_invitational',),

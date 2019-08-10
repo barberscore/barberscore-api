@@ -1983,10 +1983,8 @@ class Session(TimeStampedModel):
     def reset(self, *args, **kwargs):
         self.drcj_report.delete()
         contests = self.contests.all()
-        rounds = self.rounds.all()
         entries = self.entries.all()
         contests.delete()
-        rounds.delete()
         entries.delete()
         return
 
@@ -1998,48 +1996,46 @@ class Session(TimeStampedModel):
         conditions=[can_build],
     )
     def build(self, *args, **kwargs):
-        """Build session contests."""
-        raise RuntimeError("Can not build")
-        # Award.objects.get_model('bhs.award')
+        """Build Session."""
+        Award = apps.get_model('bhs.award')
 
-        # # Reset for indempotence
-        # self.reset()
+        # Reset for indempotence
+        self.reset()
 
-        # i = 0
-        # # Get all the active awards for the convention group
-        # awards = Award.filter(
-        #     status=Award.STATUS.active,
-        #     kind=self.kind,
-        #     season=self.convention.season,
-        #     # division__in=self.convention.divisions,
-        # ).order_by('tree_sort')
-        # if self.convention.divisions:
-        #     awards = awards.filter(
-        #         division__in=self.convention.divisions,
-        #     ).order_by('tree_sort')
-        # for award in awards:
-        #     # Create contests for each active award.
-        #     # Could also do some logic here for more precision
-        #     self.contests.create(
-        #         status=self.contests.model.STATUS.included,
-        #         award=award,
-        #     )
-        # # Create the rounds for the session, along with default # spots
-        # # for next round.
-        # for i in range(self.num_rounds):
-        #     num = i + 1
-        #     kind = self.num_rounds - i
-        #     if kind == 3: # Unique to International
-        #         spots = 20
-        #     elif num == 2 and kind != 1: # All Semis
-        #         spots = 10
-        #     else:
-        #         spots = 0
-        #     self.rounds.create(
-        #         num=num,
-        #         kind=kind,
-        #         spots=spots,
-        #     )
+        # Get all the active awards for the convention group
+        awards = Award.objects.filter(
+            status=Award.STATUS.active,
+            kind=self.kind,
+            season=self.season,
+            district=self.district,
+            # division__in=self.convention.divisions,
+        ).order_by('tree_sort')
+        if self.divisions:
+            awards = awards.filter(
+                division__in=self.divisions,
+            ).order_by('tree_sort')
+        for award in awards:
+            # Create contests for each active award.
+            # Could also do some logic here for more precision
+            self.contests.create(
+                award_id=award.id,
+                name=award.name,
+                kind=award.kind,
+                gender=award.gender,
+                level=award.level,
+                season=award.season,
+                description=award.description,
+                district=award.district,
+                division=award.division,
+                age=award.age,
+                is_novice=award.is_novice,
+                is_single=award.is_single,
+                size=award.size,
+                size_range=award.size_range,
+                scope=award.scope,
+                scope_range=award.scope_range,
+                tree_sort=award.tree_sort,
+            )
         return
 
     @fsm_log_by
