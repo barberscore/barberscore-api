@@ -1185,7 +1185,7 @@ class Group(TimeStampedModel):
         return "{0} {1}".format(self.name, suffix)
 
     def is_searchable(self):
-        return self.district
+        return self.status == self.STATUS.active
 
     @cached_property
     def image_id(self):
