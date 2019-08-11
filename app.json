@@ -96,9 +96,10 @@
         "ALGOLIASEARCH_APPLICATION_ID": "test",
         "ALGOLIASEARCH_API_KEY": "test",
         "AUTH0_AUDIENCE": "test",
-        "BARBERSCORE_CLIENT_ID": "test",
-        "BARBERSCORE_CLIENT_SECRET": "test",
-        "AUTH0_DOMAIN": "login.barberscore.com"
+        "AUTH0_CLIENT_ID": "test",
+        "AUTH0_CLIENT_SECRET": "test",
+        "AUTH0_DOMAIN": "login.barberscore.com",
+        "MEMBERCENTER_URL": "foobar"
       },
       "stack": "heroku-18",
       "scripts": {
