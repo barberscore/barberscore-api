@@ -68,8 +68,11 @@ class Command(BaseCommand):
         headers = {
             'Authorization': 'Token {0}'.format(token)
         }
+        i = 0
+        page = 1
         params = {
             'modified__gt': cursor,
+            'page': page,
         }
         response = requests.get(
             url,
@@ -77,8 +80,13 @@ class Command(BaseCommand):
             params=params,
         ).json()
         t = response['meta']['pagination']['count']
-        i = 0
-        if t > 0:
+        pages = response['meta']['pagination']['pages']
+        while page <= pages:
+            response = requests.get(
+                url,
+                headers=headers,
+                params=params,
+            ).json()
             for item in response['data']:
                 i += 1
                 self.stdout.flush()
@@ -90,6 +98,8 @@ class Command(BaseCommand):
                 #     user, _ = User.objects.get_or_create(email=person.email)
                 #     # person.user = user
                 #     person.save()
+            page += 1
+            params['page'] = page
         self.stdout.write("")
         self.stdout.write("Updated {0} Persons.".format(t))
         # if not cursor:
@@ -105,9 +115,12 @@ class Command(BaseCommand):
         headers = {
             'Authorization': 'Token {0}'.format(token)
         }
+        i = 0
+        page = 1
         params = {
             'modified__gt': cursor,
             'kind__gt': 30,
+            'page': page,
         }
         response = requests.get(
             url,
@@ -115,8 +128,13 @@ class Command(BaseCommand):
             params=params,
         ).json()
         t = response['meta']['pagination']['count']
-        i = 0
-        if t > 0:
+        pages = response['meta']['pagination']['pages']
+        while page <= pages:
+            response = requests.get(
+                url,
+                headers=headers,
+                params=params,
+            ).json()
             for item in response['data']:
                 i += 1
                 self.stdout.flush()
@@ -128,6 +146,8 @@ class Command(BaseCommand):
                 #     user, _ = User.objects.get_or_create(email=person.email)
                 #     # person.user = user
                 #     person.save()
+            page += 1
+            params['page'] = page
         self.stdout.write("")
         self.stdout.write("Updated {0} Groups.".format(t))        # self.stdout.write("Fetching Structures from Member Center...")
         # structures = Structure.objects.export_values(cursor=cursor)
