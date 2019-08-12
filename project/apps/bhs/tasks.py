@@ -84,18 +84,45 @@ def update_person_from_source(person):
         return serialized.save(owners=owners)
     return serialized.errors
 
-def update_group_from_source(group):
+@job('low')
+def update_person_from_membercenter(resource):
+    Person = apps.get_model('bhs.person')
     User = get_user_model()
-    response = get_membercenter_response(group)
-    structure = response.json()
-    parsed = JSONParser().parse_attributes(structure['data'])
-    serialized = GroupSerializer(group, data=parsed)
+    source_id = "bhs|{0}".format(resource['id'])
+    data = resource['attributes']
+    data['source_id'] = source_id
+    try:
+        person = Person.objects.get(
+            source_id=source_id,
+        )
+        serialized = PersonSerializer(person, data=data)
+    except Person.DoesNotExist:
+        serialized = PersonSerializer(data=data)
     if serialized.is_valid():
-        usernames = parsed['usernames']
+        usernames = data['usernames']
         owners = User.objects.filter(email__in=usernames).values_list('id', flat=True)
         return serialized.save(owners=owners)
-    return serialized.errors
+    raise ValueError(serialized.errors)
 
+@job('low')
+def update_group_from_membercenter(resource):
+    Group = apps.get_model('bhs.group')
+    User = get_user_model()
+    source_id = "bhs|{0}".format(resource['id'])
+    data = resource['attributes']
+    data['source_id'] = source_id
+    try:
+        group = Group.objects.get(
+            source_id=source_id,
+        )
+        serialized = GroupSerializer(group, data=data)
+    except Group.DoesNotExist:
+        serialized = GroupSerializer(data=data)
+    if serialized.is_valid():
+        usernames = data['usernames']
+        owners = User.objects.filter(email__in=usernames).values_list('id', flat=True)
+        return serialized.save(owners=owners)
+    raise ValueError(serialized.errors)
 
 # def get_or_create_account_from_email(email):
 #     auth0 = get_auth0()
