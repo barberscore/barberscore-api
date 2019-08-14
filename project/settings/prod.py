@@ -2,6 +2,7 @@
 from .base import *
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.rq import RqIntegration
 
 # Core
@@ -18,6 +19,7 @@ sentry_sdk.init(
     integrations=[
         DjangoIntegration(),
         RqIntegration(),
+        RedisIntegration(),
     ],
     send_default_pii=True,
     request_bodies='always',
