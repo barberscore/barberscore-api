@@ -316,9 +316,9 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
         'kind',
         'num_rounds',
         'is_invitational',
-        # 'convention__season',
-        # 'convention__district',
-        # 'convention__year',
+        'season',
+        'district',
+        'year',
     )
 
     autocomplete_fields = [
