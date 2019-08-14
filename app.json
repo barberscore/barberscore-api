@@ -64,6 +64,18 @@
       "description": "Sentry Bug Tracker.  Use production key.",
       "required": true
     },
+    "SENTRY_AUTH_TOKEN": {
+      "description": "Sentry Auth Token.",
+      "required": true
+    },
+    "SENTRY_ORG": {
+      "description": "Sentry Organization.",
+      "required": true
+    },
+    "SENTRY_PROJECT": {
+      "description": "Sentry Project.",
+      "required": true
+    },
     "DJANGO_SETTINGS_MODULE": {
       "description": "Configures the settings.  Do not edit.",
       "value": "settings.staging",
