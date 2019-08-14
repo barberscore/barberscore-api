@@ -29,6 +29,7 @@ from django.forms.models import model_to_dict
 
 log = logging.getLogger(__name__)
 
+
 def get_membercenter_token():
     """
     Retrieve membercenter access_token.
@@ -71,7 +72,7 @@ def get_membercenter_response(source):
     )
     return response
 
-# @job('low')
+@job('low')
 def update_person_from_source(person):
     User = get_user_model()
     response = get_membercenter_response(person)
@@ -80,7 +81,7 @@ def update_person_from_source(person):
     serialized = PersonSerializer(person, data=parsed)
     if serialized.is_valid():
         usernames = parsed['usernames']
-        owners = User.objects.filter(email__in=usernames).values_list('id', flat=True)
+        owners = User.objects.filter(username__in=usernames).values_list('id', flat=True)
         return serialized.save(owners=owners)
     return serialized.errors
 
@@ -100,7 +101,7 @@ def update_person_from_membercenter(resource):
         serialized = PersonSerializer(data=data)
     if serialized.is_valid():
         usernames = data['usernames']
-        owners = User.objects.filter(email__in=usernames).values_list('id', flat=True)
+        owners = User.objects.filter(username__in=usernames).values_list('id', flat=True)
         return serialized.save(owners=owners)
     raise ValueError(serialized.errors)
 
@@ -120,9 +121,29 @@ def update_group_from_membercenter(resource):
         serialized = GroupSerializer(data=data)
     if serialized.is_valid():
         usernames = data['usernames']
-        owners = User.objects.filter(email__in=usernames).values_list('id', flat=True)
+        owners = User.objects.filter(username__in=usernames).values_list('id', flat=True)
         return serialized.save(owners=owners)
     raise ValueError(serialized.errors)
+
+@job('low')
+def update_group_owners_from_membercenter(resource):
+    Group = apps.get_model('bhs.group')
+    User = get_user_model()
+    group_source_id = "bhs|{0}".format(resource['data']['relationships']['group']['data']['id'])
+    person_source_id = "bhs|{0}".format(resource['data']['relationships']['person']['data']['id'])
+    group = Group.objects.get(
+        source_id=group_source_id,
+    )
+    user = User.objects.get(
+        persons__source_id=person_source_id,
+    )
+    if resource['data']['attributes']['status'] > 0:
+        return group.owners.add(user)
+    elif resource['data']['attributes']['status'] < 0:
+        return group.owners.remove(user)
+    else:
+        return
+
 
 # def get_or_create_account_from_email(email):
 #     auth0 = get_auth0()

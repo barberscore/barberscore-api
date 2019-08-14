@@ -9,8 +9,11 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.apps import apps
 from django.conf import settings
+
 from apps.bhs.tasks import update_person_from_membercenter
 from apps.bhs.tasks import update_group_from_membercenter
+from apps.bhs.tasks import update_group_owners_from_membercenter
+
 # First-Party
 User = get_user_model()
 Person = apps.get_model('bhs.person')
@@ -91,13 +94,7 @@ class Command(BaseCommand):
                 i += 1
                 self.stdout.flush()
                 self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
-
                 update_person_from_membercenter.delay(item)
-                # Only link user if there are officers and an email
-                # if person.email and person.officers.filter(status__gt=0):
-                #     user, _ = User.objects.get_or_create(email=person.email)
-                #     # person.user = user
-                #     person.save()
             page += 1
             params['page'] = page
         self.stdout.write("")
@@ -108,7 +105,7 @@ class Command(BaseCommand):
         #     t = Person.objects.delete_orphans(humans)
         #     self.stdout.write("Deleted {0} Person orphans.".format(t))
 
-        # # Sync Groups
+        # Sync Groups
         self.stdout.write("Fetching Groups from Member Center...")
         endpoint, _, token = settings.MEMBERCENTER_URL.partition('@')
         url = "{0}/bhs/group".format(endpoint)
@@ -139,73 +136,47 @@ class Command(BaseCommand):
                 i += 1
                 self.stdout.flush()
                 self.stdout.write("Updating {0} of {1} Groups...".format(i, t), ending='\r')
-
                 update_group_from_membercenter.delay(item)
-                # Only link user if there are officers and an email
-                # if person.email and person.officers.filter(status__gt=0):
-                #     user, _ = User.objects.get_or_create(email=person.email)
-                #     # person.user = user
-                #     person.save()
             page += 1
             params['page'] = page
         self.stdout.write("")
-        self.stdout.write("Updated {0} Groups.".format(t))        # self.stdout.write("Fetching Structures from Member Center...")
-        # structures = Structure.objects.export_values(cursor=cursor)
-        # t = len(structures)
-        # i = 0
-        # for structure in structures:
-        #     i += 1
-        #     self.stdout.flush()
-        #     self.stdout.write("Updating {0} of {1} Groups...".format(i, t), ending='\r')
-        #     Group.objects.update_or_create_from_structure(structure)
-        # self.stdout.write("")
-        # self.stdout.write("Updated {0} Groups.".format(t))
-        # if not cursor:
-        #     self.stdout.write("Deleting Orphans...")
-        #     structures = list(Structure.objects.values_list('id', flat=True))
-        #     t = Group.objects.delete_orphans(structures)
-        #     self.stdout.write("Deleted {0} Group orphans.".format(t))
+        self.stdout.write("Updated {0} Groups.".format(t))
 
-        # # Sync Officers
-        # self.stdout.write("Fetching Roles from Member Center...")
-        # roles = Role.objects.export_values(cursor=cursor)
-        # t = len(roles)
-        # i = 0
-        # for role in roles:
-        #     i += 1
-        #     self.stdout.flush()
-        #     self.stdout.write("Updating {0} of {1} Officers...".format(i, t), ending='\r')
-        #     officer, _ = Officer.objects.update_or_create_from_role(role)
-        #     if officer.person.email:
-        #         user, _ = User.objects.get_or_create(email=person.email)
-        #         officer.group.owners.add(user)
-
-        # self.stdout.write("")
-        # self.stdout.write("Updated {0} Officers.".format(t))
-        # if not cursor:
-        #     self.stdout.write("Deleting orphans...")
-        #     roles = list(Role.objects.values_list('id', flat=True))
-        #     t = Officer.objects.delete_orphans(roles)
-        #     self.stdout.write("Deleted {0} Officer orphans.".format(t))
-
-
-        # # # Sync Members
-        # # self.stdout.write("Updating Members.")
-        # # self.stdout.write("Fetching Joins...")
-        # # joins = Join.objects.export_values(cursor=cursor)
-        # # t = len(joins)
-        # # i = 0
-        # # for join in joins:
-        # #     i += 1
-        # #     if i != t:
-        # #         self.stdout.flush()
-        # #     self.stdout.write("Updating {0} of {1} Members...".format(i, t), ending='\r')
-        # #     Member.objects.update_or_create_from_join(join)
-        # # self.stdout.write("Updated {0} Members.".format(t))
-        # # if not cursor:
-        # #     self.stdout.write("Deleting orphans...")
-        # #     joins = list(Join.objects.values_list('id', flat=True))
-        # #     t = Member.objects.delete_orphans(joins)
-        # #     self.stdout.write("Deleted {0} Member orphans.".format(t))
+        # Sync Roles
+        self.stdout.write("Fetching Officers from Member Center...")
+        endpoint, _, token = settings.MEMBERCENTER_URL.partition('@')
+        url = "{0}/bhs/officer".format(endpoint)
+        headers = {
+            'Authorization': 'Token {0}'.format(token)
+        }
+        i = 0
+        page = 1
+        params = {
+            'modified__gt': cursor,
+            'group__kind__gt': 30,
+            'page': page,
+        }
+        response = requests.get(
+            url,
+            headers=headers,
+            params=params,
+        ).json()
+        t = response['meta']['pagination']['count']
+        pages = response['meta']['pagination']['pages']
+        while page <= pages:
+            response = requests.get(
+                url,
+                headers=headers,
+                params=params,
+            ).json()
+            for item in response['data']:
+                i += 1
+                self.stdout.flush()
+                self.stdout.write("Updating {0} of {1} Roles...".format(i, t), ending='\r')
+                update_group_owners_from_membercenter.delay(item)
+            page += 1
+            params['page'] = page
+        self.stdout.write("")
+        self.stdout.write("Updated {0} Groups.".format(t))
 
         self.stdout.write("Complete.")
