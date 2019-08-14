@@ -864,7 +864,7 @@ class Entry(TimeStampedModel):
             request.user in self.session.owners.all(),
             all([
                 request.user in self.owners.all(),
-                self.status < self.STATUS.approved,
+                # self.status < self.STATUS.approved,
             ]),
         ])
 
