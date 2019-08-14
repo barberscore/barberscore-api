@@ -395,11 +395,10 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
     list_display = [
-        'district',
 
         'name',
         # 'district',
-        # 'email',
+        'email',
         # 'cell_phone',
         # 'part',
         # 'gender',
