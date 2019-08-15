@@ -90,7 +90,7 @@ class Command(BaseCommand):
                 headers=headers,
                 params=params,
             ).json()
-            for item in response['data']:
+            for item in response:
                 i += 1
                 self.stdout.flush()
                 self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
@@ -132,7 +132,7 @@ class Command(BaseCommand):
                 headers=headers,
                 params=params,
             ).json()
-            for item in response['data']:
+            for item in response:
                 i += 1
                 self.stdout.flush()
                 self.stdout.write("Updating {0} of {1} Groups...".format(i, t), ending='\r')

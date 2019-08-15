@@ -89,8 +89,8 @@ def update_person_from_source(person):
 def update_person_from_membercenter(resource):
     Person = apps.get_model('bhs.person')
     User = get_user_model()
-    source_id = "bhs|{0}".format(resource['id'])
-    data = resource['attributes']
+    source_id = "bhs|{0}".format(resource['data']['id'])
+    data = resource['data']['attributes']
     data['source_id'] = source_id
     try:
         person = Person.objects.get(
@@ -109,8 +109,8 @@ def update_person_from_membercenter(resource):
 def update_group_from_membercenter(resource):
     Group = apps.get_model('bhs.group')
     User = get_user_model()
-    source_id = "bhs|{0}".format(resource['id'])
-    data = resource['attributes']
+    source_id = "bhs|{0}".format(resource['data']['id'])
+    data = resource['data']['attributes']
     data['source_id'] = source_id
     try:
         group = Group.objects.get(
