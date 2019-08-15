@@ -892,6 +892,8 @@ class Entry(TimeStampedModel):
         return
 
     def get_owners_emails(self):
+        if not self.owners:
+            raise ValueError("No owners for {0}".format(self))
         owners = self.owners.order_by(
             'last_name',
             'first_name',

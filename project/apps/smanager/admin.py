@@ -183,9 +183,8 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
     list_filter = [
         # SessionConventionStatusListFilter,
         'status',
-        'session',
-        # 'session__convention__season',
-        # 'session__convention__year',
+        'kind',
+        'district',
     ]
 
     inlines = [
@@ -212,7 +211,7 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
     save_on_top = True
 
     ordering = [
-        # '-session__convention__year',
+        'name',
         # 'session__convention__season',
         # 'session__convention__district',
         # 'session__convention__name',
