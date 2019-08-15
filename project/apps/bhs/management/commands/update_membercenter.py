@@ -169,7 +169,7 @@ class Command(BaseCommand):
                 headers=headers,
                 params=params,
             ).json()
-            for item in response['data']:
+            for item in response:
                 i += 1
                 self.stdout.flush()
                 self.stdout.write("Updating {0} of {1} Roles...".format(i, t), ending='\r')
