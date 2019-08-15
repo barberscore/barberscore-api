@@ -128,21 +128,27 @@ def update_group_from_membercenter(resource):
 @job('low')
 def update_group_owners_from_membercenter(resource):
     Group = apps.get_model('bhs.group')
+    Person = apps.get_model('bhs.person')
     User = get_user_model()
     group_source_id = "bhs|{0}".format(resource['relationships']['group']['data']['id'])
     person_source_id = "bhs|{0}".format(resource['relationships']['person']['data']['id'])
     group = Group.objects.get(
         source_id=group_source_id,
     )
-    user = User.objects.get(
-        persons__source_id=person_source_id,
+    person = Person.objects.get(
+        source_id=person_source_id,
     )
-    if resource['attributes']['status'] > 0:
-        return group.owners.add(user)
-    elif resource['attributes']['status'] < 0:
+    if person.email:
+        user, _ = User.objects.get_or_create(
+            email=person.email,
+            name=person.name,
+            first_name=person.first_name,
+            last_name=person.last_name,
+        )
+        if resource['attributes']['status'] > 0:
+            return group.owners.add(user)
         return group.owners.remove(user)
-    else:
-        return
+    return
 
 
 # def get_or_create_account_from_email(email):
