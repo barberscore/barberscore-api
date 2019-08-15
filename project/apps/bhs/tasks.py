@@ -89,8 +89,8 @@ def update_person_from_source(person):
 def update_person_from_membercenter(resource):
     Person = apps.get_model('bhs.person')
     User = get_user_model()
-    source_id = "bhs|{0}".format(resource['data']['id'])
-    data = resource['data']['attributes']
+    source_id = "bhs|{0}".format(resource['id'])
+    data = resource['attributes']
     data['source_id'] = source_id
     try:
         person = Person.objects.get(
@@ -109,8 +109,8 @@ def update_person_from_membercenter(resource):
 def update_group_from_membercenter(resource):
     Group = apps.get_model('bhs.group')
     User = get_user_model()
-    source_id = "bhs|{0}".format(resource['data']['id'])
-    data = resource['data']['attributes']
+    source_id = "bhs|{0}".format(resource['id'])
+    data = resource['attributes']
     data['source_id'] = source_id
     try:
         group = Group.objects.get(
@@ -129,17 +129,17 @@ def update_group_from_membercenter(resource):
 def update_group_owners_from_membercenter(resource):
     Group = apps.get_model('bhs.group')
     User = get_user_model()
-    group_source_id = "bhs|{0}".format(resource['data']['relationships']['group']['data']['id'])
-    person_source_id = "bhs|{0}".format(resource['data']['relationships']['person']['data']['id'])
+    group_source_id = "bhs|{0}".format(resource['relationships']['group']['data']['id'])
+    person_source_id = "bhs|{0}".format(resource['relationships']['person']['data']['id'])
     group = Group.objects.get(
         source_id=group_source_id,
     )
     user = User.objects.get(
         persons__source_id=person_source_id,
     )
-    if resource['data']['attributes']['status'] > 0:
+    if resource['attributes']['status'] > 0:
         return group.owners.add(user)
-    elif resource['data']['attributes']['status'] < 0:
+    elif resource['attributes']['status'] < 0:
         return group.owners.remove(user)
     else:
         return

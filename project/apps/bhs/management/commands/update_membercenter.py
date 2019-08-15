@@ -71,7 +71,6 @@ class Command(BaseCommand):
         headers = {
             'Authorization': 'Token {0}'.format(token)
         }
-        i = 0
         page = 1
         params = {
             'modified__gt': cursor,
@@ -83,21 +82,24 @@ class Command(BaseCommand):
             params=params,
         ).json()
         t = response['meta']['pagination']['count']
-        pages = response['meta']['pagination']['pages']
-        while page <= pages:
-            response = requests.get(
-                url,
-                headers=headers,
-                params=params,
-            ).json()
-            for item in response:
-                i += 1
-                self.stdout.flush()
-                self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
-                update_person_from_membercenter.delay(item)
-            page += 1
-            params['page'] = page
-        self.stdout.write("")
+        if t:
+            i = 0
+            pages = response['meta']['pagination']['pages']
+            while page <= pages:
+                response = requests.get(
+                    url,
+                    headers=headers,
+                    params=params,
+                ).json()
+                items = response['data']
+                for item in items:
+                    i += 1
+                    self.stdout.flush()
+                    self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
+                    update_person_from_membercenter.delay(item)
+                page += 1
+                params['page'] = page
+            self.stdout.write("")
         self.stdout.write("Updated {0} Persons.".format(t))
         # if not cursor:
         #     humans = list(Human.objects.values_list('id', flat=True))
@@ -112,7 +114,6 @@ class Command(BaseCommand):
         headers = {
             'Authorization': 'Token {0}'.format(token)
         }
-        i = 0
         page = 1
         params = {
             'modified__gt': cursor,
@@ -125,21 +126,24 @@ class Command(BaseCommand):
             params=params,
         ).json()
         t = response['meta']['pagination']['count']
-        pages = response['meta']['pagination']['pages']
-        while page <= pages:
-            response = requests.get(
-                url,
-                headers=headers,
-                params=params,
-            ).json()
-            for item in response:
-                i += 1
-                self.stdout.flush()
-                self.stdout.write("Updating {0} of {1} Groups...".format(i, t), ending='\r')
-                update_group_from_membercenter.delay(item)
-            page += 1
-            params['page'] = page
-        self.stdout.write("")
+        if t:
+            i = 0
+            pages = response['meta']['pagination']['pages']
+            while page <= pages:
+                response = requests.get(
+                    url,
+                    headers=headers,
+                    params=params,
+                ).json()
+                items = response['data']
+                for item in items:
+                    i += 1
+                    self.stdout.flush()
+                    self.stdout.write("Updating {0} of {1} Groups...".format(i, t), ending='\r')
+                    update_group_from_membercenter.delay(item)
+                page += 1
+                params['page'] = page
+            self.stdout.write("")
         self.stdout.write("Updated {0} Groups.".format(t))
 
         # Sync Roles
@@ -149,7 +153,6 @@ class Command(BaseCommand):
         headers = {
             'Authorization': 'Token {0}'.format(token)
         }
-        i = 0
         page = 1
         params = {
             'modified__gt': cursor,
@@ -162,21 +165,24 @@ class Command(BaseCommand):
             params=params,
         ).json()
         t = response['meta']['pagination']['count']
-        pages = response['meta']['pagination']['pages']
-        while page <= pages:
-            response = requests.get(
-                url,
-                headers=headers,
-                params=params,
-            ).json()
-            for item in response:
-                i += 1
-                self.stdout.flush()
-                self.stdout.write("Updating {0} of {1} Roles...".format(i, t), ending='\r')
-                update_group_owners_from_membercenter.delay(item)
-            page += 1
-            params['page'] = page
-        self.stdout.write("")
-        self.stdout.write("Updated {0} Groups.".format(t))
+        if t:
+            i = 0
+            pages = response['meta']['pagination']['pages']
+            while page <= pages:
+                response = requests.get(
+                    url,
+                    headers=headers,
+                    params=params,
+                ).json()
+                items = response['data']
+                for item in items:
+                    i += 1
+                    self.stdout.flush()
+                    self.stdout.write("Updating {0} of {1} Roles...".format(i, t), ending='\r')
+                    update_group_owners_from_membercenter.delay(item)
+                page += 1
+                params['page'] = page
+            self.stdout.write("")
+        self.stdout.write("Updated {0} Officers.".format(t))
 
         self.stdout.write("Complete.")
