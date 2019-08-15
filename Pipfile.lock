@@ -340,7 +340,7 @@
         },
         "djangorestframework-jwt": {
             "git": "https://github.com/barberscore/django-rest-framework-jwt.git",
-            "ref": "8683245d4249bca99677b8ece32120e4828caa4c"
+            "ref": "c00d07ad6d5acd8ceb3079d3295e4485c129aa39"
         },
         "dry-rest-permissions": {
             "hashes": [

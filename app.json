@@ -45,11 +45,15 @@
       "required": true
     },
     "AUTH0_DOMAIN": {
-      "description": "Auth0 API endpoint.",
+      "description": "Auth0 API issuer.",
       "required": true
     },
     "AUTH0_AUDIENCE": {
       "description": "Auth0 API endpoint.",
+      "required": true
+    },
+    "AUTH0_CONNECTION": {
+      "description": "Auth0 Connection.",
       "required": true
     },
     "CLOUDINARY_URL": {
@@ -111,7 +115,8 @@
         "AUTH0_CLIENT_ID": "test",
         "AUTH0_CLIENT_SECRET": "test",
         "AUTH0_DOMAIN": "login.barberscore.com",
-        "MEMBERCENTER_URL": "foobar"
+        "AUTH0_CONNECTION": "Default",
+        "MEMBERCENTER_URL": "test"
       },
       "stack": "heroku-18",
       "scripts": {
