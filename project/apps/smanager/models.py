@@ -1188,6 +1188,12 @@ class Repertory(TimeStampedModel):
         return any([
             request.user in self.entry.session.owners.all(),
             request.user in self.entry.owners.all(),
+            request.user.roles.filter(name__in=[
+                'SCJC',
+                'DRCJ',
+                'CA',
+                'Librarian',
+            ]),
         ])
 
     @staticmethod
