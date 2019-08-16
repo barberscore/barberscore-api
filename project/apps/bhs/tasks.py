@@ -139,11 +139,14 @@ def update_group_owners_from_membercenter(resource):
         source_id=person_source_id,
     )
     if person.email:
-        user, _ = User.objects.get_or_create(
+        defaults = {
+            'name': person.name,
+            'first_name': person.first_name,
+            'last_name': person.last_name,
+        }
+        user, _ = User.objects.update_or_create(
             email=person.email,
-            name=person.name,
-            first_name=person.first_name,
-            last_name=person.last_name,
+            defaults=defaults,
         )
         if resource['attributes']['status'] > 0:
             return group.owners.add(user)
