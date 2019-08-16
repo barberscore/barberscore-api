@@ -89,6 +89,7 @@ class ContestAdmin(admin.ModelAdmin):
         'district',
         'division',
         'gender',
+        'is_single',
         'is_novice',
         'scope',
         'scope_range',
