@@ -1,5 +1,6 @@
-We're writing to let you know that the {{session.get_district_display}} {{session.name|safe}} {{session.get_kind_display}}
-Session is now open and accepting entries.
+We're writing to let you know that the
+{{entry.session.nomen|safe}} Session
+is now open and accepting entries.
 
 The contest entry deadline is: {{session.close_date|date:"SHORT_DATE_FORMAT" }}.
 

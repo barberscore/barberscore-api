@@ -1487,7 +1487,6 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-
     # FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
@@ -1509,6 +1508,13 @@ class Session(TimeStampedModel):
     )
 
     # Session Properties
+    @cached_property
+    def nomen(self):
+        return " ".join([
+            self.get_district_display(),
+            self.name,
+            self.get_kind_display(),
+        ])
 
     # Session Internals
     class Meta:
@@ -1521,7 +1527,7 @@ class Session(TimeStampedModel):
         resource_name = "session"
 
     def __str__(self):
-        return str(self.get_kind_display())
+        return self.nomen
 
     def clean(self):
         pass
@@ -1700,9 +1706,8 @@ class Session(TimeStampedModel):
     def get_open_email(self):
         template = 'emails/session_open.txt'
         context = {'session': self}
-        subject = "[Barberscore] {0} {1} is OPEN".format(
-            self.get_district_display(),
-            self.name,
+        subject = "[Barberscore] {0} is OPEN".format(
+            self.nomen,
         )
         to = self.get_owners_emails()
         bcc = self.group_emails
@@ -1724,7 +1729,7 @@ class Session(TimeStampedModel):
         template = 'emails/session_close.txt'
         context = {'session': self}
         subject = "[Barberscore] {0} Session is CLOSED".format(
-            self,
+            self.nomen,
         )
         to = self.convention.get_drcj_emails()
         cc = self.convention.get_ca_emails()
@@ -1754,7 +1759,7 @@ class Session(TimeStampedModel):
             'approved_entries': approved_entries,
         }
         subject = "[Barberscore] {0} Session Draw".format(
-            self,
+            self.nomen,
         )
         to = self.convention.get_drcj_emails()
         cc = self.convention.get_ca_emails()
@@ -1780,7 +1785,7 @@ class Session(TimeStampedModel):
             'session': self,
         }
         subject = "[Barberscore] {0} Session Draft Reports".format(
-            self,
+            self.nomen,
         )
         to = self.convention.get_drcj_emails()
         cc = self.convention.get_ca_emails()
@@ -1829,7 +1834,7 @@ class Session(TimeStampedModel):
             'approved_entries': approved_entries,
         }
         subject = "[Barberscore] {0} Session Starting".format(
-            self,
+            self.nomen,
         )
         to = self.convention.get_drcj_emails()
         cc = self.convention.get_ca_emails()
@@ -1855,7 +1860,7 @@ class Session(TimeStampedModel):
             'session': self,
         }
         subject = "[Barberscore] {0} Session FINAL Reports".format(
-            self,
+            self.nomen,
         )
         to = self.convention.get_drcj_emails()
         cc = self.convention.get_ca_emails()

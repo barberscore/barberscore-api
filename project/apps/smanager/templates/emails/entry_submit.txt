@@ -12,7 +12,7 @@ Group: {{entry.name|safe}}
 BHS ID: {{entry.bhs_id}}
 {% endif %}
 
-Session: {{entry.session.name|safe}} {{entry.session.get_kind_display}} Session
+Session: {{entry.session.nomen|safe}} Session
 
 Requested Evaluation: {{entry.is_evaluation|yesno|title}}
 

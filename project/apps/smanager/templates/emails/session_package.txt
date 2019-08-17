@@ -1,4 +1,4 @@
-The {{session}} Session is about to begin!
+The {{entry.session.nomen|safe}} Session is about to begin!
 
 This is the final list of approved participants, in draw order:
 
@@ -7,7 +7,7 @@ This is the final list of approved participants, in draw order:
 {% endfor %}
 
 At this point, any additions you might make to your chart repertory in Barberscore must
-also be communicated via email to the Contest Administrators (cc'd on this message). 
+also be communicated via email to the Contest Administrators (cc'd on this message).
 
 Other changes -- including scratches or order-of-appearance requests -- must be made
 directly to the Contest Administrators (cc'd on this message).
