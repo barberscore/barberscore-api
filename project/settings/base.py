@@ -240,5 +240,4 @@ INSTALLED_APPS = [
     'apps.bhs',
     'apps.smanager',
     'apps.rmanager',
-    'apps.keller',
 ]
