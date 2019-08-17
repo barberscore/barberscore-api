@@ -74,6 +74,8 @@ class RepertoryFactory(DjangoModelFactory):
 class SessionFactory(DjangoModelFactory):
     status = Session.STATUS.new
     kind = Session.KIND.quartet
+    name = "International Championship"
+    district = Session.DISTRICT.bhs
     is_invitational = False
     num_rounds = 2
     # convention = SubFactory('factories.ConventionFactory')
