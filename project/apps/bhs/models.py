@@ -1187,6 +1187,10 @@ class Group(TimeStampedModel):
     def is_searchable(self):
         return self.status == self.STATUS.active
 
+    def owner_emails(self):
+        return [x.email for x in self.owners.all()]
+
+
     @cached_property
     def image_id(self):
         return self.image.name or 'missing_image'
