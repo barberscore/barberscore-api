@@ -1191,6 +1191,10 @@ class Group(TimeStampedModel):
         return [x.email for x in self.owners.all()]
 
 
+    def owner_ids(self):
+        return [str(x.id) for x in self.owners.all()]
+
+
     @cached_property
     def image_id(self):
         return self.image.name or 'missing_image'

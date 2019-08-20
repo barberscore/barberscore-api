@@ -99,6 +99,7 @@ class GroupIndex(AlgoliaIndex):
         'image_url',
         'image_id',
         'owner_emails',
+        'owner_ids',
     ]
     settings = {
         'searchableAttributes': [
