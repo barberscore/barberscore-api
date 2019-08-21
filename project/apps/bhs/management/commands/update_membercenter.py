@@ -118,7 +118,7 @@ class Command(BaseCommand):
         page = 1
         params = {
             'status': Group.STATUS.active,
-            'kind__gt': Group.KIND.chapter,
+            'kind__gt': 30,
             'modified__gt': cursor,
             'page': page,
         }
@@ -158,7 +158,7 @@ class Command(BaseCommand):
         page = 1
         params = {
             'group__status': Group.STATUS.active,
-            'group__kind__gt': Group.KIND.chapter,
+            'group__kind__gt': 30,
             'modified__gt': cursor,
             'page': page,
         }
