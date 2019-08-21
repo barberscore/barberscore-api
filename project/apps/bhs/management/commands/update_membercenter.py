@@ -73,6 +73,7 @@ class Command(BaseCommand):
         }
         page = 1
         params = {
+            'status': Person.STATUS.active,
             'modified__gt': cursor,
             'page': page,
         }
@@ -116,8 +117,9 @@ class Command(BaseCommand):
         }
         page = 1
         params = {
+            'status': Group.STATUS.active,
+            'kind__gt': Group.KIND.chapter,
             'modified__gt': cursor,
-            'kind__gt': 30,
             'page': page,
         }
         response = requests.get(
@@ -155,8 +157,9 @@ class Command(BaseCommand):
         }
         page = 1
         params = {
+            'group__status': Group.STATUS.active,
+            'group__kind__gt': Group.KIND.chapter,
             'modified__gt': cursor,
-            'group__kind__gt': 30,
             'page': page,
         }
         response = requests.get(
