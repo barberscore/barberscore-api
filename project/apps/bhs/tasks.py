@@ -70,17 +70,16 @@ def update_person_from_membercenter(resource):
     if serialized.is_valid():
         usernames = data['usernames']
         owners = []
-        for username in usernames:
-            defaults = {
-                'name': data['name'],
-                'first_name': data['first_name'],
-                'last_name': data['last_name'],
-            }
-            user, _ = User.objects.update_or_create(
-                email=data['email'],
-                defaults=defaults,
-            )
-            owners.append(user.id)
+        defaults = {
+            'name': data['name'],
+            'first_name': data['first_name'],
+            'last_name': data['last_name'],
+        }
+        user, _ = User.objects.update_or_create(
+            email=data['email'],
+            defaults=defaults,
+        )
+        owners.append(user.id)
         return serialized.save(owners=owners)
     raise ValueError(serialized.errors)
 
@@ -100,8 +99,16 @@ def update_group_from_membercenter(resource):
     except Group.DoesNotExist:
         serialized = GroupSerializer(data=data)
     if serialized.is_valid():
-        usernames = data['usernames']
-        owners = User.objects.filter(username__in=usernames).values_list('id', flat=True)
+        emails = data['emails']
+        owners = []
+        for email in emails:
+            try:
+                user = User.objects.get(
+                    email=email,
+                )
+            except User.DoesNotExist:
+                continue
+            owners.append(user.id)
         return serialized.save(owners=owners)
     raise ValueError(serialized.errors)
 
