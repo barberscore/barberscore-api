@@ -69,7 +69,18 @@ def update_person_from_membercenter(resource):
         serialized = PersonSerializer(data=data)
     if serialized.is_valid():
         usernames = data['usernames']
-        owners = User.objects.filter(username__in=usernames).values_list('id', flat=True)
+        owners = []
+        for username in usernames:
+            defaults = {
+                'name': data['name'],
+                'first_name': data['first_name'],
+                'last_name': data['last_name'],
+            }
+            user, _ = User.objects.update_or_create(
+                email=data['email'],
+                defaults=defaults,
+            )
+            owners.append(user.id)
         return serialized.save(owners=owners)
     raise ValueError(serialized.errors)
 
