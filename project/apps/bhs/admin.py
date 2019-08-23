@@ -19,7 +19,7 @@ from .models import Convention
 admin.site.disable_action('delete_selected')
 
 
-@admin.register(Award)
+# @admin.register(Award)
 class AwardAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
@@ -96,7 +96,7 @@ class AwardAdmin(VersionAdmin, FSMTransitionMixin):
     )
 
 
-@admin.register(Chart)
+# @admin.register(Chart)
 class ChartAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
@@ -294,7 +294,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
 
     autocomplete_fields = [
         'owners',
-        'charts',
+        # 'charts',
     ]
     raw_id_fields = [
     ]

@@ -13,6 +13,7 @@ from reversion.admin import VersionAdmin
 # from .inlines import ConventionInline
 from .inlines import ContestInline
 from .inlines import EntryInline
+from .inlines import OwnerInline
 
 from .models import Assignment
 from .models import Contest
@@ -26,7 +27,7 @@ admin.site.site_header = 'Barberscore Admin Backend'
 
 
 
-@admin.register(Assignment)
+# @admin.register(Assignment)
 class AssignmentAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
@@ -76,7 +77,7 @@ class AssignmentAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Contest)
+# @admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
     fields = [
         'id',
@@ -189,7 +190,8 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
     inlines = [
-        # AppearanceInline,
+        # OwnerInline,
+        # OwnerInline,
         StateLogInline,
     ]
 
@@ -201,7 +203,7 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
 
     autocomplete_fields = [
         'session',
-        'contests',
+        # 'contests',
         'owners',
     ]
     readonly_fields = (
@@ -220,7 +222,7 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
 
-@admin.register(Repertory)
+# @admin.register(Repertory)
 class RepertoryAdmin(admin.ModelAdmin):
 
     fields = [

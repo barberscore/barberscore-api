@@ -1,6 +1,7 @@
 
 # Django
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 
 # Local
 from .models import Contest
@@ -8,8 +9,31 @@ from .models import Entry
 from .models import Session
 
 
+from .models import Entry
 from .models import Assignment
 from .models import Repertory
+User = get_user_model()
+
+
+class OwnerInline(admin.TabularInline):
+    model = Entry.owners.through
+    fields = [
+        'entry_owners',
+    ]
+    autocomplete_fields = [
+        'entry_owners',
+    ]
+    show_change_link = True
+    extra = 0
+    classes = [
+        'collapse',
+    ]
+    # readonly_fields = [
+    #     'status',
+    # ]
+    # ordering = [
+    #     'chart__title',
+    # ]
 
 
 class RepertoryInline(admin.TabularInline):
