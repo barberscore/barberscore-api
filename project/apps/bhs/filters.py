@@ -27,7 +27,7 @@ from .models import Group
 #     parameter_name = 'active_conventions'
 
 #     def lookups(self, request, model_admin):
-#         Convention = apps.get_model('smanager.convention')
+#         Convention = apps.get_model('registration.convention')
 #         conventions = Convention.objects.filter(
 #             status__gte=0,
 #         ).order_by(

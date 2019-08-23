@@ -49,10 +49,10 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'django.contrib.auth.backends.RemoteUserBackend',
 ]
-USERNAME_FIELD = 'username'
+USERNAME_FIELD = 'email'
 REQUIRED_FIELDS = [
     'name',
-    'email',
+    'id',
 ]
 LOGIN_URL = 'admin:login'
 LOGIN_REDIRECT_URL = 'admin:index'
@@ -239,6 +239,6 @@ INSTALLED_APPS = [
     'prettyjson',
     'corsheaders',
     'apps.bhs',
-    'apps.smanager',
-    'apps.rmanager',
+    'apps.registration',
+    'apps.adjudication',
 ]
