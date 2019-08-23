@@ -77,18 +77,8 @@ def update_group_from_membercenter(resource):
     except Group.DoesNotExist:
         serialized = GroupSerializer(data=data)
     if serialized.is_valid():
-        # emails = data['emails']
-        # owners = []
-        # for email in emails:
-        #     try:
-        #         user = User.objects.get(
-        #             email=email,
-        #         )
-        #     except User.DoesNotExist:
-        #         continue
-        #     owners.append(user.id)
-        # return serialized.save(owners=owners)
-        return serialized.save()
+        owners = [x['id'] for x in resource['relationships']['owners']['data']]
+        return serialized.save(owners=owners)
     raise ValueError(serialized.errors)
 
 
