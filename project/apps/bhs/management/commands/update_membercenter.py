@@ -65,43 +65,43 @@ class Command(BaseCommand):
             cursor = None
 
         # Sync Persons
-        # self.stdout.write("Fetching Persons from Member Center...")
-        # endpoint, _, token = settings.MEMBERCENTER_URL.partition('@')
-        # url = "{0}/bhs/person".format(endpoint)
-        # headers = {
-        #     'Authorization': 'Token {0}'.format(token)
-        # }
-        # page = 1
-        # params = {
-        #     'status': Person.STATUS.active,
-        #     'modified__gt': cursor,
-        #     'page': page,
-        # }
-        # response = requests.get(
-        #     url,
-        #     headers=headers,
-        #     params=params,
-        # ).json()
-        # t = response['meta']['pagination']['count']
-        # if t:
-        #     i = 0
-        #     pages = response['meta']['pagination']['pages']
-        #     while page <= pages:
-        #         response = requests.get(
-        #             url,
-        #             headers=headers,
-        #             params=params,
-        #         ).json()
-        #         items = response['data']
-        #         for item in items:
-        #             i += 1
-        #             self.stdout.flush()
-        #             self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
-        #             update_person_from_membercenter.delay(item)
-        #         page += 1
-        #         params['page'] = page
-        #     self.stdout.write("")
-        # self.stdout.write("Updated {0} Persons.".format(t))
+        self.stdout.write("Fetching Persons from Member Center...")
+        endpoint, _, token = settings.MEMBERCENTER_URL.partition('@')
+        url = "{0}/bhs/person".format(endpoint)
+        headers = {
+            'Authorization': 'Token {0}'.format(token)
+        }
+        page = 1
+        params = {
+            'status': Person.STATUS.active,
+            'modified__gt': cursor,
+            'page': page,
+        }
+        response = requests.get(
+            url,
+            headers=headers,
+            params=params,
+        ).json()
+        t = response['meta']['pagination']['count']
+        if t:
+            i = 0
+            pages = response['meta']['pagination']['pages']
+            while page <= pages:
+                response = requests.get(
+                    url,
+                    headers=headers,
+                    params=params,
+                ).json()
+                items = response['data']
+                for item in items:
+                    i += 1
+                    self.stdout.flush()
+                    self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
+                    update_person_from_membercenter.delay(item)
+                page += 1
+                params['page'] = page
+            self.stdout.write("")
+        self.stdout.write("Updated {0} Persons.".format(t))
 
         # Sync Groups
         self.stdout.write("Fetching Groups from Member Center...")
