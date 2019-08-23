@@ -75,7 +75,7 @@ class Command(BaseCommand):
         params = {
             'status': Person.STATUS.active,
             'modified__gt': cursor,
-            'page': page,
+            'page[number]': page,
         }
         response = requests.get(
             url,
@@ -99,7 +99,7 @@ class Command(BaseCommand):
                     self.stdout.write("Updating {0} of {1} Persons...".format(i, t), ending='\r')
                     update_person_from_membercenter.delay(item)
                 page += 1
-                params['page'] = page
+                params['page[number]'] = page
             self.stdout.write("")
         self.stdout.write("Updated {0} Persons.".format(t))
 
@@ -115,7 +115,7 @@ class Command(BaseCommand):
             'status': Group.STATUS.active,
             'kind__gt': 30,
             'modified__gt': cursor,
-            'page': page,
+            'page[number]': page,
         }
         response = requests.get(
             url,
@@ -139,7 +139,7 @@ class Command(BaseCommand):
                     self.stdout.write("Updating {0} of {1} Groups...".format(i, t), ending='\r')
                     update_group_from_membercenter.delay(item)
                 page += 1
-                params['page'] = page
+                params['page[number]'] = page
             self.stdout.write("")
         self.stdout.write("Updated {0} Groups.".format(t))
 
@@ -179,7 +179,7 @@ class Command(BaseCommand):
         #             self.stdout.write("Updating {0} of {1} Roles...".format(i, t), ending='\r')
         #             update_group_owners_from_membercenter.delay(item)
         #         page += 1
-        #         params['page'] = page
+        #         params['page[number]'] = page
         #     self.stdout.write("")
         # self.stdout.write("Updated {0} Officers.".format(t))
 
