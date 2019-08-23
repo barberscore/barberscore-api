@@ -30,29 +30,6 @@ from django.forms.models import model_to_dict
 log = logging.getLogger(__name__)
 
 
-def get_membercenter_token():
-    """
-    Retrieve membercenter access_token.
-
-    This also uses the cache so we're not re-instantiating for every update.
-    """
-    membercenter_api_access_token = cache.get('membercenter_api_access_token')
-    if not membercenter_api_access_token:
-        client = GetToken(api_settings.AUTH0_DOMAIN)
-        response = client.client_credentials(
-            api_settings.AUTH0_CLIENT_ID,
-            api_settings.AUTH0_CLIENT_SECRET,
-            api_settings.AUTH0_AUDIENCE,
-        )
-        cache.set(
-            'membercenter_api_access_token',
-            response['access_token'],
-            timeout=response['expires_in'],
-        )
-        membercenter_api_access_token = response['access_token']
-    return membercenter_api_access_token
-
-
 @job('low')
 def update_person_from_membercenter(resource):
     Person = apps.get_model('bhs.person')
@@ -68,19 +45,20 @@ def update_person_from_membercenter(resource):
     except Person.DoesNotExist:
         serialized = PersonSerializer(data=data)
     if serialized.is_valid():
-        usernames = data['usernames']
-        owners = []
-        defaults = {
-            'name': data['name'],
-            'first_name': data['first_name'],
-            'last_name': data['last_name'],
-        }
-        user, _ = User.objects.update_or_create(
-            email=data['email'],
-            defaults=defaults,
-        )
-        owners.append(user.id)
-        return serialized.save(owners=owners)
+        # usernames = data['usernames']
+        # owners = []
+        # defaults = {
+        #     'name': data['name'],
+        #     'first_name': data['first_name'],
+        #     'last_name': data['last_name'],
+        # }
+        # user, _ = User.objects.update_or_create(
+        #     email=data['email'],
+        #     defaults=defaults,
+        # )
+        # owners.append(user.id)
+        # return serialized.save(owners=owners)
+        return serialized.save()
     raise ValueError(serialized.errors)
 
 
@@ -99,17 +77,18 @@ def update_group_from_membercenter(resource):
     except Group.DoesNotExist:
         serialized = GroupSerializer(data=data)
     if serialized.is_valid():
-        emails = data['emails']
-        owners = []
-        for email in emails:
-            try:
-                user = User.objects.get(
-                    email=email,
-                )
-            except User.DoesNotExist:
-                continue
-            owners.append(user.id)
-        return serialized.save(owners=owners)
+        # emails = data['emails']
+        # owners = []
+        # for email in emails:
+        #     try:
+        #         user = User.objects.get(
+        #             email=email,
+        #         )
+        #     except User.DoesNotExist:
+        #         continue
+        #     owners.append(user.id)
+        # return serialized.save(owners=owners)
+        return serialized.save()
     raise ValueError(serialized.errors)
 
 
