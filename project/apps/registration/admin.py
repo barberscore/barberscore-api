@@ -150,32 +150,63 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
         'status',
     ]
 
-    fields = (
-        'id',
-        'status',
-        'session',
-        'representing',
-        'chapters',
-        ('is_evaluation', 'is_private', 'is_mt'),
-        'draw',
-        'base',
-        'prelim',
-        'seed',
-        'image',
-        'participants',
-        'description',
-        'notes',
-        'owners',
-        'contests',
-        # 'group_charts',
+    fieldsets = (
+        (None, {
+            'fields': (
+                'id',
+                'status',
+                'session',
+            ),
+        }),
+        ('Group Info', {
+            'fields': (
+                'name',
+                'representing',
+                'chapters',
+                'participants',
+                # 'charts',
+                'image',
+                'description',
+            ),
+        }),
+        ('Preferences', {
+            'fields': (
+                'is_evaluation',
+                'is_private',
+                'is_mt',
+            ),
+        }),
+        ('Contests', {
+            'fields': (
+                'contests',
+            ),
+        }),
+        ('Incoming Scores', {
+            'fields': (
+                'prelim',
+                'base',
+            ),
+        }),
+        ('Draw', {
+            'fields': (
+                'draw',
+            ),
+        }),
+        ('Misc', {
+            'fields': (
+                'notes',
+                'owners',
+                'created',
+                'modified',
+            ),
+        }),
     )
 
     list_display = (
         '__str__',
-        # 'convention_name',
+        'kind',
         'session',
         'status',
-        # 'group',
     )
 
     list_select_related = [
@@ -191,14 +222,19 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
 
     inlines = [
         # OwnerInline,
-        # OwnerInline,
+        # ContestInline,
         StateLogInline,
     ]
 
     search_fields = [
         'id',
         # 'session__convention__name',
-        # 'group__name',
+        'name',
+        'bhs_id',
+        'owners__email',
+        'owners__name',
+        'participants',
+        'code',
     ]
 
     autocomplete_fields = [
@@ -208,10 +244,12 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
     ]
     readonly_fields = (
         'id',
-        # 'convention_name',
+        'created',
+        'modified',
     )
 
     save_on_top = True
+    save_on_bottom = True
 
     ordering = [
         'name',
@@ -273,20 +311,20 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
         'name',
         'district',
         'kind',
-        'convention_id',
         ('num_rounds', 'is_invitational',),
-        'target',
+        # 'target',
         'legacy_report',
         'drcj_report',
         'owners',
-        'group_emails',
+        # 'group_emails',
         # 'contests',
         # 'footnotes',
-        'description',
+        # 'description',
         'notes',
 
         # 'name',
         # 'representing',
+        'convention_id',
         'divisions',
         ('year', 'season', ),
         'panel',
@@ -302,12 +340,12 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
     list_display = [
-        'id',
+        # 'id',
         'district',
-        'name',
         # 'convention__district',
         'kind',
-        'num_rounds',
+        'name',
+        # 'num_rounds',
         'is_invitational',
         'status',
     ]
@@ -316,16 +354,16 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
         # ConventionStatusListFilter,
         'status',
         'kind',
+        'district',
         'num_rounds',
         'is_invitational',
         'season',
-        'district',
-        'year',
+        # 'year',
     )
 
     autocomplete_fields = [
         # 'convention',
-        'target',
+        # 'target',
         'owners',
     ]
 
@@ -346,22 +384,15 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
         # 'convention',
     ]
 
-    ordering = (
-        # '-convention__year',
-        # 'convention__season',
-        # 'convention__group__tree_sort',
-        'kind',
-    )
     ordering = [
-        # '-convention__year',
-        # 'convention__season',
-        # 'convention__district',
-        # 'convention__name',
+        'district',
         'kind',
+        'name',
+        # 'convention__group__tree_sort',
     ]
 
     search_fields = [
-        # 'convention__name',
+        'district',
         'kind',
     ]
 

@@ -97,8 +97,8 @@ class ContestInline(admin.TabularInline):
     fields = [
         # 'award',
         'name',
-        'session',
-        # 'status',
+        # 'session',
+        # 'entry',
     ]
     # readonly_fields = [
     #     'status',
@@ -120,7 +120,7 @@ class EntryInline(admin.TabularInline):
     model = Entry
     fields = [
         'session',
-        # 'group',
+        'name',
         'base',
         'draw',
         'status',

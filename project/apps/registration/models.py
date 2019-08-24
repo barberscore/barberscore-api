@@ -649,7 +649,7 @@ class Entry(TimeStampedModel):
 
     name = models.CharField(
         help_text="""
-            The name of the resource.
+            The name of the group.
         """,
         max_length=255,
         blank=True,
