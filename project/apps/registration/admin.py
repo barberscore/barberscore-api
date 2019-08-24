@@ -27,7 +27,7 @@ admin.site.site_header = 'Barberscore Admin Backend'
 
 
 
-# @admin.register(Assignment)
+@admin.register(Assignment)
 class AssignmentAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
@@ -77,7 +77,7 @@ class AssignmentAdmin(admin.ModelAdmin):
     ]
 
 
-# @admin.register(Contest)
+@admin.register(Contest)
 class ContestAdmin(admin.ModelAdmin):
     fields = [
         'id',
@@ -239,7 +239,7 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
 
     autocomplete_fields = [
         'session',
-        # 'contests',
+        'contests',
         'owners',
     ]
     readonly_fields = (
