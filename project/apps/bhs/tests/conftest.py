@@ -18,14 +18,14 @@ from .factories import UserFactory
 
 
 
-@pytest.fixture
-def admin_django_client():
-    admin = UserFactory(
-        is_staff=True,
-    )
-    client = Client()
-    client.force_login(admin)
-    return client
+# @pytest.fixture
+# def admin_django_client():
+#     admin = UserFactory(
+#         is_staff=True,
+#     )
+#     client = Client()
+#     client.force_login(admin)
+#     return client
 
 
 @pytest.fixture
