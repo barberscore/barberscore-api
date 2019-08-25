@@ -161,6 +161,7 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
         ('Group Info', {
             'fields': (
                 'name',
+                'group_id',
                 'representing',
                 'chapters',
                 'participants',
