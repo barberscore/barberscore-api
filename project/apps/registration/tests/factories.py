@@ -36,7 +36,7 @@ class AssignmentFactory(DjangoModelFactory):
     # status = Assignment.STATUS.active
     kind = Assignment.KIND.official
     # convention = SubFactory('factories.ConventionFactory')
-    # person = SubFactory('factories.PersonFactory')
+    session = SubFactory('apps.registration.tests.factories.SessionFactory')
 
     class Meta:
         model = Assignment
