@@ -5,7 +5,7 @@ from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework_json_api.renderers import JSONRenderer
 
 
-class NoHTMLFormBrowsableAPIRenderer(BrowsableAPIRenderer):
+class BrowsableAPIRendererWithoutForms(BrowsableAPIRenderer):
     """Renders the browsable api, but excludes the forms."""
 
     def get_context(self, *args, **kwargs):
@@ -24,16 +24,6 @@ class NoHTMLFormBrowsableAPIRenderer(BrowsableAPIRenderer):
         return ""
 
 
-class PDFRenderer(BaseRenderer):
-    media_type = 'application/pdf'
-    format = 'pdf'
-    charset = None
-    render_style = 'binary'
-
-    def render(self, data, media_type=None, renderer_context=None):
-        return data
-
-
 class XLSXRenderer(BaseRenderer):
     media_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     format = 'xlsx'
@@ -42,15 +32,3 @@ class XLSXRenderer(BaseRenderer):
 
     def render(self, data, media_type=None, renderer_context=None):
         return data
-
-
-class NoGroupMembersJSONRenderer(JSONRenderer):
-    # pass
-    @classmethod
-    def extract_relationships(cls, fields, resource, resource_instance):
-        if resource_instance._meta.model_name == 'group' and resource_instance.kind <= 30:
-            try:
-                fields.pop('members')
-            except KeyError:
-                pass
-        return super().extract_relationships(fields, resource, resource_instance)
