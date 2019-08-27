@@ -225,7 +225,6 @@ class Assignment(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return True
         return request.user.roles.filter(
             name__in=[
                 'SCJC',
@@ -502,7 +501,6 @@ class Contest(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return True
         return request.user.roles.filter(
             name__in=[
                 'SCJC',
@@ -849,7 +847,6 @@ class Entry(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return True
         return request.user.roles.filter(
             name__in=[
                 'SCJC',
@@ -1203,7 +1200,6 @@ class Repertory(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return True
         return request.user.roles.filter(
             name__in=[
                 'SCJC',
@@ -1217,7 +1213,7 @@ class Repertory(TimeStampedModel):
     def has_object_write_permission(self, request):
         return any([
             request.user in self.entry.owners.all(),
-            # request.user.roles.filter(name='Librarian'),
+            request.user.roles.filter(name='Librarian'),
         ])
 
 
@@ -1921,7 +1917,6 @@ class Session(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return True
         return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
