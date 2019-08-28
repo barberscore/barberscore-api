@@ -73,26 +73,30 @@ class Command(BaseCommand):
         }
         page = 1
         params = {
-            'status': Person.STATUS.active,
-            'modified__gt': cursor,
+            'filter[status]': Person.STATUS.active,
+            'filter[modified__gt]': cursor,
             'page[number]': page,
         }
         response = requests.get(
             url,
             headers=headers,
             params=params,
-        ).json()
-        t = response['meta']['pagination']['count']
+        )
+        response.raise_for_status()
+        response_json = response.json()
+        t = response_json['meta']['pagination']['count']
         if t:
             i = 0
-            pages = response['meta']['pagination']['pages']
+            pages = response_json['meta']['pagination']['pages']
             while page <= pages:
                 response = requests.get(
                     url,
                     headers=headers,
                     params=params,
-                ).json()
-                items = response['data']
+                )
+                response.raise_for_status()
+                response_json = response.json()
+                items = response_json['data']
                 for item in items:
                     i += 1
                     self.stdout.flush()
@@ -112,27 +116,31 @@ class Command(BaseCommand):
         }
         page = 1
         params = {
-            'status': Group.STATUS.active,
-            'kind__gt': 30,
-            'modified__gt': cursor,
+            'filter[status]': Group.STATUS.active,
+            'filter[kind__gt]': 30,
+            'filter[modified__gt]': cursor,
             'page[number]': page,
         }
         response = requests.get(
             url,
             headers=headers,
             params=params,
-        ).json()
-        t = response['meta']['pagination']['count']
+        )
+        response.raise_for_status()
+        response_json = response.json()
+        t = response_json['meta']['pagination']['count']
         if t:
             i = 0
-            pages = response['meta']['pagination']['pages']
+            pages = response_json['meta']['pagination']['pages']
             while page <= pages:
                 response = requests.get(
                     url,
                     headers=headers,
                     params=params,
-                ).json()
-                items = response['data']
+                )
+                response.raise_for_status()
+                response_json = response.json()
+                items = response_json['data']
                 for item in items:
                     i += 1
                     self.stdout.flush()
