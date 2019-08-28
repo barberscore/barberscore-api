@@ -269,6 +269,7 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         'name',
         'bhs_id',
         'code',
+        'owners__email',
     ]
 
     list_display = [
