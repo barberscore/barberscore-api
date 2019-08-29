@@ -1357,13 +1357,13 @@ class Group(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return request.user.roles.filter(
+        return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
                 'Librarian',
                 'Manager',
             ]
-        )
+        ))
 
     @allow_staff_or_superuser
     @authenticated_users
