@@ -156,6 +156,7 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
                 'id',
                 'status',
                 'session',
+                'kind',
             ),
         }),
         ('Group Info', {
