@@ -3,6 +3,7 @@ from django_filters.rest_framework import FilterSet
 
 # Local
 from .models import Group
+from .models import Chart
 from .models import Person
 from .models import Convention
 
@@ -51,6 +52,16 @@ class PersonFilterset(FilterSet):
             # 'user__username': [
             #     'exact',
             # ],
+            'status': [
+                'exact',
+            ],
+        }
+
+
+class ChartFilterset(FilterSet):
+    class Meta:
+        model = Chart
+        fields = {
             'status': [
                 'exact',
             ],

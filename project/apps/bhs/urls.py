@@ -14,7 +14,7 @@ router = routers.DefaultRouter(
 )
 
 router.register(r'group', GroupViewSet)
-router.register(r'award', AwardViewSet, basename='award')
+router.register(r'award', AwardViewSet)
 router.register(r'person', PersonViewSet)
 router.register(r'chart', ChartViewSet)
 router.register(r'convention', ConventionViewSet)
