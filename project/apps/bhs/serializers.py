@@ -79,7 +79,6 @@ class ChartSerializer(serializers.ModelSerializer):
         ]
 
 
-
 class ConventionSerializer(serializers.ModelSerializer):
     timezone = TimezoneField(allow_null=True)
     permissions = DRYPermissionsField()
@@ -149,6 +148,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'location',
             'participants',
             'chapters',
+            'pos',
             'is_senior',
             'is_youth',
             'description',

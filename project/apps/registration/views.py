@@ -142,7 +142,13 @@ class RepertoryViewSet(views.ModelViewSet):
 
 
 class SessionViewSet(views.ModelViewSet):
-    queryset = Session.objects.all()
+    queryset = Session.objects.prefetch_related(
+        'entries',
+        'assignments',
+        'contests',
+        'statelogs',
+        'owners',
+    )
     prefetch_for_includes = {
         '__all__': [],
     }

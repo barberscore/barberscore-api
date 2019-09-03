@@ -1116,6 +1116,13 @@ class Group(TimeStampedModel):
         max_length=255,
     )
 
+    pos = models.IntegerField(
+        help_text="""
+            The number of active performers.""",
+        blank=True,
+        null=True,
+    )
+
     is_senior = models.BooleanField(
         help_text="""Qualifies as a Senior Group.  Must be set manually.""",
         default=False,
