@@ -346,20 +346,20 @@ class Award(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return request.user.roles.filter(
+        return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
             ]
-        )
+        ))
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return request.user.roles.filter(
+        return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
             ]
-        )
+        ))
 
     # Transitions
     @fsm_log_by
@@ -1116,6 +1116,13 @@ class Group(TimeStampedModel):
         max_length=255,
     )
 
+    pos = models.IntegerField(
+        help_text="""
+            The number of active performers.""",
+        blank=True,
+        null=True,
+    )
+
     is_senior = models.BooleanField(
         help_text="""Qualifies as a Senior Group.  Must be set manually.""",
         default=False,
@@ -1657,20 +1664,20 @@ class Person(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return request.user.roles.filter(
+        return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
             ]
-        )
+        ))
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return request.user.roles.filter(
+        return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
             ]
-        )
+        ))
 
     # Transitions
     @fsm_log_by

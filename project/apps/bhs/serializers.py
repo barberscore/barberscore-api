@@ -78,10 +78,6 @@ class ChartSerializer(serializers.ModelSerializer):
             'image_id',
         ]
 
-    class JSONAPIMeta:
-        included_resources = [
-        ]
-
 
 class ConventionSerializer(serializers.ModelSerializer):
     timezone = TimezoneField(allow_null=True)
@@ -131,7 +127,7 @@ class ConventionSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
     included_serializers = {
-        # 'repertories': 'apps.bhs.serializers.RepertorySerializer',
+        'charts': 'apps.bhs.serializers.ChartSerializer',
         # 'members': 'apps.bhs.serializers.MemberSerializer',
         # 'officers': 'apps.bhs.serializers.OfficerSerializer',
     }
@@ -152,6 +148,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'location',
             'participants',
             'chapters',
+            'pos',
             'is_senior',
             'is_youth',
             'description',
@@ -171,18 +168,6 @@ class GroupSerializer(serializers.ModelSerializer):
             'nomen',
             'image_id',
         ]
-
-    class JSONAPIMeta:
-        included_resources = [
-            # 'repertories',
-            # 'members',
-            # 'officers',
-        ]
-
-    # def to_representation(self, instance):
-    #     if instance.kind <= 30:
-    #         self.fields.pop('members')
-    #     return super().to_representation(instance)
 
 
 class PersonSerializer(serializers.ModelSerializer):

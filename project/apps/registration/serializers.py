@@ -14,10 +14,6 @@ from .models import Session
 
 class AssignmentSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    # included_serializers = {
-    #     'person': 'api.serializers.PersonSerializer',
-    #     'convention': 'api.serializers.ConventionSerializer',
-    # }
 
     class Meta:
         model = Assignment
@@ -45,17 +41,10 @@ class AssignmentSerializer(serializers.ModelSerializer):
         read_only_fields = [
             'image_id',
         ]
-    # class JSONAPIMeta:
-    #     included_resources = [
-    #         'convention',
-    #         'person',
-    #     ]
 
 
 class ContestSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-    included_serializers = {
-    }
 
     class Meta:
         model = Contest
@@ -85,18 +74,18 @@ class ContestSerializer(serializers.ModelSerializer):
             'permissions',
         ]
 
-    class JSONAPIMeta:
-        included_resources = [
-        ]
-
 
 class EntrySerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
+
     statelogs = serializers.PrimaryKeyRelatedField(
         many=True,
         read_only=True,
     )
+
     included_serializers = {
+        'contests': 'apps.registration.serializers.ContestSerializer',
+        'repertories': 'apps.registration.serializers.RepertorySerializer',
     }
 
     class Meta:
@@ -142,16 +131,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'image_id',
         ]
 
-    class JSONAPIMeta:
-        included_resources = [
-            # 'appearances',
-        ]
-
-    def validate(self, data):
-        """Check that the start is before the stop."""
-        # if data['is_private']:
-        #     raise serializers.ValidationError("Can not be private and compete for an award.")
-        return data
 
 
 class RepertorySerializer(serializers.ModelSerializer):
@@ -168,27 +147,25 @@ class RepertorySerializer(serializers.ModelSerializer):
             'entry',
             'permissions',
         ]
-        # validators = [
-        #     UniqueTogetherValidator(
-        #         queryset=Repertory.objects.all(),
-        #         fields=('group', 'chart'),
-        #         message='This chart already exists in your repertory.',
-        #     )
-        # ]
 
 
 class SessionSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
-
+    statelogs = serializers.PrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+    )
     included_serializers = {
-        # 'contests': 'apps.registration.serializers.ContestSerializer',
-        # 'entries': 'apps.registration.serializers.EntrySerializer',
+        'contests': 'apps.registration.serializers.ContestSerializer',
+        'entries': 'apps.registration.serializers.EntrySerializer',
+        'assignments': 'apps.registration.serializers.AssignmentSerializer',
     }
 
     class Meta:
         model = Session
         fields = [
             'id',
+            'url',
             'status',
             'kind',
             'num_rounds',
@@ -219,15 +196,11 @@ class SessionSerializer(serializers.ModelSerializer):
             'owners',
             'contests',
             'entries',
+            'assignments',
 
+            'statelogs',
             'permissions',
         ]
         read_only_fields = [
             'image_id',
-        ]
-
-    class JSONAPIMeta:
-        included_resources = [
-            # 'contests',
-            # 'entries',
         ]

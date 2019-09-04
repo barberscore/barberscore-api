@@ -7,24 +7,18 @@ from django.contrib import admin
 from reversion.admin import VersionAdmin
 
 # Local
-# from .filters import ConventionStatusListFilter
-# from .filters import SessionConventionStatusListFilter
-# from .filters import ActiveConventionListFilter
-# from .inlines import ConventionInline
 from .inlines import ContestInline
 from .inlines import EntryInline
-from .inlines import OwnerInline
+
 
 from .models import Assignment
 from .models import Contest
 from .models import Entry
 from .models import Session
-from .models import Repertory
 
 
 
 admin.site.site_header = 'Barberscore Admin Backend'
-
 
 
 @admin.register(Assignment)

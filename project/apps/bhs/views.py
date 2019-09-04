@@ -25,6 +25,7 @@ from django.utils.text import slugify
 # Local
 from .filtersets import GroupFilterset
 from .filtersets import PersonFilterset
+from .filtersets import ChartFilterset
 # from .filterbackends import RepertoryFilterBackend
 from .models import Award
 from .models import Group
@@ -63,18 +64,12 @@ class IgnoreClientContentNegotiation(BaseContentNegotiation):
 
 
 class ConventionViewSet(viewsets.ModelViewSet):
-    queryset = Convention.objects.select_related(
-        # 'user',
-    ).prefetch_related(
-        # 'assignments',
-    ).order_by('id')
+    queryset = Convention.objects.all()
     serializer_class = ConventionSerializer
     filterset_class = ConventionFilterset
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
+    ordering_fields = '__all__'
+    ordering = [
+        'id',
     ]
     resource_name = "convention"
 
@@ -108,15 +103,13 @@ class ConventionViewSet(viewsets.ModelViewSet):
 
 
 class AwardViewSet(viewsets.ModelViewSet):
-    queryset = Award.objects.select_related(
-    ).prefetch_related(
-    ).order_by('status', 'name')
+    queryset = Award.objects.all()
     serializer_class = AwardSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
+    filterset_class = None
+    ordering_fields = '__all__'
+    ordering = [
+        'status',
+        'name',
     ]
     resource_name = "award"
 
@@ -166,34 +159,14 @@ class AwardViewSet(viewsets.ModelViewSet):
 
 
 class GroupViewSet(viewsets.ModelViewSet):
-    queryset = Group.objects.select_related(
-        # 'owner',
-        # 'parent',
-    ).prefetch_related(
-        # 'owners',
-        # 'children',
-        # 'awards',
-        # 'appearances',
-        # 'conventions',
-        # 'entries',
-        # 'members',
-        # 'members__person',
-        # 'officers',
-        # 'officers__person',
-        # 'repertories',
-        # 'repertories__chart',
-        # 'statelogs',
-    ).order_by(
-        'kind',
-        'name',
-    )
+    queryset = Group.objects.all()
     serializer_class = GroupSerializer
     filterset_class = GroupFilterset
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
+    ordering_fields = '__all__'
+    page_size = 10
+    ordering = [
+        'kind',
+        'name',
     ]
     resource_name = "group"
 
@@ -266,22 +239,12 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 class PersonViewSet(viewsets.ModelViewSet):
-    queryset = Person.objects.select_related(
-        # 'user',
-    ).prefetch_related(
-        # 'assignments',
-        # 'members',
-        # 'officers',
-        # 'panelists',
-        # 'statelogs',
-    ).order_by('id')
+    queryset = Person.objects.all()
     serializer_class = PersonSerializer
     filterset_class = PersonFilterset
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
+    ordering_fields = '__all__'
+    ordering = [
+        'id',
     ]
     resource_name = "person"
 
@@ -315,18 +278,13 @@ class PersonViewSet(viewsets.ModelViewSet):
 
 
 class ChartViewSet(viewsets.ModelViewSet):
-    queryset = Chart.objects.select_related(
-    ).prefetch_related(
-        # 'repertories',
-        # 'repertories__group',
-        'statelogs',
-    ).order_by('status', 'title')
+    queryset = Chart.objects.all()
     serializer_class = ChartSerializer
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    permission_classes = [
-        DRYPermissions,
+    filterset_class = ChartFilterset
+    ordering_fields = '__all__'
+    ordering = [
+        'status',
+        'title',
     ]
     resource_name = "chart"
 
@@ -373,4 +331,3 @@ class ChartViewSet(viewsets.ModelViewSet):
             file_name=file_name,
             status=status.HTTP_200_OK
         )
-
