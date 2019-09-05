@@ -149,50 +149,59 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
             'fields': (
                 'id',
                 'status',
-                'session',
-                'kind',
             ),
         }),
-        ('Group Info', {
+        ('Group Info from Member Center', {
             'fields': (
-                'name',
                 'group_id',
+                'name',
+                'kind',
+                'gender',
+                'district',
+                'division',
                 'bhs_id',
-                'representing',
-                'chapters',
-                'participants',
-                # 'charts',
-                'image',
-                'description',
+                'code',
+                'is_senior',
+                'is_youth',
             ),
         }),
-        ('Preferences', {
+        ('Group Info Self-Reported', {
+            'fields': (
+                'participants',
+                'chapters',
+                'pos',
+                'representing',
+                'description',
+                'image',
+            ),
+        }),
+        ('Group Preferences', {
             'fields': (
                 'is_evaluation',
                 'is_private',
+                'notes',
+            ),
+        }),
+        ('DRCJ Preferences', {
+            'fields': (
                 'is_mt',
+                'draw',
+                'prelim',
+                'base',
             ),
         }),
         ('Contests', {
             'fields': (
                 'contests',
-            ),
-        }),
-        ('Incoming Scores', {
-            'fields': (
-                'prelim',
-                'base',
-            ),
-        }),
-        ('Draw', {
-            'fields': (
-                'draw',
+                # 'charts',
+                # 'awards',
             ),
         }),
         ('Misc', {
             'fields': (
-                'notes',
                 'owners',
+                # 'charts',
+                # 'awards',
                 'created',
                 'modified',
             ),
@@ -254,45 +263,6 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
         # 'session__convention__district',
         # 'session__convention__name',
         'session',
-    ]
-
-
-# @admin.register(Repertory)
-class RepertoryAdmin(admin.ModelAdmin):
-
-    fields = [
-        'id',
-        'title',
-        'arrangers',
-        'chart_id'
-    ]
-
-    list_display = [
-        'id',
-        'title',
-        'arrangers',
-        'chart_id'
-    ]
-
-    save_on_top = True
-
-    readonly_fields = [
-        'id',
-    ]
-
-    autocomplete_fields = [
-        # 'entry',
-        # 'title',
-        # 'chart',
-    ]
-
-    inlines = [
-    ]
-
-    search_fields = [
-        # 'group__name',
-        # 'chart__title',
-        'title',
     ]
 
 
