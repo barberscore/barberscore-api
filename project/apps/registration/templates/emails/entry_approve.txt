@@ -37,7 +37,7 @@ Estimated Participants-on-Stage:  {{entry.pos|default:"(No Estimate Provided)"}}
 {% endcomment %}
 Additional Notes/Requests:
 
-{{entry.description|safe|default:"(No additional notes/requests)"}}
+{{entry.notes|safe|default:"(No additional notes/requests)"}}
 
 
 If you wish to withdraw from the contest, go to your Entry and click the red "Withdraw"
