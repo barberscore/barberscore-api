@@ -1212,8 +1212,8 @@ class Group(TimeStampedModel):
         return list(self.owners.values_list('id', flat=True))
 
 
-    def get_chart_ids(self):
-        return list(self.repertories.values_list('chart__id', flat=True))
+    # def get_chart_ids(self):
+    #     return list(self.repertories.values_list('chart__id', flat=True))
 
 
     def get_representing_display(self):

@@ -105,7 +105,7 @@ class GroupIndex(AlgoliaIndex):
         'image_id',
 
         'get_owner_ids',
-        'get_chart_ids',
+        # 'get_chart_ids',
 
         'get_representing_display',
     ]
