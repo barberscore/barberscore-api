@@ -916,12 +916,12 @@ class Entry(TimeStampedModel):
         self.bhs_id = group.bhs_id
         self.code = group.code
         self.owners.set(group.owners.all())
-        for chart in group.charts.all():
-            self.repertories.create(
-                chart_id=chart.id,
-                title=chart.title,
-                arrangers=chart.arrangers,
-            )
+        # for chart in group.charts.all():
+        #     self.repertories.create(
+        #         chart_id=chart.id,
+        #         title=chart.title,
+        #         arrangers=chart.arrangers,
+        #     )
         return
 
     def get_owners_emails(self):
