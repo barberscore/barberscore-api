@@ -95,38 +95,42 @@ class EntrySerializer(serializers.ModelSerializer):
             'status',
             'is_evaluation',
             'is_private',
+            'notes',
+
             'is_mt',
-            'is_senior',
-            'is_youth',
             'draw',
             'prelim',
             'base',
+
             'participants',
+            'chapters',
             'pos',
             'representing',
-            'chapters',
-            'description',
-            'notes',
-            'image_id',
 
             'group_id',
             'name',
             'kind',
             'gender',
-            # 'district',
+            'district',
             'division',
             'bhs_id',
             'code',
+            'is_senior',
+            'is_youth',
+            'image_id',
+
+            'description',
 
             'owners',
             'contests',
-            'repertories',
             'session',
 
             'statelogs',
             'permissions',
+
         ]
         read_only_fields = [
+            'nomen',
             'image_id',
         ]
 

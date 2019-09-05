@@ -553,12 +553,12 @@ class Entry(TimeStampedModel):
         default=False,
     )
 
-    description = models.TextField(
+    notes = models.TextField(
         help_text="""
-            Public Notes (usually from group).""",
+            Specific notes and/or requests.""",
         blank=True,
-        max_length=1000,
     )
+
 
     # DRCJ Fed Data
     is_mt = models.BooleanField(
@@ -767,10 +767,11 @@ class Entry(TimeStampedModel):
     )
 
     # Internal
-    notes = models.TextField(
+    description = models.TextField(
         help_text="""
-            Private Notes (for internal use only).""",
+            Group description.""",
         blank=True,
+        max_length=1000,
     )
 
     # FKs
@@ -799,6 +800,16 @@ class Entry(TimeStampedModel):
 
     # Properties
     @cached_property
+    def nomen(self):
+        if self.bhs_id:
+            suffix = "[{0}]".format(self.bhs_id)
+        else:
+            suffix = "[No BHS ID]"
+        if self.code:
+            suffix = "({0}) {1}".format(self.code, suffix)
+        return "{0} {1}".format(self.name, suffix)
+
+    @cached_property
     def image_id(self):
         return self.image.name or 'missing_image'
 
@@ -819,9 +830,7 @@ class Entry(TimeStampedModel):
         resource_name = "entry"
 
     def __str__(self):
-        return "{0}".format(
-            self.name,
-        )
+        return self.nomen
 
     def clean(self):
         if self.is_private and self.contests.all():
