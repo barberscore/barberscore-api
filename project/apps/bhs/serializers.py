@@ -136,6 +136,7 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = [
             'id',
+            'nomen',
             'name',
             'status',
             'kind',
@@ -144,19 +145,18 @@ class GroupSerializer(serializers.ModelSerializer):
             'division',
             'bhs_id',
             'code',
-            # 'website',
-            'location',
+            'is_senior',
+            'is_youth',
+            'image_id',
+
             'participants',
             'chapters',
             'pos',
-            'is_senior',
-            'is_youth',
+
             'description',
             'notes',
-            'source_id',
 
-            'nomen',
-            'image_id',
+            'source_id',
 
             'owners',
             'charts',
