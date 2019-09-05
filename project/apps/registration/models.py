@@ -563,7 +563,7 @@ class Entry(TimeStampedModel):
     # DRCJ Fed Data
     is_mt = models.BooleanField(
         help_text="""
-            Keep scores private.""",
+            Mic Tester.""",
         default=False,
     )
 
@@ -590,6 +590,7 @@ class Entry(TimeStampedModel):
 
     # Expanded Group Data
     participants = models.CharField(
+        help_text="""The Members/Director(s).""",
         max_length=255,
         blank=True,
         default='',
@@ -609,6 +610,7 @@ class Entry(TimeStampedModel):
     )
 
     representing = models.CharField(
+        help_text='Representing (based on District)',
         max_length=255,
         blank=True,
         default='',
@@ -750,7 +752,7 @@ class Entry(TimeStampedModel):
     )
 
     is_senior = models.BooleanField(
-        help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
+        help_text="""Qualifies as a Senior Group.  Must be set manually.""",
         default=False,
     )
 
@@ -772,6 +774,24 @@ class Entry(TimeStampedModel):
             Group description.""",
         blank=True,
         max_length=1000,
+    )
+
+    charts = ArrayField(
+        base_field=models.CharField(
+            blank=True,
+            max_length=255,
+        ),
+        null=True,
+        blank=True,
+    )
+
+    awards = ArrayField(
+        base_field=models.CharField(
+            blank=True,
+            max_length=255,
+        ),
+        null=True,
+        blank=True,
     )
 
     # FKs
@@ -1138,97 +1158,6 @@ class Entry(TimeStampedModel):
     def approve(self, *args, **kwargs):
         send_approve_email_from_entry.delay(self)
         return
-
-
-class Repertory(TimeStampedModel):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    # Chart Denorm
-    chart_id = models.UUIDField(
-        null=True,
-        blank=True,
-    )
-
-    title = models.CharField(
-        max_length=255,
-    )
-
-    arrangers = models.CharField(
-        max_length=255,
-    )
-
-    # FKs
-    entry = models.ForeignKey(
-        'Entry',
-        related_name='repertories',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-
-    # Relations
-    statelogs = GenericRelation(
-        StateLog,
-        related_query_name='repertories',
-    )
-
-    # Internals
-    class Meta:
-        verbose_name_plural = 'repertories'
-        # unique_together = (
-        #     ('group', 'chart',),
-        # )
-
-    class JSONAPIMeta:
-        resource_name = "repertory"
-
-    def __str__(self):
-        return str(self.id)
-
-    # Permissions
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_read_permission(request):
-        return True
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_read_permission(self, request):
-        return any([
-            request.user in self.entry.session.owners.all(),
-            request.user in self.entry.owners.all(),
-            request.user.roles.filter(name__in=[
-                'SCJC',
-                'DRCJ',
-                'CA',
-                'Librarian',
-            ]),
-        ])
-
-    @staticmethod
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_write_permission(request):
-        return bool(request.user.roles.filter(
-            name__in=[
-                'SCJC',
-                'Librarian',
-                'Manager',
-            ]
-        ))
-
-    @allow_staff_or_superuser
-    @authenticated_users
-    def has_object_write_permission(self, request):
-        return any([
-            request.user in self.entry.owners.all(),
-            request.user.roles.filter(name='Librarian'),
-        ])
 
 
 class Session(TimeStampedModel):
