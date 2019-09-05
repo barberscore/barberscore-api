@@ -42,15 +42,6 @@ def test_entry_admin(admin_django_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_repertory_admin(admin_django_client, repertory):
-    path = reverse('admin:registration_repertory_changelist')
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('admin:registration_repertory_change', args=(str(repertory.id),))
-    response = admin_django_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-
-
 def test_session_admin(admin_django_client, session):
     path = reverse('admin:registration_session_changelist')
     response = admin_django_client.get(path)

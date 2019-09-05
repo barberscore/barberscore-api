@@ -11,7 +11,6 @@ from .models import Session
 
 from .models import Entry
 from .models import Assignment
-from .models import Repertory
 User = get_user_model()
 
 
@@ -34,30 +33,6 @@ class OwnerInline(admin.TabularInline):
     # ordering = [
     #     'chart__title',
     # ]
-
-
-class RepertoryInline(admin.TabularInline):
-    model = Repertory
-    fields = [
-        'chart',
-        'group',
-        # 'status',
-    ]
-    autocomplete_fields = [
-        'chart',
-        'group',
-    ]
-    show_change_link = True
-    extra = 0
-    classes = [
-        'collapse',
-    ]
-    # readonly_fields = [
-    #     'status',
-    # ]
-    ordering = [
-        'chart__title',
-    ]
 
 
 class AssignmentInline(admin.TabularInline):

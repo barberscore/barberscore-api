@@ -12,7 +12,6 @@ from .filtersets import SessionFilterset
 from .models import Assignment
 from .models import Contest
 from .models import Entry
-from .models import Repertory
 from .models import Session
 from .negotiators import IgnoreClientContentNegotiation
 from .renderers import XLSXRenderer
@@ -20,7 +19,6 @@ from .responders import XLSXResponse
 from .serializers import AssignmentSerializer
 from .serializers import ContestSerializer
 from .serializers import EntrySerializer
-from .serializers import RepertorySerializer
 from .serializers import SessionSerializer
 
 
@@ -128,17 +126,6 @@ class EntryViewSet(views.ModelViewSet):
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
-
-
-class RepertoryViewSet(views.ModelViewSet):
-    queryset = Repertory.objects.all()
-    serializer_class = RepertorySerializer
-    filterset_class = None
-    ordering_fields = '__all__'
-    ordering = [
-        'id',
-    ]
-    resource_name = "repertory"
 
 
 class SessionViewSet(views.ModelViewSet):

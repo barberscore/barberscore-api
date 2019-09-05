@@ -22,7 +22,6 @@ from django.db.models.signals import pre_save
 from django.db.models.signals import m2m_changed
 
 # First-Party
-from apps.registration.models import Repertory
 from apps.registration.models import Assignment
 from apps.registration.models import Contest
 from apps.registration.models import Entry
@@ -60,15 +59,6 @@ class EntryFactory(DjangoModelFactory):
 
     class Meta:
         model = Entry
-
-
-class RepertoryFactory(DjangoModelFactory):
-    # status = Repertory.STATUS.active
-    # group = SubFactory('factories.GroupFactory')
-    entry = SubFactory('apps.registration.tests.factories.EntryFactory')
-
-    class Meta:
-        model = Repertory
 
 
 class SessionFactory(DjangoModelFactory):

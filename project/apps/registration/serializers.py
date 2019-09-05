@@ -8,7 +8,6 @@ from rest_framework_json_api import serializers
 from .models import Assignment
 from .models import Contest
 from .models import Entry
-from .models import Repertory
 from .models import Session
 
 
@@ -85,7 +84,6 @@ class EntrySerializer(serializers.ModelSerializer):
 
     included_serializers = {
         'contests': 'apps.registration.serializers.ContestSerializer',
-        'repertories': 'apps.registration.serializers.RepertorySerializer',
     }
 
     class Meta:
@@ -134,22 +132,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'image_id',
         ]
 
-
-
-class RepertorySerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
-    class Meta:
-        model = Repertory
-        fields = [
-            'id',
-            'chart_id',
-            'title',
-            'arrangers',
-
-            'entry',
-            'permissions',
-        ]
 
 
 class SessionSerializer(serializers.ModelSerializer):

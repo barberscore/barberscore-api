@@ -65,19 +65,6 @@ def test_entry_endpoint(anon_api_client, entry):
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_repertory_endpoint(anon_api_client, repertory):
-    path = reverse('repertory-list')
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.post(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    path = reverse('repertory-detail', args=(str(repertory.id),))
-    response = anon_api_client.get(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.patch(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    response = anon_api_client.delete(path)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_session_endpoint(anon_api_client, session):

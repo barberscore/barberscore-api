@@ -11,7 +11,6 @@ from django.test.client import Client
 from .factories import AssignmentFactory
 from .factories import ContestFactory
 from .factories import EntryFactory
-from .factories import RepertoryFactory
 from .factories import SessionFactory
 from .factories import UserFactory
 
@@ -72,11 +71,6 @@ def contest():
 def entry():
     return EntryFactory()
 
-
-
-@pytest.fixture
-def repertory():
-    return RepertoryFactory()
 
 
 @pytest.fixture

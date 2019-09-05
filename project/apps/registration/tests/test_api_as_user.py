@@ -36,15 +36,6 @@ def test_entry_endpoint(user_api_client, entry):
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_repertory_endpoint(user_api_client, repertory):
-    path = reverse('repertory-list')
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
-    path = reverse('repertory-detail', args=(str(repertory.id),))
-    response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
 def test_session_endpoint(user_api_client, session):
     path = reverse('session-list')
     response = user_api_client.get(path)
