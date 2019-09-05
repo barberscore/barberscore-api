@@ -1019,18 +1019,19 @@ class Entry(TimeStampedModel):
         ])
 
     def can_submit_entry(self):
+        return True
         return all([
             # Only active groups can submit.
             # self.group_status == self.GROUP_STATUS.active,
             # Check POS for choruses only
-            self.pos if self.kind == self.KIND.chorus else True,
+            # self.pos if self.kind == self.KIND.chorus else True,
             # ensure they can't submit a private while competiting.
             not all([
                 self.is_private,
                 self.contests.all(),
             ]),
             # Check participants
-            self.participants,
+            # self.participants,
         ])
 
     def can_approve(self):
