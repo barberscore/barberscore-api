@@ -23,6 +23,7 @@ You are entered for the following contests/awards:
     Not competing for any awards. (Score/Eval only)
 {% endfor %}
 {% endif %}
+{% comment %}
 {% if entry.kind == entry.KIND.quartet %}
 Members (TLBrBs): {{entry.participants|safe|default:"(No Members Specified)"}}
 
@@ -33,14 +34,11 @@ Estimated Participants-on-Stage:  {{entry.pos|default:"(No Estimate Provided)"}}
 
 
 {% endif %}
+{% endcomment %}
 Additional Notes/Requests:
 
 {{entry.description|safe|default:"(No additional notes/requests)"}}
 
-
-Now that your submission is APPROVED, you can now only edit your chart repertory.
-If you need to make any other changes or have additional requests, you will need
-to contact the DRCJ directly (cc'd on this message).
 
 If you wish to withdraw from the contest, go to your Entry and click the red "Withdraw"
 button on the bottom of the page. Please note however that if you scratch and then wish
@@ -48,6 +46,7 @@ to re-enter, you'll need to contact the DRCJ for approval.
 
 IMPORTANT: Separate from this contest entry is your list of legal charts. Prior to
 competing it is your responsibility to ensure your songs are in your Repertory.
+{% comment %}
 As of now, your Repertory contains the following charts:
 
 {% for repertory in repertories %}
@@ -55,7 +54,7 @@ As of now, your Repertory contains the following charts:
 {% empty %}
   No Songs in Your Repertory
 {% endfor %}
-
+{% endcomment %}
 You can delete or add charts to your Repertory at any time, however it is
 preferred that your charts are entered no later than 5 days prior to the contest.
 IMPORTANT: Every competition song MUST be vouched for by you (as a legal chart)
