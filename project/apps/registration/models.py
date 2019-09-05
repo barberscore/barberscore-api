@@ -875,6 +875,7 @@ class Entry(TimeStampedModel):
         self.name = group.name
         self.kind = group.kind
         self.gender = group.gender
+        self.representing = group.get_district_display()
         self.district = group.district
         self.division = group.division
         self.participants = group.participants
