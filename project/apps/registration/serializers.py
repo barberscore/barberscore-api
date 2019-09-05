@@ -99,7 +99,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'is_senior',
             'is_youth',
             'draw',
-            'seed',
             'prelim',
             'base',
             'participants',

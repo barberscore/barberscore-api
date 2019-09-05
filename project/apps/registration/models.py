@@ -540,6 +540,7 @@ class Entry(TimeStampedModel):
         default=STATUS.new,
     )
 
+    # Competitor Preferences
     is_evaluation = models.BooleanField(
         help_text="""
             Entry requests evaluation.""",
@@ -552,32 +553,23 @@ class Entry(TimeStampedModel):
         default=False,
     )
 
+    description = models.TextField(
+        help_text="""
+            Public Notes (usually from group).""",
+        blank=True,
+        max_length=1000,
+    )
+
+    # DRCJ Fed Data
     is_mt = models.BooleanField(
         help_text="""
             Keep scores private.""",
         default=False,
     )
 
-    is_senior = models.BooleanField(
-        help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
-        default=False,
-    )
-
-    is_youth = models.BooleanField(
-        help_text="""Qualifies as a Youth Group.  Must be set manually.""",
-        default=False,
-    )
-
     draw = models.IntegerField(
         help_text="""
             The draw for the initial round only.""",
-        null=True,
-        blank=True,
-    )
-
-    seed = models.IntegerField(
-        help_text="""
-            The incoming rank based on prelim score.""",
         null=True,
         blank=True,
     )
@@ -596,7 +588,15 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
+    # Expanded Group Data
     participants = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+    )
+
+    chapters = models.CharField(
+        help_text="""The Chapter(s) that the comprise the group members.""",
         max_length=255,
         blank=True,
         default='',
@@ -614,34 +614,7 @@ class Entry(TimeStampedModel):
         default='',
     )
 
-    chapters = models.CharField(
-        help_text="""The Chapter(s) that the comprise the group members.""",
-        max_length=255,
-        blank=True,
-        default='',
-    )
-
-    description = models.TextField(
-        help_text="""
-            Public Notes (usually from group).""",
-        blank=True,
-        max_length=1000,
-    )
-
-    notes = models.TextField(
-        help_text="""
-            Private Notes (for internal use only).""",
-        blank=True,
-    )
-
-    image = models.ImageField(
-        upload_to=UploadPath('image'),
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
-    # Denorm
+    # Group Data (Denormalized)
     group_id = models.UUIDField(
         null=True,
         blank=True,
@@ -776,6 +749,30 @@ class Entry(TimeStampedModel):
         default='',
     )
 
+    is_senior = models.BooleanField(
+        help_text="""Qualifies as a Senior Group.  This can be set manually, but is denormlized nightly for quartets.""",
+        default=False,
+    )
+
+    is_youth = models.BooleanField(
+        help_text="""Qualifies as a Youth Group.  Must be set manually.""",
+        default=False,
+    )
+
+    image = models.ImageField(
+        upload_to=UploadPath('image'),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    # Internal
+    notes = models.TextField(
+        help_text="""
+            Private Notes (for internal use only).""",
+        blank=True,
+    )
+
     # FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
@@ -785,6 +782,12 @@ class Entry(TimeStampedModel):
 
     contests = models.ManyToManyField(
         'Contest',
+        related_name='entries',
+        blank=True,
+    )
+
+    repertories = models.ManyToManyField(
+        'Repertory',
         related_name='entries',
         blank=True,
     )
@@ -808,9 +811,15 @@ class Entry(TimeStampedModel):
     # Internals
     class Meta:
         verbose_name_plural = 'entries'
-        # unique_together = (
-        #     ('group', 'session',),
-        # )
+        constraints = [
+            models.UniqueConstraint(
+                name='unique_entry',
+                fields=[
+                    'group_id',
+                    'session',
+                ]
+            )
+        ]
 
     class JSONAPIMeta:
         resource_name = "entry"
