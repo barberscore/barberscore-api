@@ -786,12 +786,6 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
-    repertories = models.ManyToManyField(
-        'Repertory',
-        related_name='entries',
-        blank=True,
-    )
-
     session = models.ForeignKey(
         'Session',
         related_name='entries',
