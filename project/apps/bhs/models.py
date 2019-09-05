@@ -1088,19 +1088,16 @@ class Group(TimeStampedModel):
         blank=True,
     )
 
-    website = models.URLField(
-        help_text="""
-            The website URL of the resource.""",
-        blank=True,
-        default='',
+    is_senior = models.BooleanField(
+        help_text="""Qualifies as a Senior Group.  Must be set manually.""",
+        default=False,
     )
 
-    location = models.CharField(
-        help_text="""
-            The geographical location of the resource.""",
-        max_length=255,
-        blank=True,
+    is_youth = models.BooleanField(
+        help_text="""Qualifies as a Youth Group.  Must be set manually.""",
+        default=False,
     )
+
 
     participants = models.CharField(
         help_text='Director(s) or Members (listed TLBB)',
@@ -1121,16 +1118,6 @@ class Group(TimeStampedModel):
             The number of active performers.""",
         blank=True,
         null=True,
-    )
-
-    is_senior = models.BooleanField(
-        help_text="""Qualifies as a Senior Group.  Must be set manually.""",
-        default=False,
-    )
-
-    is_youth = models.BooleanField(
-        help_text="""Qualifies as a Youth Group.  Must be set manually.""",
-        default=False,
     )
 
     description = models.TextField(
@@ -1160,6 +1147,20 @@ class Group(TimeStampedModel):
         blank=True,
     )
 
+
+    website = models.URLField(
+        help_text="""
+            The website URL of the resource.""",
+        blank=True,
+        default='',
+    )
+
+    location = models.CharField(
+        help_text="""
+            The geographical location of the resource.""",
+        max_length=255,
+        blank=True,
+    )
 
     # FKs
     charts = models.ManyToManyField(
@@ -1191,17 +1192,6 @@ class Group(TimeStampedModel):
             suffix = "({0}) {1}".format(self.code, suffix)
         return "{0} {1}".format(self.name, suffix)
 
-    def is_searchable(self):
-        return self.status == self.STATUS.active
-
-    def owner_emails(self):
-        return [x.email for x in self.owners.all()]
-
-
-    def owner_ids(self):
-        return [str(x.id) for x in self.owners.all()]
-
-
     @cached_property
     def image_id(self):
         return self.image.name or 'missing_image'
@@ -1212,6 +1202,23 @@ class Group(TimeStampedModel):
             return self.image.url
         except ValueError:
             return 'https://res.cloudinary.com/barberscore/image/upload/v1554830585/missing_image.jpg'
+
+    # Algolia
+    def is_searchable(self):
+        return self.status == self.STATUS.active
+
+
+    def get_owner_ids(self):
+        return list(self.owners.values_list('id', flat=True))
+
+
+    def get_chart_ids(self):
+        return list(self.repertories.values_list('chart__id', flat=True))
+
+
+    def get_representing_display(self):
+        return self.get_district_display()
+
 
     def get_owners_emails(self):
         owners = self.owners.order_by(

@@ -89,18 +89,27 @@ class GroupIndex(AlgoliaIndex):
         'get_gender_display',
         'get_district_display',
         'get_division_display',
-        'code',
         'bhs_id',
-        'participants',
-        'chapters',
+        'code',
         'is_senior',
         'is_youth',
+        'nomen',
+
+        'participants',
+        'chapters',
+        'pos',
+
         'description',
+
         'image_url',
         'image_id',
-        'owner_emails',
-        'owner_ids',
+
+        'get_owner_ids',
+        'get_chart_ids',
+
+        'get_representing_display',
     ]
+
     settings = {
         'searchableAttributes': [
             'name',
