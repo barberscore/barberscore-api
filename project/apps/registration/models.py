@@ -1008,16 +1008,16 @@ class Entry(TimeStampedModel):
 
     def get_approve_email(self):
         template = 'emails/entry_approve.txt'
-        repertories = self.repertories.order_by(
-            'title',
-            'arrangers',
-        )
+        # repertories = self.repertories.order_by(
+        #     'title',
+        #     'arrangers',
+        # )
         contests = self.contests.order_by(
             'tree_sort',
         )
         context = {
             'entry': self,
-            'repertories': repertories,
+            # 'repertories': repertories,
             'contests': contests,
         }
         subject = "[Barberscore] Approval Notification for {0}".format(
