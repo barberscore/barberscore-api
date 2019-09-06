@@ -616,6 +616,20 @@ class Entry(TimeStampedModel):
         default='',
     )
 
+    image = models.ImageField(
+        upload_to=UploadPath('image'),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    description = models.TextField(
+        help_text="""
+            Group description.""",
+        blank=True,
+        max_length=1000,
+    )
+
     # Group Data (Denormalized)
     group_id = models.UUIDField(
         null=True,
@@ -759,21 +773,6 @@ class Entry(TimeStampedModel):
     is_youth = models.BooleanField(
         help_text="""Qualifies as a Youth Group.  Must be set manually.""",
         default=False,
-    )
-
-    image = models.ImageField(
-        upload_to=UploadPath('image'),
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-
-    # Internal
-    description = models.TextField(
-        help_text="""
-            Group description.""",
-        blank=True,
-        max_length=1000,
     )
 
     charts = ArrayField(
