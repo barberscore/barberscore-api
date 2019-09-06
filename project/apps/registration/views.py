@@ -244,8 +244,8 @@ class SessionViewSet(views.ModelViewSet):
             xlsx = session.legacy_report.file
         else:
             xlsx = session.get_legacy_report()
-        file_name = '{0} Session Legacy Report'.format(
-            session.get_kind_display(),
+        file_name = '{0} Legacy Report'.format(
+            session.nomen,
         )
         return XLSXResponse(
             xlsx,
@@ -266,9 +266,8 @@ class SessionViewSet(views.ModelViewSet):
             xlsx = session.drcj_report.file
         else:
             xlsx = session.get_drcj_report()
-        file_name = '{0} {1} Session DRCJ Report'.format(
-            session.convention,
-            session.get_kind_display(),
+        file_name = '{0} DRCJ Report'.format(
+            session.nomen,
         )
         return XLSXResponse(
             xlsx,

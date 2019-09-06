@@ -1227,6 +1227,12 @@ class Group(TimeStampedModel):
         )
         return ["{0} <{1}>".format(x.name, x.email) for x in owners]
 
+    def get_charts_nomens(self):
+        charts = self.charts.order_by(
+            'title',
+        )
+        return ["{0}".format(x.nomen) for x in charts]
+
     # def get_is_senior(self):
     #     if self.kind != self.KIND.quartet:
     #         raise ValueError('Must be quartet')

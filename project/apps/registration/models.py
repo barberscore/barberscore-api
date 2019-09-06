@@ -1510,6 +1510,7 @@ class Session(TimeStampedModel):
         return entries
 
     def get_legacy_report(self):
+        Group = apps.get_model('bhs.group')
         wb = Workbook()
         ws = wb.active
         fieldnames = [
@@ -1527,23 +1528,26 @@ class Session(TimeStampedModel):
             ]
         ).order_by('draw')
         for entry in entries:
+            group = Group.objects.get(id=entry.group_id)
             oa = entry.draw
-            group_name = entry.group_name
-            group_type = entry.get_group_kind_display()
+            group_name = group.name
+            group_type = group.get_kind_display()
             if group_type == 'Quartet':
-                group_id = entry.group_bhs_id
+                group_id = group.bhs_id
             elif group_type == 'Chorus':
-                group_id = entry.group_code
+                group_id = group.code
             elif group_type == 'VLQ':
-                group_id = entry.group_code
+                group_id = group.code
             else:
-                raise RuntimeError("Improper Entity Type: {0}".format(entry.get_group_kind_display()))
+                raise RuntimeError(
+                    "Improper Entity Type: {0}".format(group.get_kind_display())
+                )
             i = 0
-            charts_sorted = sorted(entry.group_charts, key=lambda x: x['title'])
+            charts_sorted = group.get_charts_nomens()
             for chart in charts_sorted:
                 i += 1
                 song_number = i
-                song_title = chart['title']
+                song_title = chart.partition("[")[0]
                 row = [
                     oa,
                     group_id,
@@ -1562,6 +1566,7 @@ class Session(TimeStampedModel):
         self.legacy_report.save("legacy_report", content)
 
     def get_drcj_report(self):
+        Group = apps.get_model('bhs.group')
         wb = Workbook()
         ws = wb.active
         fieldnames = [
@@ -1585,36 +1590,27 @@ class Session(TimeStampedModel):
             ]
         ).order_by('draw')
         for entry in entries:
+            group = Group.objects.get(id=entry.group_id)
             oa = entry.draw
-            group_name = entry.group_name
-            bhs_id = entry.group_bhs_id
+            group_name = group.name
+            bhs_id = group.bhs_id
             representing = entry.representing
-            chapters = entry.chapters
-            participants = entry.participants
-            pos = entry.pos
+            chapters = group.chapters
+            participants = group.participants
+            pos = group.pos
             is_evaluation = entry.is_evaluation
             is_private = entry.is_private
 
             award_names = "\n".join(
                 filter(
                     None,
-                    ["{0}".format(i.name) for i in entry.contests.order_by('award_tree_sort')],
+                    ["{0}".format(i.name) for i in entry.contests.order_by('tree_sort')],
                 )
             )
 
-            chart_titles = "\n".join(
-                filter(
-                    None,
-                    ["{0}".format(i['nomen']) for i in sorted(entry.group_charts, key=lambda x: x['nomen'])],
-                )
-            )
+            chart_titles = "\n".join(group.get_charts_nomens())
 
-            contact_emails = "\n".join(
-                filter(
-                    None,
-                    ["{0} <{1}>".format(i.name, i.email) for i in entry.owners.order_by('family_name')],
-                )
-            )
+            contact_emails = "\n".join(entry.get_owners_emails())
 
             row = [
                 oa,
@@ -1674,9 +1670,7 @@ class Session(TimeStampedModel):
         subject = "[Barberscore] {0} Session is CLOSED".format(
             self.nomen,
         )
-        to = self.convention.get_drcj_emails()
-        cc = self.convention.get_ca_emails()
-        bcc = self.get_district_emails()
+        to = self.get_owners_emails()
         context['bcc'] = [x.partition(" <")[0] for x in bcc]
         email = build_email(
             template=template,
@@ -1704,8 +1698,7 @@ class Session(TimeStampedModel):
         subject = "[Barberscore] {0} Session Draw".format(
             self.nomen,
         )
-        to = self.convention.get_drcj_emails()
-        cc = self.convention.get_ca_emails()
+        to = self.get_owners_emails()
         bcc = self.get_participant_emails()
         context['bcc'] = [x.partition(" <")[0] for x in bcc]
         email = build_email(
@@ -1730,8 +1723,7 @@ class Session(TimeStampedModel):
         subject = "[Barberscore] {0} Session Draft Reports".format(
             self.nomen,
         )
-        to = self.convention.get_drcj_emails()
-        cc = self.convention.get_ca_emails()
+        to = self.get_owners_emails()
         attachments = []
         if self.drcj_report:
             xlsx = self.drcj_report.file
@@ -1779,8 +1771,7 @@ class Session(TimeStampedModel):
         subject = "[Barberscore] {0} Session Starting".format(
             self.nomen,
         )
-        to = self.convention.get_drcj_emails()
-        cc = self.convention.get_ca_emails()
+        to = self.get_owners_emails()
         bcc = self.get_participant_emails()
         context['bcc'] = [x.partition(" <")[0] for x in bcc]
         email = build_email(
@@ -1805,8 +1796,7 @@ class Session(TimeStampedModel):
         subject = "[Barberscore] {0} Session FINAL Reports".format(
             self.nomen,
         )
-        to = self.convention.get_drcj_emails()
-        cc = self.convention.get_ca_emails()
+        to = self.get_owners_emails()
 
         attachments = []
         if self.drcj_report:
