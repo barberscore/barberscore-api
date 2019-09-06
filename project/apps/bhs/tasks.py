@@ -33,7 +33,6 @@ log = logging.getLogger(__name__)
 @job('low')
 def update_person_from_membercenter(resource):
     Person = apps.get_model('bhs.person')
-    User = get_user_model()
     source_id = "bhs|{0}".format(resource['id'])
     data = resource['attributes']
     data['source_id'] = source_id
@@ -45,19 +44,6 @@ def update_person_from_membercenter(resource):
     except Person.DoesNotExist:
         serialized = PersonSerializer(data=data)
     if serialized.is_valid():
-        # usernames = data['usernames']
-        # owners = []
-        # defaults = {
-        #     'name': data['name'],
-        #     'first_name': data['first_name'],
-        #     'last_name': data['last_name'],
-        # }
-        # user, _ = User.objects.update_or_create(
-        #     email=data['email'],
-        #     defaults=defaults,
-        # )
-        # owners.append(user.id)
-        # return serialized.save(owners=owners)
         return serialized.save()
     raise ValueError(serialized.errors)
 
@@ -65,7 +51,6 @@ def update_person_from_membercenter(resource):
 @job('low')
 def update_group_from_membercenter(resource):
     Group = apps.get_model('bhs.group')
-    User = get_user_model()
     source_id = "bhs|{0}".format(resource['id'])
     data = resource['attributes']
     data['source_id'] = source_id
