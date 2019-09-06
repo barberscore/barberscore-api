@@ -231,27 +231,54 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
     fsm_field = [
         'status',
     ]
-    fields = [
-        'id',
-        'name',
-        'status',
-        'kind',
-        'gender',
-        'district',
-        'division',
-        'owners',
-        ('is_senior', 'is_youth',),
-        ('bhs_id', 'source_id', 'code',),
-        'location',
-        'website',
-        'image',
-        'description',
-        'participants',
-        'chapters',
-        'charts',
-        'notes',
-        ('created', 'modified',),
-    ]
+    fieldsets = (
+        (None, {
+            'fields': (
+                'id',
+                'status',
+            ),
+        }),
+        ('Group Info (primarily from Member Center)', {
+            'fields': (
+                'name',
+                'kind',
+                'gender',
+                'district',
+                'division',
+                'bhs_id',
+                'code',
+                'is_senior',
+                'is_youth',
+            ),
+        }),
+        ('Group Info Self-Reported', {
+            'fields': (
+                'participants',
+                'chapters',
+                'pos',
+                # 'representing',
+                'description',
+                'image',
+            ),
+        }),
+        ('Repertory', {
+            'fields': (
+                'charts',
+            ),
+        }),
+        ('Misc', {
+            'fields': (
+                'source_id',
+                'owners',
+                'location',
+                'website',
+                'notes',
+                # 'awards',
+                'created',
+                'modified',
+            ),
+        }),
+    )
 
     list_filter = [
         # 'district',
