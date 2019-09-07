@@ -1104,6 +1104,7 @@ class Group(TimeStampedModel):
         max_length=255,
         blank=True,
         default='',
+        editable=False,
     )
 
     chapters = models.CharField(
@@ -1111,6 +1112,7 @@ class Group(TimeStampedModel):
             The denormalized chapter group.""",
         blank=True,
         max_length=255,
+        editable=False,
     )
 
     pos = models.IntegerField(
@@ -1118,6 +1120,7 @@ class Group(TimeStampedModel):
             The number of active performers.""",
         blank=True,
         null=True,
+        editable=False,
     )
 
     description = models.TextField(

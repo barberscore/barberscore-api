@@ -318,6 +318,9 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         'id',
         'created',
         'modified',
+        'participants',
+        'chapters',
+        'pos',
     ]
 
     autocomplete_fields = [
