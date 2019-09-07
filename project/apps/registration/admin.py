@@ -170,8 +170,8 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
                 'participants',
                 'chapters',
                 'pos',
-                'representing',
-                'description',
+                # 'representing',
+                # 'description',
                 'image',
             ),
         }),
@@ -248,11 +248,21 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
         'contests',
         'owners',
     ]
-    readonly_fields = (
+    readonly_fields = [
         'id',
         'created',
         'modified',
-    )
+                'group_id',
+                'name',
+                'kind',
+                'gender',
+                'district',
+                'division',
+                'bhs_id',
+                'code',
+                'is_senior',
+                'is_youth',
+    ]
 
     save_on_top = True
     save_on_bottom = True
