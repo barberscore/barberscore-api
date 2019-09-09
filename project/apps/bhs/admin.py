@@ -251,12 +251,8 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
                 'is_youth',
             ),
         }),
-        ('Group Info Self-Reported', {
+        ('Group Info (expanded)', {
             'fields': (
-                'participants',
-                'chapters',
-                'pos',
-                # 'representing',
                 'description',
                 'image',
             ),
@@ -273,7 +269,6 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
                 'location',
                 'website',
                 'notes',
-                # 'awards',
                 'created',
                 'modified',
             ),
@@ -281,8 +276,6 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
     )
 
     list_filter = [
-        # 'district',
-
         'status',
         'kind',
         'gender',
@@ -303,9 +296,6 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         'name',
         'kind',
         'gender',
-        'is_senior',
-        'is_youth',
-        'chapters',
         'district',
         'division',
         'bhs_id',
@@ -318,9 +308,6 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
         'id',
         'created',
         'modified',
-        'participants',
-        'chapters',
-        'pos',
     ]
 
     autocomplete_fields = [

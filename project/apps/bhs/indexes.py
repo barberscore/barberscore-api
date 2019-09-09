@@ -95,19 +95,13 @@ class GroupIndex(AlgoliaIndex):
         'is_youth',
         'nomen',
 
-        'participants',
-        'chapters',
-        'pos',
-
         'description',
 
         'image_url',
         'image_id',
 
         'get_owner_ids',
-        # 'get_chart_ids',
-
-        'get_representing_display',
+        'get_chart_ids',
     ]
 
     settings = {
@@ -115,8 +109,6 @@ class GroupIndex(AlgoliaIndex):
             'name',
             'code',
             'bhs_id',
-            'participants',
-            'chapters',
             'get_gender_display',
             'get_district_display',
             'get_division_display',

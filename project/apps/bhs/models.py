@@ -1098,31 +1098,6 @@ class Group(TimeStampedModel):
         default=False,
     )
 
-
-    participants = models.CharField(
-        help_text='Director(s) or Members (listed TLBB)',
-        max_length=255,
-        blank=True,
-        default='',
-        editable=False,
-    )
-
-    chapters = models.CharField(
-        help_text="""
-            The denormalized chapter group.""",
-        blank=True,
-        max_length=255,
-        editable=False,
-    )
-
-    pos = models.IntegerField(
-        help_text="""
-            The number of active performers.""",
-        blank=True,
-        null=True,
-        editable=False,
-    )
-
     description = models.TextField(
         help_text="""
             A description of the group.  Max 1000 characters.""",
@@ -1215,8 +1190,8 @@ class Group(TimeStampedModel):
         return list(self.owners.values_list('id', flat=True))
 
 
-    # def get_chart_ids(self):
-    #     return list(self.repertories.values_list('chart__id', flat=True))
+    def get_chart_ids(self):
+        return list(self.charts.values_list('id', flat=True))
 
 
     def get_representing_display(self):
