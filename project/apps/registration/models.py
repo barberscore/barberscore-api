@@ -140,9 +140,9 @@ class Assignment(TimeStampedModel):
         blank=True,
     )
 
-    representing = models.CharField(
+    area = models.CharField(
         help_text="""
-            District""",
+            Free-form field (based on district)""",
         max_length=10,
         blank=True,
         default='',
@@ -609,8 +609,8 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
-    representing = models.CharField(
-        help_text='Representing (based on District)',
+    area = models.CharField(
+        help_text='Free-form field (based on district)',
         max_length=255,
         blank=True,
         default='',
@@ -906,7 +906,7 @@ class Entry(TimeStampedModel):
         self.name = group.name
         self.kind = group.kind
         self.gender = group.gender
-        self.representing = group.get_district_display()
+        self.area = group.get_district_display()
         self.district = group.district
         self.division = group.division
         self.participants = group.participants
@@ -1572,7 +1572,7 @@ class Session(TimeStampedModel):
             'OA',
             'Group Name',
             'BHS ID',
-            'Representing',
+            'Area',
             'Chapter(s)',
             'Director/Participant(s)',
             'Estimated POS',
@@ -1593,7 +1593,7 @@ class Session(TimeStampedModel):
             oa = entry.draw
             group_name = group.name
             bhs_id = group.bhs_id
-            representing = entry.representing
+            area = entry.area
             chapters = group.chapters
             participants = group.participants
             pos = group.pos
@@ -1615,7 +1615,7 @@ class Session(TimeStampedModel):
                 oa,
                 group_name,
                 bhs_id,
-                representing,
+                area,
                 chapters,
                 participants,
                 pos,

@@ -103,7 +103,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'participants',
             'chapters',
             'pos',
-            'representing',
+            'area',
 
             'group_id',
             'name',
