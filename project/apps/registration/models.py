@@ -597,14 +597,14 @@ class Entry(TimeStampedModel):
     )
 
     chapters = models.CharField(
-        help_text="""The Chapter(s) that the comprise the group members.""",
+        help_text="""The Chapter(s) that the comprise the group Members/Chorus.""",
         max_length=255,
         blank=True,
         default='',
     )
 
     pos = models.IntegerField(
-        help_text='Estimated Participants-on-Stage',
+        help_text='Estimated Participants-on-Stage (chorus only)',
         null=True,
         blank=True,
     )

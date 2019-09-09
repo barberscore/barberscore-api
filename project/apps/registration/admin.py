@@ -148,10 +148,38 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
         (None, {
             'fields': (
                 'id',
+                'nomen',
                 'status',
             ),
         }),
-        ('Group Info from Member Center', {
+        ('Entry Preferences', {
+            'fields': (
+                'participants',
+                'chapters',
+                'pos',
+                'is_evaluation',
+                'is_private',
+                'notes',
+            ),
+        }),
+        ('DRCJ Preferences', {
+            'fields': (
+                'area',
+                'prelim',
+                'base',
+                'draw',
+                'is_mt',
+            ),
+        }),
+        ('Contests', {
+            'fields': (
+                'contests',
+                # 'charts',
+                # 'awards',
+            ),
+            'classes': ('wide',),
+        }),
+        ('Group Info', {
             'fields': (
                 'group_id',
                 'name',
@@ -163,45 +191,14 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
                 'code',
                 'is_senior',
                 'is_youth',
-            ),
-        }),
-        ('Group Info Self-Reported', {
-            'fields': (
-                'participants',
-                'chapters',
-                'pos',
-                # 'representing',
-                # 'description',
                 'image',
+                'description',
             ),
-        }),
-        ('Group Preferences', {
-            'fields': (
-                'is_evaluation',
-                'is_private',
-                'notes',
-            ),
-        }),
-        ('DRCJ Preferences', {
-            'fields': (
-                'is_mt',
-                'draw',
-                'prelim',
-                'base',
-            ),
-        }),
-        ('Contests', {
-            'fields': (
-                'contests',
-                # 'charts',
-                # 'awards',
-            ),
+            'classes': ('collapse',),
         }),
         ('Misc', {
             'fields': (
                 'owners',
-                # 'charts',
-                # 'awards',
                 'created',
                 'modified',
             ),
@@ -220,7 +217,6 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
     list_filter = [
-        # SessionConventionStatusListFilter,
         'status',
         'kind',
         'district',
@@ -234,7 +230,6 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
 
     search_fields = [
         'id',
-        # 'session__convention__name',
         'name',
         'bhs_id',
         'owners__email',
@@ -250,18 +245,21 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
     ]
     readonly_fields = [
         'id',
+        'nomen',
         'created',
         'modified',
-                'group_id',
-                'name',
-                'kind',
-                'gender',
-                'district',
-                'division',
-                'bhs_id',
-                'code',
-                'is_senior',
-                'is_youth',
+        'group_id',
+        'name',
+        'kind',
+        'gender',
+        'district',
+        'division',
+        'bhs_id',
+        'code',
+        'is_senior',
+        'is_youth',
+        'image',
+        'description',
     ]
 
     save_on_top = True
@@ -269,9 +267,6 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
 
     ordering = [
         'name',
-        # 'session__convention__season',
-        # 'session__convention__district',
-        # 'session__convention__name',
         'session',
     ]
 
@@ -300,7 +295,6 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
         'notes',
 
         # 'name',
-        # 'representing',
         'convention_id',
         'divisions',
         ('year', 'season', ),
