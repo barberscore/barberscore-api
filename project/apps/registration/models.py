@@ -909,9 +909,6 @@ class Entry(TimeStampedModel):
         self.area = group.get_district_display()
         self.district = group.district
         self.division = group.division
-        self.participants = group.participants
-        self.chapters = group.chapters
-        self.image.name = group.image.name
         self.bhs_id = group.bhs_id
         self.code = group.code
         self.owners.set(group.owners.all())
