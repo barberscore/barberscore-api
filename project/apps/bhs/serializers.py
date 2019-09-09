@@ -148,13 +148,7 @@ class GroupSerializer(serializers.ModelSerializer):
             'is_senior',
             'is_youth',
             'image_id',
-
-            'participants',
-            'chapters',
-            'pos',
-
             'description',
-            'notes',
 
             'source_id',
 
