@@ -879,7 +879,7 @@ class Entry(TimeStampedModel):
             )
         if self.session.status >= self.session.STATUS.packaged:
             raise ValidationError(
-                {'session': 'You may not add entries after the Session has been packaged.'}
+                {'session': 'You may not make changes after the Session has been packaged.'}
             )
 
 
@@ -928,6 +928,7 @@ class Entry(TimeStampedModel):
         self.kind = group.kind
         self.gender = group.gender
         self.area = group.get_district_display()
+        self.area = group.get_district_display()
         self.district = group.district
         self.division = group.division
         self.bhs_id = group.bhs_id
@@ -942,7 +943,7 @@ class Entry(TimeStampedModel):
         return
 
     def get_owners_emails(self):
-        if not self.owners:
+        if not self.owners.all():
             raise ValueError("No owners for {0}".format(self))
         owners = self.owners.order_by(
             'last_name',
@@ -958,7 +959,6 @@ class Entry(TimeStampedModel):
         )
         to = self.get_owners_emails()
         cc = self.session.get_owners_emails()
-        # cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
             template=template,
             context=context,
@@ -981,7 +981,6 @@ class Entry(TimeStampedModel):
         )
         to = self.get_owners_emails()
         cc = self.session.get_owners_emails()
-        # cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
             template=template,
             context=context,
@@ -996,6 +995,9 @@ class Entry(TimeStampedModel):
         return email.send()
 
     def get_submit_email(self):
+        Group = apps.get_model('bhs.group')
+        group = Group.objects.get(id=self.group_id)
+        charts = group.charts.order_by('title')
         template = 'emails/entry_submit.txt'
         contests = self.contests.order_by(
             'name',
@@ -1003,13 +1005,13 @@ class Entry(TimeStampedModel):
         context = {
             'entry': self,
             'contests': contests,
+            'charts': charts,
         }
         subject = "[Barberscore] Submission Notification for {0}".format(
             self.name,
         )
         to = self.get_owners_emails()
         cc = self.session.get_owners_emails()
-        # cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
             template=template,
             context=context,
@@ -1024,25 +1026,23 @@ class Entry(TimeStampedModel):
         return email.send()
 
     def get_approve_email(self):
+        Group = apps.get_model('bhs.group')
+        group = Group.objects.get(id=self.group_id)
+        charts = group.charts.order_by('title')
         template = 'emails/entry_approve.txt'
-        # repertories = self.repertories.order_by(
-        #     'title',
-        #     'arrangers',
-        # )
         contests = self.contests.order_by(
             'tree_sort',
         )
         context = {
             'entry': self,
-            # 'repertories': repertories,
             'contests': contests,
+            'charts': charts,
         }
         subject = "[Barberscore] Approval Notification for {0}".format(
             self.name,
         )
         to = self.get_owners_emails()
         cc = self.session.get_owners_emails()
-        # cc.extend(self.session.convention.get_ca_emails())
         email = build_email(
             template=template,
             context=context,
@@ -1063,30 +1063,42 @@ class Entry(TimeStampedModel):
 
     def can_invite_entry(self):
         return all([
-            self.owners,
-            # self.group_status == self.GROUP_STATUS.active,
+            self.owners.all(),
         ])
 
     def can_submit_entry(self):
         return True
         return all([
-            # Only active groups can submit.
-            # self.group_status == self.GROUP_STATUS.active,
+            # Should be self-evident, but check for changes
+            self.owners.all(),
             # Check POS for choruses only
-            # self.pos if self.kind == self.KIND.chorus else True,
-            # ensure they can't submit a private while competiting.
+            self.pos if self.kind == self.KIND.chorus else True,
+            # ensure they can't submit a private while competeting.
             not all([
                 self.is_private,
                 self.contests.all(),
             ]),
-            # Check participants
-            # self.participants,
+            # Check participants and chapters
+            self.participants,
+            self.chapters,
         ])
 
     def can_approve(self):
-        if self.is_private and self.contests.all():
-            return False
         return True
+        return all([
+            # Should be self-evident, but check for changes
+            self.owners.all(),
+            # Check POS for choruses only
+            self.pos if self.kind == self.KIND.chorus else True,
+            # ensure they can't submit a private while competeting.
+            not all([
+                self.is_private,
+                self.contests.all(),
+            ]),
+            # Check participants and chapters
+            self.participants,
+            self.chapters,
+        ])
 
     # Entry Transitions
     @fsm_log_by
@@ -1470,9 +1482,16 @@ class Session(TimeStampedModel):
     # Session Properties
     @cached_property
     def nomen(self):
+        if self.district == self.DISTRICT.bhs:
+            return " ".join([
+                self.get_district_display(),
+                str(self.year),
+                self.get_kind_display(),
+            ])
         return " ".join([
             self.get_district_display(),
-            self.name,
+            self.get_season_display(),
+            str(self.year),
             self.get_kind_display(),
         ])
 

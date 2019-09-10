@@ -1,66 +1,57 @@
 Your contest entry has been Approved!
+
 You are officially entered for the
 {{entry.session.nomen|safe}} Session.
+Please review your entry details below for completeness and accuracy.
 
 ENTRY DETAILS
 
-Group: {{entry.name|safe}}
-{% if entry.bhs_id %}
-BHS ID: {{entry.bhs_id}}
+Session: {{entry.session.nomen|safe}} Session
+Group: {{entry.nomen|safe}}
+
+{% if entry.kind == entry.KIND.quartet %}
+Members (TLBrBs): {{entry.participants|safe|default:"(No Members Specified)"}}
+Chapter(s): {{entry.chapters|safe|default:"(No Chapter(s) Specified)"}}
+{% else %}
+Director(s): {{entry.participants|safe|default:"(No Director Specified)"}}
+Chapter: {{entry.chapters|safe|default:"(No Chapter Specified)"}}
+Estimated Participants-on-Stage:  {{entry.pos|default:"(No Estimate Provided)"}}
 {% endif %}
 
-Session: {{entry.session.nomen|safe}} Session
 
 Requested Evaluation: {{entry.is_evaluation|yesno|title}}
-
 Score/Eval-Only: {{entry.is_private|yesno|title}}
 
 {% if not is_private %}
-You are entered for the following contests/awards:
+You selected to compete for the following Awards:
 {% for contest in contests %}
     - {{contest.name|safe}}
 {% empty %}
-    Not competing for any awards. (Score/Eval only)
+    Not competing for any Awards.
 {% endfor %}
 {% endif %}
-{% comment %}
-{% if entry.kind == entry.KIND.quartet %}
-Members (TLBrBs): {{entry.participants|safe|default:"(No Members Specified)"}}
 
-{% else %}
-Director(s): {{entry.participants|safe|default:"(No Director Specified)"}}
-
-Estimated Participants-on-Stage:  {{entry.pos|default:"(No Estimate Provided)"}}
-
-
-{% endif %}
-{% endcomment %}
 Additional Notes/Requests:
 
 {{entry.notes|safe|default:"(No additional notes/requests)"}}
 
 
-If you wish to withdraw from the contest, go to your Entry and click the red "Withdraw"
-button on the bottom of the page. Please note however that if you scratch and then wish
-to re-enter, you'll need to contact the DRCJ for approval.
+If you need to change your entry information, please return to Barberscore to edit
+as needed and then click the "Re-Submit" button. If you need to withdraw,
+please click the red "Withdraw" button.  You can also communicate any information
+or special requests to your DRCJ by using the Additional Notes text box.
 
-IMPORTANT: Separate from this contest entry is your list of legal charts. Prior to
-competing it is your responsibility to ensure your songs are in your Repertory.
-{% comment %}
-As of now, your Repertory contains the following charts:
+Current Repertory:
 
-{% for repertory in repertories %}
-    - {{repertory.title|safe}} [{{repertory.arrangers|safe}}]
+The following charts were in your Repertory as of the entry submission.  Please
+note that all songs you sing on stage must be listed in your Repertory before
+the Contest Session is started.  You can add to your Repertory at any time.
+
+{% for chart in charts %}
+    - {{chart.nomen|safe}}
 {% empty %}
-  No Songs in Your Repertory
+    (No Charts currently in your Repertory.)
 {% endfor %}
-{% endcomment %}
-You can delete or add charts to your Repertory at any time, however it is
-preferred that your charts are entered no later than 5 days prior to the contest.
-IMPORTANT: Every competition song MUST be vouched for by you (as a legal chart)
-by adding it to your Barberscore chart repertory prior to your performance.
-Any song sung on stage (not in your Repertory) that cannot later be properly
-validated by C&J will be cause for post-contest disqualification.
 
 
 NOTE: Please do not mark or flag this email as spam or junk mail, just delete it.

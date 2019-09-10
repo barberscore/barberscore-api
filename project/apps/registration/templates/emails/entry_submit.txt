@@ -1,51 +1,58 @@
-Your contest entry is acknowledged and will be reviewed for accuracy by the
+Your contest entry is acknowledged and will be reviewed by the
 DRCJ (District Representative for Contest and Judging). You will receive an
-acknowledgement email once your entry has been approved.
+email once your entry has been approved.
 
 If you have any questions, please contact the DRCJ of the contest
 directly (cc'd on this email).
 
 ENTRY DETAILS
 
-Group: {{entry.name|safe}}
-{% if entry.bhs_id %}
-BHS ID: {{entry.bhs_id}}
+Session: {{entry.session.nomen|safe}} Session
+Group: {{entry.nomen|safe}}
+
+{% if entry.kind == entry.KIND.quartet %}
+Members (TLBrBs): {{entry.participants|safe|default:"(No Members Specified)"}}
+Chapter(s): {{entry.chapters|safe|default:"(No Chapter(s) Specified)"}}
+{% else %}
+Director(s): {{entry.participants|safe|default:"(No Director Specified)"}}
+Chapter: {{entry.chapters|safe|default:"(No Chapter Specified)"}}
+Estimated Participants-on-Stage:  {{entry.pos|default:"(No Estimate Provided)"}}
 {% endif %}
 
-Session: {{entry.session.nomen|safe}} Session
 
 Requested Evaluation: {{entry.is_evaluation|yesno|title}}
-
 Score/Eval-Only: {{entry.is_private|yesno|title}}
 
 {% if not is_private %}
-You selected to enter the following contests/awards:
+You selected to compete for the following Awards:
 {% for contest in contests %}
     - {{contest.name|safe}}
 {% empty %}
-    Not competing for any awards (Score/Eval only).
+    Not competing for any Awards.
 {% endfor %}
 {% endif %}
-{% comment %}
-{% if entry.kind == entry.KIND.quartet %}
 
-Members (TLBrBs): {{entry.participants|safe|default:"(No Members Specified)"}}
-
-{% else %}
-
-Director(s): {{entry.participants|safe|default:"(No Director Specified)"}}
-
-Estimated Participants-on-Stage:  {{entry.pos|default:"(No Estimate Provided)"}}
-
-{% endif %}
-{% endcomment %}
 Additional Notes/Requests:
 
 {{entry.notes|safe|default:"(No additional notes/requests)"}}
 
+
 If you need to change your entry information, please return to Barberscore to edit
-as needed, then click the "Re-Submit" button. You can also communicate any information
+as needed and then click the "Re-Submit" button. If you need to withdraw,
+please click the red "Withdraw" button.  You can also communicate any information
 or special requests to your DRCJ by using the Additional Notes text box.
+
+Current Repertory:
+
+The following charts were in your Repertory as of the entry submission.  Please
+note that all songs you sing on stage must be listed in your Repertory before
+the Contest Session is started.  You can add to your Repertory at any time.
+
+{% for chart in charts %}
+    - {{chart.nomen|safe}}
+{% empty %}
+    (No Charts currently in your Repertory.)
+{% endfor %}
 
 
 NOTE: Please do not mark or flag this email as spam or junk mail, just delete it.
