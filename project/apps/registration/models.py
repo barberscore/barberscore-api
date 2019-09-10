@@ -976,7 +976,7 @@ class Entry(TimeStampedModel):
         # Send confirmation email
         template = 'emails/entry_withdraw.txt'
         context = {'entry': self}
-        subject = "[Barberscore] Withdrawl Notification for {0}".format(
+        subject = "[Barberscore] withdrawal Notification for {0}".format(
             self.name,
         )
         to = self.get_owners_emails()

@@ -1,4 +1,4 @@
-We have received notice of your withdrawl from the
+We have received notice of your withdrawal from the
 {{entry.session.nomen|safe}} Session.
 
 If anything changes please contact the DRCJ directly.  Thank you.
