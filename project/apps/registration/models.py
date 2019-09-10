@@ -1238,15 +1238,6 @@ class Session(TimeStampedModel):
         default=False,
     )
 
-    group_emails = ArrayField(
-        base_field=models.CharField(
-            blank=True,
-            max_length=100,
-        ),
-        null=True,
-        blank=True,
-    )
-
     description = models.TextField(
         help_text="""
             The Public Description.  Will be sent in all email communications.""",
@@ -1631,9 +1622,9 @@ class Session(TimeStampedModel):
             group_name = group.name
             bhs_id = group.bhs_id
             area = entry.area
-            chapters = group.chapters
-            participants = group.participants
-            pos = group.pos
+            chapters = entry.chapters
+            participants = entry.participants
+            pos = entry.pos
             is_evaluation = entry.is_evaluation
             is_private = entry.is_private
 
@@ -1678,21 +1669,48 @@ class Session(TimeStampedModel):
         )
         return ["{0} <{1}>".format(x.name, x.email) for x in owners]
 
+    def get_groups_emails(self):
+        User = apps.get_model('rest_framework_jwt.user')
+        owners = User.objects.filter(
+            group__status__gt=0,
+            group__district=self.district,
+            group__kind=self.kind,
+            group__owners__isnull=False,
+        )
+        if self.divisions:
+            groups = groups.filter(
+                group__division__in=self.divisions,
+            )
+        groups = groups.district()
+        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+
+    def get_approveds_emails(self):
+        User = apps.get_model('rest_framework_jwt.user')
+        owners = User.objects.filter(
+            entries__session=self,
+            entries__status=self.entries.model.STATUS.approved
+        ).order_by(
+            'owners__last_name',
+            'owners__first_name',
+        ).distinct()
+        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+
     def get_open_email(self):
         template = 'emails/session_open.txt'
         context = {'session': self}
-        subject = "[Barberscore] {0} is OPEN".format(
+        subject = "[Barberscore] {0} Session is OPEN".format(
             self.nomen,
         )
         to = self.get_owners_emails()
-        bcc = self.group_emails
-        # context['bcc'] = [x.partition(" <")[0] for x in bcc]
+        bcc = self.get_groups_emails()
+        context['bcc'] = [x.partition(" <")[0] for x in bcc]
+        bcc = [x.partition("<")[2].partition(">")[0] for x in bcc]
         email = build_email(
             template=template,
             context=context,
             subject=subject,
             to=to,
-            cc=bcc,
+            bcc=bcc,
         )
         return email
 
@@ -1707,13 +1725,14 @@ class Session(TimeStampedModel):
             self.nomen,
         )
         to = self.get_owners_emails()
+        bcc = self.get_groups_emails()
         context['bcc'] = [x.partition(" <")[0] for x in bcc]
+        bcc = [x.partition(" <")[2].partition(">")[0] for x in bcc]
         email = build_email(
             template=template,
             context=context,
             subject=subject,
             to=to,
-            cc=cc,
             bcc=bcc,
         )
         return email
@@ -1735,14 +1754,14 @@ class Session(TimeStampedModel):
             self.nomen,
         )
         to = self.get_owners_emails()
-        bcc = self.get_participant_emails()
+        bcc = self.get_approveds_emails()
         context['bcc'] = [x.partition(" <")[0] for x in bcc]
+        bcc = [x.partition("<")[2].partition(">")[0] for x in bcc]
         email = build_email(
             template=template,
             context=context,
             subject=subject,
             to=to,
-            cc=cc,
             bcc=bcc,
         )
         return email
@@ -1808,14 +1827,14 @@ class Session(TimeStampedModel):
             self.nomen,
         )
         to = self.get_owners_emails()
-        bcc = self.get_participant_emails()
+        bcc = self.get_approveds_emails()
         context['bcc'] = [x.partition(" <")[0] for x in bcc]
+        bcc = [x.partition("<")[2].partition(">")[0] for x in bcc]
         email = build_email(
             template=template,
             context=context,
             subject=subject,
             to=to,
-            cc=cc,
             bcc=bcc,
         )
         return email
@@ -1860,7 +1879,6 @@ class Session(TimeStampedModel):
             context=context,
             subject=subject,
             to=to,
-            cc=cc,
             attachments=attachments,
         )
         return email

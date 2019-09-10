@@ -288,7 +288,6 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
         'legacy_report',
         'drcj_report',
         'owners',
-        # 'group_emails',
         # 'contests',
         # 'footnotes',
         # 'description',
