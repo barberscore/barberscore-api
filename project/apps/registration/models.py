@@ -1690,8 +1690,8 @@ class Session(TimeStampedModel):
             entries__session=self,
             entries__status=self.entries.model.STATUS.approved
         ).order_by(
-            'owners__last_name',
-            'owners__first_name',
+            'last_name',
+            'first_name',
         ).distinct()
         return ["{0} <{1}>".format(x.name, x.email) for x in owners]
 
@@ -1805,7 +1805,6 @@ class Session(TimeStampedModel):
             context=context,
             subject=subject,
             to=to,
-            cc=cc,
             attachments=attachments,
         )
         return email
