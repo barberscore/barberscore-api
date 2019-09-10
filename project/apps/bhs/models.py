@@ -1041,8 +1041,6 @@ class Group(TimeStampedModel):
 
     district = models.IntegerField(
         choices=DISTRICT,
-        null=True,
-        blank=True,
     )
 
     DIVISION = Choices(
