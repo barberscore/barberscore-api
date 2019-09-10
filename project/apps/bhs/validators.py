@@ -24,12 +24,13 @@ validate_tin = RegexValidator(
     """,
 )
 
-validate_nopunctuation = RegexValidator(
-    r'/[\p{L}]/ui',
-    message="""
-        Must not use punctuation.
-    """,
-)
+def validate_punctuation(value):
+    if not value:
+        return ""
+    return value.translate(
+        value.maketrans('', '', '!"#$%&()*+,./:;<=>?@[\\]^_`{|}~')
+    ).strip()
+
 
 validate_url = URLValidator()
 

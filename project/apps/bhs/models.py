@@ -36,6 +36,7 @@ from .fields import ImageUploadPath
 from .fields import UploadPath
 from .fields import DivisionsField
 
+from .validators import validate_punctuation
 
 class Award(TimeStampedModel):
     """
@@ -1459,18 +1460,27 @@ class Person(TimeStampedModel):
         help_text="""
             The common name of the person.""",
         max_length=255,
+        validators=[
+            validate_punctuation,
+        ],
     )
 
     first_name = models.CharField(
         help_text="""
             The first name of the person.""",
         max_length=255,
+        validators=[
+            validate_punctuation,
+        ],
     )
 
     last_name = models.CharField(
         help_text="""
             The last name of the person.""",
         max_length=255,
+        validators=[
+            validate_punctuation,
+        ],
     )
 
     PART = Choices(
