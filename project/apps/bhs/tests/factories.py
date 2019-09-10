@@ -106,6 +106,7 @@ class GroupFactory(DjangoModelFactory):
     name = Faker('company')
     status = Group.STATUS.active
     kind = Group.KIND.quartet
+    district = Group.DISTRICT.fwd
     code = ''
     website = ''
     image = ''
