@@ -8,6 +8,7 @@ directly (cc'd on this email).
 ENTRY DETAILS
 
 Session: {{entry.session.nomen|safe}} Session
+
 Group: {{entry.nomen|safe}}
 
 {% if entry.kind == entry.KIND.quartet %}
@@ -24,6 +25,7 @@ Estimated Participants-on-Stage:  {{entry.pos|default:"(No Estimate Provided)"}}
 
 
 Requested Evaluation: {{entry.is_evaluation|yesno|title}}
+
 Score/Eval-Only: {{entry.is_private|yesno|title}}
 
 {% if not is_private %}
