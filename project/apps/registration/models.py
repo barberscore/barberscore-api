@@ -914,10 +914,7 @@ class Entry(TimeStampedModel):
             return False
         return any([
             request.user in self.session.owners.all(),
-            all([
-                request.user in self.owners.all(),
-                # self.status < self.STATUS.approved,
-            ]),
+            request.user in self.owners.all(),
         ])
 
     # Methods
@@ -1067,7 +1064,6 @@ class Entry(TimeStampedModel):
         ])
 
     def can_submit_entry(self):
-        return True
         return all([
             # Should be self-evident, but check for changes
             self.owners.all(),
@@ -1084,7 +1080,6 @@ class Entry(TimeStampedModel):
         ])
 
     def can_approve(self):
-        return True
         return all([
             # Should be self-evident, but check for changes
             self.owners.all(),
