@@ -186,7 +186,7 @@ class Assignment(TimeStampedModel):
     image_id = models.CharField(
         max_length=255,
         null=True,
-        default='',
+        default='missing_image',
     )
 
     # FKs
