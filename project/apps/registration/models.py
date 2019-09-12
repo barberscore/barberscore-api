@@ -899,13 +899,14 @@ class Entry(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return bool(request.user.roles.filter(
-            name__in=[
-                'SCJC',
-                'DRCJ',
-                'Manager',
-            ]
-        ))
+        return True
+        # return bool(request.user.roles.filter(
+        #     name__in=[
+        #         'SCJC',
+        #         'DRCJ',
+        #         'Manager',
+        #     ]
+        # ))
 
     @allow_staff_or_superuser
     @authenticated_users
