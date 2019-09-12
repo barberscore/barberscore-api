@@ -404,6 +404,7 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin):
         ('email', 'bhs_id',),
         ('home_phone', 'work_phone', 'cell_phone',),
         ('part', 'gender',),
+        'district',
         'source_id',
         'image',
         'description',

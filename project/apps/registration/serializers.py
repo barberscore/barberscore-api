@@ -38,7 +38,6 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
 
         read_only_fields = [
-            'image_id',
         ]
 
 
@@ -131,7 +130,6 @@ class EntrySerializer(serializers.ModelSerializer):
             'nomen',
             'image_id',
         ]
-
 
 
 class SessionSerializer(serializers.ModelSerializer):

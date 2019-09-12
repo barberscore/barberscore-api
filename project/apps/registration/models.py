@@ -183,6 +183,12 @@ class Assignment(TimeStampedModel):
         blank=True,
     )
 
+    image_id = models.CharField(
+        max_length=255,
+        null=True,
+        default='',
+    )
+
     # FKs
     session = models.ForeignKey(
         'Session',
@@ -205,9 +211,9 @@ class Assignment(TimeStampedModel):
     def __str__(self):
         return str(self.id)
 
-    @cached_property
-    def image_id(self):
-        return self.image.name or 'missing_image'
+    # @cached_property
+    # def image_id(self):
+    #     return self.image.name or 'missing_image'
 
     # Assignment Permissions
     @staticmethod
