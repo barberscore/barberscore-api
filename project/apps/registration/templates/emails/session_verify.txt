@@ -1,5 +1,5 @@
 We're writing to let you know that the initial draw has been completed for the
-{{entry.session.nomen|safe}} Session.
+{{session.nomen|safe}} Session.
 Please note that this may not be the final order of appearance;
 additions, scratches, and other adjustments may occur up until the day of contest.
 
