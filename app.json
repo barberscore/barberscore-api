@@ -114,7 +114,7 @@
         "AUTH0_AUDIENCE": "test",
         "AUTH0_CLIENT_ID": "test",
         "AUTH0_CLIENT_SECRET": "test",
-        "AUTH0_DOMAIN": "login.barberscore.com",
+        "AUTH0_DOMAIN": "barberscore.auth0.com",
         "AUTH0_CONNECTION": "Default",
         "MEMBERCENTER_URL": "test"
       },
