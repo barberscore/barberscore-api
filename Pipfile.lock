@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c385bc81bb7d96a82d66d8bd69972ede4a7504390adc9854d5e68ac32e2f5be7"
+            "sha256": "621834733a4b12b02b7d5de0f8e3d05aebcb6db5efc1a90e433525354e58b650"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -104,10 +104,10 @@
         },
         "certifi": {
             "hashes": [
-                "sha256:046832c04d4e752f37383b628bc601a7ea7211496b4638f6514d0e5b9acc4939",
-                "sha256:945e3ba63a0b9f577b1395204e13c3a231f9bc0223888be653286534e5873695"
+                "sha256:e4f3620cfea4f83eedc95b24abd9cd56f3c4b146dd0177e83a21b4eb49e21e50",
+                "sha256:fd7c7c74727ddcf00e9acd26bba8da604ffec95bf1c2144e67aff7a8b50e6cef"
             ],
-            "version": "==2019.6.16"
+            "version": "==2019.9.11"
         },
         "cffi": {
             "hashes": [
@@ -339,8 +339,8 @@
             "version": "==2.8.0"
         },
         "djangorestframework-jwt": {
-            "git": "https://github.com/barberscore/django-rest-framework-jwt.git",
-            "ref": "0d96605bf3bb311a275d87b270d1344bc159ecfd"
+            "editable": true,
+            "path": "./../django-rest-framework-jwt"
         },
         "dry-rest-permissions": {
             "hashes": [
@@ -504,11 +504,11 @@
         },
         "phonenumberslite": {
             "hashes": [
-                "sha256:20eedc32fbcd832083fde25db91dbda2c4dec13112c888abd67faae823c90e74",
-                "sha256:3c157f5d4d63d631f68ac7f5de336a44ae3d2f26c747a507f931913fb2e4985c"
+                "sha256:5bd43a4c88a015d9762d9e4a6861ed3a8dbbfb34f64239d5f31ada0892730ae1",
+                "sha256:8f41d6e10cc81d5e2fa11d3391707dd8e1d71fbfcd7a8abab5a6dfadd2914a9e"
             ],
             "index": "pypi",
-            "version": "==8.10.17"
+            "version": "==8.10.18"
         },
         "pickleshare": {
             "hashes": [
@@ -610,6 +610,13 @@
                 "sha256:881c4c157e45f30af185c1ffe8d549d48ac9127433f2c380c24b84572ad66297"
             ],
             "version": "==2.4.2"
+        },
+        "pyjwt": {
+            "hashes": [
+                "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e",
+                "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"
+            ],
+            "version": "==1.7.1"
         },
         "python-dateutil": {
             "hashes": [
@@ -842,19 +849,19 @@
         },
         "graphviz": {
             "hashes": [
-                "sha256:8adc6460f9eddca440b826dd89790090d76fb8e693e2206fd4c2a4ed80841999",
-                "sha256:c60e232a66e4847f9f644fbaa94730ca4f78385a1314a2cc1e7f4cb2d7461298"
+                "sha256:dc08677f37c65a4a480f00df4bd0d19a0a103c06aad95f21a37f0b7fd440de81",
+                "sha256:df54c2e0d2c8df6aee3397eb44de186d94e2a0610f4052649bfbb26d03d56850"
             ],
             "index": "pypi",
-            "version": "==0.12"
+            "version": "==0.13"
         },
         "importlib-metadata": {
             "hashes": [
-                "sha256:9ff1b1c5a354142de080b8a4e9803e5d0d59283c93aed808617c787d16768375",
-                "sha256:b7143592e374e50584564794fcb8aaf00a23025f9db866627f89a21491847a8d"
+                "sha256:652234b6ab8f2506ae58e528b6fbcc668831d3cc758e1bc01ef438d328b68cdb",
+                "sha256:6f264986fb88042bc1f0535fa9a557e6a376cfe5679dc77caac7fe8b5d43d05f"
             ],
             "markers": "python_version < '3.8'",
-            "version": "==0.20"
+            "version": "==0.22"
         },
         "isort": {
             "hashes": [
@@ -910,10 +917,10 @@
         },
         "pluggy": {
             "hashes": [
-                "sha256:0825a152ac059776623854c1543d65a4ad408eb3d33ee114dff91e57ec6ae6fc",
-                "sha256:b9817417e95936bf75d85d3f8767f7df6cdde751fc40aed3bb3074cbcb77757c"
+                "sha256:0db4b7601aae1d35b4a033282da476845aa19185c1e6964b25cf324b5e4ec3e6",
+                "sha256:fa5fa1622fa6dd5c030e9cad086fa19ef6a0cf6d7a2d12318e10cb49d6d68f34"
             ],
-            "version": "==0.12.0"
+            "version": "==0.13.0"
         },
         "py": {
             "hashes": [
@@ -1011,9 +1018,9 @@
         },
         "snowballstemmer": {
             "hashes": [
-                "sha256:9f3b9ffe0809d174f7047e121431acf99c89a7040f0ca84f94ba53a498e6d0c9"
+                "sha256:713e53b79cbcf97bc5245a06080a33d54a77e7cce2f789c835a143bcdb5c033e"
             ],
-            "version": "==1.9.0"
+            "version": "==1.9.1"
         },
         "sqlparse": {
             "hashes": [
