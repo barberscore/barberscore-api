@@ -119,7 +119,7 @@ class Appearance(TimeStampedModel):
         default='',
     )
 
-    representing = models.CharField(
+    district = models.CharField(
         help_text='Representing entity',
         max_length=255,
         blank=True,
@@ -1872,7 +1872,7 @@ class Panelist(TimeStampedModel):
         blank=True,
     )
 
-    representing = models.CharField(
+    district = models.CharField(
         help_text="""
             District""",
         max_length=10,
@@ -2622,7 +2622,7 @@ class Round(TimeStampedModel):
             public.pos_patched = public.pos
             public.participants_patched = public.participants
             group = Group.objects.get(id=public.group_id)
-            public.representing_patched = group.district
+            public.district = group.district
             public.name = group.name
 
 
@@ -4271,7 +4271,7 @@ class Round(TimeStampedModel):
                     is_single=is_single,
                     is_private=entry.is_private,
                     participants=entry.participants,
-                    representing=entry.representing,
+                    district=entry.district,
                 )
                 # Create contenders
                 raise RuntimeError('contender')
@@ -4295,7 +4295,7 @@ class Round(TimeStampedModel):
                     is_single=prior_appearance.is_single,
                     is_private=prior_appearance.is_private,
                     participants=prior_appearance.participants,
-                    representing=prior_appearance.representing,
+                    district=prior_appearance.district,
                 )
                 for new_outcome in new_outcomes:
                     curry = bool(
@@ -4317,7 +4317,7 @@ class Round(TimeStampedModel):
                     is_single=mt.is_single,
                     is_private=True,
                     participants=mt.participants,
-                    representing=mt.representing,
+                    district=mt.district,
                 )
 
 

@@ -50,7 +50,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'is_single',
         'is_private',
         'participants',
-        'representing',
+        'district',
         'pos',
         'stats',
         'csa_report',

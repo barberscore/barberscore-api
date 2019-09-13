@@ -17,7 +17,7 @@ class AppearanceInline(admin.TabularInline):
     fields = [
         # 'group',
         'status',
-        'representing',
+        'district',
         'num',
         'base',
         # 'stats',
@@ -82,7 +82,7 @@ class PanelistInline(admin.TabularInline):
         'kind',
         'num',
         # 'person',
-        'representing',
+        'district',
         'round',
     ]
     readonly_fields = [

@@ -66,7 +66,7 @@ class PanelistSerializer(serializers.ModelSerializer):
             'get_category_display',
             'psa_report',
             'legacy_person',
-            'representing',
+            'district',
             'person_id',
             'scores',
         )
@@ -113,7 +113,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'is_private',
             'is_single',
             'participants',
-            'representing',
+            'district',
             'onstage',
             'actual_start',
             'actual_finish',

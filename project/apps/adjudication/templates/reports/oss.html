@@ -83,10 +83,10 @@
                     {{public.name}}<br>
                   </strong>
                   {% if round.session.get_kind_display == 'Chorus' %}
-                    {{public.representing_patched|truncatechars_html:"50"}}&nbsp;({{public.contesting_patched|default:"None"}})<br>
+                    {{public.district|truncatechars_html:"50"}}&nbsp;({{public.contesting_patched|default:"None"}})<br>
                     <span class='smaller-font'>Dir(s): {{public.participants_patched|default:"(No Director Specified)"}};&nbsp;&nbsp;OnStage: {{public.pos_patched}}</span><br>
                   {% else %}
-                    {{public.representing_patched|default:"(Unknown)"}}&nbsp;({{public.contesting_patched|default:"None"}})<br>
+                    {{public.district|default:"(Unknown)"}}&nbsp;({{public.contesting_patched|default:"None"}})<br>
                     <span class='smaller-font'>{{public.participants_patched|default:"(No Members Specified)"}}</span><br>
                   {% endif %}
                 </td>

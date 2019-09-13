@@ -31,7 +31,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'is_private',
             'is_single',
             'participants',
-            'representing',
+            'district',
             'onstage',
             'actual_start',
             'actual_finish',
@@ -115,7 +115,7 @@ class PanelistSerializer(serializers.ModelSerializer):
             'kind',
             'category',
             'psa_report',
-            'representing',
+            'district',
 
             'round',
             'owners',
