@@ -1215,10 +1215,6 @@ class Group(TimeStampedModel):
         return list(self.charts.values_list('id', flat=True))
 
 
-    def get_representing_display(self):
-        return self.get_district_display()
-
-
     def get_owners_emails(self):
         owners = self.owners.order_by(
             'last_name',

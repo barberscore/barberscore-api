@@ -432,46 +432,46 @@ class GroupManager(Manager):
 
         if parent:
             if parent.kind == 'organization':
-                representing_raw = legacy_code
+                district_raw = legacy_code
             elif parent.kind == 'district':
-                representing_raw = parent.legacy_code
+                district_raw = parent.legacy_code
             elif parent.kind == 'chapter':
-                representing_raw = parent.parent.legacy_code
+                district_raw = parent.parent.legacy_code
             else:
-                representing_raw = None
+                district_raw = None
         elif kind == 'organization':
-            representing_raw = 'BHS'
+            district_raw = 'BHS'
         else:
-            representing_raw = None
+            district_raw = None
 
-        representing_map = {
-            'BHS': self.model.REPRESENTING.bhs,
-            'CAR': self.model.REPRESENTING.car,
-            'CSD': self.model.REPRESENTING.csd,
-            'DIX': self.model.REPRESENTING.dix,
-            'EVG': self.model.REPRESENTING.evg,
-            'FWD': self.model.REPRESENTING.fwd,
-            'ILL': self.model.REPRESENTING.ill,
-            'JAD': self.model.REPRESENTING.jad,
-            'LOL': self.model.REPRESENTING.lol,
-            'MAD': self.model.REPRESENTING.mad,
-            'NED': self.model.REPRESENTING.ned,
-            'NSC': self.model.REPRESENTING.nsc,
-            'ONT': self.model.REPRESENTING.ont,
-            'PIO': self.model.REPRESENTING.pio,
-            'RMD': self.model.REPRESENTING.rmd,
-            'SLD': self.model.REPRESENTING.sld,
-            'SUN': self.model.REPRESENTING.sun,
-            'SWD': self.model.REPRESENTING.swd,
+        district_map = {
+            'BHS': self.model.DISTRICT.bhs,
+            'CAR': self.model.DISTRICT.car,
+            'CSD': self.model.DISTRICT.csd,
+            'DIX': self.model.DISTRICT.dix,
+            'EVG': self.model.DISTRICT.evg,
+            'FWD': self.model.DISTRICT.fwd,
+            'ILL': self.model.DISTRICT.ill,
+            'JAD': self.model.DISTRICT.jad,
+            'LOL': self.model.DISTRICT.lol,
+            'MAD': self.model.DISTRICT.mad,
+            'NED': self.model.DISTRICT.ned,
+            'NSC': self.model.DISTRICT.nsc,
+            'ONT': self.model.DISTRICT.ont,
+            'PIO': self.model.DISTRICT.pio,
+            'RMD': self.model.DISTRICT.rmd,
+            'SLD': self.model.DISTRICT.sld,
+            'SUN': self.model.DISTRICT.sun,
+            'SWD': self.model.DISTRICT.swd,
         }
-        representing = representing_map.get(representing_raw, None)
+        district = district_map.get(district_raw, None)
 
         defaults = {
             'status': status,
             'name': name,
             'kind': kind,
             'gender': gender,
-            'representing': representing,
+            'district': district,
             'division': division,
             'bhs_id': bhs_id,
             'code': legacy_code,
