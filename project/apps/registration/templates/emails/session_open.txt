@@ -1,5 +1,5 @@
 We're writing to let you know that the
-{{entry.session.nomen|safe}} Session
+{{session.nomen|safe}} Session
 is now open and accepting entries.
 
 The contest entry deadline is: {{session.close_date|date:"SHORT_DATE_FORMAT" }}.

@@ -1,4 +1,4 @@
-The {{entry.session.nomen|safe}} Session is about to begin!
+The {{session.nomen|safe}} Session is about to begin!
 
 This is the final list of approved participants, in draw order:
 

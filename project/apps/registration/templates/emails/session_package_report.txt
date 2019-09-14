@@ -1,4 +1,4 @@
-The {{entry.session.nomen|safe}} Session
+The {{session.nomen|safe}} Session
 has now been Packaged!
 
 Packaging the Session represents the official handoff between the DRCJ and the CAs --

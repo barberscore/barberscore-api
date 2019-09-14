@@ -1,5 +1,5 @@
 We're writing to let you know that the
-{{entry.session.nomen|safe}} Session
+{{session.nomen|safe}} Session
 is no longer accepting contest entries.
 
 If you missed the deadline but still would like to enter the contest,

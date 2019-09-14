@@ -1701,7 +1701,10 @@ class Session(TimeStampedModel):
             owners = owners.filter(
                 groups__division__in=self.divisions,
             )
-        owners = owners.distinct()
+        owners = owners.order_by(
+            'last_name',
+            'first_name',
+        ).distinct()
         return ["{0} <{1}>".format(x.name, x.email) for x in owners]
 
     def get_approveds_emails(self):
