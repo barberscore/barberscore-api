@@ -113,24 +113,44 @@ class Assignment(TimeStampedModel):
     )
 
     DISTRICT = Choices(
-        (110, 'bhs', 'BHS'),
-        (200, 'car', 'CAR'),
-        (205, 'csd', 'CSD'),
-        (210, 'dix', 'DIX'),
-        (215, 'evg', 'EVG'),
-        (220, 'fwd', 'FWD'),
-        (225, 'ill', 'ILL'),
-        (230, 'jad', 'JAD'),
-        (235, 'lol', 'LOL'),
-        (240, 'mad', 'MAD'),
-        (345, 'ned', 'NED'),
-        (350, 'nsc', 'NSC'),
-        (355, 'ont', 'ONT'),
-        (360, 'pio', 'PIO'),
-        (365, 'rmd', 'RMD'),
-        (370, 'sld', 'SLD'),
-        (375, 'sun', 'SUN'),
-        (380, 'swd', 'SWD'),
+        ('BHS', [
+            (200, 'car', 'CAR'),
+            (205, 'csd', 'CSD'),
+            (210, 'dix', 'DIX'),
+            (215, 'evg', 'EVG'),
+            (220, 'fwd', 'FWD'),
+            (225, 'ill', 'ILL'),
+            (230, 'jad', 'JAD'),
+            (235, 'lol', 'LOL'),
+            (240, 'mad', 'MAD'),
+            (345, 'ned', 'NED'),
+            (350, 'nsc', 'NSC'),
+            (355, 'ont', 'ONT'),
+            (360, 'pio', 'PIO'),
+            (365, 'rmd', 'RMD'),
+            (370, 'sld', 'SLD'),
+            (375, 'sun', 'SUN'),
+            (380, 'swd', 'SWD'),
+        ]),
+        ('Associated', [
+            (410, 'nxtgn', 'NxtGn'),
+            (420, 'mbha', 'MBHA'),
+            (430, 'hi', 'HI'),
+            (440, 'sai', 'SAI'),
+        ]),
+        ('Affiliated', [
+            (510, 'babs', 'BABS'),
+            (515, 'bha', 'BHA'),
+            (520, 'bhnz', 'BHNZ'),
+            (525, 'bing', 'BinG'),
+            (530, 'fabs', 'FABS'),
+            (540, 'hhar', 'HHar'),
+            (550, 'iabs', 'IABS'),
+            (560, 'labbs', 'LABBS'),
+            (565, 'sabs', 'SABS'),
+            (570, 'snobs', 'SNOBS'),
+            (575, 'spats', 'SPATS'),
+        ]),
     )
 
     district = models.IntegerField(
@@ -931,7 +951,6 @@ class Entry(TimeStampedModel):
         self.kind = group.kind
         self.gender = group.gender
         self.area = group.get_district_display()
-        self.area = group.get_district_display()
         self.district = group.district
         self.division = group.division
         self.bhs_id = group.bhs_id
@@ -1622,7 +1641,7 @@ class Session(TimeStampedModel):
             oa = entry.draw
             group_name = group.name
             bhs_id = group.bhs_id
-            area = entry.area
+            area = group.get_district_display()
             chapters = entry.chapters
             participants = entry.participants
             pos = entry.pos
