@@ -1692,16 +1692,16 @@ class Session(TimeStampedModel):
     def get_groups_emails(self):
         User = apps.get_model('rest_framework_jwt.user')
         owners = User.objects.filter(
-            group__status__gt=0,
-            group__district=self.district,
-            group__kind=self.kind,
-            group__owners__isnull=False,
+            groups__status__gt=0,
+            groups__district=self.district,
+            groups__kind=self.kind,
+            groups__owners__isnull=False,
         )
         if self.divisions:
-            groups = groups.filter(
-                group__division__in=self.divisions,
+            owners = owners.filter(
+                groups__division__in=self.divisions,
             )
-        groups = groups.district()
+        owners = owners.distinct()
         return ["{0} <{1}>".format(x.name, x.email) for x in owners]
 
     def get_approveds_emails(self):
