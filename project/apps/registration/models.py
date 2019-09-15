@@ -940,7 +940,10 @@ class Entry(TimeStampedModel):
             return False
         return any([
             request.user in self.session.owners.all(),
-            request.user in self.owners.all(),
+            all([
+                request.user in self.owners.all(),
+                self.status < self.STATUS.approved,
+            ])
         ])
 
     # Methods
