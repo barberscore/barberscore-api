@@ -94,3 +94,30 @@ def update_group_owners_from_membercenter(resource):
             return group.owners.add(user)
         return group.owners.remove(user)
     return
+
+
+
+@job('low')
+def update_group_from_source(group):
+    source, _, pk = group.source_id.partition("|")
+    # Only supports Member Center currently
+    if source != 'bhs':
+        return ValueError("Not BHS")
+    endpoint, _, token = settings.MEMBERCENTER_URL.partition('@')
+    url = "{0}/bhs/group/{1}".format(endpoint, pk)
+    headers = {
+        'Authorization': 'Token {0}'.format(token)
+    }
+    response = requests.get(
+        url,
+        headers=headers,
+    )
+    if not response.ok:
+        raise RuntimeError("Bad Response")
+    resource = response.json()['data']
+    data = resource['attributes']
+    serialized = GroupSerializer(group, data=data)
+    if serialized.is_valid():
+        owners = [x['id'] for x in resource['relationships']['owners']['data']]
+        return serialized.save(owners=owners)
+    raise ValueError(serialized.errors)
