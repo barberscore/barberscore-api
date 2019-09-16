@@ -1,5 +1,6 @@
 from django_fsm_log.admin import StateLogInline
 from fsm_admin.mixins import FSMTransitionMixin
+from django_object_actions import DjangoObjectActions
 
 
 # Django
@@ -15,6 +16,7 @@ from .models import Group
 from .models import Chart
 from .models import Convention
 
+from .tasks import update_group_from_source
 
 admin.site.disable_action('delete_selected')
 
@@ -226,7 +228,7 @@ class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
 
 
 @admin.register(Group)
-class GroupAdmin(VersionAdmin, FSMTransitionMixin):
+class GroupAdmin(DjangoObjectActions, VersionAdmin, FSMTransitionMixin):
     save_on_top = True
     fsm_field = [
         'status',
@@ -393,6 +395,13 @@ class GroupAdmin(VersionAdmin, FSMTransitionMixin):
             request
         )
         # ).prefetch_related('members')
+
+    def update_from_source(self, request, obj):
+        return update_group_from_source(obj)
+    update_from_source.label = "Update"
+    update_from_source.short_description = "Update from Source Database"
+
+    change_actions = ('update_from_source', )
 
 
 @admin.register(Person)
