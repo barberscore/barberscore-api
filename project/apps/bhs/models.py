@@ -38,6 +38,7 @@ from .fields import DivisionsField
 
 from .validators import validate_punctuation
 
+
 class Award(TimeStampedModel):
     """
     Award Model.
@@ -1200,34 +1201,6 @@ class Group(TimeStampedModel):
         except ValueError:
             return 'https://res.cloudinary.com/barberscore/image/upload/v1554830585/missing_image.jpg'
 
-    # Algolia
-    def is_searchable(self):
-        return all([
-            self.status == self.STATUS.active,
-            self.owners.all(),
-        ])
-
-    def get_owner_ids(self):
-        return list(self.owners.values_list('id', flat=True))
-
-
-    def get_chart_ids(self):
-        return list(self.charts.values_list('id', flat=True))
-
-
-    def get_owners_emails(self):
-        owners = self.owners.order_by(
-            'last_name',
-            'first_name',
-        )
-        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
-
-    def get_charts_nomens(self):
-        charts = self.charts.order_by(
-            'title',
-        )
-        return ["{0}".format(x.nomen) for x in charts]
-
     # def get_is_senior(self):
     #     if self.kind != self.KIND.quartet:
     #         raise ValueError('Must be quartet')
@@ -1268,6 +1241,36 @@ class Group(TimeStampedModel):
 
     def __str__(self):
         return self.nomen
+
+    # Algolia
+    def is_searchable(self):
+        return all([
+            self.status == self.STATUS.active,
+            self.owners.all(),
+        ])
+
+    def get_owner_ids(self):
+        return list(self.owners.values_list('id', flat=True))
+
+
+    def get_chart_ids(self):
+        return list(self.charts.values_list('id', flat=True))
+
+
+    def get_owners_emails(self):
+        owners = self.owners.order_by(
+            'last_name',
+            'first_name',
+        )
+        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+
+    def get_charts_nomens(self):
+        charts = self.charts.order_by(
+            'title',
+        )
+        return ["{0}".format(x.nomen) for x in charts]
+
+    # Group Methods
 
     # def clean(self):
     #     if self.mc_pk and self.status == self.STATUS.active:
