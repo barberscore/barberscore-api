@@ -966,6 +966,7 @@ class Entry(TimeStampedModel):
         self.division = group.division
         self.bhs_id = group.bhs_id
         self.code = group.code
+        self.source_id = group.source_id
         self.owners.set(group.owners.all())
         # for chart in group.charts.all():
         #     self.repertories.create(
