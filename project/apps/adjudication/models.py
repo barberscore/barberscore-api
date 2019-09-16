@@ -120,7 +120,7 @@ class Appearance(TimeStampedModel):
     )
 
     district = models.CharField(
-        help_text='Representing entity',
+        help_text='District for entity',
         max_length=255,
         blank=True,
         default='',
