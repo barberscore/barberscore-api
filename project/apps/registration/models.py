@@ -656,6 +656,14 @@ class Entry(TimeStampedModel):
     )
 
     # Group Data (Denormalized)
+    source_id = models.CharField(
+        null=True,
+        blank=True,
+        max_length=100,
+        unique=True,
+        db_index=True,
+    )
+
     group_id = models.UUIDField(
         null=True,
         blank=True,
