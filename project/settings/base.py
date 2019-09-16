@@ -251,6 +251,7 @@ INSTALLED_APPS = [
     'django_rq',
     'django_fsm',
     'django_fsm_log',
+    'django_object_actions',
     'fsm_admin',
     'phonenumber_field',
     'reversion',
