@@ -160,7 +160,6 @@ class RoundSerializer(serializers.ModelSerializer):
             'oss_report',
             'sa_report',
             'legacy_oss',
-            'is_reviewed',
 
             'convention_id',
             'nomen',

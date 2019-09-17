@@ -204,7 +204,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'footnotes',
         '__str__',
         # 'session__kind',
-        ('date', 'is_reviewed'),
     ]
 
     list_display = [
@@ -223,7 +222,6 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # 'session__convention__season',
         # 'session__convention__district',
         # 'session__convention__year',
-        # 'is_reviewed',
     ]
 
     fsm_field = [
