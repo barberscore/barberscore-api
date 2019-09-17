@@ -339,8 +339,8 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
 
     readonly_fields = [
         'id',
-        'legacy_report',
-        'drcj_report',
+        # 'legacy_report',
+        # 'drcj_report',
     ]
 
     inlines = [
