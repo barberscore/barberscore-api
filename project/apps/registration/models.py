@@ -1739,7 +1739,6 @@ class Session(TimeStampedModel):
         to = self.get_owners_emails()
         bcc = self.get_groups_emails()
         context['bcc'] = [x.partition(" <")[0] for x in bcc]
-        bcc = [x.partition("<")[2].partition(">")[0] for x in bcc]
         email = build_email(
             template=template,
             context=context,
@@ -1762,7 +1761,6 @@ class Session(TimeStampedModel):
         to = self.get_owners_emails()
         bcc = self.get_groups_emails()
         context['bcc'] = [x.partition(" <")[0] for x in bcc]
-        bcc = [x.partition(" <")[2].partition(">")[0] for x in bcc]
         email = build_email(
             template=template,
             context=context,
@@ -1791,7 +1789,6 @@ class Session(TimeStampedModel):
         to = self.get_owners_emails()
         bcc = self.get_approveds_emails()
         context['bcc'] = [x.partition(" <")[0] for x in bcc]
-        bcc = [x.partition("<")[2].partition(">")[0] for x in bcc]
         email = build_email(
             template=template,
             context=context,
@@ -1863,7 +1860,6 @@ class Session(TimeStampedModel):
         to = self.get_owners_emails()
         bcc = self.get_approveds_emails()
         context['bcc'] = [x.partition(" <")[0] for x in bcc]
-        bcc = [x.partition("<")[2].partition(">")[0] for x in bcc]
         email = build_email(
             template=template,
             context=context,
