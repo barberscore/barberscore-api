@@ -149,6 +149,7 @@ class SessionSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'url',
+            'nomen',
             'status',
             'kind',
             'num_rounds',
@@ -186,4 +187,5 @@ class SessionSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             'image_id',
+            'nomen',
         ]
