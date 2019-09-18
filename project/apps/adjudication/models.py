@@ -1874,7 +1874,7 @@ class Panelist(TimeStampedModel):
         blank=True,
     )
 
-    district = models.CharField(
+    area = models.CharField(
         help_text="""
             District""",
         max_length=10,
@@ -2292,7 +2292,6 @@ class Round(TimeStampedModel):
         blank=True,
         null=True,
     )
-
 
     # Convention Denorm
     convention_id = models.UUIDField(
@@ -4296,28 +4295,27 @@ class Round(TimeStampedModel):
         self.reset()
 
         # Instantiate prior round
-        if self.num == 1:
-            prior_round = None
-        else:
-            prior_round = self.session.rounds.get(num=self.num - 1)
+        # if self.num == 1:
+        #     prior_round = None
+        # else:
+        #     prior_round = self.session.rounds.get(num=self.num - 1)
 
         # Create Panelsists
-        raise RuntimeError("fix")
-        # Assignment = apps.get_model('registration.assignment')
-        # cas = self.session.convention.assignments.filter(
-        #     status=Assignment.STATUS.active,
-        #     kind__in=[
-        #         Assignment.KIND.official,
-        #         Assignment.KIND.practice,
-        #     ],
-        #     category=Assignment.CATEGORY.ca,
-        # ).order_by(
-        #     'kind',
-        #     'category',
-        #     # 'person__last_name',
-        #     # 'person__nick_name',
-        #     # 'person__first_name',
-        # )
+        Assignment = apps.get_model('registration.assignment')
+        cas = self.session.convention.assignments.filter(
+            status=Assignment.STATUS.active,
+            kind__in=[
+                Assignment.KIND.official,
+                Assignment.KIND.practice,
+            ],
+            category=Assignment.CATEGORY.ca,
+        ).order_by(
+            'kind',
+            'category',
+            # 'person__last_name',
+            # 'person__nick_name',
+            # 'person__first_name',
+        )
         for ca in cas:
             self.panelists.create(
                 kind=ca.kind,
