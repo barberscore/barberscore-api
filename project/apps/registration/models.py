@@ -18,6 +18,7 @@ from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
 from timezone_field import TimeZoneField
 from phonenumber_field.modelfields import PhoneNumberField
+from django.contrib.postgres.fields import JSONField
 
 # Django
 from django.apps import apps
@@ -1301,6 +1302,11 @@ class Session(TimeStampedModel):
         blank=True,
         default='',
         storage=RawMediaCloudinaryStorage(),
+    )
+
+    registration_report = JSONField(
+        null=True,
+        blank=True,
     )
 
     # Denorm
