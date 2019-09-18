@@ -141,6 +141,7 @@ class SessionSerializer(serializers.ModelSerializer):
             'get_kind_display',
             'num_rounds',
             'is_invitational',
+            'nomen',
 
             'convention_id',
             'name',
