@@ -52,7 +52,7 @@ def build_email(template, context, subject, to, cc=[], bcc=[], attachments=[]):
     return email
 
 
-def build_rounds_from_session(session_id):
+def build_round_from_session(session_id):
     Round = apps.get_model('adjudication.round')
     Session = apps.get_model('registration.session')
     Assignment = apps.get_model('registration.assignment')

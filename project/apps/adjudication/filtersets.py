@@ -10,6 +10,15 @@ class RoundFilterset(FilterSet):
     class Meta:
         model = Round
         fields = {
+            'owners': [
+                'exact',
+            ],
+            'kind': [
+                'exact',
+            ],
+            'session_id': [
+                'exact',
+            ],
         }
 
 

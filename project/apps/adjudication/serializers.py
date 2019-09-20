@@ -163,7 +163,7 @@ class RoundSerializer(serializers.ModelSerializer):
 
             'convention_id',
             'nomen',
-            'timezone',
+            # 'timezone',
             'image_id',
 
             'session_id',
