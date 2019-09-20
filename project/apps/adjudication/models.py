@@ -503,8 +503,11 @@ class Appearance(TimeStampedModel):
         return variance
 
     def get_stats(self):
-        session = self.round.session
-        stats = session.rounds.aggregate(
+        Round = apps.get_model('adjudication.round')
+        rounds = Round.objects.filter(
+            session_id=self.round.session_id,
+        )
+        stats = rounds.aggregate(
             tot_points=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
@@ -590,7 +593,7 @@ class Appearance(TimeStampedModel):
             'panelist',
         ).filter(
             song__appearance__group_id=self.group_id,
-            song__appearance__round__session=self.round.session,
+            song__appearance__round__session_id=self.round.session_id,
             panelist__kind=Panelist.KIND.official,
         ).aggregate(
             max=Max(
@@ -641,13 +644,13 @@ class Appearance(TimeStampedModel):
         )
         appearances = Appearance.objects.select_related(
             'round',
-            'round__session',
+            'round',
         ).prefetch_related(
             'songs__scores',
             'songs__scores__panelist',
         ).filter(
             group_id=self.group_id,
-            round__session=self.round.session,
+            round__session_id=self.round.session_id,
         ).annotate(
             tot_points=Sum(
                 'songs__scores__points',
@@ -789,7 +792,7 @@ class Appearance(TimeStampedModel):
             # 'person',
         ).filter(
             kind=Panelist.KIND.official,
-            round__session=self.round.session,
+            round__session_id=self.round.session_id,
             round__num=1,
             category__gt=10,
         ).order_by('num')
@@ -810,7 +813,7 @@ class Appearance(TimeStampedModel):
         for panelist in panelists:
             category_count[panelist.get_category_display()] += 1
         songs = Song.objects.filter(
-            appearance__round__session=self.round.session,
+            appearance__round__session_id=self.round.session_id,
             appearance__group_id=self.group_id,
         ).order_by(
             'appearance__round__kind',
@@ -846,7 +849,7 @@ class Appearance(TimeStampedModel):
 
         # Penalties Block
         array = Song.objects.filter(
-            appearance__round__session=self.round.session,
+            appearance__round__session_id=self.round.session_id,
             appearance__group_id=self.group_id,
             penalties__len__gt=0,
         ).distinct().values_list('penalties', flat=True)
@@ -902,12 +905,11 @@ class Appearance(TimeStampedModel):
         group = self.group
         stats = Score.objects.select_related(
             'song__appearance__group',
-            'song__appearance__round__session',
             'song__appearance__round',
             'panelist',
         ).filter(
             song__appearance__group=self.group,
-            song__appearance__round__session=self.round.session,
+            song__appearance__round__session_id=self.round.session_id,
             panelist__kind=Panelist.KIND.official,
         ).aggregate(
             max=Max(
@@ -959,13 +961,12 @@ class Appearance(TimeStampedModel):
         appearances = Appearance.objects.select_related(
             'group',
             'round',
-            'round__session',
         ).prefetch_related(
             'songs__scores',
             'songs__scores__panelist',
         ).filter(
             group=self.group,
-            round__session=self.round.session,
+            round__session_id=self.round.session_id,
         ).annotate(
             tot_points=Sum(
                 'songs__scores__points',
@@ -2027,13 +2028,12 @@ class Panelist(TimeStampedModel):
         ).prefetch_related(
             'appearances__songs__scores',
             'appearances__songs__scores__panelist',
-            'appearances__round__session',
         ).annotate(
             tot_points=Sum(
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__session=self.round.session,
+                    appearances__round__session_id=self.round.session_id,
                 ),
             ),
             per_points=Sum(
@@ -2041,7 +2041,7 @@ class Panelist(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    appearances__round__session=self.round.session,
+                    appearances__round__session_id=self.round.session_id,
                 ),
             ),
             sng_points=Sum(
@@ -2049,7 +2049,7 @@ class Panelist(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    appearances__round__session=self.round.session,
+                    appearances__round__session_id=self.round.session_id,
                 ),
             ),
         ).order_by(
@@ -2065,7 +2065,7 @@ class Panelist(TimeStampedModel):
         }
         for group in groups:
             appearances = group.appearances.filter(
-                round__session=self.round.session,
+                round__session_id=self.round.session_id,
             ).order_by('round__kind')
             for appearance in appearances:
                 songs = appearance.songs.order_by(
