@@ -4449,13 +4449,21 @@ class Round(TimeStampedModel):
         if not prior_round:
             for entry in entries:
                 is_single = bool(entry.contests.filter(is_single=False))
-                self.appearances.create(
+                appearance = self.appearances.create(
                     num=entry.draw,
                     is_private=entry.is_private,
                     is_single=is_single,
                     participants=entry.participants,
                     district=entry.district,
+                    group_id=entry.group_id,
+                    name=entry.name,
+                    kind=entry.kind,
+                    gender=entry.gender,
+                    division=entry.division,
+                    bhs_id=entry.bhs_id,
+                    code=entry.code,
                 )
+                appearance.owners.set(entry.owners.all())
         else:
             new_outcomes = self.outcomes.all()
             prior_appearances = prior_round.appearances.filter(
