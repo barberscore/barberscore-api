@@ -447,10 +447,10 @@ class Appearance(TimeStampedModel):
         Panelist = apps.get_model('adjudication.panelist')
         group = Group.objects.get(id=self.group_id)
         if group.kind == group.KIND.chorus:
-            pos = group.members.filter(
-                status=group.members.model.STATUS.active,
-            ).count()
-            self.pos = pos
+            # pos = group.members.filter(
+            #     status=group.members.model.STATUS.active,
+            # ).count()
+            self.pos = 60
         # Try to approximate reality
         # prelim = getattr(getattr(self, "entry"), "prelim", None)
         # if not prelim:
@@ -465,14 +465,15 @@ class Appearance(TimeStampedModel):
         prelim = self.base or randint(55, 75)
         songs = self.songs.all()
         for song in songs:
-            if song.num == 1:
-                song.chart_id = group.repertories.order_by(
-                    'id',
-                ).first().chart.id
-            else:
-                song.chart_id = group.repertories.order_by(
-                    'id',
-                ).last().chart.id
+            charts = group.charts.order_by('id')
+            x = song.num + self.round.num - 2
+            try:
+                chart = charts[x]
+                song.chart_id = chart.id
+                song.title = chart.title
+                song.arrangers = chart.arrangers
+            except IndexError:
+                pass
             song.save()
             scores = song.scores.all()
             for score in scores:
@@ -4000,6 +4001,7 @@ class Round(TimeStampedModel):
         return result
 
     def mock(self):
+        """Mock Round"""
         Appearance = apps.get_model('adjudication.appearance')
         if self.status != self.STATUS.started:
             raise RuntimeError("Round not Started")
@@ -4009,6 +4011,7 @@ class Round(TimeStampedModel):
             # Don't include disqualifications.
             status=Appearance.STATUS.disqualified,
         ).exclude(
+            # Don't include scratches.
             status=Appearance.STATUS.scratched,
         )
         for appearance in appearances:
