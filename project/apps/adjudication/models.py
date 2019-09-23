@@ -1553,11 +1553,11 @@ class Outcome(TimeStampedModel):
     )
 
     # Methods
-    def get_name(self):
+    def get_winner(self):
         Award = apps.get_model('bhs.award')
         Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('adjudication.panelist')
-        award = Award.objects.get(self.award_id)
+        award = Award.objects.get(id=self.award_id)
         if self.round.kind != self.round.KIND.finals and not award.is_single:
             return "(Result determined in Finals)"
         if award.level == award.LEVEL.deferred:
@@ -1643,6 +1643,12 @@ class Outcome(TimeStampedModel):
         #     ).first().name
         if award.level == award.LEVEL.qualifier:
             threshold = award.threshold
+            winners = self.appearances.filter(
+                stats__tot_score__gte=threshold,
+            ).order_by(
+                'name',
+            ).values_list('name', flat=True)
+
             # group_ids = self.contenders.filter(
             #     status__gt=0,
             # ).values_list(
@@ -1664,29 +1670,23 @@ class Outcome(TimeStampedModel):
             # ).order_by(
             #     'name',
             # ).values_list('name', flat=True)
-            raise RuntimeError('contender')
             # group_ids = self.contenders.filter(
             #     appearance__stats__tot_score__gte=threshold,
             # ).values_list(
             #     'appearance__group_id',
             #     flat=True,
             # )
-            qualifiers = Group.objects.filter(
-                id__in=group_ids,
-            ).order_by('name').values_list('name', flat=True)
+            qualifiers = list(winners)
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
         if award.level in [award.LEVEL.championship, award.LEVEL.representative]:
-            raise RuntimeError('contender')
-            group_id = self.contenders.filter(
-                # status__gt=0,
-            ).order_by(
-                'appearance__stats__tot_points',
-                'appearance__stats__sng_points',
-                'appearance__stats__per_points',
-            ).last().appearance.group_id
-            winner = Group.objects.get(id=group_id)
+            winner = self.appearances.order_by(
+                'stats__tot_points',
+                'stats__sng_points',
+                'stats__per_points',
+            ).last()
+            # winner = Group.objects.get(id=group_id)
             # winner = Group.objects.filter(
             #     appearances__contenders__outcome=self,
             # ).annotate(
@@ -1716,7 +1716,7 @@ class Outcome(TimeStampedModel):
             #     '-per',
             # )
             if winner:
-                return str(winner.name)
+                return winner.name
             return "(No Recipient)"
         raise RuntimeError("Level mismatch")
 
@@ -4487,6 +4487,9 @@ class Round(TimeStampedModel):
                     charts=charts,
                 )
                 appearance.owners.set(entry.owners.all())
+                award_ids = list(entry.contests.values_list('award_id', flat=True))
+                outcomes = self.outcomes.filter(award_id__in=award_ids)
+                appearance.outcomes.set(outcomes)
         else:
             new_outcomes = self.outcomes.all()
             prior_appearances = prior_round.appearances.filter(
@@ -4615,7 +4618,7 @@ class Round(TimeStampedModel):
         # Run outcomes
         outcomes = self.outcomes.all()
         for outcome in outcomes:
-            outcome.name = outcome.get_name()
+            outcome.winner = outcome.get_winner()
             outcome.save()
 
         # If there is no next round simply return

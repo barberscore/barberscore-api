@@ -109,7 +109,7 @@ class OutcomeAdmin(admin.ModelAdmin):
         # 'award_id',
         'num',
         'name',
-        # 'legacy_name',
+        'appearances',
     ]
 
     list_display = [
