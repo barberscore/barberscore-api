@@ -52,6 +52,8 @@ from .tasks import send_package_email_from_session
 from .tasks import send_package_report_email_from_session
 
 
+from apps.adjudication.tasks import build_round_from_session
+
 
 class Assignment(TimeStampedModel):
     id = models.UUIDField(
@@ -2156,6 +2158,7 @@ class Session(TimeStampedModel):
         #  Create and send the reports
         send_package_email_from_session.delay(self)
         send_package_report_email_from_session.delay(self)
+        build_round_from_session(self.id)
         return
 
     @fsm_log_by

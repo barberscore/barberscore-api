@@ -54,7 +54,7 @@
     <div class='container'>
       <section>
         <img class='float-right small_logo' src="https://res.cloudinary.com/barberscore/image/upload/v1554830585/bhs_logo.png">
-        {% if panelist.person.image %}<img class='float-right img-thumbnail small_logo' src="{{panelist.person.image.url}}">{% endif %}
+        {% if panelist.image %}<img class='float-right img-thumbnail small_logo' src="{{panelist.image.url}}">{% endif %}
         <h5>
           Panelist Scoring Analysis
         </h5>
@@ -64,7 +64,7 @@
           {{panelist.round.session.convention.location}}; {{panelist.round.session.convention.start_date|date:"F j, Y"}} - {{panelist.round.session.convention.end_date|date:"F j, Y"}}
         </p>
         <h6>
-          {{panelist.person.name}}&nbsp;{{panelist.person.district}}<br>
+          {{panelist.name}}&nbsp;{{panelist.district}}<br>
           {{panelist.get_kind_display}} {{panelist.get_category_display}} Judge<br>
         </h6>
       </section>

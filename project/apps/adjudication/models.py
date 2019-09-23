@@ -374,7 +374,6 @@ class Appearance(TimeStampedModel):
     # Methods
     def get_variance(self):
         Chart = apps.get_model('bhs.chart')
-        Person = apps.get_model('bhs.person')
         Group = apps.get_model('bhs.group')
         Score = apps.get_model('adjudication.score')
         Panelist = apps.get_model('adjudication.panelist')
@@ -405,9 +404,6 @@ class Appearance(TimeStampedModel):
             'category',
             # 'person__last_name',
         )
-        for panelist in panelists:
-            person = Person.objects.get(id=panelist.person_id)
-            panelist.person = person
         variances = []
         for song in songs:
             chart = Chart.objects.get(id=song.chart_id)
@@ -588,7 +584,6 @@ class Appearance(TimeStampedModel):
 
     def get_csa(self):
         Chart = apps.get_model('bhs.chart')
-        Person = apps.get_model('bhs.person')
         Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('adjudication.panelist')
         Song = apps.get_model('adjudication.song')
@@ -798,7 +793,6 @@ class Appearance(TimeStampedModel):
 
         # Panelists
         panelists = Panelist.objects.select_related(
-            # 'person',
         ).filter(
             kind=Panelist.KIND.official,
             round__session_id=self.round.session_id,
@@ -809,8 +803,10 @@ class Appearance(TimeStampedModel):
         # Score Block
         initials = []
         for panelist in panelists:
-            person = Person.objects.get(id=panelist.person_id)
-            initials.append(person.initials)
+            initials.append("{0}{1}".format(
+                panelist.first_name[0].upper(),
+                panelist.last_name[0].upper(),
+            ))
 
 
         # Hackalicious
@@ -853,8 +849,7 @@ class Appearance(TimeStampedModel):
         # panelists from above
         for panelist in panelists:
             item = categories[panelist.get_category_display()]
-            person = Person.objects.get(id=panelist.person_id)
-            item.append(person.name)
+            item.append(panelist.name)
 
         # Penalties Block
         array = Song.objects.filter(
@@ -2018,7 +2013,6 @@ class Panelist(TimeStampedModel):
     def get_psa(self):
         Group = apps.get_model('bhs.group')
         Chart = apps.get_model('bhs.chart')
-        Person = apps.get_model('bhs.person')
         Appearance = apps.get_model('adjudication.appearance')
         Score = apps.get_model('adjudication.score')
         # Score block
@@ -2145,9 +2139,6 @@ class Panelist(TimeStampedModel):
                 appearance.songs_patched = songs
             group.appearances_patched = appearances
         panelist = self
-        person = Person.objects.get(id=panelist.person_id)
-        panelist.person = person
-
 
         context = {
             'panelist': panelist,
@@ -2180,15 +2171,13 @@ class Panelist(TimeStampedModel):
         return self.psa_report.save('psa', content)
 
     def get_psa_email(self):
-        Person = apps.get_model('bhs.person')
         context = {'panelist': self}
 
         template = 'emails/panelist_released.txt'
-        person = Person.objects.get(id=self.person_id)
         subject = "[Barberscore] PSA for {0}".format(
-            person.name,
+            self.name,
         )
-        to = ["{0} <{1}>".format(person.name, person.email)]
+        to = ["{0} <{1}>".format(self.name, self.email)]
         # cc = self.round.session.convention.get_ca_emails()
 
         if self.psa_report:
@@ -2557,7 +2546,6 @@ class Round(TimeStampedModel):
     def get_oss(self, zoom=1):
         Group = apps.get_model('bhs.group')
         Chart = apps.get_model('bhs.chart')
-        Person = apps.get_model('bhs.person')
         Panelist = apps.get_model('adjudication.panelist')
         Appearance = apps.get_model('adjudication.appearance')
         Song = apps.get_model('adjudication.song')
@@ -2871,7 +2859,6 @@ class Round(TimeStampedModel):
 
         # Panelist Block
         panelists_raw = self.panelists.select_related(
-            # 'person',
         ).filter(
             kind=Panelist.KIND.official,
             category__gte=Panelist.CATEGORY.ca,
@@ -2889,18 +2876,16 @@ class Round(TimeStampedModel):
             sections = panelists_raw.filter(
                 category=key,
             ).select_related(
-                # 'person',
             ).order_by(
                 'num',
             )
             persons = []
             for x in sections:
                 try:
-                    person = Person.objects.get(id=x.person_id)
                     persons.append(
                         "{0} {1}".format(
-                            person.name,
-                            person.get_district_display(),
+                            x.name,
+                            x.get_district_display(),
                         )
                     )
                 except AttributeError:
@@ -3012,7 +2997,6 @@ class Round(TimeStampedModel):
 
     def get_sa(self):
         Group = apps.get_model('bhs.group')
-        Person = apps.get_model('bhs.person')
         Chart = apps.get_model('bhs.chart')
         Appearance = apps.get_model('adjudication.appearance')
         Panelist = apps.get_model('adjudication.panelist')
@@ -3469,7 +3453,6 @@ class Round(TimeStampedModel):
 
     def get_legacy_oss(self):
         Chart = apps.get_model('bhs.chart')
-        Person = apps.get_model('bhs.person')
         Panelist = apps.get_model('adjudication.panelist')
         Appearance = apps.get_model('adjudication.appearance')
         Song = apps.get_model('adjudication.song')
@@ -3654,7 +3637,6 @@ class Round(TimeStampedModel):
 
         # Panelist Block
         panelists_raw = self.panelists.select_related(
-            # 'person',
         ).filter(
             kind=Panelist.KIND.official,
             category__gte=Panelist.CATEGORY.ca,
@@ -3672,14 +3654,12 @@ class Round(TimeStampedModel):
             sections = panelists_raw.filter(
                 category=key,
             ).select_related(
-                # 'person',
             ).order_by(
                 'num',
             )
             persons = []
             for x in sections:
-                person = Person.objects.get(id=x.person_id)
-                persons.append("{0} - {1}".format(person.name, person.district))
+                persons.append("{0} - {1}".format(x.name, x.area))
             panelists[value] = persons
 
 
@@ -3970,8 +3950,8 @@ class Round(TimeStampedModel):
         ).order_by(
             'kind',
             'category',
-            # 'person__last_name',
-            # 'person__first_name',
+            'last_name',
+            'first_name',
         )
         seen = set()
         result = [
