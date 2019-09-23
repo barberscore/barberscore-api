@@ -653,7 +653,6 @@ class Appearance(TimeStampedModel):
         )
         appearances = Appearance.objects.select_related(
             'round',
-            'round',
         ).prefetch_related(
             'songs__scores',
             'songs__scores__panelist',
@@ -854,7 +853,7 @@ class Appearance(TimeStampedModel):
         for panelist in panelists:
             item = categories[panelist.get_category_display()]
             person = Person.objects.get(id=panelist.person_id)
-            item.append(person.common_name)
+            item.append(person.name)
 
         # Penalties Block
         array = Song.objects.filter(
@@ -2186,9 +2185,9 @@ class Panelist(TimeStampedModel):
         template = 'emails/panelist_released.txt'
         person = Person.objects.get(id=self.person_id)
         subject = "[Barberscore] PSA for {0}".format(
-            person.common_name,
+            person.name,
         )
-        to = ["{0} <{1}>".format(person.common_name, person.email)]
+        to = ["{0} <{1}>".format(person.name, person.email)]
         # cc = self.round.session.convention.get_ca_emails()
 
         if self.psa_report:
@@ -2908,7 +2907,7 @@ class Round(TimeStampedModel):
                     person = Person.objects.get(id=x.person_id)
                     persons.append(
                         "{0} {1}".format(
-                            person.common_name,
+                            person.name,
                             person.district,
                         )
                     )
@@ -3168,7 +3167,7 @@ class Round(TimeStampedModel):
         mus_persons = []
         for p in mus_persons_qs:
             practice = bool(p.panelists.get(round=self).kind == Panelist.KIND.practice)
-            mus_persons.append((p.common_name, practice, p.initials))
+            mus_persons.append((p.name, practice, p.initials))
 
         per_persons_qs = persons.filter(
             panelists__category=Panelist.CATEGORY.performance,
@@ -3179,7 +3178,7 @@ class Round(TimeStampedModel):
         per_persons = []
         for p in per_persons_qs:
             practice = bool(p.panelists.get(round=self).kind == Panelist.KIND.practice)
-            per_persons.append((p.common_name, practice, p.initials))
+            per_persons.append((p.name, practice, p.initials))
 
         sng_persons_qs = persons.filter(
             panelists__category=Panelist.CATEGORY.singing,
@@ -3190,7 +3189,7 @@ class Round(TimeStampedModel):
         sng_persons = []
         for p in sng_persons_qs:
             practice = bool(p.panelists.get(round=self).kind == Panelist.KIND.practice)
-            sng_persons.append((p.common_name, practice, p.initials))
+            sng_persons.append((p.name, practice, p.initials))
 
         # Monkeypatching
         for group in groups:
@@ -3694,7 +3693,7 @@ class Round(TimeStampedModel):
             persons = []
             for x in sections:
                 person = Person.objects.get(id=x.person_id)
-                persons.append("{0} - {1}".format(person.common_name, person.district))
+                persons.append("{0} - {1}".format(person.name, person.district))
             panelists[value] = persons
 
 
@@ -3990,11 +3989,11 @@ class Round(TimeStampedModel):
         )
         seen = set()
         result = [
-            "{0} ({1} {2}) <{3}>".format(judge.user.common_name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,)
+            "{0} ({1} {2}) <{3}>".format(judge.user.name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,)
             for judge in judges
             if not (
-                "{0} ({1} {2}) <{3}>".format(judge.user.common_name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,) in seen or seen.add(
-                    "{0} ({1} {2}) <{3}>".format(judge.user.common_name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,)
+                "{0} ({1} {2}) <{3}>".format(judge.user.name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,) in seen or seen.add(
+                    "{0} ({1} {2}) <{3}>".format(judge.user.name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,)
                 )
             )
         ]

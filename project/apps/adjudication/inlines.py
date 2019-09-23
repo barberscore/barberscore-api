@@ -106,7 +106,7 @@ class ScoreInline(admin.TabularInline):
     model = Score
     fields = [
         'song',
-        # 'panelist__person__common_name',
+        # 'panelist__person__name',
         'points',
     ]
     autocomplete_fields = [
@@ -114,7 +114,7 @@ class ScoreInline(admin.TabularInline):
     ]
     readonly_fields = [
         'song',
-        # 'panelist__person__common_name',
+        # 'panelist__person__name',
         'status',
     ]
     ordering = (
@@ -125,8 +125,8 @@ class ScoreInline(admin.TabularInline):
     classes = [
         'collapse',
     ]
-    # def panelist__person__common_name(self, obj):
-    #     return getattr(getattr(obj.panelist, 'person'), 'common_name', getattr(obj.panelist, 'legacy_name'))
+    # def panelist__person__name(self, obj):
+    #     return getattr(getattr(obj.panelist, 'person'), 'name', getattr(obj.panelist, 'legacy_name'))
 
 
 class SongInline(admin.TabularInline):

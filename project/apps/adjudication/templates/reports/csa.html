@@ -54,8 +54,8 @@
           Competitor Scoring Analysis
         </h3>
         <p>
-          {{round.session.convention}}<br>
-          {{round.session.convention.location}}; {{round.session.convention.start_date|date:"F j, Y"}} - {{round.session.convention.end_date|date:"F j, Y"}}
+          {{round.nomen}}<br>
+          {{round.location}}; {{round.date|date:"F j, Y"}}
         </p>
       </section>
       <section>
@@ -70,18 +70,19 @@
           <h3>
             <strong>{{group.name}}</strong>
           </h3>
+          {% comment %}
           {% if group.get_kind_display != 'Quartet' %}
             <h4>
-              {{group.parent.name}}
+              {{group.chapters}}
             </h4>
           {% endif %}
+          {% endcomment %}
           <strong>Points:  {{group.tot_points}} ({{group.tot_score|floatformat:1}})</strong><br><br>
           {% if group.get_kind_display != 'Quartet' %}
             Director(s): {{ appearance.participants|default:"(Unknown)" }}<br>
           {% else %}
             Members: {{ appearance.participants|default:"(Unknown)"  }}<br>
           {% endif %}
-          District: {{appearance.district}}
         </div>
       </section>
       <section>
@@ -112,7 +113,7 @@
                   {% for appearance in group.appearances_patched %}
                       {% if group.max > 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart.title|truncatechars_html:"50"|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}<br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.title|truncatechars_html:"50"|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
@@ -179,7 +180,7 @@
               {% for song in songs %}
                 <tr class='pbi_avoid'>
                   <td>
-                    {{song.chart.title|truncatechars_html:"20"|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}
+                    {{song.title|truncatechars_html:"20"|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}
                   </td>
                   {% for points, row_class in song.scores_patched %}
                     <td class='text-right {{row_class}}'>

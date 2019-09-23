@@ -1649,6 +1649,13 @@ class Person(TimeStampedModel):
         except ValueError:
             return 'https://res.cloudinary.com/barberscore/image/upload/v1554830585/missing_image.jpg'
 
+    @cached_property
+    def initials(self):
+        return "{0}{1}".format(
+            self.first_name[0].upper(),
+            self.last_name[0].upper(),
+        )
+
 
     # Internals
     objects = PersonManager()

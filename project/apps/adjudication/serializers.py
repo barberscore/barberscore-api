@@ -177,6 +177,9 @@ class RoundSerializer(serializers.ModelSerializer):
             'permissions',
         ]
 
+        read_only_fields = [
+            'nomen',
+        ]
     class JSONAPIMeta:
         included_resources = [
             # 'appearances',

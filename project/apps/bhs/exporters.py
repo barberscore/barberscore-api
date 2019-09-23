@@ -15,11 +15,11 @@ class PersonSerializer(serializers.ModelSerializer):
         model = Person
         fields = (
             'id',
-            'common_name',
+            'name',
             'bhs_id',
         )
         read_only_fields = [
-            'common_name',
+            'name',
         ]
 
 class GroupSerializer(serializers.ModelSerializer):

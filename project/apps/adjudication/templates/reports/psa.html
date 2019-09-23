@@ -64,7 +64,7 @@
           {{panelist.round.session.convention.location}}; {{panelist.round.session.convention.start_date|date:"F j, Y"}} - {{panelist.round.session.convention.end_date|date:"F j, Y"}}
         </p>
         <h6>
-          {{panelist.person.common_name}}&nbsp;{{panelist.person.district}}<br>
+          {{panelist.person.name}}&nbsp;{{panelist.person.district}}<br>
           {{panelist.get_kind_display}} {{panelist.get_category_display}} Judge<br>
         </h6>
       </section>
@@ -74,7 +74,7 @@
           <div class='card-body'>
             <img class='float-right group_image img-thumbnail' src="{{panelist.person.image.url}}">
             <h5 class='card-title'>
-              {{panelist.person.common_name}}
+              {{panelist.person.name}}
             </h5>
             <p class='card-text'>
               Differential or other useful text
