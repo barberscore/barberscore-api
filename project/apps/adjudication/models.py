@@ -6,7 +6,7 @@ import uuid
 from random import randint
 from io import BytesIO
 from timezone_field import TimeZoneField
-
+import json
 # Third-Party
 import pydf
 from docx import Document
@@ -312,6 +312,15 @@ class Appearance(TimeStampedModel):
         max_length=255,
         blank=True,
         default='',
+    )
+
+    charts = ArrayField(
+        base_field=models.TextField(
+            blank=True,
+        ),
+        null=True,
+        blank=True,
+        default=list,
     )
 
     # Appearance FKs
@@ -4298,6 +4307,7 @@ class Round(TimeStampedModel):
         Assignment = apps.get_model('registration.assignment')
         Entry = apps.get_model('registration.entry')
         Round = apps.get_model('adjudication.round')
+        Chart = apps.get_model('bhs.chart')
 
         # Build object
         # kind = session.num_rounds
@@ -4449,6 +4459,16 @@ class Round(TimeStampedModel):
         if not prior_round:
             for entry in entries:
                 is_single = bool(entry.contests.filter(is_single=False))
+                charts_raw = Chart.objects.filter(
+                    groups__id=entry.group_id,
+                ).values(
+                    'id',
+                    'title',
+                    'arrangers',
+                )
+                for c in charts_raw:
+                    c['pk'] = str(c.pop('id'))
+                charts = [json.dumps(x) for x in charts_raw]
                 appearance = self.appearances.create(
                     num=entry.draw,
                     is_private=entry.is_private,
@@ -4462,6 +4482,7 @@ class Round(TimeStampedModel):
                     division=entry.division,
                     bhs_id=entry.bhs_id,
                     code=entry.code,
+                    charts=charts,
                 )
                 appearance.owners.set(entry.owners.all())
         else:
@@ -4963,6 +4984,12 @@ class Song(TimeStampedModel):
     chart_id = models.UUIDField(
         null=True,
         blank=True,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
     )
 
     title = models.CharField(
