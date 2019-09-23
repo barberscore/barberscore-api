@@ -57,9 +57,9 @@
           <img class='float-right small_logo' src="{{round.session.convention.image.url}}">
         {% endif %}
         <h6>
-          Official Scoring Summary&nbsp;&mdash;&nbsp;{{round.session.get_kind_display}} {{round.get_kind_display}}<br>
-          {{round.session.convention}}<br>
-          {{round.session.convention.location}}; {{round.date|date:"F j, Y"}}
+          Official Scoring Summary<br>
+          {{round.nomen}}<br>
+          {{round.location}}; {{round.date|date:"F j, Y"}}
         </h6>
       </section>
       <section>
@@ -79,14 +79,14 @@
               <tr class='pbi_avoid'>
                 <td class='w-groups'>
                   <strong>
-                    {% if round.session.convention.district == 'BHS' %}{{public.tot_rank|default:""}}. {% endif %}
+                    {% if round.get_district_display == 'BHS' %}{{public.tot_rank|default:""}}. {% endif %}
                     {{public.name}}<br>
                   </strong>
-                  {% if round.session.get_kind_display == 'Chorus' %}
-                    {{public.district|truncatechars_html:"50"}}&nbsp;({{public.contesting_patched|default:"None"}})<br>
+                  {% if round.get_session_kind_display == 'Chorus' %}
+                    {{public.area|truncatechars_html:"50"}}&nbsp;({{public.contesting_patched|default:"None"}})<br>
                     <span class='smaller-font'>Dir(s): {{public.participants_patched|default:"(No Director Specified)"}};&nbsp;&nbsp;OnStage: {{public.pos_patched}}</span><br>
                   {% else %}
-                    {{public.district|default:"(Unknown)"}}&nbsp;({{public.contesting_patched|default:"None"}})<br>
+                    {{public.area|default:"(Unknown)"}}&nbsp;({{public.contesting_patched|default:"None"}})<br>
                     <span class='smaller-font'>{{public.participants_patched|default:"(No Members Specified)"}}</span><br>
                   {% endif %}
                 </td>
@@ -95,7 +95,7 @@
                   {% for appearance in public.appearances_patched %}
                       {% if round.num != 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart_patched.nomen|truncatechars_html:60|safe|default:"(Song not in Group's Repertory)▴"}}&nbsp;{{song.penalties_patched}}<br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart_patched|truncatechars_html:60|safe|default:"(Song not in Group's Repertory)▴"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
@@ -143,19 +143,19 @@
       <section>
         <p>
           {% if round.kind == 1 %}
-            {% if round.session.convention.district == 'BHS' %}
+            {% if round.get_district_display == 'BHS' %}
                 Groups are ranked above in accordance with Article VII of the BHS Contest Rules.<br>
             {% else %}
                 Groups are listed above by total points and in accordance with Article VII of the BHS Contest Rules.<br>
             {% endif %}
           {% else %}
-            {% if round.session.convention.district == 'BHS' %}
+            {% if round.get_district_display == 'BHS' %}
               Groups not advancing are ranked above in accordance with Article VII of the BHS Contest Rules.<br>
             {% else %}
               Groups not advancing and/or competing only for single-round awards are listed above by total points and in accordance with Article VII of the BHS Contest Rules.<br>
             {% endif %}
           {% endif %}
-          {% if round.session.convention.district != 'BHS' %}
+          {% if round.get_district_display != 'BHS' %}
               {% if privates %}
                 The following groups performed for evaluation score only: {{privates|join:", "}}
               {% endif %}
@@ -184,7 +184,7 @@
             <h5>Awards</h5>
             <ul class='list-unstyled'>
               {% for award, winner in outcomes %}
-                <li><strong>{{award}}:</strong>{% if round.session.convention.district == 'BHS' %}<br>{% endif %}&nbsp;&nbsp;{{winner}}</li>
+                <li><strong>{{award}}:</strong>{% if round.get_district_display == 'BHS' %}<br>{% endif %}&nbsp;&nbsp;{{winner}}</li>
               {% endfor %}
             </ul>
           </div>

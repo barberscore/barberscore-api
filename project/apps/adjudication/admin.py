@@ -42,6 +42,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'actual_start',
         'actual_finish',
         'owners',
+        'area',
         'group_id',
         'round',
         'num',

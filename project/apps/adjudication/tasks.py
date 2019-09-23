@@ -174,7 +174,7 @@ def build_round_from_session(session_id):
             is_private=entry.is_private,
             is_single=is_single,
             participants=entry.participants,
-            district=entry.district,
+            area=entry.area,
         )
     for ca in cas:
         area = ca.get_district_display() if ca.district else ''

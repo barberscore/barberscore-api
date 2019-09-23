@@ -121,8 +121,8 @@ class Appearance(TimeStampedModel):
         default='',
     )
 
-    district = models.CharField(
-        help_text='District for entity',
+    area = models.CharField(
+        help_text='Area representing',
         max_length=255,
         blank=True,
         default='',
@@ -2582,7 +2582,7 @@ class Round(TimeStampedModel):
             '-stats__sng_points',
             '-stats__per_points',
         )
-        group_ids = publics.values_list('group_id', flat=True)
+        # group_ids = publics.values_list('group_id', flat=True)
 
 
 
@@ -2694,7 +2694,7 @@ class Round(TimeStampedModel):
             public.tot_rank = i
             appearances = Appearance.objects.filter(
                 group_id=public.group_id,
-                round__session=self.session,
+                round__session_id=self.session_id,
                 round__num__lte=self.num,
             ).prefetch_related(
                 'songs__scores',
@@ -2772,11 +2772,13 @@ class Round(TimeStampedModel):
                     ),
                 )
                 for song in songs:
-                    try:
-                        chart = Chart.objects.get(id=song.chart_id)
-                    except Chart.DoesNotExist:
-                        chart = None
-                    song.chart_patched = chart
+                    if song.chart_id:
+                        song.chart_patched = "{0} [{1}]".format(
+                            song.title,
+                            song.arrangers,
+                        )
+                    else:
+                        song.chart_patched = None
                     penalties_map = {
                         10: "†",
                         30: "‡",
@@ -2787,11 +2789,10 @@ class Round(TimeStampedModel):
                     song.penalties_patched = items
                 appearance.songs_patched = songs
             public.appearances_patched = appearances
-            raise RuntimeError('contender')
-            contesting = public.contenders.order_by(
-                'outcome__num',
+            contesting = public.outcomes.order_by(
+                'num',
             ).values_list(
-                'outcome__num',
+                'num',
                 flat=True
             )
             public.contesting_patched = ", ".join([str(x) for x in contesting])
@@ -2805,7 +2806,7 @@ class Round(TimeStampedModel):
         # Penalties Block
         array = Song.objects.select_related(
         ).filter(
-            appearance__round__session=self.session, # Using any session appearance
+            appearance__round__session_id=self.session_id, # Using any session appearance
             penalties__len__gt=0, # Where there are penalties
             appearance__is_private=False, # If a public appearance
             appearance__in=publics,  # Only completeds
@@ -2821,33 +2822,23 @@ class Round(TimeStampedModel):
         # Missing flag
         # use group_ids - these are the completeds
         is_missing = bool(Song.objects.filter(
-            appearance__round__session=self.session,
+            appearance__round__session_id=self.session_id,
             chart_id__isnull=True,
             appearance__in=publics,
         ))
         # Eval Only Block
-        private_group_ids = self.appearances.prefetch_related(
+        privates = self.appearances.prefetch_related(
         ).filter(
             is_private=True,
         ).order_by(
-        ).values_list('group_id', flat=True)
-        privates = Group.objects.filter(
-            id__in=private_group_ids,
-        ).order_by(
-            'name',
         ).values_list('name', flat=True)
         privates = list(privates)
 
         # Disqualification Block
-        disqualification_group_ids = self.appearances.prefetch_related(
+        disqualifications = self.appearances.prefetch_related(
         ).filter(
             status=Appearance.STATUS.disqualified,
         ).order_by(
-        ).values_list('group_id', flat=True)
-        disqualifications = Group.objects.filter(
-            id__in=disqualification_group_ids,
-        ).order_by(
-            'name',
         ).values_list('name', flat=True)
         disqualifications = list(disqualifications)
 
@@ -2909,7 +2900,7 @@ class Round(TimeStampedModel):
                     persons.append(
                         "{0} {1}".format(
                             person.name,
-                            person.district,
+                            person.get_district_display(),
                         )
                     )
                 except AttributeError:
@@ -2925,8 +2916,8 @@ class Round(TimeStampedModel):
             'num',
         ).values_list(
             'num',
-            # 'award__name',
             'name',
+            'winner',
         )
         outcomes = []
         for item in items:
@@ -2950,32 +2941,26 @@ class Round(TimeStampedModel):
         }
         rendered = render_to_string('reports/oss.html', context)
 
-        # if self.session.convention.district == 'BHS':
-        #     if self.session.convention.name == 'International Youth Convention':
-        #         page_size = 'Legal'
-        #     elif self.session.kind == self.session.KIND.quartet and self.kind == self.KIND.semis:
-        #         page_size = 'Legal'
-        #     else:
-        #         page_size = 'Letter'
-        # else:
-        #     if self.session.rounds.count() == 1:
-        #         if publics.count() <= 15:
-        #             page_size = 'Letter'
-        #         else:
-        #             page_size = 'Legal'
-        #     else:
-        #         if self.kind == self.KIND.finals:
-        #             if publics.count() >= 8:
-        #                 page_size = 'Legal'
-        #             else:
-        #                 page_size = 'Letter'
-        #         elif self.kind == self.KIND.semis:
-        #             if publics.count() >= 8:
-        #                 page_size = 'Legal'
-        #             else:
-        #                 page_size = 'Letter'
-        #         else:
-        #             page_size = 'Legal'
+        if self.get_district_display() == 'BHS':
+            if self.session.convention.name == 'International Youth Convention':
+                page_size = 'Legal'
+            elif self.session.kind == self.session.KIND.quartet and self.kind == self.KIND.semis:
+                page_size = 'Legal'
+            else:
+                page_size = 'Letter'
+        else:
+            if self.kind == self.KIND.finals:
+                if publics.count() >= 20:
+                    page_size = 'Legal'
+                else:
+                    page_size = 'Letter'
+            elif self.kind == self.KIND.semis:
+                if publics.count() >= 12:
+                    page_size = 'Legal'
+                else:
+                    page_size = 'Letter'
+            else:
+                page_size = 'Legal'
         try:
             statelog = self.statelogs.latest('timestamp')
             footer = 'Published by {0} at {1}'.format(
@@ -4471,16 +4456,21 @@ class Round(TimeStampedModel):
                 for c in charts_raw:
                     c['pk'] = str(c.pop('id'))
                 charts = [json.dumps(x) for x in charts_raw]
+                if entry.kind == entry.KIND.quartet:
+                    area = entry.get_district_display()
+                else:
+                    area = entry.chapters
                 appearance = self.appearances.create(
                     num=entry.draw,
                     is_private=entry.is_private,
                     is_single=is_single,
                     participants=entry.participants,
-                    district=entry.district,
+                    area=area,
                     group_id=entry.group_id,
                     name=entry.name,
                     kind=entry.kind,
                     gender=entry.gender,
+                    district=entry.district,
                     division=entry.division,
                     bhs_id=entry.bhs_id,
                     code=entry.code,

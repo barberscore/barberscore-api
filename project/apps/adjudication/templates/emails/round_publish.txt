@@ -16,7 +16,7 @@ Draw
 Results
 --------
 {% for complete in completes %}
-{% if round.session.convention.district == 'BHS' %}{{complete.tot_rank}}. {% endif %}{{complete.name|safe}}: {{complete.tot_points}} ({{complete.tot_score|floatformat:1}}%)
+{% if round.get_district_display == 'BHS' %}{{complete.tot_rank}}. {% endif %}{{complete.name|safe}}: {{complete.tot_points}} ({{complete.tot_score|floatformat:1}}%)
 {% endfor %}
 {% endif %}
 

@@ -17,7 +17,7 @@ class AppearanceInline(admin.TabularInline):
     fields = [
         # 'group',
         'status',
-        'district',
+        'area',
         'num',
         'base',
         # 'stats',
