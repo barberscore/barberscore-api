@@ -513,10 +513,8 @@ class RoundViewSet(viewsets.ModelViewSet):
             'appearances',
         ).get(pk=pk)
         pdf = round.get_titles()
-        file_name = '{0} {1} {2} Titles Report'.format(
-            # round.session.convention,
-            round.session.get_kind_display(),
-            round.get_kind_display(),
+        file_name = '{0} Titles Report'.format(
+            round.nomen,
         )
         return PDFResponse(
             pdf,
@@ -541,10 +539,8 @@ class RoundViewSet(viewsets.ModelViewSet):
             pdf = round.sa_report.file
         else:
             pdf = round.get_sa()
-        file_name = '{0} {1} {2} SA'.format(
-            # round.session.convention,
-            round.session.get_kind_display(),
-            round.get_kind_display(),
+        file_name = '{0} SA'.format(
+            round.nomen,
         )
         return PDFResponse(
             pdf,
@@ -566,10 +562,8 @@ class RoundViewSet(viewsets.ModelViewSet):
         round = Round.objects.select_related(
         ).get(pk=pk)
         docx = round.get_announcements()
-        file_name = '{0} {1} {2} Announcements'.format(
-            # round.session.convention,
-            round.session.get_kind_display(),
-            round.get_kind_display(),
+        file_name = '{0} Announcements'.format(
+            round.nomen,
         )
         return DOCXResponse(
             docx,

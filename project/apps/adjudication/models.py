@@ -3943,7 +3943,7 @@ class Round(TimeStampedModel):
         document.add_heading('Awards')
         for outcome in outcomes:
             award = Award.objects.get(id=outcome.award_id)
-            document.add_paragraph("{0}: {1}".format(award.name, outcome.name))
+            document.add_paragraph("{0}: {1}".format(award.name, outcome.winner))
         if appearances:
             document.add_heading('Draw')
             for appearance in appearances:
