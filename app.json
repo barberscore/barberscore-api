@@ -7,7 +7,9 @@
   "success_url": "/admin/",
   "buildpacks": [
     {
-      "url": "heroku/python",
+      "url": "heroku/python"
+    },
+    {
       "url": "https://github.com/barberscore/python-sentry-cli-buildpack"
     }
   ],
