@@ -4425,7 +4425,7 @@ class Round(TimeStampedModel):
         # # Create Appearances
         if not prior_round:
             for entry in entries:
-                is_single = bool(entry.contests.filter(is_single=False))
+                is_single = not bool(entry.contests.filter(is_single=False))
                 charts_raw = Chart.objects.filter(
                     groups__id=entry.group_id,
                 ).values(
