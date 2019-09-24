@@ -3,6 +3,7 @@
 from .base import *
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.rq import RqIntegration
 
 # Core
@@ -20,8 +21,10 @@ sentry_sdk.init(
     integrations=[
         DjangoIntegration(),
         RqIntegration(),
+        RedisIntegration(),
     ],
     send_default_pii=True,
+    request_bodies='always',
     environment=get_env_variable("HEROKU_APP_NAME"),
 )
 
@@ -33,6 +36,12 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'loggers': {
+        'django': {
+            'handlers': [
+                'console',
+            ],
+            'level': 'INFO',
+        },
         'api': {
             'handlers': [
                 'console',
