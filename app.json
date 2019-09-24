@@ -7,8 +7,7 @@
   "success_url": "/admin/",
   "buildpacks": [
     {
-      "url": "heroku/python",
-      "url": "https://github.com/barberscore/python-sentry-cli-buildpack"
+      "url": "heroku/python"
     }
   ],
   "formation": {
@@ -23,10 +22,10 @@
   },
   "addons": [
     "heroku-redis:hobby-dev",
-    "heroku-postgresql:hobby-basic"
+    "heroku-postgresql:hobby-dev"
   ],
   "scripts": {
-    "postdeploy": "django-admin migrate"
+    "postdeploy": "django-admin migrate --noinput"
   },
   "env": {
     "ALGOLIASEARCH_API_KEY": {
