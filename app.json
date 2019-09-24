@@ -28,7 +28,7 @@
     "heroku-postgresql:hobby-basic"
   ],
   "scripts": {
-    "postdeploy": "django-admin migrate --noinput"
+    "postdeploy": "pg_dump -Fc $PRODUCTION_DATABASE_URL | pg_restore --clean --no-owner -n public -d $DATABASE_URL && django-admin migrate --noinput"
   },
   "env": {
     "ALGOLIASEARCH_API_KEY": {
