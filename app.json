@@ -28,7 +28,7 @@
     "heroku-postgresql:hobby-basic"
   ],
   "scripts": {
-    "postdeploy": "pg_dump -Fc $HEROKU_POSTGRESQL_ROSE_URL | pg_restore --clean --no-owner -n public -d $DATABASE_URL && django-admin migrate --noinput"
+    "postdeploy": "pg_dump -Fc $PRODUCTION_DATABASE_URL | pg_restore --clean --no-owner -n public -d $DATABASE_URL && django-admin migrate --noinput"
   },
   "env": {
     "ALGOLIASEARCH_API_KEY": {
@@ -74,6 +74,10 @@
     },
     "MEMBERCENTER_URL": {
       "description": "BHS Membercenter service.",
+      "required": true
+    },
+    "PRODUCTION_DATABASE_URL": {
+      "description": "Production DATABASE_URL.",
       "required": true
     },
     "PYTHONPATH": {
