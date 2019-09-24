@@ -4634,7 +4634,7 @@ class Round(TimeStampedModel):
         # If spots are constricted, find those who advance
         if spots:
             # All those above 73.0 advance automatically, regardless of spots available
-            if self.session.convention.district == 'BHS':
+            if self.get_district_display() == 'BHS':
                 ordered = multis.order_by(
                     '-tot_points',
                     '-sng_points',
