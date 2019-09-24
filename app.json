@@ -7,7 +7,8 @@
   "success_url": "/admin/",
   "buildpacks": [
     {
-      "url": "heroku/python"
+      "url": "heroku/python",
+      "url": "https://github.com/barberscore/python-sentry-cli-buildpack"
     }
   ],
   "formation": {
@@ -36,6 +37,10 @@
       "description": "Algolia Application ID key.",
       "required": true
     },
+    "AUTH0_AUDIENCE": {
+      "description": "Auth0 API endpoint.",
+      "required": true
+    },
     "AUTH0_CLIENT_ID": {
       "description": "Auth0 Client id.",
       "required": true
@@ -44,45 +49,25 @@
       "description": "Auth0 Client secret.",
       "required": true
     },
-    "AUTH0_DOMAIN": {
-      "description": "Auth0 API issuer.",
-      "required": true
-    },
-    "AUTH0_AUDIENCE": {
-      "description": "Auth0 API endpoint.",
-      "required": true
-    },
     "AUTH0_CONNECTION": {
       "description": "Auth0 Connection.",
+      "required": true
+    },
+    "AUTH0_DOMAIN": {
+      "description": "Auth0 API issuer.",
       "required": true
     },
     "CLOUDINARY_URL": {
       "description": "Cloudinary service.",
       "required": true
     },
-    "MEMBERCENTER_URL": {
-      "description": "BHS Membercenter service.",
-      "required": true
-    },
-    "SENTRY_DSN": {
-      "description": "Sentry Bug Tracker.  Use production key.",
-      "required": true
-    },
-    "SENTRY_AUTH_TOKEN": {
-      "description": "Sentry Auth Token.",
-      "required": true
-    },
-    "SENTRY_ORG": {
-      "description": "Sentry Organization.",
-      "required": true
-    },
-    "SENTRY_PROJECT": {
-      "description": "Sentry Project.",
-      "required": true
-    },
     "DJANGO_SETTINGS_MODULE": {
       "description": "Configures the settings.  Do not edit.",
       "value": "settings.staging",
+      "required": true
+    },
+    "MEMBERCENTER_URL": {
+      "description": "BHS Membercenter service.",
       "required": true
     },
     "PYTHONPATH": {
@@ -93,6 +78,26 @@
     "SECRET_KEY": {
       "description": "Required by Django.  Auto-generated.",
       "generator": "secret",
+      "required": true
+    },
+    "SENTRY_DSN": {
+      "description": "Sentry Bug Tracker.  Use production key.",
+      "required": true
+    },
+    "SENTRY_AUTH_TOKEN": {
+      "description": "Sentry Auth Token.",
+      "required": true
+    },
+    "SENTRY_DSN": {
+      "description": "Sentry DSN.",
+      "required": true
+    },
+    "SENTRY_ORG": {
+      "description": "Sentry Organization.",
+      "required": true
+    },
+    "SENTRY_PROJECT": {
+      "description": "Sentry Project.",
       "required": true
     }
   },
