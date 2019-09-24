@@ -27,9 +27,6 @@
     "heroku-redis:hobby-dev",
     "heroku-postgresql:hobby-basic"
   ],
-  "scripts": {
-    "postdeploy": "pg_dump -Fc $HEROKU_POSTGRESQL_ROSE_URL | pg_restore --clean --no-owner -n public -d $DATABASE_URL && django-admin migrate --noinput"
-  },
   "env": {
     "ALGOLIASEARCH_API_KEY": {
       "description": "Algolia API key.",
