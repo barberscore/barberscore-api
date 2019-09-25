@@ -128,7 +128,6 @@ class EntrySerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             'nomen',
-            'image_id',
         ]
 
 

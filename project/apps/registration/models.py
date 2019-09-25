@@ -651,6 +651,13 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
+    image_id = models.CharField(
+        help_text="""The cloudinary image reference.""",
+        max_length=255,
+        blank=True,
+        default='missing_image',
+    )
+
     description = models.TextField(
         help_text="""
             Group description.""",
@@ -885,10 +892,6 @@ class Entry(TimeStampedModel):
             suffix = "({0}) {1}".format(self.code, suffix)
         return "{0} {1}".format(self.name, suffix)
 
-    @cached_property
-    def image_id(self):
-        return self.image.name or 'missing_image'
-
     # Internals
     class Meta:
         verbose_name_plural = 'entries'
@@ -970,6 +973,7 @@ class Entry(TimeStampedModel):
         self.bhs_id = group.bhs_id
         self.code = group.code
         self.source_id = group.source_id
+        self.image_id = group.image.name or 'missing_image'
         self.owners.set(group.owners.all())
         # for chart in group.charts.all():
         #     self.repertories.create(
