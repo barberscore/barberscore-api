@@ -2772,7 +2772,7 @@ class Round(TimeStampedModel):
                             song.arrangers,
                         )
                     else:
-                        song.chart_patched = None
+                        song.chart_patched = ""
                     penalties_map = {
                         10: "†",
                         30: "‡",
