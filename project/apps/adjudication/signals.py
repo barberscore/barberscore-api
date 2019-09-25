@@ -23,7 +23,7 @@ def appearance_post_transition(sender, instance, name, source, target, **kwargs)
 @receiver(post_transition, sender=Panelist)
 def panelist_post_transition(sender, instance, name, source, target, **kwargs):
     if name == 'release':
-        save_psa_from_panelist.delay(instance)
+        # save_psa_from_panelist.delay(instance)
         return
     return
 
