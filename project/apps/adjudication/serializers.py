@@ -49,6 +49,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'division',
             'bhs_id',
             'code',
+            'image_id',
             'charts',
 
             'owners',

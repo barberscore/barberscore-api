@@ -314,6 +314,14 @@ class Appearance(TimeStampedModel):
         default='',
     )
 
+    image_id = models.CharField(
+        help_text="""
+            Image ID.""",
+        max_length=255,
+        blank=True,
+        default='missing_image',
+    )
+
     charts = ArrayField(
         base_field=models.TextField(
             blank=True,
@@ -458,7 +466,7 @@ class Appearance(TimeStampedModel):
         #             )
         #         )
         #     ).latest('round__date').avg or randint(60, 70)
-        prelim = self.base or randint(55, 75)
+        prelim = self.base or randint(60, 80)
         songs = self.songs.all()
         for song in songs:
             charts = group.charts.order_by('id')
@@ -4438,6 +4446,8 @@ class Round(TimeStampedModel):
                     division=entry.division,
                     bhs_id=entry.bhs_id,
                     code=entry.code,
+                    base=entry.base,
+                    image_id=entry.image_id,
                     charts=charts,
                 )
                 appearance.owners.set(entry.owners.all())
@@ -4452,17 +4462,27 @@ class Round(TimeStampedModel):
             for prior_appearance in prior_appearances:
                 # Create and start group
                 appearance = self.appearances.create(
-                    group_id=prior_appearance.group_id,
                     num=prior_appearance.draw,
-                    base=prior_appearance.base,
-                    is_single=prior_appearance.is_single,
                     is_private=prior_appearance.is_private,
+                    is_single=prior_appearance.is_single,
                     participants=prior_appearance.participants,
+                    group_id=prior_appearance.group_id,
+                    name=prior_appearance.name,
+                    kind=prior_appearance.kind,
+                    gender=prior_appearance.gender,
                     district=prior_appearance.district,
+                    division=prior_appearance.division,
+                    bhs_id=prior_appearance.bhs_id,
+                    code=prior_appearance.code,
+                    base=prior_appearance.base,
+                    image_id=prior_appearance.image_id,
+                    charts=prior_appearance.charts,
                 )
                 for new_outcome in new_outcomes:
                     curry = bool(
-                        prior_appearance.outcomes.filter(award_id=new_outcome.award_id)
+                        prior_appearance.outcomes.filter(
+                            award_id=new_outcome.award_id,
+                        )
                     )
                     if curry:
                         appearance.outcomes.create(
@@ -4617,7 +4637,7 @@ class Round(TimeStampedModel):
         )
         # If spots are constricted, find those who advance
         if spots:
-            # All those above 73.0 advance automatically, regardless of spots available
+            # All those above 75.0 advance automatically, regardless of spots available
             if self.get_district_display() == 'BHS':
                 ordered = multis.order_by(
                     '-tot_points',
@@ -4628,7 +4648,7 @@ class Round(TimeStampedModel):
                 mt = ordered[spots:spots+1][0]
             else:
                 automatics = multis.filter(
-                    avg__gte=73.0,
+                    avg__gte=75.0,
                 )
                 # generate list of the advancers, as appearance IDs
                 advancer__ids = [x.id for x in automatics]
