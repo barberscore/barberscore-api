@@ -4282,31 +4282,6 @@ class Round(TimeStampedModel):
         Round = apps.get_model('adjudication.round')
         Chart = apps.get_model('bhs.chart')
 
-        # Build object
-        # kind = session.num_rounds
-        # num = 1
-        # spots = 10
-        # date = session.start_date
-        # convention_id = session.convention_id
-        # name = session.name
-        # district = session.district
-        # season = session.season
-        # panel = session.panel
-        # year = session.year
-        # open_date = session.open_date
-        # close_date = session.close_date
-        # start_date = session.start_date
-        # end_date = session.end_date
-        # venue_name = session.venue_name
-        # location = session.location
-        # timezone = session.timezone
-        # divisions = session.divisions
-        # image_id = session.image_id
-        # session_id = str(session.id)
-        # session_nomen = session.nomen
-        # session_kind = session.kind
-        # owners = session.owners.all()
-
         # Get objects for build
         session = Session.objects.get(id=self.session_id)
         # Instantiate prior round
@@ -4360,6 +4335,9 @@ class Round(TimeStampedModel):
         entries = session.entries.filter(
             status=Entry.STATUS.approved,
         ).order_by('draw')
+
+
+        # OWNERS
 
         # Build round
         i = 0
