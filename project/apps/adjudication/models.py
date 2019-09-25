@@ -778,7 +778,10 @@ class Appearance(TimeStampedModel):
                 ),
             )
             for song in songs:
-                chart = Chart.objects.get(id=song.chart_id)
+                try:
+                    chart = Chart.objects.get(id=song.chart_id)
+                except Chart.DoesNotExist:
+                    chart = None
                 song.chart_patched = chart
                 penalties_map = {
                     10: "†",
@@ -825,7 +828,10 @@ class Appearance(TimeStampedModel):
             'num',
         )
         for song in songs:
-            chart = Chart.objects.get(id=song.chart_id)
+            try:
+                chart = Chart.objects.get(id=song.chart_id)
+            except Chart.DoesNotExist:
+                chart = None
             song.chart_patched = chart
             scores = song.scores.filter(
                 panelist__kind=Panelist.KIND.official,
@@ -898,7 +904,7 @@ class Appearance(TimeStampedModel):
 
     def save_csa(self):
         content = self.get_csa()
-        return self.csa.save('csa', content)
+        return self.csa_report.save('csa', content)
 
     def get_complete_email(self):
         Panelist = apps.get_model('adjudication.panelist')
@@ -2025,7 +2031,7 @@ class Panelist(TimeStampedModel):
         ).exclude(
             # Don't include disqualifications
             status=Appearance.STATUS.disqualified,
-        ).values_list('group__id', flat=True)
+        ).values_list('group_id', flat=True)
         groups = Group.objects.filter(
             id__in=group_ids,
         ).prefetch_related(
@@ -3012,7 +3018,7 @@ class Round(TimeStampedModel):
         ).exclude(
             # Don't include advancers on SA
             draw__gt=0,
-        ).values_list('group__id', flat=True)
+        ).values_list('group_id', flat=True)
         groups = Group.objects.prefetch_related(
             'appearances',
             'appearances__songs__scores',
@@ -3401,7 +3407,7 @@ class Round(TimeStampedModel):
             appearance__round__session=self.session, # Using any session appearance
             penalties__len__gt=0, # Where there are penalties
             appearance__is_private=False, # If a public appearance
-            appearance__group__id__in=group_ids,  # Only completeds
+            appearance__group_id__in=group_ids,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
             10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
@@ -3473,7 +3479,7 @@ class Round(TimeStampedModel):
         ).exclude(
             # Don't include mic testers on OSS
             num__lte=0,
-        ).values_list('group__id', flat=True)
+        ).values_list('group_id', flat=True)
 
         session = self.session
 
@@ -3484,7 +3490,7 @@ class Round(TimeStampedModel):
         # Monkeypatching
         for round in rounds:
             appearances = round.appearances.filter(
-                group__id__in=group_ids,
+                group_id__in=group_ids,
             ).prefetch_related(
                 'songs__scores',
                 'songs__scores__panelist',
@@ -3583,7 +3589,7 @@ class Round(TimeStampedModel):
             appearance__round__session=self.session, # Using any session appearance
             penalties__len__gt=0, # Where there are penalties
             appearance__is_private=False, # If a public appearance
-            appearance__group__id__in=group_ids,  # Only completeds
+            appearance__group_id__in=group_ids,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
             10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
@@ -3598,7 +3604,7 @@ class Round(TimeStampedModel):
         is_missing = bool(Song.objects.filter(
             appearance__round__session=self.session,
             chart_id__isnull=True,
-            appearance__group__id__in=group_ids,
+            appearance__group_id__in=group_ids,
         ))
 
         # Eval Only Block
@@ -3997,7 +4003,7 @@ class Round(TimeStampedModel):
         ).exclude(
             # Don't include mic testers on OSS
             num__lte=0,
-        ).values_list('group__id', flat=True)
+        ).values_list('group_id', flat=True)
         completes = Group.objects.filter(
             id__in=group_ids,
         ).prefetch_related(
