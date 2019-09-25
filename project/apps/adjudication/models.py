@@ -3460,8 +3460,8 @@ class Round(TimeStampedModel):
     def save_reports(self):
         oss = self.get_oss()
         self.oss_report.save('oss', oss, save=False)
-        sa = self.get_sa()
-        self.sa_report.save('sa', sa, save=False)
+        # sa = self.get_sa()
+        # self.sa_report.save('sa', sa, save=False)
         return self.save()
 
 
