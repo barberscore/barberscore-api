@@ -84,7 +84,7 @@ def build_rounds_from_session(session_id):
         else:
             date = session.end_date
             spots = 0
-        Round.objects.create(
+        round = Round.objects.create(
             kind=kind,
             num=num,
             spots=spots,
@@ -108,6 +108,8 @@ def build_rounds_from_session(session_id):
             session_nomen=session_nomen,
             session_kind=session_kind,
         )
+        owners = session.owners.all()
+        round.owners.set(owners)
         num += 1
         kind -= 1
     return
