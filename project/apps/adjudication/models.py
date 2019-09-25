@@ -1490,6 +1490,12 @@ class Outcome(TimeStampedModel):
         blank=True,
     )
 
+    is_single = models.BooleanField(
+        default=False,
+        null=True,
+        blank=True,
+    )
+
     SIZE = Choices(
         (100, 'p1', 'Plateau 1',),
         (110, 'p2', 'Plateau 2',),
@@ -2602,14 +2608,14 @@ class Round(TimeStampedModel):
         #         'appearances__round__num',
         #         filter=Q(
         #             appearances__num__gt=0,
-        #             appearances__round__session=self.session,
+        #             appearances__round__session_id=self.session_id,
         #         ),
         #     ),
         #     tot_points=Sum(
         #         'appearances__songs__scores__points',
         #         filter=Q(
         #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             appearances__round__session=self.session,
+        #             appearances__round__session_id=self.session_id,
         #             appearances__round__num__lte=self.num,
         #         ),
         #     ),
@@ -2618,7 +2624,7 @@ class Round(TimeStampedModel):
         #         filter=Q(
         #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
         #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-        #             appearances__round__session=self.session,
+        #             appearances__round__session_id=self.session_id,
         #             appearances__round__num__lte=self.num,
         #         ),
         #     ),
@@ -2627,7 +2633,7 @@ class Round(TimeStampedModel):
         #         filter=Q(
         #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
         #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-        #             appearances__round__session=self.session,
+        #             appearances__round__session_id=self.session_id,
         #             appearances__round__num__lte=self.num,
         #         ),
         #     ),
@@ -2636,7 +2642,7 @@ class Round(TimeStampedModel):
         #         filter=Q(
         #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
         #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
-        #             appearances__round__session=self.session,
+        #             appearances__round__session_id=self.session_id,
         #             appearances__round__num__lte=self.num,
         #         ),
         #     ),
@@ -2644,7 +2650,7 @@ class Round(TimeStampedModel):
         #         'appearances__songs__scores__points',
         #         filter=Q(
         #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             appearances__round__session=self.session,
+        #             appearances__round__session_id=self.session_id,
         #             appearances__round__num__lte=self.num,
         #         ),
         #     ),
@@ -2653,7 +2659,7 @@ class Round(TimeStampedModel):
         #         filter=Q(
         #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
         #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
-        #             appearances__round__session=self.session,
+        #             appearances__round__session_id=self.session_id,
         #             appearances__round__num__lte=self.num,
         #         ),
         #     ),
@@ -2662,7 +2668,7 @@ class Round(TimeStampedModel):
         #         filter=Q(
         #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
         #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-        #             appearances__round__session=self.session,
+        #             appearances__round__session_id=self.session_id,
         #             appearances__round__num__lte=self.num,
         #         ),
         #     ),
@@ -2671,7 +2677,7 @@ class Round(TimeStampedModel):
         #         filter=Q(
         #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
         #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-        #             appearances__round__session=self.session,
+        #             appearances__round__session_id=self.session_id,
         #             appearances__round__num__lte=self.num,
         #         ),
         #     ),
@@ -2949,7 +2955,7 @@ class Round(TimeStampedModel):
                 page_size = 'Letter'
         else:
             if self.kind == self.KIND.finals:
-                if publics.count() >= 20:
+                if publics.count() >= 10:
                     page_size = 'Legal'
                 else:
                     page_size = 'Letter'
@@ -3039,7 +3045,7 @@ class Round(TimeStampedModel):
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__session=self.session,
+                    appearances__round__session_id=self.session_id,
                     appearances__round__num__lte=self.num,
                 ),
             ),
@@ -3048,7 +3054,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
-                    appearances__round__session=self.session,
+                    appearances__round__session_id=self.session_id,
                     appearances__round__num__lte=self.num,
                 ),
             ),
@@ -3057,7 +3063,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    appearances__round__session=self.session,
+                    appearances__round__session_id=self.session_id,
                     appearances__round__num__lte=self.num,
                 ),
             ),
@@ -3066,7 +3072,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    appearances__round__session=self.session,
+                    appearances__round__session_id=self.session_id,
                     appearances__round__num__lte=self.num,
                 ),
             ),
@@ -3074,7 +3080,7 @@ class Round(TimeStampedModel):
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__session=self.session,
+                    appearances__round__session_id=self.session_id,
                     appearances__round__num__lte=self.num,
                 ),
             ),
@@ -3083,7 +3089,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
-                    appearances__round__session=self.session,
+                    appearances__round__session_id=self.session_id,
                     appearances__round__num__lte=self.num,
                 ),
             ),
@@ -3092,7 +3098,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    appearances__round__session=self.session,
+                    appearances__round__session_id=self.session_id,
                     appearances__round__num__lte=self.num,
                 ),
             ),
@@ -3101,7 +3107,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    appearances__round__session=self.session,
+                    appearances__round__session_id=self.session_id,
                     appearances__round__num__lte=self.num,
                 ),
             ),
@@ -3765,7 +3771,10 @@ class Round(TimeStampedModel):
             songs = appearance.songs.order_by('num')
             titles = []
             for song in songs:
-                chart = Chart.objects.get(id=song.chart_id)
+                try:
+                    chart = Chart.objects.get(id=song.chart_id)
+                except Chart.DoesNotExist:
+                    chart = None
                 try:
                     title = chart.title
                 except AttributeError:
@@ -3824,7 +3833,7 @@ class Round(TimeStampedModel):
 
 
             # groups = Group.objects.filter(
-            #     appearances__round__session=self.session,
+            #     appearances__round__session_id=self.session_id,
             # ).exclude(
             #     status__in=[
             #         Appearance.STATUS.disqualified,
@@ -3839,7 +3848,7 @@ class Round(TimeStampedModel):
             #         'appearances__songs__scores__points',
             #         filter=Q(
             #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-            #             appearances__round__session=self.session,
+            #             appearances__round__session_id=self.session_id,
             #             appearances__round__num__lte=self.num,
             #         ),
             #     ),
@@ -3848,7 +3857,7 @@ class Round(TimeStampedModel):
             #         filter=Q(
             #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
             #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-            #             appearances__round__session=self.session,
+            #             appearances__round__session_id=self.session_id,
             #             appearances__round__num__lte=self.num,
             #         ),
             #     ),
@@ -3857,7 +3866,7 @@ class Round(TimeStampedModel):
             #         filter=Q(
             #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
             #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-            #             appearances__round__session=self.session,
+            #             appearances__round__session_id=self.session_id,
             #             appearances__round__num__lte=self.num,
             #         ),
             #     ),
@@ -3865,7 +3874,7 @@ class Round(TimeStampedModel):
             #         'appearances__songs__scores__points',
             #         filter=Q(
             #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-            #             appearances__round__session=self.session,
+            #             appearances__round__session_id=self.session_id,
             #             appearances__round__num__lte=self.num,
             #         ),
             #     ),
@@ -4024,7 +4033,7 @@ class Round(TimeStampedModel):
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__session=self.session,
+                    appearances__round__session_id=self.session_id,
                     appearances__round__num__lte=self.num,
                 ),
             ),
@@ -4033,7 +4042,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    appearances__round__session=self.session,
+                    appearances__round__session_id=self.session_id,
                     appearances__round__num__lte=self.num,
                 ),
             ),
@@ -4042,7 +4051,7 @@ class Round(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    appearances__round__session=self.session,
+                    appearances__round__session_id=self.session_id,
                     appearances__round__num__lte=self.num,
                 ),
             ),
@@ -4050,7 +4059,7 @@ class Round(TimeStampedModel):
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__session=self.session,
+                    appearances__round__session_id=self.session_id,
                     appearances__round__num__lte=self.num,
                 ),
             ),
@@ -4292,20 +4301,20 @@ class Round(TimeStampedModel):
 
         # Get objects for build
         session = Session.objects.get(id=self.session_id)
-        # Instantiate prior round
+
+        # Check for initial round
         if self.num == 1:
+            # If first Round
             prior_round = None
+
         else:
+            # If not first round
             prior_round = Round.objects.get(
                 session_id=session.id,
                 num=self.num-1,
             )
 
-        contests = session.contests.filter(
-            entries__isnull=False,
-        ).order_by(
-            'tree_sort',
-        ).distinct()
+        # Build panel from assignments
         cas = session.assignments.filter(
             category=Assignment.CATEGORY.ca,
         ).order_by(
@@ -4340,19 +4349,27 @@ class Round(TimeStampedModel):
             'last_name',
             'first_name',
         )
-        entries = session.entries.filter(
-            status=Entry.STATUS.approved,
-        ).order_by('draw')
 
-
-        # OWNERS
-
-        # Build round
+        # Build Contests
+        if not prior_round:
+            contests = session.contests.filter(
+                entries__isnull=False,
+            ).order_by(
+                'tree_sort',
+            ).distinct()
+        else:
+            contests = prior_round.outcomes.filter(
+                is_single=False,
+            )
         i = 0
         for contest in contests:
             i += 1
+            if prior_round:
+                num = contest.num
+            else:
+                num = i
             self.outcomes.create(
-                num=i,
+                num=num,
                 award_id=contest.award_id,
                 name=contest.name,
                 kind=contest.kind,
@@ -4363,6 +4380,7 @@ class Round(TimeStampedModel):
                 division=contest.division,
                 age=contest.age,
                 is_novice=contest.is_novice,
+                is_single=contest.is_single,
             )
         for ca in cas:
             area = ca.get_district_display() if ca.district else ''
@@ -4416,6 +4434,9 @@ class Round(TimeStampedModel):
 
         # # Create Appearances
         if not prior_round:
+            entries = session.entries.filter(
+                status=Entry.STATUS.approved,
+            ).order_by('draw')
             for entry in entries:
                 is_single = not bool(entry.contests.filter(is_single=False))
                 charts_raw = Chart.objects.filter(
@@ -4455,7 +4476,6 @@ class Round(TimeStampedModel):
                 outcomes = self.outcomes.filter(award_id__in=award_ids)
                 appearance.outcomes.set(outcomes)
         else:
-            new_outcomes = self.outcomes.all()
             prior_appearances = prior_round.appearances.filter(
                 status=Appearance.STATUS.advanced,
             )
@@ -4466,6 +4486,7 @@ class Round(TimeStampedModel):
                     is_private=prior_appearance.is_private,
                     is_single=prior_appearance.is_single,
                     participants=prior_appearance.participants,
+                    area=prior_appearance.area,
                     group_id=prior_appearance.group_id,
                     name=prior_appearance.name,
                     kind=prior_appearance.kind,
@@ -4478,16 +4499,12 @@ class Round(TimeStampedModel):
                     image_id=prior_appearance.image_id,
                     charts=prior_appearance.charts,
                 )
-                for new_outcome in new_outcomes:
-                    curry = bool(
-                        prior_appearance.outcomes.filter(
-                            award_id=new_outcome.award_id,
-                        )
-                    )
-                    if curry:
-                        appearance.outcomes.create(
-                            award_id=new_outcome.award_id,
-                        )
+                appearance.owners.set(prior_appearance.owners.all())
+                award_ids = list(prior_appearance.outcomes.values_list('award_id', flat=True))
+                outcomes = self.outcomes.filter(
+                    award_id__in=award_ids
+                )
+                appearance.outcomes.set(outcomes)
             return
 
             # If the first round, populate from entries
@@ -4741,25 +4758,25 @@ class Round(TimeStampedModel):
         conditions=[can_publish],)
     def publish(self, *args, **kwargs):
         """Publishes the results and notifies all parties"""
-        Appearance = apps.get_model('adjudication.appearance')
-        Panelist = apps.get_model('adjudication.panelist')
-        # Send the OSS
-        send_publish_email_from_round.delay(self)
-        # Send the CSAs
-        completed_appearances = self.appearances.filter(
-            status=Appearance.STATUS.completed,
-        )
-        for appearance in completed_appearances:
-            send_complete_email_from_appearance.delay(appearance)
-        # Send the SAs
-        send_publish_report_email_from_round.delay(self)
-        # Send the PSAs
-        panelists = self.panelists.filter(
-            category__gt=Panelist.CATEGORY.ca,
-            status=Panelist.STATUS.released,
-        )
-        for panelist in panelists:
-            send_psa_email_from_panelist.delay(panelist)
+        # Appearance = apps.get_model('adjudication.appearance')
+        # Panelist = apps.get_model('adjudication.panelist')
+        # # Send the OSS
+        # send_publish_email_from_round.delay(self)
+        # # Send the CSAs
+        # completed_appearances = self.appearances.filter(
+        #     status=Appearance.STATUS.completed,
+        # )
+        # for appearance in completed_appearances:
+        #     send_complete_email_from_appearance.delay(appearance)
+        # # Send the SAs
+        # send_publish_report_email_from_round.delay(self)
+        # # Send the PSAs
+        # panelists = self.panelists.filter(
+        #     category__gt=Panelist.CATEGORY.ca,
+        #     status=Panelist.STATUS.released,
+        # )
+        # for panelist in panelists:
+        #     send_psa_email_from_panelist.delay(panelist)
         return
 
 
