@@ -40,7 +40,7 @@ class AwardAdmin(VersionAdmin, FSMTransitionMixin):
         'season',
         'is_single',
         'is_novice',
-        ('threshold', 'minimum', 'advance', 'spots',),
+        ('threshold', 'minimum', 'spots',),
         'description',
         'notes',
     ]

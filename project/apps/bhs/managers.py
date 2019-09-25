@@ -674,7 +674,6 @@ class AwardManager(Manager):
             spots = award.spots
             threshold = award.threshold
             minimum = award.minimum
-            advance = award.advance
             row = [
                 pk,
                 district,
@@ -688,7 +687,6 @@ class AwardManager(Manager):
                 spots,
                 threshold,
                 minimum,
-                advance,
             ]
             ws.append(row)
         file = save_virtual_workbook(wb)

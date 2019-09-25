@@ -33,7 +33,6 @@ class AwardSerializer(serializers.ModelSerializer):
             'is_single',
             'threshold',
             'minimum',
-            'advance',
             'spots',
             'description',
             'notes',

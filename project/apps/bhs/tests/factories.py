@@ -43,7 +43,6 @@ class AwardFactory(DjangoModelFactory):
     is_single = False
     threshold = None
     minimum = None
-    advance = None
 
     class Meta:
         model = Award
