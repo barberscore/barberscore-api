@@ -792,10 +792,14 @@ class Appearance(TimeStampedModel):
                     chart = None
                 song.chart_patched = chart
                 penalties_map = {
-                    10: "†",
-                    30: "‡",
-                    40: "✠",
-                    50: "✶",
+                    30: "†",
+                    32: "‡",
+                    34: "✠",
+                    36: "✶",
+                    38: "✢",
+                    39: "✦",
+                    40: "❉",
+                    50: "※",
                 }
                 items = " ".join([penalties_map[x] for x in song.penalties])
                 song.penalties_patched = items
@@ -872,10 +876,14 @@ class Appearance(TimeStampedModel):
             penalties__len__gt=0,
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
-            30: "‡ Score(s) penalized due to violation of Article IX.A.2 of the BHS Contest Rules.",
-            40: "✠ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
-            50: "✶ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules.",
+            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules.",
+            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules.",
+            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules.",
+            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules.",
+            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules.",
+            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules.",
+            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
+            50: "※ Score(s) penalized due to violation of Article X.B.1-3 of the BHS Contest Rules.",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
@@ -1111,10 +1119,14 @@ class Appearance(TimeStampedModel):
                 chart = Chart.objects.get(id=song.chart_id)
                 song.chart_patched = chart
                 penalties_map = {
-                    10: "†",
-                    30: "‡",
-                    40: "✠",
-                    50: "✶",
+                    30: "†",
+                    32: "‡",
+                    34: "✠",
+                    36: "✶",
+                    38: "✢",
+                    39: "✦",
+                    40: "❉",
+                    50: "※",
                 }
                 items = " ".join([penalties_map[x] for x in song.penalties])
                 song.penalties_patched = items
@@ -2788,10 +2800,14 @@ class Round(TimeStampedModel):
                     else:
                         song.chart_patched = ""
                     penalties_map = {
-                        10: "†",
-                        30: "‡",
-                        40: "✠",
-                        50: "✶",
+                        30: "†",
+                        32: "‡",
+                        34: "✠",
+                        36: "✶",
+                        38: "✢",
+                        39: "✦",
+                        40: "❉",
+                        50: "※",
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
@@ -2820,10 +2836,14 @@ class Round(TimeStampedModel):
             appearance__in=publics,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
-            30: "‡ Score(s) penalized due to violation of Article IX.A.2 of the BHS Contest Rules.",
-            40: "✠ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
-            50: "✶ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules.",
+            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules.",
+            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules.",
+            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules.",
+            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules.",
+            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules.",
+            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules.",
+            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
+            50: "※ Score(s) penalized due to violation of Article X.B.1-3 of the BHS Contest Rules.",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
@@ -3305,10 +3325,14 @@ class Round(TimeStampedModel):
                 )
                 for song in songs:
                     penalties_map = {
-                        10: "†",
-                        30: "‡",
-                        40: "✠",
-                        50: "✶",
+                        30: "†",
+                        32: "‡",
+                        34: "✠",
+                        36: "✶",
+                        38: "✢",
+                        39: "✦",
+                        40: "❉",
+                        50: "※",
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
@@ -3424,10 +3448,14 @@ class Round(TimeStampedModel):
             appearance__group_id__in=group_ids,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
-            30: "‡ Score(s) penalized due to violation of Article IX.A.2 of the BHS Contest Rules.",
-            40: "✠ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
-            50: "✶ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules.",
+            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules.",
+            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules.",
+            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules.",
+            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules.",
+            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules.",
+            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules.",
+            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
+            50: "※ Score(s) penalized due to violation of Article X.B.1-3 of the BHS Contest Rules.",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
@@ -3558,10 +3586,14 @@ class Round(TimeStampedModel):
                     chart = Chart.objects.get(id=song.chart_id)
                     song.chart_patched = chart
                     penalties_map = {
-                        10: "†",
-                        30: "‡",
-                        40: "✠",
-                        50: "✶",
+                        30: "†",
+                        32: "‡",
+                        34: "✠",
+                        36: "✶",
+                        38: "✢",
+                        39: "✦",
+                        40: "❉",
+                        50: "※",
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
@@ -3606,10 +3638,14 @@ class Round(TimeStampedModel):
             appearance__group_id__in=group_ids,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            10: "† Score(s) penalized due to violation of Article IX.A.1 of the BHS Contest Rules.",
-            30: "‡ Score(s) penalized due to violation of Article IX.A.2 of the BHS Contest Rules.",
-            40: "✠ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
-            50: "✶ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules.",
+            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules.",
+            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules.",
+            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules.",
+            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules.",
+            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules.",
+            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules.",
+            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
+            50: "※ Score(s) penalized due to violation of Article X.B.1-3 of the BHS Contest Rules.",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
@@ -4957,10 +4993,14 @@ class Song(TimeStampedModel):
     )
 
     PENALTY = Choices(
-        (10, 'patreg', 'Primarily Patriotic/Religious Intent',),
-        (30, 'accompaniment', 'Instrumental Accompaniment',),
-        (40, 'texture', 'Chorus Exceeding 4-Part Texture',),
-        (50, 'enhancement', 'Sound Equipment or Electronic Enhancement',),
+        (30, 'repetition', 'Repeating Substantial Portions of a Song'),
+        (32, 'accompaniment', 'Instrumental Accompaniment'),
+        (34, 'texture', 'Chorus Exceeding 4-Part Texture'),
+        (36, 'excessive', 'Excessive Melody Not in Inner Part'),
+        (38, 'progression', 'Lack of Characteristic Chord Progression'),
+        (39, 'lyrics', 'Excessive Lyrics < 4 parts'),
+        (40, 'patreg', 'Primarily Patriotic/Religious Intent'),
+        (50, 'enhancement', 'Sound Equipment or Electronic Enhancement'),
     )
 
     penalties = ArrayField(
