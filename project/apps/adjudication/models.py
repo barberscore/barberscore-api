@@ -27,6 +27,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Min, Max, Count, Avg
 from django.core.exceptions import ValidationError
+
 # Django
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
@@ -380,6 +381,15 @@ class Appearance(TimeStampedModel):
         # )
 
     # Methods
+    def get_owners_emails(self):
+        if not self.owners.all():
+            raise ValueError("No owners for {0}".format(self))
+        owners = self.owners.order_by(
+            'last_name',
+            'first_name',
+        )
+        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+
     def get_variance(self):
         Chart = apps.get_model('bhs.chart')
         Group = apps.get_model('bhs.group')
@@ -985,13 +995,12 @@ class Appearance(TimeStampedModel):
             ),
         )
         appearances = Appearance.objects.select_related(
-            'group',
             'round',
         ).prefetch_related(
             'songs__scores',
             'songs__scores__panelist',
         ).filter(
-            group=self.group,
+            group_id=self.group_id,
             round__session_id=self.round.session_id,
         ).annotate(
             tot_points=Sum(
@@ -1136,11 +1145,10 @@ class Appearance(TimeStampedModel):
 
         template = 'emails/appearance_complete.txt'
         subject = "[Barberscore] CSA for {0}".format(
-            self.group.name,
+            self.name,
         )
-        to = self.group.get_officer_emails()
-        # cc = self.round.session.convention.get_drcj_emails()
-        # cc.extend(self.round.session.convention.get_ca_emails())
+        to = self.get_owners_emails()
+        cc = self.round.get_owners_emails()
 
         if self.csa_report:
             pdf = self.csa_report.file
@@ -1164,7 +1172,9 @@ class Appearance(TimeStampedModel):
 
     def send_complete_email(self):
         if self.status != self.STATUS.completed:
-            raise ValueError("Do not send CSAs unless completed")
+            raise ValueError("Do not send CSAs unless Appearance is Completed")
+        if self.round.status != self.round.STATUS.published:
+            raise ValueError("Do not send CSAs unless Round is Published")
         email = self.get_complete_email()
         return email.send()
 
@@ -1294,6 +1304,10 @@ class Appearance(TimeStampedModel):
     )
     def advance(self, *args, **kwargs):
         # Advances the Group.
+        # Delete if CSA report has been created.
+        if self.csa_report:
+            self.csa_report.delete()
+            self.save()
         return
 
     @fsm_log_by
@@ -2211,7 +2225,7 @@ class Panelist(TimeStampedModel):
             self.name,
         )
         to = ["{0} <{1}>".format(self.name, self.email)]
-        # cc = self.round.session.convention.get_ca_emails()
+        cc = self.round.get_owners_emails()
 
         if self.psa_report:
             pdf = self.psa_report.file
@@ -2576,6 +2590,16 @@ class Round(TimeStampedModel):
         return self.nomen
 
     # Methods
+    def get_owners_emails(self):
+        if not self.owners.all():
+            raise ValueError("No owners for {0}".format(self))
+        owners = self.owners.order_by(
+            'last_name',
+            'first_name',
+        )
+        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+
+
     def get_oss(self, zoom=1):
         Group = apps.get_model('bhs.group')
         Chart = apps.get_model('bhs.chart')
@@ -3009,6 +3033,9 @@ class Round(TimeStampedModel):
         content = ContentFile(file)
         return content
 
+    def save_oss(self):
+        oss = self.get_oss()
+        return self.oss_report.save('oss', oss)
 
     # Placeholder for single-page recursion tool.
     # from builtins import round as rnd
@@ -3031,10 +3058,6 @@ class Round(TimeStampedModel):
 
     # r.oss.save('oss', f)
 
-
-    def save_oss(self):
-        oss = self.get_oss()
-        return self.oss_report.save('oss', oss)
 
     def get_sa(self):
         Group = apps.get_model('bhs.group')
@@ -3705,10 +3728,9 @@ class Round(TimeStampedModel):
     def save_reports(self):
         oss = self.get_oss()
         self.oss_report.save('oss', oss, save=False)
-        # sa = self.get_sa()
-        # self.sa_report.save('sa', sa, save=False)
+        sa = self.get_sa()
+        self.sa_report.save('sa', sa, save=False)
         return self.save()
-
 
     def get_legacy_oss(self):
         Chart = apps.get_model('bhs.chart')
@@ -4411,6 +4433,8 @@ class Round(TimeStampedModel):
 
     def send_publish_email(self):
         email = self.get_publish_email()
+        if self.status != self.STATUS.published:
+            raise RuntimeError("Round not published")
         return email.send()
 
 
@@ -4420,11 +4444,10 @@ class Round(TimeStampedModel):
             'round': self,
         }
         subject = "[Barberscore] {0} Reports and SA".format(
-            self,
+            self.nomen,
         )
-        # to = self.session.convention.get_ca_emails()
-        # cc = self.session.convention.get_drcj_emails()
-        cc.extend(self.get_judge_emails())
+        to = self.get_owners_emails()
+        cc = self.get_judge_emails()
         attachments = []
         if self.sa_report:
             pdf = self.sa_report.file
