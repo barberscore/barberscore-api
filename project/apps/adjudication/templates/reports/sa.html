@@ -73,8 +73,7 @@
           <img class='float-right small_logo' src="{{round.session.convention.image.url}}">
         {% endif %}
         <h4>
-          Scoring Analysis {{round.session.get_kind_display}} {{round.get_kind_display}}<br>
-          {{round.session.convention}}
+          Scoring Analysis {{round.nomen}
         </h4>
       </section>
       <section>
@@ -114,12 +113,13 @@
               <tr>
                 <td>
                   <strong>{{group.name|truncatechars_html:30|safe}}</strong><br>
-                  <strong>{{group.tot_rank}}</strong>&nbsp;&nbsp;{{group.mus_rank}}/{{group.per_rank}}/{{group.sng_rank}}
+                  <strong>{{group.stats.tot_points}}</strong>&nbsp;&nbsp;{{group.stats.tot_score}}<br>
+                  <!-- <strong>{{group.tot_rank}}</strong>&nbsp;&nbsp;{{group.mus_rank}}/{{group.per_rank}}/{{group.sng_rank}}<br> -->
                 </td>
                 <td>
                   {% for appearance in group.appearances_patched %}
                     {% for song in appearance.songs_patched %}
-                      {{song.chart.title|truncatechars_html:20|safe|default:"(Not in Repertory)"}}&nbsp;{{song.penalties_patched}}<br>
+                      {{song.chart_patched|truncatechars_html:20|safe|default:"(Not in Repertory)"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
@@ -213,7 +213,7 @@
           <div class='float-left push-space'>
             <ul class='list-unstyled'>
               Music (Average StDev {{stats.mus|floatformat:1}}):
-              {% for person, practice, _ in mus_persons %}
+              {% for person, practice, num in mus_persons %}
                 {% if practice %}
                   <li><em>{{person}}</em></li>
                 {% else %}
@@ -225,7 +225,7 @@
           <div class='float-left push-space'>
             <ul class='list-unstyled'>
               Performance (Average StDev {{stats.per|floatformat:1}}):
-              {% for person, practice, _ in per_persons %}
+              {% for person, practice, num in per_persons %}
                 {% if practice %}
                   <li><em>{{person}}</em></li>
                 {% else %}
@@ -237,7 +237,7 @@
           <div class='float-left push-space'>
             <ul class='list-unstyled'>
               Singing (Average StDev {{stats.sng|floatformat:1}}):
-              {% for person, practice, _ in sng_persons %}
+              {% for person, practice, num in sng_persons %}
                 {% if practice %}
                   <li><em>{{person}}</em></li>
                 {% else %}
