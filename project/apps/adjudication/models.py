@@ -1319,7 +1319,8 @@ class Appearance(TimeStampedModel):
     def scratch(self, *args, **kwargs):
         # Scratches the group.
         # Remove songs
-        self.songs.delete()
+        songs = self.songs.all()
+        songs.delete()
         return
 
     @fsm_log_by
