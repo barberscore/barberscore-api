@@ -21,7 +21,7 @@
     <section>
       <ul class='list-styled'>
         {% for appearance in appearances %}
-          <li><strong>Draw {{appearance.draw}}: {{appearance.group.name}}</strong></li>
+          <li><strong>Draw {{appearance.draw}}: {{appearance.name}}</strong></li>
           <ul class='list-styled'>
             {% for item in appearance.titles_patched %}
               <li>{{item}}</li>
