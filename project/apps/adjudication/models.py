@@ -2923,9 +2923,9 @@ class Round(TimeStampedModel):
             for x in sections:
                 try:
                     persons.append(
-                        "{0} {1}".format(
+                        "{0}".format(
                             x.name,
-                            x.get_district_display(),
+                            # x.get_district_display(),
                         )
                     )
                 except AttributeError:
