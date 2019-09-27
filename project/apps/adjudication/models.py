@@ -1197,10 +1197,12 @@ class Appearance(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            'SCJC' in request.user.roles.values_list('name'),
-            'CA' in request.user.roles.values_list('name'),
-        ])
+        return bool(request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'CA',
+            ]
+        ))
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -1798,10 +1800,12 @@ class Outcome(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            'SCJC' in request.user.roles.values_list('name'),
-            'CA' in request.user.roles.values_list('name'),
-        ])
+        return bool(request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'CA',
+            ]
+        ))
 
 
     @allow_staff_or_superuser
@@ -2041,11 +2045,12 @@ class Panelist(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            'SCJC' in request.user.roles.values_list('name'),
-            'CA' in request.user.roles.values_list('name'),
-        ])
-
+        return bool(request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'CA',
+            ]
+        ))
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -5136,11 +5141,12 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            'SCJC' in request.user.roles.values_list('name'),
-            'CA' in request.user.roles.values_list('name'),
-        ])
-
+        return bool(request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'CA',
+            ]
+        ))
 
     @allow_staff_or_superuser
     @authenticated_users
@@ -5363,10 +5369,12 @@ class Song(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            'SCJC' in request.user.roles.values_list('name'),
-            'CA' in request.user.roles.values_list('name'),
-        ])
+        return bool(request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'CA',
+            ]
+        ))
 
 
     @allow_staff_or_superuser
