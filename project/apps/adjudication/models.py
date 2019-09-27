@@ -4490,21 +4490,21 @@ class Round(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_write_permission(request):
-        return any([
-            'SCJC' in request.user.roles.values_list('name'),
-            'CA' in request.user.roles.values_list('name'),
-        ])
-
+        return bool(request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'CA',
+            ]
+        ))
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            all([
-                self.owners.filter(id__contains=request.user.id),
-                self.status != self.STATUS.published,
-            ]),
-        ])
+        if self.status == self.STATUS.published:
+            return False
+        return bool(any([
+            request.user in self.owners.all(),
+        ]))
 
     # Round Conditions
     def can_build(self):
