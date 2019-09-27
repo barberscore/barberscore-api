@@ -398,10 +398,10 @@ class RoundViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True)
-    def verify(self, request, pk=None, **kwargs):
+    def finalize(self, request, pk=None, **kwargs):
         object = self.get_object()
         try:
-            object.verify(by=self.request.user)
+            object.finalize(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
                 {'status': 'Transition conditions not met.'},

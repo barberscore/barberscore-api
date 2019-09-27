@@ -1810,7 +1810,7 @@ class Outcome(TimeStampedModel):
         return any([
             all([
                 self.round.owners.filter(id__contains=request.user.id),
-                self.round.status < self.round.STATUS.verified,
+                self.round.status < self.round.STATUS.finalized,
             ]),
         ])
 
@@ -2276,7 +2276,7 @@ class Round(TimeStampedModel):
         (10, 'built', 'Built',),
         (20, 'started', 'Started',),
         (25, 'completed', 'Completed',),
-        (27, 'verified', 'Verified',),
+        (27, 'finalized', 'Finalized',),
         (30, 'published', 'Published',),
     )
 
@@ -4522,7 +4522,7 @@ class Round(TimeStampedModel):
             ),
         ])
 
-    def can_verify(self):
+    def can_finalize(self):
         return all([
             not self.outcomes.filter(
                 name='MUST ENTER WINNER MANUALLY',
@@ -4991,9 +4991,9 @@ class Round(TimeStampedModel):
     @transition(
         field=status,
         source=[STATUS.completed],
-        target=STATUS.verified,
-        conditions=[can_verify],)
-    def verify(self, *args, **kwargs):
+        target=STATUS.finalized,
+        conditions=[can_finalize],)
+    def finalize(self, *args, **kwargs):
         Appearance = apps.get_model('adjudication.appearance')
         Panelist = apps.get_model('adjudication.panelist')
         completed_appearances = self.appearances.filter(
@@ -5023,7 +5023,7 @@ class Round(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
-        source=[STATUS.verified],
+        source=[STATUS.finalized],
         target=STATUS.published,
         conditions=[can_publish],)
     def publish(self, *args, **kwargs):
