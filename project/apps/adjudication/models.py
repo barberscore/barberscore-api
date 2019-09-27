@@ -4620,38 +4620,6 @@ class Round(TimeStampedModel):
             'first_name',
         )
 
-        # Build Contests
-        if not prior_round:
-            contests = session.contests.filter(
-                entries__isnull=False,
-            ).order_by(
-                'tree_sort',
-            ).distinct()
-        else:
-            contests = prior_round.outcomes.filter(
-                is_single=False,
-            )
-        i = 0
-        for contest in contests:
-            i += 1
-            if prior_round:
-                num = contest.num
-            else:
-                num = i
-            self.outcomes.create(
-                num=num,
-                award_id=contest.award_id,
-                name=contest.name,
-                kind=contest.kind,
-                gender=contest.gender,
-                level=contest.level,
-                season=contest.season,
-                district=contest.district,
-                division=contest.division,
-                age=contest.age,
-                is_novice=contest.is_novice,
-                is_single=contest.is_single,
-            )
         for ca in cas:
             area = ca.get_district_display() if ca.district else ''
             self.panelists.create(
@@ -4702,12 +4670,53 @@ class Round(TimeStampedModel):
                 bhs_id=practice.bhs_id,
             )
 
-        # # Create Appearances
+        # Build Outcomes (Awards)
         if not prior_round:
+            # Put all contests with entries in the round for first round
+            contests = session.contests.filter(
+                entries__isnull=False,
+            ).order_by(
+                'tree_sort',
+            ).distinct()
+        else:
+            # for subsequent rounds, create from prior outcomes
+            # that are not single-round awards
+            contests = prior_round.outcomes.filter(
+                is_single=False,
+            )
+        i = 0
+        for contest in contests:
+            # Only number contests on initial; otherwise use existing.
+            i += 1
+            if prior_round:
+                num = contest.num
+            else:
+                num = i
+            self.outcomes.create(
+                num=num,
+                award_id=contest.award_id,
+                name=contest.name,
+                kind=contest.kind,
+                gender=contest.gender,
+                level=contest.level,
+                season=contest.season,
+                district=contest.district,
+                division=contest.division,
+                age=contest.age,
+                is_novice=contest.is_novice,
+                is_single=contest.is_single,
+            )
+
+        # Create Appearances
+        if not prior_round:
+            # If first round, build appearances from entries
             entries = session.entries.filter(
                 status=Entry.STATUS.approved,
             ).order_by('draw')
             for entry in entries:
+                # Force draw = 0 for MTs
+                if entry.is_mt:
+                    entry.draw = 0
                 is_single = not bool(entry.contests.filter(is_single=False))
                 charts_raw = Chart.objects.filter(
                     groups__id=entry.group_id,
@@ -4746,6 +4755,8 @@ class Round(TimeStampedModel):
                 outcomes = self.outcomes.filter(award_id__in=award_ids)
                 appearance.outcomes.set(outcomes)
         else:
+            # If subsequent round, build appearances based on
+            # ADVANCERS from prior round.
             prior_appearances = prior_round.appearances.filter(
                 status=Appearance.STATUS.advanced,
             )
@@ -4775,86 +4786,36 @@ class Round(TimeStampedModel):
                     award_id__in=award_ids
                 )
                 appearance.outcomes.set(outcomes)
+            # Create MT
+            mts = prior_round.appearances.filter(
+                draw__lte=0,
+            )
+            for mt in mts:
+                appearance = self.appearances.create(
+                    num=mt.draw,
+                    is_private=mt.is_private,
+                    is_single=mt.is_single,
+                    participants=mt.participants,
+                    area=mt.area,
+                    group_id=mt.group_id,
+                    name=mt.name,
+                    kind=mt.kind,
+                    gender=mt.gender,
+                    district=mt.district,
+                    division=mt.division,
+                    bhs_id=mt.bhs_id,
+                    code=mt.code,
+                    base=mt.base,
+                    image_id=mt.image_id,
+                    charts=mt.charts,
+                )
+                appearance.owners.set(mt.owners.all())
+                award_ids = list(mt.outcomes.values_list('award_id', flat=True))
+                outcomes = self.outcomes.filter(
+                    award_id__in=award_ids
+                )
+                appearance.outcomes.set(outcomes)
             return
-
-            # If the first round, populate from entries
-            # if not prior_round:
-            #     entries = self.session.entries.filter(
-            #         status=Entry.STATUS.approved,
-            #     )
-            #     z = 0
-            #     for entry in entries:
-            #         # TODO - MT hack
-            #         if entry.is_mt:
-            #             entry.draw = z
-            #             z -= 1
-            #         # Pull active contestants
-            #         # contestants = entry.contestants.filter(
-            #         #     status__gt=0,
-            #         # )
-            #         # Set is_single=True if they are only in single-round contests
-            #         raise RuntimeError("Fix")
-            #         is_single = not bool(
-            #             # contestants.filter(
-            #                 # contest__award__is_single=False,
-            #             )
-            #         # )
-            #         # Create and start group
-            #         appearance = self.appearances.create(
-            #             group_id=entry.group_id,
-            #             num=entry.draw,
-            #             base=entry.base,
-            #             is_single=is_single,
-            #             is_private=entry.is_private,
-            #             participants=entry.participants,
-            #             district=entry.district,
-            #         )
-            #         # Create contenders
-            #         raise RuntimeError('contender')
-
-            #         for outcome in outcomes:
-            #             outcome.contenders.create(
-            #                 appearance=appearance,
-            #             )
-            # # Otherwise, populate from prior round
-            # else:
-            #     new_outcomes = self.outcomes.all()
-            #     prior_appearances = prior_round.appearances.filter(
-            #         status=Appearance.STATUS.advanced,
-            #     )
-            #     for prior_appearance in prior_appearances:
-            #         # Create and start group
-            #         appearance = self.appearances.create(
-            #             group_id=prior_appearance.group_id,
-            #             num=prior_appearance.draw,
-            #             base=prior_appearance.base,
-            #             is_single=prior_appearance.is_single,
-            #             is_private=prior_appearance.is_private,
-            #             participants=prior_appearance.participants,
-            #             district=prior_appearance.district,
-            #         )
-            #         for new_outcome in new_outcomes:
-            #             curry = bool(
-            #                 # prior_appearance.contenders.filter(outcome__award=new_outcome.award)
-            #             )
-            #             if curry:
-            #                 raise RuntimeError('contender')
-            #                 # new_outcome.contenders.create(
-            #                 #     appearance=appearance,
-            #                 # )
-
-            #     mts = prior_round.appearances.filter(
-            #         draw__lte=0,
-            #     )
-            #     for mt in mts:
-            #         appearance = self.appearances.create(
-            #             group_id=mt.group_id,
-            #             num=mt.draw,
-            #             is_single=mt.is_single,
-            #             is_private=True,
-            #             participants=mt.participants,
-            #             district=mt.district,
-            #         )
 
 
     @fsm_log_by
