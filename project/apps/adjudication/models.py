@@ -1188,10 +1188,9 @@ class Appearance(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return any([
-            self.round.status == self.round.STATUS.published,
-            self.round.owners.filter(id__contains=request.user.id),
-        ])
+        if self.round.status == self.round.STATUS.published:
+            return True
+        return request.user in self.round.owners.all()
 
     @staticmethod
     @allow_staff_or_superuser
@@ -1207,12 +1206,9 @@ class Appearance(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            all([
-                self.round.owners.filter(id__contains=request.user.id),
-                self.round.status != self.round.STATUS.published,
-            ]),
-        ])
+        if self.round.status == self.round.STATUS.published:
+            return False
+        return request.user in self.round.owners.all()
 
     # Appearance Conditions
     def can_verify(self):
@@ -1790,11 +1786,9 @@ class Outcome(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return any([
-            self.round.status == self.round.STATUS.published,
-            self.round.owners.filter(id__contains=request.user.id),
-        ])
-
+        if self.round.status == self.round.STATUS.published:
+            return True
+        return request.user.id in self.round.owners.all()
 
     @staticmethod
     @allow_staff_or_superuser
@@ -1811,12 +1805,9 @@ class Outcome(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            all([
-                self.round.owners.filter(id__contains=request.user.id),
-                self.round.status < self.round.STATUS.finalized,
-            ]),
-        ])
+        if self.round.status == self.round.STATUS.published:
+            return False
+        return request.user in self.round.owners.all()
 
 
 class Panelist(TimeStampedModel):
@@ -2055,12 +2046,9 @@ class Panelist(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            all([
-                self.round.owners.filter(id__contains=request.user.id),
-                self.round.status < self.round.STATUS.started,
-            ]),
-        ])
+        if self.round.status >= self.round.STATUS.started:
+            return request.user in self.round.owners.all()
+
 
     def get_psa(self):
         Group = apps.get_model('bhs.group')
@@ -5117,25 +5105,10 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return any([
-            # Assigned owners can always see
-            self.song.appearance.round.owners.filter(id__contains=request.user.id),
-
-            # Panelists can always see their own scores
-            # self.panelist.user == request.user,
-
-            # Panelists can see others' scores if Appearance is complete.
-            all([
-                # self.song.appearance.round.panelists.filter(user=request.user),
-                # self.song.appearance.status <= self.song.appearance.STATUS.completed
-            ]),
-
-            # Group onwers can see their own scores if complete.
-            all([
-                # self.song.appearance.owners.filter(id__contains=request.user.id),
-                # self.song.appearance.status <= self.song.appearance.STATUS.completed
-            ]),
-        ])
+        # Assigned owners can always see
+        if request.user in self.song.appearance.round.owners.all():
+            return True
+        return False
 
     @staticmethod
     @allow_staff_or_superuser
@@ -5151,12 +5124,9 @@ class Score(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            all([
-                self.song.appearance.round.owners.filter(id__contains=request.user.id),
-                self.song.appearance.round.status < self.song.appearance.round.STATUS.verified,
-            ]),
-        ])
+        if self.song.appearance.round.status == self.song.appearance.round.STATUS.published:
+            return False
+        return request.user in self.song.appearance.round.owners.all()
 
 
 class Song(TimeStampedModel):
@@ -5360,10 +5330,9 @@ class Song(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_read_permission(self, request):
-        return any([
-            self.appearance.round.status == self.appearance.round.STATUS.published,
-            self.appearance.round.owners.filter(id__contains=request.user.id),
-        ])
+        if self.appearance.round.status == self.appearance.round.STATUS.published:
+            return True
+        return request.user in self.appearance.round.owners.all()
 
     @staticmethod
     @allow_staff_or_superuser
@@ -5380,9 +5349,7 @@ class Song(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        return any([
-            all([
-                self.appearance.round.owners.filter(id__contains=request.user.id),
-                self.appearance.round.status < self.appearance.round.STATUS.verified,
-            ]),
-        ])
+        if self.appearance.round.status == self.appearance.round.STATUS.published:
+            return False
+        return request.user in self.appearance.round.owners.all()
+
