@@ -1,5 +1,5 @@
-The {{round.session.convention|safe}} {{round.session.get_kind_display}} {{round.get_kind_display}}
-Round has been published!
+The {{round.nomen|safe}}
+has been published!
 
 Following are the summary results.  The full Official Scoring Summary is attached
 to this email.
@@ -16,7 +16,7 @@ Draw
 Results
 --------
 {% for complete in completes %}
-{% if round.get_district_display == 'BHS' %}{{complete.tot_rank}}. {% endif %}{{complete.name|safe}}: {{complete.tot_points}} ({{complete.tot_score|floatformat:1}}%)
+{% if round.get_district_display == 'BHS' %}{{complete.tot_rank}}. {% endif %}{{complete.name|safe}}: {{complete.stats.tot_points}} ({{complete.stats.tot_score|floatformat:1}}%)
 {% endfor %}
 {% endif %}
 

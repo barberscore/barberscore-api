@@ -4020,6 +4020,16 @@ class Round(TimeStampedModel):
         self.legacy_oss.save('legacy_oss', content)
 
 
+    def get_participants_emails(self):
+        User = apps.get_model('rest_framework_jwt.user')
+        owners = User.objects.filter(
+            appearances__round=self,
+        ).order_by(
+            'last_name',
+            'first_name',
+        ).distinct()
+        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+
     def get_titles(self):
         Chart = apps.get_model('bhs.chart')
         Group = apps.get_model('bhs.group')
@@ -4274,92 +4284,31 @@ class Round(TimeStampedModel):
         Appearance = apps.get_model('adjudication.appearance')
         Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('adjudication.panelist')
-        group_ids = self.appearances.filter(
+        completes = self.appearances.filter(
             is_private=False,
-        ).exclude(
-            # Don't include advancers on OSS
-            draw__gt=0,
-        ).exclude(
-            # Don't include mic testers on OSS
-            num__lte=0,
-        ).values_list('group_id', flat=True)
-        completes = Group.objects.filter(
-            id__in=group_ids,
-        ).prefetch_related(
-            'appearances',
-            'appearances__songs__scores',
-            'appearances__songs__scores__panelist',
-            'appearances__round__session',
-        ).annotate(
-            tot_points=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__session_id=self.session_id,
-                    appearances__round__num__lte=self.num,
-                ),
-            ),
-            per_points=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                    appearances__round__session_id=self.session_id,
-                    appearances__round__num__lte=self.num,
-                ),
-            ),
-            sng_points=Sum(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                    appearances__round__session_id=self.session_id,
-                    appearances__round__num__lte=self.num,
-                ),
-            ),
-            tot_score=Avg(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__round__session_id=self.session_id,
-                    appearances__round__num__lte=self.num,
-                ),
-            ),
-            raw_rank=Window(
-                expression=RowNumber(),
-                order_by=(
-                    F('tot_points').desc(),
-                    F('sng_points').desc(),
-                    F('per_points').desc(),
-                )
-            ),
+            status=Appearance.STATUS.completed,
         ).order_by(
-            '-tot_points',
-            '-sng_points',
-            '-per_points',
+            '-stats__tot_points',
+            '-stats__sng_points',
+            '-stats__per_points',
         )
-        # Monkeypatch results
-        for complete in completes:
-            complete.tot_rank = complete.raw_rank + self.spots
 
         # Draw Block
         if self.kind != self.KIND.finals:
             # Get advancers
             advancers = self.appearances.filter(
                 status=Appearance.STATUS.advanced,
-            ).select_related(
-                'group',
             ).order_by(
                 'draw',
             ).values_list(
                 'draw',
-                'group__name',
+                'name',
             )
             advancers = list(advancers)
             try:
                 mt = self.appearances.get(
                     draw=0,
-                ).group.name
+                ).name
                 advancers.append(('MT', mt))
             except Appearance.DoesNotExist:
                 pass
@@ -4381,7 +4330,7 @@ class Round(TimeStampedModel):
             outcomes.append(
                 (
                     "{0} {1}".format(item[0], item[1]),
-                    item[2],
+                    # item[2],
                 )
             )
 
@@ -4395,10 +4344,9 @@ class Round(TimeStampedModel):
         subject = "[Barberscore] {0} Results and OSS".format(
             self,
         )
-        # to = self.session.convention.get_ca_emails()
-        # cc = self.session.convention.get_drcj_emails()
-        cc.extend(self.get_judge_emails())
-        bcc = self.session.get_participant_emails()
+        to = self.get_owners_emails()
+        cc = self.get_judge_emails()
+        bcc = self.get_participants_emails()
 
         if self.oss_report:
             pdf = self.oss_report.file
@@ -4982,18 +4930,18 @@ class Round(TimeStampedModel):
         conditions=[can_publish],)
     def publish(self, *args, **kwargs):
         """Publishes the results and notifies all parties"""
-        # Appearance = apps.get_model('adjudication.appearance')
-        # Panelist = apps.get_model('adjudication.panelist')
-        # # Send the OSS
-        # send_publish_email_from_round.delay(self)
-        # # Send the CSAs
-        # completed_appearances = self.appearances.filter(
-        #     status=Appearance.STATUS.completed,
-        # )
-        # for appearance in completed_appearances:
-        #     send_complete_email_from_appearance.delay(appearance)
-        # # Send the SAs
-        # send_publish_report_email_from_round.delay(self)
+        Appearance = apps.get_model('adjudication.appearance')
+        Panelist = apps.get_model('adjudication.panelist')
+        # Send the OSS
+        send_publish_email_from_round.delay(self)
+        # Send the CSAs
+        completed_appearances = self.appearances.filter(
+            status=Appearance.STATUS.completed,
+        )
+        for appearance in completed_appearances:
+            send_complete_email_from_appearance.delay(appearance)
+        # Send the SAs
+        send_publish_report_email_from_round.delay(self)
         # # Send the PSAs
         # panelists = self.panelists.filter(
         #     category__gt=Panelist.CATEGORY.ca,
