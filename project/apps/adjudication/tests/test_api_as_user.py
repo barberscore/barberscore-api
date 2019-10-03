@@ -56,7 +56,7 @@ def test_score_endpoint(user_api_client, score):
     assert response.status_code == status.HTTP_200_OK
     path = reverse('score-detail', args=(str(score.id),))
     response = user_api_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 def test_song_endpoint(user_api_client, song):
