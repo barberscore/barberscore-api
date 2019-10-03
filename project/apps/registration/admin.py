@@ -26,9 +26,17 @@ class AssignmentAdmin(admin.ModelAdmin):
     save_on_top = True
     fields = [
         'kind',
-        'session',
-        'person_id',
         'category',
+        'person_id',
+        'name',
+        'first_name',
+        'last_name',
+        'district',
+        'area',
+        'email',
+        'cell_phone',
+        'bhs_id',
+        'session',
     ]
 
     list_display = [
