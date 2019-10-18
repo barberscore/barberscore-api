@@ -1636,7 +1636,7 @@ class Person(TimeStampedModel):
         )
 
     def is_searchable(self):
-        return self.district
+        return True
 
     @cached_property
     def image_id(self):
