@@ -670,7 +670,7 @@ class Entry(TimeStampedModel):
         null=True,
         blank=True,
         max_length=100,
-        unique=True,
+        # unique=True,
         db_index=True,
     )
 
