@@ -1514,12 +1514,39 @@ class Session(TimeStampedModel):
         related_query_name='sessions',
     )
 
+    @cached_property
+    def division_names(self):
+        districts = dict(self.DIVISION)
+        divisions = []
+        for i, districtId in enumerate(districts):
+            for divisionCode, divisionName in districts[districtId]:
+                divisions.append((divisionCode, divisionName.replace(districtId, "").lstrip()))
+        return divisions
+
+    def divisions_display(self):
+        result = ''
+        divisions = dict(self.division_names)
+        for index, value in enumerate(self.divisions):
+            result += "{0}".format(divisions[value])
+            if not index == len(self.divisions) - 1:
+                result += '/'
+        result += (" Divisions" if len(self.divisions) > 1 else " Division")
+        return result
+
     # Session Properties
     @cached_property
     def nomen(self):
         if self.district == self.DISTRICT.bhs:
             return " ".join([
                 self.get_district_display(),
+                str(self.year),
+                self.get_kind_display(),
+            ])
+        if len(self.divisions) > 0:
+            return " ".join([
+                self.get_district_display(),
+                self.divisions_display(),
+                self.get_season_display(),
                 str(self.year),
                 self.get_kind_display(),
             ])
