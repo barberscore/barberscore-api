@@ -420,6 +420,7 @@ class Appearance(TimeStampedModel):
             category__gt=Panelist.CATEGORY.ca,
         ).order_by(
             'category',
+            'last_name',
             # 'person__last_name',
         )
         variances = []
