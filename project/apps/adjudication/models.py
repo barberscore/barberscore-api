@@ -2047,8 +2047,14 @@ class Panelist(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        if self.round.status >= self.round.STATUS.started:
-            return request.user in self.round.owners.all()
+        return bool(request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'CA',
+            ]
+        ))
+        # if self.round.status >= self.round.STATUS.started:
+        #     return request.user in self.round.owners.all()
 
 
     def get_psa(self):
