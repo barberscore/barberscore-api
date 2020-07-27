@@ -34,6 +34,7 @@ from django.contrib.postgres.fields import DecimalRangeField
 from django.contrib.postgres.fields import IntegerRangeField
 from django.utils.functional import cached_property
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.auth import get_user_model
 
 from .fields import UploadPath
 from .fields import DivisionsField
@@ -1494,10 +1495,16 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
+    def get_default_owners():
+        User = get_user_model()
+        owners = User.objects.filter(email__in=settings.SESSION_OWNERS)
+        return owners
+
     # FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='sessions',
+        default=get_default_owners
     )
 
     target = models.ForeignKey(
