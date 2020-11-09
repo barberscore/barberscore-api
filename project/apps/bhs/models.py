@@ -23,6 +23,7 @@ from django.utils.functional import cached_property
 from django.conf import settings
 from django.contrib.postgres.fields import DecimalRangeField
 from django.contrib.postgres.fields import IntegerRangeField
+from django.contrib.auth import get_user_model
 
 # First-Party
 from .managers import AwardManager
@@ -765,9 +766,15 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    def get_default_owners():
+        User = get_user_model()
+        owners = User.objects.filter(email__in=settings.CONVENTION_OWNERS)
+        return owners
+
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='conventions',
+        default=get_default_owners
     )
 
     # Relations
