@@ -68,6 +68,16 @@ JWT_AUTH = {
 # BHS MemberCenter
 MEMBERCENTER_URL = get_env_variable("MEMBERCENTER_URL")
 
+CONVENTION_OWNERS = [
+    'buechler@alumni.princeton.edu',
+    'steve@armstrongconsulting.ca',
+    'proclamation56@gmail.com',
+    'mottley81@gmail.com',
+    'randy.rensi@ieee.org'
+]
+
+SESSION_OWNERS = CONVENTION_OWNERS
+
 # File Management
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
