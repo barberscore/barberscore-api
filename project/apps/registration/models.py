@@ -1269,7 +1269,7 @@ class Session(TimeStampedModel):
     )
 
     num_rounds = models.IntegerField(
-        default=0,
+        default=1,
     )
 
     is_invitational = models.BooleanField(
