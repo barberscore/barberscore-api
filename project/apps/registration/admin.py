@@ -378,3 +378,6 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
     # raw_id_fields = [
     #     'owners',
     # ]
+
+    class Media:
+        js = ('registration/js/admin/convention_change.js',)
