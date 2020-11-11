@@ -288,7 +288,7 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
     fields = [
         'id',
         'status',
-        'convention_id',
+        'convention',
         'name',
         'district',
         'divisions',

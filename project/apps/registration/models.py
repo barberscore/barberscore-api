@@ -234,6 +234,13 @@ class Assignment(TimeStampedModel):
     def __str__(self):
         return str(self.id)
 
+    @cached_property
+    def display_district(self):
+        if self.area:
+            return self.area
+        elif self.district:
+            return self.district
+
     # @cached_property
     # def image_id(self):
     #     return self.image.name or 'missing_image'
@@ -1316,10 +1323,13 @@ class Session(TimeStampedModel):
         blank=True,
     )
 
-    # Denorm
-    convention_id = models.UUIDField(
+    convention = models.ForeignKey(
+        'bhs.Convention',
         null=True,
         blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        to_field='id',
     )
 
     name = models.CharField(
