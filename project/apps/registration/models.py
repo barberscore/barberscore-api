@@ -358,8 +358,29 @@ class Contest(TimeStampedModel):
         blank=True,
     )
 
-    district = models.CharField(
-        max_length=255,
+    DISTRICT = Choices(
+        (110, 'bhs', 'BHS'),
+        (200, 'car', 'CAR'),
+        (205, 'csd', 'CSD'),
+        (210, 'dix', 'DIX'),
+        (215, 'evg', 'EVG'),
+        (220, 'fwd', 'FWD'),
+        (225, 'ill', 'ILL'),
+        (230, 'jad', 'JAD'),
+        (235, 'lol', 'LOL'),
+        (240, 'mad', 'MAD'),
+        (345, 'ned', 'NED'),
+        (350, 'nsc', 'NSC'),
+        (355, 'ont', 'ONT'),
+        (360, 'pio', 'PIO'),
+        (365, 'rmd', 'RMD'),
+        (370, 'sld', 'SLD'),
+        (375, 'sun', 'SUN'),
+        (380, 'swd', 'SWD'),
+    )
+
+    district = models.IntegerField(
+        choices=DISTRICT,
         null=True,
         blank=True,
     )
@@ -416,14 +437,11 @@ class Contest(TimeStampedModel):
 
     is_novice = models.BooleanField(
         default=False,
-        null=True,
-        blank=True,
     )
 
     is_single = models.BooleanField(
+        help_text="""Single-round award""",
         default=False,
-        null=True,
-        blank=True,
     )
 
     SIZE = Choices(

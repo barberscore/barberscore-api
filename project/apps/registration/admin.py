@@ -5,6 +5,7 @@ from fsm_admin.mixins import FSMTransitionMixin
 # Django
 from django.contrib import admin
 from reversion.admin import VersionAdmin
+from django.conf import settings
 
 # Local
 from .inlines import ContestInline
@@ -85,18 +86,18 @@ class ContestAdmin(admin.ModelAdmin):
         'id',
         'award_id',
         'name',
-        'level',
         'kind',
-        'age',
-        'description',
+        'gender',
         'district',
         'division',
-        'gender',
+        'age',
+        'level',
+        'season',
         'is_single',
         'is_novice',
+        'description',
         'scope',
         'scope_range',
-        'season',
         'size',
         'size_range',
         'tree_sort',
@@ -381,3 +382,9 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
 
     class Media:
         js = ('registration/js/admin/convention_change.js',)
+
+    def save_model(self, request, obj, form, change):
+        if not obj.image:
+            if settings.DISTRICT_DEFAULT_LOGOS[obj.district]:
+                obj.image = settings.DISTRICT_DEFAULT_LOGOS[obj.district]
+        super().save_model(request, obj, form, change)
