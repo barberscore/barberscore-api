@@ -88,6 +88,7 @@ class ContestInline(admin.TabularInline):
         'collapse',
     ]
     ordering = [
+        'name',
         'tree_sort',
     ]
 

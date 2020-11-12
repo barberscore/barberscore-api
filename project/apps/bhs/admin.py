@@ -6,6 +6,7 @@ from django_object_actions import DjangoObjectActions
 # Django
 from django.contrib import admin
 from reversion.admin import VersionAdmin
+from django.conf import settings
 
 # Local
 
@@ -226,6 +227,11 @@ class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
 
     save_on_top = True
 
+    def save_model(self, request, obj, form, change):
+        if not obj.image:
+            if settings.DISTRICT_DEFAULT_LOGOS[obj.district]:
+                obj.image = settings.DISTRICT_DEFAULT_LOGOS[obj.district]
+        super().save_model(request, obj, form, change)
 
 @admin.register(Group)
 class GroupAdmin(DjangoObjectActions, VersionAdmin, FSMTransitionMixin):
