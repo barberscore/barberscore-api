@@ -76,6 +76,27 @@ CONVENTION_OWNERS = [
     'randy.rensi@ieee.org'
 ]
 
+DISTRICT_DEFAULT_LOGOS = {
+    110: 'media/global/logos/barbershop-harmony-society.jpg', # BHS
+    200: 'media/global/logos/cardinal-district.jpg', # CAR
+    205: 'media/global/logos/central-states-district.jpg', # CSD
+    210: 'media/global/logos/dixie-district.jpg', # DIX
+    215: 'media/global/logos/evergreen-district.jpg', # EVG
+    220: 'media/global/logos/far-western-district.jpg', # FWD
+    225: 'media/global/logos/illinois-district.jpg', # ILL
+    230: 'media/global/logos/johnny-appleseed-district.jpg', # JAD
+    235: 'media/global/logos/land-o-lakes-district.jpg', # LOL
+    240: 'media/global/logos/mid-atlantic-district.jpg', # MAD
+    345: 'media/global/logos/northeastern-district.jpg', # NED
+    350: 'media/global/logos/carolinas-district.jpg', # NSC
+    355: 'media/global/logos/ontario-district.jpg', # ONT
+    360: 'media/global/logos/pioneer-district.jpg', # PIO
+    365: 'media/global/logos/rocky-mountain-district.jpg', # RMD
+    370: 'media/global/logos/seneca-land-district.jpg', # SLD
+    375: 'media/global/logos/sunshine-district.jpg', # SUN
+    380: 'media/global/logos/southwestern-district.jpg', # SWD
+}
+
 SESSION_OWNERS = CONVENTION_OWNERS
 
 # File Management
