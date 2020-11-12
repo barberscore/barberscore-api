@@ -441,7 +441,7 @@ class Contest(TimeStampedModel):
 
     is_single = models.BooleanField(
         help_text="""Single-round award""",
-        default=False,
+        default=True,
     )
 
     SIZE = Choices(
