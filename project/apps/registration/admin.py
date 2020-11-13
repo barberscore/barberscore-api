@@ -381,7 +381,16 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
     # ]
 
     class Media:
-        js = ('registration/js/admin/convention_change.js',)
+        js = ('registration/js/admin/convention_change.js', 'registration/js/admin/build_contests.js',)
+
+    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        if object_id:
+            session = Session.objects.get(id=object_id)
+            if session.status == 0:
+                extra_context['show_build_contests'] = True
+
+        return super(SessionAdmin, self).changeform_view(request, object_id, extra_context=extra_context)
 
     def save_model(self, request, obj, form, change):
         if not obj.image:

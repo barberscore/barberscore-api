@@ -2113,11 +2113,11 @@ class Session(TimeStampedModel):
             season=self.season,
             district=self.district,
             # division__in=self.convention.divisions,
-        ).order_by('tree_sort')
+        ).order_by('name', 'tree_sort')
         if self.divisions:
             awards = awards.filter(
                 division__in=self.divisions,
-            ).order_by('tree_sort')
+            ).order_by('name', 'tree_sort')
         for award in awards:
             # Create contests for each active award.
             # Could also do some logic here for more precision

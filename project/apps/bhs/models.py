@@ -15,6 +15,7 @@ from dry_rest_permissions.generics import authenticated_users
 from timezone_field import TimeZoneField
 
 # Django
+from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
@@ -597,7 +598,6 @@ class Convention(TimeStampedModel):
 
     district = models.IntegerField(
         choices=DISTRICT,
-        blank=True,
         null=True,
     )
 
@@ -927,9 +927,40 @@ class Convention(TimeStampedModel):
     )
     def build(self, *args, **kwargs):
         """Build convention and related sessions."""
+        Sessions = apps.get_model('registration.session')
+
+        current_user = kwargs['by']
 
         # Reset for indempodence
         self.reset()
+
+        # Build Sessions
+        # print('---BUILD SESSIONS---')
+        for kind in self.kinds:
+            session = Sessions.objects.create(
+                convention=self,
+                name=self.name,
+                district=self.district,
+                divisions=self.divisions,
+                year=self.year,
+                season=self.season,
+                panel=self.panel,
+                kind=kind,
+                open_date=self.open_date,
+                close_date=self.close_date,
+                start_date=self.start_date,
+                end_date=self.end_date,
+                venue_name=self.venue_name,
+                location=self.location,
+                timezone=self.timezone,
+                image=self.image,
+            )
+            session.owners.add(*self.owners.all())
+            session.save();
+    
+            # print('---BUILD CONTESTS FOR SESSION---')
+            session.build(by=current_user)
+            session.save();
         return
 
     @fsm_log_by
