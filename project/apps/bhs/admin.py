@@ -227,6 +227,18 @@ class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
 
     save_on_top = True
 
+    class Media:
+        js = ('bhs/js/admin/build_convention.js',)
+
+    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        if object_id:
+            convention = Convention.objects.get(id=object_id)
+            if convention.status == 0:
+                extra_context['show_build_convention'] = True
+
+        return super(ConventionAdmin, self).changeform_view(request, object_id, extra_context=extra_context)
+
     def save_model(self, request, obj, form, change):
         if not obj.image:
             if settings.DISTRICT_DEFAULT_LOGOS[obj.district]:

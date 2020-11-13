@@ -74,6 +74,20 @@ class ConventionViewSet(viewsets.ModelViewSet):
     resource_name = "convention"
 
     @action(methods=['post'], detail=True)
+    def build(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.build(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Transition conditions not met.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
     def activate(self, request, pk=None, **kwargs):
         object = self.get_object()
         try:
