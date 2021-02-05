@@ -52,6 +52,9 @@ from .tasks import send_verify_report_email_from_session
 from .tasks import send_package_email_from_session
 from .tasks import send_package_report_email_from_session
 
+# Local
+from .managers import SessionManager
+
 
 from apps.adjudication.tasks import build_rounds_from_session
 
@@ -1548,6 +1551,9 @@ class Session(TimeStampedModel):
         StateLog,
         related_query_name='sessions',
     )
+
+    # Internals
+    objects = SessionManager()
 
     @cached_property
     def division_names(self):

@@ -7,7 +7,7 @@ from django.core.mail import EmailMessage
 
 # Django
 from django.template.loader import render_to_string
-
+from django.conf import settings
 
 log = logging.getLogger(__name__)
 
@@ -24,18 +24,25 @@ def build_email(template, context, subject, to, cc=[], bcc=[], attachments=[]):
     clean_to = []
     clean_cc = []
     clean_bcc = []
-    for address in to:
-        if not address.partition("<")[2].partition(">")[0] in full:
-            clean_to.append(address)
-        full.append(address.partition("<")[2].partition(">")[0])
-    for address in cc:
-        if not address.partition("<")[2].partition(">")[0] in full:
-            clean_cc.append(address)
-        full.append(address.partition("<")[2].partition(">")[0])
-    for address in bcc:
-        if not address.partition("<")[2].partition(">")[0] in full:
-            clean_bcc.append(address)
-        full.append(address.partition("<")[2].partition(">")[0])
+
+    if (settings.EMAIL_ADMINS_ONLY):
+        for address in settings.EMAIL_ADMINS:
+            if not address.partition("<")[2].partition(">")[0] in full:
+                clean_to.append(address)
+            full.append(address.partition("<")[2].partition(">")[0])
+    else:
+        for address in to:
+            if not address.partition("<")[2].partition(">")[0] in full:
+                clean_to.append(address)
+            full.append(address.partition("<")[2].partition(">")[0])
+        for address in cc:
+            if not address.partition("<")[2].partition(">")[0] in full:
+                clean_cc.append(address)
+            full.append(address.partition("<")[2].partition(">")[0])
+        for address in bcc:
+            if not address.partition("<")[2].partition(">")[0] in full:
+                clean_bcc.append(address)
+            full.append(address.partition("<")[2].partition(">")[0])
 
     body = render_to_string(template, context)
     email = EmailMessage(

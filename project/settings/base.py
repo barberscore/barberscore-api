@@ -76,6 +76,10 @@ CONVENTION_OWNERS = [
     'randy.rensi@ieee.org'
 ]
 
+SALESFORCE_ORGANIZATIONS = [
+    '00D2i0000008bCiEAI'
+]
+
 DISTRICT_DEFAULT_LOGOS = {
     110: 'media/global/logos/barbershop-harmony-society.jpg', # BHS
     200: 'media/global/logos/cardinal-district.jpg', # CAR
@@ -98,6 +102,19 @@ DISTRICT_DEFAULT_LOGOS = {
 }
 
 SESSION_OWNERS = CONVENTION_OWNERS
+
+if os.environ['EMAIL_ADMINS_ONLY']:
+    EMAIL_ADMINS_ONLY = get_env_variable("EMAIL_ADMINS_ONLY")
+else:
+    EMAIL_ADMINS_ONLY = True
+EMAIL_ADMINS = [
+    'Chris Buechler <buechler@alumni.princeton.edu>',
+    'Steve Armstrong <steve@armstrongconsulting.ca>',
+    'David Mills <proclamation56@gmail.com>',
+    'Mike Ott <mottley81@gmail.com>',
+    'Randy Rensi <randy.rensi@ieee.org>',
+    'Alex Rubin <alex@webgraph.com>'
+]
 
 # File Management
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
@@ -292,4 +309,5 @@ INSTALLED_APPS = [
     'apps.bhs',
     'apps.registration',
     'apps.adjudication',
+    'apps.salesforce',
 ]

@@ -14,6 +14,7 @@ urlpatterns = [
     path('bhs/', include('apps.bhs.urls')),
     path('registration/', include('apps.registration.urls')),
     path('adjudication/', include('apps.adjudication.urls')),
+    path('salesforce/', include('apps.salesforce.urls')),
     path('jwt/', include('rest_framework_jwt.urls')),
     path('log/', include('django_fsm_log.urls')),
     path('rq/', include('django_rq.urls')),
