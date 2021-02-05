@@ -46,6 +46,7 @@ requests = "*"
 rq = "*"
 sentry-sdk = "*"
 whitenoise = "*"
+untangle = "*"
 
 [dev-packages]
 "autopep8" = "*"
