@@ -27,8 +27,39 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+class ConventionManager(Manager):
+    def update_or_create_convention(self, convention):
+        if not isinstance(convention, dict):
+            raise ValueError("Must be dict")
+
+        pk = convention['id']
+
+        # remove id from dict
+        if 'id' in convention: del convention['id']
+
+        conv, created = self.update_or_create(
+            id=pk,
+            defaults=convention,
+        )
+        return conv, created
+
 
 class PersonManager(Manager):
+    def update_or_create_person(self, person):
+        if not isinstance(person, dict):
+            raise ValueError("Must be dict")
+
+        pk = person['id']
+
+        # remove id from dict
+        if 'id' in person: del person['id']
+
+        p, created = self.update_or_create(
+            mc_pk=pk,
+            defaults=person,
+        )
+        return p, created
+
     def update_or_create_from_human(self, human):
         # Extract
         if isinstance(human, dict):
@@ -200,6 +231,21 @@ class PersonManager(Manager):
 
 
 class GroupManager(Manager):
+    def update_or_create_group(self, group):
+        if not isinstance(group, dict):
+            raise ValueError("Must be dict")
+
+        pk = group['id']
+
+        # remove id from dict
+        if 'id' in group: del group['id']
+
+        g, created = self.update_or_create(
+            mc_pk=pk,
+            defaults=group,
+        )
+        return g, created
+
     def update_or_create_from_structure(self, structure):
         # Extract
         if isinstance(structure, dict):
@@ -618,6 +664,21 @@ class GroupManager(Manager):
 
 
 class AwardManager(Manager):
+    def update_or_create_award(self, award):
+        if not isinstance(award, dict):
+            raise ValueError("Must be dict")
+
+        pk = award['id']
+
+        # remove id from dict
+        if 'id' in award: del award['id']
+
+        a, created = self.update_or_create(
+            pk=pk,
+            defaults=award,
+        )
+        return a, created
+
     def sort_tree(self):
         self.all().update(tree_sort=None)
         awards = self.order_by(
@@ -695,6 +756,21 @@ class AwardManager(Manager):
 
 
 class ChartManager(Manager):
+    def update_or_create_chart(self, chart):
+        if not isinstance(chart, dict):
+            raise ValueError("Must be dict")
+
+        pk = chart['id']
+
+        # remove id from dict
+        if 'id' in chart: del chart['id']
+
+        c, created = self.update_or_create(
+            pk=pk,
+            defaults=chart,
+        )
+        return c, created
+
     def get_report(self):
         wb = Workbook()
         ws = wb.active

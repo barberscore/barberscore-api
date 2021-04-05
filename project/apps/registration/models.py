@@ -53,8 +53,7 @@ from .tasks import send_package_email_from_session
 from .tasks import send_package_report_email_from_session
 
 # Local
-from .managers import SessionManager
-
+from .managers import ContestManager, SessionManager, AssignmentManager, EntryManager
 
 from apps.adjudication.tasks import build_rounds_from_session
 
@@ -229,6 +228,9 @@ class Assignment(TimeStampedModel):
         StateLog,
         related_query_name='assignments',
     )
+
+        # Internals
+    objects = AssignmentManager()
 
     # Internals
     class JSONAPIMeta:
@@ -517,6 +519,9 @@ class Contest(TimeStampedModel):
         StateLog,
         related_query_name='contests',
     )
+
+    # Internals
+    objects = ContestManager()
 
     # Internals
     class Meta:
@@ -909,6 +914,9 @@ class Entry(TimeStampedModel):
         StateLog,
         related_query_name='entries',
     )
+
+    # Internals
+    objects = EntryManager()
 
     # Properties
     @cached_property
