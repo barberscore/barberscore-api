@@ -12,7 +12,7 @@ brotli = "*"
 cloudinary = "*"
 cryptography = "*"
 dj-database-url = "*"
-django = "<3.0.0,>=2.2.10"
+django = "<3.0.0,>=2.2.20"
 django-prettyjson = '*'
 django-cloudinary-storage = "*"
 django-cors-headers = "*"
@@ -50,7 +50,7 @@ untangle = "*"
 
 [dev-packages]
 "autopep8" = "*"
-django-debug-toolbar = "*"
+django-debug-toolbar = ">=3.2.1"
 django-querycount = "*"
 factory-boy = "*"
 faker = "*"
