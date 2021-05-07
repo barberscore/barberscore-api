@@ -65,3 +65,18 @@ class EntryManager(Manager):
             defaults=entry,
         )
         return record, created
+
+    def update_contestentry_status(self, sf_entry):
+        entry_id = sf_entry['entry_id']
+        contest_id = sf_entry['contest_id']
+
+        Entry = apps.get_model('registration.entry')
+
+        entry = Entry.objects.get(pk=entry_id)
+
+        if sf_entry['deleted']:
+            entry.contests.remove(contest_id)
+        else:
+            entry.contests.add(contest_id)
+
+        return entry

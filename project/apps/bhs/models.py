@@ -27,7 +27,6 @@ from django.contrib.postgres.fields import IntegerRangeField
 from django.contrib.auth import get_user_model
 
 # First-Party
-from .managers import ConventionManager
 from .managers import AwardManager
 from .managers import PersonManager
 from .managers import GroupManager

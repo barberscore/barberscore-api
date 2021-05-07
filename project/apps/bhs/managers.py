@@ -27,23 +27,6 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-class ConventionManager(Manager):
-    def update_or_create_convention(self, convention):
-        if not isinstance(convention, dict):
-            raise ValueError("Must be dict")
-
-        pk = convention['id']
-
-        # remove id from dict
-        if 'id' in convention: del convention['id']
-
-        conv, created = self.update_or_create(
-            id=pk,
-            defaults=convention,
-        )
-        return conv, created
-
-
 class PersonManager(Manager):
     def update_or_create_person(self, person):
         if not isinstance(person, dict):
@@ -52,10 +35,10 @@ class PersonManager(Manager):
         pk = person['id']
 
         # remove id from dict
-        if 'id' in person: del person['id']
+        # if 'id' in person: del person['id']
 
         p, created = self.update_or_create(
-            mc_pk=pk,
+            pk=pk,
             defaults=person,
         )
         return p, created
@@ -238,13 +221,28 @@ class GroupManager(Manager):
         pk = group['id']
 
         # remove id from dict
-        if 'id' in group: del group['id']
+        # if 'id' in group: del group['id']
 
         g, created = self.update_or_create(
-            mc_pk=pk,
+            pk=pk,
             defaults=group,
         )
         return g, created
+
+    def update_group_chart(self, sf_chart):
+        group_id = sf_chart['group_id']
+        chart_id = sf_chart['chart_id']
+
+        Group = apps.get_model('bhs.group')
+        
+        group = Group.objects.get(pk=group_id)
+
+        if sf_chart['deleted']:
+            group.charts.remove(chart_id)
+        else:
+            group.charts.add(chart_id)
+
+        return group
 
     def update_or_create_from_structure(self, structure):
         # Extract

@@ -11,8 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.conf import settings
 
-from .models import SfConvention, SfAward, SfChart, SfGroup, SfPerson
-from .models import SfSession, SfContest, SfAssignment, SfEntry
+from .models import SfConvention, SfAward, SfChart, SfGroup, SfPerson, SfGroupChart
+from .models import SfSession, SfContest, SfAssignment, SfEntry, SfEntryContest
 
 from .tasks import update_or_create_convention_from_salesforce
 from .tasks import update_or_create_award_from_salesforce
@@ -23,8 +23,13 @@ from .tasks import update_or_create_session_from_salesforce
 from .tasks import update_or_create_contest_from_salesforce
 from .tasks import update_or_create_assignment_from_salesforce
 from .tasks import update_or_create_entry_from_salesforce
+from .tasks import update_contest_entry_from_salesforce
+from .tasks import update_group_chart_from_salesforce
 
 import untangle
+
+from apps.registration.models import Contest, Session, Assignment, Entry
+
 
 @csrf_exempt
 def data_import(request, **kwargs):
@@ -35,7 +40,11 @@ def data_import(request, **kwargs):
 
         # Ensure OrganizaitonID
         if obj.OrganizationId.cdata is not None and obj.OrganizationId.cdata in settings.SALESFORCE_ORGANIZATIONS:
+            processed = 0
+
             for elem in obj.Notification:
+
+                processed += 1
 
                 # convention
                 if "bhs_Convention" in elem.sObject['xsi:type']:
@@ -69,21 +78,31 @@ def data_import(request, **kwargs):
                 elif "bhs_Assignment" in elem.sObject['xsi:type']:
                     __assignment(elem.sObject)
 
+                # registration_entry_contests
+                elif "bhs_Entry_Contest" in elem.sObject['xsi:type']:
+                    __entry_contest(elem.sObject)
+
                 # registration_entry
                 elif "bhs_Entry" in elem.sObject['xsi:type']:
                     __entry(elem.sObject)
 
-                # group_charts --- No BS model exists
-                # registration_entry_contests --- no BS model exists 
+                # group_charts
+                elif "bhs_Repertory" in elem.sObject['xsi:type']:
+                    __group_chart(elem.sObject)
 
-            return HttpResponse(str(len(obj.Notification)) + ' Notifications Imported')
+                else:
+                    # THis means it wasn't an approved type
+                    processed -= 1
+
+                # group_charts --- No BS model exists
+
+            return HttpResponse(str(processed) + ' Notifications Imported')
         else:
             return HttpResponse('OrganizationId not validated')
     else:
         return HttpResponse('This should fail!')
 
 def __convention(data):
-    print(data.sf_BS_Kind__c.cdata)
     convention = SfConvention.parse_sf_notification(data)
     update_or_create_convention_from_salesforce.delay(convention)
     print('====Convention Import Queued====')
@@ -127,3 +146,13 @@ def __entry(data):
     entry = SfEntry.parse_sf_notification(data)
     update_or_create_entry_from_salesforce.delay(entry)
     print('====Entry Import Queued====')
+
+def __entry_contest(data):
+    entry = SfEntryContest.parse_sf_notification(data)
+    update_contest_entry_from_salesforce.delay(entry)
+    print('====Entry Contests Import Queued====')
+
+def __group_chart(data):
+    chart = SfGroupChart.parse_sf_notification(data)
+    update_group_chart_from_salesforce.delay(chart)
+    print('====Group Chart Import Queued====')

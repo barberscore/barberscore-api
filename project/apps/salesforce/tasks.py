@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 @job('high')
 def update_or_create_convention_from_salesforce(convention):
-    return Convention.objects.update_or_create_convention(convention)
+    return Convention.objects.update_or_create(pk=convention['id'], defaults=convention)
 
 @job('high')
 def update_or_create_award_from_salesforce(award):
@@ -48,3 +48,11 @@ def update_or_create_assignment_from_salesforce(assignment):
 @job('high')
 def update_or_create_entry_from_salesforce(entry):
     return Entry.objects.update_or_create_entry(entry)
+
+@job('high')
+def update_contest_entry_from_salesforce(entry):
+	return Entry.objects.update_contestentry_status(entry)
+
+@job('high')
+def update_group_chart_from_salesforce(chart):
+	return Group.objects.update_group_chart(chart)
