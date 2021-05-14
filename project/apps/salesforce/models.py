@@ -123,8 +123,7 @@ class SfAward:
             d['kind'] = int(float(n.sf_BS_Kind__c.cdata))
 
         # Gender
-        if hasattr(n, 'sf_BS_Classification__c'):
-            d['gender'] = int(float(n.sf_BS_Classification__c.cdata))
+        d['gender'] = int(float(n.sf_BS_Classification__c.cdata)) if hasattr(n, 'sf_BS_Classification__c') else ""
 
         # Level
         if hasattr(n, 'sf_BS_Level__c'):
@@ -139,64 +138,51 @@ class SfAward:
             d['district'] = int(float(n.sf_BS_District__c.cdata))
 
         # Divisions
-        if hasattr(n, 'sf_BS_Division__c'):
-            d['division'] = int(float(n.sf_BS_Division__c.cdata))
+        d['division'] = int(float(n.sf_BS_Division__c.cdata)) if hasattr(n, 'sf_BS_Division__c') else ""
 
         # Is Single
         if hasattr(n, 'sf_is_single__c'):
             d['is_single'] = bool(strtobool(n.sf_is_single__c.cdata))
 
         # Threshold
-        if hasattr(n, 'sf_Threshold__c'):
-            d['threshold'] = float(n.sf_Threshold__c.cdata)
+        d['threshold'] = float(n.sf_Threshold__c.cdata) if hasattr(n, 'sf_Threshold__c') else ""
 
         # Minimum
-        if hasattr(n, 'sf_Minimum__c'):
-            d['minimum'] = float(n.sf_Minimum__c.cdata)
+        d['minimum'] = float(n.sf_Minimum__c.cdata) if hasattr(n, 'sf_Minimum__c') else ""
 
         # advance
-        if hasattr(n, 'sf_Advance__c'):
-            d['advance'] = float(n.sf_Advance__c.cdata)
+        d['advance'] = float(n.sf_Advance__c.cdata) if hasattr(n, 'sf_Advance__c') else ""
 
         # spots
-        if hasattr(n, 'sf_Spots__c'):
-            d['spots'] = int(float(n.sf_Spots__c.cdata))
+        d['spots'] = int(float(n.sf_Spots__c.cdata)) if hasattr(n, 'sf_Spots__c') else ""
 
         # Description
-        if hasattr(n, 'sf_Description__c'):
-            d['description'] = n.sf_Description__c.cdata
+        d['description'] = n.sf_Description__c.cdata if hasattr(n, 'sf_Description__c') else ""
 
         # Notes
-        if hasattr(n, 'sf_Notes__c'):
-            d['notes'] = n.sf_Notes__c.cdata
+        d['notes'] = n.sf_Notes__c.cdata if hasattr(n, 'sf_Notes__c') else ""
 
         # Age
-        if hasattr(n, 'sf_BS_Age__c'):
-            d['age'] = int(float(n.sf_BS_Age__c.cdata))
+        d['age'] = int(float(n.sf_BS_Age__c.cdata)) if hasattr(n, 'sf_BS_Age__c') else ""
 
         # Is Novice
         if hasattr(n, 'sf_is_novice__c'):
             d['is_novice'] = bool(strtobool(n.sf_is_novice__c.cdata))
 
         # Size
-        if hasattr(n, 'sf_BS_Size__c'):
-            d['size'] = int(float(n.sf_BS_Size__c.cdata))
+        d['size'] = int(float(n.sf_BS_Size__c.cdata)) if hasattr(n, 'sf_BS_Size__c') else ""
 
         # Size Range
-        if hasattr(n, 'sf_Size_Range__c'):
-            d['size_range'] = n.sf_Size_Range__c.cdata
+        d['size_range'] = n.sf_Size_Range__c.cdata if hasattr(n, 'sf_Size_Range__c') else ""
 
         # Scope
-        if hasattr(n, 'sf_BS_Scope__c'):
-            d['scope'] = int(float(n.sf_BS_Scope__c.cdata))
+        d['scope'] = int(float(n.sf_BS_Scope__c.cdata)) if hasattr(n, 'sf_BS_Scope__c') else ""
 
         # Scope Range
-        if hasattr(n, 'sf_Scope_Range__c'):
-            d['scope_range'] = n.sf_Scope_Range__c.cdata
+        d['scope_range'] = n.sf_Scope_Range__c.cdata if hasattr(n, 'sf_Scope_Range__c') else ""
 
         # Tree Sort
-        if hasattr(n, 'sf_Tree_Sort__c'):
-            d['tree_sort'] = int(float(n.sf_Tree_Sort__c.cdata))
+        d['tree_sort'] = int(float(n.sf_Tree_Sort__c.cdata)) if hasattr(n, 'sf_Tree_Sort__c') else ""
 
         # Return parsed dict
         return d
@@ -231,24 +217,19 @@ class SfChart:
             d['arrangers'] = n.sf_Arrangers__c.cdata
 
         # Composer
-        if hasattr(n, 'sf_Composers__c'):
-            d['composers'] = n.sf_Composers__c.cdata
+        d['composers'] = n.sf_Composers__c.cdata if hasattr(n, 'sf_Composers__c') else ""
 
         # Lyricist
-        if hasattr(n, 'sf_Lyricists__c'):
-            d['lyricists'] = n.sf_Lyricists__c.cdata
+        d['lyricists'] = n.sf_Lyricists__c.cdata if hasattr(n, 'sf_Lyricists__c') else ""
 
         # Holders
-        if hasattr(n, 'sf_Holders__c'):
-            d['holders'] = n.sf_Holders__c.cdata
+        d['holders'] = n.sf_Holders__c.cdata if hasattr(n, 'sf_Holders__c') else ""
 
         # Description
-        if hasattr(n, 'sf_Description__c'):
-            d['description'] = n.sf_Description__c.cdata
+        d['description'] = n.sf_Description__c.cdata if hasattr(n, 'sf_Description__c') else ""
 
         # Notes
-        if hasattr(n, 'sf_Notes__c'):
-            d['notes'] = n.sf_Notes__c.cdata
+        d['notes'] = n.sf_Notes__c.cdata if hasattr(n, 'sf_Notes__c') else ""
 
         # Return parsed dict
         return d
@@ -291,16 +272,13 @@ class SfGroup:
             d['district'] = int(float(n.sf_BS_District__c.cdata))
 
         # Divisions
-        if hasattr(n, 'sf_BS_Division__c'):
-            d['division'] = int(float(n.sf_BS_Division__c.cdata))
+        d['division'] = int(float(n.sf_BS_Division__c.cdata)) if hasattr(n, 'sf_BS_Division__c') else ""
 
         # bhs_id
-        if hasattr(n, 'sf_cfg_Member_Id__c'):
-            d['bhs_id'] = int(n.sf_cfg_Member_Id__c.cdata)
+        d['bhs_id'] = int(n.sf_cfg_Member_Id__c.cdata) if hasattr(n, 'sf_cfg_Member_Id__c') else ""
 
         # code
-        if hasattr(n, 'sf_cfg_Code__c'):
-            d['code'] = n.sf_cfg_Code__c.cdata
+        d['code'] = n.sf_cfg_Code__c.cdata if hasattr(n, 'sf_cfg_Code__c') else ""
 
         # Return parsed dict
         return d
@@ -331,36 +309,28 @@ class SfPerson:
             d['name'] = n.sf_FirstName.cdata + " " + n.sf_LastName.cdata
 
         # First Name
-        if hasattr(n, 'sf_FirstName'):
-            d['first_name'] = n.sf_FirstName.cdata
+        d['first_name'] = n.sf_FirstName.cdata if hasattr(n, 'sf_FirstName') else ""
 
         # Last Name
-        if hasattr(n, 'sf_LastName'):
-            d['last_name'] = n.sf_LastName.cdata
+        d['last_name'] = n.sf_LastName.cdata if hasattr(n, 'sf_LastName') else ""
 
         # part
-        if hasattr(n, 'sf_BS_VoicePart__c'):
-            d['part'] = int(float(n.sf_BS_VoicePart__c.cdata))
+        d['part'] = int(float(n.sf_BS_VoicePart__c.cdata)) if hasattr(n, 'sf_BS_VoicePart__c') else ""
 
         # Gender
-        if hasattr(n, 'sf_BS_Gender__c'):
-            d['gender'] = int(float(n.sf_BS_Gender__c.cdata))
+        d['gender'] = int(float(n.sf_BS_Gender__c.cdata)) if hasattr(n, 'sf_BS_Gender__c') else ""
 
         # Email
-        if hasattr(n, 'sf_npe01__HomeEmail__c'):
-            d['email'] = n.sf_npe01__HomeEmail__c.cdata
+        d['email'] = n.sf_npe01__HomeEmail__c.cdata if hasattr(n, 'sf_npe01__HomeEmail__c') else ""
 
         # Home Phone
-        if hasattr(n, 'sf_HomePhone'):
-            d['home_phone'] = n.sf_HomePhone.cdata
+        d['home_phone'] = n.sf_HomePhone.cdata if hasattr(n, 'sf_HomePhone') else ""
 
         # Cell Phone
-        if hasattr(n, 'sf_MobilePhone'):
-            d['cell_phone'] = n.sf_MobilePhone.cdata
+        d['cell_phone'] = n.sf_MobilePhone.cdata if hasattr(n, 'sf_MobilePhone') else ""
 
         # BHS ID
-        if hasattr(n, 'sf_cfg_Member_Number__c'):
-            d['bhs_id'] = int(n.sf_cfg_Member_Number__c.cdata)
+        d['bhs_id'] = int(n.sf_cfg_Member_Number__c.cdata) if hasattr(n, 'sf_cfg_Member_Number__c') else ""
 
         # Return parsed dict
         return d
@@ -399,16 +369,13 @@ class SfSession:
             d['is_invitational'] = bool(strtobool(n.sf_is_invitational__c.cdata))
 
         # Description
-        if hasattr(n, 'sf_Description__c'):
-            d['description'] = n.sf_Description__c.cdata
+        d['description'] = n.sf_Description__c.cdata if hasattr(n, 'sf_Description__c') else ""
 
         # Notes
-        if hasattr(n, 'sf_Notes__c'):
-            d['notes'] = n.sf_Notes__c.cdata
+        d['notes'] = n.sf_Notes__c.cdata if hasattr(n, 'sf_Notes__c') else ""
 
         # Footnotes
-        if hasattr(n, 'sf_Footnotes__c'):
-            d['footnotes'] = n.sf_Footnotes__c.cdata
+        d['footnotes'] = n.sf_Footnotes__c.cdata if hasattr(n, 'sf_Footnotes__c') else ""
 
         if hasattr(n, 'sf_BS_Convention_UUID__c'):
             d['convention_id'] = n.sf_BS_Convention_UUID__c.cdata
@@ -498,8 +465,7 @@ class SfContest:
             d['kind'] = int(float(n.sf_BS_Kind__c.cdata))
 
         # Gender
-        if hasattr(n, 'sf_BS_Classification__c'):
-            d['gender'] = int(float(n.sf_BS_Classification__c.cdata))
+        d['gender'] = int(float(n.sf_BS_Classification__c.cdata)) if hasattr(n, 'sf_BS_Classification__c') else ""
 
         # Level
         if hasattr(n, 'sf_BS_Level__c'):
@@ -510,20 +476,17 @@ class SfContest:
             d['season'] = int(float(n.sf_BS_Season__c.cdata))
 
         # Description
-        if hasattr(n, 'sf_Description__c'):
-            d['description'] = n.sf_Description__c.cdata
+        d['description'] = n.sf_Description__c.cdata if hasattr(n, 'sf_Description__c') else ""
 
         # District
         if hasattr(n, 'sf_BS_District__c'):
             d['district'] = int(float(n.sf_BS_District__c.cdata))
 
         # Divisions
-        if hasattr(n, 'sf_BS_Division__c'):
-            d['division'] = int(float(n.sf_BS_Division__c.cdata))
+        d['division'] = int(float(n.sf_BS_Division__c.cdata)) if hasattr(n, 'sf_BS_Division__c') else ""
 
         # Age
-        if hasattr(n, 'sf_BS_Age__c'):
-            d['age'] = int(float(n.sf_BS_Age__c.cdata))
+        d['age'] = int(float(n.sf_BS_Age__c.cdata)) if hasattr(n, 'sf_BS_Age__c') else ""
 
         # Is Novice
         if hasattr(n, 'sf_is_novice__c'):
@@ -534,24 +497,19 @@ class SfContest:
             d['is_single'] = bool(strtobool(n.sf_is_single__c.cdata))
 
         # Size
-        if hasattr(n, 'sf_BS_Size__c'):
-            d['size'] = int(float(n.sf_BS_Size__c.cdata))
+        d['size'] = int(float(n.sf_BS_Size__c.cdata)) if hasattr(n, 'sf_BS_Size__c') else ""
 
         # Size Range
-        if hasattr(n, 'sf_Size_Range__c'):
-            d['size_range'] = n.sf_Size_Range__c.cdata
+        d['size_range'] = n.sf_Size_Range__c.cdata if hasattr(n, 'sf_Size_Range__c') else ""
 
         # Scope
-        if hasattr(n, 'sf_BS_Scope__c'):
-            d['scope'] = int(float(n.sf_BS_Scope__c.cdata))
+        d['scope'] = int(float(n.sf_BS_Scope__c.cdata)) if hasattr(n, 'sf_BS_Scope__c') else ""
 
         # Scope Range
-        if hasattr(n, 'sf_Scope_Range__c'):
-            d['scope_range'] = n.sf_Scope_Range__c.cdata
+        d['scope_range'] = n.sf_Scope_Range__c.cdata if hasattr(n, 'sf_Scope_Range__c') else ""
 
         # Tree Sort
-        if hasattr(n, 'sf_Tree_Sort__c'):
-            d['tree_sort'] = int(float(n.sf_Tree_Sort__c.cdata))
+        d['tree_sort'] = int(float(n.sf_Tree_Sort__c.cdata)) if hasattr(n, 'sf_Tree_Sort__c') else ""
 
         # Session ID
         if hasattr(n, 'sf_BS_Session_UUID__c'):
@@ -590,16 +548,13 @@ class SfAssignment:
             d['person_id'] = n.sf_BS_Contact_UUID__c.cdata
 
         # Name
-        if hasattr(n, 'sf_Name__c'):
-            d['name'] = n.sf_Name__c.cdata
+        d['name'] = n.sf_Name__c.cdata if hasattr(n, 'sf_Name__c') else ""
 
         # First Name
-        if hasattr(n, 'sf_FirstName__c'):
-            d['first_name'] = n.sf_FirstName__c.cdata
+        d['first_name'] = n.sf_FirstName__c.cdata if hasattr(n, 'sf_FirstName__c') else ""
 
         # Last Name
-        if hasattr(n, 'sf_LastName__c'):
-            d['last_name'] = n.sf_LastName__c.cdata
+        d['last_name'] = n.sf_LastName__c.cdata if hasattr(n, 'sf_LastName__c') else ""
         
         # District
         if hasattr(n, 'sf_BS_District__c'):
@@ -610,20 +565,16 @@ class SfAssignment:
             d['area'] = n.sf_Area__c.cdata
 
         # Email
-        if hasattr(n, 'sf_HomeEmail__c'):
-            d['email'] = n.sf_HomeEmail__c.cdata
+        d['email'] = n.sf_HomeEmail__c.cdata if hasattr(n, 'sf_HomeEmail__c') else ""
 
         # Cell Phone
-        if hasattr(n, 'sf_MobilePhone__c'):
-            d['cell_phone'] = n.sf_MobilePhone__c.cdata
+        d['cell_phone'] = n.sf_MobilePhone__c.cdata if hasattr(n, 'sf_MobilePhone__c') else ""
 
         # Airports
-        if hasattr(n, 'sf_Airports__c'):
-            d['airports'] = n.sf_Airports__c.cdata
+        d['airports'] = n.sf_Airports__c.cdata if hasattr(n, 'sf_Airports__c') else ""
 
         # BHS ID
-        if hasattr(n, 'sf_cfg_Member_Number__c'):
-            d['bhs_id'] = int(n.sf_cfg_Member_Number__c.cdata)
+        d['bhs_id'] = int(n.sf_cfg_Member_Number__c.cdata) if hasattr(n, 'sf_cfg_Member_Number__c') else ""
 
         # Session ID
         if hasattr(n, 'sf_BS_Session_UUID__c'):
@@ -674,40 +625,32 @@ class SfEntry:
             d['is_youth'] = bool(strtobool(n.sf_is_youth__c.cdata))
 
         # Draw
-        if hasattr(n, 'sf_Draw_Order__c'):
-            d['draw'] = int(float(n.sf_Draw_Order__c.cdata))
+        d['draw'] = int(float(n.sf_Draw_Order__c.cdata)) if hasattr(n, 'sf_Draw_Order__c') else ""
 
         # Prelim
-        if hasattr(n, 'sf_Prelim__c'):
-            d['prelim'] = n.sf_Prelim__c.cdata
+        d['prelim'] = n.sf_Prelim__c.cdata if hasattr(n, 'sf_Prelim__c') else ""
 
         # Base
-        if hasattr(n, 'sf_Base__c'):
-            d['base'] = n.sf_Base__c.cdata
+        d['base'] = n.sf_Base__c.cdata if hasattr(n, 'sf_Base__c') else ""
 
         # Participants
-        if hasattr(n, 'sf_Participants__c'):
-            d['participants'] = n.sf_Participants__c.cdata
+        d['participants'] = n.sf_Participants__c.cdata if hasattr(n, 'sf_Participants__c') else ""
 
         # POS
-        if hasattr(n, 'sf_Persons_On_Stage__c'):
-            d['pos'] = int(float(n.sf_Persons_On_Stage__c.cdata))
+        d['pos'] = int(float(n.sf_Persons_On_Stage__c.cdata)) if hasattr(n, 'sf_Persons_On_Stage__c') else ""
 
         # Area
         if hasattr(n, 'sf_BS_Organization__c'):
             d['area'] = n.sf_BS_Organization__c.cdata
 
         # Chapters
-        if hasattr(n, 'sf_Chapters__c'):
-            d['chapters'] = n.sf_Chapters__c.cdata
+        d['chapters'] = n.sf_Chapters__c.cdata if hasattr(n, 'sf_Chapters__c') else ""
 
         # Description
-        if hasattr(n, 'sf_Description__c'):
-            d['description'] = n.sf_Description__c.cdata
+        d['description'] = n.sf_Description__c.cdata if hasattr(n, 'sf_Description__c') else ""
 
         # Notes
-        if hasattr(n, 'sf_Notes__c'):
-            d['notes'] = n.sf_Notes__c.cdata
+        d['notes'] = n.sf_Notes__c.cdata if hasattr(n, 'sf_Notes__c') else ""
 
         # Group ID
         if hasattr(n, 'sf_BS_Account_UUID__c'):
@@ -730,16 +673,13 @@ class SfEntry:
             d['district'] = int(float(n.sf_BS_District__c.cdata))
 
         # Divisions
-        if hasattr(n, 'sf_BS_Division__c'):
-            d['division'] = int(float(n.sf_BS_Division__c.cdata))
+        d['division'] = int(float(n.sf_BS_Division__c.cdata)) if hasattr(n, 'sf_BS_Division__c') else ""
 
         # BHS ID
-        if hasattr(n, 'sf_cfg_Member_Id__c'):
-            d['bhs_id'] = int(n.sf_cfg_Member_Id__c.cdata)
+        d['bhs_id'] = int(n.sf_cfg_Member_Id__c.cdata) if hasattr(n, 'sf_cfg_Member_Id__c') else ""
 
         # code
-        if hasattr(n, 'sf_cfg_Code__c'):
-            d['code'] = n.sf_cfg_Code__c.cdata
+        d['code'] = n.sf_cfg_Code__c.cdata if hasattr(n, 'sf_cfg_Code__c') else ""
 
         # Session ID
         if hasattr(n, 'sf_BS_Session_UUID__c'):
