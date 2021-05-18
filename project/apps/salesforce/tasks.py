@@ -56,3 +56,54 @@ def update_contest_entry_from_salesforce(entry):
 @job('high')
 def update_group_chart_from_salesforce(chart):
 	return Group.objects.update_group_chart(chart)
+
+@job('high')
+def remove_record_from_salesforce(type, uuid):
+    # convention
+    if type == "bhs_Convention":
+        return Convention.objects.filter(id=uuid).delete()
+
+    # award
+    elif type == "bhs_Award":
+        return Award.objects.filter(id=uuid).delete()
+
+    # chart
+    elif type == "bhs_Chart":
+        return Chart.objects.filter(id=uuid).delete()
+
+    # group
+    elif type == "Account":
+        return Group.objects.filter(id=uuid).delete()
+
+    # person
+    elif type == "Contact":
+        return Person.objects.filter(id=uuid).delete()
+
+    # registration_session (should be already configured)
+    elif type == "bhs_Session":
+        return Session.objects.filter(id=uuid).delete()
+
+    # registration_contest
+    elif type == "bhs_Contest":
+        return Contest.objects.filter(id=uuid).delete()
+
+    # registration_assignment
+    elif type == "bhs_Assignment":
+        return Assignment.objects.filter(id=uuid).delete()
+
+    # registration_entry
+    elif type == "bhs_Entry":
+        return Entry.objects.filter(id=uuid).delete()
+
+    # # group_charts
+    # elif type == "bhs_Repertory":
+    #     return Group.objects.filter(id=uuid).delete()
+
+    # # registration_entry_contests
+    # elif type == "bhs_Entry_Contest":
+    #     print("Type not configured for deletion: " + type)
+
+    else:
+        print("Type not configured for deletion: " + type)
+
+    return

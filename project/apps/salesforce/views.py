@@ -25,6 +25,7 @@ from .tasks import update_or_create_assignment_from_salesforce
 from .tasks import update_or_create_entry_from_salesforce
 from .tasks import update_contest_entry_from_salesforce
 from .tasks import update_group_chart_from_salesforce
+from .tasks import remove_record_from_salesforce
 
 import untangle
 
@@ -89,6 +90,10 @@ def data_import(request, **kwargs):
                 # group_charts
                 elif "bhs_Repertory" in elem.sObject['xsi:type']:
                     __group_chart(elem.sObject)
+
+                # Delete entries
+                elif "bhs_Barberscore_Delete" in elem.sObject['xsi:type']:
+                    __delete_entry(elem.sObject)
 
                 else:
                     # THis means it wasn't an approved type
@@ -156,3 +161,10 @@ def __group_chart(data):
     chart = SfGroupChart.parse_sf_notification(data)
     update_group_chart_from_salesforce.delay(chart)
     print('====Group Chart Import Queued====')
+
+def __delete_entry(data):
+    uuid = data.sf_Object_Key__c.cdata
+    recordType = data.sf_Object_Name__c.cdata
+
+    remove_record_from_salesforce.delay(recordType, uuid)
+    print('====Delete Entries Queued====')
