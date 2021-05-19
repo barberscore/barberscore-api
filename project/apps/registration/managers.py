@@ -74,9 +74,10 @@ class EntryManager(Manager):
 
         entry = Entry.objects.get(pk=entry_id)
 
-        if sf_entry['deleted']:
-            entry.contests.remove(contest_id)
-        else:
-            entry.contests.add(contest_id)
+        if entry:
+            if sf_entry['deleted']:
+                entry.contests.remove(contest_id)
+            else:
+                entry.contests.add(contest_id)
 
         return entry

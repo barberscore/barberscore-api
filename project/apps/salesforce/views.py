@@ -25,7 +25,17 @@ from .tasks import update_or_create_assignment_from_salesforce
 from .tasks import update_or_create_entry_from_salesforce
 from .tasks import update_contest_entry_from_salesforce
 from .tasks import update_group_chart_from_salesforce
-from .tasks import remove_record_from_salesforce
+from .tasks import delete_convention
+from .tasks import delete_award
+from .tasks import delete_chart
+from .tasks import delete_group
+from .tasks import delete_person
+from .tasks import delete_session
+from .tasks import delete_contest
+from .tasks import delete_assignment
+from .tasks import delete_entry
+from .tasks import delete_repertory
+from .tasks import delete_entry_contest
 
 import untangle
 
@@ -162,9 +172,43 @@ def __group_chart(data):
     update_group_chart_from_salesforce.delay(chart)
     print('====Group Chart Import Queued====')
 
+deletion = {
+    'bhs_Convention': delete_convention,
+    'bhs_Award': delete_award,
+    'bhs_Chart': delete_chart,
+    'Account': delete_group,
+    'Contact': delete_person,
+    'bhs_Session': delete_session,
+    'bhs_Contest': delete_contest,
+    'bhs_Assignment': delete_assignment,
+    'bhs_Entry': delete_entry
+}
+
 def __delete_entry(data):
     uuid = data.sf_Object_Key__c.cdata
     recordType = data.sf_Object_Name__c.cdata
 
-    remove_record_from_salesforce.delay(recordType, uuid)
+    if recordType in deletion:
+        return deletion[recordType].delay(uuid)
+
+    # group_charts
+    elif recordType == "bhs_Repertory":
+        chart = {
+            'group_id': data.sf_Object_Key__c.cdata,
+            'chart_id': data.sf_Foreign_Key__c.cdata,
+            'deleted': "true"
+        }
+        return delete_repertory.delay(chart)
+
+    # registration_entry_contests
+    elif recordType == "bhs_Entry_Contest_Xref":
+        entry = {
+            'entry_id': data.sf_Object_Key__c.cdata,
+            'contest_id': data.sf_Foreign_Key__c.cdata,
+            'deleted': "true"
+        }
+        return delete_entry_contest.delay(entry)
+
+
+    # remove_record_from_salesforce.delay(recordType, uuid, data)
     print('====Delete Entries Queued====')

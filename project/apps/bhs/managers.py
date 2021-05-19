@@ -237,10 +237,11 @@ class GroupManager(Manager):
         
         group = Group.objects.get(pk=group_id)
 
-        if sf_chart['deleted']:
-            group.charts.remove(chart_id)
-        else:
-            group.charts.add(chart_id)
+        if group:
+            if sf_chart['deleted']:
+                group.charts.remove(chart_id)
+            else:
+                group.charts.add(chart_id)
 
         return group
 
