@@ -640,8 +640,8 @@ class SfEntry:
         d['pos'] = int(float(n.sf_Persons_On_Stage__c.cdata)) if hasattr(n, 'sf_Persons_On_Stage__c') else None
 
         # Area
-        if hasattr(n, 'sf_BS_Organization__c'):
-            d['area'] = n.sf_BS_Organization__c.cdata
+        if hasattr(n, 'sf_Organization__c'):
+            d['area'] = n.sf_Organization__c.cdata
 
         # Chapters
         d['chapters'] = n.sf_Chapters__c.cdata if hasattr(n, 'sf_Chapters__c') else ""
@@ -675,11 +675,13 @@ class SfEntry:
         # Divisions
         d['division'] = int(float(n.sf_BS_Division__c.cdata)) if hasattr(n, 'sf_BS_Division__c') else None
 
-        # BHS ID
-        d['bhs_id'] = int(n.sf_cfg_Member_Id__c.cdata) if hasattr(n, 'sf_cfg_Member_Id__c') else None
-
-        # code
-        d['code'] = n.sf_cfg_Code__c.cdata if hasattr(n, 'sf_cfg_Code__c') else ""
+        if hasattr(n, 'sf_cfg_Member_Id__c'):
+            if (n.sf_cfg_Member_Id__c.cdata.isdigit()):
+                # BHS ID
+                d['bhs_id'] = int(n.sf_cfg_Member_Id__c.cdata)
+            else:
+                # code
+                d['code'] = n.sf_cfg_Member_Id__c.cdata
 
         # Session ID
         if hasattr(n, 'sf_BS_Session_UUID__c'):
