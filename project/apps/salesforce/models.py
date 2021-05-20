@@ -79,8 +79,7 @@ class SfConvention:
             d['timezone'] = n.sf_Time_Zone__c.cdata
 
         # Description
-        if hasattr(n, 'sf_Description__c'):
-            d['description'] = n.sf_Description__c.cdata
+        d['description'] = n.sf_Description__c.cdata if hasattr(n, 'sf_Description__c') else ""
 
         # Divisions
         if hasattr(n, 'sf_BS_Division__c'):
@@ -173,13 +172,13 @@ class SfAward:
         d['size'] = int(float(n.sf_BS_Size__c.cdata)) if hasattr(n, 'sf_BS_Size__c') else None
 
         # Size Range
-        d['size_range'] = n.sf_Size_Range__c.cdata if hasattr(n, 'sf_Size_Range__c') else ""
+        d['size_range'] = n.sf_Size_Range__c.cdata if hasattr(n, 'sf_Size_Range__c') else None
 
         # Scope
         d['scope'] = int(float(n.sf_BS_Scope__c.cdata)) if hasattr(n, 'sf_BS_Scope__c') else None
 
         # Scope Range
-        d['scope_range'] = n.sf_Scope_Range__c.cdata if hasattr(n, 'sf_Scope_Range__c') else ""
+        d['scope_range'] = n.sf_Scope_Range__c.cdata if hasattr(n, 'sf_Scope_Range__c') else None
 
         # Tree Sort
         d['tree_sort'] = int(float(n.sf_Tree_Sort__c.cdata)) if hasattr(n, 'sf_Tree_Sort__c') else None
