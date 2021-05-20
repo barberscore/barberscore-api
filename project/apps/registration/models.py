@@ -1422,7 +1422,7 @@ class Session(TimeStampedModel):
     )
 
     YEAR_CHOICES = []
-    for r in reversed(range(1939, (datetime.datetime.now().year + 2))):
+    for r in reversed(range(1939, (datetime.datetime.now().year + 11))):
         YEAR_CHOICES.append((r, r))
 
     year = models.IntegerField(
