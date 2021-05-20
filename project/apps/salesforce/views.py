@@ -189,7 +189,7 @@ def __delete_entry(data):
     recordType = data.sf_Object_Name__c.cdata
 
     if recordType in deletion:
-        return deletion[recordType].delay(uuid)
+        deletion[recordType].delay(uuid)
 
     # group_charts
     elif recordType == "bhs_Repertory":
@@ -198,7 +198,7 @@ def __delete_entry(data):
             'chart_id': data.sf_Foreign_Key__c.cdata,
             'deleted': "true"
         }
-        return delete_repertory.delay(chart)
+        delete_repertory.delay(chart)
 
     # registration_entry_contests
     elif recordType == "bhs_Entry_Contest_Xref":
@@ -207,7 +207,7 @@ def __delete_entry(data):
             'contest_id': data.sf_Foreign_Key__c.cdata,
             'deleted': "true"
         }
-        return delete_entry_contest.delay(entry)
+        delete_entry_contest.delay(entry)
 
 
     # remove_record_from_salesforce.delay(recordType, uuid, data)
