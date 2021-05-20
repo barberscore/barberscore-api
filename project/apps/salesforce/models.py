@@ -499,13 +499,13 @@ class SfContest:
         d['size'] = int(float(n.sf_BS_Size__c.cdata)) if hasattr(n, 'sf_BS_Size__c') else None
 
         # Size Range
-        d['size_range'] = n.sf_Size_Range__c.cdata if hasattr(n, 'sf_Size_Range__c') else ""
+        d['size_range'] = n.sf_Size_Range__c.cdata if hasattr(n, 'sf_Size_Range__c') else None
 
         # Scope
         d['scope'] = int(float(n.sf_BS_Scope__c.cdata)) if hasattr(n, 'sf_BS_Scope__c') else None
 
         # Scope Range
-        d['scope_range'] = n.sf_Scope_Range__c.cdata if hasattr(n, 'sf_Scope_Range__c') else ""
+        d['scope_range'] = n.sf_Scope_Range__c.cdata if hasattr(n, 'sf_Scope_Range__c') else None
 
         # Tree Sort
         d['tree_sort'] = int(float(n.sf_Tree_Sort__c.cdata)) if hasattr(n, 'sf_Tree_Sort__c') else None
@@ -547,13 +547,13 @@ class SfAssignment:
             d['person_id'] = n.sf_BS_Contact_UUID__c.cdata
 
         # Name
-        d['name'] = n.sf_Name__c.cdata if hasattr(n, 'sf_Name__c') else ""
+        d['name'] = n.sf_Name__c.cdata if hasattr(n, 'sf_Name__c') else None
 
         # First Name
-        d['first_name'] = n.sf_FirstName__c.cdata if hasattr(n, 'sf_FirstName__c') else ""
+        d['first_name'] = n.sf_FirstName__c.cdata if hasattr(n, 'sf_FirstName__c') else None
 
         # Last Name
-        d['last_name'] = n.sf_LastName__c.cdata if hasattr(n, 'sf_LastName__c') else ""
+        d['last_name'] = n.sf_LastName__c.cdata if hasattr(n, 'sf_LastName__c') else None
         
         # District
         if hasattr(n, 'sf_BS_District__c'):
@@ -564,13 +564,13 @@ class SfAssignment:
             d['area'] = n.sf_Area__c.cdata
 
         # Email
-        d['email'] = n.sf_HomeEmail__c.cdata if hasattr(n, 'sf_HomeEmail__c') else ""
+        d['email'] = n.sf_HomeEmail__c.cdata if hasattr(n, 'sf_HomeEmail__c') else None
 
         # Cell Phone
-        d['cell_phone'] = n.sf_MobilePhone__c.cdata if hasattr(n, 'sf_MobilePhone__c') else ""
+        d['cell_phone'] = n.sf_MobilePhone__c.cdata if hasattr(n, 'sf_MobilePhone__c') else None
 
         # Airports
-        d['airports'] = n.sf_Airports__c.cdata if hasattr(n, 'sf_Airports__c') else ""
+        d['airports'] = n.sf_Airports__c.cdata if hasattr(n, 'sf_Airports__c') else None
 
         # BHS ID
         d['bhs_id'] = int(n.sf_cfg_Member_Number__c.cdata) if hasattr(n, 'sf_cfg_Member_Number__c') else None
