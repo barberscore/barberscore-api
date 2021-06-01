@@ -784,14 +784,17 @@ class Convention(TimeStampedModel):
 
     @cached_property
     def nomen(self):
+        district_display = ''
+        if self.district is not None:
+            district_display = self.get_district_display()
         if self.district == self.DISTRICT.bhs:
             return " ".join([
-                self.get_district_display(),
+                district_display,
                 str(self.year),
                 self.name,
             ])
         return " ".join([
-            self.get_district_display(),
+            district_display,
             self.get_season_display(),
             str(self.year),
             self.name,

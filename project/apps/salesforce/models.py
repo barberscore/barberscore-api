@@ -535,12 +535,12 @@ class SfAssignment:
             d['id'] = n.sf_BS_UUID__c.cdata
 
         # Kind
-        if hasattr(n, 'sf_BS_Kind__c'):
-            d['kind'] = int(float(n.sf_BS_Kind__c.cdata))
+        if hasattr(n, 'sf_BS_Type__c'):
+            d['kind'] = int(float(n.sf_BS_Type__c.cdata))
 
         # Category
         if hasattr(n, 'sf_BS_Category__c'):
-            d['kind'] = int(float(n.sf_BS_Category__c.cdata))
+            d['category'] = int(float(n.sf_BS_Category__c.cdata))
 
         # Person ID
         if hasattr(n, 'sf_BS_Contact_UUID__c'):
