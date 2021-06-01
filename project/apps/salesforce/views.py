@@ -6,7 +6,7 @@ import logging
 from django_fsm import TransitionNotAllowed
 from pprint import pprint
 
-from django.http import HttpResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
 from django.conf import settings
@@ -111,11 +111,14 @@ def data_import(request, **kwargs):
 
                 # group_charts --- No BS model exists
 
-            return HttpResponse(str(processed) + ' Notifications Imported')
+            print(str(processed) + ' Notifications Imported')
+            return render(request, 'response.xml', { 'status': 'true' }, content_type='application/xml')
         else:
-            return HttpResponse('OrganizationId not validated')
+            print('OrganizationId not validated')
+            return render(request, 'response.xml', { 'status': 'false' }, content_type='application/xml')
     else:
-        return HttpResponse('This should fail!')
+        print('This should fail!')
+        return render(request, 'response.xml', { 'status': 'false' }, content_type='application/xml')
 
 def __convention(data):
     convention = SfConvention.parse_sf_notification(data)
