@@ -27,6 +27,29 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+class ConventionManager(Manager):
+    def update_or_create_convention(self, convention):
+        if not isinstance(convention, dict):
+            raise ValueError("Must be dict")
+
+        pk = convention['id']
+
+        # remove id from dict
+        # if 'id' in convention: del convention['id']
+
+        conv, created = self.update_or_create(
+            pk=pk,
+            defaults=convention,
+        )
+
+        # Add default owners
+        owners = self.model.get_default_owners()
+        for owner in owners:
+            conv.owners.add(owner.id)
+
+        return conv, created
+
+
 class PersonManager(Manager):
     def update_or_create_person(self, person):
         if not isinstance(person, dict):

@@ -28,11 +28,17 @@ class SessionManager(Manager):
         # remove id from dict
         if 'id' in session: del session['id']
 
-        group, created = self.update_or_create(
+        sess, created = self.update_or_create(
             id=pk,
             defaults=session,
         )
-        return group, created
+
+        # Add default owners
+        owners = self.model.get_default_owners()
+        for owner in owners:
+            sess.owners.add(owner.id)
+
+        return sess, created
 
 class AssignmentManager(Manager):
     def update_or_create_assignment(self, assignment):
