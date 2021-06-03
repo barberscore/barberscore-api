@@ -457,8 +457,8 @@ class SfContest:
             d['id'] = n.sf_BS_UUID__c.cdata
 
         # Award ID
-        if hasattr(n, 'BS_Award_UUID__c'):
-            d['award_id'] = n.BS_Award_UUID__c.cdata
+        if hasattr(n, 'sf_BS_Award_UUID__c'):
+            d['award_id'] = n.sf_BS_Award_UUID__c.cdata
 
         # Name
         if hasattr(n, 'sf_Name'):
