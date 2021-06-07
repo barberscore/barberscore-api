@@ -3,6 +3,7 @@ django.setup()
 
 # Standard Library
 import logging
+import time
 
 # Third-Party
 from django_rq import job
@@ -35,10 +36,12 @@ def update_or_create_person_from_salesforce(person):
 
 @job('high')
 def update_or_create_session_from_salesforce(session):
+    time.sleep(10)
     return Session.objects.update_or_create_session(session)
 
 @job('high')
 def update_or_create_contest_from_salesforce(contest):
+    time.sleep(20)
     return Contest.objects.update_or_create_contest(contest)
 
 @job('high')
@@ -100,43 +103,3 @@ def delete_repertory(chart):
 @job('high')
 def delete_entry_contest(entry):
     return Entry.objects.update_contestentry_status(entry)
-
-# deletion = {
-#     'bhs_Convention': delete_convention,
-#     'bhs_Award': delete_award,
-#     'bhs_Chart': delete_chart,
-#     'Account': delete_group,
-#     'Contact': delete_person,
-#     'bhs_Session': delete_session,
-#     'bhs_Contest': delete_contest,
-#     'bhs_Assignment': delete_assignment,
-#     'bhs_Entry': delete_entry
-# }
-
-# @job('high')
-# def remove_record_from_salesforce(type, uuid, data):
-
-#     if type in deletion:
-#         deletion[type](uuid)
-
-#     # group_charts
-#     elif type == "bhs_Repertory":
-#         chart = {
-#             'group_id': data.sf_Object_Key__c.cdata,
-#             'chart_id': data.sf_Foreign_Key__c.cdata,
-#             'deleted': "true"
-#         }
-#         return Group.objects.update_group_chart(chart)
-
-#     # registration_entry_contests
-#     elif type == "bhs_Entry_Contest_Xref":
-#         entry = {
-#             'entry_id': data.sf_Object_Key__c.cdata,
-#             'contest_id': data.sf_Foreign_Key__c.cdata,
-#             'deleted': "true"
-#         }
-#         return Entry.objects.update_contestentry_status(entry)
-
-#     else:
-#         print("Type not configured for deletion: " + type)
-#         return

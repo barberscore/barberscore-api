@@ -274,12 +274,12 @@ class SfGroup:
         d['division'] = int(float(n.sf_BS_Division__c.cdata)) if hasattr(n, 'sf_BS_Division__c') else None
 
         # bhs_id
-        if n.sf_cfg_Member_Id__c.cdata.isalnum():
+        if hasattr(n, 'sf_cfg_Member_Id__c') and n.sf_cfg_Member_Id__c.cdata.isalnum():
             # Is a Chorus
             # code
             d['code'] = n.sf_cfg_Member_Id__c.cdata if hasattr(n, 'sf_cfg_Member_Id__c') else ""
 
-        else:
+        elif hasattr(n, 'sf_cfg_Member_Id__c'):
             # Is a Quartet
             d['bhs_id'] = int(n.sf_cfg_Member_Id__c.cdata) if hasattr(n, 'sf_cfg_Member_Id__c') else None
 
