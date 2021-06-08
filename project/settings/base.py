@@ -22,6 +22,8 @@ def get_env_variable(var_name):
         raise ImproperlyConfigured(error_msg)
     return var
 
+SERVER_EMAIL = 'admin@barberscore.com'
+ADMINS = [('Alex Rubin', 'alex@barberscore.com')]
 
 # Common
 DJANGO_SETTINGS_MODULE = get_env_variable("DJANGO_SETTINGS_MODULE")
@@ -77,8 +79,8 @@ CONVENTION_OWNERS = [
 ]
 
 SALESFORCE_ORGANIZATIONS = [
-    '00D6s0000008laeEAA',
-    '00D6s0000004coXEAQ'
+    '00D6s0000004coX',
+    # '00D6s0000004coXEAQ'
 ]
 
 DISTRICT_DEFAULT_LOGOS = {
