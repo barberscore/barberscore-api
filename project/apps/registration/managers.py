@@ -25,6 +25,12 @@ class SessionManager(Manager):
 
         pk = session['id']
 
+        # Session packaging changed by function below
+        package_session = False
+        if session['status'] == 20:
+            session['status'] = 10
+            package_session = True
+
         # remove id from dict
         if 'id' in session: del session['id']
 
@@ -37,6 +43,12 @@ class SessionManager(Manager):
         owners = self.model.get_default_owners()
         for owner in owners:
             sess.owners.add(owner.id)
+
+        # Package Session ("build rounds")
+        if package_session:
+            Session = apps.get_model('registration.session')
+            record = Session.objects.get(pk=pk)
+            record.package()
 
         return sess, created
 
@@ -70,6 +82,12 @@ class EntryManager(Manager):
             id=pk,
             defaults=entry,
         )
+
+        # Add default owners
+        owners = self.model.get_default_owners()
+        for owner in owners:
+            record.owners.add(owner.id)
+
         return record, created
 
     def update_contestentry_status(self, sf_entry):
