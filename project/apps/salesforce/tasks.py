@@ -36,12 +36,11 @@ def update_or_create_person_from_salesforce(person):
 
 @job('high')
 def update_or_create_session_from_salesforce(session):
-    time.sleep(10)
     return Session.objects.update_or_create_session(session)
 
 @job('high')
 def update_or_create_contest_from_salesforce(contest):
-    time.sleep(20)
+    time.sleep(10)
     return Contest.objects.update_or_create_contest(contest)
 
 @job('high')
