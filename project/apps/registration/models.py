@@ -891,6 +891,11 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
+    def get_default_owners():
+        User = get_user_model()
+        owners = User.objects.filter(email__in=settings.SESSION_OWNERS)
+        return owners
+
     # FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
@@ -2236,8 +2241,8 @@ class Session(TimeStampedModel):
         self.save_legacy_report()
 
         #  Create and send the reports
-        send_package_email_from_session.delay(self)
-        send_package_report_email_from_session.delay(self)
+                # send_package_email_from_session.delay(self)
+                # send_package_report_email_from_session.delay(self)
         build_rounds_from_session(self.id)
         return
 
