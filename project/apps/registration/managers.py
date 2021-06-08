@@ -27,8 +27,8 @@ class SessionManager(Manager):
 
         # Session packaging changed by function below
         package_session = False
-        if session['status'] == 20:
-            session['status'] = 10
+        if session['status'] == self.model.STATUS.packaged:
+            session['status'] = self.model.STATUS.verified
             package_session = True
 
         # remove id from dict
