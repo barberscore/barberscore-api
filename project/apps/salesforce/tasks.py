@@ -54,7 +54,7 @@ def update_or_create_entry_from_salesforce(entry):
 @job('high')
 def update_contest_entry_from_salesforce(entry):
     time.sleep(10)
-	return Entry.objects.update_contestentry_status(entry)
+    return Entry.objects.update_contestentry_status(entry)
 
 @job('high')
 def update_group_chart_from_salesforce(chart):
