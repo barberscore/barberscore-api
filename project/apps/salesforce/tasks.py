@@ -40,7 +40,7 @@ def update_or_create_session_from_salesforce(session):
 
 @job('high')
 def update_or_create_contest_from_salesforce(contest):
-    time.sleep(10)
+    time.sleep(20)
     return Contest.objects.update_or_create_contest(contest)
 
 @job('high')
@@ -53,7 +53,7 @@ def update_or_create_entry_from_salesforce(entry):
 
 @job('high')
 def update_contest_entry_from_salesforce(entry):
-    time.sleep(10)
+    time.sleep(30)
     return Entry.objects.update_contestentry_status(entry)
 
 @job('high')
