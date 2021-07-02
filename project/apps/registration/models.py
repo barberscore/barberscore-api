@@ -929,23 +929,22 @@ class Entry(TimeStampedModel):
         if self.bhs_id:
             suffix = "[{0}]".format(self.bhs_id)
         else:
-            suffix = "[No BHS ID]"
+            suffix = ""
         if self.code:
             suffix = "({0}) {1}".format(self.code, suffix)
         return "{0} {1}".format(self.name, suffix)
 
+    @cached_property
+    def get_district_display(self):
+        return "testing"
+
+    @cached_property
+    def get_district(self):
+        return "testing2"
+
     # Internals
     class Meta:
         verbose_name_plural = 'entries'
-        constraints = [
-            models.UniqueConstraint(
-                name='unique_entry',
-                fields=[
-                    'group_id',
-                    'session',
-                ]
-            )
-        ]
 
     class JSONAPIMeta:
         resource_name = "entry"

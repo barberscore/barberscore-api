@@ -66,3 +66,21 @@ class DivisionsField(ArrayField):
         if isinstance(res, list):
             value = [self.base_field.to_python(val) for val in res]
         return value
+
+
+class DistrictField(ArrayField):
+    def formfield(self, **kwargs):
+        defaults = {
+            'choices': self.base_field.choices,
+        }
+        defaults.update(kwargs)
+        # Skip our parent's formfield implementation completely as we don't
+        # care for it.
+        # pylint:disable=bad-super-call
+        return super(ArrayField, self).formfield(**defaults)
+
+    def to_python(self, value):
+        res = super().to_python(value)
+        if isinstance(res, list):
+            value = [self.base_field.to_python(val) for val in res]
+        return value

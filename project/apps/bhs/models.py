@@ -1229,7 +1229,7 @@ class Group(TimeStampedModel):
         if self.bhs_id:
             suffix = "[{0}]".format(self.bhs_id)
         else:
-            suffix = "[No BHS ID]"
+            suffix = ""
         if self.code:
             suffix = "({0}) {1}".format(self.code, suffix)
         return "{0} {1}".format(self.name, suffix)
@@ -1673,7 +1673,7 @@ class Person(TimeStampedModel):
         if self.bhs_id:
             suffix = "[{0}]".format(self.bhs_id)
         else:
-            suffix = "[No BHS ID]"
+            suffix = ""
         return "{0} {1}".format(
             self.name,
             suffix
