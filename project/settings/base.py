@@ -78,9 +78,8 @@ CONVENTION_OWNERS = [
     'randy.rensi@ieee.org'
 ]
 
-SALESFORCE_ORGANIZATIONS = [
-    '00D6s0000004coXEAQ',
-]
+# SALESFORCE_ORGANIZATIONS
+SALESFORCE_ORGANIZATION_ID = get_env_variable("SALESFORCE_ORGANIZATION_ID")
 
 DISTRICT_DEFAULT_LOGOS = {
     110: 'media/global/logos/barbershop-harmony-society.jpg', # BHS

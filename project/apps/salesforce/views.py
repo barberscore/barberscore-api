@@ -50,7 +50,7 @@ def data_import(request, **kwargs):
         obj = untangle.parse(request.body.decode('utf-8')).soapenv_Envelope.soapenv_Body.notifications
 
         # Ensure OrganizaitonID
-        if obj.OrganizationId.cdata is not None and obj.OrganizationId.cdata in settings.SALESFORCE_ORGANIZATIONS:
+        if obj.OrganizationId.cdata is not None and obj.OrganizationId.cdata == settings.SALESFORCE_ORGANIZATION_ID:
             processed = 0
 
             for elem in obj.Notification:
