@@ -1041,7 +1041,8 @@ class Group(TimeStampedModel):
             The gender of group.
         """,
         choices=GENDER,
-        default=GENDER.male,
+        null=True,
+        blank=True
     )
 
     DISTRICT = Choices(
@@ -1087,6 +1088,8 @@ class Group(TimeStampedModel):
 
     district = models.IntegerField(
         choices=DISTRICT,
+        null=True,
+        blank=True
     )
 
     DIVISION = Choices(
