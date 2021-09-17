@@ -934,14 +934,6 @@ class Entry(TimeStampedModel):
             suffix = "({0}) {1}".format(self.code, suffix)
         return "{0} {1}".format(self.name, suffix)
 
-    @cached_property
-    def get_district_display(self):
-        return "testing"
-
-    @cached_property
-    def get_district(self):
-        return "testing2"
-
     # Internals
     class Meta:
         verbose_name_plural = 'entries'
@@ -1592,8 +1584,9 @@ class Session(TimeStampedModel):
         if self.district == self.DISTRICT.bhs:
             return " ".join([
                 self.get_district_display(),
+                self.name,
                 str(self.year),
-                self.get_kind_display(),
+                self.get_kind_display()
             ])
         if len(self.divisions) > 0:
             return " ".join([
