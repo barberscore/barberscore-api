@@ -24,6 +24,7 @@ def get_env_variable(var_name):
 
 SERVER_EMAIL = 'admin@barberscore.com'
 ADMINS = [('Alex Rubin', 'alex@barberscore.com')]
+TASK_USER_ID = "auth0|6149b95c273488006af78263"
 
 # Common
 DJANGO_SETTINGS_MODULE = get_env_variable("DJANGO_SETTINGS_MODULE")

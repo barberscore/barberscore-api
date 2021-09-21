@@ -40,6 +40,7 @@ from .fields import DivisionsField
 
 from .validators import validate_punctuation
 
+from apps.salesforce.decorators import notification_user
 
 class Award(TimeStampedModel):
     """
@@ -366,12 +367,14 @@ class Award(TimeStampedModel):
         ))
 
     # Transitions
+    @notification_user
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.active)
     def activate(self, *args, **kwargs):
         """Activate the Award."""
         return
 
+    @notification_user
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, *args, **kwargs):
@@ -531,18 +534,21 @@ class Chart(TimeStampedModel):
         ])
 
     # Transitions
+    @notification_user
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.active)
     def activate(self, *args, **kwargs):
         """Activate the Chart."""
         return
 
+    @notification_user
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.inactive)
     def deactivate(self, *args, **kwargs):
         """Deactivate the Chart."""
         return
 
+    @notification_user
     @fsm_log_by
     @transition(field=status, source='*', target=STATUS.protected)
     def protect(self, *args, **kwargs):
@@ -914,6 +920,7 @@ class Convention(TimeStampedModel):
         return
 
     # Convention Transitions
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -924,6 +931,7 @@ class Convention(TimeStampedModel):
     def reset(self, *args, **kwargs):
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -969,6 +977,7 @@ class Convention(TimeStampedModel):
             session.save();
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -980,6 +989,7 @@ class Convention(TimeStampedModel):
         """Activate convention."""
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -1448,6 +1458,7 @@ class Group(TimeStampedModel):
         return
 
     # Transitions
+    @notification_user
     @fsm_log_by
     @fsm_log_description
     @transition(
@@ -1467,6 +1478,7 @@ class Group(TimeStampedModel):
         self.denormalize()
         return
 
+    @notification_user
     @fsm_log_by
     @fsm_log_description
     @transition(
@@ -1754,6 +1766,7 @@ class Person(TimeStampedModel):
         ))
 
     # Transitions
+    @notification_user
     @fsm_log_by
     @fsm_log_description
     @transition(field=status, source='*', target=STATUS.active)
@@ -1761,6 +1774,7 @@ class Person(TimeStampedModel):
         """Activate the Person."""
         return
 
+    @notification_user
     @fsm_log_by
     @fsm_log_description
     @transition(field=status, source='*', target=STATUS.inactive)

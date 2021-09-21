@@ -47,7 +47,7 @@ class SessionManager(Manager):
         # Package Session ("build rounds")
         if package_session:
             Session = apps.get_model('registration.session')
-            record = Session.objects.get(pk=pk)
+            record = Session.objects.get(id=pk)
             record.package()
 
         return sess, created
@@ -96,7 +96,10 @@ class EntryManager(Manager):
 
         Entry = apps.get_model('registration.entry')
 
-        entry = Entry.objects.get(pk=entry_id)
+        entry = Entry.objects.get(id=entry_id)
+
+        print("###ENTRY###")
+        print(entry_id)
 
         if entry:
             if sf_entry['deleted']:

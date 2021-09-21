@@ -52,6 +52,8 @@ from .tasks import send_verify_report_email_from_session
 from .tasks import send_package_email_from_session
 from .tasks import send_package_report_email_from_session
 
+from apps.salesforce.decorators import notification_user
+
 # Local
 from .managers import ContestManager, SessionManager, AssignmentManager, EntryManager
 
@@ -1173,6 +1175,7 @@ class Entry(TimeStampedModel):
         ])
 
     # Entry Transitions
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -1186,6 +1189,7 @@ class Entry(TimeStampedModel):
             self.update_from_group()
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -1200,6 +1204,7 @@ class Entry(TimeStampedModel):
         send_invite_email_from_entry.delay(self)
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -1226,6 +1231,7 @@ class Entry(TimeStampedModel):
         send_withdraw_email_from_entry.delay(self)
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -1242,6 +1248,7 @@ class Entry(TimeStampedModel):
         send_submit_email_from_entry.delay(self)
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -2088,6 +2095,7 @@ class Session(TimeStampedModel):
         # ])
 
     # Session Transitions
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -2103,6 +2111,7 @@ class Session(TimeStampedModel):
         entries.delete()
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -2153,6 +2162,7 @@ class Session(TimeStampedModel):
             )
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -2167,6 +2177,7 @@ class Session(TimeStampedModel):
             send_open_email_from_session.delay(self)
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -2203,6 +2214,7 @@ class Session(TimeStampedModel):
             send_close_email_from_session.delay(self)
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -2218,6 +2230,7 @@ class Session(TimeStampedModel):
         send_verify_report_email_from_session.delay(self)
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -2238,6 +2251,7 @@ class Session(TimeStampedModel):
         build_rounds_from_session(self.id)
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
