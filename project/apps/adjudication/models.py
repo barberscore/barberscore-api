@@ -62,6 +62,7 @@ from .managers import ScoreManager
 
 log = logging.getLogger(__name__)
 
+from apps.salesforce.decorators import notification_user
 
 class Appearance(TimeStampedModel):
     """
@@ -1229,6 +1230,7 @@ class Appearance(TimeStampedModel):
         ])
 
     # Appearance Transitions
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -1253,6 +1255,7 @@ class Appearance(TimeStampedModel):
             i += 1
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -1264,6 +1267,7 @@ class Appearance(TimeStampedModel):
         self.actual_start = now()
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -1275,6 +1279,7 @@ class Appearance(TimeStampedModel):
         self.actual_finish = now()
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -1295,6 +1300,7 @@ class Appearance(TimeStampedModel):
         self.stats = self.get_stats()
         return self.STATUS.variance if variance else self.STATUS.verified
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -1309,6 +1315,7 @@ class Appearance(TimeStampedModel):
             self.save()
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -1320,6 +1327,7 @@ class Appearance(TimeStampedModel):
         # Saves CSA via post-transition signal to avoid race condition
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -1336,6 +1344,7 @@ class Appearance(TimeStampedModel):
         songs.delete()
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -2253,6 +2262,7 @@ class Panelist(TimeStampedModel):
         return email.send()
 
     # Transitions
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -4481,6 +4491,7 @@ class Round(TimeStampedModel):
         return True
 
     # Round Transitions
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -4498,6 +4509,7 @@ class Round(TimeStampedModel):
         appearances.delete()
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -4766,6 +4778,7 @@ class Round(TimeStampedModel):
             return
 
 
+    @notification_user
     @fsm_log_by
     @transition(field=status, source=[STATUS.built], target=STATUS.started)
     def start(self, *args, **kwargs):
@@ -4776,6 +4789,7 @@ class Round(TimeStampedModel):
             appearance.save()
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -4896,6 +4910,7 @@ class Round(TimeStampedModel):
             mt.save()
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
@@ -4929,6 +4944,7 @@ class Round(TimeStampedModel):
         # Saves reports through transition signal to avoid race condition
         return
 
+    @notification_user
     @fsm_log_by
     @transition(
         field=status,
