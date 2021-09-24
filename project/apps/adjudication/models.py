@@ -1,4 +1,3 @@
-from builtins import round as rnd
 # Standard Library
 import datetime
 import logging
@@ -59,6 +58,8 @@ from .managers import AppearanceManager
 from .managers import PanelistManager
 from .managers import SongManager
 from .managers import ScoreManager
+
+from .helpers import round_up as rnd
 
 log = logging.getLogger(__name__)
 
