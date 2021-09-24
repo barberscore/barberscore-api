@@ -100,9 +100,6 @@ class EntryManager(Manager):
 
         entry = Entry.objects.get(id=entry_id)
 
-        print("###ENTRY###")
-        print(entry_id)
-
         if entry:
             if sf_entry['deleted']:
                 entry.contests.remove(contest_id)
