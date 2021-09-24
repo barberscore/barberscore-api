@@ -25,9 +25,12 @@ class SessionManager(Manager):
 
         pk = session['id']
 
+        Session = apps.get_model('registration.session')
+        legacy = Session.objects.filter(id=pk).first()
+
         # Session packaging changed by function below
         package_session = False
-        if session['status'] == self.model.STATUS.packaged:
+        if session['status'] == self.model.STATUS.packaged and legacy is not None and legacy.status is not self.model.STATUS.packaged:
             session['status'] = self.model.STATUS.verified
             package_session = True
 
@@ -46,9 +49,8 @@ class SessionManager(Manager):
 
         # Package Session ("build rounds")
         if package_session:
-            Session = apps.get_model('registration.session')
-            record = Session.objects.get(id=pk)
-            record.package()
+            sess.package()
+            sess.save()
 
         return sess, created
 
