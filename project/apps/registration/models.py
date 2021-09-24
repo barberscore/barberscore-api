@@ -2,6 +2,7 @@
 # Standard Library
 import uuid
 import datetime
+import ast
 
 # Third-Party
 from django_fsm import FSMIntegerField
@@ -1577,12 +1578,14 @@ class Session(TimeStampedModel):
 
     def divisions_display(self):
         result = ''
-        divisions = dict(self.division_names)
-        for index, value in enumerate(self.divisions):
-            result += "{0}".format(divisions[value])
-            if not index == len(self.divisions) - 1:
-                result += '/'
-        result += (" Divisions" if len(self.divisions) > 1 else " Division")
+        sessionDivisions = ast.literal_eval(self.divisions)
+        if len(sessionDivisions):
+            divisions = dict(self.division_names)
+            for index, value in enumerate(self.divisions):
+                result += str(divisions[value])
+                if not index == len(sessionDivisions) - 1:
+                    result += '/'
+            result += (" Divisions" if len(sessionDivisions) > 1 else " Division")
         return result
 
     # Session Properties
@@ -2109,7 +2112,7 @@ class Session(TimeStampedModel):
         entries = self.entries.all()
         contests.delete()
         entries.delete()
-        return
+        pass
 
     @notification_user
     @fsm_log_by
@@ -2160,7 +2163,7 @@ class Session(TimeStampedModel):
                 scope_range=award.scope_range,
                 tree_sort=award.tree_sort,
             )
-        return
+        pass
 
     @notification_user
     @fsm_log_by
@@ -2175,7 +2178,7 @@ class Session(TimeStampedModel):
         # Send notification for all public contests
         if not self.is_invitational:
             send_open_email_from_session.delay(self)
-        return
+        pass
 
     @notification_user
     @fsm_log_by
@@ -2212,7 +2215,7 @@ class Session(TimeStampedModel):
         # Send notification for all public contests only
         if not self.is_invitational:
             send_close_email_from_session.delay(self)
-        return
+        pass
 
     @notification_user
     @fsm_log_by
@@ -2228,7 +2231,7 @@ class Session(TimeStampedModel):
         """Make draw public."""
         send_verify_email_from_session.delay(self)
         send_verify_report_email_from_session.delay(self)
-        return
+        pass
 
     @notification_user
     @fsm_log_by
@@ -2249,7 +2252,7 @@ class Session(TimeStampedModel):
                 # send_package_email_from_session.delay(self)
                 # send_package_report_email_from_session.delay(self)
         build_rounds_from_session(self.id)
-        return
+        pass
 
     @notification_user
     @fsm_log_by
@@ -2260,4 +2263,4 @@ class Session(TimeStampedModel):
         conditions=[can_finish],
     )
     def finish(self, *args, **kwargs):
-        return
+        pass
