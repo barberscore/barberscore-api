@@ -1239,12 +1239,15 @@ class Group(TimeStampedModel):
     # Properties
     @cached_property
     def nomen(self):
-        if self.bhs_id:
-            suffix = "[{0}]".format(self.bhs_id)
+        if self.kind is self.KIND.quartet:
+            if self.bhs_id:
+                suffix = "[{0}]".format(self.bhs_id)
+            else:
+                suffix = ""
+            if self.code:
+                suffix = "({0}) {1}".format(self.code, suffix)
         else:
-            suffix = ""
-        if self.code:
-            suffix = "({0}) {1}".format(self.code, suffix)
+            suffix = "({0})".format(self.code)
         return "{0} {1}".format(self.name, suffix)
 
     @cached_property
