@@ -1585,15 +1585,14 @@ class Session(TimeStampedModel):
         return divisions
 
     def divisions_display(self):
-        result = ''
-        sessionDivisions = ast.literal_eval(self.divisions)
-        if len(sessionDivisions):
-            divisions = dict(self.division_names)
+        result = ""
+        divisions = dict(self.division_names)
+        if hasattr(self.divisions, '__len__') and (not isinstance(self.divisions, str)):
             for index, value in enumerate(self.divisions):
                 result += str(divisions[value])
-                if not index == len(sessionDivisions) - 1:
-                    result += '/'
-            result += (" Divisions" if len(sessionDivisions) > 1 else " Division")
+                if not index == len(self.divisions) - 1:
+                    result += "/"
+            result += (" Divisions" if len(self.divisions) > 1 else " Division")
         return result
 
     # Session Properties
