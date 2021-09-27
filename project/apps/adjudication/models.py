@@ -676,6 +676,8 @@ class Appearance(TimeStampedModel):
         ).filter(
             group_id=self.group_id,
             round__session_id=self.round.session_id,
+        ).order_by(
+            '-round__num',
         ).annotate(
             tot_points=Sum(
                 'songs__scores__points',
@@ -1005,6 +1007,8 @@ class Appearance(TimeStampedModel):
         ).filter(
             group_id=self.group_id,
             round__session_id=self.round.session_id,
+        ).order_by(
+            '-round__num',
         ).annotate(
             tot_points=Sum(
                 'songs__scores__points',
