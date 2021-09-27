@@ -568,6 +568,7 @@ class Convention(TimeStampedModel):
         (0, 'new', 'New',),
         (5, 'built', 'Built',),
         (10, 'active', 'Active',),
+        (50, 'cancelled', 'Cancelled',),
     )
 
     status = FSMIntegerField(
