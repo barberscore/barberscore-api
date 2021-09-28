@@ -940,11 +940,7 @@ class Entry(TimeStampedModel):
 
     @cached_property
     def get_district_display(self):
-        return "testing"
-
-    @cached_property
-    def get_district(self):
-        return "testing2"
+        return self.DISTRICT[self.district]
 
     # Internals
     class Meta:
