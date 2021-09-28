@@ -4041,7 +4041,6 @@ class Round(TimeStampedModel):
         content = self.get_legacy_oss()
         self.legacy_oss.save('legacy_oss', content)
 
-
     def get_participants_emails(self):
         User = apps.get_model('rest_framework_jwt.user')
         owners = User.objects.filter(
@@ -4257,7 +4256,6 @@ class Round(TimeStampedModel):
         content = ContentFile(buff.getvalue())
         return content
 
-
     def get_judge_emails(self):
         Panelist = apps.get_model('adjudication.panelist')
         judges = self.panelists.filter(
@@ -4300,7 +4298,6 @@ class Round(TimeStampedModel):
             appearance.mock()
             appearance.save()
         return
-
 
     def get_publish_email(self):
         Appearance = apps.get_model('adjudication.appearance')
@@ -4393,13 +4390,11 @@ class Round(TimeStampedModel):
         )
         return email
 
-
     def send_publish_email(self):
         email = self.get_publish_email()
         if self.status != self.STATUS.published:
             raise RuntimeError("Round not published")
         return email.send()
-
 
     def get_publish_report_email(self):
         template = 'emails/round_publish_report.txt'
@@ -4431,7 +4426,6 @@ class Round(TimeStampedModel):
             attachments=attachments,
         )
         return email
-
 
     def send_publish_report_email(self):
         email = self.get_publish_report_email()
@@ -4693,10 +4687,15 @@ class Round(TimeStampedModel):
                 for c in charts_raw:
                     c['pk'] = str(c.pop('id'))
                 charts = [json.dumps(x) for x in charts_raw]
+
                 if entry.kind == entry.KIND.quartet:
-                    area = entry.get_district_display()
+                    # area = entry.get_district_display()
+                    # entry object here is from the registration_entry table.
+                    # need to determine the correct value for quartets...
+                    area = entry.area
                 else:
                     area = entry.chapters
+
                 appearance = self.appearances.create(
                     num=entry.draw,
                     is_private=entry.is_private,

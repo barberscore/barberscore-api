@@ -938,6 +938,10 @@ class Entry(TimeStampedModel):
             suffix = "({0}) {1}".format(self.code, suffix)
         return "{0} {1}".format(self.name, suffix)
 
+    @cached_property
+    def get_district_display(self):
+        return self.DISTRICT[self.district]
+
     # Internals
     class Meta:
         verbose_name_plural = 'entries'
