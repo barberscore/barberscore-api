@@ -31,14 +31,19 @@ from .models import Award
 from .models import Group
 from .models import Person
 from .models import Chart
+
 from .renderers import PDFRenderer
 from .renderers import XLSXRenderer
 from .responders import PDFResponse
 from .responders import XLSXResponse
+from .renderers import DOCXRenderer
+from .responders import DOCXResponse
+
 from .serializers import GroupSerializer
 from .serializers import PersonSerializer
 from .serializers import ChartSerializer
 from .serializers import AwardSerializer
+
 from .filtersets import ConventionFilterset
 from .models import Convention
 from .serializers import ConventionSerializer
@@ -115,6 +120,65 @@ class ConventionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            DOCXRenderer,
+        ],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
+    def bbstix(self, request, pk=None):
+        convention = Convention.objects.select_related(
+        ).get(pk=pk)
+
+        if convention.bbstix_report:
+            docx = convention.bbstix_report.file
+        else:
+            docx = convention.get_bbstix_report()
+
+        ### Adjust File name
+        file_name = '{0}{1}_BBStix'.format(
+            convention.get_district_display(),
+            convention.start_date.strftime("%Y%m%d")
+        )
+
+        return DOCXResponse(
+            docx,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+    @action(
+        methods=['get'],
+        detail=True,
+        renderer_classes=[
+            DOCXRenderer,
+        ],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
+    def bbstix_practice(self, request, pk=None):
+        convention = Convention.objects.select_related(
+        ).get(pk=pk)
+
+        if convention.bbstix_practice_report:
+            docx = convention.bbstix_practice_report.file
+        else:
+            docx = convention.get_bbstix_report(include_practice=True)
+
+        ### Adjust File name
+        file_name = '{0}{1}_BBStix2'.format(
+            convention.get_district_display(),
+            convention.start_date.strftime("%Y%m%d"),
+        )
+
+        return DOCXResponse(
+            docx,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
 
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.all()

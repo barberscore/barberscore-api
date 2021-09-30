@@ -479,7 +479,12 @@ class Appearance(TimeStampedModel):
         #             )
         #         )
         #     ).latest('round__date').avg or randint(60, 70)
-        prelim = self.base or randint(60, 80)
+
+        # ensures score doesn't exceed 100
+        if self.base and self.base <= 100:
+            prelim = self.base or randint(60, 80)
+        else:
+            prelim = randint(60, 80)
         songs = self.songs.all()
         for song in songs:
             charts = group.charts.order_by('id')
@@ -1859,6 +1864,13 @@ class Panelist(TimeStampedModel):
     kind = models.IntegerField(
         choices=KIND,
     )
+
+    CATEGORY_SHORT_NAMES = {
+        10: "CA",
+        30: "MUS",
+        40: "PER",
+        50: "SNG",
+    }
 
     CATEGORY = Choices(
         (5, 'drcj', 'DRCJ'),
