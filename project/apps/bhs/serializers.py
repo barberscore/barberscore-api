@@ -104,6 +104,10 @@ class ConventionSerializer(serializers.ModelSerializer):
             'divisions',
             'kinds',
 
+            'has_practice_panelists',
+            'rounds_finalized',
+            'bbstix_base_filename',
+
             'image_id',
             'persons',
             'owners',
@@ -117,7 +121,6 @@ class ConventionSerializer(serializers.ModelSerializer):
     class JSONAPIMeta:
         included_resources = [
         ]
-
 
     def validate(self, data):
         return data

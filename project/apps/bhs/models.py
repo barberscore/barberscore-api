@@ -1,10 +1,13 @@
 import uuid
 import datetime
+import operator
+from io import BytesIO
 
 # Third-Party
 from model_utils import Choices
 from django_fsm import FSMIntegerField
 from model_utils.models import TimeStampedModel
+from cloudinary_storage.storage import RawMediaCloudinaryStorage
 from phonenumber_field.modelfields import PhoneNumberField
 from django_fsm import transition
 from django_fsm_log.decorators import fsm_log_by
@@ -13,6 +16,7 @@ from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from timezone_field import TimeZoneField
+from docx import Document
 
 # Django
 from django.apps import apps
@@ -25,6 +29,9 @@ from django.conf import settings
 from django.contrib.postgres.fields import DecimalRangeField
 from django.contrib.postgres.fields import IntegerRangeField
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
+from django.db.models import Case, When, Q
+from django.template.defaultfilters import pluralize
 
 # First-Party
 from .managers import ConventionManager
@@ -582,6 +589,27 @@ class Convention(TimeStampedModel):
         default='Convention',
     )
 
+    DISTRICT_FULL_NAMES = {
+        110: "Barbershop Harmony Society",
+        200: "Cardinal",
+        205: "Central States",
+        210: "Dixie",
+        215: "Evergreen",
+        220: "Far Western",
+        225: "Illinois",
+        230: "Johnny Appleseed",
+        235: "Land 'O Lakes",
+        240: "Mid-Atlantic",
+        345: "Northeastern",
+        350: "Carolinas",
+        355: "Ontario",
+        360: "Pioneer",
+        365: "Rocky Mountain",
+        370: "Seneca Land",
+        375: "Sunshine",
+        380: "Southwestern",        
+    }
+
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
@@ -766,6 +794,23 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    bbstix_report = models.FileField(
+        upload_to=UploadPath('bbstix_report'),
+        blank=True,
+        default='',
+        storage=RawMediaCloudinaryStorage(),
+        verbose_name="BBSTIX Report",
+    )
+
+    bbstix_practice_report = models.FileField(
+        upload_to=UploadPath('bbstix_practice_report'),
+        help_text="""This BBSTIX report include practice judge data.""",
+        blank=True,
+        default='',
+        storage=RawMediaCloudinaryStorage(),
+        verbose_name="BBSTIX Report (with Practice Judges)",
+    )
+
     # FKs
     persons = models.ManyToManyField(
         'Person',
@@ -855,6 +900,383 @@ class Convention(TimeStampedModel):
             'first_name',
         )
         return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+
+    def get_bbstix_report(self, include_practice=False):
+
+        # if include_practice:
+        #     print("include_practice is true")
+        # else:
+        #     print("include_practice is false")
+
+        Round = apps.get_model('adjudication.round')
+        Session = apps.get_model('registration.session')
+        Appearance = apps.get_model('adjudication.appearance')
+        Entry = apps.get_model('registration.entry')
+        Contest = apps.get_model('registration.contest')
+        Panelist = apps.get_model('adjudication.panelist')
+
+        ## Build doc here!
+        rows = []
+
+        # Header
+        rows.append(
+            "BBSTIX, BHS, {0}".format(
+                self.name,
+            )
+        )
+
+        # Location
+        rows.append(
+            "{0} District, {1}, {2}".format(
+                self.DISTRICT_FULL_NAMES[self.district],
+                self.location,
+                self.end_date.strftime("%B %d, %Y"),
+            )
+        )
+
+        # Alphabetical sort order for Sessions by kind nomen
+        subsession_order = []
+        i = 1
+        for kind_id, kind_name in sorted(Session.KIND, key=operator.itemgetter(1)):
+            subsession_order.append(
+                When(kind=kind_id, then=i)
+            )
+            i += 1
+
+        sessions = Session.objects.filter(
+            convention_id=self.id,
+        ).annotate(
+            subsession_order=Case(*subsession_order, output_field=models.IntegerField())
+        ).order_by(
+            'subsession_order'
+        )
+
+        # Alphabetical sort order for Rounds by kind nomen
+        round_order = []
+        i = 1
+        for kind_id, kind_name in sorted(Round.KIND, key=operator.itemgetter(1)):
+            round_order.append(
+                When(kind=kind_id, then=i)
+            )
+            i += 1
+
+        panel_records = []
+        song_records = []
+        penalty_records = []
+        panel_count = 0
+
+        # Subsession
+        for id, session in enumerate(sessions):
+
+            rounds = Round.objects.filter(
+                session_id=session.id
+            ).annotate(
+                round_order=Case(*round_order, output_field=models.IntegerField())
+            ).order_by(
+                'round_order'
+            )
+
+            contests = Contest.objects.filter(
+                session_id=session.id
+            ).order_by(
+                'name'
+            )
+
+            subsession_ids = {}
+            session_contests = []
+
+            i = 1
+            for contest in contests:
+                subsession_ids[str(contest.id)] = i
+                session_contests.append(
+                    '{0}={1} ({2})'.format(
+                        i,
+                        contest.name,
+                        '{0} Round{1}'.format(
+                            rounds.count(), 
+                            pluralize(rounds.count()),
+                        )
+                    )
+                )
+                i += 1
+
+            for r in rounds:
+                appearances = Appearance.objects.filter(
+                    round_id=r.id,
+                    num__gt=0
+                ).prefetch_related(
+                    'songs__scores',
+                    'songs__scores__panelist',
+                ).order_by(
+                    'num',
+                )
+
+                # Sessions & Rounds
+
+                subsession = 'Subsession: {0} {1} ({2})'.format(
+                    Session.KIND[session.kind],
+                    Round.KIND[r.kind],
+                    appearances.count(),
+                )
+
+                rows.append(
+                    '{0}, {1}'.format(
+                        subsession,
+                        ', '.join(session_contests),
+                    )
+                )
+
+                # Panel
+                panelists = Panelist.objects.filter(
+                    round_id=r.id,
+                    kind=Panelist.KIND.official,
+                    category__gt=Panelist.CATEGORY.ca,
+                ).order_by(
+                    'num',
+                )
+
+                round_panel = []
+                for panelist in panelists:
+                    round_panel.append(
+                        '"{0} ({1})={2}, {3}"'.format(
+                            panelist.num,
+                            Panelist.CATEGORY_SHORT_NAMES[panelist.category],
+                            panelist.last_name,
+                            panelist.first_name,
+                        )
+                    )
+
+                # Practice Judges
+                if include_practice:
+                    panelists = Panelist.objects.filter(
+                        round_id=r.id,
+                        kind=Panelist.KIND.practice,
+                        category__gt=Panelist.CATEGORY.ca,
+                    ).order_by(
+                        'num',
+                    )
+
+                    for panelist in panelists:
+                        round_panel.append(
+                            '"{0} ({1})={2}, {3}"'.format(
+                                panelist.num,
+                                Panelist.CATEGORY_SHORT_NAMES[panelist.category],
+                                panelist.last_name,
+                                panelist.first_name,
+                            )
+                        )
+
+                # Set judge panel count based on the first session...might need to alter for variable size panels.
+                if id == 0:
+                    panel_count = len(round_panel)
+
+                panel_records.append(
+                    'Panel - {0} {1}:, {2}'.format(
+                        Session.KIND[session.kind],
+                        Round.KIND[r.kind],
+                        ', '.join(round_panel),
+                    )
+                )
+
+                # Songs
+                for appearance in appearances:
+
+                    # Competing in which contests?
+                    entry = Entry.objects.filter(
+                        group_id=appearance.group_id,
+                        session_id=session.id
+                    ).first()
+
+                    contest_entered = []
+                    for entry_contest in entry.contests.all():
+                        contest_entered.append(
+                            str(subsession_ids[str(entry_contest.id)])
+                        )
+                    contest_entered.sort()
+
+                    songs = appearance.songs.prefetch_related(
+                        'scores',
+                        'scores__panelist',
+                    ).order_by(
+                        'num',
+                    )
+
+                    song_num = 1
+                    for song in songs:
+
+                        # Include practice judge scores?
+                        if include_practice:
+                            scores = song.scores.order_by('panelist__num')
+                        else:
+                            scores = song.scores.filter(
+                                panelist__kind=Panelist.KIND.official,
+                            ).order_by('panelist__num')
+
+                        # collect scores for this song
+                        song_scores = []
+                        for score in scores:
+                            song_scores.append(
+                                str(score.points)
+                            )
+
+                        # Song Record
+                        song_records.append(
+                            'Session: {0} {1}, "Contestant Name: {2}", "Subsessions: {3}", OA: {4}, Song Nbr: {5}, "Song Title: {6}", {7}'.format(
+                                Session.KIND[session.kind],
+                                Round.KIND[r.kind],
+                                appearance.name,
+                                ','.join(contest_entered),
+                                appearance.num,
+                                song_num,
+                                song.title,
+                                ", ".join(song_scores),
+                            )
+                        )
+
+                        # Penalty Record
+                        penalty_article_map = {
+                            30: "V.A.2",
+                            32: "IX.A.2.a",
+                            34: "IX.A.2.b",
+                            36: "IX.A.2.c",
+                            38: "IX.A.2.d",
+                            39: "IX.A.2.e",
+                            40: "IX.A.3",
+                            50: "X.B.1-3",
+                        }
+
+                        penalty_desc_map = {
+                            30: "Repeating Substantial Portions of a Song",
+                            32: "Instrumental Accompaniment",
+                            34: "Chorus Exceeding 4-Part Texture",
+                            36: "Excessive Melody Not in Inner Part",
+                            38: "Lack of Characteristic Chord Progression",
+                            39: "Excessive Lyrics < 4 parts",
+                            40: "Primarily Patriotic/Religious Intent",
+                            50: "Sound Equipment or Electronic Enhancement",
+                        }
+
+                        if len(song.penalties):
+                            for penalty_id in sorted(song.penalties):
+                                penalty_records.append(
+                                    '"Penalty", "Session: {0} {1}", "Contestant: {2}", OA: {3}, Song Nbr: {4}, "Rule: Article {5}", "Description: {6}"'.format(
+                                        Session.KIND[session.kind],
+                                        Round.KIND[r.kind],
+                                        appearance.name,
+                                        appearance.num,
+                                        song_num,
+                                        penalty_article_map[penalty_id],
+                                        penalty_desc_map[penalty_id],
+                                    )
+                                )
+
+                        song_num += 1
+
+        # Judge Count Record
+        rows.append(
+            "Judge Count: {0}".format(
+                panel_count,
+            )
+        )
+
+        # Panel Record
+        for panel in panel_records:
+            rows.append(
+                panel
+            )
+
+        # Song Record
+            # Session: Chorus Finals, "Contestant Name: Maple Leaf Chord Company", "Subsessions: 6", OA: 1, Song Nbr: 1, "Song Title: A Little Street Where Old Friends Meet", 65, 65, 67, 70, 64, 67
+        for song in song_records:
+            rows.append(
+                song
+            )
+
+        # Penalty Record
+            # "Penalty", "Session: Quartet Finals", "Contestant: Ripple Effect", OA: 4, "Judge: M01", Song Nbr: 2, "Rule: Article IX.A.2.e", "Description: Excessive Passages without Lyrics in 4 parts", 3
+        for penalty in penalty_records:
+            rows.append(
+                penalty
+            )
+
+        # Create new document
+        document = Document()
+        paragraph = document.add_paragraph('')
+
+        for row in rows:
+            run = paragraph.add_run(row)
+            run.add_break()
+
+        buff = BytesIO()
+        document.save(buff)
+        content = ContentFile(buff.getvalue())
+        return content
+
+    def save_bbstix_report(self):
+        bbstix = self.get_bbstix_report()
+        return self.bbstix_report.save('bbstix_report', bbstix)
+
+    def save_bbstix_practice_report(self):
+        bbstix = self.get_bbstix_report(include_practice=True)
+        return self.bbstix_practice_report.save('bbstix_report', bbstix)
+
+    def has_practice_panelists(self, has_practice_panelist=False):
+        Session = apps.get_model('registration.session')
+        Round = apps.get_model('adjudication.round')
+        Panelist = apps.get_model('adjudication.panelist')
+
+        # Gather Convention Sessions
+        sessions = Session.objects.filter(
+            convention_id=self.id,
+        )
+
+        # Loop Sessions to access Rounds
+        for id, session in enumerate(sessions):
+            rounds = Round.objects.filter(
+                session_id=session.id
+            )
+
+            # Loop Rounds to see if any have practice judges
+            for r in rounds:
+                # Panel
+                practice_panelists = Panelist.objects.filter(
+                    round_id=r.id,
+                    kind=Panelist.KIND.practice,
+                    category__gt=Panelist.CATEGORY.ca,
+                ).count()
+
+                if practice_panelists:
+                    has_practice_panelist = True
+
+        return has_practice_panelist
+
+    def rounds_finalized(self, finalized=True):
+        Session = apps.get_model('registration.session')
+        Round = apps.get_model('adjudication.round')
+
+        # Gather Convention Sessions
+        sessions = Session.objects.filter(
+            convention_id=self.id,
+        )
+
+        # Loop Sessions to access Rounds
+        for id, session in enumerate(sessions):
+            rounds = Round.objects.filter(
+                session_id=session.id
+            )
+
+            # Loop Rounds to check status
+            for r in rounds:
+                if r.status < Round.STATUS.finalized:
+                    finalized = False
+
+        return finalized
+
+    def bbstix_base_filename(self):
+        return '{0}{1}'.format(
+            self.get_district_display(),
+            self.start_date.strftime("%Y%m%d")
+        )
 
     # Methods
     # Convention Permissions
