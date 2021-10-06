@@ -4263,11 +4263,12 @@ class Round(TimeStampedModel):
                     "{0}: {1}".format(appearance.draw, group.name),
                     # style='List Bullet',
                 )
-            gp = Group.objects.get(id=mt.group_id)
-            document.add_paragraph(
-                "MT: {0}".format(gp.name),
-                # style='List Bullet',
-            )
+            if mt is not None:
+                gp = Group.objects.get(id=mt.group_id)
+                document.add_paragraph(
+                    "MT: {0}".format(gp.name),
+                    # style='List Bullet',
+                )            
         if winners:
             document.add_heading('Results')
             for winner in winners:
