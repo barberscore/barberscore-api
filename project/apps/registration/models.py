@@ -69,9 +69,9 @@ class Assignment(TimeStampedModel):
     )
 
     KIND = Choices(
+        (-10, 'former', 'Former'),
         (10, 'official', 'Official'),
         (20, 'practice', 'Practice'),
-        (30, 'former', 'Former'),
     )
 
     kind = models.IntegerField(
