@@ -106,7 +106,7 @@ class ConventionSerializer(serializers.ModelSerializer):
 
             'has_practice_panelists',
             'rounds_finalized',
-            'bbstix_base_filename',
+            'base_filename',
 
             'image_id',
             'persons',
