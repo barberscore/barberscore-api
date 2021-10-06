@@ -1142,7 +1142,9 @@ class Convention(TimeStampedModel):
                             38: "IX.A.2.d",
                             39: "IX.A.2.e",
                             40: "IX.A.3",
-                            50: "X.B.1-3",
+                            44: "IX.A.3.b",
+                            48: "XI.A.1",
+                            50: "X.B",
                         }
 
                         penalty_desc_map = {
@@ -1153,6 +1155,8 @@ class Convention(TimeStampedModel):
                             38: "Lack of Characteristic Chord Progression",
                             39: "Excessive Lyrics < 4 parts",
                             40: "Primarily Patriotic/Religious Intent",
+                            44: "Not in Good Taste",
+                            48: "Non-members Performing on Stage",
                             50: "Sound Equipment or Electronic Enhancement",
                         }
 
