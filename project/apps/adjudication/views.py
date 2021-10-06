@@ -39,9 +39,9 @@ from .models import Song
 
 from .renderers import PDFRenderer
 from .renderers import XLSXRenderer
+from .renderers import DOCXRenderer
 from .responders import PDFResponse
 from .responders import XLSXResponse
-from .renderers import DOCXRenderer
 from .responders import DOCXResponse
 
 from .serializers import AppearanceSerializer
@@ -575,6 +575,8 @@ class RoundViewSet(viewsets.ModelViewSet):
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
         'song',
+        'song__appearance',
+        'song__appearance__round',
         'panelist',
     ).prefetch_related(
     ).order_by('id')
@@ -588,6 +590,16 @@ class ScoreViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "score"
+
+    def partial_update(self, request, pk=None):
+        object = self.get_object()
+
+        # Reset appearance status???
+        appearance = Appearance.objects.filter(
+                id=object.song.appearance.id
+            ).update(status=Appearance.STATUS.finished)
+
+        return super().partial_update(request, *pk)
 
 
 class SongViewSet(viewsets.ModelViewSet):
