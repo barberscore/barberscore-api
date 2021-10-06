@@ -572,10 +572,10 @@ class Convention(TimeStampedModel):
 
     STATUS = Choices(
         (-10, 'inactive', 'Inactive',),
+        (-5, 'cancelled', 'Cancelled',),
         (0, 'new', 'New',),
         (5, 'built', 'Built',),
         (10, 'active', 'Active',),
-        (50, 'cancelled', 'Cancelled',),
     )
 
     status = FSMIntegerField(
@@ -1272,7 +1272,7 @@ class Convention(TimeStampedModel):
 
         return finalized
 
-    def bbstix_base_filename(self):
+    def base_filename(self):
         return '{0}{1}'.format(
             self.get_district_display(),
             self.start_date.strftime("%Y%m%d")
