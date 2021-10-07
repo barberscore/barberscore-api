@@ -1203,17 +1203,10 @@ class Convention(TimeStampedModel):
                 penalty
             )
 
-        # Create new document
-        document = Document()
-        paragraph = document.add_paragraph('')
+        # Combine the rows
+        buff = '\n'.join(rows)
 
-        for row in rows:
-            run = paragraph.add_run(row)
-            run.add_break()
-
-        buff = BytesIO()
-        document.save(buff)
-        content = ContentFile(buff.getvalue())
+        content = ContentFile(buff)
         return content
 
     def save_bbstix_report(self):

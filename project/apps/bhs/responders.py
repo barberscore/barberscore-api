@@ -48,3 +48,18 @@ class DOCXResponse(Response):
             *args,
             **kwargs
         )
+
+class TXTResponse(Response):
+    def __init__(self, text, file_name, *args, **kwargs):
+        headers = {
+            'Content-Disposition': 'filename="{}.txt"'.format(file_name),
+            # 'Content-Length': len(xlsx),
+        }
+
+        super().__init__(
+            text,
+            content_type='text/plain',
+            headers=headers,
+            *args,
+            **kwargs
+        )
