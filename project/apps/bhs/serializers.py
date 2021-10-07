@@ -104,7 +104,6 @@ class ConventionSerializer(serializers.ModelSerializer):
             'divisions',
             'kinds',
 
-            'has_practice_panelists',
             'rounds_finalized',
             'base_filename',
 

@@ -52,6 +52,14 @@ class DOCXRenderer(BaseRenderer):
     def render(self, data, media_type=None, renderer_context=None):
         return data
 
+class TXTRenderer(BaseRenderer):
+    media_type = 'text/plain'
+    format = 'txt'
+    charset = None
+    render_style = 'binary'
+
+    def render(self, data, media_type=None, renderer_context=None):
+        return data
 
 class NoGroupMembersJSONRenderer(JSONRenderer):
     # pass

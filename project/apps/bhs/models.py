@@ -1013,7 +1013,7 @@ class Convention(TimeStampedModel):
 
                 # Sessions & Rounds
 
-                subsession = 'Subsession: {0} {1} ({2})'.format(
+                subsession = 'Subsessions: {0} {1} ({2})'.format(
                     Session.KIND[session.kind],
                     Round.KIND[r.kind],
                     appearances.count(),
@@ -1203,17 +1203,10 @@ class Convention(TimeStampedModel):
                 penalty
             )
 
-        # Create new document
-        document = Document()
-        paragraph = document.add_paragraph('')
+        # Combine the rows
+        buff = '\n'.join(rows)
 
-        for row in rows:
-            run = paragraph.add_run(row)
-            run.add_break()
-
-        buff = BytesIO()
-        document.save(buff)
-        content = ContentFile(buff.getvalue())
+        content = ContentFile(buff)
         return content
 
     def save_bbstix_report(self):
@@ -1223,36 +1216,6 @@ class Convention(TimeStampedModel):
     def save_bbstix_practice_report(self):
         bbstix = self.get_bbstix_report(include_practice=True)
         return self.bbstix_practice_report.save('bbstix_report', bbstix)
-
-    def has_practice_panelists(self, has_practice_panelist=False):
-        Session = apps.get_model('registration.session')
-        Round = apps.get_model('adjudication.round')
-        Panelist = apps.get_model('adjudication.panelist')
-
-        # Gather Convention Sessions
-        sessions = Session.objects.filter(
-            convention_id=self.id,
-        )
-
-        # Loop Sessions to access Rounds
-        for id, session in enumerate(sessions):
-            rounds = Round.objects.filter(
-                session_id=session.id
-            )
-
-            # Loop Rounds to see if any have practice judges
-            for r in rounds:
-                # Panel
-                practice_panelists = Panelist.objects.filter(
-                    round_id=r.id,
-                    kind=Panelist.KIND.practice,
-                    category__gt=Panelist.CATEGORY.ca,
-                ).count()
-
-                if practice_panelists:
-                    has_practice_panelist = True
-
-        return has_practice_panelist
 
     def rounds_finalized(self, finalized=True):
         Session = apps.get_model('registration.session')

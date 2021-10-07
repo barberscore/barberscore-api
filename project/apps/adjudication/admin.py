@@ -239,6 +239,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # '-session__convention__year',
         # 'session__convention__name',
         # '-session__kind',
+        '-date',
         'kind',
     )
 
