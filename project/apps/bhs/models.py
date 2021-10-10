@@ -30,7 +30,7 @@ from django.contrib.postgres.fields import DecimalRangeField
 from django.contrib.postgres.fields import IntegerRangeField
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
-from django.db.models import Case, When, Q
+from django.db.models import Case, When, Q, Count
 from django.template.defaultfilters import pluralize
 
 # First-Party

@@ -26,6 +26,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Min, Max, Count, Avg
 from django.core.exceptions import ValidationError
+from collections.abc import Iterable
 
 # Django
 from django.apps import apps
@@ -2384,6 +2385,27 @@ class Round(TimeStampedModel):
         default='',
     )
 
+    DISTRICT_FULL_NAMES = {
+        110: "Barbershop Harmony Society",
+        200: "Cardinal",
+        205: "Central States",
+        210: "Dixie",
+        215: "Evergreen",
+        220: "Far Western",
+        225: "Illinois",
+        230: "Johnny Appleseed",
+        235: "Land 'O Lakes",
+        240: "Mid-Atlantic",
+        345: "Northeastern",
+        350: "Carolinas",
+        355: "Ontario",
+        360: "Pioneer",
+        365: "Rocky Mountain",
+        370: "Seneca Land",
+        375: "Sunshine",
+        380: "Southwestern",        
+    }
+
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
@@ -2631,7 +2653,6 @@ class Round(TimeStampedModel):
             'first_name',
         )
         return ["{0} <{1}>".format(x.name, x.email) for x in owners]
-
 
     def get_oss(self, zoom=1):
         Group = apps.get_model('bhs.group')
@@ -3094,7 +3115,6 @@ class Round(TimeStampedModel):
     # print(type(f))
 
     # r.oss.save('oss', f)
-
 
     def get_sa(self):
         Group = apps.get_model('bhs.group')
@@ -4286,6 +4306,139 @@ class Round(TimeStampedModel):
         document.save(buff)
         content = ContentFile(buff.getvalue())
         return content
+
+    def get_labels(self, request, data):
+        Appearance = apps.get_model('adjudication.appearance')
+        Panelist = apps.get_model('adjudication.panelist')
+        Round = apps.get_model('adjudication.round')
+        Entry = apps.get_model('registration.entry')
+
+
+        # Default Filters...
+        appearance_filters = {}
+        panelist_filters = {}
+        panelist_filters.update({'round_id': self.id})
+        appearance_filters.update({'round_id': self.id})
+
+        # All Judges
+        # All Contestants
+
+        # Specific Judge
+        if len(data) and isinstance(data['judges'], Iterable) and len(data['judges']):
+            judge_ids = []
+            for p in data['judges']:
+                judge_ids.append(p['personId'])
+            panelist_filters.update({'person_id__in': judge_ids})
+
+        # Specific Contestant
+        if len(data) and isinstance(data['groups'], Iterable) and len(data['groups']):
+            appearance_ids = []
+            for a in data['groups']:
+                appearance_ids.append(a['groupId'])
+            appearance_filters.update({'group_id__in': appearance_ids})
+
+        ### ORDER
+            # Category
+                # Judge Last Name
+                    # Round
+                        # Order of Appearance
+
+        # ### JUDGES ###
+        panelists = Panelist.objects.select_related('round').filter(
+                round__id=self.id,
+                category__gt=Panelist.CATEGORY.ca,
+                **panelist_filters
+            ).order_by(
+                'category',
+                'last_name',
+                'round__session_kind',
+                'round__kind',
+            )
+
+
+
+        ## Set via POST var
+        if len(data) and 'isReversed' in data:
+            reverse_order = data['isReversed']
+        else:
+            reverse_order = False
+
+        # Reverse Order
+        appearance_order = 'num'
+        if reverse_order:
+            appearance_order = "-{0}".format(appearance_order)
+
+        ### APPEARANCES ###
+        appearances = Appearance.objects.select_related('round').filter(
+                round__id=self.id,
+                **appearance_filters
+            ).order_by(
+                'round__session_kind',
+                'round__kind',
+                appearance_order
+            )
+
+        # Create new document
+        document = "{\\rtf1\\ansi\\ansicpg1252\\cocoartf2513\n"
+        document += "\\cocoatextscaling0\\cocoaplatform0{\\fonttbl\\f0\\fswiss\\fcharset0 ArialMT;\\f1\\fswiss\\fcharset0 Arial-BoldMT;}\n"
+        document += "{\\colortbl;\\red255\\green255\\blue255;\\red0\\green0\\blue0;}\n"
+        document += "{\\*\\expandedcolortbl;;\\cssrgb\\c0\\c0\\c0;}\n"
+        document += "{\\info\n"
+        document += "{\\title LEFTLEFTLEFT}\n"
+        document += "{\\author Barberscore}}\\margl720\\margr720\\margb720\\margt720\\vieww22680\\viewh14600\\viewkind0\n"
+        document += "\\deftab720\n"
+        document += "\\pard\\tqc\\tx5400\\tqr\\tx10800\\pardeftab720\\ri0\\partightenfactor0\n"
+        document += "\n"
+        document += "\\f0\\fs24 \\cf2 \\\n"
+
+        directors = {}
+        completed = []
+        for judge in panelists:
+            if judge.person_id not in completed:
+                for appearance in appearances:
+
+                    document += "\\page {0}. {1}\t\\\n".format(
+                        (appearance.num if appearance.num != 0 else 'MT'),
+                        appearance.name
+                        )
+
+                    if appearance.kind == Appearance.KIND.chorus and appearance.group_id not in directors:
+                        entry = Entry.objects.filter(
+                            group_id=appearance.group_id,
+                            session_id=appearance.round.session_id,
+                        ).first()
+                        directors[appearance.group_id] = entry.participants
+                        document += "        {0}\t\t{1}\n".format(directors[appearance.group_id], judge.last_name)
+                    else:
+                        document += "         \t\t{0}\n".format(judge.last_name)
+
+                    document += "\\f1\\b   \n"
+                    document += "\\fs44 #{0}\n".format(judge.num)
+                    document += "\\f0\\b0\\fs24 \\\n"
+                    document += "\\pard\\tqc\\tx5400\\tqr\\tx10800\\pardeftab720\\ri0\\qc\\partightenfactor0\n"
+                    document += "\\cf2 {0} District - {1} {2}, {3}\\\n".format(
+                            self.DISTRICT_FULL_NAMES[self.district],
+                            Appearance.KIND[appearance.round.session_kind],
+                            Round.KIND[appearance.round.kind],
+                            appearance.round.date.strftime("%-m/%-d/%Y"),                            
+                    )
+                    document += "\\pard\\tqc\\tx5400\\tqr\\tx10800\\pardeftab720\\ri0\\partightenfactor0\n"
+                    document += "\\cf2 \t\t\\\n"
+
+                completed.append(judge.person_id)
+
+        # End of File...
+        document += "\\\n"
+        document += "}"
+
+        content = ContentFile(document)
+        return content
+
+    def base_filename(self):
+        return '{0}{1}'.format(
+            self.get_district_display(),
+            self.start_date.strftime("%Y%m%d")
+        )
 
     def get_judge_emails(self):
         Panelist = apps.get_model('adjudication.panelist')
