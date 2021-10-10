@@ -169,6 +169,7 @@ class RoundSerializer(serializers.ModelSerializer):
 
             'session_id',
             'session_kind',
+            'base_filename',
 
             'owners',
             'appearances',
@@ -235,3 +236,4 @@ class SongSerializer(serializers.ModelSerializer):
         included_resources = [
             'scores',
         ]
+

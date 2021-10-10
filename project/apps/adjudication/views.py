@@ -14,12 +14,16 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
+
 
 # Django
 from django.core.files.base import ContentFile
 from django.db.models import Sum, Q, Avg
 from django.template.loader import render_to_string
 from django.utils.text import slugify
+from django.utils.six import BytesIO
+from collections.abc import Iterable
 
 # Local
 # from .filterbackends import AppearanceFilterBackend
@@ -36,13 +40,16 @@ from .models import Panelist
 from .models import Round
 from .models import Score
 from .models import Song
+from apps.bhs.models import Convention
 
 from .renderers import PDFRenderer
 from .renderers import XLSXRenderer
 from .renderers import DOCXRenderer
+from .renderers import RTFRenderer
 from .responders import PDFResponse
 from .responders import XLSXResponse
 from .responders import DOCXResponse
+from .responders import RTFResponse
 
 from .serializers import AppearanceSerializer
 from .serializers import OutcomeSerializer
@@ -451,7 +458,6 @@ class RoundViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-
     @action(
         methods=['get'],
         detail=True,
@@ -473,7 +479,6 @@ class RoundViewSet(viewsets.ModelViewSet):
             file_name=file_name,
             status=status.HTTP_200_OK
         )
-
 
     @action(
         methods=['get'],
@@ -498,7 +503,6 @@ class RoundViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-
     @action(
         methods=['get'],
         detail=True,
@@ -521,7 +525,6 @@ class RoundViewSet(viewsets.ModelViewSet):
             file_name=file_name,
             status=status.HTTP_200_OK
         )
-
 
     @action(
         methods=['get'],
@@ -548,7 +551,6 @@ class RoundViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-
     @action(
         methods=['get'],
         detail=True,
@@ -567,6 +569,48 @@ class RoundViewSet(viewsets.ModelViewSet):
         )
         return DOCXResponse(
             docx,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
+    @action(
+        methods=['post'],
+        detail=True,
+        renderer_classes=[
+            RTFRenderer,
+        ],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
+    def labels(self, request, pk=None, **kwargs):
+        round = self.get_object()
+
+        # Parse inbound request
+        if len(request._request.body):
+            content = BytesIO(request._request.body)
+            data = JSONParser().parse(content)
+        else:
+            data = {}
+
+        convention = Convention.objects.filter(
+            id=round.convention_id
+        ).first()
+
+        # File name postfix
+        postfix = ""
+        if len(data):
+            postfix = "_" + data['postfix'].strip()
+
+        rtf = round.get_labels(request, data)
+
+        ### Concatenate File name
+        file_name = '{0}_Lbls{1}'.format(
+            convention.base_filename(),
+            postfix
+        )
+
+        return RTFResponse(
+            rtf,
             file_name=file_name,
             status=status.HTTP_200_OK
         )

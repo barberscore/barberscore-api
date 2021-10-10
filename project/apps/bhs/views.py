@@ -126,7 +126,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
         methods=['get'],
         detail=True,
         renderer_classes=[
-            DOCXRenderer,
+            TXTRenderer,
         ],
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
@@ -156,7 +156,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
         methods=['get'],
         detail=True,
         renderer_classes=[
-            DOCXRenderer,
+            TXTRenderer,
         ],
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
