@@ -24,7 +24,7 @@ from django.db.models.functions import DenseRank, RowNumber, Rank
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Min, Max, Count, Avg
+from django.db.models import Min, Max, Avg
 from django.core.exceptions import ValidationError
 from collections.abc import Iterable
 
@@ -33,7 +33,7 @@ from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.files.base import ContentFile
 from django.db import models
-from django.db.models import F, Window
+from django.db.models import Window
 from django.template.loader import render_to_string
 from django.utils.functional import cached_property
 from django.conf import settings
@@ -572,13 +572,6 @@ class Appearance(TimeStampedModel):
                     appearances__group_id=self.group_id,
                 ),
             ),
-            tot_score=Avg(
-                'appearances__songs__scores__points',
-                filter=Q(
-                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__group_id=self.group_id,
-                ),
-            ),
             sng_score=Avg(
                 'appearances__songs__scores__points',
                 filter=Q(
@@ -603,10 +596,21 @@ class Appearance(TimeStampedModel):
                     appearances__group_id=self.group_id,
                 ),
             ),
+            score_count=Count(
+                'appearances__songs__scores',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__group_id=self.group_id,
+                ),                
+            ),
         )
+        stats['tot_score'] = (stats['tot_points'] / stats['score_count'])
+        stats.pop("score_count", None)
         for key, value in stats.items():
-            if key.endswith('_score'):
+            if key is not 'tot_score' and key.endswith('_score'):
                 stats[key] = rnd(value, 1)
+            elif key is 'tot_score':
+                stats[key] = round(value, 1)                
         return stats
 
     def get_csa(self):
