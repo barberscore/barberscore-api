@@ -1632,10 +1632,10 @@ class Group(TimeStampedModel):
         if self.kind is self.KIND.quartet:
             if self.bhs_id:
                 suffix = "[{0}]".format(self.bhs_id)
+            elif self.code:
+                suffix = "({0})".format(self.code)
             else:
                 suffix = ""
-            if self.code:
-                suffix = "({0}) {1}".format(self.code, suffix)
         else:
             suffix = "({0})".format(self.code)
         return "{0} {1}".format(self.name, suffix)
