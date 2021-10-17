@@ -2918,7 +2918,7 @@ class Round(TimeStampedModel):
             appearance__round__session_id=self.session_id, # Using any session appearance
             penalties__len__gt=0, # Where there are penalties
             appearance__is_private=False, # If a public appearance
-            appearance__in=publics,  # Only completeds
+#            appearance__in=publics,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
             30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules. (Repeating Substantial Portions of a Song)",
@@ -3700,19 +3700,19 @@ class Round(TimeStampedModel):
             appearance__round__session_id=self.session_id, # Using any session appearance
             penalties__len__gt=0, # Where there are penalties
             appearance__is_private=False, # If a public appearance
-            appearance__in=groups,  # Only completeds
+            # appearance__in=groups,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules.",
-            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules.",
-            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules.",
-            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules.",
-            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules.",
-            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules.",
-            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
-            44: "∏ Score(s) penalized due to violation of Article IX.A.3.b of the BHS Contest Rules.",
-            48: "∇ Score(s) penalized due to violation of Article XI.A.1 of the BHS Contest Rules.",
-            50: "※ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules.",
+            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules. (Repeating Substantial Portions of a Song)",
+            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules. (Instrumental Accompaniment)",
+            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules. (Chorus Exceeding 4-Part Texture)",
+            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules. (Excessive Melody Not in Inner Part)",
+            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules. (Lack of Characteristic Chord Progression)",
+            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules. (Excessive Lyrics < 4 parts)",
+            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules. (Primarily Patriotic/Religious Intent)",
+            44: "∏ Score(s) penalized due to violation of Article IX.A.3.b of the BHS Contest Rules. (Not in Good Taste)",
+            48: "∇ Score(s) penalized due to violation of Article XI.A.1 of the BHS Contest Rules. (Non-members Performing on Stage)",
+            50: "※ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules. (Sound Equipment or Electronic Enhancement)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
