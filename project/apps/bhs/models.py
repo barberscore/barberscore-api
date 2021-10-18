@@ -1163,7 +1163,7 @@ class Convention(TimeStampedModel):
                         if len(song.penalties):
                             for penalty_id in sorted(song.penalties):
                                 penalty_records.append(
-                                    '"Penalty", "Session: {0} {1}", "Contestant: {2}", OA: {3}, Song Nbr: {4}, "Rule: Article {5}", "Description: {6}"'.format(
+                                    '"Penalty", "Session: {0} {1}", "Contestant: {2}", OA: {3}, "Judge: ???", Song Nbr: {4}, "Rule: Article {5}", "Description: {6}", 5+'.format(
                                         Session.KIND[session.kind],
                                         Round.KIND[r.kind],
                                         appearance.name,
