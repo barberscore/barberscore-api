@@ -1163,7 +1163,7 @@ class Convention(TimeStampedModel):
                         if len(song.penalties):
                             for penalty_id in sorted(song.penalties):
                                 penalty_records.append(
-                                    '"Penalty", "Session: {0} {1}", "Contestant: {2}", OA: {3}, Song Nbr: {4}, "Rule: Article {5}", "Description: {6}"'.format(
+                                    '"Penalty", "Session: {0} {1}", "Contestant: {2}", OA: {3}, "Judge: ???", Song Nbr: {4}, "Rule: Article {5}", "Description: {6}", 5+'.format(
                                         Session.KIND[session.kind],
                                         Round.KIND[r.kind],
                                         appearance.name,
@@ -1394,6 +1394,7 @@ class Convention(TimeStampedModel):
 
 class Group(TimeStampedModel):
     id = models.UUIDField(
+        verbose_name='ID',
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
@@ -1543,6 +1544,7 @@ class Group(TimeStampedModel):
     )
 
     bhs_id = models.IntegerField(
+        verbose_name='BHS ID',
         blank=True,
         null=True,
         unique=True,
@@ -1556,11 +1558,13 @@ class Group(TimeStampedModel):
     )
 
     is_senior = models.BooleanField(
+        verbose_name='Is Senior',
         help_text="""Qualifies as a Senior Group.  Must be set manually.""",
         default=False,
     )
 
     is_youth = models.BooleanField(
+        verbose_name='Is Youth',
         help_text="""Qualifies as a Youth Group.  Must be set manually.""",
         default=False,
     )
@@ -1579,6 +1583,7 @@ class Group(TimeStampedModel):
     )
 
     source_id = models.CharField(
+        verbose_name='Source ID',
         null=True,
         blank=True,
         max_length=100,
