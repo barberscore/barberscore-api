@@ -1204,7 +1204,7 @@ class Convention(TimeStampedModel):
             )
 
         # Combine the rows
-        buff = '\n'.join(rows)
+        buff = '\r\n'.join(rows)
 
         content = ContentFile(buff)
         return content
