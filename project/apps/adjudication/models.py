@@ -1715,6 +1715,7 @@ class Outcome(TimeStampedModel):
         if award.level == award.LEVEL.qualifier:
             threshold = award.threshold
             winners = self.appearances.filter(
+                stats__isnull = False,
                 stats__tot_score__gte=threshold,
             ).order_by(
                 'name',
@@ -1752,7 +1753,7 @@ class Outcome(TimeStampedModel):
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
         if award.level in [award.LEVEL.championship, award.LEVEL.representative]:
-            winner = self.appearances.order_by(
+            winner = self.appearances.filter(stats__isnull = False).order_by(
                 'stats__tot_points',
                 'stats__sng_points',
                 'stats__per_points',
