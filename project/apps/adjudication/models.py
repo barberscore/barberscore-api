@@ -4872,7 +4872,7 @@ class Round(TimeStampedModel):
                     'id',
                     'title',
                     'arrangers',
-                )
+                ).order_by('title')
                 for c in charts_raw:
                     c['pk'] = str(c.pop('id'))
                 charts = [json.dumps(x) for x in charts_raw]
@@ -4914,6 +4914,17 @@ class Round(TimeStampedModel):
                 status=Appearance.STATUS.advanced,
             )
             for prior_appearance in prior_appearances:
+                charts_raw = Chart.objects.filter(
+                    groups__id=prior_appearance.group_id,
+                ).values(
+                    'id',
+                    'title',
+                    'arrangers',
+                ).order_by('title')
+                for c in charts_raw:
+                    c['pk'] = str(c.pop('id'))
+                charts = [json.dumps(x) for x in charts_raw]
+                
                 # Create and start group
                 appearance = self.appearances.create(
                     num=prior_appearance.draw,
