@@ -65,7 +65,7 @@ class EntryViewSet(views.ModelViewSet):
             object.build(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -79,7 +79,7 @@ class EntryViewSet(views.ModelViewSet):
             object.invite(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -93,7 +93,7 @@ class EntryViewSet(views.ModelViewSet):
             object.withdraw(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -107,7 +107,7 @@ class EntryViewSet(views.ModelViewSet):
             object.submit(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -121,7 +121,7 @@ class EntryViewSet(views.ModelViewSet):
             object.approve(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -158,7 +158,7 @@ class SessionViewSet(views.ModelViewSet):
             object.build(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -172,7 +172,7 @@ class SessionViewSet(views.ModelViewSet):
             object.open(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -186,7 +186,7 @@ class SessionViewSet(views.ModelViewSet):
             object.close(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -200,7 +200,7 @@ class SessionViewSet(views.ModelViewSet):
             object.verify(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -214,7 +214,7 @@ class SessionViewSet(views.ModelViewSet):
             object.package(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -228,7 +228,7 @@ class SessionViewSet(views.ModelViewSet):
             object.finish(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()

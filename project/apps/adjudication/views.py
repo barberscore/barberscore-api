@@ -118,7 +118,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.start(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -132,7 +132,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.finish(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -146,7 +146,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.verify(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -161,7 +161,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.complete(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -176,7 +176,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.advance(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -191,7 +191,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.scratch(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -206,7 +206,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.disqualify(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -355,7 +355,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             object.reset(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -369,7 +369,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             object.build(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -383,7 +383,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             object.start(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -397,7 +397,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             object.complete(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -411,7 +411,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             object.finalize(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -425,7 +425,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         #     object.publish(by=self.request.user)
         # except TransitionNotAllowed:
         #     return Response(
-        #         {'status': 'Transition conditions not met.'},
+        #         {'status': 'Information incomplete.'},
         #         status=status.HTTP_400_BAD_REQUEST,
         #     )
         object.publish(by=self.request.user)
