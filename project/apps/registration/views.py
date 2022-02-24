@@ -244,10 +244,10 @@ class SessionViewSet(views.ModelViewSet):
     )
     def legacy(self, request, pk=None):
         session = Session.objects.get(pk=pk)
-        if session.legacy_report:
-            xlsx = session.legacy_report.file
-        else:
-            xlsx = session.get_legacy_report()
+        # if session.legacy_report:
+        #     xlsx = session.legacy_report.file
+        # else:
+        xlsx = session.get_legacy_report()
         file_name = '{0} Legacy Report'.format(
             session.nomen,
         )
@@ -266,10 +266,10 @@ class SessionViewSet(views.ModelViewSet):
     )
     def drcj(self, request, pk=None):
         session = Session.objects.get(pk=pk)
-        if session.drcj_report:
-            xlsx = session.drcj_report.file
-        else:
-            xlsx = session.get_drcj_report()
+        # if session.drcj_report:
+        #     xlsx = session.drcj_report.file
+        # else:
+        xlsx = session.get_drcj_report()
         file_name = '{0} DRCJ Report'.format(
             session.nomen,
         )

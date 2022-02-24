@@ -135,10 +135,10 @@ class ConventionViewSet(viewsets.ModelViewSet):
         convention = Convention.objects.select_related(
         ).get(pk=pk)
 
-        if convention.bbstix_report:
-            txt = convention.bbstix_report.file
-        else:
-            txt = convention.get_bbstix_report()
+        # if convention.bbstix_report:
+        #     txt = convention.bbstix_report.file
+        # else:
+        txt = convention.get_bbstix_report()
 
         ### Adjust File name
         file_name = '{0}{1}_BBStix'.format(
@@ -165,10 +165,10 @@ class ConventionViewSet(viewsets.ModelViewSet):
         convention = Convention.objects.select_related(
         ).get(pk=pk)
 
-        if convention.bbstix_practice_report:
-            txt = convention.bbstix_practice_report.file
-        else:
-            txt = convention.get_bbstix_report(include_practice=True)
+        # if convention.bbstix_practice_report:
+        #     txt = convention.bbstix_practice_report.file
+        # else:
+        txt = convention.get_bbstix_report(include_practice=True)
 
         ### Adjust File name
         file_name = '{0}{1}_BBStix2'.format(

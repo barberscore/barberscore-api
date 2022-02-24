@@ -225,10 +225,10 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     )
     def variance(self, request, pk=None):
         appearance = Appearance.objects.get(pk=pk)
-        if appearance.variance_report:
-            pdf = appearance.variance_report.file
-        else:
-            pdf = appearance.get_variance()
+        # if appearance.variance_report:
+        #     pdf = appearance.variance_report.file
+        # else:
+        pdf = appearance.get_variance()
         file_name = '{0} Variance Report.pdf'.format(appearance)
         return PDFResponse(
             pdf,
@@ -250,10 +250,10 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         Renders the Competitor Scoring Analysis in PDF
         """
         appearance = Appearance.objects.get(pk=pk)
-        if appearance.csa_report:
-            pdf = appearance.csa_report.file
-        else:
-            pdf = appearance.get_csa()
+        # if appearance.csa_report:
+        #     pdf = appearance.csa_report.file
+        # else:
+        pdf = appearance.get_csa()
         file_name = '{0} CSA.pdf'.format(appearance)
         return PDFResponse(
             pdf,
@@ -307,10 +307,10 @@ class PanelistViewSet(viewsets.ModelViewSet):
     )
     def psa(self, request, pk=None):
         panelist = Panelist.objects.get(pk=pk)
-        if panelist.psa_report:
-            pdf = panelist.psa_report.file
-        else:
-            pdf = panelist.get_psa()
+        # if panelist.psa_report:
+        #     pdf = panelist.psa_report.file
+        # else:
+        pdf = panelist.get_psa()
         file_name = '{0} PSA.pdf'.format(panelist)
         return PDFResponse(
             pdf,
@@ -447,10 +447,10 @@ class RoundViewSet(viewsets.ModelViewSet):
             # 'session',
             # 'session__convention',
         ).get(pk=pk)
-        if round.oss_report:
-            pdf = round.oss_report.file
-        else:
-            pdf = round.get_oss()
+        # if round.oss_report:
+        #     pdf = round.oss_report.file
+        # else:
+        pdf = round.get_oss()
         file_name = '{0} OSS.pdf'.format(round)
         return PDFResponse(
             pdf,
@@ -492,10 +492,10 @@ class RoundViewSet(viewsets.ModelViewSet):
     def legacyoss(self, request, pk=None):
         round = Round.objects.select_related(
         ).get(pk=pk)
-        if round.legacy_oss:
-            pdf = round.legacy_oss.file
-        else:
-            pdf = round.get_legacy_oss()
+        # if round.legacy_oss:
+        #     pdf = round.legacy_oss.file
+        # else:
+        pdf = round.get_legacy_oss()
         file_name = '{0} Legacy OSS.pdf'.format(round)
         return PDFResponse(
             pdf,
@@ -538,10 +538,10 @@ class RoundViewSet(viewsets.ModelViewSet):
             # 'session',
             # 'session__convention',
         ).get(pk=pk)
-        if round.sa_report:
-            pdf = round.sa_report.file
-        else:
-            pdf = round.get_sa()
+        # if round.sa_report:
+        #     pdf = round.sa_report.file
+        # else:
+        pdf = round.get_sa()
         file_name = '{0} SA'.format(
             round.nomen,
         )
