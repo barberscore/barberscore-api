@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_json_api import views
+from django.db.models import Prefetch
 
 # Local
 from .filtersets import EntryFilterset
@@ -130,15 +131,18 @@ class EntryViewSet(views.ModelViewSet):
 
 class SessionViewSet(views.ModelViewSet):
     queryset = Session.objects.prefetch_related(
-        'entries',
-        'assignments',
-        'contests',
-        'statelogs',
-        'owners',
-    )
+            'entries',
+            Prefetch('assignments', queryset=Assignment.objects.filter(kind__gte=0)),
+            'contests',
+            'statelogs',
+            'owners',
+        )
     prefetch_for_includes = {
         '__all__': [],
     }
+    # queryset.filter(
+    #     assignments__kind__gt=0
+    # )
     serializer_class = SessionSerializer
     filterset_class = SessionFilterset
     ordering_fields = '__all__'
