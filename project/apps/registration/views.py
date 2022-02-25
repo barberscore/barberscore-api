@@ -131,7 +131,8 @@ class EntryViewSet(views.ModelViewSet):
 
 class SessionViewSet(views.ModelViewSet):
     queryset = Session.objects.prefetch_related(
-            Prefetch('entries', queryset=Entry.objects.exclude(status=7)),
+            # Prefetch('entries', queryset=Entry.objects.exclude(status=7)),
+            'entries'
             Prefetch('assignments', queryset=Assignment.objects.filter(kind__gte=0)),
             'contests',
             'statelogs',
@@ -141,7 +142,7 @@ class SessionViewSet(views.ModelViewSet):
         '__all__': [],
     }
     # queryset.filter(
-    #     entries__status__ne=7
+    #     assignments__kind__gt=0
     # )
     serializer_class = SessionSerializer
     filterset_class = SessionFilterset
