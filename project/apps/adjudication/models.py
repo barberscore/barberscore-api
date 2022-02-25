@@ -844,12 +844,13 @@ class Appearance(TimeStampedModel):
 
         # Score Block
         initials = []
+        count = 1
         for panelist in panelists:
             initials.append("{0}{1}".format(
-                panelist.first_name[0].upper(),
-                panelist.last_name[0].upper(),
+                panelist.get_category_display()[0].upper(),
+                str(count).zfill(2),
             ))
-
+            count += 1
 
         # Hackalicious
         category_count = {
@@ -892,9 +893,16 @@ class Appearance(TimeStampedModel):
             'Singing': [],
         }
         # panelists from above
+        count = 1
         for panelist in panelists:
             item = categories[panelist.get_category_display()]
-            item.append(panelist.name)
+            name = "{0}{1} = {2}".format(
+                panelist.get_category_display()[0].upper(),
+                str(count).zfill(2),
+                panelist.name
+            )
+            item.append(name)
+            count += 1
 
         # Penalties Block
         array = Song.objects.filter(
@@ -4872,7 +4880,7 @@ class Round(TimeStampedModel):
                     'id',
                     'title',
                     'arrangers',
-                )
+                ).order_by('title')
                 for c in charts_raw:
                     c['pk'] = str(c.pop('id'))
                 charts = [json.dumps(x) for x in charts_raw]
@@ -4914,6 +4922,17 @@ class Round(TimeStampedModel):
                 status=Appearance.STATUS.advanced,
             )
             for prior_appearance in prior_appearances:
+                charts_raw = Chart.objects.filter(
+                    groups__id=prior_appearance.group_id,
+                ).values(
+                    'id',
+                    'title',
+                    'arrangers',
+                ).order_by('title')
+                for c in charts_raw:
+                    c['pk'] = str(c.pop('id'))
+                charts = [json.dumps(x) for x in charts_raw]
+                
                 # Create and start group
                 appearance = self.appearances.create(
                     num=prior_appearance.draw,

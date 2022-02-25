@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_json_api import views
+from django.db.models import Prefetch
 
 # Local
 from .filtersets import EntryFilterset
@@ -64,7 +65,7 @@ class EntryViewSet(views.ModelViewSet):
             object.build(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -78,7 +79,7 @@ class EntryViewSet(views.ModelViewSet):
             object.invite(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -92,7 +93,7 @@ class EntryViewSet(views.ModelViewSet):
             object.withdraw(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -106,7 +107,7 @@ class EntryViewSet(views.ModelViewSet):
             object.submit(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -120,7 +121,7 @@ class EntryViewSet(views.ModelViewSet):
             object.approve(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -130,15 +131,19 @@ class EntryViewSet(views.ModelViewSet):
 
 class SessionViewSet(views.ModelViewSet):
     queryset = Session.objects.prefetch_related(
-        'entries',
-        'assignments',
-        'contests',
-        'statelogs',
-        'owners',
-    )
+            # Prefetch('entries', queryset=Entry.objects.exclude(status=7)),
+            'entries',
+            Prefetch('assignments', queryset=Assignment.objects.filter(kind__gte=0)),
+            'contests',
+            'statelogs',
+            'owners',
+        )
     prefetch_for_includes = {
         '__all__': [],
     }
+    # queryset.filter(
+    #     assignments__kind__gt=0
+    # )
     serializer_class = SessionSerializer
     filterset_class = SessionFilterset
     ordering_fields = '__all__'
@@ -154,7 +159,7 @@ class SessionViewSet(views.ModelViewSet):
             object.build(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -168,7 +173,7 @@ class SessionViewSet(views.ModelViewSet):
             object.open(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -182,7 +187,7 @@ class SessionViewSet(views.ModelViewSet):
             object.close(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -196,7 +201,7 @@ class SessionViewSet(views.ModelViewSet):
             object.verify(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -210,7 +215,7 @@ class SessionViewSet(views.ModelViewSet):
             object.package(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -224,7 +229,7 @@ class SessionViewSet(views.ModelViewSet):
             object.finish(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -240,10 +245,10 @@ class SessionViewSet(views.ModelViewSet):
     )
     def legacy(self, request, pk=None):
         session = Session.objects.get(pk=pk)
-        if session.legacy_report:
-            xlsx = session.legacy_report.file
-        else:
-            xlsx = session.get_legacy_report()
+        # if session.legacy_report:
+        #     xlsx = session.legacy_report.file
+        # else:
+        xlsx = session.get_legacy_report()
         file_name = '{0} Legacy Report'.format(
             session.nomen,
         )
@@ -262,10 +267,10 @@ class SessionViewSet(views.ModelViewSet):
     )
     def drcj(self, request, pk=None):
         session = Session.objects.get(pk=pk)
-        if session.drcj_report:
-            xlsx = session.drcj_report.file
-        else:
-            xlsx = session.get_drcj_report()
+        # if session.drcj_report:
+        #     xlsx = session.drcj_report.file
+        # else:
+        xlsx = session.get_drcj_report()
         file_name = '{0} DRCJ Report'.format(
             session.nomen,
         )

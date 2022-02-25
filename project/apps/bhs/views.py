@@ -87,7 +87,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
             object.build(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -101,7 +101,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
             object.activate(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -115,7 +115,7 @@ class ConventionViewSet(viewsets.ModelViewSet):
             object.deactivate(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -135,10 +135,10 @@ class ConventionViewSet(viewsets.ModelViewSet):
         convention = Convention.objects.select_related(
         ).get(pk=pk)
 
-        if convention.bbstix_report:
-            txt = convention.bbstix_report.file
-        else:
-            txt = convention.get_bbstix_report()
+        # if convention.bbstix_report:
+        #     txt = convention.bbstix_report.file
+        # else:
+        txt = convention.get_bbstix_report()
 
         ### Adjust File name
         file_name = '{0}{1}_BBStix'.format(
@@ -165,10 +165,10 @@ class ConventionViewSet(viewsets.ModelViewSet):
         convention = Convention.objects.select_related(
         ).get(pk=pk)
 
-        if convention.bbstix_practice_report:
-            txt = convention.bbstix_practice_report.file
-        else:
-            txt = convention.get_bbstix_report(include_practice=True)
+        # if convention.bbstix_practice_report:
+        #     txt = convention.bbstix_practice_report.file
+        # else:
+        txt = convention.get_bbstix_report(include_practice=True)
 
         ### Adjust File name
         file_name = '{0}{1}_BBStix2'.format(
@@ -200,7 +200,7 @@ class AwardViewSet(viewsets.ModelViewSet):
             object.activate(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -214,7 +214,7 @@ class AwardViewSet(viewsets.ModelViewSet):
             object.deactivate(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -257,7 +257,7 @@ class GroupViewSet(viewsets.ModelViewSet):
             object.activate(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -271,7 +271,7 @@ class GroupViewSet(viewsets.ModelViewSet):
             object.deactivate(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -335,7 +335,7 @@ class PersonViewSet(viewsets.ModelViewSet):
             object.activate(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -349,7 +349,7 @@ class PersonViewSet(viewsets.ModelViewSet):
             object.deactivate(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -375,7 +375,7 @@ class ChartViewSet(viewsets.ModelViewSet):
             object.activate(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -389,7 +389,7 @@ class ChartViewSet(viewsets.ModelViewSet):
             object.deactivate(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()

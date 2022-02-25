@@ -1911,10 +1911,10 @@ class Session(TimeStampedModel):
         )
         to = self.get_owners_emails()
         attachments = []
-        if self.drcj_report:
-            xlsx = self.drcj_report.file
-        else:
-            xlsx = self.get_drcj_report()
+        # if self.drcj_report:
+        #     xlsx = self.drcj_report.file
+        # else:
+        xlsx = self.get_drcj_report()
         file_name = '{0} Session DRCJ Report DRAFT.xlsx'.format(self)
         attachments.append((
             file_name,
@@ -1983,10 +1983,10 @@ class Session(TimeStampedModel):
         to = self.get_owners_emails()
 
         attachments = []
-        if self.drcj_report:
-            xlsx = self.drcj_report.file
-        else:
-            xlsx = self.get_drcj_report()
+        # if self.drcj_report:
+        #     xlsx = self.drcj_report.file
+        # else:
+        xlsx = self.get_drcj_report()
         file_name = '{0} Session DRCJ Report FINAL.xlsx'.format(self)
         attachments.append((
             file_name,

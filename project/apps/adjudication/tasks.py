@@ -62,6 +62,8 @@ def build_email(template, context, subject, to, cc=[], bcc=[], attachments=[]):
 
 def build_rounds_from_session(session_id):
     Round = apps.get_model('adjudication.round')
+    # Remove existing rounds associated with the session_id
+    Round.objects.filter(session_id=session_id).delete()
     Session = apps.get_model('registration.session')
     session = Session.objects.get(id=session_id)
     session_id = session_id
