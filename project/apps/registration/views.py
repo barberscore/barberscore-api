@@ -132,7 +132,7 @@ class EntryViewSet(views.ModelViewSet):
 class SessionViewSet(views.ModelViewSet):
     queryset = Session.objects.prefetch_related(
             # Prefetch('entries', queryset=Entry.objects.exclude(status=7)),
-            'entries'
+            'entries',
             Prefetch('assignments', queryset=Assignment.objects.filter(kind__gte=0)),
             'contests',
             'statelogs',
