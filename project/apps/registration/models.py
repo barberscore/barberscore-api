@@ -1690,15 +1690,13 @@ class Session(TimeStampedModel):
             oa = entry.draw
             group_name = group.name
             group_type = group.get_kind_display()
-            if group_type == 'Quartet':
+            if group.bhs_id:
                 group_id = group.bhs_id
-            elif group_type == 'Chorus':
-                group_id = group.code
-            elif group_type == 'VLQ':
+            elif group.code:
                 group_id = group.code
             else:
                 raise RuntimeError(
-                    "Improper Entity Type: {0}".format(group.get_kind_display())
+                    "Missing BHS Group ID: {0}".format(group_name)
                 )
             i = 0
             charts_sorted = group.get_charts_nomens()
@@ -1708,7 +1706,7 @@ class Session(TimeStampedModel):
                 song_title = chart.partition("[")[0]
                 row = [
                     oa,
-                    group_id,
+                    int(group_id),
                     group_name,
                     group_type,
                     song_number,
