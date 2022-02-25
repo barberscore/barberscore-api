@@ -1,6 +1,7 @@
 
 # Standard Library
 import logging
+import re
 
 # Third-Party
 import pydf
@@ -254,7 +255,9 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         #     pdf = appearance.csa_report.file
         # else:
         pdf = appearance.get_csa()
+
         file_name = '{0} CSA.pdf'.format(appearance)
+        file_name = re.sub('[^a-zA-Z0-9_ ]', '', file_name)
         return PDFResponse(
             pdf,
             file_name=file_name,
