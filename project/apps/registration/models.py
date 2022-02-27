@@ -3,6 +3,7 @@
 import uuid
 import datetime
 import ast
+from collections.abc import Iterable
 
 # Third-Party
 from django_fsm import FSMIntegerField
@@ -1583,8 +1584,14 @@ class Session(TimeStampedModel):
 
     def divisions_display(self):
         result = ""
-        divisions = dict(self.division_names)
-        if hasattr(self.divisions, '__len__') and (not isinstance(self.divisions, str)):
+
+        if (isinstance(self.divisions, Iterable)):
+            sessionDivisions = self.divisions
+        else:
+            sessionDivisions = ast.literal_eval(self.divisions)
+
+        if len(sessionDivisions):
+            divisions = dict(self.division_names)
             for index, value in enumerate(self.divisions):
                 result += str(divisions[value])
                 if not index == len(self.divisions) - 1:

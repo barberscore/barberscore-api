@@ -641,11 +641,23 @@ class ScoreViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, pk=None):
         object = self.get_object()
 
+        # Update Score
+        super().partial_update(request, *pk)
+
         # Reset appearance status???
         appearance = Appearance.objects.filter(
                 id=object.song.appearance.id
-            ).update(status=Appearance.STATUS.finished)
+            )
 
+        # Update appearance stats
+        stats = appearance[0].get_stats()
+
+        appearance.update(
+            status=Appearance.STATUS.finished,
+            stats=stats
+        )
+
+        # Resave score for return
         return super().partial_update(request, *pk)
 
 
