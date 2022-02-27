@@ -1594,9 +1594,12 @@ class Session(TimeStampedModel):
             divisions = dict(self.division_names)
             for index, value in enumerate(self.divisions):
                 result += str(divisions[value])
-                if not index == len(sessionDivisions) - 1:
-                    result += '/'
-            result += (" Divisions" if len(sessionDivisions) > 1 else " Division")
+
+                print(" ".join(['Index', str(index)]))
+                print(" ".join(['divisions length', str(len(self.divisions))]))
+                if not index == (len(self.divisions) - 1):
+                    result += "/"
+            result += (" Divisions" if len(self.divisions) > 1 else " Division")
         return result
 
     # Session Properties
@@ -1605,8 +1608,9 @@ class Session(TimeStampedModel):
         if self.district == self.DISTRICT.bhs:
             return " ".join([
                 self.get_district_display(),
+                self.name,
                 str(self.year),
-                self.get_kind_display(),
+                self.get_kind_display()
             ])
         if len(self.divisions) > 0:
             return " ".join([
