@@ -1594,9 +1594,6 @@ class Session(TimeStampedModel):
             divisions = dict(self.division_names)
             for index, value in enumerate(self.divisions):
                 result += str(divisions[value])
-
-                print(" ".join(['Index', str(index)]))
-                print(" ".join(['divisions length', str(len(self.divisions))]))
                 if not index == (len(self.divisions) - 1):
                     result += "/"
             result += (" Divisions" if len(self.divisions) > 1 else " Division")
