@@ -35,7 +35,9 @@ class AssignmentViewSet(views.ModelViewSet):
 
 
 class ContestViewSet(views.ModelViewSet):
-    queryset = Contest.objects.all()
+    queryset = Contest.objects.prefetch_related(
+            Prefetch('entries', queryset=Entry.objects.exclude(status=7)),
+    )
     serializer_class = ContestSerializer
     filterset_class = None
     ordering_fields = '__all__'
