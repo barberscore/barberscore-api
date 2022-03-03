@@ -76,7 +76,8 @@ CONVENTION_OWNERS = [
     'steve@armstrongconsulting.ca',
     'proclamation56@gmail.com',
     'mottley81@gmail.com',
-    'randy.rensi@ieee.org'
+    'randy.rensi@ieee.org',
+    'alex@barbershopchorus.com'
 ]
 
 # SALESFORCE_ORGANIZATIONS
