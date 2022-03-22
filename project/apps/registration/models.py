@@ -1713,7 +1713,7 @@ class Session(TimeStampedModel):
                 song_title = chart.partition("[")[0]
                 row = [
                     oa,
-                    int(group_id),
+                    group_id,
                     group_name,
                     group_type,
                     song_number,
