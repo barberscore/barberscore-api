@@ -169,6 +169,7 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
                 'is_evaluation',
                 'is_private',
                 'notes',
+                'notification_list',
             ),
         }),
         ('DRCJ Preferences', {
@@ -300,6 +301,7 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
         ('open_date', 'close_date', ),
         ('start_date', 'end_date', ),
         'owners',
+        'notification_list',
         'venue_name',
         'location',
         'timezone',

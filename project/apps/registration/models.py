@@ -925,6 +925,12 @@ class Entry(TimeStampedModel):
         related_query_name='entries',
     )
 
+    notification_list = models.TextField(
+        help_text="""
+            Comma separated list of email addresses to notify with reports.""",
+        blank=True,
+    )
+
     # Internals
     objects = EntryManager()
 
@@ -1564,6 +1570,12 @@ class Session(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    notification_list = models.TextField(
+        help_text="""
+            Comma separated list of email addresses to notify with reports.""",
+        blank=True,
+    )
+
     # Relations
     statelogs = GenericRelation(
         StateLog,
@@ -1593,6 +1605,8 @@ class Session(TimeStampedModel):
         if len(sessionDivisions):
             divisions = dict(self.division_names)
             for index, value in enumerate(self.divisions):
+                print("divisions")
+                print(len(divisions))
                 result += str(divisions[value])
                 if not index == (len(self.divisions) - 1):
                     result += "/"
