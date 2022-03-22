@@ -25,6 +25,9 @@ from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Min, Max, Avg
+from django.db.models.functions import Cast
+from django.db.models.constants import LOOKUP_SEP
+from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import ValidationError
 from collections.abc import Iterable
 
@@ -65,6 +68,24 @@ from .helpers import round_up as rnd
 log = logging.getLogger(__name__)
 
 from apps.salesforce.decorators import notification_user
+
+class KeyTextTransformFactory:
+
+    def __init__(self, key_name):
+        self.key_name = key_name
+
+    def __call__(self, *args, **kwargs):
+        return KeyTextTransform(self.key_name, *args, **kwargs)
+
+class JSONF(F):
+
+    def resolve_expression(self, query=None, allow_joins=True, reuse=None, summarize=False, for_save=False):
+        rhs = super().resolve_expression(query, allow_joins, reuse, summarize, for_save)
+
+        field_list = self.name.split(LOOKUP_SEP)
+        for name in field_list[1:]:
+            rhs = KeyTextTransformFactory(name)(rhs)
+        return rhs
 
 class Appearance(TimeStampedModel):
     """
@@ -160,6 +181,11 @@ class Appearance(TimeStampedModel):
     )
 
     stats = JSONField(
+        null=True,
+        blank=True,
+    )
+
+    round_stats = JSONField(
         null=True,
         blank=True,
     )
@@ -607,10 +633,82 @@ class Appearance(TimeStampedModel):
         stats['tot_score'] = (stats['tot_points'] / stats['score_count'])
         stats.pop("score_count", None)
         for key, value in stats.items():
-            if key is not 'tot_score' and key.endswith('_score'):
-                stats[key] = rnd(value, 1)
-            elif key is 'tot_score':
-                stats[key] = round(value, 1)                
+            stats[key] = rnd(value, 1)
+        return stats
+
+    def get_stats_round(self):
+        Round = apps.get_model('adjudication.round')
+        rounds = Round.objects.filter(
+            id=self.round.id,
+        )
+        stats = rounds.aggregate(
+            tot_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            sng_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            per_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            mus_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            sng_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            per_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            mus_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            score_count=Count(
+                'appearances__songs__scores',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__group_id=self.group_id,
+                ),                
+            ),
+        )
+        stats['tot_score'] = (stats['tot_points'] / stats['score_count'])
+        stats.pop("score_count", None)
+        for key, value in stats.items():
+            stats[key] = rnd(value, 1)
         return stats
 
     def get_csa(self):
@@ -911,16 +1009,16 @@ class Appearance(TimeStampedModel):
             penalties__len__gt=0,
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules. (Repeating Substantial Portions of a Song)",
-            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules. (Instrumental Accompaniment)",
-            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules. (Chorus Exceeding 4-Part Texture)",
-            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules. (Excessive Melody Not in Inner Part)",
-            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules. (Lack of Characteristic Chord Progression)",
-            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules. (Excessive Lyrics < 4 parts)",
-            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules. (Primarily Patriotic/Religious Intent)",
-            44: "∏ Score(s) penalized due to violation of Article IX.A.3.b of the BHS Contest Rules. (Not in Good Taste)",
-            48: "∇ Score(s) penalized due to violation of Article XI.A.1 of the BHS Contest Rules. (Non-members Performing on Stage)",
-            50: "※ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules. (Sound Equipment or Electronic Enhancement)",
+            30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
+            32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
+            34: "✠ Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
+            36: "✶ Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
+            38: "✢ Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
+            39: "✦ Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
+            40: "❉ Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
+            44: "∏ Scores penalized for Not in Good Taste (IX.A.3.b)",
+            48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
+            50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
@@ -1327,6 +1425,7 @@ class Appearance(TimeStampedModel):
         else:
             variance = False
         self.stats = self.get_stats()
+        self.round_stats = self.get_stats_round()
         return self.STATUS.variance if variance else self.STATUS.verified
 
     @notification_user
@@ -1382,7 +1481,7 @@ class Appearance(TimeStampedModel):
     )
     def disqualify(self, *args, **kwargs):
         # Disqualify the group.
-        self.songs.delete()
+            # self.songs.delete()
         # Notify the group?
         return
 
@@ -2930,16 +3029,16 @@ class Round(TimeStampedModel):
 #            appearance__in=publics,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules. (Repeating Substantial Portions of a Song)",
-            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules. (Instrumental Accompaniment)",
-            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules. (Chorus Exceeding 4-Part Texture)",
-            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules. (Excessive Melody Not in Inner Part)",
-            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules. (Lack of Characteristic Chord Progression)",
-            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules. (Excessive Lyrics < 4 parts)",
-            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules. (Primarily Patriotic/Religious Intent)",
-            44: "∏ Score(s) penalized due to violation of Article IX.A.3.b of the BHS Contest Rules. (Not in Good Taste)",
-            48: "∇ Score(s) penalized due to violation of Article XI.A.1 of the BHS Contest Rules. (Non-members Performing on Stage)",
-            50: "※ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules. (Sound Equipment or Electronic Enhancement)",
+            30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
+            32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
+            34: "✠ Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
+            36: "✶ Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
+            38: "✢ Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
+            39: "✦ Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
+            40: "❉ Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
+            44: "∏ Scores penalized for Not in Good Taste (IX.A.3.b)",
+            48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
+            50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
@@ -3258,12 +3357,12 @@ class Round(TimeStampedModel):
         ).order_by(
             'num',
         ).distinct()
+
         mus_persons = []
         for p in mus_persons_qs:
             practice = bool(p.kind == Panelist.KIND.practice)
-            initials = "{0}{1}".format(p.first_name.upper()[0], p.last_name.upper()[0])
-            mus_persons.append((p.name, practice, initials))
-
+            num = "{0}".format('{:02d}'.format(p.num))
+            mus_persons.append((p.name, practice, num))
         per_persons_qs = self.panelists.filter(
             category=Panelist.CATEGORY.performance,
             round__session_id=self.session_id,
@@ -3273,9 +3372,8 @@ class Round(TimeStampedModel):
         per_persons = []
         for p in per_persons_qs:
             practice = bool(p.kind == Panelist.KIND.practice)
-            initials = "{0}{1}".format(p.first_name.upper()[0], p.last_name.upper()[0])
-            per_persons.append((p.name, practice, initials))
-
+            num = "{0}".format('{:02d}'.format(p.num))
+            per_persons.append((p.name, practice, num))
         sng_persons_qs = self.panelists.filter(
             category=Panelist.CATEGORY.singing,
             round__session_id=self.session_id,
@@ -3285,9 +3383,8 @@ class Round(TimeStampedModel):
         sng_persons = []
         for p in sng_persons_qs:
             practice = bool(p.kind == Panelist.KIND.practice)
-            initials = "{0}{1}".format(p.first_name.upper()[0], p.last_name.upper()[0])
-            sng_persons.append((p.name, practice, initials))
-
+            num = "{0}".format('{:02d}'.format(p.num))
+            sng_persons.append((p.name, practice, num))
         # per_persons_qs = persons.filter(
         #     panelists__category=Panelist.CATEGORY.performance,
         #     panelists__round__session_id=self.session_id,
@@ -3519,35 +3616,74 @@ class Round(TimeStampedModel):
             # Don't include mic testers on OSS
             # num__lte=0,
         # ).annotate(
-        #     tot_rank=Window(
-        #         expression=RowNumber(),
-        #         partition_by=[F('group_id')],
-        #         order_by=(
-        #             F('stats__tot_points').desc(),
-        #             F('stats__sng_points').desc(),
-        #             F('stats__per_points').desc(),
-        #         )
-        #     ),
-        #     mus_rank=Window(
+        #     # tot_round_rank=Window(
+        #     #     expression=RowNumber(),
+        #     #     partition_by=[F('round_id')],
+        #     #     order_by=(
+        #     #         F('round_stats__tot_points').desc(),
+        #     #         F('round_stats__sng_points').desc(),
+        #     #         F('round_stats__per_points').desc(),
+        #     #     )
+        #     # ),
+        #     mus_round_rank=Window(
         #         expression=Rank(),
-        #         partition_by=[F('group_id')],
-        #         order_by=F('stats__mus_points').desc(),
+        #         partition_by=[F('round_id')],
+        #         order_by=F('round_stats__mus_points').desc(),
         #     ),
-        #     per_rank=Window(
+        #     per_round_rank=Window(
         #         expression=Rank(),
-        #         partition_by=[F('group_id')],
-        #         order_by=F('stats__per_points').desc(),
+        #         partition_by=[F('round_id')],
+        #         order_by=F('round_stats__per_points').desc(),
         #     ),
-        #     sng_rank=Window(
+        #     sng_round_rank=Window(
         #         expression=Rank(),
-        #         partition_by=[F('group_id')],
-        #         order_by=F('stats__sng_points').desc(),
+        #         partition_by=[F('round_id')],
+        #         order_by=F('round_stats__sng_points').desc(),
         #     ),
         ).order_by(
             '-stats__tot_points',
             '-stats__sng_points',
             '-stats__per_points',
         )
+
+        round_rankings = Appearance.objects.filter(
+            round__session_id=self.session_id,
+            round__num__lte=self.num,
+        ).exclude(
+            # Don't include scratches
+            status=Appearance.STATUS.scratched,
+        ).exclude(
+            # Don't include disqualifications.
+            status=Appearance.STATUS.disqualified,
+        ).annotate(
+            mus_round_rank=Window(
+                expression=Rank(),
+                partition_by=[F('round_id')],
+                order_by=Cast(JSONF('round_stats__mus_points'), models.IntegerField()).desc(),
+            ),
+            per_round_rank=Window(
+                expression=Rank(),
+                partition_by=[F('round_id')],
+                order_by=Cast(JSONF('round_stats__per_points'), models.IntegerField()).desc(),
+            ),
+            sng_round_rank=Window(
+                expression=Rank(),
+                partition_by=[F('round_id')],
+                order_by=Cast(JSONF('round_stats__sng_points'), models.IntegerField()).desc(),
+            ),
+        )
+
+        print('QUERY')
+        print(round_rankings.query)
+
+        rankings = {}
+        for appearance in round_rankings:
+            # print(appearance.mus_round_rank)
+            # print(appearance.per_round_rank)
+            # print(appearance.sng_round_rank)
+            # print('===========')
+            rankings[appearance.id] = appearance
+
         for group in groups:
             appearances = Appearance.objects.filter(
                 group_id=group.group_id,
@@ -3558,7 +3694,33 @@ class Round(TimeStampedModel):
                 'songs__scores__panelist',
             ).order_by(
                 'round__kind',
+            # ).annotate(
+            #     tot_rank=Window(
+            #         expression=RowNumber(),
+            #         partition_by=[F('group_id')],
+            #         order_by=(
+            #             F('round_stats__tot_points').desc(),
+            #             F('round_stats__sng_points').desc(),
+            #             F('round_stats__per_points').desc(),
+            #         )
+            #     ),
+            #     mus_round_rank=Window(
+            #         expression=Rank(),
+            #         partition_by=[F('group_id')],
+            #         order_by=F('round_stats__mus_points').desc(),
+            #     ),
+            #     per_round_rank=Window(
+            #         expression=Rank(),
+            #         partition_by=[F('group_id')],
+            #         order_by=F('round_stats__per_points').desc(),
+            #     ),
+            #     sng_round_rank=Window(
+            #         expression=Rank(),
+            #         partition_by=[F('group_id')],
+            #         order_by=F('round_stats__sng_points').desc(),
+            #     ),
             )
+
             # ).annotate(
             #     tot_points=Sum(
             #         'songs__scores__points',
@@ -3629,6 +3791,7 @@ class Round(TimeStampedModel):
                         ),
                     ),
                 )
+
                 for song in songs:
                     if song.chart_id:
                         song.chart_patched = "{0} [{1}]".format(
@@ -3699,6 +3862,7 @@ class Round(TimeStampedModel):
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
                 appearance.songs_patched = songs
+                appearance.rankings = rankings[appearance.id]
             group.appearances_patched = appearances
 
         # Penalties Block
@@ -3712,61 +3876,64 @@ class Round(TimeStampedModel):
             # appearance__in=groups,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules. (Repeating Substantial Portions of a Song)",
-            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules. (Instrumental Accompaniment)",
-            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules. (Chorus Exceeding 4-Part Texture)",
-            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules. (Excessive Melody Not in Inner Part)",
-            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules. (Lack of Characteristic Chord Progression)",
-            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules. (Excessive Lyrics < 4 parts)",
-            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules. (Primarily Patriotic/Religious Intent)",
-            44: "∏ Score(s) penalized due to violation of Article IX.A.3.b of the BHS Contest Rules. (Not in Good Taste)",
-            48: "∇ Score(s) penalized due to violation of Article XI.A.1 of the BHS Contest Rules. (Non-members Performing on Stage)",
-            50: "※ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules. (Sound Equipment or Electronic Enhancement)",
+            30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
+            32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
+            34: "✠ Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
+            36: "✶ Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
+            38: "✢ Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
+            39: "✦ Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
+            40: "❉ Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
+            44: "∏ Scores penalized for Not in Good Taste (IX.A.3.b)",
+            48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
+            50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
         # Build stats
-        stats = Song.objects.select_related(
-            'appearance__round',
-        ).prefetch_related(
-            'scores__panelist__kind',
-        ).filter(
-            appearance__round__session_id=self.session_id,
-            appearance__round__num__lte=self.num,
-        ).annotate(
-            tot_dev=StdDev(
-                'scores__points',
-                filter=Q(
-                    scores__panelist__kind=Panelist.KIND.official,
-                ),
-            ),
-            mus_dev=StdDev(
-                'scores__points',
-                filter=Q(
-                    scores__panelist__kind=Panelist.KIND.official,
-                    scores__panelist__category=Panelist.CATEGORY.music,
-                ),
-            ),
-            per_dev=StdDev(
-                'scores__points',
-                filter=Q(
-                    scores__panelist__kind=Panelist.KIND.official,
-                    scores__panelist__category=Panelist.CATEGORY.performance,
-                ),
-            ),
-            sng_dev=StdDev(
-                'scores__points',
-                filter=Q(
-                    scores__panelist__kind=Panelist.KIND.official,
-                    scores__panelist__category=Panelist.CATEGORY.singing,
-                ),
-            ),
-        ).aggregate(
-            tot=Avg('tot_dev'),
-            mus=Avg('mus_dev'),
-            per=Avg('per_dev'),
-            sng=Avg('sng_dev'),
-        )
+        # stats = Song.objects.select_related(
+        #     'appearance__round',
+        # ).prefetch_related(
+        #     'scores__panelist__kind',
+        # ).filter(
+        #     appearance__round__session_id=self.session_id,
+        #     appearance__round__num__lte=self.num,
+        # ).annotate(
+        #     tot_dev=StdDev(
+        #         'scores__points',
+        #         filter=Q(
+        #             scores__panelist__kind=Panelist.KIND.official,
+        #         ),
+        #     ),
+        #     mus_dev=StdDev(
+        #         'scores__points',
+        #         filter=Q(
+        #             scores__panelist__kind=Panelist.KIND.official,
+        #             scores__panelist__category=Panelist.CATEGORY.music,
+        #         ),
+        #     ),
+        #     per_dev=StdDev(
+        #         'scores__points',
+        #         filter=Q(
+        #             scores__panelist__kind=Panelist.KIND.official,
+        #             scores__panelist__category=Panelist.CATEGORY.performance,
+        #         ),
+        #     ),
+        #     sng_dev=StdDev(
+        #         'scores__points',
+        #         filter=Q(
+        #             scores__panelist__kind=Panelist.KIND.official,
+        #             scores__panelist__category=Panelist.CATEGORY.singing,
+        #         ),
+        #     ),
+        # ).aggregate(
+        #     tot=Avg('tot_dev'),
+        #     mus=Avg('mus_dev'),
+        #     per=Avg('per_dev'),
+        #     sng=Avg('sng_dev'),
+        # )
+
+        stats = self.get_session_stats()
+
         context = {
             'round': self,
             'groups': groups,
@@ -3782,6 +3949,7 @@ class Round(TimeStampedModel):
             statelog.by.name,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
         )
+
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
@@ -3794,6 +3962,95 @@ class Round(TimeStampedModel):
         )
         content = ContentFile(file)
         return content
+
+    def get_session_stats(self):
+        stats = {}
+        # If current round == 1 and more than one round exists calculate Grand Total Figures.
+        if self.kind > 1:
+            round_name = Round.KIND[self.kind]
+
+            # Retrieve Grand Total Stats for a specific round
+            stats['Total'] = {}
+            stats['Total'][round_name] = self.get_round_stats(self.kind, None)
+
+            for category in Panelist.CATEGORY:
+                if category[0] >= 30:
+                    stats[category[1]] = {}
+        
+                    # Retrieve category stats for a specific round
+                    stats[category[1]][round_name] = self.get_round_stats(self.kind, category[0])        
+        else:
+            # How many rounds are there???
+            rounds = Round.objects.filter(
+                session_id=self.session_id,
+            ).order_by('kind')
+
+            stats['Total'] = {}
+            if rounds.count() > 1:
+                stats['Total']['Grand'] = self.get_round_stats(None, None)
+
+                for round in rounds:
+                    round_name = Round.KIND[round.kind]
+                    stats['Total'][round_name] = self.get_round_stats(round.kind, None)
+            else:
+                stats['Total']['Finals'] = self.get_round_stats(self.kind, None)                
+
+            for category in Panelist.CATEGORY:
+                if category[0] >= 30:
+                    stats[category[1]] = {}
+                    
+                    if rounds.count() > 1:
+                        stats[category[1]]['Grand'] = self.get_round_stats(None, category[0])
+
+                    for round in rounds:
+                        round_name = Round.KIND[round.kind]
+                    
+                        # Retrieve category stats for a specific round
+                        stats[category[1]][round_name] = self.get_round_stats(round.kind, category[0])
+        return stats
+
+    def get_round_stats(self, round_num, category):
+        filter_round = ""
+        if round_num is not None:
+            filter_round = " AND round.kind = {0}".format(round_num)
+
+        filter_category = ""
+        if category is not None:
+            filter_category = " AND panelist.category = {0}".format(category)
+
+        query = '''
+            SELECT 
+                scores.id,
+                ROUND(AVG(scores.resid) OVER (),2) AS diff,
+                ROUND(stddev_samp(scores.resid) OVER (),2) AS stddev
+            FROM (
+                SELECT round.id, song.id as song_id, appearance.name, song.title, panelist.category, panelist.last_name, score.points, round.id as round_id, round.kind,
+
+                avg(score.points) over(partition by song.id,panelist.category) as AVG_SCORE,
+
+                ABS(avg(score.points) over(partition by song.id,panelist.category) - score.points) as resid
+
+                FROM public.adjudication_score as score
+
+                LEFT JOIN adjudication_song as song ON song.id = score.song_id
+                LEFT JOIN adjudication_appearance as appearance ON song.appearance_id = appearance.id
+                LEFT JOIN adjudication_panelist as panelist ON panelist.id = score.panelist_id
+                LEFT JOIN adjudication_round as round ON round.id = appearance.round_id
+                LEFT JOIN registration_session as session on session.id = round.session_id
+
+                WHERE session.id = '%s' -- Session ID
+                AND panelist.kind = 10 -- Official scores only
+                %s -- Round Number
+                %s -- Category
+                    
+                ORDER BY appearance.num, score.song_id, panelist.num
+
+            ) as scores
+
+            LIMIT 1
+        ''' % (self.session_id, filter_round, filter_category)
+
+        return Score.objects.raw(query)[0]
 
     def save_sa(self):
         sa = self.get_sa()
@@ -3947,16 +4204,16 @@ class Round(TimeStampedModel):
             appearance__group_id__in=group_ids,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules.",
-            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules.",
-            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules.",
-            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules.",
-            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules.",
-            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules.",
-            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
-            44: "∏ Score(s) penalized due to violation of Article IX.A.3.b of the BHS Contest Rules.",
-            48: "∇ Score(s) penalized due to violation of Article XI.A.1 of the BHS Contest Rules.",
-            50: "※ Score(s) penalized due to violation of Article X.B of the BHS Contest Rules.",
+            30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
+            32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
+            34: "✠ Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
+            36: "✶ Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
+            38: "✢ Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
+            39: "✦ Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
+            40: "❉ Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
+            44: "∏ Scores penalized for Not in Good Taste (IX.A.3.b)",
+            48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
+            50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
@@ -4362,13 +4619,12 @@ class Round(TimeStampedModel):
                 category__gt=Panelist.CATEGORY.ca,
                 **panelist_filters
             ).order_by(
+                'kind',
                 'category',
                 'last_name',
                 'round__session_kind',
                 'round__kind',
             )
-
-
 
         ## Set via POST var
         if len(data) and 'isReversed' in data:
@@ -4626,7 +4882,7 @@ class Round(TimeStampedModel):
 
     def send_publish_report_email(self):
         email = self.get_publish_report_email()
-        return email.send()
+        return email.send()        
 
     # Round Permissions
     @staticmethod
@@ -5347,16 +5603,16 @@ class Song(TimeStampedModel):
     )
 
     PENALTY = Choices(
-        (30, 'repetition', 'Repeating Substantial Portions of a Song (Article V.A.2)'),
-        (32, 'accompaniment', 'Instrumental Accompaniment (Article IX.A.2.a)'),
-        (34, 'texture', 'Chorus Exceeding 4-Part Texture (Article IX.A.2.b)'),
-        (36, 'excessive', 'Excessive Melody Not in Inner Part (Article IX.A.2.c)'),
-        (38, 'progression', 'Lack of Characteristic Chord Progression (Article IX.A.2.d)'),
-        (39, 'lyrics', 'Excessive Lyrics < 4 parts (Article IX.A.2.e)'),
-        (40, 'patreg', 'Primarily Patriotic/Religious Intent (Article IX.A.3)'),
-        (44, 'notingoodtaste', 'Not in Good Taste (Article IX.A.3.b)'),
-        (48, 'nonmembersperforming', 'Non-members Performing on Stage (Article XI.A.1)'),
-        (50, 'enhancement', 'Sound Equipment or Electronic Enhancement (Article X.B)'),
+        (30, 'repetition', 'Repeating Substantial Portions of a Song (V.A.2)'),
+        (32, 'accompaniment', 'Instrumental Accompaniment (IX.A.2.a)'),
+        (34, 'texture', 'Chorus Exceeding 4-Part Texture (IX.A.2.b)'),
+        (36, 'excessive', 'Excessive Melody Not in Inner Part (IX.A.2.c)'),
+        (38, 'progression', 'Lack of Characteristic Chord Progression (IX.A.2.d)'),
+        (39, 'lyrics', 'Excessive Lyrics < 4 parts (IX.A.2.e)'),
+        (40, 'patreg', 'Primarily Patriotic/Religious Intent (IX.A.3)'),
+        (44, 'notingoodtaste', 'Not in Good Taste (IX.A.3.b)'),
+        (48, 'nonmembersperforming', 'Non-members Performing on Stage (XI.A.1)'),
+        (50, 'enhancement', 'Sound Equipment or Electronic Enhancement (X.B.1-3)'),
     )
 
     penalties = ArrayField(
