@@ -436,6 +436,10 @@ class SfSession:
         if hasattr(n, 'sf_BS_Division__c'):
             d['divisions'] = n.sf_BS_Division__c.cdata
 
+        # Notification List
+        if hasattr(n, 'sf_Send_Results_To__c'):
+            d['notification_list'] = n.sf_Send_Results_To__c.cdata
+
         # Return parsed dict
         return d
 
@@ -690,6 +694,10 @@ class SfEntry:
         # Session ID
         if hasattr(n, 'sf_BS_Session_UUID__c'):
             d['session_id'] = n.sf_BS_Session_UUID__c.cdata
+
+        # Notification List
+        if hasattr(n, 'sf_Send_Results_To__c'):
+            d['notification_list'] = n.sf_Send_Results_To__c.cdata
 
         # Return parsed dict
         return d

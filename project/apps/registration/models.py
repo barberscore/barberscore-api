@@ -925,6 +925,12 @@ class Entry(TimeStampedModel):
         related_query_name='entries',
     )
 
+    notification_list = models.TextField(
+        help_text="""
+            Comma separated list of email addresses to notify with reports.""",
+        blank=True,
+    )
+
     # Internals
     objects = EntryManager()
 
@@ -1052,8 +1058,9 @@ class Entry(TimeStampedModel):
         return email
 
     def send_invite_email(self):
-        email = self.get_invite_email()
-        return email.send()
+        # email = self.get_invite_email()
+        # return email.send()
+        return False
 
     def get_withdraw_email(self):
         # Send confirmation email
@@ -1074,8 +1081,9 @@ class Entry(TimeStampedModel):
         return email
 
     def send_withdraw_email(self):
-        email = self.get_withdraw_email()
-        return email.send()
+        # email = self.get_withdraw_email()
+        # return email.send()
+        return False
 
     def get_submit_email(self):
         Group = apps.get_model('bhs.group')
@@ -1105,8 +1113,9 @@ class Entry(TimeStampedModel):
         return email
 
     def send_submit_email(self):
-        email = self.get_submit_email()
-        return email.send()
+        # email = self.get_submit_email()
+        # return email.send()
+        return False
 
     def get_approve_email(self):
         Group = apps.get_model('bhs.group')
@@ -1136,8 +1145,9 @@ class Entry(TimeStampedModel):
         return email
 
     def send_approve_email(self):
-        email = self.get_approve_email()
-        return email.send()
+        # email = self.get_approve_email()
+        # return email.send()
+        return False
 
 
     # Entry Transition Conditions
@@ -1564,6 +1574,12 @@ class Session(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    notification_list = models.TextField(
+        help_text="""
+            Comma separated list of email addresses to notify with reports.""",
+        blank=True,
+    )
+
     # Relations
     statelogs = GenericRelation(
         StateLog,
@@ -1853,8 +1869,9 @@ class Session(TimeStampedModel):
         return email
 
     def send_open_email(self):
-        email = self.get_open_email()
-        return email.send()
+        # email = self.get_open_email()
+        # return email.send()
+        return False
 
     def get_close_email(self):
         template = 'emails/session_close.txt'
@@ -1875,8 +1892,9 @@ class Session(TimeStampedModel):
         return email
 
     def send_close_email(self):
-        email = self.get_close_email()
-        return email.send()
+        # email = self.get_close_email()
+        # return email.send()
+        return False
 
     def get_verify_email(self):
         template = 'emails/session_verify.txt'
@@ -1903,8 +1921,9 @@ class Session(TimeStampedModel):
         return email
 
     def send_verify_email(self):
-        email = self.get_verify_email()
-        return email.send()
+        # email = self.get_verify_email()
+        # return email.send()
+        return False
 
     def get_verify_report_email(self):
         template = 'emails/session_verify_report.txt'
@@ -1946,8 +1965,9 @@ class Session(TimeStampedModel):
         return email
 
     def send_verify_report_email(self):
-        email = self.get_verify_report_email()
-        return email.send()
+        # email = self.get_verify_report_email()
+        # return email.send()
+        return False
 
     def get_package_email(self):
         template = 'emails/session_package.txt'
@@ -1974,8 +1994,9 @@ class Session(TimeStampedModel):
         return email
 
     def send_package_email(self):
-        email = self.get_package_email()
-        return email.send()
+        # email = self.get_package_email()
+        # return email.send()
+        return False
 
     def get_package_report_email(self):
         template = 'emails/session_package_report.txt'
@@ -2018,9 +2039,9 @@ class Session(TimeStampedModel):
         return email
 
     def send_package_report_email(self):
-        email = self.get_package_report_email()
-        return email.send()
-
+        # email = self.get_package_report_email()
+        # return email.send()
+        return False
 
     # Session Permissions
     @staticmethod

@@ -77,7 +77,7 @@ CONVENTION_OWNERS = [
     'proclamation56@gmail.com',
     'mottley81@gmail.com',
     'randy.rensi@ieee.org',
-    'alex@barbershopchorus.com'
+    'alex@barbershopchorus.com',
 ]
 
 # SALESFORCE_ORGANIZATIONS
