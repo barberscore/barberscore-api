@@ -411,6 +411,11 @@ class Appearance(TimeStampedModel):
 
     # Methods
     def get_owners_emails(self):
+        Entry = apps.get_model('registration.entry')
+        entry = Entry.objects.filter(
+            group_id=self.group_id,
+            session_id=self.round.session_id,
+        ).first()
         if not self.owners.all():
             raise ValueError("No owners for {0}".format(self))
         owners = self.owners.order_by(
@@ -1061,15 +1066,17 @@ class Appearance(TimeStampedModel):
         Panelist = apps.get_model('adjudication.panelist')
         Score = apps.get_model('adjudication.score')
         Chart = apps.get_model('bhs.chart')
+        Group = apps.get_model('bhs.group')
 
         # Context
-        group = self.group
+        group = Group.objects.get(id=self.group_id)
+
         stats = Score.objects.select_related(
             'song__appearance__group',
             'song__appearance__round',
             'panelist',
         ).filter(
-            song__appearance__group=self.group,
+            song__appearance__group_id=group.id,
             song__appearance__round__session_id=self.round.session_id,
             panelist__kind=Panelist.KIND.official,
         ).aggregate(
@@ -1119,13 +1126,16 @@ class Appearance(TimeStampedModel):
                 )
             ),
         )
+
+        print("stats", stats)
+
         appearances = Appearance.objects.select_related(
             'round',
         ).prefetch_related(
             'songs__scores',
             'songs__scores__panelist',
         ).filter(
-            group_id=self.group_id,
+            group_id=group.id,
             round__session_id=self.round.session_id,
         ).order_by(
             '-round__num',
@@ -1283,12 +1293,17 @@ class Appearance(TimeStampedModel):
             pdf = self.csa_report.file
         else:
             pdf = self.get_csa()
-        file_name = '{0} CSA.pdf'.format(self)
+        file_name = '{0} CSA.pdf'.format(group.name)
         attachments = [(
             file_name,
             pdf,
             'application/pdf',
         )]
+
+        print("CSA EMAIL")
+        print("to", to)
+        print("cc", cc)
+
         email = build_email(
             template=template,
             context=context,
@@ -2758,13 +2773,11 @@ class Round(TimeStampedModel):
 
     # Methods
     def get_owners_emails(self):
-        if not self.owners.all():
-            raise ValueError("No owners for {0}".format(self))
-        owners = self.owners.order_by(
-            'last_name',
-            'first_name',
-        )
-        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+        Session = apps.get_model('registration.session')
+        session = Session.objects.get(id=self.session_id)
+        if not len(session.notification_list):
+            raise ValueError("No notification list for {0}".format(session))
+        return ["{0}".format(x.strip()) for x in session.notification_list.split(',')]
 
     def get_oss(self, zoom=1):
         Group = apps.get_model('bhs.group')
@@ -3659,29 +3672,23 @@ class Round(TimeStampedModel):
             mus_round_rank=Window(
                 expression=Rank(),
                 partition_by=[F('round_id')],
-                order_by=Cast(JSONF('round_stats__mus_points'), models.IntegerField()).desc(),
+                order_by=Cast(JSONF('round_stats__mus_points'), models.FloatField()).desc(),
             ),
             per_round_rank=Window(
                 expression=Rank(),
                 partition_by=[F('round_id')],
-                order_by=Cast(JSONF('round_stats__per_points'), models.IntegerField()).desc(),
+                order_by=Cast(JSONF('round_stats__per_points'), models.FloatField()).desc(),
             ),
             sng_round_rank=Window(
                 expression=Rank(),
                 partition_by=[F('round_id')],
-                order_by=Cast(JSONF('round_stats__sng_points'), models.IntegerField()).desc(),
+                order_by=Cast(JSONF('round_stats__sng_points'), models.FloatField()).desc(),
             ),
         )
 
-        print('QUERY')
-        print(round_rankings.query)
-
         rankings = {}
         for appearance in round_rankings:
-            # print(appearance.mus_round_rank)
-            # print(appearance.per_round_rank)
-            # print(appearance.sng_round_rank)
-            # print('===========')
+            print("appearance", appearance)
             rankings[appearance.id] = appearance
 
         for group in groups:
@@ -4362,14 +4369,25 @@ class Round(TimeStampedModel):
         self.legacy_oss.save('legacy_oss', content)
 
     def get_participants_emails(self):
-        User = apps.get_model('rest_framework_jwt.user')
-        owners = User.objects.filter(
-            appearances__round=self,
-        ).order_by(
-            'last_name',
-            'first_name',
-        ).distinct()
-        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+        Entry = apps.get_model('registration.entry')
+        appearances = self.appearances.distinct()
+        for appearance in appearances:
+            entry = Entry.objects.filter(
+                group_id=appearance.group_id,
+                session_id=self.session_id
+            ).first()
+            seen = set()
+            if len(entry.notification_list):
+                result = [
+                    "{0}".format(email,)
+                    for email in entry.notification_list.split(',')
+                    if not (
+                        "{0}".format(email,) in seen or seen.add(
+                            "{0}".format(email,)
+                        )
+                    )
+                ]
+        return result
 
     def get_titles(self):
         Chart = apps.get_model('bhs.chart')
@@ -4710,6 +4728,9 @@ class Round(TimeStampedModel):
         )
 
     def get_judge_emails(self):
+        postfix = ''
+        if (settings.EMAIL_ADMINS_ONLY):
+            postfix = '.invalid'
         Panelist = apps.get_model('adjudication.panelist')
         judges = self.panelists.filter(
             # status=Panelist.STATUS.active,
@@ -4723,11 +4744,11 @@ class Round(TimeStampedModel):
         )
         seen = set()
         result = [
-            "{0} ({1} {2}) <{3}>".format(judge.user.name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,)
+            "{0} ({1} {2}) <{3}{4}>".format(judge.name, judge.get_kind_display(), judge.get_category_display(), judge.email, postfix,)
             for judge in judges
             if not (
-                "{0} ({1} {2}) <{3}>".format(judge.user.name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,) in seen or seen.add(
-                    "{0} ({1} {2}) <{3}>".format(judge.user.name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,)
+                "{0} ({1} {2}) <{3}{4}>".format(judge.name, judge.get_kind_display(), judge.get_category_display(), judge.email, postfix,) in seen or seen.add(
+                    "{0} ({1} {2}) <{3}{4}>".format(judge.name, judge.get_kind_display(), judge.get_category_display(), judge.email, postfix,)
                 )
             )
         ]
@@ -4796,13 +4817,15 @@ class Round(TimeStampedModel):
             'num',
             # 'award__name',
             'name',
+            'winner'
         )
+
         outcomes = []
         for item in items:
             outcomes.append(
                 (
                     "{0} {1}".format(item[0], item[1]),
-                    # item[2],
+                    item[2],
                 )
             )
 
