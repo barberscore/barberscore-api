@@ -1609,8 +1609,6 @@ class Session(TimeStampedModel):
         if len(sessionDivisions):
             divisions = dict(self.division_names)
             for index, value in enumerate(self.divisions):
-                print("divisions")
-                print(len(divisions))
                 result += str(divisions[value])
                 if not index == (len(self.divisions) - 1):
                     result += "/"

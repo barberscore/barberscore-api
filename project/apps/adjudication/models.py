@@ -416,13 +416,9 @@ class Appearance(TimeStampedModel):
             group_id=self.group_id,
             session_id=self.round.session_id,
         ).first()
-        if not self.owners.all():
-            raise ValueError("No owners for {0}".format(self))
-        owners = self.owners.order_by(
-            'last_name',
-            'first_name',
-        )
-        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+        if not len(entry.notification_list):
+            raise ValueError("No notification list for {0}".format(entry))
+        return ["{0}".format(x.strip()) for x in entry.notification_list.split(',')]
 
     def get_variance(self):
         Chart = apps.get_model('bhs.chart')
@@ -1126,8 +1122,6 @@ class Appearance(TimeStampedModel):
                 )
             ),
         )
-
-        print("stats", stats)
 
         appearances = Appearance.objects.select_related(
             'round',
