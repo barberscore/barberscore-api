@@ -1,6 +1,7 @@
 
 # Standard Library
 import logging
+import re
 
 # Third-Party
 import pydf
@@ -14,12 +15,16 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
+
 
 # Django
 from django.core.files.base import ContentFile
 from django.db.models import Sum, Q, Avg
 from django.template.loader import render_to_string
 from django.utils.text import slugify
+from django.utils.six import BytesIO
+from collections.abc import Iterable
 
 # Local
 # from .filterbackends import AppearanceFilterBackend
@@ -36,13 +41,16 @@ from .models import Panelist
 from .models import Round
 from .models import Score
 from .models import Song
+from apps.bhs.models import Convention
 
 from .renderers import PDFRenderer
 from .renderers import XLSXRenderer
+from .renderers import DOCXRenderer
+from .renderers import RTFRenderer
 from .responders import PDFResponse
 from .responders import XLSXResponse
-from .renderers import DOCXRenderer
 from .responders import DOCXResponse
+from .responders import RTFResponse
 
 from .serializers import AppearanceSerializer
 from .serializers import OutcomeSerializer
@@ -111,7 +119,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.start(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -125,7 +133,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.finish(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -139,7 +147,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.verify(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -154,7 +162,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.complete(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -169,7 +177,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.advance(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -184,7 +192,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.scratch(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -199,7 +207,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             object.disqualify(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -218,10 +226,10 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     )
     def variance(self, request, pk=None):
         appearance = Appearance.objects.get(pk=pk)
-        if appearance.variance_report:
-            pdf = appearance.variance_report.file
-        else:
-            pdf = appearance.get_variance()
+        # if appearance.variance_report:
+        #     pdf = appearance.variance_report.file
+        # else:
+        pdf = appearance.get_variance()
         file_name = '{0} Variance Report.pdf'.format(appearance)
         return PDFResponse(
             pdf,
@@ -243,11 +251,13 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         Renders the Competitor Scoring Analysis in PDF
         """
         appearance = Appearance.objects.get(pk=pk)
-        if appearance.csa_report:
-            pdf = appearance.csa_report.file
-        else:
-            pdf = appearance.get_csa()
+        # if appearance.csa_report:
+        #     pdf = appearance.csa_report.file
+        # else:
+        pdf = appearance.get_csa()
+
         file_name = '{0} CSA.pdf'.format(appearance)
+        file_name = re.sub('[^a-zA-Z0-9_ ]', '', file_name)
         return PDFResponse(
             pdf,
             file_name=file_name,
@@ -300,10 +310,10 @@ class PanelistViewSet(viewsets.ModelViewSet):
     )
     def psa(self, request, pk=None):
         panelist = Panelist.objects.get(pk=pk)
-        if panelist.psa_report:
-            pdf = panelist.psa_report.file
-        else:
-            pdf = panelist.get_psa()
+        # if panelist.psa_report:
+        #     pdf = panelist.psa_report.file
+        # else:
+        pdf = panelist.get_psa()
         file_name = '{0} PSA.pdf'.format(panelist)
         return PDFResponse(
             pdf,
@@ -348,7 +358,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             object.reset(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -362,7 +372,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             object.build(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -376,7 +386,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             object.start(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -390,7 +400,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             object.complete(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -404,7 +414,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             object.finalize(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Transition conditions not met.'},
+                {'status': 'Information incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -418,7 +428,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         #     object.publish(by=self.request.user)
         # except TransitionNotAllowed:
         #     return Response(
-        #         {'status': 'Transition conditions not met.'},
+        #         {'status': 'Information incomplete.'},
         #         status=status.HTTP_400_BAD_REQUEST,
         #     )
         object.publish(by=self.request.user)
@@ -440,17 +450,16 @@ class RoundViewSet(viewsets.ModelViewSet):
             # 'session',
             # 'session__convention',
         ).get(pk=pk)
-        if round.oss_report:
-            pdf = round.oss_report.file
-        else:
-            pdf = round.get_oss()
+        # if round.oss_report:
+        #     pdf = round.oss_report.file
+        # else:
+        pdf = round.get_oss()
         file_name = '{0} OSS.pdf'.format(round)
         return PDFResponse(
             pdf,
             file_name=file_name,
             status=status.HTTP_200_OK
         )
-
 
     @action(
         methods=['get'],
@@ -474,7 +483,6 @@ class RoundViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-
     @action(
         methods=['get'],
         detail=True,
@@ -487,17 +495,16 @@ class RoundViewSet(viewsets.ModelViewSet):
     def legacyoss(self, request, pk=None):
         round = Round.objects.select_related(
         ).get(pk=pk)
-        if round.legacy_oss:
-            pdf = round.legacy_oss.file
-        else:
-            pdf = round.get_legacy_oss()
+        # if round.legacy_oss:
+        #     pdf = round.legacy_oss.file
+        # else:
+        pdf = round.get_legacy_oss()
         file_name = '{0} Legacy OSS.pdf'.format(round)
         return PDFResponse(
             pdf,
             file_name=file_name,
             status=status.HTTP_200_OK
         )
-
 
     @action(
         methods=['get'],
@@ -522,7 +529,6 @@ class RoundViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-
     @action(
         methods=['get'],
         detail=True,
@@ -535,10 +541,10 @@ class RoundViewSet(viewsets.ModelViewSet):
             # 'session',
             # 'session__convention',
         ).get(pk=pk)
-        if round.sa_report:
-            pdf = round.sa_report.file
-        else:
-            pdf = round.get_sa()
+        # if round.sa_report:
+        #     pdf = round.sa_report.file
+        # else:
+        pdf = round.get_sa()
         file_name = '{0} SA'.format(
             round.nomen,
         )
@@ -547,7 +553,6 @@ class RoundViewSet(viewsets.ModelViewSet):
             file_name=file_name,
             status=status.HTTP_200_OK
         )
-
 
     @action(
         methods=['get'],
@@ -571,10 +576,54 @@ class RoundViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
+    @action(
+        methods=['post'],
+        detail=True,
+        renderer_classes=[
+            RTFRenderer,
+        ],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
+    def labels(self, request, pk=None, **kwargs):
+        round = self.get_object()
+
+        # Parse inbound request
+        if len(request._request.body):
+            content = BytesIO(request._request.body)
+            data = JSONParser().parse(content)
+        else:
+            data = {}
+
+        convention = Convention.objects.filter(
+            id=round.convention_id
+        ).first()
+
+        # File name postfix
+        postfix = ""
+        if len(data):
+            postfix = "_" + data['postfix'].strip()
+
+        rtf = round.get_labels(request, data)
+
+        ### Concatenate File name
+        file_name = '{0}_Lbls{1}'.format(
+            convention.base_filename(),
+            postfix
+        )
+
+        return RTFResponse(
+            rtf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
+
 
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.select_related(
         'song',
+        'song__appearance',
+        'song__appearance__round',
         'panelist',
     ).prefetch_related(
     ).order_by('id')
@@ -588,6 +637,28 @@ class ScoreViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "score"
+
+    def partial_update(self, request, pk=None):
+        object = self.get_object()
+
+        # Update Score
+        super().partial_update(request, *pk)
+
+        # Reset appearance status???
+        appearance = Appearance.objects.filter(
+                id=object.song.appearance.id
+            )
+
+        # Update appearance stats
+        stats = appearance[0].get_stats()
+
+        appearance.update(
+            status=Appearance.STATUS.finished,
+            stats=stats
+        )
+
+        # Resave score for return
+        return super().partial_update(request, *pk)
 
 
 class SongViewSet(viewsets.ModelViewSet):

@@ -48,3 +48,17 @@ class DOCXResponse(Response):
             *args,
             **kwargs
         )
+
+class RTFResponse(Response):
+    def __init__(self, rtf, file_name, *args, **kwargs):
+        headers = {
+            'Content-Disposition': 'filename="{}.rtf"'.format(file_name),
+        }
+
+        super().__init__(
+            rtf,
+            content_type='application/rtf',
+            headers=headers,
+            *args,
+            **kwargs
+        )

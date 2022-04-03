@@ -1,6 +1,7 @@
 # Django
 from django.apps import apps
 from django.db.models import Manager
+from django.contrib.auth import get_user_model
 
 class ContestManager(Manager):
     def update_or_create_contest(self, contest):
@@ -68,6 +69,25 @@ class AssignmentManager(Manager):
             id=pk,
             defaults=assignment,
         )
+
+        # Set any CA on assignment to own both Convention and Session
+        if record.session_id and record.category == self.model.CATEGORY.ca:
+
+            # Get JWT User record
+                # 1. record.email
+            User = get_user_model()
+            owner = User.objects.filter(email=record.email).first()
+
+            # Session
+            Session = apps.get_model('registration.session')
+            session = Session.objects.filter(id=record.session_id).first()
+            session.owners.add(owner.id)
+
+            # Convention
+            Convention = apps.get_model('bhs.convention')
+            convention = Convention.objects.filter(id=session.convention_id).first()
+            convention.owners.add(owner.id)
+
         return record, created
 
 class EntryManager(Manager):

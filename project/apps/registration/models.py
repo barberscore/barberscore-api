@@ -3,6 +3,7 @@
 import uuid
 import datetime
 import ast
+from collections.abc import Iterable
 
 # Third-Party
 from django_fsm import FSMIntegerField
@@ -69,6 +70,7 @@ class Assignment(TimeStampedModel):
     )
 
     KIND = Choices(
+        (-10, 'former', 'Former'),
         (10, 'official', 'Official'),
         (20, 'practice', 'Practice'),
     )
@@ -923,6 +925,12 @@ class Entry(TimeStampedModel):
         related_query_name='entries',
     )
 
+    notification_list = models.TextField(
+        help_text="""
+            Comma separated list of email addresses to notify with reports.""",
+        blank=True,
+    )
+
     # Internals
     objects = EntryManager()
 
@@ -939,11 +947,7 @@ class Entry(TimeStampedModel):
 
     @cached_property
     def get_district_display(self):
-        return "testing"
-
-    @cached_property
-    def get_district(self):
-        return "testing2"
+        return self.DISTRICT[self.district]
 
     # Internals
     class Meta:
@@ -1054,8 +1058,9 @@ class Entry(TimeStampedModel):
         return email
 
     def send_invite_email(self):
-        email = self.get_invite_email()
-        return email.send()
+        # email = self.get_invite_email()
+        # return email.send()
+        return False
 
     def get_withdraw_email(self):
         # Send confirmation email
@@ -1076,8 +1081,9 @@ class Entry(TimeStampedModel):
         return email
 
     def send_withdraw_email(self):
-        email = self.get_withdraw_email()
-        return email.send()
+        # email = self.get_withdraw_email()
+        # return email.send()
+        return False
 
     def get_submit_email(self):
         Group = apps.get_model('bhs.group')
@@ -1107,8 +1113,9 @@ class Entry(TimeStampedModel):
         return email
 
     def send_submit_email(self):
-        email = self.get_submit_email()
-        return email.send()
+        # email = self.get_submit_email()
+        # return email.send()
+        return False
 
     def get_approve_email(self):
         Group = apps.get_model('bhs.group')
@@ -1138,8 +1145,9 @@ class Entry(TimeStampedModel):
         return email
 
     def send_approve_email(self):
-        email = self.get_approve_email()
-        return email.send()
+        # email = self.get_approve_email()
+        # return email.send()
+        return False
 
 
     # Entry Transition Conditions
@@ -1566,6 +1574,12 @@ class Session(TimeStampedModel):
         on_delete=models.SET_NULL,
     )
 
+    notification_list = models.TextField(
+        help_text="""
+            Comma separated list of email addresses to notify with reports.""",
+        blank=True,
+    )
+
     # Relations
     statelogs = GenericRelation(
         StateLog,
@@ -1586,11 +1600,17 @@ class Session(TimeStampedModel):
 
     def divisions_display(self):
         result = ""
-        divisions = dict(self.division_names)
-        if hasattr(self.divisions, '__len__') and (not isinstance(self.divisions, str)):
+
+        if (isinstance(self.divisions, Iterable)):
+            sessionDivisions = self.divisions
+        else:
+            sessionDivisions = ast.literal_eval(self.divisions)
+
+        if len(sessionDivisions):
+            divisions = dict(self.division_names)
             for index, value in enumerate(self.divisions):
                 result += str(divisions[value])
-                if not index == len(self.divisions) - 1:
+                if not index == (len(self.divisions) - 1):
                     result += "/"
             result += (" Divisions" if len(self.divisions) > 1 else " Division")
         return result
@@ -1601,8 +1621,9 @@ class Session(TimeStampedModel):
         if self.district == self.DISTRICT.bhs:
             return " ".join([
                 self.get_district_display(),
+                self.name,
                 str(self.year),
-                self.get_kind_display(),
+                self.get_kind_display()
             ])
         if len(self.divisions) > 0:
             return " ".join([
@@ -1692,15 +1713,13 @@ class Session(TimeStampedModel):
             oa = entry.draw
             group_name = group.name
             group_type = group.get_kind_display()
-            if group_type == 'Quartet':
+            if group.bhs_id:
                 group_id = group.bhs_id
-            elif group_type == 'Chorus':
-                group_id = group.code
-            elif group_type == 'VLQ':
+            elif group.code:
                 group_id = group.code
             else:
                 raise RuntimeError(
-                    "Improper Entity Type: {0}".format(group.get_kind_display())
+                    "Missing BHS Group ID: {0}".format(group_name)
                 )
             i = 0
             charts_sorted = group.get_charts_nomens()
@@ -1850,8 +1869,9 @@ class Session(TimeStampedModel):
         return email
 
     def send_open_email(self):
-        email = self.get_open_email()
-        return email.send()
+        # email = self.get_open_email()
+        # return email.send()
+        return False
 
     def get_close_email(self):
         template = 'emails/session_close.txt'
@@ -1872,8 +1892,9 @@ class Session(TimeStampedModel):
         return email
 
     def send_close_email(self):
-        email = self.get_close_email()
-        return email.send()
+        # email = self.get_close_email()
+        # return email.send()
+        return False
 
     def get_verify_email(self):
         template = 'emails/session_verify.txt'
@@ -1900,8 +1921,9 @@ class Session(TimeStampedModel):
         return email
 
     def send_verify_email(self):
-        email = self.get_verify_email()
-        return email.send()
+        # email = self.get_verify_email()
+        # return email.send()
+        return False
 
     def get_verify_report_email(self):
         template = 'emails/session_verify_report.txt'
@@ -1913,10 +1935,10 @@ class Session(TimeStampedModel):
         )
         to = self.get_owners_emails()
         attachments = []
-        if self.drcj_report:
-            xlsx = self.drcj_report.file
-        else:
-            xlsx = self.get_drcj_report()
+        # if self.drcj_report:
+        #     xlsx = self.drcj_report.file
+        # else:
+        xlsx = self.get_drcj_report()
         file_name = '{0} Session DRCJ Report DRAFT.xlsx'.format(self)
         attachments.append((
             file_name,
@@ -1943,8 +1965,9 @@ class Session(TimeStampedModel):
         return email
 
     def send_verify_report_email(self):
-        email = self.get_verify_report_email()
-        return email.send()
+        # email = self.get_verify_report_email()
+        # return email.send()
+        return False
 
     def get_package_email(self):
         template = 'emails/session_package.txt'
@@ -1971,8 +1994,9 @@ class Session(TimeStampedModel):
         return email
 
     def send_package_email(self):
-        email = self.get_package_email()
-        return email.send()
+        # email = self.get_package_email()
+        # return email.send()
+        return False
 
     def get_package_report_email(self):
         template = 'emails/session_package_report.txt'
@@ -1985,10 +2009,10 @@ class Session(TimeStampedModel):
         to = self.get_owners_emails()
 
         attachments = []
-        if self.drcj_report:
-            xlsx = self.drcj_report.file
-        else:
-            xlsx = self.get_drcj_report()
+        # if self.drcj_report:
+        #     xlsx = self.drcj_report.file
+        # else:
+        xlsx = self.get_drcj_report()
         file_name = '{0} Session DRCJ Report FINAL.xlsx'.format(self)
         attachments.append((
             file_name,
@@ -2015,9 +2039,9 @@ class Session(TimeStampedModel):
         return email
 
     def send_package_report_email(self):
-        email = self.get_package_report_email()
-        return email.send()
-
+        # email = self.get_package_report_email()
+        # return email.send()
+        return False
 
     # Session Permissions
     @staticmethod

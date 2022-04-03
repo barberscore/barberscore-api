@@ -43,6 +43,23 @@ class XLSXRenderer(BaseRenderer):
     def render(self, data, media_type=None, renderer_context=None):
         return data
 
+class DOCXRenderer(BaseRenderer):
+    media_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    format = 'docx'
+    charset = None
+    render_style = 'binary'
+
+    def render(self, data, media_type=None, renderer_context=None):
+        return data
+
+class TXTRenderer(BaseRenderer):
+    media_type = 'text/plain'
+    format = 'txt'
+    charset = None
+    render_style = 'binary'
+
+    def render(self, data, media_type=None, renderer_context=None):
+        return data
 
 class NoGroupMembersJSONRenderer(JSONRenderer):
     # pass

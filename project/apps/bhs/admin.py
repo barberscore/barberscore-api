@@ -165,6 +165,8 @@ class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
         'location',
         'timezone',
         'image',
+        'bbstix_report',
+        'bbstix_practice_report',
         'persons',
         'description',
     )

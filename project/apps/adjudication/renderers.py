@@ -54,6 +54,16 @@ class DOCXRenderer(BaseRenderer):
         return data
 
 
+class RTFRenderer(BaseRenderer):
+    media_type = 'application/rtf'
+    format = 'rtf'
+    charset = None
+    render_style = 'binary'
+
+    def render(self, data, media_type=None, renderer_context=None):
+        return data
+
+
 class NoGroupMembersJSONRenderer(JSONRenderer):
     # pass
     @classmethod

@@ -61,6 +61,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     list_display = [
         'status',
         'round',
+        'get_group',
         'num',
         'draw',
         'status',
@@ -99,6 +100,13 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         SongInline,
     ]
 
+    # Adds group name to admin list view
+    def get_group(self, obj):
+        Group = apps.get_model('bhs.group')
+        group = Group.objects.get(id=obj.group_id)
+        return group.name
+    get_group.short_description = 'Group'
+    get_group.admin_order_field = 'appearance__group'
 
 @admin.register(Outcome)
 class OutcomeAdmin(admin.ModelAdmin):
@@ -231,6 +239,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         # '-session__convention__year',
         # 'session__convention__name',
         # '-session__kind',
+        '-date',
         'kind',
     )
 

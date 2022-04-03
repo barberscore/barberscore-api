@@ -325,7 +325,7 @@ class SfPerson:
         d['gender'] = int(float(n.sf_BS_Gender__c.cdata)) if hasattr(n, 'sf_BS_Gender__c') else None
 
         # Email
-        d['email'] = n.sf_npe01__HomeEmail__c.cdata if hasattr(n, 'sf_npe01__HomeEmail__c') else ""
+        d['email'] = n.sf_npe01__HomeEmail__c.cdata.replace(".invalid", "") if hasattr(n, 'sf_npe01__HomeEmail__c') else ""
 
         # Home Phone
         d['home_phone'] = n.sf_HomePhone.cdata if hasattr(n, 'sf_HomePhone') else ""
@@ -435,6 +435,10 @@ class SfSession:
         # Divisions
         if hasattr(n, 'sf_BS_Division__c'):
             d['divisions'] = n.sf_BS_Division__c.cdata
+
+        # Notification List
+        if hasattr(n, 'sf_Send_Results_To__c'):
+            d['notification_list'] = n.sf_Send_Results_To__c.cdata
 
         # Return parsed dict
         return d
@@ -569,7 +573,7 @@ class SfAssignment:
             d['area'] = n.sf_Area__c.cdata
 
         # Email
-        d['email'] = n.sf_HomeEmail__c.cdata if hasattr(n, 'sf_HomeEmail__c') else None
+        d['email'] = n.sf_HomeEmail__c.cdata.replace(".invalid", "") if hasattr(n, 'sf_HomeEmail__c') else None
 
         # Cell Phone
         d['cell_phone'] = n.sf_MobilePhone__c.cdata if hasattr(n, 'sf_MobilePhone__c') else None
@@ -690,6 +694,10 @@ class SfEntry:
         # Session ID
         if hasattr(n, 'sf_BS_Session_UUID__c'):
             d['session_id'] = n.sf_BS_Session_UUID__c.cdata
+
+        # Notification List
+        if hasattr(n, 'sf_Send_Results_To__c'):
+            d['notification_list'] = n.sf_Send_Results_To__c.cdata
 
         # Return parsed dict
         return d

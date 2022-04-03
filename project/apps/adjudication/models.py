@@ -1,4 +1,3 @@
-from builtins import round as rnd
 # Standard Library
 import datetime
 import logging
@@ -25,15 +24,19 @@ from django.db.models.functions import DenseRank, RowNumber, Rank
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Min, Max, Count, Avg
+from django.db.models import Min, Max, Avg
+from django.db.models.functions import Cast
+from django.db.models.constants import LOOKUP_SEP
+from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import ValidationError
+from collections.abc import Iterable
 
 # Django
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.files.base import ContentFile
 from django.db import models
-from django.db.models import F, Window
+from django.db.models import Window
 from django.template.loader import render_to_string
 from django.utils.functional import cached_property
 from django.conf import settings
@@ -60,9 +63,29 @@ from .managers import PanelistManager
 from .managers import SongManager
 from .managers import ScoreManager
 
+from .helpers import round_up as rnd
+
 log = logging.getLogger(__name__)
 
 from apps.salesforce.decorators import notification_user
+
+class KeyTextTransformFactory:
+
+    def __init__(self, key_name):
+        self.key_name = key_name
+
+    def __call__(self, *args, **kwargs):
+        return KeyTextTransform(self.key_name, *args, **kwargs)
+
+class JSONF(F):
+
+    def resolve_expression(self, query=None, allow_joins=True, reuse=None, summarize=False, for_save=False):
+        rhs = super().resolve_expression(query, allow_joins, reuse, summarize, for_save)
+
+        field_list = self.name.split(LOOKUP_SEP)
+        for name in field_list[1:]:
+            rhs = KeyTextTransformFactory(name)(rhs)
+        return rhs
 
 class Appearance(TimeStampedModel):
     """
@@ -158,6 +181,11 @@ class Appearance(TimeStampedModel):
     )
 
     stats = JSONField(
+        null=True,
+        blank=True,
+    )
+
+    round_stats = JSONField(
         null=True,
         blank=True,
     )
@@ -383,13 +411,14 @@ class Appearance(TimeStampedModel):
 
     # Methods
     def get_owners_emails(self):
-        if not self.owners.all():
-            raise ValueError("No owners for {0}".format(self))
-        owners = self.owners.order_by(
-            'last_name',
-            'first_name',
-        )
-        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+        Entry = apps.get_model('registration.entry')
+        entry = Entry.objects.filter(
+            group_id=self.group_id,
+            session_id=self.round.session_id,
+        ).first()
+        if not len(entry.notification_list):
+            raise ValueError("No notification list for {0}".format(entry))
+        return ["{0}".format(x.strip()) for x in entry.notification_list.split(',')]
 
     def get_variance(self):
         Chart = apps.get_model('bhs.chart')
@@ -478,7 +507,12 @@ class Appearance(TimeStampedModel):
         #             )
         #         )
         #     ).latest('round__date').avg or randint(60, 70)
-        prelim = self.base or randint(60, 80)
+
+        # ensures score doesn't exceed 100
+        if self.base and self.base <= 100:
+            prelim = self.base or randint(60, 80)
+        else:
+            prelim = randint(60, 80)
         songs = self.songs.all()
         for song in songs:
             charts = group.charts.order_by('id')
@@ -565,10 +599,78 @@ class Appearance(TimeStampedModel):
                     appearances__group_id=self.group_id,
                 ),
             ),
-            tot_score=Avg(
+            sng_score=Avg(
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            per_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            mus_score=Avg(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            score_count=Count(
+                'appearances__songs__scores',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__group_id=self.group_id,
+                ),                
+            ),
+        )
+        stats['tot_score'] = (stats['tot_points'] / stats['score_count'])
+        stats.pop("score_count", None)
+        for key, value in stats.items():
+            stats[key] = rnd(value, 1)
+        return stats
+
+    def get_stats_round(self):
+        Round = apps.get_model('adjudication.round')
+        rounds = Round.objects.filter(
+            id=self.round.id,
+        )
+        stats = rounds.aggregate(
+            tot_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            sng_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            per_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+                    appearances__group_id=self.group_id,
+                ),
+            ),
+            mus_points=Sum(
+                'appearances__songs__scores__points',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
                     appearances__group_id=self.group_id,
                 ),
             ),
@@ -596,10 +698,18 @@ class Appearance(TimeStampedModel):
                     appearances__group_id=self.group_id,
                 ),
             ),
+            score_count=Count(
+                'appearances__songs__scores',
+                filter=Q(
+                    appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+                    appearances__group_id=self.group_id,
+                ),                
+            ),
         )
+        stats['tot_score'] = (stats['tot_points'] / stats['score_count'])
+        stats.pop("score_count", None)
         for key, value in stats.items():
-            if key.endswith('_score'):
-                stats[key] = rnd(value, 1)
+            stats[key] = rnd(value, 1)
         return stats
 
     def get_csa(self):
@@ -675,6 +785,8 @@ class Appearance(TimeStampedModel):
         ).filter(
             group_id=self.group_id,
             round__session_id=self.round.session_id,
+        ).order_by(
+            '-round__num',
         ).annotate(
             tot_points=Sum(
                 'songs__scores__points',
@@ -811,6 +923,8 @@ class Appearance(TimeStampedModel):
                     38: "✢",
                     39: "✦",
                     40: "❉",
+                    44: "∏",
+                    48: "∇",
                     50: "※",
                 }
                 items = " ".join([penalties_map[x] for x in song.penalties])
@@ -829,12 +943,13 @@ class Appearance(TimeStampedModel):
 
         # Score Block
         initials = []
+        count = 1
         for panelist in panelists:
             initials.append("{0}{1}".format(
-                panelist.first_name[0].upper(),
-                panelist.last_name[0].upper(),
+                panelist.get_category_display()[0].upper(),
+                str(count).zfill(2),
             ))
-
+            count += 1
 
         # Hackalicious
         category_count = {
@@ -877,9 +992,16 @@ class Appearance(TimeStampedModel):
             'Singing': [],
         }
         # panelists from above
+        count = 1
         for panelist in panelists:
             item = categories[panelist.get_category_display()]
-            item.append(panelist.name)
+            name = "{0}{1} = {2}".format(
+                panelist.get_category_display()[0].upper(),
+                str(count).zfill(2),
+                panelist.name
+            )
+            item.append(name)
+            count += 1
 
         # Penalties Block
         array = Song.objects.filter(
@@ -888,14 +1010,16 @@ class Appearance(TimeStampedModel):
             penalties__len__gt=0,
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules.",
-            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules.",
-            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules.",
-            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules.",
-            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules.",
-            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules.",
-            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
-            50: "※ Score(s) penalized due to violation of Article X.B.1-3 of the BHS Contest Rules.",
+            30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
+            32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
+            34: "✠ Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
+            36: "✶ Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
+            38: "✢ Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
+            39: "✦ Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
+            40: "❉ Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
+            44: "∏ Scores penalized for Not in Good Taste (IX.A.3.b)",
+            48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
+            50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
@@ -938,15 +1062,17 @@ class Appearance(TimeStampedModel):
         Panelist = apps.get_model('adjudication.panelist')
         Score = apps.get_model('adjudication.score')
         Chart = apps.get_model('bhs.chart')
+        Group = apps.get_model('bhs.group')
 
         # Context
-        group = self.group
+        group = Group.objects.get(id=self.group_id)
+
         stats = Score.objects.select_related(
             'song__appearance__group',
             'song__appearance__round',
             'panelist',
         ).filter(
-            song__appearance__group=self.group,
+            song__appearance__group_id=group.id,
             song__appearance__round__session_id=self.round.session_id,
             panelist__kind=Panelist.KIND.official,
         ).aggregate(
@@ -996,14 +1122,17 @@ class Appearance(TimeStampedModel):
                 )
             ),
         )
+
         appearances = Appearance.objects.select_related(
             'round',
         ).prefetch_related(
             'songs__scores',
             'songs__scores__panelist',
         ).filter(
-            group_id=self.group_id,
+            group_id=group.id,
             round__session_id=self.round.session_id,
+        ).order_by(
+            '-round__num',
         ).annotate(
             tot_points=Sum(
                 'songs__scores__points',
@@ -1137,6 +1266,8 @@ class Appearance(TimeStampedModel):
                     38: "✢",
                     39: "✦",
                     40: "❉",
+                    44: "∏",
+                    48: "∇",
                     50: "※",
                 }
                 items = " ".join([penalties_map[x] for x in song.penalties])
@@ -1156,12 +1287,17 @@ class Appearance(TimeStampedModel):
             pdf = self.csa_report.file
         else:
             pdf = self.get_csa()
-        file_name = '{0} CSA.pdf'.format(self)
+        file_name = '{0} CSA.pdf'.format(group.name)
         attachments = [(
             file_name,
             pdf,
             'application/pdf',
         )]
+
+        print("CSA EMAIL")
+        print("to", to)
+        print("cc", cc)
+
         email = build_email(
             template=template,
             context=context,
@@ -1298,6 +1434,7 @@ class Appearance(TimeStampedModel):
         else:
             variance = False
         self.stats = self.get_stats()
+        self.round_stats = self.get_stats_round()
         return self.STATUS.variance if variance else self.STATUS.verified
 
     @notification_user
@@ -1353,7 +1490,7 @@ class Appearance(TimeStampedModel):
     )
     def disqualify(self, *args, **kwargs):
         # Disqualify the group.
-        self.songs.delete()
+            # self.songs.delete()
         # Notify the group?
         return
 
@@ -1694,6 +1831,7 @@ class Outcome(TimeStampedModel):
         if award.level == award.LEVEL.qualifier:
             threshold = award.threshold
             winners = self.appearances.filter(
+                stats__isnull = False,
                 stats__tot_score__gte=threshold,
             ).order_by(
                 'name',
@@ -1731,7 +1869,7 @@ class Outcome(TimeStampedModel):
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
         if award.level in [award.LEVEL.championship, award.LEVEL.representative]:
-            winner = self.appearances.order_by(
+            winner = self.appearances.filter(stats__isnull = False).order_by(
                 'stats__tot_points',
                 'stats__sng_points',
                 'stats__per_points',
@@ -1854,6 +1992,13 @@ class Panelist(TimeStampedModel):
     kind = models.IntegerField(
         choices=KIND,
     )
+
+    CATEGORY_SHORT_NAMES = {
+        10: "CA",
+        30: "MUS",
+        40: "PER",
+        50: "SNG",
+    }
 
     CATEGORY = Choices(
         (5, 'drcj', 'DRCJ'),
@@ -2361,6 +2506,27 @@ class Round(TimeStampedModel):
         default='',
     )
 
+    DISTRICT_FULL_NAMES = {
+        110: "Barbershop Harmony Society",
+        200: "Cardinal",
+        205: "Central States",
+        210: "Dixie",
+        215: "Evergreen",
+        220: "Far Western",
+        225: "Illinois",
+        230: "Johnny Appleseed",
+        235: "Land 'O Lakes",
+        240: "Mid-Atlantic",
+        345: "Northeastern",
+        350: "Carolinas",
+        355: "Ontario",
+        360: "Pioneer",
+        365: "Rocky Mountain",
+        370: "Seneca Land",
+        375: "Sunshine",
+        380: "Southwestern",        
+    }
+
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
@@ -2601,14 +2767,11 @@ class Round(TimeStampedModel):
 
     # Methods
     def get_owners_emails(self):
-        if not self.owners.all():
-            raise ValueError("No owners for {0}".format(self))
-        owners = self.owners.order_by(
-            'last_name',
-            'first_name',
-        )
-        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
-
+        Session = apps.get_model('registration.session')
+        session = Session.objects.get(id=self.session_id)
+        if not len(session.notification_list):
+            raise ValueError("No notification list for {0}".format(session))
+        return ["{0}".format(x.strip()) for x in session.notification_list.split(',')]
 
     def get_oss(self, zoom=1):
         Group = apps.get_model('bhs.group')
@@ -2842,6 +3005,8 @@ class Round(TimeStampedModel):
                         38: "✢",
                         39: "✦",
                         40: "❉",
+                        44: "∏",
+                        48: "∇",
                         50: "※",
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
@@ -2868,17 +3033,19 @@ class Round(TimeStampedModel):
             appearance__round__session_id=self.session_id, # Using any session appearance
             penalties__len__gt=0, # Where there are penalties
             appearance__is_private=False, # If a public appearance
-            appearance__in=publics,  # Only completeds
+#            appearance__in=publics,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules.",
-            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules.",
-            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules.",
-            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules.",
-            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules.",
-            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules.",
-            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
-            50: "※ Score(s) penalized due to violation of Article X.B.1-3 of the BHS Contest Rules.",
+            30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
+            32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
+            34: "✠ Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
+            36: "✶ Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
+            38: "✢ Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
+            39: "✦ Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
+            40: "❉ Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
+            44: "∏ Scores penalized for Not in Good Taste (IX.A.3.b)",
+            48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
+            50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
@@ -3068,7 +3235,6 @@ class Round(TimeStampedModel):
 
     # r.oss.save('oss', f)
 
-
     def get_sa(self):
         Group = apps.get_model('bhs.group')
         Chart = apps.get_model('bhs.chart')
@@ -3198,12 +3364,12 @@ class Round(TimeStampedModel):
         ).order_by(
             'num',
         ).distinct()
+
         mus_persons = []
         for p in mus_persons_qs:
             practice = bool(p.kind == Panelist.KIND.practice)
-            initials = "{0}{1}".format(p.first_name.upper()[0], p.last_name.upper()[0])
-            mus_persons.append((p.name, practice, initials))
-
+            num = "{0}".format('{:02d}'.format(p.num))
+            mus_persons.append((p.name, practice, num))
         per_persons_qs = self.panelists.filter(
             category=Panelist.CATEGORY.performance,
             round__session_id=self.session_id,
@@ -3213,9 +3379,8 @@ class Round(TimeStampedModel):
         per_persons = []
         for p in per_persons_qs:
             practice = bool(p.kind == Panelist.KIND.practice)
-            initials = "{0}{1}".format(p.first_name.upper()[0], p.last_name.upper()[0])
-            per_persons.append((p.name, practice, initials))
-
+            num = "{0}".format('{:02d}'.format(p.num))
+            per_persons.append((p.name, practice, num))
         sng_persons_qs = self.panelists.filter(
             category=Panelist.CATEGORY.singing,
             round__session_id=self.session_id,
@@ -3225,9 +3390,8 @@ class Round(TimeStampedModel):
         sng_persons = []
         for p in sng_persons_qs:
             practice = bool(p.kind == Panelist.KIND.practice)
-            initials = "{0}{1}".format(p.first_name.upper()[0], p.last_name.upper()[0])
-            sng_persons.append((p.name, practice, initials))
-
+            num = "{0}".format('{:02d}'.format(p.num))
+            sng_persons.append((p.name, practice, num))
         # per_persons_qs = persons.filter(
         #     panelists__category=Panelist.CATEGORY.performance,
         #     panelists__round__session_id=self.session_id,
@@ -3459,35 +3623,68 @@ class Round(TimeStampedModel):
             # Don't include mic testers on OSS
             # num__lte=0,
         # ).annotate(
-        #     tot_rank=Window(
-        #         expression=RowNumber(),
-        #         partition_by=[F('group_id')],
-        #         order_by=(
-        #             F('stats__tot_points').desc(),
-        #             F('stats__sng_points').desc(),
-        #             F('stats__per_points').desc(),
-        #         )
-        #     ),
-        #     mus_rank=Window(
+        #     # tot_round_rank=Window(
+        #     #     expression=RowNumber(),
+        #     #     partition_by=[F('round_id')],
+        #     #     order_by=(
+        #     #         F('round_stats__tot_points').desc(),
+        #     #         F('round_stats__sng_points').desc(),
+        #     #         F('round_stats__per_points').desc(),
+        #     #     )
+        #     # ),
+        #     mus_round_rank=Window(
         #         expression=Rank(),
-        #         partition_by=[F('group_id')],
-        #         order_by=F('stats__mus_points').desc(),
+        #         partition_by=[F('round_id')],
+        #         order_by=F('round_stats__mus_points').desc(),
         #     ),
-        #     per_rank=Window(
+        #     per_round_rank=Window(
         #         expression=Rank(),
-        #         partition_by=[F('group_id')],
-        #         order_by=F('stats__per_points').desc(),
+        #         partition_by=[F('round_id')],
+        #         order_by=F('round_stats__per_points').desc(),
         #     ),
-        #     sng_rank=Window(
+        #     sng_round_rank=Window(
         #         expression=Rank(),
-        #         partition_by=[F('group_id')],
-        #         order_by=F('stats__sng_points').desc(),
+        #         partition_by=[F('round_id')],
+        #         order_by=F('round_stats__sng_points').desc(),
         #     ),
         ).order_by(
             '-stats__tot_points',
             '-stats__sng_points',
             '-stats__per_points',
         )
+
+        round_rankings = Appearance.objects.filter(
+            round__session_id=self.session_id,
+            round__num__lte=self.num,
+        ).exclude(
+            # Don't include scratches
+            status=Appearance.STATUS.scratched,
+        ).exclude(
+            # Don't include disqualifications.
+            status=Appearance.STATUS.disqualified,
+        ).annotate(
+            mus_round_rank=Window(
+                expression=Rank(),
+                partition_by=[F('round_id')],
+                order_by=Cast(JSONF('round_stats__mus_points'), models.FloatField()).desc(),
+            ),
+            per_round_rank=Window(
+                expression=Rank(),
+                partition_by=[F('round_id')],
+                order_by=Cast(JSONF('round_stats__per_points'), models.FloatField()).desc(),
+            ),
+            sng_round_rank=Window(
+                expression=Rank(),
+                partition_by=[F('round_id')],
+                order_by=Cast(JSONF('round_stats__sng_points'), models.FloatField()).desc(),
+            ),
+        )
+
+        rankings = {}
+        for appearance in round_rankings:
+            print("appearance", appearance)
+            rankings[appearance.id] = appearance
+
         for group in groups:
             appearances = Appearance.objects.filter(
                 group_id=group.group_id,
@@ -3498,7 +3695,33 @@ class Round(TimeStampedModel):
                 'songs__scores__panelist',
             ).order_by(
                 'round__kind',
+            # ).annotate(
+            #     tot_rank=Window(
+            #         expression=RowNumber(),
+            #         partition_by=[F('group_id')],
+            #         order_by=(
+            #             F('round_stats__tot_points').desc(),
+            #             F('round_stats__sng_points').desc(),
+            #             F('round_stats__per_points').desc(),
+            #         )
+            #     ),
+            #     mus_round_rank=Window(
+            #         expression=Rank(),
+            #         partition_by=[F('group_id')],
+            #         order_by=F('round_stats__mus_points').desc(),
+            #     ),
+            #     per_round_rank=Window(
+            #         expression=Rank(),
+            #         partition_by=[F('group_id')],
+            #         order_by=F('round_stats__per_points').desc(),
+            #     ),
+            #     sng_round_rank=Window(
+            #         expression=Rank(),
+            #         partition_by=[F('group_id')],
+            #         order_by=F('round_stats__sng_points').desc(),
+            #     ),
             )
+
             # ).annotate(
             #     tot_points=Sum(
             #         'songs__scores__points',
@@ -3569,6 +3792,7 @@ class Round(TimeStampedModel):
                         ),
                     ),
                 )
+
                 for song in songs:
                     if song.chart_id:
                         song.chart_patched = "{0} [{1}]".format(
@@ -3632,11 +3856,14 @@ class Round(TimeStampedModel):
                         38: "✢",
                         39: "✦",
                         40: "❉",
+                        44: "∏",
+                        48: "∇",
                         50: "※",
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
                 appearance.songs_patched = songs
+                appearance.rankings = rankings[appearance.id]
             group.appearances_patched = appearances
 
         # Penalties Block
@@ -3647,62 +3874,67 @@ class Round(TimeStampedModel):
             appearance__round__session_id=self.session_id, # Using any session appearance
             penalties__len__gt=0, # Where there are penalties
             appearance__is_private=False, # If a public appearance
-            appearance__in=groups,  # Only completeds
+            # appearance__in=groups,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules.",
-            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules.",
-            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules.",
-            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules.",
-            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules.",
-            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules.",
-            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
-            50: "※ Score(s) penalized due to violation of Article X.B.1-3 of the BHS Contest Rules.",
+            30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
+            32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
+            34: "✠ Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
+            36: "✶ Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
+            38: "✢ Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
+            39: "✦ Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
+            40: "❉ Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
+            44: "∏ Scores penalized for Not in Good Taste (IX.A.3.b)",
+            48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
+            50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
         # Build stats
-        stats = Song.objects.select_related(
-            'appearance__round',
-        ).prefetch_related(
-            'scores__panelist__kind',
-        ).filter(
-            appearance__round__session_id=self.session_id,
-            appearance__round__num__lte=self.num,
-        ).annotate(
-            tot_dev=StdDev(
-                'scores__points',
-                filter=Q(
-                    scores__panelist__kind=Panelist.KIND.official,
-                ),
-            ),
-            mus_dev=StdDev(
-                'scores__points',
-                filter=Q(
-                    scores__panelist__kind=Panelist.KIND.official,
-                    scores__panelist__category=Panelist.CATEGORY.music,
-                ),
-            ),
-            per_dev=StdDev(
-                'scores__points',
-                filter=Q(
-                    scores__panelist__kind=Panelist.KIND.official,
-                    scores__panelist__category=Panelist.CATEGORY.performance,
-                ),
-            ),
-            sng_dev=StdDev(
-                'scores__points',
-                filter=Q(
-                    scores__panelist__kind=Panelist.KIND.official,
-                    scores__panelist__category=Panelist.CATEGORY.singing,
-                ),
-            ),
-        ).aggregate(
-            tot=Avg('tot_dev'),
-            mus=Avg('mus_dev'),
-            per=Avg('per_dev'),
-            sng=Avg('sng_dev'),
-        )
+        # stats = Song.objects.select_related(
+        #     'appearance__round',
+        # ).prefetch_related(
+        #     'scores__panelist__kind',
+        # ).filter(
+        #     appearance__round__session_id=self.session_id,
+        #     appearance__round__num__lte=self.num,
+        # ).annotate(
+        #     tot_dev=StdDev(
+        #         'scores__points',
+        #         filter=Q(
+        #             scores__panelist__kind=Panelist.KIND.official,
+        #         ),
+        #     ),
+        #     mus_dev=StdDev(
+        #         'scores__points',
+        #         filter=Q(
+        #             scores__panelist__kind=Panelist.KIND.official,
+        #             scores__panelist__category=Panelist.CATEGORY.music,
+        #         ),
+        #     ),
+        #     per_dev=StdDev(
+        #         'scores__points',
+        #         filter=Q(
+        #             scores__panelist__kind=Panelist.KIND.official,
+        #             scores__panelist__category=Panelist.CATEGORY.performance,
+        #         ),
+        #     ),
+        #     sng_dev=StdDev(
+        #         'scores__points',
+        #         filter=Q(
+        #             scores__panelist__kind=Panelist.KIND.official,
+        #             scores__panelist__category=Panelist.CATEGORY.singing,
+        #         ),
+        #     ),
+        # ).aggregate(
+        #     tot=Avg('tot_dev'),
+        #     mus=Avg('mus_dev'),
+        #     per=Avg('per_dev'),
+        #     sng=Avg('sng_dev'),
+        # )
+
+        stats = self.get_session_stats()
+
         context = {
             'round': self,
             'groups': groups,
@@ -3718,6 +3950,7 @@ class Round(TimeStampedModel):
             statelog.by.name,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
         )
+
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
@@ -3730,6 +3963,95 @@ class Round(TimeStampedModel):
         )
         content = ContentFile(file)
         return content
+
+    def get_session_stats(self):
+        stats = {}
+        # If current round == 1 and more than one round exists calculate Grand Total Figures.
+        if self.kind > 1:
+            round_name = Round.KIND[self.kind]
+
+            # Retrieve Grand Total Stats for a specific round
+            stats['Total'] = {}
+            stats['Total'][round_name] = self.get_round_stats(self.kind, None)
+
+            for category in Panelist.CATEGORY:
+                if category[0] >= 30:
+                    stats[category[1]] = {}
+        
+                    # Retrieve category stats for a specific round
+                    stats[category[1]][round_name] = self.get_round_stats(self.kind, category[0])        
+        else:
+            # How many rounds are there???
+            rounds = Round.objects.filter(
+                session_id=self.session_id,
+            ).order_by('kind')
+
+            stats['Total'] = {}
+            if rounds.count() > 1:
+                stats['Total']['Grand'] = self.get_round_stats(None, None)
+
+                for round in rounds:
+                    round_name = Round.KIND[round.kind]
+                    stats['Total'][round_name] = self.get_round_stats(round.kind, None)
+            else:
+                stats['Total']['Finals'] = self.get_round_stats(self.kind, None)                
+
+            for category in Panelist.CATEGORY:
+                if category[0] >= 30:
+                    stats[category[1]] = {}
+                    
+                    if rounds.count() > 1:
+                        stats[category[1]]['Grand'] = self.get_round_stats(None, category[0])
+
+                    for round in rounds:
+                        round_name = Round.KIND[round.kind]
+                    
+                        # Retrieve category stats for a specific round
+                        stats[category[1]][round_name] = self.get_round_stats(round.kind, category[0])
+        return stats
+
+    def get_round_stats(self, round_num, category):
+        filter_round = ""
+        if round_num is not None:
+            filter_round = " AND round.kind = {0}".format(round_num)
+
+        filter_category = ""
+        if category is not None:
+            filter_category = " AND panelist.category = {0}".format(category)
+
+        query = '''
+            SELECT 
+                scores.id,
+                ROUND(AVG(scores.resid) OVER (),2) AS diff,
+                ROUND(stddev_samp(scores.resid) OVER (),2) AS stddev
+            FROM (
+                SELECT round.id, song.id as song_id, appearance.name, song.title, panelist.category, panelist.last_name, score.points, round.id as round_id, round.kind,
+
+                avg(score.points) over(partition by song.id,panelist.category) as AVG_SCORE,
+
+                ABS(avg(score.points) over(partition by song.id,panelist.category) - score.points) as resid
+
+                FROM public.adjudication_score as score
+
+                LEFT JOIN adjudication_song as song ON song.id = score.song_id
+                LEFT JOIN adjudication_appearance as appearance ON song.appearance_id = appearance.id
+                LEFT JOIN adjudication_panelist as panelist ON panelist.id = score.panelist_id
+                LEFT JOIN adjudication_round as round ON round.id = appearance.round_id
+                LEFT JOIN registration_session as session on session.id = round.session_id
+
+                WHERE session.id = '%s' -- Session ID
+                AND panelist.kind = 10 -- Official scores only
+                %s -- Round Number
+                %s -- Category
+                    
+                ORDER BY appearance.num, score.song_id, panelist.num
+
+            ) as scores
+
+            LIMIT 1
+        ''' % (self.session_id, filter_round, filter_category)
+
+        return Score.objects.raw(query)[0]
 
     def save_sa(self):
         sa = self.get_sa()
@@ -3836,6 +4158,8 @@ class Round(TimeStampedModel):
                         38: "✢",
                         39: "✦",
                         40: "❉",
+                        44: "∏",
+                        48: "∇",
                         50: "※",
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
@@ -3881,14 +4205,16 @@ class Round(TimeStampedModel):
             appearance__group_id__in=group_ids,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Score(s) penalized due to violation of Article V.A.2 of the BHS Contest Rules.",
-            32: "‡ Score(s) penalized due to violation of Article IX.A.2.a of the BHS Contest Rules.",
-            34: "✠ Score(s) penalized due to violation of Article IX.A.2.b of the BHS Contest Rules.",
-            36: "✶ Score(s) penalized due to violation of Article IX.A.2.c of the BHS Contest Rules.",
-            38: "✢ Score(s) penalized due to violation of Article IX.A.2.d of the BHS Contest Rules.",
-            39: "✦ Score(s) penalized due to violation of Article IX.A.2.e of the BHS Contest Rules.",
-            40: "❉ Score(s) penalized due to violation of Article IX.A.3 of the BHS Contest Rules.",
-            50: "※ Score(s) penalized due to violation of Article X.B.1-3 of the BHS Contest Rules.",
+            30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
+            32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
+            34: "✠ Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
+            36: "✶ Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
+            38: "✢ Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
+            39: "✦ Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
+            40: "❉ Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
+            44: "∏ Scores penalized for Not in Good Taste (IX.A.3.b)",
+            48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
+            50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
@@ -4036,16 +4362,26 @@ class Round(TimeStampedModel):
         content = self.get_legacy_oss()
         self.legacy_oss.save('legacy_oss', content)
 
-
     def get_participants_emails(self):
-        User = apps.get_model('rest_framework_jwt.user')
-        owners = User.objects.filter(
-            appearances__round=self,
-        ).order_by(
-            'last_name',
-            'first_name',
-        ).distinct()
-        return ["{0} <{1}>".format(x.name, x.email) for x in owners]
+        Entry = apps.get_model('registration.entry')
+        appearances = self.appearances.distinct()
+        for appearance in appearances:
+            entry = Entry.objects.filter(
+                group_id=appearance.group_id,
+                session_id=self.session_id
+            ).first()
+            seen = set()
+            if len(entry.notification_list):
+                result = [
+                    "{0}".format(email,)
+                    for email in entry.notification_list.split(',')
+                    if not (
+                        "{0}".format(email,) in seen or seen.add(
+                            "{0}".format(email,)
+                        )
+                    )
+                ]
+        return result
 
     def get_titles(self):
         Chart = apps.get_model('bhs.chart')
@@ -4229,11 +4565,12 @@ class Round(TimeStampedModel):
                     "{0}: {1}".format(appearance.draw, group.name),
                     # style='List Bullet',
                 )
-            gp = Group.objects.get(id=mt.group_id)
-            document.add_paragraph(
-                "MT: {0}".format(gp.name),
-                # style='List Bullet',
-            )
+            if mt is not None:
+                gp = Group.objects.get(id=mt.group_id)
+                document.add_paragraph(
+                    "MT: {0}".format(gp.name),
+                    # style='List Bullet',
+                )            
         if winners:
             document.add_heading('Results')
             for winner in winners:
@@ -4252,8 +4589,142 @@ class Round(TimeStampedModel):
         content = ContentFile(buff.getvalue())
         return content
 
+    def get_labels(self, request, data):
+        Appearance = apps.get_model('adjudication.appearance')
+        Panelist = apps.get_model('adjudication.panelist')
+        Round = apps.get_model('adjudication.round')
+        Entry = apps.get_model('registration.entry')
+
+
+        # Default Filters...
+        appearance_filters = {}
+        panelist_filters = {}
+        panelist_filters.update({'round_id': self.id})
+        appearance_filters.update({'round_id': self.id})
+
+        # All Judges
+        # All Contestants
+
+        # Specific Judge
+        if len(data) and isinstance(data['judges'], Iterable) and len(data['judges']):
+            judge_ids = []
+            for p in data['judges']:
+                judge_ids.append(p['personId'])
+            panelist_filters.update({'person_id__in': judge_ids})
+
+        # Specific Contestant
+        if len(data) and isinstance(data['groups'], Iterable) and len(data['groups']):
+            appearance_ids = []
+            for a in data['groups']:
+                appearance_ids.append(a['groupId'])
+            appearance_filters.update({'group_id__in': appearance_ids})
+
+        ### ORDER
+            # Category
+                # Judge Last Name
+                    # Round
+                        # Order of Appearance
+
+        # ### JUDGES ###
+        panelists = Panelist.objects.select_related('round').filter(
+                round__id=self.id,
+                category__gt=Panelist.CATEGORY.ca,
+                **panelist_filters
+            ).order_by(
+                'kind',
+                'category',
+                'last_name',
+                'round__session_kind',
+                'round__kind',
+            )
+
+        ## Set via POST var
+        if len(data) and 'isReversed' in data:
+            reverse_order = data['isReversed']
+        else:
+            reverse_order = False
+
+        # Reverse Order
+        appearance_order = 'num'
+        if reverse_order:
+            appearance_order = "-{0}".format(appearance_order)
+
+        ### APPEARANCES ###
+        appearances = Appearance.objects.select_related('round').filter(
+                round__id=self.id,
+                **appearance_filters
+            ).order_by(
+                'round__session_kind',
+                'round__kind',
+                appearance_order
+            )
+
+        # Create new document
+        document = "{\\rtf1\\ansi\\ansicpg1252\\cocoartf2513\n"
+        document += "\\cocoatextscaling0\\cocoaplatform0{\\fonttbl\\f0\\fswiss\\fcharset0 ArialMT;\\f1\\fswiss\\fcharset0 Arial-BoldMT;}\n"
+        document += "{\\colortbl;\\red255\\green255\\blue255;\\red0\\green0\\blue0;}\n"
+        document += "{\\*\\expandedcolortbl;;\\cssrgb\\c0\\c0\\c0;}\n"
+        document += "{\\info\n"
+        document += "{\\title LEFTLEFTLEFT}\n"
+        document += "{\\author Barberscore}}\\margl720\\margr720\\margb720\\margt720\\vieww22680\\viewh14600\\viewkind0\n"
+        document += "\\deftab720\n"
+        document += "\\pard\\tqc\\tx5400\\tqr\\tx10800\\pardeftab720\\ri0\\partightenfactor0\n"
+        document += "\n"
+        document += "\\f0\\fs24 \\cf2 \\\n"
+
+        directors = {}
+        completed = []
+        for judge in panelists:
+            if judge.person_id not in completed:
+                for appearance in appearances:
+
+                    document += "\\page {0}. {1}\t\\\n".format(
+                        (appearance.num if appearance.num != 0 else 'MT'),
+                        appearance.name
+                        )
+
+                    if appearance.kind == Appearance.KIND.chorus and appearance.group_id not in directors:
+                        entry = Entry.objects.filter(
+                            group_id=appearance.group_id,
+                            session_id=appearance.round.session_id,
+                        ).first()
+                        directors[appearance.group_id] = entry.participants
+                        document += "        {0}\t\t{1}\n".format(directors[appearance.group_id], judge.last_name)
+                    else:
+                        document += "         \t\t{0}\n".format(judge.last_name)
+
+                    document += "\\f1\\b   \n"
+                    document += "\\fs44 #{0}\n".format(judge.num)
+                    document += "\\f0\\b0\\fs24 \\\n"
+                    document += "\\pard\\tqc\\tx5400\\tqr\\tx10800\\pardeftab720\\ri0\\qc\\partightenfactor0\n"
+                    document += "\\cf2 {0} District - {1} {2}, {3}\\\n".format(
+                            self.DISTRICT_FULL_NAMES[self.district],
+                            Appearance.KIND[appearance.round.session_kind],
+                            Round.KIND[appearance.round.kind],
+                            appearance.round.date.strftime("%-m/%-d/%Y"),                            
+                    )
+                    document += "\\pard\\tqc\\tx5400\\tqr\\tx10800\\pardeftab720\\ri0\\partightenfactor0\n"
+                    document += "\\cf2 \t\t\\\n"
+
+                completed.append(judge.person_id)
+
+        # End of File...
+        document += "\\\n"
+        document += "}"
+
+        content = ContentFile(document)
+        return content
+
+    def base_filename(self):
+        return '{0}{1}'.format(
+            self.get_district_display(),
+            self.start_date.strftime("%Y%m%d")
+        )
 
     def get_judge_emails(self):
+        postfix = ''
+        if (settings.EMAIL_ADMINS_ONLY):
+            postfix = '.invalid'
         Panelist = apps.get_model('adjudication.panelist')
         judges = self.panelists.filter(
             # status=Panelist.STATUS.active,
@@ -4267,11 +4738,11 @@ class Round(TimeStampedModel):
         )
         seen = set()
         result = [
-            "{0} ({1} {2}) <{3}>".format(judge.user.name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,)
+            "{0} ({1} {2}) <{3}{4}>".format(judge.name, judge.get_kind_display(), judge.get_category_display(), judge.email, postfix,)
             for judge in judges
             if not (
-                "{0} ({1} {2}) <{3}>".format(judge.user.name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,) in seen or seen.add(
-                    "{0} ({1} {2}) <{3}>".format(judge.user.name, judge.get_kind_display(), judge.get_category_display(), judge.user.email,)
+                "{0} ({1} {2}) <{3}{4}>".format(judge.name, judge.get_kind_display(), judge.get_category_display(), judge.email, postfix,) in seen or seen.add(
+                    "{0} ({1} {2}) <{3}{4}>".format(judge.name, judge.get_kind_display(), judge.get_category_display(), judge.email, postfix,)
                 )
             )
         ]
@@ -4295,7 +4766,6 @@ class Round(TimeStampedModel):
             appearance.mock()
             appearance.save()
         return
-
 
     def get_publish_email(self):
         Appearance = apps.get_model('adjudication.appearance')
@@ -4341,13 +4811,15 @@ class Round(TimeStampedModel):
             'num',
             # 'award__name',
             'name',
+            'winner'
         )
+
         outcomes = []
         for item in items:
             outcomes.append(
                 (
                     "{0} {1}".format(item[0], item[1]),
-                    # item[2],
+                    item[2],
                 )
             )
 
@@ -4388,13 +4860,11 @@ class Round(TimeStampedModel):
         )
         return email
 
-
     def send_publish_email(self):
         email = self.get_publish_email()
         if self.status != self.STATUS.published:
             raise RuntimeError("Round not published")
         return email.send()
-
 
     def get_publish_report_email(self):
         template = 'emails/round_publish_report.txt'
@@ -4427,10 +4897,9 @@ class Round(TimeStampedModel):
         )
         return email
 
-
     def send_publish_report_email(self):
         email = self.get_publish_report_email()
-        return email.send()
+        return email.send()        
 
     # Round Permissions
     @staticmethod
@@ -4684,14 +5153,19 @@ class Round(TimeStampedModel):
                     'id',
                     'title',
                     'arrangers',
-                )
+                ).order_by('title')
                 for c in charts_raw:
                     c['pk'] = str(c.pop('id'))
                 charts = [json.dumps(x) for x in charts_raw]
+
                 if entry.kind == entry.KIND.quartet:
-                    area = entry.get_district_display()
+                    # area = entry.get_district_display()
+                    # entry object here is from the registration_entry table.
+                    # need to determine the correct value for quartets...
+                    area = entry.area
                 else:
                     area = entry.chapters
+
                 appearance = self.appearances.create(
                     num=entry.draw,
                     is_private=entry.is_private,
@@ -4721,6 +5195,17 @@ class Round(TimeStampedModel):
                 status=Appearance.STATUS.advanced,
             )
             for prior_appearance in prior_appearances:
+                charts_raw = Chart.objects.filter(
+                    groups__id=prior_appearance.group_id,
+                ).values(
+                    'id',
+                    'title',
+                    'arrangers',
+                ).order_by('title')
+                for c in charts_raw:
+                    c['pk'] = str(c.pop('id'))
+                charts = [json.dumps(x) for x in charts_raw]
+                
                 # Create and start group
                 appearance = self.appearances.create(
                     num=prior_appearance.draw,
@@ -5135,14 +5620,16 @@ class Song(TimeStampedModel):
     )
 
     PENALTY = Choices(
-        (30, 'repetition', 'Repeating Substantial Portions of a Song'),
-        (32, 'accompaniment', 'Instrumental Accompaniment'),
-        (34, 'texture', 'Chorus Exceeding 4-Part Texture'),
-        (36, 'excessive', 'Excessive Melody Not in Inner Part'),
-        (38, 'progression', 'Lack of Characteristic Chord Progression'),
-        (39, 'lyrics', 'Excessive Lyrics < 4 parts'),
-        (40, 'patreg', 'Primarily Patriotic/Religious Intent'),
-        (50, 'enhancement', 'Sound Equipment or Electronic Enhancement'),
+        (30, 'repetition', 'Repeating Substantial Portions of a Song (V.A.2)'),
+        (32, 'accompaniment', 'Instrumental Accompaniment (IX.A.2.a)'),
+        (34, 'texture', 'Chorus Exceeding 4-Part Texture (IX.A.2.b)'),
+        (36, 'excessive', 'Excessive Melody Not in Inner Part (IX.A.2.c)'),
+        (38, 'progression', 'Lack of Characteristic Chord Progression (IX.A.2.d)'),
+        (39, 'lyrics', 'Excessive Lyrics < 4 parts (IX.A.2.e)'),
+        (40, 'patreg', 'Primarily Patriotic/Religious Intent (IX.A.3)'),
+        (44, 'notingoodtaste', 'Not in Good Taste (IX.A.3.b)'),
+        (48, 'nonmembersperforming', 'Non-members Performing on Stage (XI.A.1)'),
+        (50, 'enhancement', 'Sound Equipment or Electronic Enhancement (X.B.1-3)'),
     )
 
     penalties = ArrayField(
