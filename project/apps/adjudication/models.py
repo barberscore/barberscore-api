@@ -121,6 +121,8 @@ class Appearance(TimeStampedModel):
 
     num = models.IntegerField(
         help_text="""The order of appearance for this round.""",
+        null=True,
+        blank=True,
     )
 
     draw = models.IntegerField(

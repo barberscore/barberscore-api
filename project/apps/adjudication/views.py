@@ -5,6 +5,7 @@ import re
 
 # Third-Party
 import pydf
+import json
 from rest_framework_json_api.filters import OrderingFilter
 from rest_framework_json_api.django_filters import DjangoFilterBackend
 from django_fsm import TransitionNotAllowed
@@ -19,6 +20,7 @@ from rest_framework.parsers import JSONParser
 
 
 # Django
+from django.apps import apps
 from django.core.files.base import ContentFile
 from django.db.models import Sum, Q, Avg
 from django.template.loader import render_to_string
@@ -100,6 +102,23 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         DRYPermissions,
     ]
     resource_name = "appearance"
+
+    def perform_create(self, serializer):
+        Chart = apps.get_model('bhs.chart')
+        group_id = serializer.initial_data['group_id']
+        charts_raw = Chart.objects.filter(
+            groups__id=group_id,
+        ).values(
+            'id',
+            'title',
+            'arrangers',
+        ).order_by('title')
+        for c in charts_raw:
+            c['pk'] = str(c.pop('id'))
+        charts = [json.dumps(x) for x in charts_raw]
+
+        # print("add participants...")
+        serializer.save(charts=charts)
 
     @action(methods=['get'], detail=True)
     def mock(self, request, pk=None, **kwargs):
