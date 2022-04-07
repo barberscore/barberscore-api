@@ -217,6 +217,12 @@ class Appearance(TimeStampedModel):
         blank=True,
     )
 
+    # Denorm
+    entry_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
     name = models.CharField(
         help_text="""
             The name of the resource.
@@ -5175,6 +5181,7 @@ class Round(TimeStampedModel):
                     participants=entry.participants,
                     area=area,
                     group_id=entry.group_id,
+                    entry_id=entry.id,
                     name=entry.name,
                     kind=entry.kind,
                     gender=entry.gender,
@@ -5216,6 +5223,7 @@ class Round(TimeStampedModel):
                     participants=prior_appearance.participants,
                     area=prior_appearance.area,
                     group_id=prior_appearance.group_id,
+                    entry_id=prior_appearance.entry_id,
                     name=prior_appearance.name,
                     kind=prior_appearance.kind,
                     gender=prior_appearance.gender,
@@ -5245,6 +5253,7 @@ class Round(TimeStampedModel):
                     participants=mt.participants,
                     area=mt.area,
                     group_id=mt.group_id,
+                    entry_id=mt.entry_id,
                     name=mt.name,
                     kind=mt.kind,
                     gender=mt.gender,
