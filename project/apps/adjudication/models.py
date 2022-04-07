@@ -463,8 +463,9 @@ class Appearance(TimeStampedModel):
         )
         variances = []
         for song in songs:
-            chart = Chart.objects.get(id=song.chart_id)
-            song.chart_patched = chart
+            if song.chart_id is not None:
+                chart = Chart.objects.get(id=song.chart_id)
+                song.chart_patched = chart
             variances.extend(song.dixons)
             variances.extend(song.asterisks)
         variances = list(set(variances))
