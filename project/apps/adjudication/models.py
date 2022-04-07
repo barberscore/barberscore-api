@@ -121,6 +121,8 @@ class Appearance(TimeStampedModel):
 
     num = models.IntegerField(
         help_text="""The order of appearance for this round.""",
+        null=True,
+        blank=True,
     )
 
     draw = models.IntegerField(
@@ -211,6 +213,12 @@ class Appearance(TimeStampedModel):
 
     # Denorm
     group_id = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+
+    # Denorm
+    entry_id = models.UUIDField(
         null=True,
         blank=True,
     )
@@ -455,8 +463,9 @@ class Appearance(TimeStampedModel):
         )
         variances = []
         for song in songs:
-            chart = Chart.objects.get(id=song.chart_id)
-            song.chart_patched = chart
+            if song.chart_id is not None:
+                chart = Chart.objects.get(id=song.chart_id)
+                song.chart_patched = chart
             variances.extend(song.dixons)
             variances.extend(song.asterisks)
         variances = list(set(variances))
@@ -5173,6 +5182,7 @@ class Round(TimeStampedModel):
                     participants=entry.participants,
                     area=area,
                     group_id=entry.group_id,
+                    entry_id=entry.id,
                     name=entry.name,
                     kind=entry.kind,
                     gender=entry.gender,
@@ -5214,6 +5224,7 @@ class Round(TimeStampedModel):
                     participants=prior_appearance.participants,
                     area=prior_appearance.area,
                     group_id=prior_appearance.group_id,
+                    entry_id=prior_appearance.entry_id,
                     name=prior_appearance.name,
                     kind=prior_appearance.kind,
                     gender=prior_appearance.gender,
@@ -5243,6 +5254,7 @@ class Round(TimeStampedModel):
                     participants=mt.participants,
                     area=mt.area,
                     group_id=mt.group_id,
+                    entry_id=mt.entry_id,
                     name=mt.name,
                     kind=mt.kind,
                     gender=mt.gender,

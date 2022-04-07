@@ -49,7 +49,7 @@
         </h2>
         <ul class='list-unstyled'>
           {% for song in songs %}
-            <li class='panelist'>Song #{{song.num}}:&nbsp;{{song.title}}</li>
+            <li class='panelist'>Song #{{song.num}}:&nbsp;{{song.title|default:"(Song not in Group's Repertory)"}}</li>
           {% endfor %}
         </ul>
       </section>

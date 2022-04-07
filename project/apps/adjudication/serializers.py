@@ -42,6 +42,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'csa_report',
 
             'group_id',
+            'entry_id',
             'name',
             'kind',
             'gender',
