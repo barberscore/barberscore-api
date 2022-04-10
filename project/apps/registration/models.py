@@ -4,6 +4,7 @@ import uuid
 import datetime
 import ast
 from collections.abc import Iterable
+import json
 
 # Third-Party
 from django_fsm import FSMIntegerField
@@ -1282,6 +1283,28 @@ class Entry(TimeStampedModel):
     )
     def approve(self, *args, **kwargs):
         send_approve_email_from_entry.delay(self)
+        return
+
+    @fsm_log_by
+    def update_charts(self, *args, **kwargs):
+        Appearance = apps.get_model('adjudication.appearance')
+        Chart = apps.get_model('bhs.chart')
+        appearances = Appearance.objects.filter(
+            entry_id=self.id,
+        )
+        for appearance in appearances:
+            charts_raw = Chart.objects.filter(
+                groups__id=self.group_id,
+            ).values(
+                'id',
+                'title',
+                'arrangers',
+            ).order_by('title')
+            for c in charts_raw:
+                c['pk'] = str(c.pop('id'))
+            charts = [json.dumps(x) for x in charts_raw]
+            appearance.charts = charts
+            appearance.save()
         return
 
 

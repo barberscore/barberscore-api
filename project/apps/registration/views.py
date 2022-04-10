@@ -130,6 +130,19 @@ class EntryViewSet(views.ModelViewSet):
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
+    @action(methods=['post'], detail=True)
+    def update_charts(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.update_charts(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Information incomplete.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
 
 class SessionViewSet(views.ModelViewSet):
     queryset = Session.objects.prefetch_related(
