@@ -177,9 +177,10 @@ class Appearance(TimeStampedModel):
     )
 
     pos = models.IntegerField(
-        help_text='Actual Participants-on-Stage',
+        help_text='Number of Singers on Stage',
         null=True,
         blank=True,
+        verbose_name="Participants on Stage",
     )
 
     stats = JSONField(
@@ -209,6 +210,7 @@ class Appearance(TimeStampedModel):
         upload_to=UploadPath('csa_report'),
         blank=True,
         default='',
+        verbose_name='CSA Report',
     )
 
     # Denorm
@@ -2918,6 +2920,7 @@ class Round(TimeStampedModel):
         i = self.spots
         for public in publics:
             i += 1
+            public.tot_score_avg = 0 
             public.tot_rank = i
             appearances = Appearance.objects.filter(
                 group_id=public.group_id,
@@ -2963,6 +2966,9 @@ class Round(TimeStampedModel):
                     ),
                 ),
             )
+
+            # print('count', appearances.count())
+
             for appearance in appearances:
                 songs = appearance.songs.prefetch_related(
                     'scores',
@@ -3021,20 +3027,21 @@ class Round(TimeStampedModel):
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
                 appearance.songs_patched = songs
+                public.tot_score_avg += appearance.tot_score
+            public.tot_score_avg = public.tot_score_avg / appearances.count()
             public.appearances_patched = appearances
             contesting = public.outcomes.order_by(
                 'num',
             ).values_list(
                 'num',
                 flat=True
-            )
+            )            
             public.contesting_patched = ", ".join([str(x) for x in contesting])
             public.pos_patched = public.pos
             public.participants_patched = public.participants
             group = Group.objects.get(id=public.group_id)
             public.district = group.district
             public.name = group.name
-
 
         # Penalties Block
         array = Song.objects.select_related(
@@ -3691,10 +3698,10 @@ class Round(TimeStampedModel):
 
         rankings = {}
         for appearance in round_rankings:
-            print("appearance", appearance)
             rankings[appearance.id] = appearance
 
         for group in groups:
+            group.tot_score_avg = 0
             appearances = Appearance.objects.filter(
                 group_id=group.group_id,
                 round__session_id=self.session_id,
@@ -3704,6 +3711,14 @@ class Round(TimeStampedModel):
                 'songs__scores__panelist',
             ).order_by(
                 'round__kind',
+            ).annotate(
+                tot_score=Avg(
+                    'songs__scores__points',
+                    filter=Q(
+                        songs__scores__panelist__kind=Panelist.KIND.official,
+                    ),
+                ),
+            )
             # ).annotate(
             #     tot_rank=Window(
             #         expression=RowNumber(),
@@ -3729,7 +3744,7 @@ class Round(TimeStampedModel):
             #         partition_by=[F('group_id')],
             #         order_by=F('round_stats__sng_points').desc(),
             #     ),
-            )
+            # )
 
             # ).annotate(
             #     tot_points=Sum(
@@ -3817,6 +3832,7 @@ class Round(TimeStampedModel):
                         ).order_by(
                             'panelist__num',
                         )
+
                         if raw_music_scores:
                             for m in raw_music_scores:
                                 diff = abs(m.points - m.song.mus_score) > 5
@@ -3873,6 +3889,8 @@ class Round(TimeStampedModel):
                     song.penalties_patched = items
                 appearance.songs_patched = songs
                 appearance.rankings = rankings[appearance.id]
+                group.tot_score_avg += appearance.tot_score
+            group.tot_score_avg = group.tot_score_avg / appearances.count()
             group.appearances_patched = appearances
 
         # Penalties Block
@@ -3942,6 +3960,7 @@ class Round(TimeStampedModel):
         #     sng=Avg('sng_dev'),
         # )
 
+        # Category Stats
         stats = self.get_session_stats()
 
         context = {
