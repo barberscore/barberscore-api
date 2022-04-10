@@ -162,11 +162,19 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def verify(self, request, pk=None, **kwargs):
         object = self.get_object()
+
+        # For Choruses, ensure a valid number of participants on stage has been entered.
+        if object.kind == object.KIND.chorus and (object.pos is None or object.pos < 8):
+            return Response(
+                {'status': 'Please enter a valid number of Participants on stage.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         try:
             object.verify(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Information incomplete.'},
+                {'status': 'Information incomplete. Unable to verify appearance. Check entered scores.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()

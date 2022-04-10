@@ -91,9 +91,9 @@
                   {% endif %}
                 </td>
                 <td class='w-songs'>
-                  <strong>Total: {{public.stats.tot_points}} Points</strong><br>
+                  <strong>Total: {{public.stats.tot_points|floatformat:0}} Points</strong><br>
                   {% for appearance in public.appearances_patched %}
-                      {% if round.num != 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points}} Points</span><br>{% endif %}
+                      {% if round.num != 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points|floatformat:0}} Points</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
                       &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart_patched|truncatechars_html:50|safe|default:"(Song not in Group's Repertory)▴"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
@@ -127,7 +127,7 @@
                   {% endfor %}
                 </td>
                 <td class='w-scores text-right'>
-                  <strong>{{public.stats.tot_score|floatformat:1}}</strong><br>
+                  <strong>{{public.tot_score_avg|floatformat:1}}</strong><br>
                   {% for appearance in public.appearances_patched %}
                     {% if round.num != 1 %}<span class='bolder'>{{appearance.tot_score|floatformat:1}}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
