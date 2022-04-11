@@ -1699,10 +1699,7 @@ class Group(TimeStampedModel):
 
     # Algolia
     def is_searchable(self):
-        return all([
-            self.status == self.STATUS.active,
-            self.owners.all(),
-        ])
+        return self.status == self.STATUS.active
 
     def get_owner_ids(self):
         return list(self.owners.values_list('id', flat=True))
