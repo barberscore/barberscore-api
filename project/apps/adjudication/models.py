@@ -351,6 +351,7 @@ class Appearance(TimeStampedModel):
             Short-form code.""",
         max_length=255,
         blank=True,
+        null=True,
         default='',
     )
 
@@ -374,6 +375,7 @@ class Appearance(TimeStampedModel):
     # Appearance FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
+        blank=True,
         related_name='appearances',
     )
 
