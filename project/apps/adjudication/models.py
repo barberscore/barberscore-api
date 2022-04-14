@@ -3628,6 +3628,7 @@ class Round(TimeStampedModel):
 
         groups = self.appearances.filter(
             # is_private=False,
+            num__gt=0,
         ).exclude(
             # Don't include advancers on SA
             draw__gt=0,
@@ -4475,8 +4476,9 @@ class Round(TimeStampedModel):
             '-num',
         )
         if self.kind == self.KIND.finals:
-            winners = self.appearances.exclude(
+            winners = self.appearances.exclude(num=0).exclude(
                 status__in=[
+                    Appearance.STATUS.built,
                     Appearance.STATUS.disqualified,
                     Appearance.STATUS.scratched,
                 ],
@@ -4973,6 +4975,7 @@ class Round(TimeStampedModel):
         # Confirm verified performances exist
         valid = all([
             self.appearances.filter(
+                num__gt=0,
                 status__in=[
                     Appearance.STATUS.verified,
                     Appearance.STATUS.disqualified,
@@ -4984,6 +4987,7 @@ class Round(TimeStampedModel):
         # Confirm all performances have been verified
         valid = not all([
             self.appearances.filter(
+                num__gt=0,
                 status__in=[
                     Appearance.STATUS.completed,
                     Appearance.STATUS.new,
