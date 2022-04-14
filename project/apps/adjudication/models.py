@@ -4969,7 +4969,9 @@ class Round(TimeStampedModel):
 
     def can_complete(self):
         Appearance = apps.get_model('adjudication.appearance')
-        return all([
+
+        # Confirm verified performances exist
+        valid = all([
             self.appearances.filter(
                 status__in=[
                     Appearance.STATUS.verified,
@@ -4978,6 +4980,22 @@ class Round(TimeStampedModel):
                 ]
             ),
         ])
+
+        # Confirm all performances have been verified
+        valid = not all([
+            self.appearances.filter(
+                status__in=[
+                    Appearance.STATUS.completed,
+                    Appearance.STATUS.new,
+                    Appearance.STATUS.built,
+                    Appearance.STATUS.started,
+                    Appearance.STATUS.finished,
+                    Appearance.STATUS.variance,
+                ]
+            ),
+        ])
+
+        return valid
 
     def can_finalize(self):
         return all([
