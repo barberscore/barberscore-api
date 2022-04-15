@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 "auth0-python" = "*"
 "django-sendgrid-v5" = "*"
-"psycopg2-binary" = "*"
 algoliasearch-django = "*"
 brotli = "*"
 cloudinary = "*"
@@ -46,8 +45,10 @@ rq = "*"
 sentry-sdk = "*"
 whitenoise = "*"
 untangle = "*"
-django-fsm-log = {git = "https://github.com/barberscore/django-fsm-log.git"}
 setuptools = "==60.10.0"
+django-fsm-log = {git = "https://github.com/barberscore/django-fsm-log.git"}
+psycopg2 = "==2.8.6"
+psycopg2-binary = "==2.8.6"
 
 [dev-packages]
 "autopep8" = "*"
