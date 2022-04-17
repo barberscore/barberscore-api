@@ -956,13 +956,11 @@ class Appearance(TimeStampedModel):
 
         # Score Block
         initials = []
-        count = 1
         for panelist in panelists:
             initials.append("{0}{1}".format(
                 panelist.get_category_display()[0].upper(),
-                str(count).zfill(2),
+                str(panelist.num).zfill(2),
             ))
-            count += 1
 
         # Hackalicious
         category_count = {
@@ -1005,16 +1003,14 @@ class Appearance(TimeStampedModel):
             'Singing': [],
         }
         # panelists from above
-        count = 1
         for panelist in panelists:
             item = categories[panelist.get_category_display()]
             name = "{0}{1} = {2}".format(
                 panelist.get_category_display()[0].upper(),
-                str(count).zfill(2),
+                str(panelist.num).zfill(2),
                 panelist.name
             )
             item.append(name)
-            count += 1
 
         # Penalties Block
         array = Song.objects.filter(
