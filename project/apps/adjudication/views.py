@@ -326,6 +326,30 @@ class PanelistViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "panelist"
 
+    def partial_update(self, request, pk=None):
+        # Current object
+        object = self.get_object()
+        try:
+            # Submitted number...
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid()
+
+            ## See if the submitted number already exists
+            if (Panelist.objects.filter(
+                    num=request.data['num'],
+                    round_id=object.round_id,
+                ).count()):
+                raise ValueError()
+
+            # Update Panelist
+            return super().partial_update(request, *pk)
+
+        except ValueError as e:
+            return Response(
+                {'status': 'Number is already in use by another judge.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
     @action(
         methods=['get'],
         detail=True,
