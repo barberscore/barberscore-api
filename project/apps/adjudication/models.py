@@ -1945,7 +1945,7 @@ class Outcome(TimeStampedModel):
     def has_object_read_permission(self, request):
         if self.round.status == self.round.STATUS.published:
             return True
-        return request.user.id in self.round.owners.all()
+        return request.user in self.round.owners.all()
 
     @staticmethod
     @allow_staff_or_superuser
