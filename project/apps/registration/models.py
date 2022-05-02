@@ -275,12 +275,20 @@ class Assignment(TimeStampedModel):
         return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'CA',
             ]
         ))
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
+        if bool(request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'CA',
+            ]
+        )):
+            return True
         return any([
             request.user in self.session.owners.all(),
         ])
@@ -579,7 +587,14 @@ class Contest(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        if self.session.status >= self.session.STATUS.opened:
+        if bool(request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'CA',
+            ]
+        )):
+            return True
+        elif self.session.status >= self.session.STATUS.opened:
             return False
         return any([
             request.user in self.session.owners.all(),
@@ -999,7 +1014,14 @@ class Entry(TimeStampedModel):
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        if self.session.status >= self.session.STATUS.packaged:
+        if bool(request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'CA',
+            ]
+        )):
+            return True
+        elif self.session.status >= self.session.STATUS.packaged:
             return False
         return any([
             request.user in self.session.owners.all(),
@@ -2086,14 +2108,23 @@ class Session(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'DRCJ',
+                'CA',
             ]
         ))
 
     @allow_staff_or_superuser
     @authenticated_users
     def has_object_write_permission(self, request):
-        if self.status >= self.STATUS.packaged:
+        if bool(request.user.roles.filter(
+            name__in=[
+                'SCJC',
+                'CA',
+            ]
+        )):
+            return True
+        elif self.status >= self.STATUS.packaged:
             return False
+        
         return bool(any([
             request.user in self.owners.all(),
         ]))
