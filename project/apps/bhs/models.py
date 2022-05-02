@@ -361,6 +361,7 @@ class Award(TimeStampedModel):
         return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'CA',
             ]
         ))
 
@@ -370,6 +371,7 @@ class Award(TimeStampedModel):
         return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'CA',
             ]
         ))
 
@@ -524,6 +526,7 @@ class Chart(TimeStampedModel):
                 name__in=[
                     'SCJC',
                     'Librarian',
+                    'CA',
                 ],
             )
         ])
@@ -536,6 +539,7 @@ class Chart(TimeStampedModel):
                 name__in=[
                     'SCJC',
                     'Librarian',
+                    'CA',
                 ],
             )
         ])
@@ -1265,6 +1269,7 @@ class Convention(TimeStampedModel):
         return any([
             request.user.roles.filter(name__in=[
                 'SCJC',
+                'CA',
                 ]
             )
         ])
@@ -1275,6 +1280,7 @@ class Convention(TimeStampedModel):
         return any([
             request.user.roles.filter(name__in=[
                 'SCJC',
+                'CA',
             ])
         ])
 
@@ -1832,6 +1838,7 @@ class Group(TimeStampedModel):
                 'SCJC',
                 'Librarian',
                 'Manager',
+                'CA',
             ]
         ))
 
@@ -1843,6 +1850,7 @@ class Group(TimeStampedModel):
                 name__in=[
                     'SCJC',
                     'Librarian',
+                    'CA',
                 ]
             ),
             request.user in self.owners.all(),
@@ -2148,6 +2156,7 @@ class Person(TimeStampedModel):
         return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'CA',
             ]
         ))
 
@@ -2157,6 +2166,7 @@ class Person(TimeStampedModel):
         return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'CA',
             ]
         ))
 

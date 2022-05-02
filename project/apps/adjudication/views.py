@@ -2,6 +2,7 @@
 # Standard Library
 import logging
 import re
+import uuid
 
 # Third-Party
 import pydf
@@ -27,6 +28,7 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 from django.utils.six import BytesIO
 from collections.abc import Iterable
+from django.contrib.auth import get_user_model
 
 # Local
 # from .filterbackends import AppearanceFilterBackend
@@ -326,6 +328,40 @@ class PanelistViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "panelist"
 
+    def perform_create(self, serializer):
+        if serializer.initial_data['category'] == Panelist.CATEGORY.ca:
+            #
+            # Add CA as owner of Round, Session, and Convention
+            #
+            person_id = serializer.initial_data['person_id']
+            Person = apps.get_model('bhs.person')
+            person = Person.objects.get(pk=person_id)
+
+            User = get_user_model()
+            owner = User.objects.filter(email=person.email).first()
+
+            # Parent round to access session ID
+            parent_round = Round.objects.get(pk=serializer.initial_data['round']['id'])
+
+            # Session
+            Session = apps.get_model('registration.session')
+            session = Session.objects.get(pk=parent_round.session_id)
+            session.owners.add(owner.id)
+
+            # Rounds under session
+            rounds = Round.objects.filter(
+                    session_id=session.id
+                )
+            for round in rounds:
+                round.owners.add(owner.id)
+
+            # Convention
+            convention = Convention.objects.get(pk=session.convention_id)
+            convention.owners.add(owner.id)
+
+        # Save Panelist record
+        serializer.save()
+
     def partial_update(self, request, pk=None):
         # Current object
         object = self.get_object()
@@ -349,6 +385,43 @@ class PanelistViewSet(viewsets.ModelViewSet):
                 {'status': 'Number is already in use by another judge.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+    def perform_destroy(self, instance):
+        print("perform_destroy function", instance.id)
+
+        if instance.category == Panelist.CATEGORY.ca:
+            #
+            # Remove CA as owner of Round, Session, and Convention
+            #
+            Person = apps.get_model('bhs.person')
+            person = Person.objects.get(pk=instance.person_id)
+
+            User = get_user_model()
+            owner = User.objects.filter(email=person.email).first()
+
+            # Round
+            parent_round = Round.objects.get(pk=instance.round_id)
+
+            # Session
+            Session = apps.get_model('registration.session')
+            session = Session.objects.get(pk=parent_round.session_id)
+            session.owners.remove(owner.id)
+
+            # Parent round to access session ID
+            rounds = Round.objects.filter(
+                    session_id=session.id
+                )
+            for round in rounds:
+                round.owners.remove(owner.id)
+
+            # Convention
+            convention = Convention.objects.get(pk=session.convention_id)
+            convention.owners.remove(owner.id)
+
+            print("CA removed as owner")
+
+        # Remove Panelist record
+        return super().perform_destroy(instance)
 
     @action(
         methods=['get'],
