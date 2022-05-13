@@ -3078,6 +3078,11 @@ class Round(TimeStampedModel):
         privates = self.appearances.prefetch_related(
         ).filter(
             is_private=True,
+        ).exclude(
+            status__in=[
+                Appearance.STATUS.disqualified,
+                Appearance.STATUS.scratched,
+            ],
         ).order_by(
         ).values_list('name', flat=True)
         privates = list(privates)
