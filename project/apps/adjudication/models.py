@@ -2914,6 +2914,8 @@ class Round(TimeStampedModel):
         #     '-per_points',
         # )
 
+        songs_with_panelities = []
+
         # Monkeypatching
         i = self.spots
         for public in publics:
@@ -3010,6 +3012,7 @@ class Round(TimeStampedModel):
                         )
                     else:
                         song.chart_patched = ""
+
                     penalties_map = {
                         30: "†",
                         32: "‡",
@@ -3023,6 +3026,8 @@ class Round(TimeStampedModel):
                         50: "※",
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
+                    if song.penalties and song.penalties not in songs_with_panelities:
+                        songs_with_panelities.append(song.penalties)
                     song.penalties_patched = items
                 appearance.songs_patched = songs
                 public.tot_score_avg += appearance.tot_score
@@ -3046,13 +3051,14 @@ class Round(TimeStampedModel):
             public.name = group.name
 
         # Penalties Block
-        array = Song.objects.select_related(
-        ).filter(
-            appearance__round__session_id=self.session_id, # Using any session appearance
-            penalties__len__gt=0, # Where there are penalties
-            appearance__is_private=False, # If a public appearance
-            # appearance__in=publics,  # Only completeds
-        ).distinct().values_list('penalties', flat=True)
+        # array = Song.objects.select_related(
+        # ).filter(
+        #     appearance__round__session_id=self.session_id, # Using any session appearance
+        #     penalties__len__gt=0, # Where there are penalties
+        #     appearance__is_private=False, # If a public appearance
+
+        #     # appearance__in=publics,  # Only completeds
+        # ).distinct().values_list('penalties', flat=True)
         penalties_map = {
             30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
             32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
@@ -3065,7 +3071,7 @@ class Round(TimeStampedModel):
             48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
             50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
-        penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
+        penalties = sorted(list(set(penalties_map[x] for l in songs_with_panelities for x in l)))
 
         # Missing flag
         # use group_ids - these are the completeds
