@@ -644,7 +644,7 @@ class Appearance(TimeStampedModel):
                 ),                
             ),
         )
-        stats['tot_score'] = (stats['tot_points'] / stats['score_count'])
+        stats['tot_score'] = round((stats['tot_points'] / stats['score_count']), 1)
         stats.pop("score_count", None)
         for key, value in stats.items():
             stats[key] = rnd(value, 1)
@@ -719,7 +719,7 @@ class Appearance(TimeStampedModel):
                 ),                
             ),
         )
-        stats['tot_score'] = (stats['tot_points'] / stats['score_count'])
+        stats['tot_score'] = round((stats['tot_points'] / stats['score_count']), 1)
         stats.pop("score_count", None)
         for key, value in stats.items():
             stats[key] = rnd(value, 1)
