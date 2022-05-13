@@ -68,13 +68,23 @@ class EntryViewSet(views.ModelViewSet):
         object = self.get_object()
 
         Appearance = apps.get_model('adjudication.appearance')
+        Round = apps.get_model('adjudication.round')
         appearances = Appearance.objects.filter(entry_id=object.id)
 
-        if request.data['participants'] is not None:
+        if request.data['participants'] is not None or request.data['is_private']:
             # Update Participant names for associated appearances
             for a in appearances:
+                # Update is private
+                a.is_private=request.data['is_private']
+
+                # Update paritcipant names
                 a.participants=request.data['participants']
                 a.save()
+
+        # Recalculate Round outcomes
+        for a in appearances:
+            r = Round.objects.get(id=a.round_id)
+            r.determine_winners()
 
         # Save Entry
         return super().partial_update(request, *pk)
