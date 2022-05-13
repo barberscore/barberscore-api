@@ -3051,7 +3051,7 @@ class Round(TimeStampedModel):
             appearance__round__session_id=self.session_id, # Using any session appearance
             penalties__len__gt=0, # Where there are penalties
             appearance__is_private=False, # If a public appearance
-#            appearance__in=publics,  # Only completeds
+            # appearance__in=publics,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
             30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
@@ -4487,6 +4487,8 @@ class Round(TimeStampedModel):
                     Appearance.STATUS.disqualified,
                     Appearance.STATUS.scratched,
                 ],
+            ).exclude(
+                is_private=True,
             ).order_by(
                 'stats__tot_points',
                 'stats__sng_points',
@@ -5016,6 +5018,15 @@ class Round(TimeStampedModel):
     def can_publish(self):
         return True
 
+    def determine_winners(self):
+        # Run outcomes
+        outcomes = self.outcomes.all()
+        for outcome in outcomes:
+            if outcome.level is not Outcome.LEVEL.raw:
+                outcome.winner = outcome.get_winner()
+                outcome.save()
+        return     
+
     # Round Transitions
     @notification_user
     @fsm_log_by
@@ -5344,11 +5355,8 @@ class Round(TimeStampedModel):
     def complete(self, *args, **kwargs):
         Appearance = apps.get_model('adjudication.appearance')
         Panelist = apps.get_model('adjudication.panelist')
-        # Run outcomes
-        outcomes = self.outcomes.all()
-        for outcome in outcomes:
-            outcome.winner = outcome.get_winner()
-            outcome.save()
+
+        self.determine_winners()
 
         # If there is no next round simply return
         if self.kind == self.KIND.finals:
