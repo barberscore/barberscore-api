@@ -365,6 +365,11 @@ class PanelistViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, pk=None):
         # Current object
         object = self.get_object()
+
+        if type(request.data['airports']) == str:
+            print("airports is string")
+            request.data.pop('airports')
+
         try:
             # Submitted number...
             serializer = self.get_serializer(data=request.data)
