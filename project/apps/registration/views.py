@@ -7,6 +7,9 @@ from rest_framework.response import Response
 from rest_framework_json_api import views
 from django.db.models import Prefetch
 
+# Django
+from django.apps import apps
+
 # Local
 from .filtersets import EntryFilterset
 from .filtersets import SessionFilterset
@@ -59,6 +62,22 @@ class EntryViewSet(views.ModelViewSet):
         'id',
     ]
     resource_name = "entry"
+
+    def partial_update(self, request, pk=None):
+        # Current object
+        object = self.get_object()
+
+        Appearance = apps.get_model('adjudication.appearance')
+        appearances = Appearance.objects.filter(entry_id=object.id)
+
+        if request.data['participants'] is not None:
+            # Update Participant names for associated appearances
+            for a in appearances:
+                a.participants=request.data['participants']
+                a.save()
+
+        # Save Entry
+        return super().partial_update(request, *pk)
 
     @action(methods=['post'], detail=True)
     def build(self, request, pk=None, **kwargs):

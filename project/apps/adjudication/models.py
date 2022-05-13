@@ -1048,7 +1048,7 @@ class Appearance(TimeStampedModel):
         )
         statelog = self.round.statelogs.latest('timestamp')
         footer = 'Published by {0} at {1}'.format(
-            statelog.by,
+            statelog.by.name,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
         )
         file = pydf.generate_pdf(
@@ -2360,7 +2360,7 @@ class Panelist(TimeStampedModel):
         )
         statelog = self.round.statelogs.latest('timestamp')
         footer = 'Published by {0} at {1}'.format(
-            statelog.by,
+            statelog.by.name,
             statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
         )
         file = pydf.generate_pdf(
@@ -3039,6 +3039,10 @@ class Round(TimeStampedModel):
             public.participants_patched = public.participants
             group = Group.objects.get(id=public.group_id)
             public.district = group.district
+            if public.area == 'BHS':
+                public.display_area = self.DISTRICT[group.district]
+            else:
+                public.display_area = public.area
             public.name = group.name
 
         # Penalties Block
@@ -3205,7 +3209,7 @@ class Round(TimeStampedModel):
         try:
             statelog = self.statelogs.latest('timestamp')
             footer = 'Published by {0} at {1}'.format(
-                statelog.by,
+                statelog.by.name,
                 statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
             )
         except StateLog.DoesNotExist:
@@ -4366,7 +4370,7 @@ class Round(TimeStampedModel):
         try:
             statelog = self.statelogs.latest('timestamp')
             footer = 'Published by {0} at {1}'.format(
-                statelog.by,
+                statelog.by.name,
                 statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
             )
         except StateLog.DoesNotExist:
