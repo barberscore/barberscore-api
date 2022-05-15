@@ -83,17 +83,17 @@
                     {{public.name}}<br>
                   </strong>
                   {% if round.get_session_kind_display == 'Chorus' %}
-                    {{public.area|truncatechars_html:"50"}}&nbsp;({{public.contesting_patched|default:"None"}})<br>
+                    {{public.display_area|default:"(Unknown)"}}&nbsp;({{public.contesting_patched|default:"None"}})<br>
                     <span class='smaller-font'>Dir(s): {{public.participants_patched|default:"(No Director Specified)"}};&nbsp;&nbsp;OnStage: {{public.pos_patched}}</span><br>
                   {% else %}
-                    {{public.area|default:"(Unknown)"}}&nbsp;({{public.contesting_patched|default:"None"}})<br>
+                    {{public.display_area|default:"(Unknown)"}}&nbsp;({{public.contesting_patched|default:"None"}})<br>
                     <span class='smaller-font'>{{public.participants_patched|default:"(No Members Specified)"}}</span><br>
                   {% endif %}
                 </td>
                 <td class='w-songs'>
                   <strong>Total: {{public.stats.tot_points|floatformat:0}} Points</strong><br>
                   {% for appearance in public.appearances_patched %}
-                      {% if round.num != 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {{appearance.tot_points|floatformat:0}} Points</span><br>{% endif %}
+                      {% if round.num != 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {% if appearance.status != -20%}{{appearance.tot_points|floatformat:0}} Points{% else %}<em>Performer Scratched</em>{% endif %}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
                       &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart_patched|truncatechars_html:50|safe|default:"(Song not in Group's Repertory)▴"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}

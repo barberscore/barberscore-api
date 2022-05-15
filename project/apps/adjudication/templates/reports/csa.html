@@ -73,6 +73,7 @@
           <strong>Points:  {{group.tot_points}} ({{group.tot_score|floatformat:1}})</strong><br><br>
           {% if group.get_kind_display != 'Quartet' %}
             Director(s): {{ appearance.participants|default:"(Unknown)" }}<br>
+            Persons on Stage: {{ appearance.pos|default:"(Unknown)" }}
           {% else %}
             Members: {{ appearance.participants|default:"(Unknown)"  }}<br>
           {% endif %}
