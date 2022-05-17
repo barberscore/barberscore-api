@@ -582,7 +582,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         # if round.oss_report:
         #     pdf = round.oss_report.file
         # else:
-        pdf = round.get_oss()
+        pdf = round.get_oss(request.user.name)
         file_name = '{0} OSS.pdf'.format(round)
         return PDFResponse(
             pdf,
@@ -673,7 +673,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         # if round.sa_report:
         #     pdf = round.sa_report.file
         # else:
-        pdf = round.get_sa()
+        pdf = round.get_sa(request.user.name)
         file_name = '{0} SA'.format(
             round.nomen,
         )
