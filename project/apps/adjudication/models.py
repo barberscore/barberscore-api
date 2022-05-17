@@ -2784,7 +2784,7 @@ class Round(TimeStampedModel):
             raise ValueError("No notification list for {0}".format(session))
         return ["{0}".format(x.strip()) for x in session.notification_list.split(',')]
 
-    def get_oss(self, zoom=1):
+    def get_oss(self, published_by=None, zoom=1):
         Group = apps.get_model('bhs.group')
         Chart = apps.get_model('bhs.chart')
         Panelist = apps.get_model('adjudication.panelist')
@@ -3225,11 +3225,17 @@ class Round(TimeStampedModel):
             else:
                 page_size = 'Legal'
         try:
-            statelog = self.statelogs.latest('timestamp')
-            footer = 'Published by {0} at {1}'.format(
-                statelog.by.name,
-                statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
-            )
+            if published_by is not None:
+                footer = 'Published by {0} at {1}'.format(
+                    published_by,
+                    datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S %Z"),
+                )
+            else:
+                statelog = self.statelogs.latest('timestamp')
+                footer = 'Published by {0} at {1}'.format(
+                    statelog.by.name,
+                    statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+                )
         except StateLog.DoesNotExist:
             footer = '(Unknown)'
         file = pydf.generate_pdf(
@@ -3271,7 +3277,7 @@ class Round(TimeStampedModel):
 
     # r.oss.save('oss', f)
 
-    def get_sa(self):
+    def get_sa(self, published_by=None):
         Group = apps.get_model('bhs.group')
         Chart = apps.get_model('bhs.chart')
         Person = apps.get_model('bhs.person')
@@ -3997,12 +4003,18 @@ class Round(TimeStampedModel):
             'penalties': penalties,
         }
         rendered = render_to_string('reports/sa.html', context)
-        statelog = self.statelogs.latest('timestamp')
-        footer = 'Published by {0} at {1}'.format(
-            statelog.by.name,
-            statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
-        )
 
+        if published_by is not None:
+            footer = 'Published by {0} at {1}'.format(
+                published_by,
+                datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S %Z"),
+            )
+        else:
+            statelog = self.statelogs.latest('timestamp')
+            footer = 'Published by {0} at {1}'.format(
+                statelog.by.name,
+                statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            )
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
