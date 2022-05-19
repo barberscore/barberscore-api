@@ -178,6 +178,8 @@ class SessionSerializer(serializers.ModelSerializer):
 
             'image_id',
 
+            'rounds_published',
+
             'owners',
             'contests',
             'entries',

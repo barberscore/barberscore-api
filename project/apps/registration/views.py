@@ -1,3 +1,4 @@
+import json
 
 # Third-Party
 from django_fsm import TransitionNotAllowed
@@ -111,6 +112,23 @@ class EntryViewSet(views.ModelViewSet):
         except TransitionNotAllowed:
             return Response(
                 {'status': 'Information incomplete.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def contest(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        try:
+            object.update_contests(by=self.request.user)
+            entry = Entry.objects.get(pk=object.id)
+            serializer = self.get_serializer(entry)
+            return Response(serializer.data)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Unable to change contests incomplete.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
