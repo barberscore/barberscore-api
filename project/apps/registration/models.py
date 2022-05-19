@@ -1329,6 +1329,36 @@ class Entry(TimeStampedModel):
             appearance.save()
         return
 
+    @fsm_log_by
+    def update_contests(self, *args, **kwargs):
+        Round = apps.get_model('adjudication.round')
+        Appearance = apps.get_model('adjudication.appearance')
+
+        # Gather Awards
+        award_ids = list(self.contests.values_list('award_id', flat=True))
+
+        # Update Round Winners
+        rounds = Round.objects.filter(
+            session_id=self.session_id
+        )
+        for r in rounds:
+            # Gather Round Outcomes
+            outcomes = r.outcomes.filter(award_id__in=award_ids)
+
+            # Update Appearance Outcomes...
+            entry_appearances = Appearance.objects.filter(
+                entry_id=self.id,
+                round_id=r.id,
+            )
+            for a in entry_appearances:
+                a.outcomes.set(outcomes)
+
+            # Round statuses requiring recalculation
+            round_statuses = [Round.STATUS.completed, Round.STATUS.finalized]
+            if r.status in round_statuses:
+                r.determine_winners()
+        return
+
 
 class Session(TimeStampedModel):
     id = models.UUIDField(
@@ -1700,6 +1730,18 @@ class Session(TimeStampedModel):
 
     def clean(self):
         pass
+
+    def rounds_published(self):
+        Round = apps.get_model('adjudication.round')
+        last_round_of_session = Round.objects.filter(
+            session_id=self.id
+        ).order_by(
+            '-num'
+        )[0]
+
+        if last_round_of_session.status == Round.STATUS.published:
+            return True
+        return False
 
     @cached_property
     def image_id(self):
