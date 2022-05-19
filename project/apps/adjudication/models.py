@@ -44,6 +44,7 @@ from django.utils.timezone import now
 from django.contrib.postgres.fields import DecimalRangeField
 from django.contrib.postgres.fields import IntegerRangeField
 from phonenumber_field.modelfields import PhoneNumberField
+from django.db.models.expressions import RawSQL
 
 from .tasks import build_email
 from .tasks import send_publish_email_from_round
@@ -2809,13 +2810,11 @@ class Round(TimeStampedModel):
         ).exclude(
             # Don't include mic testers on OSS
             num__lte=0,
-        ).order_by(
-            '-stats__tot_points',
-            '-stats__sng_points',
-            '-stats__per_points',
+        ).all().order_by(
+            RawSQL("(stats->>%s)::Numeric", ("tot_points",)).desc(nulls_last=True),
+            RawSQL("(stats->>%s)::Numeric", ("sng_points",)).desc(nulls_last=True),
+            RawSQL("(stats->>%s)::Numeric", ("per_points",)).desc(nulls_last=True),
         )
-        # group_ids = publics.values_list('group_id', flat=True)
-
 
         # groups = Group.objects.filter(
         #     id__in=group_ids,
@@ -2924,6 +2923,7 @@ class Round(TimeStampedModel):
             i += 1
             public.tot_score_avg = 0 
             public.tot_rank = i
+            tot_points = 0
             appearances = Appearance.objects.filter(
                 group_id=public.group_id,
                 round__session_id=self.session_id,
@@ -3036,6 +3036,8 @@ class Round(TimeStampedModel):
                         song.penalties_patched = items
                     appearance.songs_patched = songs
                     public.tot_score_avg += appearance.tot_score
+                    if public.stats is None:
+                        public.stats = appearance.stats
 
             public.tot_score_avg = public.tot_score_avg / scored_rounds
             public.appearances_patched = appearances
@@ -3692,10 +3694,10 @@ class Round(TimeStampedModel):
         #         partition_by=[F('round_id')],
         #         order_by=F('round_stats__sng_points').desc(),
         #     ),
-        ).order_by(
-            '-stats__tot_points',
-            '-stats__sng_points',
-            '-stats__per_points',
+        ).all().order_by(
+            RawSQL("(stats->>%s)::Numeric", ("tot_points",)).desc(nulls_last=True),
+            RawSQL("(stats->>%s)::Numeric", ("sng_points",)).desc(nulls_last=True),
+            RawSQL("(stats->>%s)::Numeric", ("per_points",)).desc(nulls_last=True),
         )
 
         round_rankings = Appearance.objects.filter(
@@ -3810,8 +3812,10 @@ class Round(TimeStampedModel):
             #         ),
             #     ),
             # )
+            scored_rounds = 0
             for appearance in appearances:
                 if appearance.status != Appearance.STATUS.scratched:
+                    scored_rounds += 1
                     songs = appearance.songs.prefetch_related(
                         'scores',
                         'scores__panelist',
@@ -3920,7 +3924,10 @@ class Round(TimeStampedModel):
                     appearance.songs_patched = songs
                     appearance.rankings = rankings[appearance.id]
                     group.tot_score_avg += appearance.tot_score
-            group.tot_score_avg = group.tot_score_avg / appearances.count()
+                    if group.stats is None:
+                        group.stats = appearance.stats
+                        
+            group.tot_score_avg = group.tot_score_avg / scored_rounds
             group.appearances_patched = appearances
 
         # Penalties Block
