@@ -5434,6 +5434,7 @@ class Round(TimeStampedModel):
             ),
         )
         # If spots are constricted, find those who advance
+        mt = None
         if spots:
             # All those above 75.0 advance automatically, regardless of spots available
             if self.get_district_display() == 'BHS':
@@ -5443,7 +5444,12 @@ class Round(TimeStampedModel):
                     '-per_points',
                 )
                 advancer__ids = [x.id for x in ordered[:spots]]
-                mt = ordered[spots:spots+1][0]
+                try:
+                    mt = ordered[spots:spots+1][0]                
+                except IndexError:
+                    # Index is not present
+                    # ...usually when the number of spots exceeds the number of competitors.
+                    pass
             else:
                 automatics = multis.filter(
                     avg__gte=75.0,
@@ -5478,7 +5484,6 @@ class Round(TimeStampedModel):
         # Otherwise, advance all
         else:
             advancer__ids = [a.id for a in multis]
-            mt = None
 
         # Reset draw
         self.appearances.update(draw=None)
