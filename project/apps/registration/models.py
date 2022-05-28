@@ -1737,9 +1737,9 @@ class Session(TimeStampedModel):
             session_id=self.id
         ).order_by(
             '-num'
-        )[0]
+        ).first()
 
-        if last_round_of_session.status == Round.STATUS.published:
+        if last_round_of_session is not None and last_round_of_session.status == Round.STATUS.published:
             return True
         return False
 
