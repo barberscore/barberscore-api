@@ -8,6 +8,7 @@ from timezone_field import TimeZoneField
 import json
 # Third-Party
 import pydf
+import html
 from docx import Document
 from django_fsm import FSMIntegerField
 from django_fsm import transition
@@ -460,7 +461,7 @@ class Appearance(TimeStampedModel):
         )
         panelists = self.round.panelists.filter(
             kind=Panelist.KIND.official,
-            category__gt=Panelist.CATEGORY.ca,
+            category__gt=Panelist.CATEGORY.adm,
         ).order_by(
             'category',
             'last_name',
@@ -1348,6 +1349,7 @@ class Appearance(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         ))
 
@@ -1387,7 +1389,7 @@ class Appearance(TimeStampedModel):
         """Sets up the Appearance."""
         Panelist = apps.get_model('adjudication.panelist')
         panelists = self.round.panelists.filter(
-            category__gt=Panelist.CATEGORY.ca,
+            category__gt=Panelist.CATEGORY.adm,
         )
         i = 1
         while i <= 2:  # Number songs constant
@@ -1738,6 +1740,13 @@ class Outcome(TimeStampedModel):
         blank=True,
     )
 
+    printed = models.BooleanField(
+        help_text="""
+            Show this outcome on the OSS.""",
+        default=True,
+    )
+
+
     # FKs
     round = models.ForeignKey(
         'Round',
@@ -1958,6 +1967,7 @@ class Outcome(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         ))
 
@@ -2006,7 +2016,7 @@ class Panelist(TimeStampedModel):
     )
 
     CATEGORY_SHORT_NAMES = {
-        10: "CA",
+        10: "ADM",
         30: "MUS",
         40: "PER",
         50: "SNG",
@@ -2014,7 +2024,7 @@ class Panelist(TimeStampedModel):
 
     CATEGORY = Choices(
         (5, 'drcj', 'DRCJ'),
-        (10, 'ca', 'CA'),
+        (10, 'adm', 'ADM'),
         (30, 'music', 'Music'),
         (40, 'performance', 'Performance'),
         (50, 'singing', 'Singing'),
@@ -2182,7 +2192,7 @@ class Panelist(TimeStampedModel):
             raise ValidationError(
                 {'num': 'Practice Num must be greater than 50'}
             )
-        if self.num and self.num and self.category == self.CATEGORY.ca:
+        if self.num and self.num and self.category == self.CATEGORY.adm:
             raise ValidationError(
                 {'num': 'CAs must not have a num.'}
             )
@@ -2207,6 +2217,7 @@ class Panelist(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         ))
 
@@ -2217,6 +2228,7 @@ class Panelist(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         ))
         # if self.round.status >= self.round.STATUS.started:
@@ -3141,12 +3153,12 @@ class Round(TimeStampedModel):
         panelists_raw = self.panelists.select_related(
         ).filter(
             kind=Panelist.KIND.official,
-            category__gte=Panelist.CATEGORY.ca,
+            category__gte=Panelist.CATEGORY.adm,
         ).order_by(
             'num',
         )
         categories_map = {
-            10: 'CA',
+            10: 'ADM',
             30: 'MUS',
             40: 'PER',
             50: 'SNG',
@@ -3177,6 +3189,8 @@ class Round(TimeStampedModel):
         # Outcome Block
         items = self.outcomes.select_related(
             # 'award',
+        ).filter(
+            printed=True,
         ).order_by(
             'num',
         ).values_list(
@@ -4335,12 +4349,12 @@ class Round(TimeStampedModel):
         panelists_raw = self.panelists.select_related(
         ).filter(
             kind=Panelist.KIND.official,
-            category__gte=Panelist.CATEGORY.ca,
+            category__gte=Panelist.CATEGORY.adm,
         ).order_by(
             'num',
         )
         categories_map = {
-            10: 'CA',
+            10: 'ADM',
             30: 'Music',
             40: 'Performance',
             50: 'Singing',
@@ -4630,7 +4644,7 @@ class Round(TimeStampedModel):
         document.add_heading('Awards')
         for outcome in outcomes:
             award = Award.objects.get(id=outcome.award_id)
-            document.add_paragraph("{0}: {1}".format(award.name, outcome.winner))
+            document.add_paragraph("{0}: {1}".format(award.name, html.unescape(outcome.winner)))
         if appearances:
             document.add_heading('Draw')
             for appearance in appearances:
@@ -4642,7 +4656,7 @@ class Round(TimeStampedModel):
             if mt is not None:
                 gp = Group.objects.get(id=mt.group_id)
                 document.add_paragraph(
-                    "MT: {0}".format(gp.name),
+                    "MT: {0}".format(html.unescape(gp.name)),
                     # style='List Bullet',
                 )            
         if winners:
@@ -4653,7 +4667,7 @@ class Round(TimeStampedModel):
                     "With a score of {0}, a {1} average: {2}".format(
                         winner.stats['tot_points'],
                         winner.stats['tot_score'],
-                        group.name,
+                        html.unescape(group.name),
                     ),
                     style='List Bullet',
                 )
@@ -4702,7 +4716,7 @@ class Round(TimeStampedModel):
         # ### JUDGES ###
         panelists = Panelist.objects.select_related('round').filter(
                 round__id=self.id,
-                category__gt=Panelist.CATEGORY.ca,
+                category__gt=Panelist.CATEGORY.adm,
                 **panelist_filters
             ).order_by(
                 'kind',
@@ -4754,7 +4768,7 @@ class Round(TimeStampedModel):
 
                     document += "\\page {0}. {1}\t\\\n".format(
                         (appearance.num if appearance.num != 0 else 'MT'),
-                        appearance.name
+                        html.unescape(appearance.name)
                         )
 
                     if appearance.kind == Appearance.KIND.chorus and appearance.group_id not in directors:
@@ -4802,7 +4816,7 @@ class Round(TimeStampedModel):
         Panelist = apps.get_model('adjudication.panelist')
         judges = self.panelists.filter(
             # status=Panelist.STATUS.active,
-            category__gt=Panelist.CATEGORY.ca,
+            category__gt=Panelist.CATEGORY.adm,
             # person__email__isnull=False,
         ).order_by(
             'kind',
@@ -4995,6 +5009,7 @@ class Round(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         ))
 
@@ -5118,7 +5133,7 @@ class Round(TimeStampedModel):
 
         # Build panel from assignments
         cas = session.assignments.filter(
-            category=Assignment.CATEGORY.ca,
+            category=Assignment.CATEGORY.adm,
         ).order_by(
             'kind',
             'category',
@@ -5529,7 +5544,7 @@ class Round(TimeStampedModel):
             appearance.advance()
             appearance.save()
         panelists = self.panelists.filter(
-            category__gt=Panelist.CATEGORY.ca,
+            category__gt=Panelist.CATEGORY.adm,
         )
         for panelist in panelists:
             panelist.release()
@@ -5560,7 +5575,7 @@ class Round(TimeStampedModel):
         send_publish_report_email_from_round.delay(self)
         # # Send the PSAs
         # panelists = self.panelists.filter(
-        #     category__gt=Panelist.CATEGORY.ca,
+        #     category__gt=Panelist.CATEGORY.adm,
         #     status=Panelist.STATUS.released,
         # )
         # for panelist in panelists:
@@ -5682,6 +5697,7 @@ class Score(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         ))
 
@@ -5909,6 +5925,7 @@ class Song(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         ))
 

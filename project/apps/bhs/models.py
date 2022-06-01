@@ -362,6 +362,7 @@ class Award(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         ))
 
@@ -372,6 +373,7 @@ class Award(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         ))
 
@@ -527,6 +529,7 @@ class Chart(TimeStampedModel):
                     'SCJC',
                     'Librarian',
                     'CA',
+                    'ADM',
                 ],
             )
         ])
@@ -540,6 +543,7 @@ class Chart(TimeStampedModel):
                     'SCJC',
                     'Librarian',
                     'CA',
+                    'ADM',
                 ],
             )
         ])
@@ -1034,7 +1038,7 @@ class Convention(TimeStampedModel):
                 panelists = Panelist.objects.filter(
                     round_id=r.id,
                     kind=Panelist.KIND.official,
-                    category__gt=Panelist.CATEGORY.ca,
+                    category__gt=Panelist.CATEGORY.adm,
                 ).order_by(
                     'num',
                 )
@@ -1055,7 +1059,7 @@ class Convention(TimeStampedModel):
                     panelists = Panelist.objects.filter(
                         round_id=r.id,
                         kind=Panelist.KIND.practice,
-                        category__gt=Panelist.CATEGORY.ca,
+                        category__gt=Panelist.CATEGORY.adm,
                     ).order_by(
                         'num',
                     )
@@ -1270,6 +1274,7 @@ class Convention(TimeStampedModel):
             request.user.roles.filter(name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
                 ]
             )
         ])
@@ -1281,6 +1286,7 @@ class Convention(TimeStampedModel):
             request.user.roles.filter(name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ])
         ])
 
@@ -1839,6 +1845,7 @@ class Group(TimeStampedModel):
                 'Librarian',
                 'Manager',
                 'CA',
+                'ADM',
             ]
         ))
 
@@ -1851,6 +1858,7 @@ class Group(TimeStampedModel):
                     'SCJC',
                     'Librarian',
                     'CA',
+                    'ADM',
                 ]
             ),
             request.user in self.owners.all(),
@@ -2157,6 +2165,7 @@ class Person(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         ))
 
@@ -2167,6 +2176,7 @@ class Person(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         ))
 

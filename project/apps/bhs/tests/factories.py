@@ -84,7 +84,7 @@ class ConventionFactory(DjangoModelFactory):
     #         )
     #         AssignmentFactory(
     #             convention=self,
-    #             category=Assignment.CATEGORY.ca,
+    #             category=Assignment.CATEGORY.adm,
     #         )
     #         for i in range(self.panel):
     #             AssignmentFactory(
