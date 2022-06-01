@@ -82,7 +82,7 @@ class Assignment(TimeStampedModel):
 
     CATEGORY = Choices(
         (5, 'drcj', 'DRCJ'),
-        (10, 'ca', 'CA'),
+        (10, 'adm', 'ADM'),
         (30, 'music', 'Music'),
         (40, 'performance', 'Performance'),
         (50, 'singing', 'Singing'),
@@ -276,6 +276,7 @@ class Assignment(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         ))
 
@@ -286,6 +287,7 @@ class Assignment(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         )):
             return True
@@ -591,6 +593,7 @@ class Contest(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         )):
             return True
@@ -1018,6 +1021,7 @@ class Entry(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         )):
             return True
@@ -2151,6 +2155,7 @@ class Session(TimeStampedModel):
                 'SCJC',
                 'DRCJ',
                 'CA',
+                'ADM',
             ]
         ))
 
@@ -2161,6 +2166,7 @@ class Session(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'ADM',
             ]
         )):
             return True

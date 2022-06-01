@@ -184,7 +184,7 @@
             <h5>Awards</h5>
             <ul class='list-unstyled'>
               {% for award, winner in outcomes %}
-                <li><strong>{{award}}:</strong>{% if round.get_district_display == 'BHS' %}<br>{% endif %}&nbsp;&nbsp;{{winner}}</li>
+                <li><strong>{{award}}:</strong>{% if round.get_district_display == 'BHS' %}<br>{% endif %}&nbsp;&nbsp;{{winner|safe}}</li>
               {% endfor %}
             </ul>
           </div>

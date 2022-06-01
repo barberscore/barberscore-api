@@ -95,6 +95,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'scope',
             'scope_range',
             'tree_sort',
+            'printed',
 
             'round',
             'appearances',

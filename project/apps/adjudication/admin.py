@@ -114,10 +114,11 @@ class OutcomeAdmin(admin.ModelAdmin):
     fields = [
         'id',
         'status',
+        'name',
         'round',
         # 'award_id',
         'num',
-        'name',
+        'printed',
         # 'appearances',
     ]
 
