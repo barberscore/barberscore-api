@@ -71,7 +71,7 @@ class AssignmentManager(Manager):
         )
 
         # Set any CA on assignment to own both Convention and Session
-        if record.session_id and record.category == self.model.CATEGORY.ca:
+        if record.session_id and record.category == self.model.CATEGORY.adm:
 
             # Get JWT User record
                 # 1. record.email

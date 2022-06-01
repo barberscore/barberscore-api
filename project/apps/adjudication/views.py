@@ -329,7 +329,7 @@ class PanelistViewSet(viewsets.ModelViewSet):
     resource_name = "panelist"
 
     def perform_create(self, serializer):
-        if serializer.initial_data['category'] == Panelist.CATEGORY.ca:
+        if serializer.initial_data['category'] == Panelist.CATEGORY.adm:
             #
             # Add CA as owner of Round, Session, and Convention
             #
@@ -394,7 +394,7 @@ class PanelistViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         print("perform_destroy function", instance.id)
 
-        if instance.category == Panelist.CATEGORY.ca:
+        if instance.category == Panelist.CATEGORY.adm:
             #
             # Remove CA as owner of Round, Session, and Convention
             #

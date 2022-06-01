@@ -21,7 +21,7 @@ class AppearanceFilterBackend(DRYPermissionFiltersBase):
             Q(
                 round__session__convention__assignments__person__user=request.user,
                 round__session__convention__assignments__status__gt=0,
-                round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
+                round__session__convention__assignments__category__lte=Assignment.CATEGORY.adm,
             )
         ).distinct()
         return queryset
@@ -42,7 +42,7 @@ class OutcomeFilterBackend(DRYPermissionFiltersBase):
             Q(
                 round__session__convention__assignments__person__user=request.user,
                 round__session__convention__assignments__status__gt=0,
-                round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
+                round__session__convention__assignments__category__lte=Assignment.CATEGORY.adm,
             )
         ).distinct()
         return queryset
@@ -61,7 +61,7 @@ class ScoreFilterBackend(DRYPermissionFiltersBase):
             Q(
                 song__appearance__round__session__convention__assignments__person__user=request.user,
                 song__appearance__round__session__convention__assignments__status__gt=0,
-                song__appearance__round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
+                song__appearance__round__session__convention__assignments__category__lte=Assignment.CATEGORY.adm,
             ) |
             # Panelists can see their own scores
             Q(
@@ -99,7 +99,7 @@ class SongFilterBackend(DRYPermissionFiltersBase):
             Q(
                 appearance__round__session__convention__assignments__person__user=request.user,
                 appearance__round__session__convention__assignments__status__gt=0,
-                appearance__round__session__convention__assignments__category__lte=Assignment.CATEGORY.ca,
+                appearance__round__session__convention__assignments__category__lte=Assignment.CATEGORY.adm,
             )
         ).distinct()
         return queryset
