@@ -3221,9 +3221,12 @@ class Round(TimeStampedModel):
         rendered = render_to_string('reports/oss.html', context)
 
         if self.get_district_display() == 'BHS':
-            if self.session.convention.name == 'International Youth Convention':
+            Session = apps.get_model('registration.session')
+            session = Session.objects.get(id=self.session_id)
+
+            if session.convention.name == 'International Youth Convention':
                 page_size = 'Legal'
-            elif self.session.kind == self.session.KIND.quartet and self.kind == self.KIND.semis:
+            elif session.kind == session.KIND.quartet and self.kind == self.KIND.semis:
                 page_size = 'Legal'
             else:
                 page_size = 'Letter'
