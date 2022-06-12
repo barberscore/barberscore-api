@@ -131,6 +131,7 @@
                   {% for appearance in group.appearances_patched %}
                     {{ appearance.rankings.mus_round_rank }}
                     {% for song in appearance.songs_patched %}
+                      {% if appearance.rankings.mus_round_rank >= 10 and forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}
                       {{song.mus_score|floatformat:1}}&nbsp;&nbsp;
                       {% for score, diff, practice in song.mus_scores %}
                         {% if score %}
@@ -151,6 +152,7 @@
                   {% for appearance in group.appearances_patched %}
                     {{ appearance.rankings.per_round_rank }}
                     {% for song in appearance.songs_patched %}
+                      {% if appearance.rankings.per_round_rank >= 10 and forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}
                       {{song.per_score|floatformat:1}}&nbsp;&nbsp;
                       {% for score, diff, practice in song.per_scores %}
                         {% if score %}
@@ -171,6 +173,7 @@
                   {% for appearance in group.appearances_patched %}
                     {{ appearance.rankings.sng_round_rank }}
                     {% for song in appearance.songs_patched %}
+                      {% if appearance.rankings.sng_round_rank >= 10 and forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}
                       {{song.sng_score|floatformat:1}}&nbsp;&nbsp;
                       {% for score, diff, practice in song.sng_scores %}
                         {% if score %}
