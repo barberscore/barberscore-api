@@ -36,7 +36,7 @@ django-reversion==3.0.9
 django-rq==2.4.1
 django-sendgrid-v5==0.9.1
 django-timezone-field==4.1.2
-django==2.2.27
+django==2.2.28
 djangorestframework-jsonapi==4.1.0
 djangorestframework==3.12.4
 dry-rest-permissions==0.1.10
