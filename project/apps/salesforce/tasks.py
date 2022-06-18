@@ -52,7 +52,7 @@ def update_or_create_contest_from_salesforce(contest, max_retries=10):
     if max_retries > 0:
         if Session.objects.filter(pk=contest['session_id']).count():
             return Contest.objects.update_or_create_contest(contest)
-        else :
+        else:
             time.sleep(60)
             queue.enqueue(update_or_create_contest_from_salesforce, args=(contest, (max_retries - 1)))
     else:
@@ -70,19 +70,25 @@ def update_or_create_entry_from_salesforce(entry):
 def update_contest_entry_from_salesforce(entry, max_retries=10):
     queue = get_queue('high')
 
-    # print('Search for EntryID + ' + entry['entry_id'])
+    print('Search for EntryID + ' + entry['entry_id'])
 
     #
     # Query Entry to see if entry_id record exists
     # 
 
+    print("max_retries: " + max_retries)
+
     if max_retries > 0:
+        print("reached")
         if Entry.objects.filter(pk=entry['entry_id']).count():
+            print("reached")
             return Entry.objects.update_contestentry_status(entry)
-        else :
+        else:
+            print("sleep")
             time.sleep(60)
             queue.enqueue(update_contest_entry_from_salesforce, args=(entry, (max_retries - 1)))
     else:
+        print("entry ID not found")
         raise ObjectDoesNotExist("Entry ID not found: " + entry['entry_id'])
 
 
