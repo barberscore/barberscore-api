@@ -76,7 +76,7 @@ def update_contest_entry_from_salesforce(entry, max_retries=10):
     # Query Entry to see if entry_id record exists
     # 
 
-    print("max_retries: " + max_retries)
+    print("max_retries: " + str(max_retries))
 
     if max_retries > 0:
         print("reached")
