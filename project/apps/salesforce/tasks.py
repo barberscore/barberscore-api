@@ -7,6 +7,7 @@ import time
 
 # Third-Party
 from django_rq import job, get_queue
+from rq import Retry
 
 # Django
 from apps.bhs.models import Convention, Award, Chart, Group, Person
@@ -67,29 +68,19 @@ def update_or_create_entry_from_salesforce(entry):
     return Entry.objects.update_or_create_entry(entry)
 
 @job('high')
-def update_contest_entry_from_salesforce(entry, max_retries=10):
+def update_contest_entry_from_salesforce(entry):
     queue = get_queue('high')
-
-    print('Search for EntryID + ' + entry['entry_id'])
 
     #
     # Query Entry to see if entry_id record exists
     # 
 
-    print("max_retries: " + str(max_retries))
-
-    if max_retries > 0:
-        print("reached")
-        if Entry.objects.filter(pk=entry['entry_id']).count():
-            print("reached")
-            return Entry.objects.update_contestentry_status(entry)
-        else:
-            print("sleep")
-            time.sleep(60)
-            queue.enqueue(update_contest_entry_from_salesforce, args=(entry, (max_retries - 1)))
+    if Entry.objects.filter(pk=entry['entry_id']).count():
+        return Entry.objects.update_contestentry_status(entry)
     else:
-        print("entry ID not found")
-        raise ObjectDoesNotExist("Entry ID not found: " + entry['entry_id'])
+        queue.enqueue(update_contest_entry_from_salesforce, args=(entry), 
+            retry=Retry(max=10, 
+                interval=[60, 120, 180, 240, 300, 360, 420, 480, 540, 600]))
 
 
 @job('high')
