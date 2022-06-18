@@ -68,7 +68,7 @@ def update_or_create_entry_from_salesforce(entry):
     return Entry.objects.update_or_create_entry(entry)
 
 @job('high')
-def update_contest_entry_from_salesforce(entry):
+def update_contest_entry_from_salesforce(entry, ignore):
     queue = get_queue('high')
 
     #
