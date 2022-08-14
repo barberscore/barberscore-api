@@ -82,6 +82,7 @@ class Assignment(TimeStampedModel):
 
     CATEGORY = Choices(
         (5, 'drcj', 'DRCJ'),
+        (9, 'pc', 'PC'),
         (10, 'adm', 'ADM'),
         (30, 'music', 'Music'),
         (40, 'performance', 'Performance'),
@@ -275,6 +276,7 @@ class Assignment(TimeStampedModel):
         return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'PC',
                 'CA',
                 'ADM',
             ]
@@ -286,6 +288,7 @@ class Assignment(TimeStampedModel):
         if bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'PC',
                 'CA',
                 'ADM',
             ]
@@ -592,6 +595,7 @@ class Contest(TimeStampedModel):
         if bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'PC',
                 'CA',
                 'ADM',
             ]
@@ -1020,6 +1024,7 @@ class Entry(TimeStampedModel):
         if bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'PC',
                 'CA',
                 'ADM',
             ]
@@ -2154,6 +2159,7 @@ class Session(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'DRCJ',
+                'PC',
                 'CA',
                 'ADM',
             ]
@@ -2165,6 +2171,7 @@ class Session(TimeStampedModel):
         if bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'PC',
                 'CA',
                 'ADM',
             ]
