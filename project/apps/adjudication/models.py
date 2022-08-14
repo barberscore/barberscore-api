@@ -1349,6 +1349,7 @@ class Appearance(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'PC',
                 'ADM',
             ]
         ))
@@ -1966,6 +1967,7 @@ class Outcome(TimeStampedModel):
         return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'PC',
                 'CA',
                 'ADM',
             ]
@@ -2016,6 +2018,7 @@ class Panelist(TimeStampedModel):
     )
 
     CATEGORY_SHORT_NAMES = {
+        9: "PC",
         10: "ADM",
         30: "MUS",
         40: "PER",
@@ -2024,6 +2027,7 @@ class Panelist(TimeStampedModel):
 
     CATEGORY = Choices(
         (5, 'drcj', 'DRCJ'),
+        (9, 'pc', 'PC'),
         (10, 'adm', 'ADM'),
         (30, 'music', 'Music'),
         (40, 'performance', 'Performance'),
@@ -2192,9 +2196,13 @@ class Panelist(TimeStampedModel):
             raise ValidationError(
                 {'num': 'Practice Num must be greater than 50'}
             )
+        if self.num and self.num and self.category == self.CATEGORY.pc:
+            raise ValidationError(
+                {'num': 'PCs must not have a num.'}
+            )
         if self.num and self.num and self.category == self.CATEGORY.adm:
             raise ValidationError(
-                {'num': 'CAs must not have a num.'}
+                {'num': 'ADMs must not have a num.'}
             )
 
     # Permissions
@@ -2216,6 +2224,7 @@ class Panelist(TimeStampedModel):
         return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'PC',
                 'CA',
                 'ADM',
             ]
@@ -2227,6 +2236,7 @@ class Panelist(TimeStampedModel):
         return bool(request.user.roles.filter(
             name__in=[
                 'SCJC',
+                'PC',
                 'CA',
                 'ADM',
             ]
@@ -3158,6 +3168,7 @@ class Round(TimeStampedModel):
             'num',
         )
         categories_map = {
+            9: 'PC',
             10: 'ADM',
             30: 'MUS',
             40: 'PER',
@@ -4357,6 +4368,7 @@ class Round(TimeStampedModel):
             'num',
         )
         categories_map = {
+            9: 'PC',
             10: 'ADM',
             30: 'Music',
             40: 'Performance',
@@ -5012,6 +5024,7 @@ class Round(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'PC',
                 'ADM',
             ]
         ))
@@ -5136,7 +5149,10 @@ class Round(TimeStampedModel):
 
         # Build panel from assignments
         cas = session.assignments.filter(
-            category=Assignment.CATEGORY.adm,
+            category__in=[
+                Assignment.CATEGORY.pc,
+                Assignment.CATEGORY.adm,
+            ]
         ).order_by(
             'kind',
             'category',
@@ -5700,6 +5716,7 @@ class Score(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'PC',
                 'ADM',
             ]
         ))
@@ -5928,6 +5945,7 @@ class Song(TimeStampedModel):
             name__in=[
                 'SCJC',
                 'CA',
+                'PC',
                 'ADM',
             ]
         ))
