@@ -311,7 +311,7 @@ class Award(TimeStampedModel):
 
     # Denormalizations
     tree_sort = models.IntegerField(
-        unique=True,
+        # unique=True,
         blank=True,
         null=True,
         editable=False,

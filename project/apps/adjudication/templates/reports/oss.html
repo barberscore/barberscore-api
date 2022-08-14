@@ -194,7 +194,7 @@
             <h5>Footnotes</h5>
             <p>
               {%if round.footnotes %}
-                {{round.footnotes}}<br>
+                {{round.footnotes|linebreaks}}<br>
               {%endif%}
               {% for penalty in penalties %}
                 {{penalty}}<br>
