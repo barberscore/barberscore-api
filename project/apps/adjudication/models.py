@@ -1736,7 +1736,7 @@ class Outcome(TimeStampedModel):
 
     tree_sort = models.IntegerField(
         # unique=True,
-        editable=False,
+        # editable=False,
         null=True,
         blank=True,
     )
@@ -3193,9 +3193,9 @@ class Round(TimeStampedModel):
                     )
                 except AttributeError:
                     persons.append("(Unknown)")
-            names = ", ".join(persons)
-            panelists.append((value, names))
-
+            if persons: 
+                names = ", ".join(persons)
+                panelists.append((value, names))
 
         # Outcome Block
         items = self.outcomes.select_related(
@@ -3203,6 +3203,7 @@ class Round(TimeStampedModel):
         ).filter(
             printed=True,
         ).order_by(
+            'tree_sort',
             'num',
         ).values_list(
             'num',
@@ -4542,6 +4543,7 @@ class Round(TimeStampedModel):
             draw=0,
         ).first()
         outcomes = self.outcomes.order_by(
+            '-tree_sort',
             '-num',
         )
         if self.kind == self.KIND.finals:
@@ -5271,6 +5273,7 @@ class Round(TimeStampedModel):
                 age=contest.age,
                 is_novice=contest.is_novice,
                 is_single=contest.is_single,
+                tree_sort=contest.tree_sort,
             )
 
         # Create Appearances
