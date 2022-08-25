@@ -521,7 +521,7 @@ class Contest(TimeStampedModel):
 
     tree_sort = models.IntegerField(
         # unique=True,
-        editable=False,
+        # editable=False,
         null=True,
         blank=True,
     )
