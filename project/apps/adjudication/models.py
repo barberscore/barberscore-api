@@ -3163,7 +3163,7 @@ class Round(TimeStampedModel):
         panelists_raw = self.panelists.select_related(
         ).filter(
             kind=Panelist.KIND.official,
-            category__gte=Panelist.CATEGORY.adm,
+            category__gte=Panelist.CATEGORY.pc,
         ).order_by(
             'num',
         )
@@ -4364,7 +4364,7 @@ class Round(TimeStampedModel):
         panelists_raw = self.panelists.select_related(
         ).filter(
             kind=Panelist.KIND.official,
-            category__gte=Panelist.CATEGORY.adm,
+            category__gte=Panelist.CATEGORY.pc,
         ).order_by(
             'num',
         )
