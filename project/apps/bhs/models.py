@@ -314,7 +314,7 @@ class Award(TimeStampedModel):
         # unique=True,
         blank=True,
         null=True,
-        editable=False,
+        # editable=False,
     )
 
     # Internals
