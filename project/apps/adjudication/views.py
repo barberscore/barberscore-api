@@ -778,13 +778,18 @@ class ScoreViewSet(viewsets.ModelViewSet):
                 id=object.song.appearance.id
             )
 
-        # Update appearance stats
-        stats = appearance[0].get_stats()
+        if appearance[0].status <= Appearance.STATUS.finished:
+            # Update appearance stats
+            stats = appearance[0].get_stats()
 
-        appearance.update(
-            status=Appearance.STATUS.finished,
-            stats=stats
-        )
+            appearance.update(
+                status=Appearance.STATUS.finished,
+                stats=stats
+            )
+        else:
+            appearance.update(
+                status=Appearance.STATUS.finished,
+            )
 
         # Resave score for return
         return super().partial_update(request, *pk)
