@@ -581,6 +581,7 @@ class Appearance(TimeStampedModel):
         Round = apps.get_model('adjudication.round')
         rounds = Round.objects.filter(
             session_id=self.round.session_id,
+            kind__gte=self.round.kind,
         )
         stats = rounds.aggregate(
             tot_points=Sum(
@@ -1327,6 +1328,9 @@ class Appearance(TimeStampedModel):
         email = self.get_complete_email()
         return email.send()
 
+    def has_advanced(self):
+        return True if self.draw > 0 else False
+
     # Appearance Permissions
     @staticmethod
     @allow_staff_or_superuser
@@ -1433,7 +1437,7 @@ class Appearance(TimeStampedModel):
     @transition(
         field=status,
         source=[STATUS.finished, STATUS.variance],
-        target=RETURN_VALUE(STATUS.variance, STATUS.verified,),
+        target=RETURN_VALUE(STATUS.variance, STATUS.verified, STATUS.advanced,),
         conditions=[can_verify],
     )
     def verify(self, *args, **kwargs):
@@ -1446,9 +1450,27 @@ class Appearance(TimeStampedModel):
         # Variance is only checked once.
         else:
             variance = False
+
         self.stats = self.get_stats()
         self.round_stats = self.get_stats_round()
-        return self.STATUS.variance if variance else self.STATUS.verified
+
+        if variance:
+            return self.STATUS.variance
+        elif self.has_advanced():
+            # Update future Round stats
+            future_appearances = Appearance.objects.filter(
+                entry_id=self.entry_id,
+                round__kind__lt=self.round.kind,
+                status__in=[Appearance.STATUS.verified, Appearance.STATUS.advanced]
+            )
+
+            for a in future_appearances:
+                a.stats = a.get_stats()
+                a.save()
+
+            return self.STATUS.advanced
+        else:
+            return self.STATUS.verified
 
     @notification_user
     @fsm_log_by
