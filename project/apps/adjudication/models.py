@@ -1329,7 +1329,7 @@ class Appearance(TimeStampedModel):
         return email.send()
 
     def has_advanced(self):
-        return True if self.draw > 0 else False
+        return True if self.draw is not None and self.draw > 0 else False
 
     # Appearance Permissions
     @staticmethod
