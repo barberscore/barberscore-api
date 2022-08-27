@@ -106,6 +106,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
     resource_name = "appearance"
 
     def perform_create(self, serializer):
+        Entry = apps.get_model('registration.entry')
         Chart = apps.get_model('bhs.chart')
         group_id = serializer.initial_data['group_id']
         charts_raw = Chart.objects.filter(
@@ -119,8 +120,24 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             c['pk'] = str(c.pop('id'))
         charts = [json.dumps(x) for x in charts_raw]
 
-        # print("add participants...")
-        serializer.save(charts=charts)
+        print(serializer.initial_data['round']['id'])
+
+        parent_round = Round.objects.get(id=serializer.initial_data['round']['id'])
+
+        entry = Entry.objects.get(
+            session_id=parent_round.session_id,
+            group_id=group_id
+        )
+
+        if entry is not None:
+            # print("add participants...")
+            serializer.save(
+                charts=charts,
+                participants=entry.participants,
+                entry_id=entry.id,
+            )            
+        else:
+            serializer.save(charts=charts)
 
     @action(methods=['get'], detail=True)
     def mock(self, request, pk=None, **kwargs):
