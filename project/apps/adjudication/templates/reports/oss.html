@@ -16,7 +16,7 @@
       }
       strong {
         font-family: 'Encode Sans', sans-serif;
-        font-weight: 600;
+        font-weight: 800;
       }
       table {
         table-layout:fixed; /* will switch the table-layout algorythm */
@@ -26,17 +26,21 @@
             line-height: 1.3;
         {% endif %}
       }
+      table thead tr th {
+        font-weight: 800 !important;
+      }
       .w-groups {
-        width: 40% !important;
+        width: 30% !important;
+        padding-right: 4% !important;
       }
       .w-songs {
-        width: 44% !important;
+        width: 50% !important;
       }
       .w-scores {
         width: 4% !important;
       }
       .bolder {
-        font-weight: 400;
+        font-weight: 500;
       }
       .small_logo {
           height: 50px;
@@ -95,7 +99,7 @@
                   {% for appearance in public.appearances_patched %}
                       {% if round.num != 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {% if appearance.status != -20%}{{appearance.tot_points|floatformat:0}} Points{% else %}<em>Performer Scratched</em>{% endif %}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart_patched|truncatechars_html:50|safe|default:"(Song not in Group's Repertory)▴"}}&nbsp;{{song.penalties_patched}}<br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart_patched|truncatechars_html:70|safe|default:"(Song not in Group's Repertory)▴"}}&nbsp;{{song.penalties_patched}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
