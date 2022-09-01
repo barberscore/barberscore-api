@@ -4564,7 +4564,9 @@ class Round(TimeStampedModel):
         mt = self.appearances.filter(
             draw=0,
         ).first()
-        outcomes = self.outcomes.order_by(
+        outcomes = self.outcomes.filter(
+            printed=True,
+        ).order_by(
             '-tree_sort',
             '-num',
         )

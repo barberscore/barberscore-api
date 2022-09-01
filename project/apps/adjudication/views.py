@@ -393,7 +393,7 @@ class PanelistViewSet(viewsets.ModelViewSet):
             serializer.is_valid()
 
             ## See if the submitted number already exists
-            if (Panelist.objects.filter(
+            if (request.data['num'] is not object.num and Panelist.objects.filter(
                     num=request.data['num'],
                     round_id=object.round_id,
                 ).count()):
