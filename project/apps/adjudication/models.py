@@ -1769,6 +1769,12 @@ class Outcome(TimeStampedModel):
         default=True,
     )
 
+    print_on_finals_oss = models.BooleanField(
+        help_text="""
+            Show this outcome on the Finals OSS.""",
+        default=False,
+        verbose_name='Include on Finals OSS',
+    )
 
     # FKs
     round = models.ForeignKey(
@@ -2961,6 +2967,13 @@ class Round(TimeStampedModel):
 
         songs_with_panelities = []
 
+        if self.kind == self.KIND.finals:
+            previous_rounds = Round.objects.filter(
+                session_id=self.session_id,
+            ).exclude(
+                id=self.id,
+            ).order_by('kind')
+
         # Monkeypatching
         i = self.spots
         for public in publics:
@@ -3091,7 +3104,36 @@ class Round(TimeStampedModel):
             ).values_list(
                 'num',
                 flat=True
-            )            
+            )
+
+            if self.kind == self.KIND.finals:
+                for previous_round in previous_rounds:
+                    previous_appearances = Appearance.objects.filter(
+                            entry_id=public.entry_id,
+                            is_private=False,
+                        ).exclude(
+                            status__in=excluded_appearance_statuses,
+                        ).exclude(
+                            # Don't include mic testers on OSS
+                            num__lte=0,
+                        ).exclude(
+                            id=public.id
+                        )
+
+                    for previous_appearance in previous_appearances:
+
+                        previously_contesting = previous_appearance.outcomes.filter(
+                            print_on_finals_oss=True,
+                        ).order_by(
+                            'num',
+                        ).values_list(
+                            'num',
+                            flat=True
+                        )
+
+                        merged_contesting = contesting | previously_contesting
+                        contesting = merged_contesting.distinct()
+
             public.contesting_patched = ", ".join([str(x) for x in contesting])
             public.pos_patched = public.pos
             public.participants_patched = public.participants
@@ -3240,6 +3282,28 @@ class Round(TimeStampedModel):
                     item[2],
                 )
             )
+
+        if self.kind == self.KIND.finals:
+            for pr in previous_rounds:
+                items = pr.outcomes.select_related(
+                    # 'award',
+                ).filter(
+                    print_on_finals_oss=True,
+                ).order_by(
+                    'tree_sort',
+                    'num',
+                ).values_list(
+                    'num',
+                    'name',
+                    'winner',
+                )
+                for item in items:
+                    outcomes.append(
+                        (
+                            "{0} {1}".format(item[0], item[1]),
+                            item[2],
+                        )
+                    )
 
         context = {
             'round': self,
