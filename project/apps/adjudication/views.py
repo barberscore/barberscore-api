@@ -120,7 +120,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             c['pk'] = str(c.pop('id'))
         charts = [json.dumps(x) for x in charts_raw]
 
-        print(serializer.initial_data['round']['id'])
+        # print(serializer.initial_data['round']['id'])
 
         parent_round = Round.objects.get(id=serializer.initial_data['round']['id'])
 
@@ -409,7 +409,7 @@ class PanelistViewSet(viewsets.ModelViewSet):
             )
 
     def perform_destroy(self, instance):
-        print("perform_destroy function", instance.id)
+        # print("perform_destroy function", instance.id)
 
         if instance.category == Panelist.CATEGORY.adm:
             #
@@ -440,7 +440,7 @@ class PanelistViewSet(viewsets.ModelViewSet):
             convention = Convention.objects.get(pk=session.convention_id)
             convention.owners.remove(owner.id)
 
-            print("CA removed as owner")
+            # print("CA removed as owner")
 
         # Remove Panelist record
         return super().perform_destroy(instance)

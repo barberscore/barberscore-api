@@ -119,6 +119,7 @@ class OutcomeAdmin(admin.ModelAdmin):
         # 'award_id',
         'num',
         'printed',
+        'print_on_finals_oss',
         # 'appearances',
     ]
 
