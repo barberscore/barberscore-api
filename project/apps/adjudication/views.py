@@ -124,19 +124,19 @@ class AppearanceViewSet(viewsets.ModelViewSet):
 
         parent_round = Round.objects.get(id=serializer.initial_data['round']['id'])
 
-        entry = Entry.objects.get(
-            session_id=parent_round.session_id,
-            group_id=group_id
-        )
+        try:
+            entry = Entry.objects.get(
+                session_id=parent_round.session_id,
+                group_id=group_id
+            )
 
-        if entry is not None:
             # print("add participants...")
             serializer.save(
                 charts=charts,
                 participants=entry.participants,
                 entry_id=entry.id,
             )            
-        else:
+        except Entry.DoesNotExist:
             serializer.save(charts=charts)
 
     @action(methods=['get'], detail=True)
