@@ -5530,6 +5530,7 @@ class Round(TimeStampedModel):
         multis = self.appearances.filter(
             status=Appearance.STATUS.verified,
             is_single=False,
+            num__gt=0
         ).annotate(
             avg=Avg(
                 'songs__scores__points',
