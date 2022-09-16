@@ -1210,7 +1210,7 @@ class Entry(TimeStampedModel):
     def can_approve(self):
         return all([
             # Should be self-evident, but check for changes
-            self.owners.all(),
+        # self.owners.all(),
             # Check POS for choruses only
             self.pos if self.kind == self.KIND.chorus else True,
             # ensure they can't submit a private while competeting.
