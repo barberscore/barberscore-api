@@ -4750,7 +4750,7 @@ class Round(TimeStampedModel):
         for outcome in outcomes:
             award = Award.objects.get(id=outcome.award_id)
 
-            if outcome.winner is None:
+            if outcome.winner is None or outcome.winner is None:
                 if outcome.level == Outcome.LEVEL.manual or outcome.level == Outcome.LEVEL.raw:
                     document.add_paragraph("{0}: {1}".format(award.name, "No winner was entered"))
                 else:
