@@ -4749,7 +4749,15 @@ class Round(TimeStampedModel):
         document.add_heading('Awards')
         for outcome in outcomes:
             award = Award.objects.get(id=outcome.award_id)
-            document.add_paragraph("{0}: {1}".format(award.name, html.unescape(outcome.winner)))
+
+            if outcome.winner is None:
+                if outcome.level == Outcome.LEVEL.manual or outcome.level == Outcome.LEVEL.raw:
+                    document.add_paragraph("{0}: {1}".format(award.name, "No winner was entered"))
+                else:
+                    document.add_paragraph("{0}: {1}".format(award.name, "This award does not have a winner"))
+            else:
+                document.add_paragraph("{0}: {1}".format(award.name, html.unescape(outcome.winner)))
+
         if appearances:
             document.add_heading('Draw')
             for appearance in appearances:
