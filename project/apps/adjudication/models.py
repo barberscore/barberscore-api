@@ -3522,35 +3522,37 @@ class Round(TimeStampedModel):
         #         '-per_points',
         #     )
 
-        mus_persons_qs = self.panelists.filter(
+        mus_persons_qs = Panelist.objects.filter(
             category=Panelist.CATEGORY.music,
             round__session_id=self.session_id,
         ).order_by(
             'num',
-        ).distinct()
+        ).distinct('num')
 
         mus_persons = []
         for p in mus_persons_qs:
             practice = bool(p.kind == Panelist.KIND.practice)
             num = "{0}".format('{:02d}'.format(p.num))
             mus_persons.append((p.name, practice, num))
-        per_persons_qs = self.panelists.filter(
+
+        per_persons_qs = Panelist.objects.filter(
             category=Panelist.CATEGORY.performance,
             round__session_id=self.session_id,
         ).order_by(
             'num',
-        ).distinct()
+        ).distinct('num')
         per_persons = []
         for p in per_persons_qs:
             practice = bool(p.kind == Panelist.KIND.practice)
             num = "{0}".format('{:02d}'.format(p.num))
             per_persons.append((p.name, practice, num))
-        sng_persons_qs = self.panelists.filter(
+
+        sng_persons_qs = Panelist.objects.filter(
             category=Panelist.CATEGORY.singing,
             round__session_id=self.session_id,
         ).order_by(
             'num',
-        ).distinct()
+        ).distinct('num')
         sng_persons = []
         for p in sng_persons_qs:
             practice = bool(p.kind == Panelist.KIND.practice)
