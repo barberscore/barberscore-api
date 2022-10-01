@@ -953,17 +953,25 @@ class Appearance(TimeStampedModel):
         ).filter(
             kind=Panelist.KIND.official,
             round__session_id=self.round.session_id,
-            round__num=1,
             category__gt=10,
-        ).order_by('num')
+        ).order_by('num').distinct('num')
+
+        class_map = {
+            Panelist.CATEGORY.music: 'warning',
+            Panelist.CATEGORY.performance: 'success',
+            Panelist.CATEGORY.singing: 'info',
+        }
 
         # Score Block
+        default_scoring_row = {}
         initials = []
         for panelist in panelists:
-            initials.append("{0}{1}".format(
+            default_scoring_row[str(panelist.num).zfill(2)] = {'points': '--', 'row_class': class_map[panelist.category]}
+
+            initials.append(("{0}{1}".format(
                 panelist.get_category_display()[0].upper(),
                 str(panelist.num).zfill(2),
-            ))
+            ), str(panelist.num).zfill(2)))
 
         # Hackalicious
         category_count = {
@@ -985,19 +993,16 @@ class Appearance(TimeStampedModel):
                 chart = Chart.objects.get(id=song.chart_id)
             except Chart.DoesNotExist:
                 chart = None
+
             song.chart_patched = chart
             scores = song.scores.filter(
                 panelist__kind=Panelist.KIND.official,
+
             ).order_by('panelist__num')
-            class_map = {
-                Panelist.CATEGORY.music: 'warning',
-                Panelist.CATEGORY.performance: 'success',
-                Panelist.CATEGORY.singing: 'info',
-            }
-            items = []
+            items = {}
             for score in scores:
-                items.append((score.points, class_map[score.panelist.category]))
-            song.scores_patched = items
+                items[str(score.panelist.num).zfill(2)] = {'points': score.points, 'row_class': class_map[score.panelist.category]}
+            song.scores_patched = {**default_scoring_row, **items}
 
         # Category Block
         categories = {

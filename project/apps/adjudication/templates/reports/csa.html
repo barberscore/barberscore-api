@@ -165,7 +165,7 @@
           <thead>
             <tr>
               <th>Songs</th>
-              {% for initial in initials %}
+              {% for initial, num in initials %}
                 <th class='text-right'>{{initial}}</th>
               {% endfor %}
             </tr>
@@ -176,9 +176,9 @@
                   <td>
                     {{song.title|truncatechars_html:"60"|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}
                   </td>
-                  {% for points, row_class in song.scores_patched %}
-                    <td class='text-right {{row_class}}'>
-                      {{points}}
+                  {% for key, score in song.scores_patched.items %}
+                    <td class='text-right {{score.row_class}}'>
+                    {{score.points}}
                     </td>
                   {% endfor %}
                 </tr>
