@@ -4000,13 +4000,14 @@ class Round(TimeStampedModel):
                         song.mus_scores = mus_scores
 
                         per_scores = []
-                        for person in per_persons_qs:
+                        for panelist in per_persons_qs:
                             raw_performance_scores = song.scores.filter(
-                                panelist__person_id=person.person_id,
+                                panelist__person_id=panelist.person_id,
                                 panelist__kind=panelist.kind
                             ).order_by(
                                 'panelist__num',
                             )
+
                             if raw_performance_scores:
                                 for m in raw_performance_scores:
                                     diff = abs(m.points - m.song.per_score) > 5
@@ -4017,9 +4018,9 @@ class Round(TimeStampedModel):
                         song.per_scores = per_scores
 
                         sng_scores = []
-                        for person in sng_persons_qs:
+                        for panelist in sng_persons_qs:
                             raw_singing_scores = song.scores.filter(
-                                panelist__person_id=person.person_id,
+                                panelist__person_id=panelist.person_id,
                                 panelist__kind=panelist.kind
                             ).order_by(
                                 'panelist__num',
@@ -4135,6 +4136,7 @@ class Round(TimeStampedModel):
             'penalties': penalties,
         }
         rendered = render_to_string('reports/sa.html', context)
+        # return rendered
 
         if published_by is not None:
             footer = 'Published by {0} at {1}'.format(
@@ -4147,6 +4149,7 @@ class Round(TimeStampedModel):
                 statelog.by.name,
                 statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
             )
+ 
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
