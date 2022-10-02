@@ -949,12 +949,14 @@ class Appearance(TimeStampedModel):
         group.appearances_patched = appearances
 
         # Panelists
-        panelists = Panelist.objects.select_related(
+        panelists_ids = Panelist.objects.select_related(
         ).filter(
             kind=Panelist.KIND.official,
             round__session_id=self.round.session_id,
             category__gt=10,
         ).order_by('num').distinct('num')
+        # Order Panelists by Category
+        panelists = Panelist.objects.filter(id__in=panelists_ids).order_by('category')
 
         class_map = {
             Panelist.CATEGORY.music: 'warning',
