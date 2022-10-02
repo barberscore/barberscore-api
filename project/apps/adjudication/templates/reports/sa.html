@@ -115,7 +115,7 @@
             {% for group in groups %}
               <tr>
                 <td>
-                  <strong>{{group.name|truncatechars_html:60|safe}}</strong><br>
+                  <strong>{{group.name|truncatechars_html:30|safe}}</strong><br>
                   <strong>{{group.stats.tot_points|floatformat:0}}</strong>&nbsp;&nbsp;{{group.tot_score_avg|floatformat:1}}<br>
                   <!-- <strong>{{group.tot_rank}}</strong>&nbsp;&nbsp;{{group.mus_rank}}/{{group.per_rank}}/{{group.sng_rank}}<br> -->
                   ({% for appearance in group.appearances_patched %}{% if appearance.status == -20 %}SCRATCHED{% else %}{% include 'reports/includes/round_kind.html' with kind=appearance.round.kind %}{{ appearance.num }}{% endif %}{% if not forloop.last %}&nbsp;{% endif %}{% endfor %})
