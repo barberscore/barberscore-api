@@ -18,6 +18,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
+from rest_framework.renderers import StaticHTMLRenderer
 
 
 # Django
@@ -678,7 +679,10 @@ class RoundViewSet(viewsets.ModelViewSet):
     @action(
         methods=['get'],
         detail=True,
-        renderer_classes=[PDFRenderer],
+        renderer_classes=[
+            PDFRenderer
+            # StaticHTMLRenderer
+        ],
         permission_classes=[DRYPermissions],
         content_negotiation_class=IgnoreClientContentNegotiation,
     )
@@ -691,6 +695,8 @@ class RoundViewSet(viewsets.ModelViewSet):
         #     pdf = round.sa_report.file
         # else:
         pdf = round.get_sa(request.user.name)
+
+        # return Response(pdf)
         file_name = '{0} SA'.format(
             round.nomen,
         )
