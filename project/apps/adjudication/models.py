@@ -18,7 +18,7 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django.db.models import Sum, Max, Avg, StdDev, Count, Q, F, Func
+from django.db.models import Subquery, Sum, Max, Avg, StdDev, Count, Q, F, Func
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django_fsm import RETURN_VALUE
 from django.db.models.functions import DenseRank, RowNumber, Rank
@@ -3982,9 +3982,10 @@ class Round(TimeStampedModel):
                         else:
                             song.chart_patched = ""
                         mus_scores = []
-                        for person in mus_persons_qs:
+                        for panelist in mus_persons_qs:
                             raw_music_scores = song.scores.filter(
-                                panelist__person_id=person.person_id,
+                                panelist__person_id=panelist.person_id,
+                                panelist__kind=panelist.kind
                             ).order_by(
                                 'panelist__num',
                             )
@@ -4002,6 +4003,7 @@ class Round(TimeStampedModel):
                         for person in per_persons_qs:
                             raw_performance_scores = song.scores.filter(
                                 panelist__person_id=person.person_id,
+                                panelist__kind=panelist.kind
                             ).order_by(
                                 'panelist__num',
                             )
@@ -4018,6 +4020,7 @@ class Round(TimeStampedModel):
                         for person in sng_persons_qs:
                             raw_singing_scores = song.scores.filter(
                                 panelist__person_id=person.person_id,
+                                panelist__kind=panelist.kind
                             ).order_by(
                                 'panelist__num',
                             )
