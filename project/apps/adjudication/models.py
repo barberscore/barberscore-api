@@ -956,7 +956,7 @@ class Appearance(TimeStampedModel):
             category__gt=10,
         ).order_by('num').distinct('num')
         # Order Panelists by Category
-        panelists = Panelist.objects.filter(id__in=panelists_ids).order_by('category')
+        panelists = Panelist.objects.filter(id__in=panelists_ids).order_by('category', 'num')
 
         class_map = {
             Panelist.CATEGORY.music: 'warning',
