@@ -311,14 +311,8 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
         # 'target',
         'legacy_report',
         'drcj_report',
-        # 'contests',
         # 'footnotes',
         # 'description',
-
-        # 'name',
-
-
-
     ]
 
     list_display = [
@@ -358,7 +352,7 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
     inlines = [
         # RoundInline,
         ContestInline,
-        EntryInline,
+        # EntryInline,
         StateLogInline,
     ]
 
