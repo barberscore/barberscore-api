@@ -214,7 +214,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
         ('kind', 'num', 'spots',),
         # 'footnotes',
         '__str__',
-        # 'session__kind',
+        'session_nomen',
     ]
 
     list_display = [

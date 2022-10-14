@@ -156,6 +156,7 @@ class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
         'status',
         'name',
         ('district', 'divisions', ),
+        'district_display_name',
         ('year', 'season', ),
         ('panel', 'kinds', ),
         ('open_date', 'close_date', ),

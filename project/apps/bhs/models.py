@@ -776,6 +776,15 @@ class Convention(TimeStampedModel):
         blank=True,
     )
 
+    district_display_name = models.CharField(
+        verbose_name='District Display Name',
+        help_text="""
+            Used to override the display of the district name/abbr in case of multi-district conventions.""",
+        max_length=255,
+        default='',
+        blank=True,
+    )
+
     KINDS = Choices(
         (32, 'chorus', "Chorus"),
         (41, 'quartet', "Quartet"),
@@ -849,7 +858,9 @@ class Convention(TimeStampedModel):
     @cached_property
     def nomen(self):
         district_display = ''
-        if self.district is not None:
+        if self.district_display_name:
+            district_display = self.district_display_name
+        elif self.district is not None:
             district_display = self.get_district_display()
         if self.district == self.DISTRICT.bhs:
             return " ".join([
