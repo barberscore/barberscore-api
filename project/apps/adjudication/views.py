@@ -329,6 +329,26 @@ class OutcomeViewSet(viewsets.ModelViewSet):
     ]
     resource_name = "outcome"
 
+    def partial_update(self, request, pk=None):
+        # Current object
+        object = self.get_object()
+
+        # Get current state of Outcome
+        o = Outcome.objects.get(pk=request.data['id'])
+
+        # If Print on Finals OSS has been set, deselect the "Printed" option        
+        if request.data['print_on_finals_oss'] and o.print_on_finals_oss is False:
+            request.data['printed'] = False
+
+        try:
+            # Update Outcome
+            return super().partial_update(request, *pk)
+
+        except ValueError as e:
+            return Response(
+                {'status': 'Unable to change outcome'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 class PanelistViewSet(viewsets.ModelViewSet):
     queryset = Panelist.objects.select_related(
