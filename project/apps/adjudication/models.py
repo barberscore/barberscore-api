@@ -4847,7 +4847,6 @@ class Round(TimeStampedModel):
                 category__gt=Panelist.CATEGORY.adm,
                 **panelist_filters
             ).order_by(
-                'kind',
                 'category',
                 'last_name',
                 'round__session_kind',
