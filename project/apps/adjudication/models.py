@@ -2982,7 +2982,11 @@ class Round(TimeStampedModel):
             ).order_by('kind')
 
         # Monkeypatching
-        i = self.spots
+        if self.kind == self.KIND.finals:
+            i = 0
+        else:
+            i = self.spots
+
         for public in publics:
             i += 1
             public.tot_score_avg = 0 
