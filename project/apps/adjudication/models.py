@@ -9,6 +9,7 @@ import json
 # Third-Party
 import pydf
 import html
+from itertools import chain
 from docx import Document
 from django_fsm import FSMIntegerField
 from django_fsm import transition
@@ -4647,12 +4648,41 @@ class Round(TimeStampedModel):
         mt = self.appearances.filter(
             draw=0,
         ).first()
-        outcomes = self.outcomes.filter(
-            printed=True,
-        ).order_by(
-            '-tree_sort',
-            '-num',
-        )
+
+        if self.kind == self.KIND.finals:
+            outcomes = {}
+            previous_rounds = Round.objects.filter(
+                session_id=self.session_id,
+            ).exclude(
+                id=self.id,
+            ).order_by('kind')
+            for pr in previous_rounds:
+                prev_items = pr.outcomes.select_related(
+                    # 'award',
+                ).filter(
+                    print_on_finals_oss=True,
+                ).order_by(
+                    '-tree_sort',
+                    '-num',
+                )
+                outcomes = list(chain(outcomes, prev_items))
+
+            current_items = self.outcomes.filter(
+                printed=True,
+            ).order_by(
+                '-tree_sort',
+                '-num',
+            )
+            
+            outcomes = list(chain(outcomes, current_items))
+        else:
+            outcomes = self.outcomes.filter(
+                printed=True,
+            ).order_by(
+                '-tree_sort',
+                '-num',
+            )
+
         if self.kind == self.KIND.finals:
             winners = self.appearances.exclude(num=0).exclude(
                 status__in=[
