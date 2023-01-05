@@ -1804,9 +1804,9 @@ class Outcome(TimeStampedModel):
         award = Award.objects.get(id=self.award_id)
         if self.round.kind != self.round.KIND.finals and not award.is_single:
             return "(Result determined in Finals)"
-        if award.level == award.LEVEL.deferred:
+        if award.level == Award.LEVEL.deferred:
             return "(Result determined post-contest)"
-        if award.level in [award.LEVEL.manual, award.LEVEL.raw, award.LEVEL.standard]:
+        if award.level in [Award.LEVEL.manual, Award.LEVEL.raw, Award.LEVEL.standard]:
             return "MUST ENTER WINNER MANUALLY"
         # if award.level == award.LEVEL.raw:
         #     group_ids = Group.objects.filter(
@@ -1885,7 +1885,7 @@ class Outcome(TimeStampedModel):
         #     ).order_by(
         #         '-diff',
         #     ).first().name
-        if award.level == award.LEVEL.qualifier:
+        if award.level == Award.LEVEL.qualifier:
             threshold = award.threshold
             winners = self.appearances.filter(
                 stats__isnull = False,
@@ -1925,7 +1925,7 @@ class Outcome(TimeStampedModel):
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
-        if award.level in [award.LEVEL.championship, award.LEVEL.representative]:
+        if award.level in [Award.LEVEL.championship, Award.LEVEL.representative]:
             winner = self.appearances.filter(stats__isnull = False).order_by(
                 'stats__tot_points',
                 'stats__sng_points',
@@ -3341,7 +3341,7 @@ class Round(TimeStampedModel):
                 page_size = 'Letter'
         else:
             if self.kind == self.KIND.finals:
-                if publics.count() >= 10:
+                if publics.count() >= 7:
                     page_size = 'Legal'
                 else:
                     page_size = 'Letter'
