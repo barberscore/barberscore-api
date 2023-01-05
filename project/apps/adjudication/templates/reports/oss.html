@@ -83,7 +83,7 @@
               <tr class='pbi_avoid'>
                 <td class='w-groups'>
                   <strong>
-                    {% if round.get_district_display == 'BHS' %}{{public.tot_rank|default:""}}. {% endif %}
+                    {{public.tot_rank|default:""}}.
                     {{public.name}}<br>
                   </strong>
                   {% if round.get_session_kind_display == 'Chorus' %}

@@ -9,6 +9,7 @@ import json
 # Third-Party
 import pydf
 import html
+from itertools import chain
 from docx import Document
 from django_fsm import FSMIntegerField
 from django_fsm import transition
@@ -1804,9 +1805,9 @@ class Outcome(TimeStampedModel):
         award = Award.objects.get(id=self.award_id)
         if self.round.kind != self.round.KIND.finals and not award.is_single:
             return "(Result determined in Finals)"
-        if award.level == award.LEVEL.deferred:
+        if award.level == Award.LEVEL.deferred:
             return "(Result determined post-contest)"
-        if award.level in [award.LEVEL.manual, award.LEVEL.raw, award.LEVEL.standard]:
+        if award.level in [Award.LEVEL.manual, Award.LEVEL.raw, Award.LEVEL.standard]:
             return "MUST ENTER WINNER MANUALLY"
         # if award.level == award.LEVEL.raw:
         #     group_ids = Group.objects.filter(
@@ -1885,7 +1886,7 @@ class Outcome(TimeStampedModel):
         #     ).order_by(
         #         '-diff',
         #     ).first().name
-        if award.level == award.LEVEL.qualifier:
+        if award.level == Award.LEVEL.qualifier:
             threshold = award.threshold
             winners = self.appearances.filter(
                 stats__isnull = False,
@@ -1925,7 +1926,7 @@ class Outcome(TimeStampedModel):
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
-        if award.level in [award.LEVEL.championship, award.LEVEL.representative]:
+        if award.level in [Award.LEVEL.championship, Award.LEVEL.representative]:
             winner = self.appearances.filter(stats__isnull = False).order_by(
                 'stats__tot_points',
                 'stats__sng_points',
@@ -2982,7 +2983,11 @@ class Round(TimeStampedModel):
             ).order_by('kind')
 
         # Monkeypatching
-        i = self.spots
+        if self.kind == self.KIND.finals:
+            i = 0
+        else:
+            i = self.spots
+
         for public in publics:
             i += 1
             public.tot_score_avg = 0 
@@ -3337,7 +3342,7 @@ class Round(TimeStampedModel):
                 page_size = 'Letter'
         else:
             if self.kind == self.KIND.finals:
-                if publics.count() >= 10:
+                if publics.count() >= 7:
                     page_size = 'Legal'
                 else:
                     page_size = 'Letter'
@@ -4643,12 +4648,41 @@ class Round(TimeStampedModel):
         mt = self.appearances.filter(
             draw=0,
         ).first()
-        outcomes = self.outcomes.filter(
-            printed=True,
-        ).order_by(
-            '-tree_sort',
-            '-num',
-        )
+
+        if self.kind == self.KIND.finals:
+            outcomes = {}
+            previous_rounds = Round.objects.filter(
+                session_id=self.session_id,
+            ).exclude(
+                id=self.id,
+            ).order_by('kind')
+            for pr in previous_rounds:
+                prev_items = pr.outcomes.select_related(
+                    # 'award',
+                ).filter(
+                    print_on_finals_oss=True,
+                ).order_by(
+                    '-tree_sort',
+                    '-num',
+                )
+                outcomes = list(chain(outcomes, prev_items))
+
+            current_items = self.outcomes.filter(
+                printed=True,
+            ).order_by(
+                '-tree_sort',
+                '-num',
+            )
+            
+            outcomes = list(chain(outcomes, current_items))
+        else:
+            outcomes = self.outcomes.filter(
+                printed=True,
+            ).order_by(
+                '-tree_sort',
+                '-num',
+            )
+
         if self.kind == self.KIND.finals:
             winners = self.appearances.exclude(num=0).exclude(
                 status__in=[
@@ -4847,7 +4881,6 @@ class Round(TimeStampedModel):
                 category__gt=Panelist.CATEGORY.adm,
                 **panelist_filters
             ).order_by(
-                'kind',
                 'category',
                 'last_name',
                 'round__session_kind',
@@ -4905,6 +4938,8 @@ class Round(TimeStampedModel):
                             session_id=appearance.round.session_id,
                         ).first()
                         directors[appearance.group_id] = entry.participants
+
+                    if appearance.kind == Appearance.KIND.chorus:
                         document += "        {0}\t\t{1}\n".format(directors[appearance.group_id], judge.last_name)
                     else:
                         document += "         \t\t{0}\n".format(judge.last_name)
