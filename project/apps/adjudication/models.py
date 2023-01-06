@@ -2843,7 +2843,7 @@ class Round(TimeStampedModel):
             raise ValueError("No notification list for {0}".format(session))
         return ["{0}".format(x.strip()) for x in session.notification_list.split(',')]
 
-    def get_oss(self, published_by=None, zoom=1):
+    def get_oss(self, published_by=None, paper_size=None, zoom=1):
         Group = apps.get_model('bhs.group')
         Chart = apps.get_model('bhs.chart')
         Panelist = apps.get_model('adjudication.panelist')
@@ -3330,29 +3330,33 @@ class Round(TimeStampedModel):
         }
         rendered = render_to_string('reports/oss.html', context)
 
-        if self.get_district_display() == 'BHS':
-            Session = apps.get_model('registration.session')
-            session = Session.objects.get(id=self.session_id)
+        if paper_size is None:
+            if self.get_district_display() == 'BHS':
+                Session = apps.get_model('registration.session')
+                session = Session.objects.get(id=self.session_id)
 
-            if session.convention.name == 'International Youth Convention':
-                page_size = 'Legal'
-            elif session.kind == session.KIND.quartet and self.kind == self.KIND.semis:
-                page_size = 'Legal'
+                if session.convention.name == 'International Youth Convention':
+                    page_size = 'Legal'
+                elif session.kind == session.KIND.quartet and self.kind == self.KIND.semis:
+                    page_size = 'Legal'
+                else:
+                    page_size = 'Letter'
             else:
-                page_size = 'Letter'
+                if self.kind == self.KIND.finals:
+                    if publics.count() >= 7:
+                        page_size = 'Legal'
+                    else:
+                        page_size = 'Letter'
+                elif self.kind == self.KIND.semis:
+                    if publics.count() >= 12:
+                        page_size = 'Legal'
+                    else:
+                        page_size = 'Letter'
+                else:
+                    page_size = 'Legal'
         else:
-            if self.kind == self.KIND.finals:
-                if publics.count() >= 7:
-                    page_size = 'Legal'
-                else:
-                    page_size = 'Letter'
-            elif self.kind == self.KIND.semis:
-                if publics.count() >= 12:
-                    page_size = 'Legal'
-                else:
-                    page_size = 'Letter'
-            else:
-                page_size = 'Legal'
+            page_size = paper_size
+
         try:
             if published_by is not None:
                 footer = 'Published by {0} at {1}'.format(

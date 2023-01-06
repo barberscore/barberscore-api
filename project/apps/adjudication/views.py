@@ -604,7 +604,7 @@ class RoundViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(
-        methods=['get'],
+        methods=['get', 'post'],
         detail=True,
         renderer_classes=[
             PDFRenderer,
@@ -620,7 +620,16 @@ class RoundViewSet(viewsets.ModelViewSet):
         # if round.oss_report:
         #     pdf = round.oss_report.file
         # else:
-        pdf = round.get_oss(request.user.name)
+
+        # Allow selectable paper size        
+        paper_size = None
+        if len(request._request.body):
+            content = BytesIO(request._request.body)
+            data = JSONParser().parse(content)
+            if data['paperSize']:
+                paper_size = data['paperSize'].strip()
+                
+        pdf = round.get_oss(request.user.name, paper_size)
         file_name = '{0} OSS.pdf'.format(round)
         return PDFResponse(
             pdf,
