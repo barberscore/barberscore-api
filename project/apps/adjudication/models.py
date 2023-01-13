@@ -26,7 +26,7 @@ from django.db.models.functions import DenseRank, RowNumber, Rank
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Min, Max, Avg
+from django.db.models import Min, Max, Avg, Prefetch
 from django.db.models.functions import Cast
 from django.db.models.constants import LOOKUP_SEP
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
@@ -1800,6 +1800,11 @@ class Outcome(TimeStampedModel):
     # Methods
     def get_winner(self):
         Award = apps.get_model('bhs.award')
+        Round = apps.get_model('adjudication.round')
+        Appearance = apps.get_model('adjudication.appearance')
+        Session = apps.get_model('registration.session')
+        Contest = apps.get_model('registration.contest')
+        Entry = apps.get_model('registration.entry')
         Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('adjudication.panelist')
         award = Award.objects.get(id=self.award_id)
@@ -1807,85 +1812,67 @@ class Outcome(TimeStampedModel):
             return "(Result determined in Finals)"
         if award.level == Award.LEVEL.deferred:
             return "(Result determined post-contest)"
-        if award.level in [Award.LEVEL.manual, Award.LEVEL.raw, Award.LEVEL.standard]:
+        # if award.level in [Award.LEVEL.manual, Award.LEVEL.raw, Award.LEVEL.standard]:
+        #     return "MUST ENTER WINNER MANUALLY"
+        if award.level in [Award.LEVEL.manual]:
             return "MUST ENTER WINNER MANUALLY"
-        # if award.level == award.LEVEL.raw:
-        #     group_ids = Group.objects.filter(
-        #         appearances__contenders__outcome=self,
-        #     ).values_list('id', flat=True)
-        #     group = Group.objects.filter(
-        #         id__in=group_ids,
-        #     ).annotate(
-        #         avg=Avg(
-        #             'appearances__songs__scores__points',
-        #             filter=Q(
-        #                 appearances__round__session=self.round.session,
-        #                 appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             ),
-        #         ),
-        #         base=Avg(
-        #             'appearances__base',
-        #             filter=Q(
-        #                 appearances__round__session=self.round.session,
-        #             ),
-        #         ),
-        #         diff=F('avg') - F('base'),
-        #         sng=Sum(
-        #             'appearances__songs__scores__points',
-        #             filter=Q(
-        #                 appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #                 appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing
-        #             ),
-        #         ),
-        #         per=Sum(
-        #             'appearances__songs__scores__points',
-        #             filter=Q(
-        #                 appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #                 appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance
-        #             ),
-        #         ),
-        #     ).filter(
-        #         diff__gt=0,
-        #     ).order_by(
-        #        '-diff',
-        #     ).first()
-        #     try:
-        #         winner = group.name
-        #     except AttributeError:
-        #         winner = "(No Award Winner)"
-        #     return winner
-        # if award.level == award.LEVEL.standard:
-        #     group_ids = Group.objects.filter(
-        #         appearances__contenders__outcome=self,
-        #     ).values_list('id', flat=True)
-        #     groups = Group.objects.filter(
-        #         id__in=group_ids,
-        #     ).annotate(
-        #         score=Avg(
-        #             'appearances__songs__scores__points',
-        #             filter=Q(
-        #                 appearances__round__session=self.round.session,
-        #                 appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             ),
-        #         ),
-        #         base=Avg(
-        #             'appearances__base',
-        #             filter=Q(
-        #                 appearances__round__session=self.round.session,
-        #             ),
-        #         ),
-        #     )
-        #     totals = groups.aggregate(
-        #         Avg('score'),
-        #         Avg('base'),
-        #     )
-        #     winner = groups.annotate(
-        #         score_ratio=F('score') / totals['score__avg'],
-        #         base_ratio=F('base') / totals['base__avg'],
-        #         diff=F('score_ratio') - F('base_ratio'),
-        #     ).order_by(
-        #         '-diff',
-        #     ).first().name
+        if award.level == Award.LEVEL.raw:
+            round = Round.objects.prefetch_related('appearances').get(id=self.round_id)
+            contest = Contest.objects.prefetch_related(
+                Prefetch('entries', queryset=Entry.objects.exclude(status=7)),
+            ).get(award_id=self.award_id, session_id=round.session_id)
+            group_ids = contest.entries.values_list('group_id', flat=True)
+
+            group = Appearance.objects.filter(
+                group_id__in=group_ids,
+                round_id=self.round_id,
+                stats__isnull = False,
+            ).annotate(
+                avg=Cast(JSONF('stats__tot_score'), models.FloatField()),
+                points=Cast(JSONF('stats__tot_points'), models.FloatField()),
+                sng=Cast(JSONF('stats__sng_points'), models.FloatField()),
+                per=Cast(JSONF('stats__per_points'), models.FloatField()),
+                diff=Cast(F('points') - F('base'), models.FloatField()),
+            ).order_by(
+               '-diff',
+            ).first()
+
+            try:
+                winner = group.name
+            except AttributeError:
+                winner = "(No Award Winner)"
+            return winner
+        if award.level == Award.LEVEL.standard:
+            round = Round.objects.prefetch_related('appearances').get(id=self.round_id)
+            contest = Contest.objects.prefetch_related(
+                Prefetch('entries', queryset=Entry.objects.exclude(status=7)),
+            ).get(award_id=self.award_id, session_id=round.session_id)
+            group_ids = contest.entries.values_list('group_id', flat=True)
+
+            group = Appearance.objects.filter(
+                group_id__in=group_ids,
+                round_id=self.round_id,
+                stats__isnull = False,
+            ).annotate(
+                avg=Cast(JSONF('stats__tot_score'), models.FloatField()),
+                points=Cast(JSONF('stats__tot_points'), models.FloatField()),
+                sng=Cast(JSONF('stats__sng_points'), models.FloatField()),
+                per=Cast(JSONF('stats__per_points'), models.FloatField()),
+                diff=Cast(F('points') - F('base'), models.FloatField()),
+            ).order_by(
+               '-diff',
+            ).first()
+
+            try:
+                # Winner must return a positive differential
+                if group.diff > 0:
+                    winner = group.name
+                else:
+                    winner = "(No Award Winner)"
+            except (AttributeError, UnboundLocalError):
+                winner = "(No Award Winner)"
+            return winner
+
         if award.level == Award.LEVEL.qualifier:
             threshold = award.threshold
             winners = self.appearances.filter(
