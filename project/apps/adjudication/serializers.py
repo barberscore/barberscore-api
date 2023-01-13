@@ -21,6 +21,13 @@ class AppearanceSerializer(serializers.ModelSerializer):
         # 'songs': 'apps.adjudication.serializers.SongSerializer',
     }
 
+    diff = serializers.SerializerMethodField('get_diff')
+
+    def get_diff(self, obj):
+        if obj.base:
+            return obj.stats['tot_points'] - obj.base
+        return 0
+
     class Meta:
         model = Appearance
         fields = [
@@ -38,6 +45,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'pos',
             'stats',
             'base',
+            'diff',
             'variance_report',
             'csa_report',
 
