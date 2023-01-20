@@ -24,9 +24,13 @@ class AppearanceSerializer(serializers.ModelSerializer):
     diff = serializers.SerializerMethodField('get_diff')
 
     def get_diff(self, obj):
-        if obj.base:
-            return obj.stats['tot_points'] - obj.base
-        return 0
+        diff = 0
+        try:
+            if obj.base:
+                diff = obj.stats['tot_points'] - obj.base
+        except(TypeError):
+            diff = 0
+        return diff
 
     class Meta:
         model = Appearance
