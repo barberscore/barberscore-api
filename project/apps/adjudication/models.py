@@ -1808,15 +1808,16 @@ class Outcome(TimeStampedModel):
         Group = apps.get_model('bhs.group')
         Panelist = apps.get_model('adjudication.panelist')
         award = Award.objects.get(id=self.award_id)
+
         if self.round.kind != self.round.KIND.finals and not award.is_single:
             return "(Result determined in Finals)"
-        if award.level == Award.LEVEL.deferred:
+        if self.level == self.LEVEL.deferred:
             return "(Result determined post-contest)"
         # if award.level in [Award.LEVEL.manual, Award.LEVEL.raw, Award.LEVEL.standard]:
         #     return "MUST ENTER WINNER MANUALLY"
-        if award.level in [Award.LEVEL.manual]:
+        if self.level in [self.LEVEL.manual]:
             return "MUST ENTER WINNER MANUALLY"
-        if award.level == Award.LEVEL.raw:
+        if self.level == self.LEVEL.raw:
             round = Round.objects.prefetch_related('appearances').get(id=self.round_id)
             contest = Contest.objects.prefetch_related(
                 Prefetch('entries', queryset=Entry.objects.exclude(status=7)),
@@ -1842,7 +1843,8 @@ class Outcome(TimeStampedModel):
             except AttributeError:
                 winner = "(No Award Winner)"
             return winner
-        if award.level == Award.LEVEL.standard:
+
+        if self.level == self.LEVEL.standard:
             round = Round.objects.prefetch_related('appearances').get(id=self.round_id)
             contest = Contest.objects.prefetch_related(
                 Prefetch('entries', queryset=Entry.objects.exclude(status=7)),
@@ -1873,7 +1875,7 @@ class Outcome(TimeStampedModel):
                 winner = "(No Award Winner)"
             return winner
 
-        if award.level == Award.LEVEL.qualifier:
+        if self.level == self.LEVEL.qualifier:
             threshold = award.threshold
             winners = self.appearances.filter(
                 stats__isnull = False,
@@ -1913,7 +1915,7 @@ class Outcome(TimeStampedModel):
             if qualifiers:
                 return ", ".join(qualifiers)
             return "(No Qualifiers)"
-        if award.level in [Award.LEVEL.championship, Award.LEVEL.representative]:
+        if self.level in [self.LEVEL.championship, self.LEVEL.representative]:
             winner = self.appearances.filter(stats__isnull = False).order_by(
                 'stats__tot_points',
                 'stats__sng_points',
@@ -5227,9 +5229,9 @@ class Round(TimeStampedModel):
         # Run outcomes
         outcomes = self.outcomes.all()
         for outcome in outcomes:
-            if outcome.level is not Outcome.LEVEL.raw:
-                outcome.winner = outcome.get_winner()
-                outcome.save()
+            # if outcome.level is not Outcome.LEVEL.raw:
+            outcome.winner = outcome.get_winner()
+            outcome.save()
         return     
 
     # Round Transitions
