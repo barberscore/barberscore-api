@@ -102,6 +102,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
             'division',
             'age',
             'is_novice',
+            'is_single',
             'size',
             'size_range',
             'scope',
