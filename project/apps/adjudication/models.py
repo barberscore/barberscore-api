@@ -1836,6 +1836,7 @@ class Outcome(TimeStampedModel):
                 diff=Cast(F('points') - F('base'), models.FloatField()),
             ).order_by(
                '-diff',
+               'points',
             ).first()
 
             try:
@@ -1863,6 +1864,7 @@ class Outcome(TimeStampedModel):
                 diff=Cast(F('points') - F('base'), models.FloatField()),
             ).order_by(
                '-diff',
+               'points',
             ).first()
 
             try:
