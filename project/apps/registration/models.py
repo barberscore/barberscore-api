@@ -987,11 +987,6 @@ class Entry(TimeStampedModel):
             raise ValidationError(
                 {'is_private': 'You may not compete for an award and remain private.'}
             )
-        if self.session.status >= self.session.STATUS.packaged:
-            raise ValidationError(
-                {'session': 'You may not make changes after the Session has been packaged.'}
-            )
-
 
     # Entry Permissions
     @staticmethod

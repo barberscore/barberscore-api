@@ -149,6 +149,11 @@ class ContestAdmin(admin.ModelAdmin):
 
 @admin.register(Entry)
 class EntryAdmin(VersionAdmin, FSMTransitionMixin):
+    def get_readonly_fields(self, request, obj=None):
+        if obj.session.status >= obj.session.STATUS.packaged:
+            self.readonly_fields.append('session')
+        return self.readonly_fields
+
     fsm_field = [
         'status',
     ]
@@ -158,6 +163,7 @@ class EntryAdmin(VersionAdmin, FSMTransitionMixin):
             'fields': (
                 'id',
                 'nomen',
+                'session',
                 'status',
             ),
         }),
