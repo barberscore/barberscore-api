@@ -33,7 +33,7 @@ def build_email(template, context, subject, to, cc=[], bcc=[], attachments=[]):
             clean_to.append(address)
         full.append(address.partition("<")[2].partition(">")[0])
     for address in cc:
-        print('cc address', address)
+        # print('cc address', address)
         if not '<' in address and not address in full:
             clean_cc.append(address)
         elif not address.partition("<")[2].partition(">")[0] in full:

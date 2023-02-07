@@ -1314,9 +1314,9 @@ class Appearance(TimeStampedModel):
             'application/pdf',
         )]
 
-        print("CSA EMAIL")
-        print("to", to)
-        print("cc", cc)
+        # print("CSA EMAIL")
+        # print("to", to)
+        # print("cc", cc)
 
         email = build_email(
             template=template,
@@ -4567,6 +4567,7 @@ class Round(TimeStampedModel):
     def get_participants_emails(self):
         Entry = apps.get_model('registration.entry')
         appearances = self.appearances.distinct()
+        result = []
         for appearance in appearances:
             entry = Entry.objects.filter(
                 group_id=appearance.group_id,
