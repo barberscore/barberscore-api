@@ -181,12 +181,25 @@ class AppearanceViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=True)
     def verify(self, request, pk=None, **kwargs):
+        Song = apps.get_model('adjudication.song')
         object = self.get_object()
 
         # For Choruses, ensure a valid number of participants on stage has been entered.
         if object.kind == object.KIND.chorus and (object.pos is None or object.pos < 8):
             return Response(
                 {'status': 'Please enter a valid number of Participants on stage.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Ensure both songs have valid selections.
+        appearanceSongs = Song.objects.filter(appearance_id=object).values_list('title', flat=True)
+        songs = []
+        for title in appearanceSongs:
+            if len(title) > 0:
+                songs.append(title)
+        if songs is None or len(songs) < 2:
+            return Response(
+                {'status': 'Please select two song titles for this appearance.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
