@@ -51,6 +51,11 @@ def build_email(template, context, subject, to, cc=[], bcc=[], attachments=[]):
             if not address.partition("<")[2].partition(">")[0] in full:
                 clean_bcc.append(address)
             full.append(address.partition("<")[2].partition(">")[0])
+    else:
+        # Ensure removal ".invalid" postfix from email addresses when intentionally sending.
+        clean_to = [addr.replace('.invalid', '') for addr in clean_to]
+        clean_cc = [addr.replace('.invalid', '') for addr in clean_cc]
+        clean_bcc = [addr.replace('.invalid', '') for addr in clean_bcc]
 
     body = render_to_string(template, context)
     email = EmailMessage(
@@ -65,7 +70,6 @@ def build_email(template, context, subject, to, cc=[], bcc=[], attachments=[]):
         with attachment[1].open() as f:
             email.attach(attachment[0], f.read(), attachment[2])
     return email
-
 
 def build_rounds_from_session(session_id):
     Round = apps.get_model('adjudication.round')
@@ -131,11 +135,9 @@ def build_rounds_from_session(session_id):
         kind -= 1
     return
 
-
 @job('high')
 def send_complete_email_from_appearance(appearance):
     return appearance.send_complete_email()
-
 
 @job('high')
 def send_psa_email_from_panelist(panelist):

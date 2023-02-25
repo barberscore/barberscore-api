@@ -1329,6 +1329,8 @@ class Appearance(TimeStampedModel):
         return email
 
     def send_complete_email(self):
+        self.round.refresh_from_db()
+
         if self.status != self.STATUS.completed:
             raise ValueError("Do not send CSAs unless Appearance is Completed")
         if self.round.status != self.round.STATUS.published:
@@ -5109,6 +5111,9 @@ class Round(TimeStampedModel):
 
     def send_publish_email(self):
         email = self.get_publish_email()
+
+        self.refresh_from_db()
+
         if self.status != self.STATUS.published:
             raise RuntimeError("Round not published")
         return email.send()

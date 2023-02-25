@@ -594,7 +594,7 @@ class RoundViewSet(viewsets.ModelViewSet):
             object.finalize(by=self.request.user)
         except TransitionNotAllowed:
             return Response(
-                {'status': 'Information incomplete.'},
+                {'status': 'Unable to Finalize round.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         object.save()
@@ -604,14 +604,13 @@ class RoundViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def publish(self, request, pk=None, **kwargs):
         object = self.get_object()
-        # try:
-        #     object.publish(by=self.request.user)
-        # except TransitionNotAllowed:
-        #     return Response(
-        #         {'status': 'Information incomplete.'},
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
-        object.publish(by=self.request.user)
+        try:
+            object.publish(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Unable to Publish round.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
