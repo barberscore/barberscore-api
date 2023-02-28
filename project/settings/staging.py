@@ -29,7 +29,10 @@ sentry_sdk.init(
 )
 
 # Email
-EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
+
 
 # Logging
 LOGGING = {
