@@ -1329,8 +1329,6 @@ class Appearance(TimeStampedModel):
         return email
 
     def send_complete_email(self):
-        self.round.refresh_from_db()
-
         if self.status != self.STATUS.completed:
             raise ValueError("Do not send CSAs unless Appearance is Completed")
         if self.round.status != self.round.STATUS.published:
@@ -5112,8 +5110,6 @@ class Round(TimeStampedModel):
     def send_publish_email(self):
         email = self.get_publish_email()
 
-        self.refresh_from_db()
-
         if self.status != self.STATUS.published:
             raise RuntimeError("Round not published")
         return email.send()
@@ -5733,23 +5729,28 @@ class Round(TimeStampedModel):
         """Publishes the results and notifies all parties"""
         Appearance = apps.get_model('adjudication.appearance')
         Panelist = apps.get_model('adjudication.panelist')
+        
         # Send the OSS
-        send_publish_email_from_round.delay(self)
+        send_publish_email_from_round.delay(self.id)
+
         # Send the CSAs
-        completed_appearances = self.appearances.filter(
+        completed_appearances = Appearance.objects.filter(
             status=Appearance.STATUS.completed,
+            round_id=self.id
         )
         for appearance in completed_appearances:
-            send_complete_email_from_appearance.delay(appearance)
+            send_complete_email_from_appearance.delay(appearance.id)
+
         # Send the SAs
-        send_publish_report_email_from_round.delay(self)
-        # # Send the PSAs
+        send_publish_report_email_from_round.delay(self.id)
+
+        # Send the PSAs
         # panelists = self.panelists.filter(
         #     category__gt=Panelist.CATEGORY.adm,
         #     status=Panelist.STATUS.released,
         # )
         # for panelist in panelists:
-        #     send_psa_email_from_panelist.delay(panelist)
+        #     send_psa_email_from_panelist.delay(panelist.id)
         return
 
 

@@ -135,30 +135,38 @@ def build_rounds_from_session(session_id):
         kind -= 1
     return
 
-@job('high')
-def send_complete_email_from_appearance(appearance):
+@job('high', timeout=300)
+def send_complete_email_from_appearance(appearance_id):
+    Appearance = apps.get_model('adjudication.appearance')
+    appearance = Appearance.objects.get(id=appearance_id)
     return appearance.send_complete_email()
 
-@job('high')
-def send_psa_email_from_panelist(panelist):
+@job('high', timeout=300)
+def send_psa_email_from_panelist(panelist_id):
+    Panelist = apps.get_model('adjudication.panelist')
+    panelist = Panelist.objects.get(id=panelist_id)
     return panelist.send_psa_email()
 
-@job('high')
-def send_publish_email_from_round(round):
+@job('high', timeout=300)
+def send_publish_email_from_round(round_id):
+    Round = apps.get_model('adjudication.round')
+    round = Round.objects.get(id=round_id)
     return round.send_publish_email()
 
-@job('high')
-def send_publish_report_email_from_round(round):
+@job('high', timeout=300)
+def send_publish_report_email_from_round(round_id):
+    Round = apps.get_model('adjudication.round')
+    round = Round.objects.get(id=round_id)
     return round.send_publish_report_email()
 
-@job('high')
+@job('high', timeout=300)
 def save_csa_from_appearance(appearance):
     return appearance.save_csa()
 
-@job('high')
+@job('high', timeout=300)
 def save_psa_from_panelist(panelist):
     return panelist.save_psa()
 
-@job('high')
+@job('high', timeout=300)
 def save_reports_from_round(round):
     return round.save_reports()
