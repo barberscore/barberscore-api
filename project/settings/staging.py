@@ -29,11 +29,11 @@ sentry_sdk.init(
 )
 
 # Email
-# EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
-EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
-SENDGRID_SANDBOX_MODE_IN_DEBUG=False
-
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = 'd7409e08d76811'
+EMAIL_HOST_PASSWORD = 'ef085d636ac702'
+EMAIL_PORT = '2525'
 
 # Logging
 LOGGING = {
