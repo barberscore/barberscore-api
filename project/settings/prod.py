@@ -28,9 +28,14 @@ sentry_sdk.init(
 )
 
 # Email
-EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-SENDGRID_API_KEY = get_env_variable("SENDGRID_API_KEY")
-SENDGRID_SANDBOX_MODE_IN_DEBUG=False
+
+## Move to env variables
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = get_env_variable("EMAIL_HOST")
+EMAIL_HOST_USER = get_env_variable("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = get_env_variable("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = get_env_variable("EMAIL_PORT")
+
 
 # Search
 ALGOLIA['AUTO_INDEXING'] = True

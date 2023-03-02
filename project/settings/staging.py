@@ -30,10 +30,10 @@ sentry_sdk.init(
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = 'd7409e08d76811'
-EMAIL_HOST_PASSWORD = 'ef085d636ac702'
-EMAIL_PORT = '2525'
+EMAIL_HOST = get_env_variable("EMAIL_HOST")
+EMAIL_HOST_USER = get_env_variable("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = get_env_variable("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = get_env_variable("EMAIL_PORT")
 
 # Logging
 LOGGING = {
