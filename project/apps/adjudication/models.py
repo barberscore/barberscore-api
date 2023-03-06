@@ -4995,6 +4995,36 @@ class Round(TimeStampedModel):
         ]
         return result
 
+    def get_adm_emails(self):
+        postfix = ''
+        if (settings.EMAIL_ADMINS_ONLY):
+            postfix = '.invalid'
+        Panelist = apps.get_model('adjudication.panelist')
+        judges = self.panelists.filter(
+            category__in=[
+                Panelist.CATEGORY.pc,
+                Panelist.CATEGORY.adm,
+            ]
+            # status=Panelist.STATUS.active,
+            # person__email__isnull=False,
+        ).order_by(
+            'kind',
+            'category',
+            'last_name',
+            'first_name',
+        )
+        seen = set()
+        result = [
+            "{0} ({1} {2}) <{3}{4}>".format(judge.name, judge.get_kind_display(), judge.get_category_display(), judge.email, postfix,)
+            for judge in judges
+            if not (
+                "{0} ({1} {2}) <{3}{4}>".format(judge.name, judge.get_kind_display(), judge.get_category_display(), judge.email, postfix,) in seen or seen.add(
+                    "{0} ({1} {2}) <{3}{4}>".format(judge.name, judge.get_kind_display(), judge.get_category_display(), judge.email, postfix,)
+                )
+            )
+        ]
+        return result
+
     def mock(self):
         """Mock Round"""
         Appearance = apps.get_model('adjudication.appearance')
@@ -5122,8 +5152,12 @@ class Round(TimeStampedModel):
         subject = "[Barberscore] {0} Reports and SA".format(
             self.nomen,
         )
-        to = self.get_owners_emails()
+        # Get ADMs (PC & ADM)
+        to = self.get_adm_emails()
+
+        # Get Scoring Judges
         cc = self.get_judge_emails()
+    
         attachments = []
         if self.sa_report:
             pdf = self.sa_report.file
