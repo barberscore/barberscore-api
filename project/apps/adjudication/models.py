@@ -1301,7 +1301,7 @@ class Appearance(TimeStampedModel):
             self.name,
         )
         to = self.get_owners_emails()
-        cc = self.round.get_owners_emails()
+        cc = self.round.get_adm_emails()
 
         if self.csa_report:
             pdf = self.csa_report.file
