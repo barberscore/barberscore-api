@@ -3,6 +3,7 @@ import datetime
 import logging
 import uuid
 from random import randint
+from time import sleep
 from io import BytesIO
 from timezone_field import TimeZoneField
 import json
@@ -1334,6 +1335,8 @@ class Appearance(TimeStampedModel):
         if self.round.status != self.round.STATUS.published:
             raise ValueError("Do not send CSAs unless Round is Published")
         email = self.get_complete_email()
+        # Sleep a random number of seconds (between 1 and 5)
+        sleep(randint(1,5))
         return email.send()
 
     def has_advanced(self):
@@ -2465,6 +2468,8 @@ class Panelist(TimeStampedModel):
 
     def send_psa_email(self):
         email = self.get_psa_email()
+        # Sleep a random number of seconds (between 1 and 5)
+        sleep(randint(1,5))
         return email.send()
 
     # Transitions
@@ -5142,6 +5147,8 @@ class Round(TimeStampedModel):
 
         if self.status != self.STATUS.published:
             raise RuntimeError("Round not published")
+        # Sleep a random number of seconds (between 1 and 5)
+        sleep(randint(1,5))
         return email.send()
 
     def get_publish_report_email(self):
@@ -5181,7 +5188,9 @@ class Round(TimeStampedModel):
 
     def send_publish_report_email(self):
         email = self.get_publish_report_email()
-        return email.send()        
+        # Sleep a random number of seconds (between 1 and 5)
+        sleep(randint(1,5))
+        return email.send()
 
     # Round Permissions
     @staticmethod
