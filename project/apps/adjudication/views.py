@@ -380,14 +380,14 @@ class PanelistViewSet(viewsets.ModelViewSet):
     resource_name = "panelist"
 
     def perform_create(self, serializer):
+        person_id = serializer.initial_data['person_id']
+        Person = apps.get_model('bhs.person')
+        person = Person.objects.get(pk=person_id)
+
         if serializer.initial_data['category'] in [Panelist.CATEGORY.adm, Panelist.CATEGORY.pc]:
             #
             # Add PC or ADM as owner of Round, Session, and Convention
             #
-            person_id = serializer.initial_data['person_id']
-            Person = apps.get_model('bhs.person')
-            person = Person.objects.get(pk=person_id)
-
             User = get_user_model()
             owner = User.objects.filter(email=person.email).first()
 
@@ -411,7 +411,9 @@ class PanelistViewSet(viewsets.ModelViewSet):
             convention.owners.add(owner.id)
 
         # Save Panelist record
-        serializer.save()
+        serializer.save(
+            email=person.email
+        )
 
     def partial_update(self, request, pk=None):
         # Current object
