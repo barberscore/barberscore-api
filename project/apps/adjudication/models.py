@@ -1298,22 +1298,37 @@ class Appearance(TimeStampedModel):
         context = {'group': group}
 
         template = 'emails/appearance_complete.txt'
-        subject = "[Barberscore] CSA for {0}".format(
+        subject = "[Barberscore] CSA for {0} and OSS".format(
             self.name,
         )
         to = self.get_owners_emails()
         cc = self.round.get_adm_emails()
 
+        attachments = []
+
+        # Attach CSA
         if self.csa_report:
             pdf = self.csa_report.file
         else:
             pdf = self.get_csa()
         file_name = '{0} CSA.pdf'.format(group.name)
-        attachments = [(
+        attachments.append((
             file_name,
             pdf,
             'application/pdf',
-        )]
+        ))
+
+        # Attach OSS
+        if self.round.oss_report:
+            oss_pdf = self.round.oss_report.file
+        else:
+            oss_pdf = self.round.get_oss()
+        oss_file_name = '{0} OSS.pdf'.format(self.round)
+        attachments.append((
+            oss_file_name,
+            oss_pdf,
+            'application/pdf',
+        ))
 
         # print("CSA EMAIL")
         # print("to", to)
@@ -4973,6 +4988,33 @@ class Round(TimeStampedModel):
             self.start_date.strftime("%Y%m%d")
         )
 
+    def get_judge_emails_all_categories(self):
+        postfix = ''
+        if (settings.EMAIL_ADMINS_ONLY):
+            postfix = '.invalid'
+        Panelist = apps.get_model('adjudication.panelist')
+        judges = self.panelists.filter(
+            # status=Panelist.STATUS.active,
+            category__gt=Panelist.CATEGORY.drcj,
+            # person__email__isnull=False,
+        ).order_by(
+            'kind',
+            'category',
+            'last_name',
+            'first_name',
+        )
+        seen = set()
+        result = [
+            "{0} ({1} {2}) <{3}{4}>".format(judge.name, judge.get_kind_display(), judge.get_category_display(), judge.email, postfix,)
+            for judge in judges
+            if not (
+                "{0} ({1} {2}) <{3}{4}>".format(judge.name, judge.get_kind_display(), judge.get_category_display(), judge.email, postfix,) in seen or seen.add(
+                    "{0} ({1} {2}) <{3}{4}>".format(judge.name, judge.get_kind_display(), judge.get_category_display(), judge.email, postfix,)
+                )
+            )
+        ]
+        return result
+
     def get_judge_emails(self):
         postfix = ''
         if (settings.EMAIL_ADMINS_ONLY):
@@ -5115,9 +5157,8 @@ class Round(TimeStampedModel):
         subject = "[Barberscore] {0} Results and OSS".format(
             self,
         )
+        # Notification List on Session.
         to = self.get_owners_emails()
-        cc = self.get_judge_emails()
-        bcc = self.get_participants_emails()
 
         if self.oss_report:
             pdf = self.oss_report.file
@@ -5129,15 +5170,12 @@ class Round(TimeStampedModel):
             pdf,
             'application/pdf',
         )]
-        context['bcc'] = [x.partition(" <")[0] for x in bcc]
 
         email = build_email(
             template=template,
             context=context,
             subject=subject,
             to=to,
-            cc=cc,
-            bcc=bcc,
             attachments=attachments,
         )
         return email
@@ -5156,32 +5194,44 @@ class Round(TimeStampedModel):
         context = {
             'round': self,
         }
-        subject = "[Barberscore] {0} Reports and SA".format(
+        subject = "[Barberscore] {0} Reports, SA and OSS".format(
             self.nomen,
         )
-        # Get ADMs (PC & ADM)
-        to = self.get_adm_emails()
 
-        # Get Scoring Judges
-        cc = self.get_judge_emails()
-    
+        # Get all judges
+        to = self.get_judge_emails_all_categories()
+
         attachments = []
+
+        # Attach SA
         if self.sa_report:
             pdf = self.sa_report.file
         else:
             pdf = self.get_sa()
         file_name = '{0} SA.pdf'.format(self)
-        attachments = [(
+        attachments.append((
             file_name,
             pdf,
             'application/pdf',
-        )]
+        ))
+
+        # Attach OSS
+        if self.oss_report:
+            oss_pdf = self.oss_report.file
+        else:
+            oss_pdf = self.get_oss()
+        oss_file_name = '{0} OSS.pdf'.format(self)
+        attachments.append((
+            oss_file_name,
+            oss_pdf,
+            'application/pdf',
+        ))
+        
         email = build_email(
             template=template,
             context=context,
             subject=subject,
             to=to,
-            cc=cc,
             attachments=attachments,
         )
         return email
