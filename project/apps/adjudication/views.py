@@ -20,6 +20,8 @@ from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import StaticHTMLRenderer
 import django_rq
+from redis import Redis
+from rq.worker import Worker, WorkerStatus
 
 # Django
 from django.apps import apps
@@ -607,11 +609,21 @@ class RoundViewSet(viewsets.ModelViewSet):
     def publish(self, request, pk=None, **kwargs):
         # Confirm queue is empty...
         queue = django_rq.get_queue('high')
+        redis = Redis()
+        workers = Worker.all(redis)
+        for worker in workers:
+            if worker.state == WorkerStatus.BUSY:
+                return Response(
+                    {'status': 'This Round cannot publish yet because there are tasks still in progress. Please wait and try again in 2-5 minutes.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         if (not queue.is_empty()):
             return Response(
                 {'status': 'This Round cannot publish yet because there are tasks still in progress. Please wait and try again in 2-5 minutes.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
         object = self.get_object()
         try:
             object.publish(by=self.request.user)
