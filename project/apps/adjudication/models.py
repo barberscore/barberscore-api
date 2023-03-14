@@ -1887,7 +1887,7 @@ class Outcome(TimeStampedModel):
 
             try:
                 # Winner must return a positive differential
-                if group.diff > 0:
+                if group.diff is not None and group.diff > 0:
                     winner = group.name
                 else:
                     winner = "(No Award Winner)"
