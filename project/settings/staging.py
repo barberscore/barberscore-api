@@ -6,8 +6,6 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.rq import RqIntegration
 
-ENVIRONMENT="staging"
-
 # Core
 ALLOWED_HOSTS = [
     '.barberscore.com',

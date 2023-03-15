@@ -3,8 +3,6 @@
 import logging
 import re
 import uuid
-import os
-from urllib.parse import urlparse
 
 # Third-Party
 import pydf
@@ -22,7 +20,6 @@ from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import StaticHTMLRenderer
 import django_rq
-from redis import Redis
 from rq.worker import Worker, WorkerStatus
 
 # Django
@@ -34,7 +31,6 @@ from django.utils.text import slugify
 from django.utils.six import BytesIO
 from collections.abc import Iterable
 from django.contrib.auth import get_user_model
-from django.conf import settings
 
 # Local
 # from .filterbackends import AppearanceFilterBackend
@@ -612,12 +608,8 @@ class RoundViewSet(viewsets.ModelViewSet):
     def publish(self, request, pk=None, **kwargs):
         # Confirm queue is empty...
         queue = django_rq.get_queue('high')
-        url = urlparse(os.environ.get("REDIS_URL"))
-        if settings.ENVIRONMENT == 'dev':
-            redis = Redis(host=url.hostname)
-        else:
-            redis = Redis(host=url.hostname, port=url.port, password=url.password, ssl=True, ssl_cert_reqs=None)
-        workers = Worker.all(redis)
+        redis_conn = django_rq.get_connection('high')
+        workers = Worker.all(connection=redis_conn)
         for worker in workers:
             if worker.state == WorkerStatus.BUSY:
                 return Response(
