@@ -205,18 +205,25 @@ class PanelistAdmin(admin.ModelAdmin):
 
 @admin.register(Round)
 class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
-    fields = [
-        'id',
-        'status',
-        'oss_report',
-        'sa_report',
-        'owners',
-        # 'legacy_oss',
-        ('kind', 'num', 'spots',),
-        # 'footnotes',
-        '__str__',
-        'session_nomen',
-    ]
+    fieldsets = (
+        (None, {
+            'fields': (
+                'id',
+                'status',
+                'oss_report',
+                'sa_report',
+                'owners',
+                # 'legacy_oss',
+                ('kind', 'num', 'spots',),
+                # 'footnotes',
+                '__str__',
+                'session_nomen',
+            )
+        }),
+        ('Revision', {
+            'fields': ('revision_number', ('revision_date', 'revision_reason')),
+        }),
+    )
 
     list_display = [
         '__str__',

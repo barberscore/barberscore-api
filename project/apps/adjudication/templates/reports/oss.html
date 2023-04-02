@@ -193,19 +193,22 @@
             </ul>
           </div>
         {% endif %}
-        {%if round.footnotes or penalties or is_missing%}
+        {% if round.footnotes or round.revision_number > 0 or penalties or is_missing %}
           <div>
             <h5>Footnotes</h5>
             <p>
-              {%if round.footnotes %}
+              {% if round.footnotes %}
                 {{round.footnotes|linebreaks}}<br>
-              {%endif%}
+              {% endif %}
               {% for penalty in penalties %}
                 {{penalty}}<br>
               {% endfor %}
               {% if is_missing %}
                 ▴ The Group is responsible for validating any performed chart to the DRCJ within 30 days.<br>
               {% endif %}
+              {% if round.revision_number > 0 %}
+                Revision: {{ round.revision_date }} - {{ round.revision_reason }}<br>
+              {% endif %}  
             </p>
           </div>
         {% endif %}

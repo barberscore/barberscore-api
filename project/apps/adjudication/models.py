@@ -1065,6 +1065,7 @@ class Appearance(TimeStampedModel):
         )
         file = pydf.generate_pdf(
             rendered,
+            # page_size=page_size,
             orientation='Portrait',
             margin_top='5mm',
             margin_bottom='5mm',
@@ -1277,7 +1278,10 @@ class Appearance(TimeStampedModel):
                 ),
             )
             for song in songs:
-                chart = Chart.objects.get(id=song.chart_id)
+                try:
+                    chart = Chart.objects.get(id=song.chart_id)
+                except Chart.DoesNotExist:
+                    chart = None
                 song.chart_patched = chart
                 penalties_map = {
                     30: "†",
@@ -1298,8 +1302,9 @@ class Appearance(TimeStampedModel):
         context = {'group': group}
 
         template = 'emails/appearance_complete.txt'
-        subject = "[Barberscore] CSA for {0} and OSS".format(
+        subject = "[Barberscore] CSA for {0} and OSS{1}".format(
             self.name,
+            self.round.revision_subject(),
         )
         to = self.get_owners_emails()
         cc = self.round.get_adm_emails()
@@ -1311,7 +1316,10 @@ class Appearance(TimeStampedModel):
             pdf = self.csa_report.file
         else:
             pdf = self.get_csa()
-        file_name = '{0} CSA.pdf'.format(group.name)
+        file_name = '{0} CSA{1}.pdf'.format(
+            group.name,
+            " - {0}".format(self.round.revision_nomen()) if self.round.revision_nomen() else ""
+        )
         attachments.append((
             file_name,
             pdf,
@@ -1323,7 +1331,7 @@ class Appearance(TimeStampedModel):
             oss_pdf = self.round.oss_report.file
         else:
             oss_pdf = self.round.get_oss()
-        oss_file_name = '{0} OSS.pdf'.format(self.round)
+        oss_file_name = '{0} OSS.pdf'.format(self.round.scoresheet_filename())
         attachments.append((
             oss_file_name,
             oss_pdf,
@@ -2454,8 +2462,9 @@ class Panelist(TimeStampedModel):
         context = {'panelist': self}
 
         template = 'emails/panelist_released.txt'
-        subject = "[Barberscore] PSA for {0}".format(
+        subject = "[Barberscore] PSA for {0}{1}".format(
             self.name,
+            self.round.revision_subject(),
         )
         to = ["{0} <{1}>".format(self.name, self.email)]
         cc = self.round.get_owners_emails()
@@ -2501,6 +2510,7 @@ class Panelist(TimeStampedModel):
 
 
 class Round(TimeStampedModel):
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -2811,6 +2821,30 @@ class Round(TimeStampedModel):
         related_name='rounds',
     )
 
+    revision_number = models.IntegerField(
+        help_text="""
+            Manually updated when revisions are made.
+        """,
+        blank=True,
+        default='0',
+    )
+
+    revision_date = models.DateField(
+        help_text="""
+            Date of this revision.
+        """,
+        blank=True,
+        null=True,
+    )
+
+    revision_reason = models.CharField(
+        help_text="""
+            Describe the reason for the revision.
+        """,
+        max_length=255,
+        blank=True,
+    )
+
     # Relations
     statelogs = GenericRelation(
         StateLog,
@@ -2847,6 +2881,48 @@ class Round(TimeStampedModel):
         return self.nomen
 
     # Methods
+    def clean(self):
+        errors = {}
+        if self.revision_number > 0:
+            if self.revision_date is None:
+                errors.update(
+                    {'revision_date': 'A valid revision date is required to save a revision.'}
+                )
+            if len(self.revision_reason) < 8:
+                errors.update(
+                    {'revision_reason': 'A valid revision reason is required to save a revision.'}
+                )
+        if len(errors):
+            raise ValidationError(errors)
+    
+    def revision_subject(self):
+        if self.revision_number > 0:
+            return " - {0} - {1}".format(
+                self.revision_nomen(),
+                self.revision_date.strftime('%Y/%m/%d')
+            )
+        return ''
+
+    def revision_nomen(self):
+        if self.revision_number > 0:
+            return "Rev {}".format(
+                self.revision_number,
+            )
+        return ''
+
+    def scoresheet_filename(self):
+        if (self.revision_number > 0):
+            session_nomen_patch = self.session_nomen.replace(self.get_district_display(), "{0} {1}".format(
+                self.get_district_display(),
+                self.revision_nomen().replace(' ', ''),
+            ))
+            return "{0} {1}".format(
+                session_nomen_patch,
+                self.get_kind_display(),
+            )
+        else:
+            return self.nomen
+
     def get_owners_emails(self):
         Session = apps.get_model('registration.session')
         session = Session.objects.get(id=self.session_id)
@@ -5154,8 +5230,9 @@ class Round(TimeStampedModel):
             'outcomes': outcomes,
         }
         template = 'emails/round_publish.txt'
-        subject = "[Barberscore] {0} Results and OSS".format(
+        subject = "[Barberscore] {0} Results and OSS{1}".format(
             self,
+            self.revision_subject()
         )
         # Notification List on Session.
         to = self.get_owners_emails()
@@ -5164,7 +5241,7 @@ class Round(TimeStampedModel):
             pdf = self.oss_report.file
         else:
             pdf = self.get_oss()
-        file_name = '{0} OSS.pdf'.format(self)
+        file_name = '{0} OSS.pdf'.format(self.scoresheet_filename())
         attachments = [(
             file_name,
             pdf,
@@ -5194,8 +5271,9 @@ class Round(TimeStampedModel):
         context = {
             'round': self,
         }
-        subject = "[Barberscore] {0} Reports, SA and OSS".format(
+        subject = "[Barberscore] {0} Reports, SA and OSS{1}".format(
             self.nomen,
+            self.revision_subject()
         )
 
         # Get all judges
@@ -5208,7 +5286,7 @@ class Round(TimeStampedModel):
             pdf = self.sa_report.file
         else:
             pdf = self.get_sa()
-        file_name = '{0} SA.pdf'.format(self)
+        file_name = '{0} SA.pdf'.format(self.scoresheet_filename())
         attachments.append((
             file_name,
             pdf,
@@ -5220,7 +5298,7 @@ class Round(TimeStampedModel):
             oss_pdf = self.oss_report.file
         else:
             oss_pdf = self.get_oss()
-        oss_file_name = '{0} OSS.pdf'.format(self)
+        oss_file_name = '{0} OSS.pdf'.format(self.scoresheet_filename())
         attachments.append((
             oss_file_name,
             oss_pdf,
@@ -5808,6 +5886,10 @@ class Round(TimeStampedModel):
         for panelist in panelists:
             panelist.release()
             panelist.save()
+
+        # Send the SAs
+        send_publish_report_email_from_round.delay(self.id)
+
         # Saves reports through transition signal to avoid race condition
         return
 
@@ -5833,9 +5915,6 @@ class Round(TimeStampedModel):
         )
         for appearance in completed_appearances:
             send_complete_email_from_appearance.delay(appearance.id)
-
-        # Send the SAs
-        send_publish_report_email_from_round.delay(self.id)
 
         # Send the PSAs
         # panelists = self.panelists.filter(

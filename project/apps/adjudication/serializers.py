@@ -180,12 +180,17 @@ class RoundSerializer(serializers.ModelSerializer):
 
             'convention_id',
             'nomen',
+            'scoresheet_filename',
             # 'timezone',
             'image_id',
 
             'session_id',
             'session_kind',
             'base_filename',
+
+            'revision_number',
+            'revision_date',
+            'revision_nomen',
 
             'owners',
             'appearances',
