@@ -317,7 +317,10 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         # else:
         pdf = appearance.get_csa()
 
-        file_name = '{0} CSA.pdf'.format(appearance)
+        file_name = '{0} CSA{1}.pdf'.format(
+            appearance,
+            " - {0}".format(appearance.round.revision_nomen()) if appearance.round.revision_nomen() else ""
+        )
         file_name = re.sub('[^a-zA-Z0-9_ ]', '', file_name)
         return PDFResponse(
             pdf,

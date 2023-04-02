@@ -120,6 +120,8 @@ class EntrySerializer(serializers.ModelSerializer):
 
             'description',
 
+            'notification_list',
+
             'owners',
             'contests',
             'session',

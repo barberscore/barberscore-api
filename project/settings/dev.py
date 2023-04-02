@@ -12,7 +12,13 @@ INTERNAL_IPS = [
 ]
 
 # Mailhog
-EMAIL_PORT = 1025
+EMAIL_PORT = 1026
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+# EMAIL_HOST_USER = 'd7409e08d76811'
+# EMAIL_HOST_PASSWORD = 'ef085d636ac702'
+# EMAIL_PORT = '2525'
+
 
 # Debug Toolbar
 MIDDLEWARE = [
@@ -32,9 +38,14 @@ DEBUG_TOOLBAR_PANELS = [
 ]
 
 # Async settings
+# if DEBUG:
+#     RQ_QUEUES['default']['ASYNC'] = False
+#     RQ_QUEUES['high']['ASYNC'] = False
+#     RQ_QUEUES['low']['ASYNC'] = False
+# else:
 RQ_QUEUES['default']['ASYNC'] = True
 RQ_QUEUES['high']['ASYNC'] = True
-RQ_QUEUES['low']['ASYNC'] = True
+RQ_QUEUES['low']['ASYNC'] = True    
 
 # Algolia Overwrite
 ALGOLIA['INDEX_SUFFIX'] = 'dev'
