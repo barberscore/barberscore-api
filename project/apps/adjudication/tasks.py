@@ -163,6 +163,12 @@ def send_publish_report_email_from_round(round_id):
     return round.send_publish_report_email()
 
 @job('high', timeout=300)
+def send_finish_report_email_from_round(round_id):
+    Round = apps.get_model('adjudication.round')
+    round = Round.objects.get(id=round_id)
+    return round.send_finish_report_email()
+
+@job('high', timeout=300)
 def save_csa_from_appearance(appearance):
     return appearance.save_csa()
 
