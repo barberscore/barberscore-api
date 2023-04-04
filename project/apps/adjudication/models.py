@@ -1313,10 +1313,7 @@ class Appearance(TimeStampedModel):
         attachments = []
 
         # Attach CSA
-        if self.csa_report:
-            pdf = self.csa_report.file
-        else:
-            pdf = self.get_csa()
+        pdf = self.get_csa()
         file_name = '{0} CSA{1}.pdf'.format(
             group.name,
             " - {0}".format(self.round.revision_nomen()) if self.round.revision_nomen() else ""
