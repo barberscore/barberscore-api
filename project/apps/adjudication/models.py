@@ -52,6 +52,7 @@ from django.db.models.expressions import RawSQL
 from .tasks import build_email
 from .tasks import send_publish_email_from_round
 from .tasks import send_publish_report_email_from_round
+from .tasks import send_finish_report_email_from_round
 from .tasks import send_psa_email_from_panelist
 from .tasks import save_psa_from_panelist
 from .tasks import send_complete_email_from_appearance
@@ -5271,7 +5272,7 @@ class Round(TimeStampedModel):
         context = {
             'round': self,
         }
-        subject = "[Barberscore] {0} Reports, SA and OSS{1}".format(
+        subject = "[Barberscore] {0} OSS{1}".format(
             self.nomen,
             self.revision_subject()
         )
@@ -5280,18 +5281,6 @@ class Round(TimeStampedModel):
         to = self.get_judge_emails_all_categories()
 
         attachments = []
-
-        # Attach SA
-        if self.sa_report:
-            pdf = self.sa_report.file
-        else:
-            pdf = self.get_sa()
-        file_name = '{0} SA.pdf'.format(self.scoresheet_filename())
-        attachments.append((
-            file_name,
-            pdf,
-            'application/pdf',
-        ))
 
         # Attach OSS
         if self.oss_report:
@@ -5319,6 +5308,49 @@ class Round(TimeStampedModel):
         # Sleep a random number of seconds (between 1 and 5)
         sleep(randint(1,5))
         return email.send()
+
+    def get_finish_report_email(self):
+        template = 'emails/round_finish_report.txt'
+        context = {
+            'round': self,
+        }
+        subject = "[Barberscore] {0} SA{1}".format(
+            self.nomen,
+            self.revision_subject()
+        )
+
+        # Get all judges
+        to = self.get_judge_emails_all_categories()
+
+        attachments = []
+
+        # Attach SA
+        if self.sa_report:
+            pdf = self.sa_report.file
+        else:
+            pdf = self.get_sa()
+        file_name = '{0} SA.pdf'.format(self.scoresheet_filename())
+        attachments.append((
+            file_name,
+            pdf,
+            'application/pdf',
+        ))
+        
+        email = build_email(
+            template=template,
+            context=context,
+            subject=subject,
+            to=to,
+            attachments=attachments,
+        )
+        return email
+
+    def send_finish_report_email(self):
+        email = self.get_finish_report_email()
+        # Sleep a random number of seconds (between 1 and 5)
+        sleep(randint(1,5))
+        return email.send()
+
 
     # Round Permissions
     @staticmethod
@@ -5888,7 +5920,7 @@ class Round(TimeStampedModel):
             panelist.save()
 
         # Send the SAs
-        send_publish_report_email_from_round.delay(self.id)
+        send_finish_report_email_from_round.delay(self.id)
 
         # Saves reports through transition signal to avoid race condition
         return
@@ -5915,6 +5947,9 @@ class Round(TimeStampedModel):
         )
         for appearance in completed_appearances:
             send_complete_email_from_appearance.delay(appearance.id)
+
+        # Send the SAs
+        send_publish_report_email_from_round.delay(self.id)
 
         # Send the PSAs
         # panelists = self.panelists.filter(
