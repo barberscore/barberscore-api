@@ -60,6 +60,7 @@ class AssignmentAdmin(admin.ModelAdmin):
 
     search_fields = [
         'id',
+        'name',
     ]
 
     autocomplete_fields = [
@@ -326,6 +327,7 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
         'district',
         # 'convention__district',
         'kind',
+        'year',
         'name',
         # 'num_rounds',
         'is_invitational',
@@ -367,6 +369,7 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
     ordering = [
+        '-start_date',
         'district',
         'kind',
         'name',

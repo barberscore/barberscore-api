@@ -95,6 +95,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     search_fields = [
         # 'round__session__convention__name',
         'id',
+        'name',
     ]
     inlines = [
         SongInline,
@@ -176,6 +177,7 @@ class PanelistAdmin(admin.ModelAdmin):
         'num',
         'kind',
         'category',
+        'name',
         'round',
     ]
 
@@ -192,6 +194,7 @@ class PanelistAdmin(admin.ModelAdmin):
 
     search_fields = [
         'id',
+        'name',
     ]
 
     autocomplete_fields = [
