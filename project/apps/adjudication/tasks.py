@@ -26,6 +26,9 @@ def build_email(template, context, subject, to, cc=[], bcc=[], attachments=[]):
     clean_cc = []
     clean_bcc = []
 
+    # BCC all outbound messages to the Barberscore Gmail account for tracking...
+    clean_bcc.append('barberscore1@gmail.com')
+
     for address in to:
         if not '<' in address and not address in full:
             clean_to.append(address)
