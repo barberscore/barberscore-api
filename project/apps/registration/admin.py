@@ -334,6 +334,11 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
         'status',
     ]
 
+    list_display_links = [
+        'district',
+        'name',
+    ]
+
     list_filter = (
         # ConventionStatusListFilter,
         'status',
