@@ -1548,8 +1548,8 @@ class Appearance(TimeStampedModel):
             self.stats = self.get_stats()
         # Scratches the group.
         # Remove songs
-        songs = self.songs.all()
-        songs.delete()
+        # songs = self.songs.all()
+        # songs.delete()
         return
 
     @notification_user
