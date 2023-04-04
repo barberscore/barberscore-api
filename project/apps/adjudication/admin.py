@@ -64,8 +64,13 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
         'get_group',
         'num',
         'draw',
-        'status',
     ]
+
+    list_display_links = [
+        'status',
+        'get_group',
+    ]
+
     list_select_related = [
         # 'round__session',
         # 'round__session__convention',
