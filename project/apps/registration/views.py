@@ -108,6 +108,22 @@ class EntryViewSet(views.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True)
+    def create_manual_entry(self, request, pk=None, **kwargs):
+        object = self.get_object()
+        print("create_manual_entry")
+        print(request)
+        try:
+            object.build_manual_entry(by=self.request.user)
+        except TransitionNotAllowed:
+            return Response(
+                {'status': 'Information incomplete.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        object.save()
+        serializer = self.get_serializer(object)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
     def invite(self, request, pk=None, **kwargs):
         object = self.get_object()
         try:

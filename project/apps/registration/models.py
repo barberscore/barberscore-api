@@ -1042,11 +1042,18 @@ class Entry(TimeStampedModel):
         self.name = group.name
         self.kind = group.kind
         self.gender = group.gender
-        self.area = group.get_district_display()
+        # self.area = group.get_district_display()
+        self.area = "BHS"
         self.district = group.district
         self.division = group.division
-        self.bhs_id = group.bhs_id
-        self.code = group.code
+        if group.bhs_id is None and group.code.isdigit():
+            self.bhs_id = group.code
+        elif group.bhs_id.isdigit():
+            self.bhs_id = group.bhs_id
+        elif group.bhs_id == group.code:
+            self.bhs_id = group.bhs_id
+        elif not group.code.isdigit():
+            self.code = group.code
         self.source_id = group.source_id
         self.image_id = group.image.name or 'missing_image'
         self.owners.set(group.owners.all())
@@ -1237,6 +1244,20 @@ class Entry(TimeStampedModel):
     @fsm_log_by
     @transition(
         field=status,
+        source=[STATUS.new],
+        target=STATUS.approved,
+        conditions=[can_build_entry],
+    )
+    def build_manual_entry(self, *args, **kwargs):
+        """Build Entry"""
+        if self.group_id:
+            self.update_from_group()
+        return
+
+    @notification_user
+    @fsm_log_by
+    @transition(
+        field=status,
         source=[
             STATUS.built,
         ],
@@ -1308,7 +1329,7 @@ class Entry(TimeStampedModel):
         ],
     )
     def approve(self, *args, **kwargs):
-        send_approve_email_from_entry.delay(self)
+        # send_approve_email_from_entry.delay(self)
         return
 
     @fsm_log_by
