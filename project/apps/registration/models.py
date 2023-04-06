@@ -1048,7 +1048,7 @@ class Entry(TimeStampedModel):
         self.division = group.division
         if group.bhs_id is None and group.code.isdigit():
             self.bhs_id = group.code
-        elif group.bhs_id.isdigit():
+        elif type(group.bhs_id) == int or group.bhs_id.isdigit():
             self.bhs_id = group.bhs_id
         elif group.bhs_id == group.code:
             self.bhs_id = group.bhs_id
@@ -2251,6 +2251,18 @@ class Session(TimeStampedModel):
         # return all([
         #     not self.rounds.exclude(status=self.rounds.model.STATUS.published)
         # ])
+
+    def can_build_round(self):
+        '''Check if all Approved entries have been assigned a Draw number'''
+        entries = self.entries.filter(
+            status__in=[
+                Entry.STATUS.approved,
+            ],
+            draw__isnull=True
+        ).order_by('draw')
+        if entries.exists():
+            return False
+        return True
 
     # Session Transitions
     @notification_user

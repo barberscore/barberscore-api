@@ -5438,6 +5438,17 @@ class Round(TimeStampedModel):
             outcome.save()
         return     
 
+    def confirm_session_entries(self):
+        '''Confirm Session Approved entries have been assigned a Draw number.'''
+
+        # Fetch models
+        Session = apps.get_model('registration.session')
+
+        # Fetch session
+        session = Session.objects.get(id=self.session_id)
+
+        return session.can_build_round()
+
     # Round Transitions
     @notification_user
     @fsm_log_by
