@@ -3,7 +3,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Encode+Sans+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style type="text/css">
       body {
         font-family: 'Encode Sans Condensed', sans-serif;
@@ -107,7 +109,7 @@
                   {% for appearance in group.appearances_patched %}
                       {% if group.max > 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}</span> (OA: {{appearance.num}})<br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.title|truncatechars_html:"60"|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}<br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.title|truncatechars_html:"60"|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched|safe}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
@@ -174,7 +176,7 @@
               {% for song in songs %}
                 <tr class='pbi_avoid'>
                   <td>
-                    {{song.title|truncatechars_html:"60"|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched}}
+                    {{song.title|truncatechars_html:"60"|safe|default:"(Song not in Group's Repertory)"}}&nbsp;{{song.penalties_patched|safe}}
                   </td>
                   {% for key, score in song.scores_patched.items %}
                     <td class='text-right {{score.row_class}}'>
@@ -208,7 +210,7 @@
             </h3>
             <ul class='list-unstyled'>
               {% for penalty in penalties %}
-                <li>{{penalty}}</li>
+                <li>{{penalty|safe}}</li>
               {% endfor %}
             </ul>
         {% endif %}

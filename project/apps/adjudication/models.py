@@ -935,16 +935,16 @@ class Appearance(TimeStampedModel):
                     chart = None
                 song.chart_patched = chart
                 penalties_map = {
-                    30: "†",
-                    32: "‡",
-                    34: "✠",
-                    36: "✶",
-                    38: "✢",
-                    39: "✦",
-                    40: "❉",
-                    44: "∏",
-                    48: "∇",
-                    50: "※",
+                    30: "<b><sup>V</sup></b>",
+                    32: "<b><sup>2a</sup></b>",
+                    34: "<b><sup>2b</sup></b>",
+                    36: "<b><sup>2c</sup></b>",
+                    38: "<b><sup>2d</sup></b>",
+                    39: "<b><sup>2e</sup></b>",
+                    40: "<b><sup>3a</sup></b>",
+                    44: "<b><sup>3b</sup></b>",
+                    48: "<b><sup>XI</sup></b>",
+                    50: "<b><sup>X</sup></b>",
                 }
                 items = " ".join([penalties_map[x] for x in song.penalties])
                 song.penalties_patched = items
@@ -1032,16 +1032,16 @@ class Appearance(TimeStampedModel):
             penalties__len__gt=0,
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
-            32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
-            34: "✠ Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
-            36: "✶ Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
-            38: "✢ Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
-            39: "✦ Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
-            40: "❉ Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
-            44: "∏ Scores penalized for Not in Good Taste (IX.A.3.b)",
-            48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
-            50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
+            30: "<b><sup>V</sup></b> Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
+            32: "<b><sup>2a</sup></b> Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
+            34: "<b><sup>2b</sup></b> Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
+            36: "<b><sup>2c</sup></b> Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
+            38: "<b><sup>2d</sup></b> Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
+            39: "<b><sup>2e</sup></b> Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
+            40: "<b><sup>3a</sup></b> Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
+            44: "<b><sup>3b</sup></b> Scores penalized for Not in Good Taste (IX.A.3.b)",
+            48: "<b><sup>XI</sup></b> Scores penalized for Non-members Performing on Stage (XI.A.1)",
+            50: "<b><sup>X</sup></b> Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
@@ -1285,16 +1285,16 @@ class Appearance(TimeStampedModel):
                     chart = None
                 song.chart_patched = chart
                 penalties_map = {
-                    30: "†",
-                    32: "‡",
-                    34: "✠",
-                    36: "✶",
-                    38: "✢",
-                    39: "✦",
-                    40: "❉",
-                    44: "∏",
-                    48: "∇",
-                    50: "※",
+                    30: "<b><sup>V</sup></b>",
+                    32: "<b><sup>2a</sup></b>",
+                    34: "<b><sup>2b</sup></b>",
+                    36: "<b><sup>2c</sup></b>",
+                    38: "<b><sup>2d</sup></b>",
+                    39: "<b><sup>2e</sup></b>",
+                    40: "<b><sup>3a</sup></b>",
+                    44: "<b><sup>3b</sup></b>",
+                    48: "<b><sup>XI</sup></b>",
+                    50: "<b><sup>X</sup></b>",
                 }
                 items = " ".join([penalties_map[x] for x in song.penalties])
                 song.penalties_patched = items
@@ -3173,16 +3173,16 @@ class Round(TimeStampedModel):
                             song.chart_patched = ""
 
                         penalties_map = {
-                            30: "†",
-                            32: "‡",
-                            34: "✠",
-                            36: "✶",
-                            38: "✢",
-                            39: "✦",
-                            40: "❉",
-                            44: "∏",
-                            48: "∇",
-                            50: "※",
+                            30: "<b><sup>V</sup></b>",
+                            32: "<b><sup>2a</sup></b>",
+                            34: "<b><sup>2b</sup></b>",
+                            36: "<b><sup>2c</sup></b>",
+                            38: "<b><sup>2d</sup></b>",
+                            39: "<b><sup>2e</sup></b>",
+                            40: "<b><sup>3a</sup></b>",
+                            44: "<b><sup>3b</sup></b>",
+                            48: "<b><sup>XI</sup></b>",
+                            50: "<b><sup>X</sup></b>",
                         }
                         items = " ".join([penalties_map[x] for x in song.penalties])
                         if song.penalties and song.penalties not in songs_with_panelities:
@@ -3252,16 +3252,16 @@ class Round(TimeStampedModel):
         #     # appearance__in=publics,  # Only completeds
         # ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
-            32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
-            34: "✠ Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
-            36: "✶ Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
-            38: "✢ Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
-            39: "✦ Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
-            40: "❉ Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
-            44: "∏ Scores penalized for Not in Good Taste (IX.A.3.b)",
-            48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
-            50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
+            30: "<b><sup>V</sup></b> Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
+            32: "<b><sup>2a</sup></b> Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
+            34: "<b><sup>2b</sup></b> Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
+            36: "<b><sup>2c</sup></b> Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
+            38: "<b><sup>2d</sup></b> Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
+            39: "<b><sup>2e</sup></b> Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
+            40: "<b><sup>3a</sup></b> Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
+            44: "<b><sup>3b</sup></b> Scores penalized for Not in Good Taste (IX.A.3.b)",
+            48: "<b><sup>XI</sup></b> Scores penalized for Non-members Performing on Stage (XI.A.1)",
+            50: "<b><sup>X</sup></b> Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in songs_with_panelities for x in l)))
 
@@ -4130,16 +4130,16 @@ class Round(TimeStampedModel):
                                 sng_scores.append((None, False, False))
                         song.sng_scores = sng_scores
                         penalties_map = {
-                            30: "†",
-                            32: "‡",
-                            34: "✠",
-                            36: "✶",
-                            38: "✢",
-                            39: "✦",
-                            40: "❉",
-                            44: "∏",
-                            48: "∇",
-                            50: "※",
+                            30: "<b><sup>V</sup></b>",
+                            32: "<b><sup>2a</sup></b>",
+                            34: "<b><sup>2b</sup></b>",
+                            36: "<b><sup>2c</sup></b>",
+                            38: "<b><sup>2d</sup></b>",
+                            39: "<b><sup>2e</sup></b>",
+                            40: "<b><sup>3a</sup></b>",
+                            44: "<b><sup>3b</sup></b>",
+                            48: "<b><sup>XI</sup></b>",
+                            50: "<b><sup>X</sup></b>",
                         }
                         items = " ".join([penalties_map[x] for x in song.penalties])
                         song.penalties_patched = items
@@ -4163,16 +4163,16 @@ class Round(TimeStampedModel):
             # appearance__in=groups,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
-            32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
-            34: "✠ Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
-            36: "✶ Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
-            38: "✢ Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
-            39: "✦ Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
-            40: "❉ Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
-            44: "∏ Scores penalized for Not in Good Taste (IX.A.3.b)",
-            48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
-            50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
+            30: "<b><sup>V</sup></b> Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
+            32: "<b><sup>2a</sup></b> Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
+            34: "<b><sup>2b</sup></b> Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
+            36: "<b><sup>2c</sup></b> Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
+            38: "<b><sup>2d</sup></b> Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
+            39: "<b><sup>2e</sup></b> Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
+            40: "<b><sup>3a</sup></b> Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
+            44: "<b><sup>3b</sup></b> Scores penalized for Not in Good Taste (IX.A.3.b)",
+            48: "<b><sup>XI</sup></b> Scores penalized for Non-members Performing on Stage (XI.A.1)",
+            50: "<b><sup>X</sup></b> Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
@@ -4446,16 +4446,16 @@ class Round(TimeStampedModel):
                     chart = Chart.objects.get(id=song.chart_id)
                     song.chart_patched = chart
                     penalties_map = {
-                        30: "†",
-                        32: "‡",
-                        34: "✠",
-                        36: "✶",
-                        38: "✢",
-                        39: "✦",
-                        40: "❉",
-                        44: "∏",
-                        48: "∇",
-                        50: "※",
+                        30: "<b><sup>V</sup></b>",
+                        32: "<b><sup>2a</sup></b>",
+                        34: "<b><sup>2b</sup></b>",
+                        36: "<b><sup>2c</sup></b>",
+                        38: "<b><sup>2d</sup></b>",
+                        39: "<b><sup>2e</sup></b>",
+                        40: "<b><sup>3a</sup></b>",
+                        44: "<b><sup>3b</sup></b>",
+                        48: "<b><sup>XI</sup></b>",
+                        50: "<b><sup>X</sup></b>",
                     }
                     items = " ".join([penalties_map[x] for x in song.penalties])
                     song.penalties_patched = items
@@ -4500,16 +4500,16 @@ class Round(TimeStampedModel):
             appearance__group_id__in=group_ids,  # Only completeds
         ).distinct().values_list('penalties', flat=True)
         penalties_map = {
-            30: "† Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
-            32: "‡ Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
-            34: "✠ Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
-            36: "✶ Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
-            38: "✢ Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
-            39: "✦ Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
-            40: "❉ Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
-            44: "∏ Scores penalized for Not in Good Taste (IX.A.3.b)",
-            48: "∇ Scores penalized for Non-members Performing on Stage (XI.A.1)",
-            50: "※ Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
+            30: "<b><sup>V</sup></b> Scores penalized for Repeating Substantial Portions of a Song (V.A.2)",
+            32: "<b><sup>2a</sup></b> Scores penalized for Instrumental Accompaniment (IX.A.2.a)",
+            34: "<b><sup>2b</sup></b> Scores penalized for Chorus Exceeding 4-Part Texture (IX.A.2.b)",
+            36: "<b><sup>2c</sup></b> Scores penalized for Excessive Melody Not in Inner Part (IX.A.2.c)",
+            38: "<b><sup>2d</sup></b> Scores penalized for Lack of Characteristic Chord Progression (IX.A.2.d)",
+            39: "<b><sup>2e</sup></b> Scores penalized for Excessive Lyrics < 4 parts (IX.A.2.e)",
+            40: "<b><sup>3a</sup></b> Scores penalized for Primarily Patriotic/Religious Intent (IX.A.3)",
+            44: "<b><sup>3b</sup></b> Scores penalized for Not in Good Taste (IX.A.3.b)",
+            48: "<b><sup>XI</sup></b> Scores penalized for Non-members Performing on Stage (XI.A.1)",
+            50: "<b><sup>X</sup></b> Scores penalized for Sound Equipment or Electronic Enhancement (X.B.1-3)",
         }
         penalties = sorted(list(set(penalties_map[x] for l in array for x in l)))
 
