@@ -79,6 +79,7 @@
   </head>
   <body>
     <div class='container'>
+    {% spaceless %}
       <section>
         <img class='float-right small_logo' src="https://res.cloudinary.com/barberscore/image/upload/v1554830585/bhs_logo.png">
         {% if round.session.convention.image %}
@@ -100,23 +101,14 @@
           <thead>
             <th>Group</th>
             <th>Songs</th>
-            <th class='text-right'>
-              &nbsp;&nbsp;MUS&nbsp;&nbsp;
-              {% for name, practice, num in mus_persons %}
-                &nbsp;{{num}}
-              {% endfor %}
+            <th class='text-right' style="white-space: nowrap;">
+              &nbsp;&nbsp;MUS&nbsp;&nbsp;{% for name, practice, num in mus_persons %}&nbsp;{{num}}{% endfor %}
             </th>
-            <th class='text-right'>
-              &nbsp;&nbsp;PER&nbsp;&nbsp;
-              {% for name, practice, num in per_persons %}
-                &nbsp;{{num}}
-              {% endfor %}
+            <th class='text-right' style="white-space: nowrap;">
+              &nbsp;&nbsp;PER&nbsp;&nbsp;{% for name, practice, num in per_persons %}&nbsp;{{num}}{% endfor %}
             </th>
-            <th class='text-right'>
-              &nbsp;&nbsp;SNG&nbsp;&nbsp;
-              {% for name, practice, num in sng_persons %}
-                &nbsp;{{num}}
-              {% endfor %}
+            <th class='text-right' style="white-space: nowrap;">
+              &nbsp;&nbsp;SNG&nbsp;&nbsp;{% for name, practice, num in sng_persons %}&nbsp;{{num}}{% endfor %}
             </th>
             <th class='text-center'>TOT</th>
           </thead>
@@ -131,79 +123,27 @@
                 </td>
                 <td>
                   {% for appearance in group.appearances_patched %}
-                    {% for song in appearance.songs_patched %}
-                      <span style="white-space: nowrap;">{{song.chart_patched|truncatechars_html:30|safe|default:"(Not in Repertory)"}}&nbsp;{{song.penalties_patched|safe}}</span><br>
-                    {% endfor %}
+                    {% for song in appearance.songs_patched %}<span style="white-space: nowrap;">{{song.chart_patched|truncatechars_html:30|safe|default:"(Not in Repertory)"}}{{song.penalties_patched|safe}}</span><br>{% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-right' style="white-space: nowrap;">
+                  {% for appearance in group.appearances_patched %}
+                    {% if appearance.rankings.mus_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.mus_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.mus_score|floatformat:1}}&nbsp;&nbsp;{% for score, diff, practice in song.mus_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;&nbsp;&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-right' style="white-space: nowrap;">
+                  {% for appearance in group.appearances_patched %}
+                    {% if appearance.rankings.per_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.per_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.per_score|floatformat:1}}&nbsp;&nbsp;{% for score, diff, practice in song.per_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;&nbsp;&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
+                  {% endfor %}
+                </td>
+                <td class='text-right' style="white-space: nowrap;">
+                  {% for appearance in group.appearances_patched %}
+                    {% if appearance.rankings.sng_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.sng_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.sng_score|floatformat:1}}&nbsp;&nbsp;{% for score, diff, practice in song.sng_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;&nbsp;&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
                   {% for appearance in group.appearances_patched %}
-                    {% if appearance.rankings.mus_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.mus_round_rank }}
-                    {% for song in appearance.songs_patched %}
-                      {% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}
-                      {{song.mus_score|floatformat:1}}&nbsp;&nbsp;
-                      {% for score, diff, practice in song.mus_scores %}
-                        {% if score %}
-                          {% if diff %}
-                            <span class='d-practice'>{{score}}</span>&nbsp;
-                          {% else %}
-                            {{score}}&nbsp;
-                          {% endif %}
-                        {% else %}
-                          &nbsp;&nbsp;&nbsp;
-                        {% endif %}
-                      {% endfor %}
-                      <br>
-                    {% endfor %}
-                  {% endfor %}
-                </td>
-                <td class='text-right'>
-                  {% for appearance in group.appearances_patched %}
-                    {% if appearance.rankings.per_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.per_round_rank }}
-                    {% for song in appearance.songs_patched %}
-                      {% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}
-                      {{song.per_score|floatformat:1}}&nbsp;&nbsp;
-                      {% for score, diff, practice in song.per_scores %}
-                        {% if score %}
-                          {% if diff %}
-                            <span class='d-practice'>{{score}}</span>&nbsp;
-                          {% else %}
-                            {{score}}&nbsp;
-                          {% endif %}
-                        {% else %}
-                          &nbsp;&nbsp;&nbsp;
-                        {% endif %}
-                      {% endfor %}
-                      <br>
-                    {% endfor %}
-                  {% endfor %}
-                </td>
-                <td class='text-right'>
-                  {% for appearance in group.appearances_patched %}
-                    {% if appearance.rankings.sng_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.sng_round_rank }}
-                    {% for song in appearance.songs_patched %}
-                      {% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}
-                      {{song.sng_score|floatformat:1}}&nbsp;&nbsp;
-                      {% for score, diff, practice in song.sng_scores %}
-                        {% if score %}
-                          {% if diff %}
-                            <span class='d-practice'>{{score}}</span>&nbsp;
-                          {% else %}
-                            {{score}}&nbsp;
-                          {% endif %}
-                        {% else %}
-                          &nbsp;&nbsp;&nbsp;
-                        {% endif %}
-                      {% endfor %}
-                      <br>
-                    {% endfor %}
-                  {% endfor %}
-                </td>
-                <td class='text-right'>
-                  {% for appearance in group.appearances_patched %}
-                    {% for song in appearance.songs_patched %}
-                      &nbsp;<strong>{{song.tot_score|floatformat:1}}</strong>&nbsp;<br>
-                    {% endfor %}
+                    {% for song in appearance.songs_patched %}&nbsp;<strong>{{song.tot_score|floatformat:1}}</strong>&nbsp;<br>{% endfor %}
                   {% endfor %}
                 </td>
               </tr>
@@ -213,20 +153,21 @@
       </section>
       <div class='tight-spacing'>
         <section>
+          {% if penalties|length %}
           <ul class='list-unstyled'>
             {% for penalty in penalties %}
-              <li>{{penalty|safe}}</li>
-            {% endfor %}
+            <li>{{penalty|safe}}</li>{% endfor %}
           </ul>
+          {% endif %}
           <div class='float-left push-space'>
             <strong>Total</strong><br>
-            {% for group, categories in stats.items %}
-              {% if group == 'Total' %}
-                {% for round, stat in categories.items %}
-                  {{ round|make_list|first }}: (Df {{ stat.diff }} SDv {{ stat.stddev }})<br>
-                {% endfor %}
-              {% endif %}
-            {% endfor %}
+              {% for group, categories in stats.items %}
+                {% if group == 'Total' %}
+                  {% for round, stat in categories.items %}
+                    {{ round|make_list|first }}: (Df {{ stat.diff }} SDv {{ stat.stddev }})<br>
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
             Score +/- 5 Points from Average in <strong>Bold</strong><br>
           </div>
           <div class='float-left push-space'>
@@ -240,8 +181,7 @@
                 {% endif %}
               {% endfor %}
               {% for person, practice, num in mus_persons %}
-                <li>{{ num }} = {{person}}</li>
-              {% endfor %}
+              <li>{{ num }} = {{person}}</li>{% endfor %}
             </ul>
           </div>
           <div class='float-left push-space'>
@@ -255,8 +195,7 @@
                 {% endif %}
               {% endfor %}
               {% for person, practice, num in per_persons %}
-                <li>{{ num }} = {{person}}</li>
-              {% endfor %}
+              <li>{{ num }} = {{person}}</li>{% endfor %}
             </ul>
           </div>
           <div class='float-left push-space'>
@@ -270,12 +209,12 @@
                 {% endif %}
               {% endfor %}
               {% for person, practice, num in sng_persons %}
-                <li>{{ num }} = {{person}}</li>
-              {% endfor %}
+              <li>{{ num }} = {{person}}</li>{% endfor %}
             </ul>
           </div>
         </section>
       </div>
+    {% endspaceless %}
     </div>
   </body>
 </html>
