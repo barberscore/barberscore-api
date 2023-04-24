@@ -3,7 +3,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Encode+Sans:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style type="text/css">
       body {
         font-family: 'Encode Sans', sans-serif !important;
@@ -14,7 +16,7 @@
         {% endif %}
         font-weight: 200;
       }
-      strong {
+      strong, b {
         font-family: 'Encode Sans', sans-serif;
         font-weight: 800;
       }
@@ -99,7 +101,7 @@
                   {% for appearance in public.appearances_patched %}
                       {% if round.num != 1 %}<span class='bolder'>{{appearance.round.get_kind_display}}: {% if appearance.status != -20%}{{appearance.tot_points|floatformat:0}} Points{% else %}<em>Performer Scratched</em>{% endif %}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart_patched|truncatechars_html:70|safe|default:"(Song not in Group's Repertory)▴"}}&nbsp;{{song.penalties_patched}}<br>
+                      &nbsp;&nbsp;&nbsp;&nbsp;{{song.chart_patched|truncatechars_html:70|safe|default:"(Song not in Group's Repertory)▴"}}&nbsp;{{song.penalties_patched|safe}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
@@ -201,7 +203,7 @@
                 {{round.footnotes|linebreaks}}<br>
               {% endif %}
               {% for penalty in penalties %}
-                {{penalty}}<br>
+                {{penalty|safe}}<br>
               {% endfor %}
               {% if is_missing %}
                 ▴ The Group is responsible for validating any performed chart to the DRCJ within 30 days.<br>

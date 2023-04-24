@@ -170,7 +170,7 @@
             <p>
               {%if round.footnotes %}{{round.footnotes}}<br>{%endif%}
               {% for penalty in penalties %}
-                {{penalty}}<br>
+                {{penalty|safe}}<br>
               {% endfor %}
             </p>
           </div>
