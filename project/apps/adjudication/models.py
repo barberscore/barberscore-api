@@ -4141,7 +4141,7 @@ class Round(TimeStampedModel):
                             48: "<b><sup>XI</sup></b>",
                             50: "<b><sup>X</sup></b>",
                         }
-                        items = " ".join([penalties_map[x] for x in song.penalties])
+                        items = "&nbsp;".join([penalties_map[x] for x in song.penalties])
                         song.penalties_patched = items
                     appearance.songs_patched = songs
                     appearance.rankings = rankings[appearance.id]
