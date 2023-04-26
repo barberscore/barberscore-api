@@ -123,7 +123,7 @@
                 </td>
                 <td>
                   {% for appearance in group.appearances_patched %}
-                    {% for song in appearance.songs_patched %}<span style="white-space: nowrap;">{{song.chart_patched|truncatechars_html:30|safe|default:"(Not in Repertory)"}}{{song.penalties_patched|safe}}</span><br>{% endfor %}
+                    {% for song in appearance.songs_patched %}<span style="white-space: nowrap;">{{song.chart_patched|truncatechars_html:30|safe|default:"(Not in Repertory)"}}&nbsp;{{song.penalties_patched|safe}}</span><br>{% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right' style="white-space: nowrap;">
