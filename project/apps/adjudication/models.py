@@ -3228,7 +3228,8 @@ class Round(TimeStampedModel):
                             flat=True
                         )
 
-                        merged_contesting = contesting | previously_contesting
+                        # merged_contesting = contesting | previously_contesting
+                        merged_contesting = contesting.union(previously_contesting)
                         contesting = merged_contesting.distinct()
 
             public.contesting_patched = ", ".join([str(x) for x in contesting])
