@@ -3060,8 +3060,8 @@ class Round(TimeStampedModel):
 
         songs_with_panelities = []
 
-        if self.kind == self.KIND.finals:
-            previous_rounds = Round.objects.filter(
+        # Get Previous Rounds
+        previous_rounds = Round.objects.filter(
                 session_id=self.session_id,
             ).exclude(
                 id=self.id,
@@ -3203,7 +3203,7 @@ class Round(TimeStampedModel):
                 flat=True
             )
 
-            if self.kind == self.KIND.finals:
+            if len(previous_rounds):
                 for previous_round in previous_rounds:
                     previous_appearances = Appearance.objects.filter(
                             entry_id=public.entry_id,
@@ -5799,32 +5799,10 @@ class Round(TimeStampedModel):
             is_single=False,
             num__gt=0
         ).annotate(
-            avg=Avg(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                )
-            ),
-            tot_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                )
-            ),
-            sng_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.singing,
-                )
-            ),
-            per_points=Sum(
-                'songs__scores__points',
-                filter=Q(
-                    songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.performance,
-                )
-            ),
+            avg=KeyTextTransform('tot_score', 'stats'),
+            tot_points=KeyTextTransform('tot_points', 'stats'),
+            sng_points=KeyTextTransform('sng_points', 'stats'),
+            per_points=KeyTextTransform('per_points', 'stats'),
         )
         # If spots are constricted, find those who advance
         mt = None
