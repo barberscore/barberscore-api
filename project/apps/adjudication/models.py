@@ -3923,11 +3923,22 @@ class Round(TimeStampedModel):
             round__session_id=self.session_id,
             round__num__lte=self.num,
         ).exclude(
-            # Don't include scratches
-            status=Appearance.STATUS.scratched,
-        ).exclude(
-            # Don't include disqualifications.
-            status=Appearance.STATUS.disqualified,
+            status__in=[
+                # Don't include disqualifications.
+                Appearance.STATUS.disqualified,
+
+                # Don't include scratches
+                Appearance.STATUS.scratched,
+
+                # Don't include new
+                Appearance.STATUS.new,
+
+                # Don't include built
+                Appearance.STATUS.built,
+
+                # Don't include variance
+                Appearance.STATUS.variance,
+            ],
         ).annotate(
             mus_round_rank=Window(
                 expression=Rank(),
