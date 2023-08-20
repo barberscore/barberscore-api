@@ -45,6 +45,8 @@ from .fields import ImageUploadPath
 from .fields import UploadPath
 from .fields import DivisionsField
 
+from apps.organizations.models import Organization
+
 from .validators import validate_punctuation
 
 from apps.salesforce.decorators import notification_user
@@ -128,8 +130,17 @@ class Award(TimeStampedModel):
         choices=SEASON,
     )
 
+    organization = models.ForeignKey(
+        'organizations.Organization',
+        related_name='+',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
+        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -592,6 +603,14 @@ class Convention(TimeStampedModel):
         default=STATUS.new,
     )
 
+    organization = models.ForeignKey(
+        'organizations.Organization',
+        related_name='org',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
     name = models.CharField(
         max_length=255,
         default='Convention',
@@ -599,6 +618,7 @@ class Convention(TimeStampedModel):
 
     DISTRICT_FULL_NAMES = {
         110: "Barbershop Harmony Society",
+        115: "Harmony, Inc.",
         200: "Cardinal",
         205: "Central States",
         210: "Dixie",
@@ -620,6 +640,7 @@ class Convention(TimeStampedModel):
 
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
+        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -1467,6 +1488,14 @@ class Group(TimeStampedModel):
         choices=GENDER,
         null=True,
         blank=True
+    )
+
+    organization = models.ForeignKey(
+        'organizations.Organization',
+        related_name='+',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
     )
 
     DISTRICT = Choices(

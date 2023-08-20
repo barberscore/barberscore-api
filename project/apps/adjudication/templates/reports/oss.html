@@ -58,10 +58,10 @@
   <body>
     <main role='main' class='container'>
       <section>
-        <img class='float-right small_logo' src="https://res.cloudinary.com/barberscore/image/upload/v1554830585/bhs_logo.png">
-        {% if round.session.convention.image %}
-          <img class='float-right small_logo' src="{{round.session.convention.image.url}}">
-        {% endif %}
+        <img class='float-right small_logo' src="{{round.convention.organization.logo.url}}">
+        <!-- {% if round.convention.image %}
+          <img class='float-right small_logo' src="{{round.convention.image.url}}">
+        {% endif %} -->
         <h6>
           Official Scoring Summary<br>
           {{round.nomen}}<br>
@@ -206,7 +206,7 @@
                 {{penalty|safe}}<br>
               {% endfor %}
               {% if is_missing %}
-                ▴ The Group is responsible for validating any performed chart to the DRCJ within 30 days.<br>
+                ▴ The Group is responsible for validating any performed chart to the {{round.convention.organization.drcj_nomen}} within 30 days.<br>
               {% endif %}
               {% if round.revision_number > 0 %}
                 Revision: {{ round.revision_date }} - {{ round.revision_reason }}<br>

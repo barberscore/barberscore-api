@@ -74,6 +74,8 @@ log = logging.getLogger(__name__)
 
 from apps.salesforce.decorators import notification_user
 
+from apps.bhs.models import Convention
+
 class KeyTextTransformFactory:
 
     def __init__(self, key_name):
@@ -271,6 +273,7 @@ class Appearance(TimeStampedModel):
 
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
+        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -2128,6 +2131,7 @@ class Panelist(TimeStampedModel):
 
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
+        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -2597,6 +2601,7 @@ class Round(TimeStampedModel):
 
     DISTRICT_FULL_NAMES = {
         110: "Barbershop Harmony Society",
+        115: "Harmony, Inc.",
         200: "Cardinal",
         205: "Central States",
         210: "Dixie",
@@ -2618,6 +2623,7 @@ class Round(TimeStampedModel):
 
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
+        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -2856,6 +2862,9 @@ class Round(TimeStampedModel):
             self.session_nomen,
             self.get_kind_display(),
         )
+
+    def convention(self):
+        return Convention.objects.get(pk=self.convention_id)
 
     # Internals
     class Meta:
