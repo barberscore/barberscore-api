@@ -59,7 +59,7 @@ class Organization(TimeStampedModel):
 
     logo = models.FileField(
         upload_to=UploadPath('organization_logos'),
-        help_text="""Logo should be xx x xx in JPG format.""",
+        help_text="""Logo should be 108px x 108px in JPG format.""",
         blank=True,
         default='',
         storage=RawMediaCloudinaryStorage(),
