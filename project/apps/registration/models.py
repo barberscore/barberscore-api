@@ -55,6 +55,8 @@ from .tasks import send_verify_report_email_from_session
 from .tasks import send_package_email_from_session
 from .tasks import send_package_report_email_from_session
 
+from apps.organizations.models import Organization
+
 from apps.salesforce.decorators import notification_user
 
 # Local
@@ -384,6 +386,7 @@ class Contest(TimeStampedModel):
 
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
+        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -1487,8 +1490,17 @@ class Session(TimeStampedModel):
         default='',
     )
 
+    organization = models.ForeignKey(
+        'organizations.Organization',
+        related_name='+',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
+        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),

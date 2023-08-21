@@ -34,6 +34,7 @@ class AwardAdmin(VersionAdmin, FSMTransitionMixin):
         'status',
         'kind',
         'gender',
+        'organization',
         'district',
         'division',
         'age',
@@ -52,6 +53,7 @@ class AwardAdmin(VersionAdmin, FSMTransitionMixin):
         'name',
         # 'size',
         # 'scope',
+        'get_organization_abbr',
         'district',
         'division',
         'kind',
@@ -77,6 +79,7 @@ class AwardAdmin(VersionAdmin, FSMTransitionMixin):
         'status',
         'kind',
         'level',
+        'organization',
         'district',
         'division',
         'age',
@@ -97,6 +100,13 @@ class AwardAdmin(VersionAdmin, FSMTransitionMixin):
     ordering = (
         'tree_sort',
     )
+
+    def get_organization_abbr(self, obj):
+        if obj.organization:
+            return obj.organization.abbreviation
+        else:
+            return None
+    get_organization_abbr.short_description = 'ORG'
 
 
 @admin.register(Chart)
@@ -155,6 +165,7 @@ class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
         # 'legacy_complete',
         'status',
         'name',
+        'organization',
         ('district', 'divisions', ),
         'district_display_name',
         ('year', 'season', ),
@@ -174,6 +185,7 @@ class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
 
     list_display = (
         'year',
+        'get_organization_abbr',
         'district',
         'season',
         'divisions',
@@ -195,6 +207,7 @@ class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
     list_filter = (
         'status',
         'season',
+        'organization',
         'district',
         'year',
     )
@@ -247,6 +260,13 @@ class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
             if settings.DISTRICT_DEFAULT_LOGOS[obj.district]:
                 obj.image = settings.DISTRICT_DEFAULT_LOGOS[obj.district]
         super().save_model(request, obj, form, change)
+
+    def get_organization_abbr(self, obj):
+        if obj.organization:
+            return obj.organization.abbreviation
+        else:
+            return None
+    get_organization_abbr.short_description = 'ORG'
 
 @admin.register(Group)
 class GroupAdmin(DjangoObjectActions, VersionAdmin, FSMTransitionMixin):

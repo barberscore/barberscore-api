@@ -33,6 +33,10 @@ class SfConvention:
         if hasattr(n, 'sf_Name'):
             d['name'] = str(n.sf_Name.cdata)
 
+        # Organization
+        if hasattr(n, 'sf_BS_Organization__c'):
+            d['organization'] = n.sf_BS_Organization__c.cdata
+
         # District
         if hasattr(n, 'sf_BS_District__c'):
             d['district'] = int(float(n.sf_BS_District__c.cdata))
@@ -131,6 +135,10 @@ class SfAward:
         # Season
         if hasattr(n, 'sf_BS_Season__c'):
             d['season'] = int(float(n.sf_BS_Season__c.cdata))
+
+        # Organization
+        if hasattr(n, 'sf_BS_Organization__c'):
+            d['organization'] = n.sf_BS_Organization__c.cdata
 
         # District
         if hasattr(n, 'sf_BS_District__c'):
@@ -266,6 +274,10 @@ class SfGroup:
         if hasattr(n, 'sf_BS_Classification__c'):
             d['gender'] = int(float(n.sf_BS_Classification__c.cdata))
 
+        # Organization
+        if hasattr(n, 'sf_BS_Organization__c'):
+            d['organization'] = n.sf_BS_Organization__c.cdata
+
         # District
         if hasattr(n, 'sf_BS_District__c'):
             d['district'] = int(float(n.sf_BS_District__c.cdata))
@@ -387,6 +399,10 @@ class SfSession:
         # Name
         if hasattr(n, 'sf_Name'):
             d['name'] = n.sf_Name.cdata
+
+        # Organization
+        if hasattr(n, 'sf_BS_Organization__c'):
+            d['organization'] = n.sf_BS_Organization__c.cdata
 
         # District
         if hasattr(n, 'sf_BS_District__c'):

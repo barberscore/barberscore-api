@@ -50,8 +50,8 @@
   <body>
     <div class='container'>
       <section>
-        <img class='float-right small_logo' src="https://res.cloudinary.com/barberscore/image/upload/v1554830585/bhs_logo.png">
-          {% if round.session.convention.image %}<img class='float-right small_logo' src="{{round.session.convention.image.url}}">{% endif %}
+        <img class='float-right small_logo' src="{{round.convention.organization.logo.url}}">
+          <!-- {% if round.convention.image %}<img class='float-right small_logo' src="{{round.convention.image.url}}">{% endif %} -->
         <h3>
           Contestant Scoring Analysis
         </h3>
