@@ -26,6 +26,7 @@ class SessionManager(Manager):
 
         pk = session['id']
 
+        Organization = apps.get_model('organizations.organization')
         Session = apps.get_model('registration.session')
         legacy = Session.objects.filter(id=pk).first()
 
@@ -44,7 +45,16 @@ class SessionManager(Manager):
         )
 
         # Add default owners
-        owners = self.model.get_default_owners()
+        if sess.organization:
+            owners = sess.organization.default_owners
+        else:
+            if sess.district == Session.DISTRICT.hi:
+                org = Organization.objects.get(abbreviation="HI")
+            else:
+                org = Organization.objects.get(abbreviation="BHS")
+
+            owners = org.default_owners
+
         for owner in owners:
             sess.owners.add(owner.id)
 
@@ -95,6 +105,9 @@ class EntryManager(Manager):
         if not isinstance(entry, dict):
             raise ValueError("Must be dict")
 
+        Organization = apps.get_model('organizations.organization')
+        Session = apps.get_model('registration.session')
+
         pk = entry['id']
 
         # remove id from dict
@@ -106,7 +119,16 @@ class EntryManager(Manager):
         )
 
         # Add default owners
-        owners = self.model.get_default_owners()
+        if record.session.organization:
+            owners = record.session.organization.default_owners
+        else:
+            if record.session.district == Session.DISTRICT.hi:
+                org = Organization.objects.get(abbreviation="HI")
+            else:
+                org = Organization.objects.get(abbreviation="BHS")
+
+            owners = org.default_owners
+
         for owner in owners:
             record.owners.add(owner.id)
 

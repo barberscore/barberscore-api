@@ -922,11 +922,6 @@ class Entry(TimeStampedModel):
         blank=True,
     )
 
-    def get_default_owners():
-        User = get_user_model()
-        owners = User.objects.filter(email__in=settings.SESSION_OWNERS)
-        return owners
-
     # FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
@@ -944,6 +939,7 @@ class Entry(TimeStampedModel):
         'Session',
         related_name='entries',
         on_delete=models.CASCADE,
+        blank=True
     )
 
     statelogs = GenericRelation(
@@ -1667,15 +1663,15 @@ class Session(TimeStampedModel):
     )
 
     def get_default_owners():
-        User = get_user_model()
-        owners = User.objects.filter(email__in=settings.SESSION_OWNERS)
-        return owners
+        return False
+        # User = get_user_model()
+        # owners = User.objects.filter(email__in=settings.SESSION_OWNERS)
+        # return owners
 
     # FKs
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='sessions',
-        default=get_default_owners
     )
 
     target = models.ForeignKey(

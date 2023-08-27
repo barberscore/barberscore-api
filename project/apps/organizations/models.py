@@ -59,7 +59,7 @@ class Organization(TimeStampedModel):
 
     logo = models.FileField(
         upload_to=UploadPath('organization_logos'),
-        help_text="""Logo should be xx x xx in JPG format.""",
+        help_text="""Logo should be 108px x 108px in JPG format.""",
         blank=True,
         default='',
         storage=RawMediaCloudinaryStorage(),
@@ -102,6 +102,31 @@ class Organization(TimeStampedModel):
 
     def __str__(self):
         return self.nomen
+
+    # Read Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return True
+
+    # Default Owners Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_default_owners_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_default_owners_permission(request):
+        return True
 
 
 class District(TimeStampedModel):
@@ -153,6 +178,18 @@ class District(TimeStampedModel):
     def __str__(self):
         return self.nomen
 
+    # Read Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return True
+
 
 class Division(TimeStampedModel):
     id = models.UUIDField(
@@ -202,3 +239,16 @@ class Division(TimeStampedModel):
 
     def __str__(self):
         return self.nomen
+
+    # Read Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return True
+

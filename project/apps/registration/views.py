@@ -10,6 +10,7 @@ from django.db.models import Prefetch
 
 # Django
 from django.apps import apps
+from django.http import JsonResponse
 
 # Local
 from .filtersets import EntryFilterset
@@ -232,6 +233,17 @@ class SessionViewSet(views.ModelViewSet):
         'id',
     ]
     resource_name = "session"
+
+    @action(methods=['get', 'post'], detail=True)
+    def default_owners(self, request, pk=None, **kwargs):
+        session = Session.objects.get(pk=pk)
+        default_owners = {}
+
+        for owner in session.owners.all():
+            default_owners[owner.id] = owner.email
+
+        return JsonResponse(default_owners)
+
 
     @action(methods=['post'], detail=True)
     def build(self, request, pk=None, **kwargs):

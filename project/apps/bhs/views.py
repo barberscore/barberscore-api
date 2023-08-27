@@ -17,6 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 # Django
+from django.http import JsonResponse
 from django.core.files.base import ContentFile
 from django.db.models import Sum, Q, Avg
 from django.template.loader import render_to_string
@@ -79,6 +80,16 @@ class ConventionViewSet(viewsets.ModelViewSet):
         'id',
     ]
     resource_name = "convention"
+
+    @action(methods=['get', 'post'], detail=True)
+    def default_owners(self, request, pk=None, **kwargs):
+        convention = Convention.objects.get(pk=pk)
+        default_owners = {}
+
+        for owner in convention.organization.default_owners.all():
+            default_owners[owner.id] = owner.email
+
+        return JsonResponse(default_owners)
 
     @action(methods=['post'], detail=True)
     def build(self, request, pk=None, **kwargs):

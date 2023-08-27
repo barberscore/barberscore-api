@@ -244,7 +244,7 @@ class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
     save_on_top = True
 
     class Media:
-        js = ('bhs/js/admin/build_convention.js',)
+        js = ('bhs/js/admin/build_convention.js', 'bhs/js/admin/convention_owners.js',)
 
     def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
         extra_context = extra_context or {}
