@@ -386,7 +386,6 @@ class Contest(TimeStampedModel):
 
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
-        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -404,6 +403,7 @@ class Contest(TimeStampedModel):
         (370, 'sld', 'SLD'),
         (375, 'sun', 'SUN'),
         (380, 'swd', 'SWD'),
+        (430, 'hi', 'HI'),
     )
 
     district = models.IntegerField(
@@ -1496,7 +1496,6 @@ class Session(TimeStampedModel):
 
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
-        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -1514,6 +1513,7 @@ class Session(TimeStampedModel):
         (370, 'sld', 'SLD'),
         (375, 'sun', 'SUN'),
         (380, 'swd', 'SWD'),
+        (430, 'hi', 'HI'),
     )
 
     district = models.IntegerField(

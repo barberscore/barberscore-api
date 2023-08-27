@@ -140,7 +140,6 @@ class Award(TimeStampedModel):
 
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
-        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -158,6 +157,7 @@ class Award(TimeStampedModel):
         (370, 'sld', 'SLD'),
         (375, 'sun', 'SUN'),
         (380, 'swd', 'SWD'),
+        (430, 'hi', 'HI'),
     )
 
     district = models.IntegerField(
@@ -618,7 +618,6 @@ class Convention(TimeStampedModel):
 
     DISTRICT_FULL_NAMES = {
         110: "Barbershop Harmony Society",
-        115: "Harmony, Inc.",
         200: "Cardinal",
         205: "Central States",
         210: "Dixie",
@@ -635,12 +634,12 @@ class Convention(TimeStampedModel):
         365: "Rocky Mountain",
         370: "Seneca Land",
         375: "Sunshine",
-        380: "Southwestern",        
+        380: "Southwestern",
+        430: "Harmony, Inc.",
     }
 
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
-        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -658,6 +657,7 @@ class Convention(TimeStampedModel):
         (370, 'sld', 'SLD'),
         (375, 'sun', 'SUN'),
         (380, 'swd', 'SWD'),
+        (430, 'hi', 'HI'),
     )
 
     district = models.IntegerField(
@@ -2032,6 +2032,7 @@ class Person(TimeStampedModel):
         (370, 'sld', 'SLD'),
         (375, 'sun', 'SUN'),
         (380, 'swd', 'SWD'),
+        (430, 'hi', 'HI'),
     )
 
     district = models.IntegerField(

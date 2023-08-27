@@ -86,7 +86,6 @@ SALESFORCE_ORGANIZATION_ID = get_env_variable("SALESFORCE_ORGANIZATION_ID")
 
 DISTRICT_DEFAULT_LOGOS = {
     110: 'media/global/logos/barbershop-harmony-society.jpg', # BHS
-    115: 'media/global/logos/barbershop-harmony-society.jpg', # HI
     200: 'media/global/logos/cardinal-district.jpg', # CAR
     205: 'media/global/logos/central-states-district.jpg', # CSD
     210: 'media/global/logos/dixie-district.jpg', # DIX
@@ -104,6 +103,7 @@ DISTRICT_DEFAULT_LOGOS = {
     370: 'media/global/logos/seneca-land-district.jpg', # SLD
     375: 'media/global/logos/sunshine-district.jpg', # SUN
     380: 'media/global/logos/southwestern-district.jpg', # SWD
+    430: 'media/global/logos/barbershop-harmony-society.jpg', # HI
 }
 
 SESSION_OWNERS = CONVENTION_OWNERS
@@ -297,7 +297,6 @@ ADMIN_ORDERING = {
 # Creating a sort function
 def get_app_list(self, request):
     app_dict = self._build_app_dict(request)
-    print(ADMIN_ORDERING)
     for app_name in app_dict:
         if app_name in ADMIN_ORDERING:
             app = app_dict[app_name]
