@@ -273,7 +273,6 @@ class Appearance(TimeStampedModel):
 
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
-        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -291,6 +290,7 @@ class Appearance(TimeStampedModel):
         (370, 'sld', 'SLD'),
         (375, 'sun', 'SUN'),
         (380, 'swd', 'SWD'),
+        (430, 'hi', 'HI'),
     )
 
     district = models.IntegerField(
@@ -2131,7 +2131,6 @@ class Panelist(TimeStampedModel):
 
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
-        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -2149,6 +2148,7 @@ class Panelist(TimeStampedModel):
         (370, 'sld', 'SLD'),
         (375, 'sun', 'SUN'),
         (380, 'swd', 'SWD'),
+        (430, 'hi', 'HI'),
     )
 
     district = models.IntegerField(
@@ -2601,7 +2601,6 @@ class Round(TimeStampedModel):
 
     DISTRICT_FULL_NAMES = {
         110: "Barbershop Harmony Society",
-        115: "Harmony, Inc.",
         200: "Cardinal",
         205: "Central States",
         210: "Dixie",
@@ -2619,11 +2618,11 @@ class Round(TimeStampedModel):
         370: "Seneca Land",
         375: "Sunshine",
         380: "Southwestern",        
+        430: "Harmony, Inc.",
     }
 
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
-        (115, 'hi', 'HI'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
         (210, 'dix', 'DIX'),
@@ -2641,6 +2640,7 @@ class Round(TimeStampedModel):
         (370, 'sld', 'SLD'),
         (375, 'sun', 'SUN'),
         (380, 'swd', 'SWD'),
+        (430, 'hi', 'HI'),
     )
 
     district = models.IntegerField(
