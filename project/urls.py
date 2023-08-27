@@ -11,6 +11,7 @@ from django.views.static import serve
 urlpatterns = [
     path('', lambda r: HttpResponseRedirect('admin/')),
     path('admin/', admin.site.urls),
+    path('organizations/', include('apps.organizations.urls')),
     path('bhs/', include('apps.bhs.urls')),
     path('registration/', include('apps.registration.urls')),
     path('adjudication/', include('apps.adjudication.urls')),

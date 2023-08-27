@@ -103,6 +103,31 @@ class Organization(TimeStampedModel):
     def __str__(self):
         return self.nomen
 
+    # Read Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return True
+
+    # Default Owners Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_default_owners_permission(request):
+        return True
+
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_default_owners_permission(request):
+        return True
+
 
 class District(TimeStampedModel):
     id = models.UUIDField(
@@ -153,6 +178,18 @@ class District(TimeStampedModel):
     def __str__(self):
         return self.nomen
 
+    # Read Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return True
+
 
 class Division(TimeStampedModel):
     id = models.UUIDField(
@@ -202,3 +239,16 @@ class Division(TimeStampedModel):
 
     def __str__(self):
         return self.nomen
+
+    # Read Permissions
+    @staticmethod
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_read_permission(request):
+        return True
+
+    @allow_staff_or_superuser
+    @authenticated_users
+    def has_object_read_permission(self, request):
+        return True
+

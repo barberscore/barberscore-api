@@ -857,14 +857,11 @@ class Convention(TimeStampedModel):
     )
 
     def get_default_owners():
-        User = get_user_model()
-        owners = User.objects.filter(email__in=settings.CONVENTION_OWNERS)
-        return owners
+        return False
 
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='conventions',
-        default=get_default_owners
     )
 
     # Relations

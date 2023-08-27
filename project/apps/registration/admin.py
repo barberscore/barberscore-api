@@ -151,9 +151,13 @@ class ContestAdmin(admin.ModelAdmin):
 @admin.register(Entry)
 class EntryAdmin(VersionAdmin, FSMTransitionMixin):
     def get_readonly_fields(self, request, obj=None):
-        if obj.session.status >= obj.session.STATUS.packaged:
+        if hasattr(obj, 'session' ) and obj.session.status >= obj.session.STATUS.packaged:
             self.readonly_fields.append('session')
         return self.readonly_fields
+
+    class Media:
+        js = ('registration/js/admin/session_owners.js',)
+
 
     fsm_field = [
         'status',
@@ -391,7 +395,7 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
     # ]
 
     class Media:
-        js = ('registration/js/admin/convention_change.js', 'registration/js/admin/build_contests.js',)
+        js = ('registration/js/admin/convention_change.js', 'registration/js/admin/build_contests.js', 'registration/js/admin/session_owners.js',)
 
     def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
         extra_context = extra_context or {}

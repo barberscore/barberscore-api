@@ -32,6 +32,9 @@ class ConventionManager(Manager):
         if not isinstance(convention, dict):
             raise ValueError("Must be dict")
 
+        Organization = apps.get_model('organizations.organization')
+        Convention = apps.get_model('bhs.convention')
+
         pk = convention['id']
 
         # remove id from dict
@@ -43,7 +46,16 @@ class ConventionManager(Manager):
         )
 
         # Add default owners
-        owners = self.model.get_default_owners()
+        if sess.organization:
+            owners = sess.organization.default_owners
+        else:
+            if conv.district == Convention.DISTRICT.hi:
+                org = Organization.objects.get(abbreviation="HI")
+            else:
+                org = Organization.objects.get(abbreviation="BHS")
+
+            owners = org.default_owners
+
         for owner in owners:
             conv.owners.add(owner.id)
 
