@@ -46,8 +46,8 @@ class ConventionManager(Manager):
         )
 
         # Add default owners
-        if sess.organization:
-            owners = sess.organization.default_owners
+        if conv.organization:
+            owners = conv.organization.default_owners
         else:
             if conv.district == Convention.DISTRICT.hi:
                 org = Organization.objects.get(abbreviation="HI")
