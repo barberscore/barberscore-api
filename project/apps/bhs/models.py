@@ -2013,6 +2013,14 @@ class Person(TimeStampedModel):
         null=True,
     )
 
+    organization = models.ForeignKey(
+        'organizations.Organization',
+        related_name='+',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
     DISTRICT = Choices(
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
