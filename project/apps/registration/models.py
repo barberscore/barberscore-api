@@ -1726,7 +1726,13 @@ class Session(TimeStampedModel):
     # Session Properties
     @cached_property
     def nomen(self):
-        if self.district == self.DISTRICT.bhs:
+        if self.district == 115:
+            print(self.id)
+            print(self.district)
+
+        if self.district is None:
+            return False
+        elif self.district == self.DISTRICT.bhs:
             return " ".join([
                 self.get_district_display(),
                 self.name,
