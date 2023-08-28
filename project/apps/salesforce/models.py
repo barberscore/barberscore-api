@@ -316,6 +316,10 @@ class SfPerson:
         if hasattr(n, 'sf_BS_UUID__c'):
             d['id'] = n.sf_BS_UUID__c.cdata
 
+        # Organization
+        if hasattr(n, 'sf_BS_Organization__c'):
+            d['organization'] = n.sf_BS_Organization__c.cdata
+
         # Status
         if hasattr(n, 'sf_BS_Status__c'):
             d['status'] = int(float(n.sf_BS_Status__c.cdata))
