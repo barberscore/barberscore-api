@@ -50,13 +50,12 @@ class ConventionManager(Manager):
             owners = conv.organization.default_owners
         else:
             if conv.district == Convention.DISTRICT.hi:
-                org = Organization.objects.get(abbreviation="HI")
+                org = Organization.objects.filter(abbreviation="HI").first()
             else:
-                org = Organization.objects.get(abbreviation="BHS")
-
+                org = Organization.objects.filter(abbreviation="BHS").first()
             owners = org.default_owners
 
-        for owner in owners:
+        for owner in owners.all():
             conv.owners.add(owner.id)
 
         return conv, created

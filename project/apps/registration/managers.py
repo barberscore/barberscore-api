@@ -49,13 +49,12 @@ class SessionManager(Manager):
             owners = sess.organization.default_owners
         else:
             if sess.district == Session.DISTRICT.hi:
-                org = Organization.objects.get(abbreviation="HI")
+                org = Organization.objects.filter(abbreviation="HI").first()
             else:
-                org = Organization.objects.get(abbreviation="BHS")
-
+                org = Organization.objects.filter(abbreviation="BHS").first()
             owners = org.default_owners
 
-        for owner in owners:
+        for owner in owners.all():
             sess.owners.add(owner.id)
 
         # Package Session ("build rounds")
@@ -123,13 +122,12 @@ class EntryManager(Manager):
             owners = record.session.organization.default_owners
         else:
             if record.session.district == Session.DISTRICT.hi:
-                org = Organization.objects.get(abbreviation="HI")
+                org = Organization.objects.filter(abbreviation="HI").first()
             else:
-                org = Organization.objects.get(abbreviation="BHS")
-
+                org = Organization.objects.filter(abbreviation="BHS").first()
             owners = org.default_owners
 
-        for owner in owners:
+        for owner in owners.all():
             record.owners.add(owner.id)
 
         return record, created

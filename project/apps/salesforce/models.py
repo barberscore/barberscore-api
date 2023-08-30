@@ -35,7 +35,7 @@ class SfConvention:
 
         # Organization
         if hasattr(n, 'sf_BS_Organization__c'):
-            d['organization'] = n.sf_BS_Organization__c.cdata
+            d['organization_id'] = n.sf_BS_Organization__c.cdata
 
         # District
         if hasattr(n, 'sf_BS_District__c'):
@@ -138,7 +138,7 @@ class SfAward:
 
         # Organization
         if hasattr(n, 'sf_BS_Organization__c'):
-            d['organization'] = n.sf_BS_Organization__c.cdata
+            d['organization_id'] = n.sf_BS_Organization__c.cdata
 
         # District
         if hasattr(n, 'sf_BS_District__c'):
@@ -276,7 +276,7 @@ class SfGroup:
 
         # Organization
         if hasattr(n, 'sf_BS_Organization__c'):
-            d['organization'] = n.sf_BS_Organization__c.cdata
+            d['organization_id'] = n.sf_BS_Organization__c.cdata
 
         # District
         if hasattr(n, 'sf_BS_District__c'):
@@ -318,7 +318,7 @@ class SfPerson:
 
         # Organization
         if hasattr(n, 'sf_BS_Organization__c'):
-            d['organization'] = n.sf_BS_Organization__c.cdata
+            d['organization_id'] = n.sf_BS_Organization__c.cdata
 
         # Status
         if hasattr(n, 'sf_BS_Status__c'):
@@ -406,7 +406,7 @@ class SfSession:
 
         # Organization
         if hasattr(n, 'sf_BS_Organization__c'):
-            d['organization'] = n.sf_BS_Organization__c.cdata
+            d['organization_id'] = n.sf_BS_Organization__c.cdata
 
         # District
         if hasattr(n, 'sf_BS_District__c'):
