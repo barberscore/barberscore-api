@@ -2943,6 +2943,7 @@ class Round(TimeStampedModel):
         Panelist = apps.get_model('adjudication.panelist')
         Appearance = apps.get_model('adjudication.appearance')
         Song = apps.get_model('adjudication.song')
+        Entry = apps.get_model('registration.entry')
 
         excluded_appearance_statuses = [
             Appearance.STATUS.disqualified, # Don't include disqualifications.
@@ -3250,6 +3251,23 @@ class Round(TimeStampedModel):
                 public.display_area = self.DISTRICT[group.district]
             else:
                 public.display_area = public.area
+
+            if (self.session_kind == self.SESSION_KIND.chorus
+                and (self.district in [self.DISTRICT.bhs, self.DISTRICT.hi] or public.district != self.district)):
+
+                if group.district in [public.DISTRICT.bhs, public.DISTRICT.hi]:
+                    entry = Entry.objects.filter(
+                        id=public.entry_id,
+                    ).first()
+
+                    representing = entry.area
+                else:
+                    representing = public.DISTRICT[group.district]
+
+                public.representing = "({0})".format(
+                    representing,
+                )
+
             public.name = group.name
 
         # Penalties Block
