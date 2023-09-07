@@ -880,7 +880,14 @@ class Convention(TimeStampedModel):
             district_display = self.district_display_name
         elif self.district is not None:
             district_display = self.get_district_display()
-        if self.district == self.DISTRICT.bhs:
+
+        if self.organization is not None:
+            return " ".join([
+                self.organization.abbreviation,
+                str(self.year),
+                self.name,
+            ])
+        elif self.district == self.DISTRICT.bhs:
             return " ".join([
                 district_display,
                 str(self.year),
