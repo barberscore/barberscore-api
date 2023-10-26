@@ -436,9 +436,11 @@ class Appearance(TimeStampedModel):
             group_id=self.group_id,
             session_id=self.round.session_id,
         ).first()
-        if not len(entry.notification_list):
-            raise ValueError("No notification list for {0}".format(entry))
-        return ["{0}".format(x.strip()) for x in entry.notification_list.split(',')]
+        if entry is None or entry.notification_list is None:
+            return []
+        else:
+            notification_list = ["{0}".format(x.strip()) for x in entry.notification_list.split(',')]
+            return notification_list
 
     def get_variance(self):
         Chart = apps.get_model('bhs.chart')
