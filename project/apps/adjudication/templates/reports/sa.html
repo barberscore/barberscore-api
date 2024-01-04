@@ -51,7 +51,7 @@
       .pbi_avoid {
           page-break-inside: avoid !important;
       }
-      .col-music {
+      .col-musicality {
         background-color: #fcf8e3;
       }
       .col-performance {
@@ -93,7 +93,7 @@
         <table class='table table-striped table-bordered table-sm'>
           <colgroup>
             <col span=2>
-            <col span=1 class='col-music b-right'>
+            <col span=1 class='col-musicality b-right'>
             <col span=1 class='col-performance b-right'>
             <col span=1 class='col-singing b-right'>
             <col span=1>
@@ -172,9 +172,9 @@
           </div>
           <div class='float-left push-space'>
             <ul class='list-unstyled'>
-              <strong>Music</strong><br>
+              <strong>Musicality</strong><br>
               {% for group, categories in stats.items %}
-                {% if group == 'Music' %}
+                {% if group == 'Musicality' %}
                   {% for round, stat in categories.items %}
                     {{ round|make_list|first }}: (Df {{ stat.diff }} SDv {{ stat.stddev }})<br>
                   {% endfor %}

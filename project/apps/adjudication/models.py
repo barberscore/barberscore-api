@@ -619,7 +619,7 @@ class Appearance(TimeStampedModel):
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.musicality,
                     appearances__group_id=self.group_id,
                 ),
             ),
@@ -643,7 +643,7 @@ class Appearance(TimeStampedModel):
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.musicality,
                     appearances__group_id=self.group_id,
                 ),
             ),
@@ -694,7 +694,7 @@ class Appearance(TimeStampedModel):
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.musicality,
                     appearances__group_id=self.group_id,
                 ),
             ),
@@ -718,7 +718,7 @@ class Appearance(TimeStampedModel):
                 'appearances__songs__scores__points',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    appearances__songs__scores__panelist__category=Panelist.CATEGORY.musicality,
                     appearances__group_id=self.group_id,
                 ),
             ),
@@ -764,7 +764,7 @@ class Appearance(TimeStampedModel):
             mus_points=Sum(
                 'points',
                 filter=Q(
-                    panelist__category=Panelist.CATEGORY.music,
+                    panelist__category=Panelist.CATEGORY.musicality,
                 )
             ),
             per_points=Sum(
@@ -785,7 +785,7 @@ class Appearance(TimeStampedModel):
             mus_score=Avg(
                 'points',
                 filter=Q(
-                    panelist__category=Panelist.CATEGORY.music,
+                    panelist__category=Panelist.CATEGORY.musicality,
                 )
             ),
             per_score=Avg(
@@ -822,7 +822,7 @@ class Appearance(TimeStampedModel):
                 'songs__scores__points',
                 filter=Q(
                     songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    songs__scores__panelist__category=Panelist.CATEGORY.musicality,
                 ),
             ),
             per_points=Sum(
@@ -849,7 +849,7 @@ class Appearance(TimeStampedModel):
                 'songs__scores__points',
                 filter=Q(
                     songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    songs__scores__panelist__category=Panelist.CATEGORY.musicality,
                 ),
             ),
             per_score=Avg(
@@ -888,7 +888,7 @@ class Appearance(TimeStampedModel):
                     'scores__points',
                     filter=Q(
                         scores__panelist__kind=Panelist.KIND.official,
-                        scores__panelist__category=Panelist.CATEGORY.music,
+                        scores__panelist__category=Panelist.CATEGORY.musicality,
                     ),
                 ),
                 per_score=Avg(
@@ -915,7 +915,7 @@ class Appearance(TimeStampedModel):
                     'scores__points',
                     filter=Q(
                         scores__panelist__kind=Panelist.KIND.official,
-                        scores__panelist__category=Panelist.CATEGORY.music,
+                        scores__panelist__category=Panelist.CATEGORY.musicality,
                     ),
                 ),
                 per_points=Sum(
@@ -967,7 +967,7 @@ class Appearance(TimeStampedModel):
         panelists = Panelist.objects.filter(id__in=panelists_ids).order_by('category', 'num')
 
         class_map = {
-            Panelist.CATEGORY.music: 'warning',
+            Panelist.CATEGORY.musicality: 'warning',
             Panelist.CATEGORY.performance: 'success',
             Panelist.CATEGORY.singing: 'info',
         }
@@ -985,7 +985,7 @@ class Appearance(TimeStampedModel):
 
         # Hackalicious
         category_count = {
-            'Music': 0,
+            'Musicality': 0,
             'Performance': 0,
             'Singing': 0,
         }
@@ -1016,7 +1016,7 @@ class Appearance(TimeStampedModel):
 
         # Category Block
         categories = {
-            'Music': [],
+            'Musicality': [],
             'Performance': [],
             'Singing': [],
         }
@@ -1113,7 +1113,7 @@ class Appearance(TimeStampedModel):
             mus_points=Sum(
                 'points',
                 filter=Q(
-                    panelist__category=Panelist.CATEGORY.music,
+                    panelist__category=Panelist.CATEGORY.musicality,
                 )
             ),
             per_points=Sum(
@@ -1134,7 +1134,7 @@ class Appearance(TimeStampedModel):
             mus_score=Avg(
                 'points',
                 filter=Q(
-                    panelist__category=Panelist.CATEGORY.music,
+                    panelist__category=Panelist.CATEGORY.musicality,
                 )
             ),
             per_score=Avg(
@@ -1172,7 +1172,7 @@ class Appearance(TimeStampedModel):
                 'songs__scores__points',
                 filter=Q(
                     songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    songs__scores__panelist__category=Panelist.CATEGORY.musicality,
                 ),
             ),
             per_points=Sum(
@@ -1199,7 +1199,7 @@ class Appearance(TimeStampedModel):
                 'songs__scores__points',
                 filter=Q(
                     songs__scores__panelist__kind=Panelist.KIND.official,
-                    songs__scores__panelist__category=Panelist.CATEGORY.music,
+                    songs__scores__panelist__category=Panelist.CATEGORY.musicality,
                 ),
             ),
             per_score=Avg(
@@ -1238,7 +1238,7 @@ class Appearance(TimeStampedModel):
                     'scores__points',
                     filter=Q(
                         scores__panelist__kind=Panelist.KIND.official,
-                        scores__panelist__category=Panelist.CATEGORY.music,
+                        scores__panelist__category=Panelist.CATEGORY.musicality,
                     ),
                 ),
                 per_score=Avg(
@@ -1265,7 +1265,7 @@ class Appearance(TimeStampedModel):
                     'scores__points',
                     filter=Q(
                         scores__panelist__kind=Panelist.KIND.official,
-                        scores__panelist__category=Panelist.CATEGORY.music,
+                        scores__panelist__category=Panelist.CATEGORY.musicality,
                     ),
                 ),
                 per_points=Sum(
@@ -2085,7 +2085,7 @@ class Panelist(TimeStampedModel):
         (5, 'drcj', 'DRCJ'),
         (9, 'pc', 'PC'),
         (10, 'adm', 'ADM'),
-        (30, 'music', 'Music'),
+        (30, 'musicality', 'Musicality'),
         (40, 'performance', 'Performance'),
         (50, 'singing', 'Singing'),
     )
@@ -2354,7 +2354,7 @@ class Panelist(TimeStampedModel):
         )
         # Monkeypatching
         class_map = {
-            Panelist.CATEGORY.music: 'badge badge-warning mono-font',
+            Panelist.CATEGORY.musicality: 'badge badge-warning mono-font',
             Panelist.CATEGORY.performance: 'badge badge-success mono-font',
             Panelist.CATEGORY.singing: 'badge badge-info mono-font',
         }
@@ -2381,11 +2381,11 @@ class Panelist(TimeStampedModel):
                             scores__panelist__kind=Panelist.KIND.official,
                         ),
                     ),
-                    Music=Avg(
+                    Musicality=Avg(
                         'scores__points',
                         filter=Q(
                             scores__panelist__kind=Panelist.KIND.official,
-                            scores__panelist__category=Panelist.CATEGORY.music,
+                            scores__panelist__category=Panelist.CATEGORY.musicality,
                         ),
                     ),
                     Performance=Avg(
@@ -3016,7 +3016,7 @@ class Round(TimeStampedModel):
         #         'appearances__songs__scores__points',
         #         filter=Q(
         #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.musicality,
         #             appearances__round__session_id=self.session_id,
         #             appearances__round__num__lte=self.num,
         #         ),
@@ -3033,7 +3033,7 @@ class Round(TimeStampedModel):
         #         'appearances__songs__scores__points',
         #         filter=Q(
         #             appearances__songs__scores__panelist__kind=Panelist.KIND.official,
-        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.music,
+        #             appearances__songs__scores__panelist__category=Panelist.CATEGORY.musicality,
         #             appearances__round__session_id=self.session_id,
         #             appearances__round__num__lte=self.num,
         #         ),
@@ -3116,7 +3116,7 @@ class Round(TimeStampedModel):
                     'songs__scores__points',
                     filter=Q(
                         songs__scores__panelist__kind=Panelist.KIND.official,
-                        songs__scores__panelist__category=Panelist.CATEGORY.music,
+                        songs__scores__panelist__category=Panelist.CATEGORY.musicality,
                     ),
                 ),
                 per_score=Avg(
@@ -3157,7 +3157,7 @@ class Round(TimeStampedModel):
                             'scores__points',
                             filter=Q(
                                 scores__panelist__kind=Panelist.KIND.official,
-                                scores__panelist__category=Panelist.CATEGORY.music,
+                                scores__panelist__category=Panelist.CATEGORY.musicality,
                             ),
                         ),
                         per_score=Avg(
@@ -3564,7 +3564,7 @@ class Round(TimeStampedModel):
         #             'songs__scores__points',
         #             filter=Q(
         #                 songs__scores__panelist__kind=Panelist.KIND.official,
-        #                 songs__scores__panelist__category=Panelist.CATEGORY.music,
+        #                 songs__scores__panelist__category=Panelist.CATEGORY.musicality,
         #                 round__session_id=self.session_id,
         #                 round__num__lte=self.num,
         #             ),
@@ -3599,7 +3599,7 @@ class Round(TimeStampedModel):
         #             'songs__scores__points',
         #             filter=Q(
         #                 songs__scores__panelist__kind=Panelist.KIND.official,
-        #                 songs__scores__panelist__category=Panelist.CATEGORY.music,
+        #                 songs__scores__panelist__category=Panelist.CATEGORY.musicality,
         #                 round__session_id=self.session_id,
         #                 round__num__lte=self.num,
         #             ),
@@ -3649,7 +3649,7 @@ class Round(TimeStampedModel):
         #     )
 
         mus_persons_qs = Panelist.objects.filter(
-            category=Panelist.CATEGORY.music,
+            category=Panelist.CATEGORY.musicality,
             round__session_id=self.session_id,
         ).order_by(
             'num',
@@ -3746,7 +3746,7 @@ class Round(TimeStampedModel):
         #             'songs__scores__points',
         #             filter=Q(
         #                 songs__scores__panelist__kind=Panelist.KIND.official,
-        #                 songs__scores__panelist__category=Panelist.CATEGORY.music,
+        #                 songs__scores__panelist__category=Panelist.CATEGORY.musicality,
         #             ),
         #         ),
         #         per_score=Avg(
@@ -3783,7 +3783,7 @@ class Round(TimeStampedModel):
         #                 'scores__points',
         #                 filter=Q(
         #                     scores__panelist__kind=Panelist.KIND.official,
-        #                     scores__panelist__category=Panelist.CATEGORY.music,
+        #                     scores__panelist__category=Panelist.CATEGORY.musicality,
         #                 ),
         #             ),
         #             per_score=Avg(
@@ -3810,7 +3810,7 @@ class Round(TimeStampedModel):
         #                 'scores__points',
         #                 filter=Q(
         #                     scores__panelist__kind=Panelist.KIND.official,
-        #                     scores__panelist__category=Panelist.CATEGORY.music,
+        #                     scores__panelist__category=Panelist.CATEGORY.musicality,
         #                 ),
         #             ),
         #             per_dev=StdDev(
@@ -3849,13 +3849,13 @@ class Round(TimeStampedModel):
 
         #             mus_scores = []
         #             for person in mus_persons_qs:
-        #                 raw_music_scores = song.scores.filter(
+        #                 raw_musicality_scores = song.scores.filter(
         #                     panelist__person=person,
         #                 ).order_by(
         #                     'panelist__num',
         #                 )
-        #                 if raw_music_scores:
-        #                     for m in raw_music_scores:
+        #                 if raw_musicality_scores:
+        #                     for m in raw_musicality_scores:
         #                         diff = abs(m.points - m.song.mus_score) > 5
         #                         practice = bool(m.panelist.kind == Panelist.KIND.practice)
         #                         mus_scores.append((m.points, diff, practice))
@@ -4053,7 +4053,7 @@ class Round(TimeStampedModel):
             #         'songs__scores__points',
             #         filter=Q(
             #             songs__scores__panelist__kind=Panelist.KIND.official,
-            #             songs__scores__panelist__category=Panelist.CATEGORY.music,
+            #             songs__scores__panelist__category=Panelist.CATEGORY.musicality,
             #         ),
             #     ),
             #     per_score=Avg(
@@ -4091,7 +4091,7 @@ class Round(TimeStampedModel):
                             'scores__points',
                             filter=Q(
                                 scores__panelist__kind=Panelist.KIND.official,
-                                scores__panelist__category=Panelist.CATEGORY.music,
+                                scores__panelist__category=Panelist.CATEGORY.musicality,
                             ),
                         ),
                         per_score=Avg(
@@ -4120,15 +4120,15 @@ class Round(TimeStampedModel):
                             song.chart_patched = ""
                         mus_scores = []
                         for panelist in mus_persons_qs:
-                            raw_music_scores = song.scores.filter(
+                            raw_musicality_scores = song.scores.filter(
                                 panelist__person_id=panelist.person_id,
                                 panelist__kind=panelist.kind
                             ).order_by(
                                 'panelist__num',
                             )
 
-                            if raw_music_scores:
-                                for m in raw_music_scores:
+                            if raw_musicality_scores:
+                                for m in raw_musicality_scores:
                                     diff = abs(m.points - m.song.mus_score) > 5
                                     practice = bool(m.panelist.kind == Panelist.KIND.practice)
                                     mus_scores.append((m.points, diff, practice))
@@ -4236,7 +4236,7 @@ class Round(TimeStampedModel):
         #         'scores__points',
         #         filter=Q(
         #             scores__panelist__kind=Panelist.KIND.official,
-        #             scores__panelist__category=Panelist.CATEGORY.music,
+        #             scores__panelist__category=Panelist.CATEGORY.musicality,
         #         ),
         #     ),
         #     per_dev=StdDev(
@@ -4465,7 +4465,7 @@ class Round(TimeStampedModel):
                         'scores__points',
                         filter=Q(
                             scores__panelist__kind=Panelist.KIND.official,
-                            scores__panelist__category=Panelist.CATEGORY.music,
+                            scores__panelist__category=Panelist.CATEGORY.musicality,
                         ),
                     ),
                     per_points=Sum(
@@ -5560,7 +5560,7 @@ class Round(TimeStampedModel):
             category__in=[
                 Assignment.CATEGORY.singing,
                 Assignment.CATEGORY.performance,
-                Assignment.CATEGORY.music,
+                Assignment.CATEGORY.musicality,
             ],
             kind=Assignment.KIND.official,
         ).order_by(
@@ -5573,7 +5573,7 @@ class Round(TimeStampedModel):
             category__in=[
                 Assignment.CATEGORY.singing,
                 Assignment.CATEGORY.performance,
-                Assignment.CATEGORY.music,
+                Assignment.CATEGORY.musicality,
             ],
             kind=Assignment.KIND.practice,
         ).order_by(
@@ -6013,7 +6013,7 @@ class Score(TimeStampedModel):
     )
 
     # CATEGORY = Choices(
-    #     (30, 'music', 'Music'),
+    #     (30, 'musicality', 'Musicality'),
     #     (40, 'performance', 'Performance'),
     #     (50, 'singing', 'Singing'),
     # )
