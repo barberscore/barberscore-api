@@ -1082,7 +1082,6 @@ class Convention(TimeStampedModel):
                 round_panel = []
                 for panelist in panelists:
                     shortname = panelist.name.replace(panelist.last_name, "").strip()
-
                     round_panel.append(
                         '"{0} ({1})={2}, {3}"'.format(
                             panelist.num,
