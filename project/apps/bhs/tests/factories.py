@@ -89,7 +89,7 @@ class ConventionFactory(DjangoModelFactory):
     #         for i in range(self.panel):
     #             AssignmentFactory(
     #                 convention=self,
-    #                 category=Assignment.CATEGORY.music,
+    #                 category=Assignment.CATEGORY.musicality,
     #             )
     #             AssignmentFactory(
     #                 convention=self,

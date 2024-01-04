@@ -86,7 +86,7 @@ class Assignment(TimeStampedModel):
         (5, 'drcj', 'DRCJ'),
         (9, 'pc', 'PC'),
         (10, 'adm', 'ADM'),
-        (30, 'music', 'Music'),
+        (30, 'musicality', 'Musicality'),
         (40, 'performance', 'Performance'),
         (50, 'singing', 'Singing'),
     )
