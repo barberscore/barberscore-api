@@ -286,7 +286,7 @@ class SfGroup:
         d['division'] = int(float(n.sf_BS_Division__c.cdata)) if hasattr(n, 'sf_BS_Division__c') else None
 
         # bhs_id
-        if hasattr(n, 'sf_cfg_Member_Id__c') and n.sf_cfg_Member_Id__c.cdata.isalnum():
+        if hasattr(n, 'sf_cfg_Member_Id__c') and not n.sf_cfg_Member_Id__c.cdata.isnumeric():
             # Is a Chorus
             # code
             d['code'] = n.sf_cfg_Member_Id__c.cdata if hasattr(n, 'sf_cfg_Member_Id__c') else ""
@@ -703,13 +703,14 @@ class SfEntry:
         # Divisions
         d['division'] = int(float(n.sf_BS_Division__c.cdata)) if hasattr(n, 'sf_BS_Division__c') else None
 
-        if hasattr(n, 'sf_cfg_Member_Id__c'):
-            if (n.sf_cfg_Member_Id__c.cdata.isdigit()):
-                # BHS ID
-                d['bhs_id'] = int(n.sf_cfg_Member_Id__c.cdata)
-            else:
-                # code
-                d['code'] = n.sf_cfg_Member_Id__c.cdata
+        # bhs_id
+        if hasattr(n, 'sf_cfg_Member_Id__c') and not n.sf_cfg_Member_Id__c.cdata.isnumeric():
+            # code
+            d['code'] = n.sf_cfg_Member_Id__c.cdata
+        
+        elif hasattr(n, 'sf_cfg_Member_Id__c'):
+            # BHS ID
+            d['bhs_id'] = int(n.sf_cfg_Member_Id__c.cdata) if hasattr(n, 'sf_cfg_Member_Id__c') else None
 
         # Session ID
         if hasattr(n, 'sf_BS_Session_UUID__c'):

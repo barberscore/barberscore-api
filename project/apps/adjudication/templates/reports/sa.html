@@ -128,17 +128,17 @@
                 </td>
                 <td class='text-right' style="white-space: nowrap;">
                   {% for appearance in group.appearances_patched %}
-                    {% if appearance.rankings.mus_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.mus_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.mus_score|floatformat:1}}&nbsp;&nbsp;{% for score, diff, practice in song.mus_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;&nbsp;&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
+                    {% if appearance.rankings.mus_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.mus_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.mus_score|floatformat:1}}&nbsp;&nbsp;{% for score, diff, practice in song.mus_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;0&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right' style="white-space: nowrap;">
                   {% for appearance in group.appearances_patched %}
-                    {% if appearance.rankings.per_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.per_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.per_score|floatformat:1}}&nbsp;&nbsp;{% for score, diff, practice in song.per_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;&nbsp;&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
+                    {% if appearance.rankings.per_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.per_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.per_score|floatformat:1}}&nbsp;&nbsp;{% for score, diff, practice in song.per_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;0&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right' style="white-space: nowrap;">
                   {% for appearance in group.appearances_patched %}
-                    {% if appearance.rankings.sng_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.sng_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.sng_score|floatformat:1}}&nbsp;&nbsp;{% for score, diff, practice in song.sng_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;&nbsp;&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
+                    {% if appearance.rankings.sng_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.sng_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.sng_score|floatformat:1}}&nbsp;&nbsp;{% for score, diff, practice in song.sng_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;0&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
