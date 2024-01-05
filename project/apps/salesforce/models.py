@@ -113,6 +113,10 @@ class SfAward:
         if hasattr(n, 'sf_BS_UUID__c'):
             d['id'] = n.sf_BS_UUID__c.cdata
 
+        # Organization
+        if hasattr(n, 'sf_BS_Organization__c'):
+            d['organization_id'] = n.sf_BS_Organization__c.cdata
+
         # Name
         if hasattr(n, 'sf_Name'):
             d['name'] = n.sf_Name.cdata
@@ -668,8 +672,8 @@ class SfEntry:
         d['pos'] = int(float(n.sf_Persons_On_Stage__c.cdata)) if hasattr(n, 'sf_Persons_On_Stage__c') else None
 
         # Area
-        if hasattr(n, 'sf_Organization__c'):
-            d['area'] = n.sf_Organization__c.cdata
+        if hasattr(n, 'sf_Area__c'):
+            d['area'] = n.sf_Area__c.cdata
 
         # Chapters
         d['chapters'] = n.sf_Chapters__c.cdata if hasattr(n, 'sf_Chapters__c') else ""
