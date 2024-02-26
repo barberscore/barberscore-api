@@ -235,6 +235,7 @@ class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
 
     ordering = [
         '-year',
+        '-start_date',
         'season',
         'district',
     ]
