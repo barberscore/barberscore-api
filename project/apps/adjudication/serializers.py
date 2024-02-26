@@ -22,6 +22,7 @@ class AppearanceSerializer(serializers.ModelSerializer):
     }
 
     diff = serializers.SerializerMethodField('get_diff')
+    name = serializers.SerializerMethodField('get_name')
 
     def get_diff(self, obj):
         diff = 0
@@ -31,6 +32,9 @@ class AppearanceSerializer(serializers.ModelSerializer):
         except(TypeError):
             diff = 0
         return diff
+
+    def get_name(self, obj):
+        return obj.name.replace('.', ' ')
 
     class Meta:
         model = Appearance
@@ -72,7 +76,6 @@ class AppearanceSerializer(serializers.ModelSerializer):
             'songs',
             'permissions',
         ]
-
 
     class JSONAPIMeta:
         included_resources = [
