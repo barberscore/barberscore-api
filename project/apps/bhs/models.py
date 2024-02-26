@@ -1047,7 +1047,8 @@ class Convention(TimeStampedModel):
             for r in rounds:
                 appearances = Appearance.objects.filter(
                     round_id=r.id,
-                    num__gt=0
+                    num__gt=0,
+                    status=Appearance.STATUS.completed
                 ).prefetch_related(
                     'songs__scores',
                     'songs__scores__panelist',
