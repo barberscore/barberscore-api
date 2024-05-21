@@ -4725,33 +4725,44 @@ class Round(TimeStampedModel):
         Chart = apps.get_model('bhs.chart')
         Group = apps.get_model('bhs.group')
         Song = apps.get_model('adjudication.song')
-        appearances = self.appearances.filter(
+
+        groups = self.appearances.filter(
             draw__gt=0,
         ).order_by(
             'draw',
         )
-        for appearance in appearances:
-            songs = appearance.songs.order_by('num')
-            titles = []
-            for song in songs:
-                try:
-                    chart = Chart.objects.get(id=song.chart_id)
-                except Chart.DoesNotExist:
-                    chart = None
-                try:
-                    title = chart.title
-                except AttributeError:
-                    title = "Unknown (Not in Repertory)"
-                row = "{0} Song {1}: {2}".format(
-                    song.appearance.round.get_kind_display(),
-                    song.num,
-                    title,
-                )
-                titles.append(row)
-            appearance.titles_patched = titles
+        
+        for group in groups:
+            appearances = Appearance.objects.filter(
+                group_id=group.group_id,
+                round__session_id=self.session_id,
+                round__num__lte=self.num,
+            )
+
+            for appearance in appearances:
+                songs = appearance.songs.order_by('num')
+                titles = []
+                for song in songs:
+                    try:
+                        chart = Chart.objects.get(id=song.chart_id)
+                    except Chart.DoesNotExist:
+                        chart = None
+                    try:
+                        title = chart.title
+                    except AttributeError:
+                        title = "Unknown (Not in Repertory)"
+                    row = "{0} Song {1}: {2}".format(
+                        song.appearance.round.get_kind_display(),
+                        song.num,
+                        title,
+                    )
+                    titles.append(row)
+                appearance.titles_patched = titles
+
+            group.appearances_patched = appearances
 
         context = {
-            'appearances': appearances,
+            'groups': groups,
             'round': self,
         }
         rendered = render_to_string('reports/titles.html', context)
