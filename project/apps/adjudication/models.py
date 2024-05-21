@@ -2860,9 +2860,10 @@ class Round(TimeStampedModel):
     # Properties
     @cached_property
     def nomen(self):
-        return "{0} {1}".format(
-            self.session_nomen,
-            self.get_kind_display(),
+        return "{0} {1} {2}".format(
+            self.convention().nomen, # Convention Nomen
+            self.get_session_kind_display(), # Session Kind
+            self.get_kind_display(), # Round Kind
         )
 
     def convention(self):
