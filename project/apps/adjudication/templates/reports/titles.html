@@ -20,11 +20,13 @@
     </section>
     <section>
       <ul class='list-styled'>
-        {% for appearance in appearances %}
-          <li><strong>Draw {{appearance.draw}}: {{appearance.name}}</strong></li>
+        {% for group in groups %}
+          <li><strong>Draw {{group.draw}}: {{group.name}}</strong></li>
           <ul class='list-styled'>
-            {% for item in appearance.titles_patched %}
-              <li>{{item}}</li>
+            {% for appearance in group.appearances_patched %}
+              {% for item in appearance.titles_patched %}
+                <li>{{item}}</li>
+              {% endfor %}
             {% endfor %}
           </ul>
         {% empty %}
