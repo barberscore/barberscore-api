@@ -1049,6 +1049,7 @@ class Convention(TimeStampedModel):
                     round_id=r.id,
                     num__gt=0,
                     status__in=[
+                        Appearance.STATUS.disqualified,
                         Appearance.STATUS.completed,
                         Appearance.STATUS.finished,
                         Appearance.STATUS.advanced
@@ -1165,9 +1166,12 @@ class Convention(TimeStampedModel):
                         # collect scores for this song
                         song_scores = []
                         for score in scores:
-                            song_scores.append(
-                                str(score.points)
-                            )
+                            if appearance.status == Appearance.STATUS.disqualified:
+                                song_scores.append("0")
+                            else:
+                                song_scores.append(
+                                    str(score.points)
+                                )
 
                         # Song Record
                         song_records.append(
