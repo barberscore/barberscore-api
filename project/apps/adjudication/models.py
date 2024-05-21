@@ -4121,7 +4121,7 @@ class Round(TimeStampedModel):
                         mus_scores = []
                         for panelist in mus_persons_qs:
                             raw_musicality_scores = song.scores.filter(
-                                panelist__person_id=panelist.person_id,
+                                panelist_id=panelist.id,
                                 panelist__kind=panelist.kind
                             ).order_by(
                                 'panelist__num',
@@ -4139,7 +4139,7 @@ class Round(TimeStampedModel):
                         per_scores = []
                         for panelist in per_persons_qs:
                             raw_performance_scores = song.scores.filter(
-                                panelist__person_id=panelist.person_id,
+                                panelist_id=panelist.id,
                                 panelist__kind=panelist.kind
                             ).order_by(
                                 'panelist__num',
@@ -4157,7 +4157,7 @@ class Round(TimeStampedModel):
                         sng_scores = []
                         for panelist in sng_persons_qs:
                             raw_singing_scores = song.scores.filter(
-                                panelist__person_id=panelist.person_id,
+                                panelist_id=panelist.id,
                                 panelist__kind=panelist.kind
                             ).order_by(
                                 'panelist__num',
