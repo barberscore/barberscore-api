@@ -4738,6 +4738,8 @@ class Round(TimeStampedModel):
                 group_id=group.group_id,
                 round__session_id=self.session_id,
                 round__num__lte=self.num,
+            ).order_by(
+                '-round__num'
             )
 
             for appearance in appearances:
