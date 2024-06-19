@@ -6279,9 +6279,9 @@ class Song(TimeStampedModel):
         if song_avg['avg'] >= 90:
             high_low_diff = 8
         elif song_avg['avg'] >= 80 and song_avg['avg'] < 90:
-            high_low_diff = 8
-        elif song_avg['avg'] >= 70 and song_avg['avg'] < 80:
             high_low_diff = 9
+        elif song_avg['avg'] >= 70 and song_avg['avg'] < 80:
+            high_low_diff = 10
         elif song_avg['avg'] >= 60 and song_avg['avg'] < 70:
             high_low_diff = 10
         elif song_avg['avg'] >= 50 and song_avg['avg'] < 60:
