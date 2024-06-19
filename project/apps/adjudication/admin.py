@@ -37,6 +37,7 @@ admin.site.site_header = 'Barberscore Admin Backend'
 class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     fields = [
         'id',
+        'name',
         'status',
         'onstage',
         'actual_start',
@@ -93,6 +94,7 @@ class AppearanceAdmin(FSMTransitionMixin, admin.ModelAdmin):
     ]
     readonly_fields = [
         'id',
+        'name',
         'stats',
         # 'csa',
         # 'variance_report',

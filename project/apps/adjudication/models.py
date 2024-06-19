@@ -6258,10 +6258,42 @@ class Song(TimeStampedModel):
                 panelist__kind=10,
             )
             for score in category_scores:
-                is_asterisk = abs(score.points - category['avg']) > 5
+                is_asterisk = abs(score.points - category['avg']) > 4
                 if is_asterisk:
                     asterisks.append(category['panelist__category'])
                     continue
+        
+        ## Review highest and lowest scores across all categories
+
+        # Only use official scores.
+        scores = self.scores.filter(
+            panelist__kind=10,
+        )
+        ascending = scores.order_by('points')
+        descending = scores.order_by('-points')
+        song_avg = scores.aggregate(
+            avg=Avg('points'),
+        )
+        high_low_diff = descending[0].points - ascending[0].points
+
+        if song_avg['avg'] >= 90:
+            high_low_diff = 8
+        elif song_avg['avg'] >= 80 and song_avg['avg'] < 90:
+            high_low_diff = 8
+        elif song_avg['avg'] >= 70 and song_avg['avg'] < 80:
+            high_low_diff = 9
+        elif song_avg['avg'] >= 60 and song_avg['avg'] < 70:
+            high_low_diff = 10
+        elif song_avg['avg'] >= 50 and song_avg['avg'] < 60:
+            high_low_diff = 10
+        elif song_avg['avg'] < 50:
+            high_low_diff = 10
+
+        for score in scores:
+            if (descending[0].points - score.points) >= high_low_diff:
+                asterisks.append(descending[0].panelist.category)
+                asterisks.append(score.panelist.category)
+                continue
         asterisks = list(set(asterisks))
         return asterisks
 
@@ -6274,11 +6306,13 @@ class Song(TimeStampedModel):
         # Set flag
         output = []
         # Confidence thresholds
+        # Dixon 90% confidence
+        # 
         confidence = {
             '3': 0.941,
             '6': .56,
-            '9': .376,
-            '12': .437,
+            '9': .437,
+            '12': .376,
             '15': .338,
         }
         # Only use official scores.
@@ -6314,14 +6348,28 @@ class Song(TimeStampedModel):
             critical = confidence[str(aggregates['cnt'])]
             ascending_distance = abs(ascending[0].points - ascending[1].points)
             ascending_q = ascending_distance / aggregates['spread']
-            if ascending_q > critical and ascending_distance > 4:
+            if ascending_q > critical and ascending_distance >= 4:
                 output.append(ascending[0].panelist.category)
             descending_distance = abs(descending[0].points - descending[1].points)
             descending_q = descending_distance / aggregates['spread']
-            if descending_q > critical and descending_distance > 4:
+            if descending_q > critical and descending_distance >= 4:
                 output.append(descending[0].panelist.category)
-        return output
 
+        ## Quad panel or greater...
+        ## Drop highest and lowest scores
+        if str(aggregates['cnt']) in ['12', '15']: ## quad or quint panel
+            critical = confidence[str(aggregates['cnt'])]
+            ascending_distance = abs(ascending[2].points - ascending[1].points)
+            ascending_q = ascending_distance / (ascending[len(ascending)-1].points - ascending[1].points)
+            if ascending_q > critical and ascending_distance >= 4:
+                output.append(ascending[0].panelist.category)
+                output.append(ascending[1].panelist.category)
+            descending_distance = abs(descending[1].points - descending[2].points)
+            descending_q = descending_distance / (descending[1].points - descending[len(descending)-1].points)
+            if descending_q > critical and descending_distance >= 4:
+                output.append(descending[0].panelist.category)
+                output.append(descending[1].panelist.category)
+        return output
 
     # Song Permissions
     @staticmethod
