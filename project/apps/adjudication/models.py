@@ -6348,11 +6348,11 @@ class Song(TimeStampedModel):
             critical = confidence[str(aggregates['cnt'])]
             ascending_distance = abs(ascending[0].points - ascending[1].points)
             ascending_q = ascending_distance / aggregates['spread']
-            if ascending_q > critical and ascending_distance > 4:
+            if ascending_q > critical and ascending_distance >= 4:
                 output.append(ascending[0].panelist.category)
             descending_distance = abs(descending[0].points - descending[1].points)
             descending_q = descending_distance / aggregates['spread']
-            if descending_q > critical and descending_distance > 4:
+            if descending_q > critical and descending_distance >= 4:
                 output.append(descending[0].panelist.category)
 
         ## Quad panel or greater...
@@ -6361,12 +6361,12 @@ class Song(TimeStampedModel):
             critical = confidence[str(aggregates['cnt'])]
             ascending_distance = abs(ascending[2].points - ascending[1].points)
             ascending_q = ascending_distance / (ascending[len(ascending)-1].points - ascending[1].points)
-            if ascending_q > critical and ascending_distance > 4:
+            if ascending_q > critical and ascending_distance >= 4:
                 output.append(ascending[0].panelist.category)
                 output.append(ascending[1].panelist.category)
             descending_distance = abs(descending[1].points - descending[2].points)
             descending_q = descending_distance / (descending[1].points - descending[len(descending)-1].points)
-            if descending_q > critical and descending_distance > 4:
+            if descending_q > critical and descending_distance >= 4:
                 output.append(descending[0].panelist.category)
                 output.append(descending[1].panelist.category)
         return output
