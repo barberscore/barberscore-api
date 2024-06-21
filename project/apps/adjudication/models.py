@@ -573,6 +573,10 @@ class Appearance(TimeStampedModel):
         variance = False
         # Run checks for all songs and save.
         for song in self.songs.all():
+            # Ensure previous asterisks and dixons are cleared
+            song.asterisks = []
+            song.dixons = []
+
             asterisks = song.get_asterisks()
             if asterisks:
                 song.asterisks = asterisks
