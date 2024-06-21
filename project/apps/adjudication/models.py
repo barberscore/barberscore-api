@@ -6289,11 +6289,19 @@ class Song(TimeStampedModel):
         elif song_avg['avg'] < 50:
             high_low_diff = 10
 
+        high_low_found = False
         for score in scores:
             if (descending[0].points - score.points) >= high_low_diff:
                 asterisks.append(descending[0].panelist.category)
                 asterisks.append(score.panelist.category)
+                high_low_found = True
                 continue
+        
+        if high_low_found:
+            for score in descending:
+                if score.points == descending[0].points:
+                    asterisks.append(score.panelist.category)
+
         asterisks = list(set(asterisks))
         return asterisks
 
