@@ -873,16 +873,6 @@ class ScoreViewSet(viewsets.ModelViewSet):
                 id=object.song.appearance.id
             )
 
-        songs = Song.objects.filter(
-            appearance_id=object.song.appearance.id
-        )
-
-        ## Clear variances for all songs under performance when score changes.
-        for song in songs:
-            song.asterisks = []
-            song.dixons = []
-            song.save()
-
         if appearance[0].status <= Appearance.STATUS.finished:
             # Update appearance stats
             stats = appearance[0].get_stats()
