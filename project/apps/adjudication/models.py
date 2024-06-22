@@ -569,10 +569,22 @@ class Appearance(TimeStampedModel):
             return
 
     def check_variance(self):
+        # Set flag
+        variance = False
         # Run checks for all songs and save.
         for song in self.songs.all():
-            song.asterisks = song.get_asterisks()
-            song.dixons = song.get_dixons()
+            # Ensure previous asterisks and dixons are cleared
+            song.asterisks = []
+            song.dixons = []
+
+            asterisks = song.get_asterisks()
+            if asterisks:
+                song.asterisks = asterisks
+                variance = True
+            dixons = song.get_dixons()
+            if dixons:
+                song.dixons = dixons
+                variance = True
             song.save()
         return variance
 
