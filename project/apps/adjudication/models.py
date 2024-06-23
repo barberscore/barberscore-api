@@ -6371,12 +6371,18 @@ class Song(TimeStampedModel):
         if str(aggregates['cnt']) in ['12', '15']: ## quad or quint panel
             critical = confidence[str(aggregates['cnt'])]
             ascending_distance = abs(ascending[2].points - ascending[1].points)
-            ascending_q = ascending_distance / (ascending[len(ascending)-1].points - ascending[1].points)
+            try:
+                ascending_q = ascending_distance / (ascending[len(ascending)-1].points - ascending[1].points)
+            except ZeroDivisionError:
+                ascending_q = ascending_distance
             if ascending_q > critical and ascending_distance >= 4:
                 output.append(ascending[0].panelist.category)
                 output.append(ascending[1].panelist.category)
             descending_distance = abs(descending[1].points - descending[2].points)
-            descending_q = descending_distance / (descending[1].points - descending[len(descending)-1].points)
+            try:
+                descending_q = descending_distance / (descending[1].points - descending[len(descending)-1].points)
+            except ZeroDivisionError:
+                descending_q = descending_distance
             if descending_q > critical and descending_distance >= 4:
                 output.append(descending[0].panelist.category)
                 output.append(descending[1].panelist.category)
