@@ -914,23 +914,23 @@ class SongViewSet(viewsets.ModelViewSet):
         # Update Song
         super().partial_update(request, *pk)
 
-        # Reset appearance status???
-        appearance = Appearance.objects.filter(
-                id=object.appearance.id
-            )
+        # # Reset appearance status???
+        # appearance = Appearance.objects.filter(
+        #         id=object.appearance.id
+        #     )
 
-        if appearance[0].status <= Appearance.STATUS.finished:
-            # Update appearance stats
-            stats = appearance[0].get_stats()
+        # if appearance[0].status <= Appearance.STATUS.finished:
+        #     # Update appearance stats
+        #     stats = appearance[0].get_stats()
 
-            appearance.update(
-                status=Appearance.STATUS.finished,
-                stats=stats
-            )
-        elif appearance[0].status is not Appearance.STATUS.finished:
-            appearance.update(
-                status=Appearance.STATUS.finished,
-            )
+        #     appearance.update(
+        #         status=Appearance.STATUS.finished,
+        #         stats=stats
+        #     )
+        # elif appearance[0].status is not Appearance.STATUS.finished:
+        #     appearance.update(
+        #         status=Appearance.STATUS.finished,
+        #     )
 
         # Resave Song for return
         return super().partial_update(request, *pk)
