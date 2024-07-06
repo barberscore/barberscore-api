@@ -275,7 +275,7 @@ class Appearance(TimeStampedModel):
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
-        (210, 'dix', 'DIX'),
+        (210, 'shd', 'SHD'),
         (215, 'evg', 'EVG'),
         (220, 'fwd', 'FWD'),
         (225, 'ill', 'ILL'),
@@ -2138,7 +2138,7 @@ class Panelist(TimeStampedModel):
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
-        (210, 'dix', 'DIX'),
+        (210, 'shd', 'SHD'),
         (215, 'evg', 'EVG'),
         (220, 'fwd', 'FWD'),
         (225, 'ill', 'ILL'),
@@ -2608,7 +2608,7 @@ class Round(TimeStampedModel):
         110: "Barbershop Harmony Society",
         200: "Cardinal",
         205: "Central States",
-        210: "Dixie",
+        210: "Southeastern",
         215: "Evergreen",
         220: "Far Western",
         225: "Illinois",
@@ -2630,7 +2630,7 @@ class Round(TimeStampedModel):
         (110, 'bhs', 'BHS'),
         (200, 'car', 'CAR'),
         (205, 'csd', 'CSD'),
-        (210, 'dix', 'DIX'),
+        (210, 'shd', 'SHD'),
         (215, 'evg', 'EVG'),
         (220, 'fwd', 'FWD'),
         (225, 'ill', 'ILL'),
@@ -3252,6 +3252,7 @@ class Round(TimeStampedModel):
             public.pos_patched = public.pos
             public.participants_patched = public.participants
             group = Group.objects.get(id=public.group_id)
+
             public.district = group.district
             if public.area == 'BHS':
                 public.display_area = self.DISTRICT[group.district]
