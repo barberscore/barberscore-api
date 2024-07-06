@@ -3657,6 +3657,7 @@ class Round(TimeStampedModel):
             round__session_id=self.session_id,
         ).order_by(
             'num',
+            'round__num',
         ).distinct('num')
 
         mus_persons = []
@@ -3670,6 +3671,7 @@ class Round(TimeStampedModel):
             round__session_id=self.session_id,
         ).order_by(
             'num',
+            'round__num',
         ).distinct('num')
         per_persons = []
         for p in per_persons_qs:
@@ -3682,12 +3684,14 @@ class Round(TimeStampedModel):
             round__session_id=self.session_id,
         ).order_by(
             'num',
+            'round__num',
         ).distinct('num')
         sng_persons = []
         for p in sng_persons_qs:
             practice = bool(p.kind == Panelist.KIND.practice)
             num = "{0}".format('{:02d}'.format(p.num))
             sng_persons.append((p.name, practice, num))
+        
         # per_persons_qs = persons.filter(
         #     panelists__category=Panelist.CATEGORY.performance,
         #     panelists__round__session_id=self.session_id,
@@ -4122,6 +4126,16 @@ class Round(TimeStampedModel):
                             )
                         else:
                             song.chart_patched = ""
+
+                        mus_persons_qs = Panelist.objects.filter(
+                            category=Panelist.CATEGORY.musicality,
+                            round__session_id=self.session_id,
+                            round__id=appearance.round_id,
+                        ).order_by(
+                            'num',
+                            'round__num',
+                        ).distinct('num')
+
                         mus_scores = []
                         for panelist in mus_persons_qs:
                             raw_musicality_scores = song.scores.filter(
@@ -4140,6 +4154,15 @@ class Round(TimeStampedModel):
                                 mus_scores.append((None, False, False))
                         song.mus_scores = mus_scores
 
+                        per_persons_qs = Panelist.objects.filter(
+                            category=Panelist.CATEGORY.performance,
+                            round__session_id=self.session_id,
+                            round__id=appearance.round_id,
+                        ).order_by(
+                            'num',
+                            'round__num',
+                        ).distinct('num')
+
                         per_scores = []
                         for panelist in per_persons_qs:
                             raw_performance_scores = song.scores.filter(
@@ -4157,6 +4180,15 @@ class Round(TimeStampedModel):
                             else:
                                 per_scores.append((None, False, False))
                         song.per_scores = per_scores
+
+                        sng_persons_qs = Panelist.objects.filter(
+                            category=Panelist.CATEGORY.singing,
+                            round__session_id=self.session_id,
+                            round__id=appearance.round_id,
+                        ).order_by(
+                            'num',
+                            'round__num',
+                        ).distinct('num')
 
                         sng_scores = []
                         for panelist in sng_persons_qs:
