@@ -3267,8 +3267,10 @@ class Round(TimeStampedModel):
                     ).first()
 
                     representing = entry.area
-                else:
+                elif group.district in public.DISTRICT:
                     representing = public.DISTRICT[group.district]
+                else: 
+                    representing = public.area
 
                 public.representing = "({0})".format(
                     representing,
