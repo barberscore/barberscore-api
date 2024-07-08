@@ -620,7 +620,7 @@ class Convention(TimeStampedModel):
         110: "Barbershop Harmony Society",
         200: "Cardinal",
         205: "Central States",
-        210: "Southeastern",
+        210: "Southeastern Harmony",
         215: "Evergreen",
         220: "Far Western",
         225: "Illinois",
