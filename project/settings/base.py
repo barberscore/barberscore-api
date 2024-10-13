@@ -103,7 +103,34 @@ DISTRICT_DEFAULT_LOGOS = {
     370: 'media/global/logos/seneca-land-district.jpg', # SLD
     375: 'media/global/logos/sunshine-district.jpg', # SUN
     380: 'media/global/logos/southwestern-district.jpg', # SWD
+
     430: 'media/global/logos/barbershop-harmony-society.jpg', # HI
+    700: 'media/global/logos/barbershop-harmony-society.jpg', # HI - Area 1
+    705: 'media/global/logos/barbershop-harmony-society.jpg', # HI - Area 2
+    710: 'media/global/logos/barbershop-harmony-society.jpg', # HI - Area 3
+    715: 'media/global/logos/barbershop-harmony-society.jpg', # HI - Area 4
+    720: 'media/global/logos/barbershop-harmony-society.jpg', # HI - Area 5
+    725: 'media/global/logos/barbershop-harmony-society.jpg', # HI - Area 6
+
+    510: 'media/global/logos/barbershop-harmony-society.jpg', # BABS
+    515: 'media/global/logos/barbershop-harmony-society.jpg', # BHA
+    750: 'media/global/logos/barbershop-harmony-society.jpg', # BHA - VR
+    755: 'media/global/logos/barbershop-harmony-society.jpg', # BHA - WR
+    760: 'media/global/logos/barbershop-harmony-society.jpg', # BHA - CR
+    765: 'media/global/logos/barbershop-harmony-society.jpg', # BHA - ER
+    770: 'media/global/logos/barbershop-harmony-society.jpg', # BHA - SR
+    775: 'media/global/logos/barbershop-harmony-society.jpg', # BHA - TR
+
+    520: 'media/global/logos/barbershop-harmony-society.jpg', # BHNZ
+    800: 'media/global/logos/barbershop-harmony-society.jpg', # BHNZ - NR
+    805: 'media/global/logos/barbershop-harmony-society.jpg', # BHNZ - CR
+    810: 'media/global/logos/barbershop-harmony-society.jpg', # BHNZ - SR
+
+    525: 'media/global/logos/barbershop-harmony-society.jpg', # BinG
+    540: 'media/global/logos/barbershop-harmony-society.jpg', # HH
+    550: 'media/global/logos/barbershop-harmony-society.jpg', # IABS
+    560: 'media/global/logos/barbershop-harmony-society.jpg', # LABBS
+    565: 'media/global/logos/barbershop-harmony-society.jpg', # BIBA
 }
 
 SESSION_OWNERS = CONVENTION_OWNERS
