@@ -32,23 +32,16 @@ class OrganizationAdmin(VersionAdmin, FSMTransitionMixin):
     #     'name',
     # ]
 
-    # fields = [
-    #     'id',
-    #     'name',
-    #     'status',
-    #     'kind',
-    #     'gender',
-    #     'district',
-    #     'division',
-    #     'age',
-    #     'level',
-    #     'season',
-    #     'is_single',
-    #     'is_novice',
-    #     ('threshold', 'minimum', 'spots',),
-    #     'description',
-    #     'notes',
-    # ]
+    fields = [
+        'id',
+        'name',
+        'abbreviation',
+        'logo',
+        'district_nomen',
+        'division_nomen',
+        'drcj_nomen',
+        'default_owners',
+    ]
 
     # list_display = [
     #     # 'district',
@@ -94,9 +87,9 @@ class OrganizationAdmin(VersionAdmin, FSMTransitionMixin):
         'default_owners',
     ]
 
-    # readonly_fields = [
-    #     'id',
-    # ]
+    readonly_fields = [
+        'id',
+    ]
 
     # search_fields = [
     #     'name',

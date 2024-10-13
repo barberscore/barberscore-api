@@ -158,6 +158,32 @@ class Award(TimeStampedModel):
         (375, 'sun', 'SUN'),
         (380, 'swd', 'SWD'),
         (430, 'hi', 'HI'),
+        (510, 'babs', 'BABS'),
+        (515, 'bha', 'BHA'),
+        (520, 'bhnz', 'BHNZ'),
+        (525, 'bing', 'BinG!'),
+        (530, 'fabs', 'FABS'),
+        (540, 'hhar', 'HHar'),
+        (550, 'iabs', 'IABS'),
+        (560, 'labbs', 'LABBS'),
+        (565, 'biba', 'BIBA'),
+        (570, 'snobs', 'SNOBS'),
+        (575, 'spats', 'SPATS'),
+        (700, 'area1', 'AREA1'),
+        (705, 'area2', 'AREA2'),
+        (710, 'area3', 'AREA3'),
+        (715, 'area4', 'AREA4'),
+        (720, 'area5', 'AREA5'),
+        (725, 'area6', 'AREA6'),
+        (750, 'vr', 'VR'),
+        (755, 'wr', 'WR'),
+        (760, 'cr', 'CR'),
+        (765, 'er', 'ER'),
+        (770, 'sr', 'SR'),
+        (775, 'tr', 'TR'),
+        (800, 'nr', 'NR'),
+        (805, 'cr', 'CR'),
+        (810, 'sr', 'SR'),
     )
 
     district = models.IntegerField(
@@ -636,6 +662,32 @@ class Convention(TimeStampedModel):
         375: "Sunshine",
         380: "Southwestern",
         430: "Harmony, Inc.",
+        510: "British Association of Barbershop Singers",
+        515: "Barbershop Harmony Australia",
+        520: "Barbershop Harmony New Zealand",
+        525: "Barbershop in Germany",
+        540: "Holland Harmony",
+        550: "Irish Association of Barbershop Singers",
+        560: "Ladies Association of British Barbershop Singers",
+        565: "Barbershop of IBeria Association",
+
+        700: "Area 1", # HI
+        705: "Area 2", # HI
+        710: "Area 3", # HI
+        715: "Area 4", # HI
+        720: "Area 5", # HI
+        725: "Area 6", # HI
+
+        750: "Victorian", # BHA
+        755: "Western", # BHA
+        760: "Central", # BHA
+        765: "Eastern", # BHA
+        770: "Sunshine", # BHA
+        775: "Tasmanian", # BHA
+
+        800: "Northern", # BHNZ
+        805: "Central", # BHNZ
+        810: "Southern", # BHNZ
     }
 
     DISTRICT = Choices(
@@ -658,6 +710,32 @@ class Convention(TimeStampedModel):
         (375, 'sun', 'SUN'),
         (380, 'swd', 'SWD'),
         (430, 'hi', 'HI'),
+        (510, 'babs', 'BABS'),
+        (515, 'bha', 'BHA'),
+        (520, 'bhnz', 'BHNZ'),
+        (525, 'bing', 'BinG!'),
+        (530, 'fabs', 'FABS'),
+        (540, 'hhar', 'HHar'),
+        (550, 'iabs', 'IABS'),
+        (560, 'labbs', 'LABBS'),
+        (565, 'biba', 'BIBA'),
+        (570, 'snobs', 'SNOBS'),
+        (575, 'spats', 'SPATS'),
+        (700, 'area1', 'AREA1'),
+        (705, 'area2', 'AREA2'),
+        (710, 'area3', 'AREA3'),
+        (715, 'area4', 'AREA4'),
+        (720, 'area5', 'AREA5'),
+        (725, 'area6', 'AREA6'),
+        (750, 'vr', 'VR'),
+        (755, 'wr', 'WR'),
+        (760, 'cr', 'CR'),
+        (765, 'er', 'ER'),
+        (770, 'sr', 'SR'),
+        (775, 'tr', 'TR'),
+        (800, 'nr', 'NR'),
+        (805, 'cr', 'CR'),
+        (810, 'sr', 'SR'),
     )
 
     district = models.IntegerField(
@@ -1536,18 +1614,33 @@ class Group(TimeStampedModel):
             (410, 'nxtgn', 'NxtGn'),
             (420, 'mbha', 'MBHA'),
             (430, 'hi', 'HI'),
+            (700, 'area1', 'AREA1'),
+            (705, 'area2', 'AREA2'),
+            (710, 'area3', 'AREA3'),
+            (715, 'area4', 'AREA4'),
+            (720, 'area5', 'AREA5'),
+            (725, 'area6', 'AREA6'),
             (440, 'sai', 'SAI'),
         ]),
         ('Affiliated', [
             (510, 'babs', 'BABS'),
             (515, 'bha', 'BHA'),
+            (750, 'vr', 'VR'),
+            (755, 'wr', 'WR'),
+            (760, 'cr', 'CR'),
+            (765, 'er', 'ER'),
+            (770, 'sr', 'SR'),
+            (775, 'tr', 'TR'),
             (520, 'bhnz', 'BHNZ'),
-            (525, 'bing', 'BinG'),
+            (800, 'nr', 'NR'),
+            (805, 'cr', 'CR'),
+            (810, 'sr', 'SR'),
+            (525, 'bing', 'BinG!'),
             (530, 'fabs', 'FABS'),
             (540, 'hhar', 'HHar'),
             (550, 'iabs', 'IABS'),
             (560, 'labbs', 'LABBS'),
-            (565, 'sabs', 'SABS'),
+            (565, 'biba', 'BIBA'),
             (570, 'snobs', 'SNOBS'),
             (575, 'spats', 'SPATS'),
         ]),
@@ -2058,6 +2151,32 @@ class Person(TimeStampedModel):
         (375, 'sun', 'SUN'),
         (380, 'swd', 'SWD'),
         (430, 'hi', 'HI'),
+        (510, 'babs', 'BABS'),
+        (515, 'bha', 'BHA'),
+        (520, 'bhnz', 'BHNZ'),
+        (525, 'bing', 'BinG!'),
+        (530, 'fabs', 'FABS'),
+        (540, 'hhar', 'HHar'),
+        (550, 'iabs', 'IABS'),
+        (560, 'labbs', 'LABBS'),
+        (565, 'biba', 'BIBA'),
+        (570, 'snobs', 'SNOBS'),
+        (575, 'spats', 'SPATS'),
+        (700, 'area1', 'AREA1'),
+        (705, 'area2', 'AREA2'),
+        (710, 'area3', 'AREA3'),
+        (715, 'area4', 'AREA4'),
+        (720, 'area5', 'AREA5'),
+        (725, 'area6', 'AREA6'),
+        (750, 'vr', 'VR'),
+        (755, 'wr', 'WR'),
+        (760, 'cr', 'CR'),
+        (765, 'er', 'ER'),
+        (770, 'sr', 'SR'),
+        (775, 'tr', 'TR'),
+        (800, 'nr', 'NR'),
+        (805, 'cr', 'CR'),
+        (810, 'sr', 'SR'),
     )
 
     district = models.IntegerField(

@@ -360,6 +360,9 @@ class GroupManager(Manager):
 
         # AIC
         aic_map = {
+            506532: "Three and a Half Men",
+            505091: "Midtown",
+            503565: "Quorum",
             503061: "Signature",
             500983: "After Hours",
             501972: "Main Street",
