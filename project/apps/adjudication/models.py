@@ -5477,10 +5477,13 @@ class Round(TimeStampedModel):
         # Notification List on Session.
         to = self.get_owners_emails()
 
-        if self.oss_report:
-            pdf = self.oss_report.file
-        else:
-            pdf = self.get_oss()
+        # if self.oss_report:
+        #     pdf = self.oss_report.file
+        # else:
+        #     pdf = self.get_oss()
+
+        # Ensure the OSS is recompiled prior to email
+        pdf = self.get_oss()
         file_name = '{0} OSS.pdf'.format(self.scoresheet_filename())
         attachments = [(
             file_name,
