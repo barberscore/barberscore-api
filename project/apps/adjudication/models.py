@@ -1374,10 +1374,11 @@ class Appearance(TimeStampedModel):
         ))
 
         # Attach OSS
-        if self.round.oss_report:
-            oss_pdf = self.round.oss_report.file
-        else:
-            oss_pdf = self.round.get_oss()
+        # if self.round.oss_report:
+        #     oss_pdf = self.round.oss_report.file
+        # else:
+        oss_pdf = self.round.get_oss()
+
         oss_file_name = '{0} OSS.pdf'.format(self.round.scoresheet_filename())
         attachments.append((
             oss_file_name,
@@ -2558,10 +2559,10 @@ class Panelist(TimeStampedModel):
         to = ["{0} <{1}>".format(self.name, self.email)]
         cc = self.round.get_owners_emails()
 
-        if self.psa_report:
-            pdf = self.psa_report.file
-        else:
-            pdf = self.get_psa()
+        # if self.psa_report:
+        #     pdf = self.psa_report.file
+        # else:
+        pdf = self.get_psa()
         file_name = '{0} PSA.pdf'.format(self)
         attachments = [(
             file_name,
@@ -5525,10 +5526,10 @@ class Round(TimeStampedModel):
         attachments = []
 
         # Attach OSS
-        if self.oss_report:
-            oss_pdf = self.oss_report.file
-        else:
-            oss_pdf = self.get_oss()
+        # if self.oss_report:
+        #     oss_pdf = self.oss_report.file
+        # else:
+        oss_pdf = self.get_oss()
         oss_file_name = '{0} OSS.pdf'.format(self.scoresheet_filename())
         attachments.append((
             oss_file_name,
@@ -5567,10 +5568,10 @@ class Round(TimeStampedModel):
         attachments = []
 
         # Attach SA
-        if self.sa_report:
-            pdf = self.sa_report.file
-        else:
-            pdf = self.get_sa()
+        # if self.sa_report:
+        #     pdf = self.sa_report.file
+        # else:
+        pdf = self.get_sa()
         file_name = '{0} SA.pdf'.format(self.scoresheet_filename())
         attachments.append((
             file_name,
