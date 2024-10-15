@@ -29,7 +29,7 @@ def panelist_post_transition(sender, instance, name, source, target, **kwargs):
 
 @receiver(post_transition, sender=Round)
 def round_post_transition(sender, instance, name, source, target, **kwargs):
-    if name == 'finalize':
+    if name == 'finalize' or name == 'publish':
         save_reports_from_round.delay(instance)
         return
     return
