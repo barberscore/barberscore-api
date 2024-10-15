@@ -102,3 +102,17 @@ INSTALLED_APPS += [
     'debug_toolbar',
     'whitenoise.runserver_nostatic',
 ]
+
+# Caches
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": get_env_variable("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {
+                "max_connections": 20,
+            },
+        }
+    },
+}
