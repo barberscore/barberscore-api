@@ -135,6 +135,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             # print("add participants...")
             serializer.save(
                 name=entry.name,
+                is_private=entry.is_private,
                 charts=charts,
                 participants=entry.participants,
                 entry_id=entry.id,
