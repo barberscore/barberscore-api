@@ -136,6 +136,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
             serializer.save(
                 name=entry.name,
                 is_private=entry.is_private,
+                area=entry.area,
                 charts=charts,
                 participants=entry.participants,
                 entry_id=entry.id,
