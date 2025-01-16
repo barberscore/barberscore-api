@@ -667,24 +667,48 @@ class Appearance(TimeStampedModel):
                     appearances__group_id=self.group_id,
                 ),
             ),
-            sng_score=Avg(
-                'appearances__songs__scores__points',
+            # sng_score=Avg(
+            #     'appearances__songs__scores__points',
+            #     filter=Q(
+            #         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #         appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
+            #         appearances__group_id=self.group_id,
+            #     ),
+            # ),
+            # per_score=Avg(
+            #     'appearances__songs__scores__points',
+            #     filter=Q(
+            #         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #         appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
+            #         appearances__group_id=self.group_id,
+            #     ),
+            # ),
+            # mus_score=Sum(
+            #     'appearances__songs__scores__points',
+            #     filter=Q(
+            #         appearances__songs__scores__panelist__kind=Panelist.KIND.official,
+            #         appearances__songs__scores__panelist__category=Panelist.CATEGORY.musicality,
+            #         appearances__group_id=self.group_id,
+            #     ),
+            # ),
+            sng_score_count=Count(
+                'appearances__songs__scores',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.singing,
                     appearances__group_id=self.group_id,
                 ),
             ),
-            per_score=Avg(
-                'appearances__songs__scores__points',
+            per_score_count=Count(
+                'appearances__songs__scores',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.performance,
                     appearances__group_id=self.group_id,
                 ),
             ),
-            mus_score=Avg(
-                'appearances__songs__scores__points',
+            mus_score_count=Count(
+                'appearances__songs__scores',
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__songs__scores__panelist__category=Panelist.CATEGORY.musicality,
@@ -699,8 +723,20 @@ class Appearance(TimeStampedModel):
                 ),                
             ),
         )
+
+
+        # Adjust averages for Rounding
         stats['tot_score'] = round((stats['tot_points'] / stats['score_count']), 1)
+        stats['sng_score'] = round((stats['sng_points'] / stats['sng_score_count']), 1)
+        stats['per_score'] = round((stats['per_points'] / stats['per_score_count']), 1)
+        stats['mus_score'] = round((stats['mus_points'] / stats['mus_score_count']), 1)
+
+        # Remove unused count variables.
         stats.pop("score_count", None)
+        stats.pop("sng_score_count", None)
+        stats.pop("per_score_count", None)
+        stats.pop("mus_score_count", None)
+
         for key, value in stats.items():
             stats[key] = rnd(value, 1)
         return stats
