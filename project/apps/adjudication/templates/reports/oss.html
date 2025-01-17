@@ -1,3 +1,4 @@
+{% load oss_extras %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -105,38 +106,38 @@
                   {% endfor %}
                 </td>
                 <td class='w-scores text-right'>
-                  <strong>{{public.stats.mus_score|floatformat:1}}</strong><br>
+                  <strong>{{public.stats.mus_score|truncate_number:1}}</strong><br>
                   {% for appearance in public.appearances_patched %}
-                    {% if round.num != 1  %}<span class='bolder'>{{appearance.mus_score|floatformat:1}}</span><br>{% endif %}
+                    {% if round.num != 1  %}<span class='bolder'>{{appearance.mus_score|truncate_number:1}}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                        {{song.mus_score|floatformat:1}}<br>
+                        {{song.mus_score|truncate_number:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='w-scores text-right'>
-                  <strong>{{public.stats.per_score|floatformat:1}}</strong><br>
+                  <strong>{{public.stats.per_score|truncate_number:1}}</strong><br>
                   {% for appearance in public.appearances_patched %}
-                    {% if round.num != 1  %}<span class='bolder'>{{appearance.per_score|floatformat:1}}</span><br>{% endif %}
+                    {% if round.num != 1  %}<span class='bolder'>{{appearance.per_score|truncate_number:1}}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                        {{song.per_score|floatformat:1}}<br>
+                        {{song.per_score|truncate_number:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='w-scores text-right'>
-                  <strong>{{public.stats.sng_score|floatformat:1}}</strong><br>
+                  <strong>{{public.stats.sng_score|truncate_number:1}}</strong><br>
                   {% for appearance in public.appearances_patched %}
-                    {% if round.num != 1 %}<span class='bolder'>{{appearance.sng_score|floatformat:1}}</span><br>{% endif %}
+                    {% if round.num != 1 %}<span class='bolder'>{{appearance.sng_score|truncate_number:1}}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                        {{song.sng_score|floatformat:1}}<br>
+                        {{song.sng_score|truncate_number:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='w-scores text-right'>
-                  <strong>{{public.tot_score_avg|floatformat:1}}</strong><br>
+                  <strong>{{public.tot_score_avg|truncate_number:1}}</strong><br>
                   {% for appearance in public.appearances_patched %}
-                    {% if round.num != 1 %}<span class='bolder'>{{appearance.tot_score|floatformat:1}}</span><br>{% endif %}
+                    {% if round.num != 1 %}<span class='bolder'>{{appearance.tot_score|truncate_number:1}}</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                        {{song.tot_score|floatformat:1}}<br>
+                        {{song.tot_score|truncate_number:1}}<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
