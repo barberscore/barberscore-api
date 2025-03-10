@@ -1,3 +1,4 @@
+{% load oss_extras %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -72,7 +73,7 @@
             </h4>
           {% endif %}
           {% endcomment %}
-          <strong>Points:  {{group.tot_points}} ({{group.tot_score|floatformat:1}})</strong><br><br>
+          <strong>Points:  {{group.tot_points}} ({{group.tot_score|truncate_number:1}})</strong><br><br>
           {% if group.get_kind_display != 'Quartet' %}
             Director(s): {{ appearance.participants|default:"(Unknown)" }}<br>
             Persons on Stage: {{ appearance.pos|default:"(Unknown)" }}
@@ -114,38 +115,38 @@
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{group.mus_points}}&nbsp;({{group.mus_score|floatformat:1}})</strong><br>
+                  <strong>{{group.mus_points}}&nbsp;({{group.mus_score|truncate_number:1}})</strong><br>
                   {% for appearance in group.appearances_patched %}
-                    {% if group.max > 1 %}<span class='bolder'>{{appearance.mus_points}}&nbsp;({{appearance.mus_score|floatformat:1}})</span><br>{% endif %}
+                    {% if group.max > 1 %}<span class='bolder'>{{appearance.mus_points}}&nbsp;({{appearance.mus_score|truncate_number:1}})</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                      {{song.mus_points}}&nbsp;({{song.mus_score|floatformat:1}})<br>
+                      {{song.mus_points}}&nbsp;({{song.mus_score|truncate_number:1}})<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{group.per_points}}&nbsp;({{group.per_score|floatformat:1}})</strong><br>
+                  <strong>{{group.per_points}}&nbsp;({{group.per_score|truncate_number:1}})</strong><br>
                   {% for appearance in group.appearances_patched %}
-                    {% if group.max > 1 %}<span class='bolder'>{{appearance.per_points}}&nbsp;({{appearance.per_score|floatformat:1}})</span><br>{% endif %}
+                    {% if group.max > 1 %}<span class='bolder'>{{appearance.per_points}}&nbsp;({{appearance.per_score|truncate_number:1}})</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                      {{song.per_points}}&nbsp;({{song.per_score|floatformat:1}})<br>
+                      {{song.per_points}}&nbsp;({{song.per_score|truncate_number:1}})<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{group.sng_points}}&nbsp;({{group.sng_score|floatformat:1}})</strong><br>
+                  <strong>{{group.sng_points}}&nbsp;({{group.sng_score|truncate_number:1}})</strong><br>
                   {% for appearance in group.appearances_patched %}
-                    {% if group.max > 1 %}<span class='bolder'>{{appearance.sng_points}}&nbsp;({{appearance.sng_score|floatformat:1}})</span><br>{% endif %}
+                    {% if group.max > 1 %}<span class='bolder'>{{appearance.sng_points}}&nbsp;({{appearance.sng_score|truncate_number:1}})</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                      {{song.sng_points}}&nbsp;({{song.sng_score|floatformat:1}})<br>
+                      {{song.sng_points}}&nbsp;({{song.sng_score|truncate_number:1}})<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
-                  <strong>{{group.tot_points}}&nbsp;({{group.tot_score|floatformat:1}})</strong><br>
+                  <strong>{{group.tot_points}}&nbsp;({{group.tot_score|truncate_number:1}})</strong><br>
                   {% for appearance in group.appearances_patched %}
-                    {% if group.max > 1 %}<span class='bolder'>{{appearance.tot_points}}&nbsp;({{appearance.tot_score|floatformat:1}})</span><br>{% endif %}
+                    {% if group.max > 1 %}<span class='bolder'>{{appearance.tot_points}}&nbsp;({{appearance.tot_score|truncate_number:1}})</span><br>{% endif %}
                     {% for song in appearance.songs_patched %}
-                      {{song.tot_points}}&nbsp;({{song.tot_score|floatformat:1}})<br>
+                      {{song.tot_points}}&nbsp;({{song.tot_score|truncate_number:1}})<br>
                     {% endfor %}
                   {% endfor %}
                 </td>
