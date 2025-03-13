@@ -1,9 +1,15 @@
 from django import template
-import math
+from django.apps import apps
+
+from apps.adjudication.rounders import bankers
+from apps.adjudication.rounders import standard
 
 register = template.Library()
 
-@register.filter
-def truncate_number(value, n):
-    return math.floor(value * 10 ** n) / 10 ** n
+@register.filter(name='bankers_round')
+def bankers_round(num):
+    return bankers(num)
 
+@register.filter(name='standard_round')
+def standard_round(num):
+    return standard(num)

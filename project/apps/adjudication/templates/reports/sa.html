@@ -118,7 +118,7 @@
               <tr>
                 <td width="243">
                   <strong>{{group.name|truncatechars_html:30|safe}}</strong><br>
-                  <strong>{{group.stats.tot_points|floatformat:0}}</strong>&nbsp;&nbsp;{{group.tot_score_avg|truncate_number:1}}<br>
+                  <strong>{{group.stats.tot_points|floatformat:0}}</strong>&nbsp;&nbsp;{{group.tot_score_avg|standard_round}}<br>
                   <!-- <strong>{{group.tot_rank}}</strong>&nbsp;&nbsp;{{group.mus_rank}}/{{group.per_rank}}/{{group.sng_rank}}<br> -->
                   ({% for appearance in group.appearances_patched %}{% if appearance.status == -20 %}SCRATCHED{% else %}{% include 'reports/includes/round_kind.html' with kind=appearance.round.kind %}{{ appearance.num }}{% endif %}{% if not forloop.last %}&nbsp;{% endif %}{% endfor %})
                 </td>
@@ -129,22 +129,22 @@
                 </td>
                 <td class='text-right' style="white-space: nowrap;">
                   {% for appearance in group.appearances_patched %}
-                    {% if appearance.rankings.mus_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.mus_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.mus_score|truncate_number:1}}&nbsp;&nbsp;{% for score, diff, practice in song.mus_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;0&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
+                    {% if appearance.rankings.mus_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.mus_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.mus_score|bankers_round}}&nbsp;&nbsp;{% for score, diff, practice in song.mus_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;0&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right' style="white-space: nowrap;">
                   {% for appearance in group.appearances_patched %}
-                    {% if appearance.rankings.per_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.per_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.per_score|truncate_number:1}}&nbsp;&nbsp;{% for score, diff, practice in song.per_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;0&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
+                    {% if appearance.rankings.per_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.per_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.per_score|bankers_round}}&nbsp;&nbsp;{% for score, diff, practice in song.per_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;0&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right' style="white-space: nowrap;">
                   {% for appearance in group.appearances_patched %}
-                    {% if appearance.rankings.sng_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.sng_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.sng_score|truncate_number:1}}&nbsp;&nbsp;{% for score, diff, practice in song.sng_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;0&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
+                    {% if appearance.rankings.sng_round_rank < 10 %}&nbsp;{% endif %}{{ appearance.rankings.sng_round_rank }}&nbsp;{% for song in appearance.songs_patched %}{% if forloop.counter > 1 %}&nbsp;&nbsp;{% endif %}{{song.sng_score|bankers_round}}&nbsp;&nbsp;{% for score, diff, practice in song.sng_scores %}{% if score %}{% if diff %}<span class='d-practice'>{{score}}</span>&nbsp;{% else %}{{score}}&nbsp;{% endif %}{% else %}&nbsp;0&nbsp;{% endif %}{% endfor %}<br>{% endfor %}
                   {% endfor %}
                 </td>
                 <td class='text-right'>
                   {% for appearance in group.appearances_patched %}
-                    {% for song in appearance.songs_patched %}&nbsp;<strong>{{song.tot_score|truncate_number:1}}</strong>&nbsp;<br>{% endfor %}
+                    {% for song in appearance.songs_patched %}&nbsp;<strong>{{song.tot_score|standard_round}}</strong>&nbsp;<br>{% endfor %}
                   {% endfor %}
                 </td>
               </tr>
