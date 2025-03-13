@@ -69,8 +69,8 @@ from .managers import PanelistManager
 from .managers import SongManager
 from .managers import ScoreManager
 
-from .helpers import round_up as rnd
-from .helpers import truncate_number
+from .rounders import bankers as bankers_round
+from .rounders import standard as standard_round
 
 log = logging.getLogger(__name__)
 
@@ -706,7 +706,7 @@ class Appearance(TimeStampedModel):
             if "points" in key:
                 stats[key] = math.floor(value)
             else:
-                stats[key] = truncate_number(value, 1)
+                stats[key] = value
 
         return stats
 
@@ -779,10 +779,10 @@ class Appearance(TimeStampedModel):
                 ),                
             ),
         )
-        stats['tot_score'] = round((stats['tot_points'] / stats['score_count']), 1)
+        stats['tot_score'] = standard_round((stats['tot_points'] / stats['score_count']))
         stats.pop("score_count", None)
         for key, value in stats.items():
-            stats[key] = rnd(value, 1)
+            stats[key] = bankers_round(value)
         return stats
 
     def get_csa(self):
@@ -5165,8 +5165,8 @@ class Round(TimeStampedModel):
                 group = Group.objects.get(id=winner.group_id)
                 document.add_paragraph(
                     "With a score of {0}, a {1} average: {2}".format(
-                        winner.stats['tot_points'],
-                        winner.stats['tot_score'],
+                        int(winner.stats['tot_points']),
+                        standard_round(winner.stats['tot_score']),
                         html.unescape(group.name),
                     ),
                     style='List Bullet',
