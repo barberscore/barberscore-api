@@ -791,6 +791,7 @@ class Appearance(TimeStampedModel):
         Panelist = apps.get_model('adjudication.panelist')
         Song = apps.get_model('adjudication.song')
         Score = apps.get_model('adjudication.score')
+        Session = apps.get_model('registration.session')
 
         # Appearancers Block
         group = Group.objects.get(id=self.group_id)
@@ -1114,9 +1115,11 @@ class Appearance(TimeStampedModel):
             context,
         )
         statelog = self.round.statelogs.latest('timestamp')
+        
+        session = Session.objects.get(id=self.round.session_id)
         footer = 'Published by {0} at {1}'.format(
             statelog.by.name,
-            statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            statelog.timestamp.astimezone(session.convention.timezone).strftime("%Y-%m-%d %H:%M:%S %Z"),
         )
         file = pydf.generate_pdf(
             rendered,
@@ -2398,6 +2401,8 @@ class Panelist(TimeStampedModel):
         Chart = apps.get_model('bhs.chart')
         Appearance = apps.get_model('adjudication.appearance')
         Score = apps.get_model('adjudication.score')
+        Session = apps.get_model('registration.session')
+
         # Score block
         group_ids = self.round.appearances.exclude(
             # Don't include advancers or MTs on PSA
@@ -2532,9 +2537,10 @@ class Panelist(TimeStampedModel):
             context,
         )
         statelog = self.round.statelogs.latest('timestamp')
+        session = Session.objects.get(id=self.round.session_id)
         footer = 'Published by {0} at {1}'.format(
             statelog.by.name,
-            statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            statelog.timestamp.astimezone(session.convention.timezone).strftime("%Y-%m-%d %H:%M:%S %Z"),
         )
         file = pydf.generate_pdf(
             rendered,
@@ -3607,11 +3613,11 @@ class Round(TimeStampedModel):
         }
         rendered = render_to_string('reports/oss.html', context)
 
+        Session = apps.get_model('registration.session')
+        session = Session.objects.get(id=self.session_id)
+
         if paper_size is None:
             if self.get_district_display() == 'BHS':
-                Session = apps.get_model('registration.session')
-                session = Session.objects.get(id=self.session_id)
-
                 if session.convention.name == 'International Youth Convention':
                     page_size = 'Legal'
                 elif session.kind == session.KIND.quartet and self.kind == self.KIND.semis:
@@ -3638,13 +3644,13 @@ class Round(TimeStampedModel):
             if published_by is not None:
                 footer = 'Published by {0} at {1}'.format(
                     published_by,
-                    datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S %Z"),
+                    datetime.datetime.now().astimezone(session.convention.timezone).strftime("%Y-%m-%d %H:%M:%S %Z"),
                 )
             else:
                 statelog = self.statelogs.latest('timestamp')
                 footer = 'Published by {0} at {1}'.format(
                     statelog.by.name,
-                    statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+                    statelog.timestamp.astimezone(session.convention.timezone).strftime("%Y-%m-%d %H:%M:%S %Z"),
                 )
         except StateLog.DoesNotExist:
             footer = '(Unknown)'
@@ -3694,6 +3700,7 @@ class Round(TimeStampedModel):
         Appearance = apps.get_model('adjudication.appearance')
         Panelist = apps.get_model('adjudication.panelist')
         Song = apps.get_model('adjudication.song')
+        Session = apps.get_model('registration.session')
 
         # Score Block
         # group_ids = self.appearances.exclude(
@@ -4469,16 +4476,19 @@ class Round(TimeStampedModel):
         rendered = render_to_string('reports/sa.html', context)
         # return rendered
 
+        # Get Session to get to Convention timezone
+        session = Session.objects.get(id=self.session_id)
+
         if published_by is not None:
             footer = 'Published by {0} at {1}'.format(
                 published_by,
-                datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S %Z"),
+                datetime.datetime.now().astimezone(session.convention.timezone).strftime("%Y-%m-%d %H:%M:%S %Z"),
             )
         else:
             statelog = self.statelogs.latest('timestamp')
             footer = 'Published by {0} at {1}'.format(
                 statelog.by.name,
-                statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+                statelog.timestamp.astimezone(session.convention.timezone).strftime("%Y-%m-%d %H:%M:%S %Z"),
             )
  
         file = pydf.generate_pdf(
@@ -4600,6 +4610,7 @@ class Round(TimeStampedModel):
         Appearance = apps.get_model('adjudication.appearance')
         Song = apps.get_model('adjudication.song')
         Score = apps.get_model('adjudication.score')
+        Session = apps.get_model('registration.session')
 
         # Get the Groups
         group_ids = self.appearances.filter(
@@ -4867,11 +4878,15 @@ class Round(TimeStampedModel):
         #     else:
         #         page_size = 'Letter'
         page_size = 'Letter'
+
+        # Get Session to get to Convention timezone
+        session = Session.objects.get(id=self.session_id)
+
         try:
             statelog = self.statelogs.latest('timestamp')
             footer = 'Published by {0} at {1}'.format(
                 statelog.by.name,
-                statelog.timestamp.strftime("%Y-%m-%d %H:%M:%S %Z"),
+                statelog.timestamp.astimetamp(session.convention.timezone).strftime("%Y-%m-%d %H:%M:%S %Z"),
             )
         except StateLog.DoesNotExist:
             footer = ""
