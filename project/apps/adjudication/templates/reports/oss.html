@@ -59,10 +59,11 @@
   <body>
     <main role='main' class='container'>
       <section>
-        <img class='float-right small_logo' src="{{round.convention.organization.logo.url}}">
-        <!-- {% if round.convention.image %}
+        {% if round.convention.organization.logo %}
+          <img class='float-right small_logo' src="{{round.convention.organization.logo.url}}">
+        {% elif round.convention.image %}
           <img class='float-right small_logo' src="{{round.convention.image.url}}">
-        {% endif %} -->
+        {% endif %}
         <h6>
           Official Scoring Summary<br>
           {{round.nomen}}<br>
