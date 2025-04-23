@@ -5235,7 +5235,8 @@ class Round(TimeStampedModel):
                 **panelist_filters
             ).order_by(
                 'category',
-                'last_name',
+                'kind',
+                'num',
                 'round__session_kind',
                 'round__kind',
             )
@@ -5277,7 +5278,7 @@ class Round(TimeStampedModel):
         directors = {}
         completed = []
         for judge in panelists:
-            if judge.person_id not in completed:
+            if judge.num not in completed:
                 for appearance in appearances:
 
                     document += "\\page {0}. {1}\t\\\n".format(
@@ -5310,7 +5311,7 @@ class Round(TimeStampedModel):
                     document += "\\pard\\tqc\\tx5400\\tqr\\tx10800\\pardeftab720\\ri0\\partightenfactor0\n"
                     document += "\\cf2 \t\t\\\n"
 
-                completed.append(judge.person_id)
+                completed.append(judge.num)
 
         # End of File...
         document += "\\\n"
