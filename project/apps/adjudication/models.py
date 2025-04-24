@@ -703,7 +703,7 @@ class Appearance(TimeStampedModel):
         )
 
         for key, value in stats.items():
-            if "points" in key:
+            if "points" in key and value:
                 stats[key] = math.floor(value)
             else:
                 stats[key] = value
