@@ -1,3 +1,10 @@
 build:
   docker:
     web: Dockerfile
+
+run:
+    worker:
+      command:
+        - django-admin rqworker high default low
+      image: web
+
