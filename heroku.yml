@@ -5,6 +5,7 @@ build:
 run:
     web:
       command:
+      - django-admin collectstatic --no-input
       - gunicorn project.wsgi:application  --bind 0.0.0.0:$PORT
     worker:
       command:
