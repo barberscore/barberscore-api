@@ -24,8 +24,8 @@ COPY . /app/
 WORKDIR /app
 ENV PATH="$PATH:/app/project/"
 
-RUN python manage.py collectstatic --no-input
-RUN python manage.py migrate
+RUN django-admin collectstatic --no-input
+RUN django-admin migrate --noinput
 
 # Run the application
 CMD ["gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:8000"]
