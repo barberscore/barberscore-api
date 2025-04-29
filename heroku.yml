@@ -3,8 +3,14 @@ build:
     web: Dockerfile
 
 run:
+    web:
+      command:
+      - gunicorn project.wsgi:application  --bind 0.0.0.0:$PORT
     worker:
       command:
         - django-admin rqworker high default low
       image: web
-
+    release:
+      command:
+        - django-admin migrate --noinput
+      image: web

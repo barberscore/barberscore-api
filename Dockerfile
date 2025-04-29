@@ -28,4 +28,4 @@ ENV PATH="$PATH:/app/project/"
 # RUN python manage.py migrate --noinput
 
 # Run the application
-CMD gunicorn project.wsgi:application  --bind 0.0.0.0:$PORT
+# CMD gunicorn project.wsgi:application  --bind 0.0.0.0:$PORT
