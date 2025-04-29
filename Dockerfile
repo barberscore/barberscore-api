@@ -28,4 +28,4 @@ RUN django-admin collectstatic --no-input
 RUN django-admin migrate --noinput
 
 # Run the application
-CMD ["gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:$PORT"]
