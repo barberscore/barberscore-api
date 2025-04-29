@@ -21,6 +21,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the application code
 COPY . /app/
 
+WORKDIR /app
+ENV PATH="$PATH:/app/project/"
+
 RUN python manage.py collectstatic --no-input
 RUN python manage.py migrate
 
