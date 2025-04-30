@@ -5,12 +5,8 @@ build:
 run:
     web:
       command:
-      - django-admin collectstatic --no-input && gunicorn project.wsgi:application  --bind 0.0.0.0:$PORT
+      - django-admin migrate --noinput && django-admin collectstatic --no-input && gunicorn project.wsgi:application  --bind 0.0.0.0:$PORT
     worker:
       command:
         - django-admin rqworker high default low
-      image: web
-    release:
-      command:
-        - django-admin migrate --noinput
       image: web
