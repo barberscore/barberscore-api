@@ -99,7 +99,7 @@ def get_stats_round(apps, round_id, group_id):
     for key, value in stats.items():
         if key != 'tot_score' and key.endswith('_score'):
             stats[key] = round_up(value, 1)
-        elif key is 'tot_score':
+        elif key == 'tot_score':
             stats[key] = round(value, 1)
     return stats
 
