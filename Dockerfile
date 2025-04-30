@@ -10,7 +10,7 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends gcc git postgresql libpq-dev default-mysql-client libmariadb-dev-compat libmariadb-dev \
+    && apt-get install -y --no-install-recommends curl gcc git postgresql libpq-dev default-mysql-client libmariadb-dev-compat libmariadb-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
