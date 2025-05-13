@@ -22,13 +22,7 @@ RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkh
 RUN ls
 RUN tar xvJf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
 RUN cp wkhtmltox/bin/wkhtmlto* /usr/bin/
-# RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
-# RUN dpkg -i wkhtmltox_0.12.5-1.bionic_amd64.deb
-# RUN apt-get install -y -f
-# RUN ln -s /usr/local/bin/wkhtmltopdf /usr/bin/wkhtmltopdf
 
-
-# RUN ln -s /usr/lib/aarch64-linux-gnu/libjpeg.so.62 /usr/lib/aarch64-linux-gnu/libjpeg.so.8
 RUN rm -f /usr/bin/python3 && ln -s /usr/bin/python3.9 /usr/bin/python3
 
 # Install Python dependencies
