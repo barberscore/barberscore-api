@@ -11,7 +11,8 @@ ALLOWED_HOSTS = [
     '.barberscore.com',
     '.herokuapp.com',
 ]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 SECURE_SSL_REDIRECT = True
 
 

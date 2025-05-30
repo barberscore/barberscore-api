@@ -23,7 +23,7 @@ urlpatterns = [
 ]
 
 if settings.DEBUG and settings.DJANGO_SETTINGS_MODULE == 'settings.dev':
-    import debug_toolbar
+    # import debug_toolbar
     urlpatterns += [
         re_path(
             r'^media/(?P<path>.*)$',
@@ -31,5 +31,5 @@ if settings.DEBUG and settings.DJANGO_SETTINGS_MODULE == 'settings.dev':
                 'document_root': settings.MEDIA_ROOT,
             }
         ),
-        path('__debug__/', include(debug_toolbar.urls)),
+        # path('__debug__/', include(debug_toolbar.urls)),
     ]

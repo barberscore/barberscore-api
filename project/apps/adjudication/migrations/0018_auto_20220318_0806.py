@@ -88,7 +88,7 @@ def get_stats_round(apps, round_id, group_id):
             filter=Q(
                 appearances__songs__scores__panelist__kind=KIND.official,
                 appearances__group_id=group_id,
-            ),                
+            ),
         ),
     )
     if stats['tot_points'] is not None:
@@ -97,9 +97,9 @@ def get_stats_round(apps, round_id, group_id):
         stats['tot_score'] = 0
     stats.pop("score_count", None)
     for key, value in stats.items():
-        if key is not 'tot_score' and key.endswith('_score'):
+        if key != 'tot_score' and key.endswith('_score'):
             stats[key] = round_up(value, 1)
-        elif key is 'tot_score':
+        elif key == 'tot_score':
             stats[key] = round(value, 1)
     return stats
 
