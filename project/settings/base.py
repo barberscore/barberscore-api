@@ -170,6 +170,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+if get_env_variable('USE_HTTPS'):
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+
 # Templating
 TEMPLATES = [
     {
@@ -329,7 +333,7 @@ def get_app_list(self, request):
         if app_name in ADMIN_ORDERING:
             app = app_dict[app_name]
             app['models'].sort(key=lambda x: ADMIN_ORDERING[app_name].index(x['object_name']))
-            yield app            
+            yield app
         else:
             yield app_dict[app_name]
 

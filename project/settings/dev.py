@@ -21,8 +21,8 @@ EMAIL_PORT = 1026
 
 
 # Debug Toolbar
-MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+'''MIDDLEWARE = [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
 ] + MIDDLEWARE
 MIDDLEWARE += [
     'querycount.middleware.QueryCountMiddleware',
@@ -35,7 +35,7 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.signals.SignalsPanel',
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
-]
+]'''
 
 # Async settings
 # if DEBUG:
@@ -45,7 +45,7 @@ DEBUG_TOOLBAR_PANELS = [
 # else:
 RQ_QUEUES['default']['ASYNC'] = True
 RQ_QUEUES['high']['ASYNC'] = True
-RQ_QUEUES['low']['ASYNC'] = True    
+RQ_QUEUES['low']['ASYNC'] = True
 
 # Algolia Overwrite
 ALGOLIA['INDEX_SUFFIX'] = 'dev'
@@ -99,7 +99,7 @@ LOGGING = {
 }
 
 INSTALLED_APPS += [
-    'debug_toolbar',
+    # 'debug_toolbar',
     'whitenoise.runserver_nostatic',
 ]
 
