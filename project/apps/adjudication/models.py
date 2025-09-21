@@ -491,6 +491,9 @@ class Appearance(TimeStampedModel):
         Score = apps.get_model('adjudication.score')
         Panelist = apps.get_model('adjudication.panelist')
 
+        # Confirm variance figures...
+        self.check_variance()
+
         # Group
         group = Group.objects.get(id=self.group_id)
         # Songs Block
