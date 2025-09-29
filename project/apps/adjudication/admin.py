@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.contrib import messages
 from django.apps import apps
 from django.conf import settings
+from reversion.admin import VersionAdmin
 # Local
 # from .filters import AppearanceConventionStatusListFilter
 # from .filters import ConventionStatusListFilter
@@ -291,7 +292,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Score)
-class ScoreAdmin(admin.ModelAdmin):
+class ScoreAdmin(admin.ModelAdmin, VersionAdmin):
     fields = [
         # 'name',
         # 'status',
