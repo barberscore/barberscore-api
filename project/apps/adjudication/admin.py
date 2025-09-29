@@ -292,7 +292,7 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
 
 @admin.register(Score)
-class ScoreAdmin(admin.ModelAdmin, VersionAdmin):
+class ScoreAdmin(VersionAdmin):
     fields = [
         # 'name',
         # 'status',
