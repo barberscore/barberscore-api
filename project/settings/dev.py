@@ -23,10 +23,11 @@ EMAIL_PORT = 1026
 # Debug Toolbar
 '''MIDDLEWARE = [
         'debug_toolbar.middleware.DebugToolbarMiddleware',
-] + MIDDLEWARE
+] + MIDDLEWARE'''
 MIDDLEWARE += [
     'querycount.middleware.QueryCountMiddleware',
 ]
+'''
 DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.timer.TimerPanel',
     'debug_toolbar.panels.request.RequestPanel',

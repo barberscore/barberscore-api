@@ -341,21 +341,44 @@ class ConventionCompleteView(APIView):
 class ConventionSyncView(APIView):
     """Sync a convention from production to staging environment.
     
-    This endpoint should only be used in staging environment.
+    When called from production: fetches convention data from prod DB and pushes to staging.
+    When called from staging: accepts convention data and syncs it to staging database.
     """
     permission_classes = [IsAuthenticated]
+    
+    def _is_production(self, request):
+        """Check if we're running in production environment by checking request host."""
+        host = request.get_host().lower()
+        # If 'staging' is in the host, we're in staging; otherwise, we're in production
+        return 'staging' not in host
     
     def post(self, request, pk, format=None):
         """Sync convention data from production to staging.
         
         POST /bhs/convention/<uuid>/sync
-        Uses BARBERSCORE_PROD_API_URL from environment for production endpoint.
+        
+        If called from production:
+        - Gets convention data from current (prod) database
+        - POSTs it to staging environment
+        
+        If called from staging:
+        - Accepts convention data in request body (from prod)
+        - Syncs it to staging database
         """
-        # Get production URL from environment
-        production_url = os.getenv('BARBERSCORE_PROD_API_URL')
-        if not production_url:
+        if self._is_production(request):
+            # We're in prod - get data from prod DB and push to staging
+            return self._sync_from_prod(request, pk)
+        else:
+            # We're in staging - accept data and sync it
+            return self._sync_to_staging(request, pk)
+    
+    def _sync_from_prod(self, request, pk):
+        """Get convention data from prod DB and push to staging."""
+        # Get staging URL from environment
+        staging_url = os.getenv('BARBERSCORE_STAGING_API_URL')
+        if not staging_url:
             return Response(
-                {'error': 'BARBERSCORE_PROD_API_URL not configured'},
+                {'error': 'BARBERSCORE_STAGING_API_URL not configured'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
@@ -367,30 +390,94 @@ class ConventionSyncView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
-        # Construct production endpoint URL
-        prod_endpoint = f"{production_url.rstrip('/')}/bhs/convention/{pk}/complete"
-        
+        # Get convention data from current (prod) database
         try:
-            # Call production endpoint
+            convention = Convention.objects.get(pk=pk)
+            convention_data = self._get_convention_complete_data(convention, request)
+        except Convention.DoesNotExist:
+            return Response(
+                {'error': f'Convention {pk} not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to get convention data: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+        # POST data to staging
+        staging_endpoint = f"{staging_url.rstrip('/')}/bhs/convention/{pk}/sync"
+        try:
             headers = {
                 'Authorization': f'Bearer {auth_token}',
                 'Content-Type': 'application/json'
             }
-            response = requests.get(prod_endpoint, headers=headers, timeout=30)
+            response = requests.post(
+                staging_endpoint,
+                json=convention_data,
+                headers=headers,
+                timeout=60
+            )
             response.raise_for_status()
             
-            convention_data = response.json()
+            return Response({
+                'message': 'Convention synced successfully to staging',
+                'convention_id': pk,
+                'staging_response': response.json()
+            })
             
         except requests.exceptions.RequestException as e:
             return Response(
-                {'error': f'Failed to fetch from production: {str(e)}'},
+                {'error': f'Failed to push to staging: {str(e)}'},
                 status=status.HTTP_502_BAD_GATEWAY
             )
-        except ValueError as e:
-            return Response(
-                {'error': f'Invalid JSON response from production: {str(e)}'},
-                status=status.HTTP_502_BAD_GATEWAY
-            )
+    
+    def _sync_to_staging(self, request, pk):
+        """Accept convention data and sync it to staging database."""
+        # Get convention data from request body
+        if request.data:
+            convention_data = request.data
+        else:
+            # Fallback: fetch from production (backward compatibility)
+            production_url = os.getenv('BARBERSCORE_PROD_API_URL')
+            if not production_url:
+                return Response(
+                    {'error': 'BARBERSCORE_PROD_API_URL not configured'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            
+            # Get auth token from environment
+            auth_token = os.getenv('BARBERSCORE_AUTH_TOKEN')
+            if not auth_token:
+                return Response(
+                    {'error': 'BARBERSCORE_AUTH_TOKEN not configured'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            
+            # Construct production endpoint URL
+            prod_endpoint = f"{production_url.rstrip('/')}/bhs/convention/{pk}/complete"
+            
+            try:
+                # Call production endpoint
+                headers = {
+                    'Authorization': f'Bearer {auth_token}',
+                    'Content-Type': 'application/json'
+                }
+                response = requests.get(prod_endpoint, headers=headers, timeout=30)
+                response.raise_for_status()
+                
+                convention_data = response.json()
+                
+            except requests.exceptions.RequestException as e:
+                return Response(
+                    {'error': f'Failed to fetch from production: {str(e)}'},
+                    status=status.HTTP_502_BAD_GATEWAY
+                )
+            except ValueError as e:
+                return Response(
+                    {'error': f'Invalid JSON response from production: {str(e)}'},
+                    status=status.HTTP_502_BAD_GATEWAY
+                )
         
         # Sync data to staging
         try:
@@ -408,6 +495,106 @@ class ConventionSyncView(APIView):
                 {'error': f'Failed to sync data: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+    
+    def _get_convention_complete_data(self, convention, request):
+        """Get complete convention data (same logic as ConventionCompleteView)."""
+        # Base convention payload
+        convention_data = ConventionSerializer(convention, context={'request': request}).data
+
+        # Gather sessions for this convention
+        sessions = Session.objects.filter(convention_id=convention.id).prefetch_related(
+            'assignments',
+            'contests',
+            'entries',
+        )
+
+        # Build nested sessions payload
+        sessions_payload = []
+        for session in sessions:
+            session_data = SessionSerializer(session, context={'request': request}).data
+
+            # Assignments
+            assignments_qs = session.assignments.all()
+            session_data['assignments'] = AssignmentSerializer(assignments_qs, many=True, context={'request': request}).data
+
+            # Contests (with entries)
+            contests_qs = session.contests.prefetch_related('entries').all()
+            session_data['contests'] = ContestSerializer(contests_qs, many=True, context={'request': request}).data
+
+            # Entries (includes initial draw field on the entry)
+            entries_qs = session.entries.all()
+            session_data['entries'] = EntrySerializer(entries_qs, many=True, context={'request': request}).data
+
+            # Session-level draw summary (initial draw numbers per entry)
+            session_data['draws'] = [
+                {
+                    'entry_id': str(entry.id),
+                    'group_id': entry.group_id,
+                    'draw': entry.draw,
+                }
+                for entry in entries_qs
+                if entry.draw is not None
+            ]
+
+            # Rounds for this session
+            rounds_qs = Round.objects.filter(session_id=session.id).prefetch_related(
+                'panelists',
+                'appearances',
+                'outcomes',
+            ).order_by('num')
+
+            rounds_payload = []
+            for rnd in rounds_qs:
+                round_data = RoundSerializer(rnd, context={'request': request}).data
+
+                # Panelists
+                round_data['panelists'] = PanelistSerializer(rnd.panelists.all(), many=True, context={'request': request}).data
+
+                # Appearances (contains per-appearance draw for next round)
+                appearances_qs = rnd.appearances.all().order_by('num')
+                round_data['appearances'] = AppearanceSerializer(appearances_qs, many=True, context={'request': request}).data
+
+                # Outcomes
+                round_data['outcomes'] = OutcomeSerializer(rnd.outcomes.all(), many=True, context={'request': request}).data
+
+                # Round draw summary (next-round draw numbers from appearances)
+                round_data['draw'] = [
+                    {
+                        'appearance_id': str(app.id),
+                        'group_id': app.group_id,
+                        'num': app.num,
+                        'draw': app.draw,
+                    }
+                    for app in appearances_qs if app.draw is not None
+                ]
+
+                # Simple standings calculation based on tot_points in appearance stats
+                try:
+                    appearances_for_rank = list(appearances_qs)
+                    appearances_for_rank.sort(
+                        key=lambda a: (a.stats or {}).get('tot_points', 0),
+                        reverse=True,
+                    )
+                    round_data['standings'] = [
+                        {
+                            'appearance_id': str(app.id),
+                            'group_id': app.group_id,
+                            'tot_points': (app.stats or {}).get('tot_points', 0),
+                        }
+                        for app in appearances_for_rank
+                    ]
+                except Exception:
+                    round_data['standings'] = []
+
+                rounds_payload.append(round_data)
+
+            session_data['rounds'] = rounds_payload
+
+            sessions_payload.append(session_data)
+
+        convention_data['sessions'] = sessions_payload
+
+        return convention_data
     
     def _sync_convention_data(self, convention_data):
         """Sync convention data from production to staging database."""

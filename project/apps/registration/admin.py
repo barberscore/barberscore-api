@@ -389,6 +389,7 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
     search_fields = [
         'district',
         'kind',
+        'id'
     ]
 
     # raw_id_fields = [
