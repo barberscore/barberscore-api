@@ -7,9 +7,6 @@ import dj_database_url
 # Django
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib import admin
-import dotenv
-
-dotenv.read_dotenv(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), '.env')
 
 
 def get_env_variable(var_name):
@@ -32,7 +29,7 @@ TASK_USER_ID = "auth0|6149b95c273488006af78263"
 
 # Common
 DJANGO_SETTINGS_MODULE = get_env_variable("DJANGO_SETTINGS_MODULE")
-DEBUG = True
+DEBUG = False
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 SECRET_KEY = get_env_variable("SECRET_KEY")
