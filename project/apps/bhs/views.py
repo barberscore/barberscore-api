@@ -62,12 +62,14 @@ from apps.registration.serializers import (
     ContestSerializer,
     EntrySerializer,
 )
-from apps.adjudication.models import Round, Panelist, Appearance, Outcome
+from apps.adjudication.models import Round, Panelist, Appearance, Outcome, Song, Score
 from apps.adjudication.serializers import (
     RoundSerializer,
     PanelistSerializer,
     AppearanceSerializer,
     OutcomeSerializer,
+    SongSerializer,
+    ScoreSerializer,
 )
 
 
@@ -498,6 +500,8 @@ class ConventionSyncView(APIView):
     
     def _get_convention_complete_data(self, convention, request):
         """Get complete convention data (same logic as ConventionCompleteView)."""
+        from apps.bhs.models import Award, Chart, Person, Group
+        
         # Base convention payload
         convention_data = ConventionSerializer(convention, context={'request': request}).data
 
@@ -508,6 +512,14 @@ class ConventionSyncView(APIView):
             'entries',
         )
 
+        # Collect IDs for related objects
+        award_ids = set()
+        chart_ids = set()
+        person_ids = set()
+        group_ids = set()
+        entry_ids = set()
+        contest_ids = set()
+
         # Build nested sessions payload
         sessions_payload = []
         for session in sessions:
@@ -516,14 +528,38 @@ class ConventionSyncView(APIView):
             # Assignments
             assignments_qs = session.assignments.all()
             session_data['assignments'] = AssignmentSerializer(assignments_qs, many=True, context={'request': request}).data
+            # Collect person IDs from assignments
+            for assignment in assignments_qs:
+                if assignment.person_id:
+                    person_ids.add(assignment.person_id)
 
             # Contests (with entries)
             contests_qs = session.contests.prefetch_related('entries').all()
             session_data['contests'] = ContestSerializer(contests_qs, many=True, context={'request': request}).data
+            # Collect award IDs from contests
+            for contest in contests_qs:
+                contest_ids.add(contest.id)
+                if contest.award_id:
+                    award_ids.add(contest.award_id)
 
             # Entries (includes initial draw field on the entry)
             entries_qs = session.entries.all()
             session_data['entries'] = EntrySerializer(entries_qs, many=True, context={'request': request}).data
+            # Collect group IDs from entries and track entry-contest relationships
+            entry_contest_relationships = []
+            for entry in entries_qs:
+                entry_ids.add(entry.id)
+                if entry.group_id:
+                    group_ids.add(entry.group_id)
+                # Track entry-contest relationships
+                for contest in entry.contests.all():
+                    entry_contest_relationships.append({
+                        'entry_id': str(entry.id),
+                        'contest_id': str(contest.id),
+                    })
+
+            # Store entry-contest relationships
+            session_data['entry_contests'] = entry_contest_relationships
 
             # Session-level draw summary (initial draw numbers per entry)
             session_data['draws'] = [
@@ -552,7 +588,26 @@ class ConventionSyncView(APIView):
 
                 # Appearances (contains per-appearance draw for next round)
                 appearances_qs = rnd.appearances.all().order_by('num')
-                round_data['appearances'] = AppearanceSerializer(appearances_qs, many=True, context={'request': request}).data
+                appearances_data = []
+                for appearance in appearances_qs:
+                    appearance_data = AppearanceSerializer(appearance, context={'request': request}).data
+                    
+                    # Songs and Scores for this appearance
+                    songs_qs = Song.objects.filter(appearance_id=appearance.id).order_by('num')
+                    songs_data = []
+                    for song in songs_qs:
+                        song_data = SongSerializer(song, context={'request': request}).data
+                        # Collect chart IDs from songs
+                        if song.chart_id:
+                            chart_ids.add(song.chart_id)
+                        # Get scores for this song
+                        scores_qs = Score.objects.filter(song_id=song.id)
+                        song_data['scores'] = ScoreSerializer(scores_qs, many=True, context={'request': request}).data
+                        songs_data.append(song_data)
+                    appearance_data['songs'] = songs_data
+                    appearances_data.append(appearance_data)
+                
+                round_data['appearances'] = appearances_data
 
                 # Outcomes
                 round_data['outcomes'] = OutcomeSerializer(rnd.outcomes.all(), many=True, context={'request': request}).data
@@ -594,13 +649,36 @@ class ConventionSyncView(APIView):
 
         convention_data['sessions'] = sessions_payload
 
+        # Collect Charts from Groups (Repertory)
+        if group_ids:
+            groups = Group.objects.filter(id__in=group_ids).prefetch_related('charts')
+            for group in groups:
+                for chart in group.charts.all():
+                    chart_ids.add(chart.id)
+
+        # Fetch and serialize Awards
+        awards = Award.objects.filter(id__in=award_ids) if award_ids else Award.objects.none()
+        convention_data['awards'] = AwardSerializer(awards, many=True, context={'request': request}).data
+
+        # Fetch and serialize Charts
+        charts = Chart.objects.filter(id__in=chart_ids) if chart_ids else Chart.objects.none()
+        convention_data['charts'] = ChartSerializer(charts, many=True, context={'request': request}).data
+
+        # Fetch and serialize Persons
+        persons = Person.objects.filter(id__in=person_ids) if person_ids else Person.objects.none()
+        convention_data['persons'] = PersonSerializer(persons, many=True, context={'request': request}).data
+
+        # Fetch and serialize Groups
+        groups = Group.objects.filter(id__in=group_ids) if group_ids else Group.objects.none()
+        convention_data['groups'] = GroupSerializer(groups, many=True, context={'request': request}).data
+
         return convention_data
     
     def _sync_convention_data(self, convention_data):
         """Sync convention data from production to staging database."""
-        from apps.bhs.models import Convention
+        from apps.bhs.models import Convention, Award, Chart, Person, Group
         from apps.registration.models import Session, Assignment, Contest, Entry
-        from apps.adjudication.models import Round, Panelist, Appearance, Outcome
+        from apps.adjudication.models import Round, Panelist, Appearance, Outcome, Song, Score
         
         sync_result = {
             'convention_updated': False,
@@ -612,6 +690,13 @@ class ConventionSyncView(APIView):
             'panelists_synced': 0,
             'appearances_synced': 0,
             'outcomes_synced': 0,
+            'awards_synced': 0,
+            'charts_synced': 0,
+            'persons_synced': 0,
+            'groups_synced': 0,
+            'entry_contests_synced': 0,
+            'songs_synced': 0,
+            'scores_synced': 0,
         }
         
         # Sync convention
@@ -636,6 +721,103 @@ class ConventionSyncView(APIView):
             }
         )
         sync_result['convention_updated'] = True
+        
+        # Sync Awards
+        for award_data in convention_data.get('awards', []):
+            award_id = award_data['id']
+            Award.objects.update_or_create(
+                id=award_id,
+                defaults={
+                    'name': award_data.get('name', ''),
+                    'status': award_data.get('status'),
+                    'kind': award_data.get('kind'),
+                    'gender': award_data.get('gender'),
+                    'level': award_data.get('level'),
+                    'season': award_data.get('season'),
+                    'is_single': award_data.get('is_single', False),
+                    'threshold': award_data.get('threshold'),
+                    'minimum': award_data.get('minimum'),
+                    'spots': award_data.get('spots'),
+                    'description': award_data.get('description', ''),
+                    'notes': award_data.get('notes', ''),
+                    'district': award_data.get('district'),
+                    'division': award_data.get('division'),
+                    'age': award_data.get('age'),
+                    'is_novice': award_data.get('is_novice', False),
+                    'size': award_data.get('size'),
+                    'size_range': award_data.get('size_range'),
+                    'scope': award_data.get('scope'),
+                    'scope_range': award_data.get('scope_range'),
+                    'tree_sort': award_data.get('tree_sort'),
+                }
+            )
+            sync_result['awards_synced'] += 1
+        
+        # Sync Charts
+        for chart_data in convention_data.get('charts', []):
+            chart_id = chart_data['id']
+            Chart.objects.update_or_create(
+                id=chart_id,
+                defaults={
+                    'status': chart_data.get('status'),
+                    'title': chart_data.get('title', ''),
+                    'arrangers': chart_data.get('arrangers', ''),
+                }
+            )
+            sync_result['charts_synced'] += 1
+        
+        # Sync Persons
+        for person_data in convention_data.get('persons', []):
+            person_id = person_data['id']
+            Person.objects.update_or_create(
+                id=person_id,
+                defaults={
+                    'status': person_data.get('status'),
+                    'name': person_data.get('name', ''),
+                    'first_name': person_data.get('first_name', ''),
+                    'last_name': person_data.get('last_name', ''),
+                    'part': person_data.get('part'),
+                    'gender': person_data.get('gender'),
+                    'district': person_data.get('district'),
+                    'email': person_data.get('email'),
+                    'address': person_data.get('address', ''),
+                    'home_phone': person_data.get('home_phone'),
+                    'work_phone': person_data.get('work_phone'),
+                    'cell_phone': person_data.get('cell_phone'),
+                    'airports': person_data.get('airports', []),
+                    'description': person_data.get('description', ''),
+                    'notes': person_data.get('notes', ''),
+                    'bhs_id': person_data.get('bhs_id'),
+                    'source_id': person_data.get('source_id'),
+                }
+            )
+            sync_result['persons_synced'] += 1
+        
+        # Sync Groups
+        for group_data in convention_data.get('groups', []):
+            group_id = group_data['id']
+            group, created = Group.objects.update_or_create(
+                id=group_id,
+                defaults={
+                    'name': group_data.get('name', ''),
+                    'status': group_data.get('status'),
+                    'kind': group_data.get('kind'),
+                    'gender': group_data.get('gender'),
+                    'district': group_data.get('district'),
+                    'division': group_data.get('division'),
+                    'bhs_id': group_data.get('bhs_id'),
+                    'code': group_data.get('code', ''),
+                    'is_senior': group_data.get('is_senior', False),
+                    'is_youth': group_data.get('is_youth', False),
+                    'description': group_data.get('description', ''),
+                    'source_id': group_data.get('source_id'),
+                }
+            )
+            # Sync group-chart relationships (Repertory)
+            if 'charts' in group_data:
+                chart_ids = [chart['id'] if isinstance(chart, dict) else chart for chart in group_data['charts']]
+                group.charts.set(Chart.objects.filter(id__in=chart_ids))
+            sync_result['groups_synced'] += 1
         
         # Sync sessions
         for session_data in convention_data.get('sessions', []):
@@ -703,7 +885,7 @@ class ConventionSyncView(APIView):
             # Sync entries
             for entry_data in session_data.get('entries', []):
                 entry_id = entry_data['id']
-                Entry.objects.update_or_create(
+                entry, created = Entry.objects.update_or_create(
                     id=entry_id,
                     defaults={
                         'session_id': session_id,
@@ -723,6 +905,26 @@ class ConventionSyncView(APIView):
                     }
                 )
                 sync_result['entries_synced'] += 1
+            
+            # Sync entry-contest relationships (registration_entry_contests)
+            # First, collect all entry-contest relationships for this session
+            entry_contest_map = {}
+            for entry_contest_data in session_data.get('entry_contests', []):
+                entry_id = entry_contest_data['entry_id']
+                contest_id = entry_contest_data['contest_id']
+                if entry_id not in entry_contest_map:
+                    entry_contest_map[entry_id] = []
+                entry_contest_map[entry_id].append(contest_id)
+            
+            # Now sync the relationships
+            for entry_id, contest_ids in entry_contest_map.items():
+                try:
+                    entry = Entry.objects.get(id=entry_id)
+                    contests = Contest.objects.filter(id__in=contest_ids)
+                    entry.contests.set(contests)
+                    sync_result['entry_contests_synced'] += len(contest_ids)
+                except Entry.DoesNotExist:
+                    pass
             
             # Sync rounds
             for round_data in session_data.get('rounds', []):
@@ -764,7 +966,7 @@ class ConventionSyncView(APIView):
                 # Sync appearances
                 for appearance_data in round_data.get('appearances', []):
                     appearance_id = appearance_data['id']
-                    Appearance.objects.update_or_create(
+                    appearance, created = Appearance.objects.update_or_create(
                         id=appearance_id,
                         defaults={
                             'round_id': round_id,
@@ -791,6 +993,50 @@ class ConventionSyncView(APIView):
                         }
                     )
                     sync_result['appearances_synced'] += 1
+                    
+                    # Sync Songs for this appearance
+                    for song_data in appearance_data.get('songs', []):
+                        song_id = song_data['id']
+                        song, created = Song.objects.update_or_create(
+                            id=song_id,
+                            defaults={
+                                'appearance_id': appearance_id,
+                                'status': song_data.get('status'),
+                                'num': song_data.get('num'),
+                                'asterisks': song_data.get('asterisks', []),
+                                'dixons': song_data.get('dixons', []),
+                                'penalties': song_data.get('penalties', []),
+                                'stats': song_data.get('stats'),
+                                'chart_id': song_data.get('chart_id'),
+                                'title': song_data.get('title', ''),
+                                'arrangers': song_data.get('arrangers', ''),
+                            }
+                        )
+                        sync_result['songs_synced'] += 1
+                        
+                        # Sync Scores for this song
+                        for score_data in song_data.get('scores', []):
+                            score_id = score_data['id']
+                            # Handle panelist - could be ID string or dict
+                            panelist_id = score_data.get('panelist')
+                            if isinstance(panelist_id, dict):
+                                panelist_id = panelist_id.get('id')
+                            elif isinstance(panelist_id, str):
+                                pass  # Already an ID string
+                            else:
+                                panelist_id = None
+                            
+                            if panelist_id:
+                                Score.objects.update_or_create(
+                                    id=score_id,
+                                    defaults={
+                                        'song_id': song_id,
+                                        'panelist_id': panelist_id,
+                                        'status': score_data.get('status'),
+                                        'points': score_data.get('points'),
+                                    }
+                                )
+                                sync_result['scores_synced'] += 1
                 
                 # Sync outcomes
                 for outcome_data in round_data.get('outcomes', []):
