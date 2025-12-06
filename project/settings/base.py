@@ -73,7 +73,6 @@ JWT_AUTH = {
 MEMBERCENTER_URL = get_env_variable("MEMBERCENTER_URL")
 
 CONVENTION_OWNERS = [
-    'buechler@alumni.princeton.edu',
     'steve@armstrongconsulting.ca',
     'proclamation56@gmail.com',
     'mottley81@gmail.com',
@@ -140,7 +139,6 @@ if os.environ['EMAIL_ADMINS_ONLY']:
 else:
     EMAIL_ADMINS_ONLY = True
 EMAIL_ADMINS = [
-    'Chris Buechler <buechler@alumni.princeton.edu>',
     'Steve Armstrong <steve@armstrongconsulting.ca>',
     'David Mills <proclamation56@gmail.com>',
     'Mike Ott <mottley81@gmail.com>',
