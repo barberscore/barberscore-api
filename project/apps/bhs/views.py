@@ -108,6 +108,7 @@ class EnvTokenPermission(BasePermission):
         provided = auth_header.split(' ', 1)[1].strip()
         return provided == expected
 
+
 class ConventionViewSet(viewsets.ModelViewSet):
     queryset = Convention.objects.all()
     serializer_class = ConventionSerializer
@@ -231,6 +232,16 @@ class ConventionViewSet(viewsets.ModelViewSet):
         )
 
 class ConventionCompleteView(APIView):
+    """Complete view for convention data.
+    
+    GET: Returns complete convention data (existing functionality)
+    POST: Accepts convention data and populates it into the database (for staging sync)
+    
+    POST endpoint uses BARBERSCORE_AUTH_TOKEN for authentication (via EnvTokenPermission).
+    This endpoint is called by production's ConventionSyncView to sync data to staging.
+    """
+    
+    # Uses BARBERSCORE_AUTH_TOKEN for authentication (checked via EnvTokenPermission)
     permission_classes = [EnvTokenPermission]
 
     def get(self, request, pk, format=None):
@@ -339,360 +350,50 @@ class ConventionCompleteView(APIView):
         convention_data['sessions'] = sessions_payload
 
         return Response(convention_data)
-
-
-class ConventionSyncView(APIView):
-    """Sync a convention from production to staging environment.
-    
-    When called from production: fetches convention data from prod DB and pushes to staging.
-    When called from staging: accepts convention data and syncs it to staging database.
-    """
-    permission_classes = [IsAuthenticated]
-    
-    def _is_production(self, request):
-        """Check if we're running in production environment by checking request host."""
-        host = request.get_host().lower()
-        # If 'staging' is in the host, we're in staging; otherwise, we're in production
-        return 'staging' not in host
-    
-    def _convert_uuids_to_strings(self, obj):
-        """Recursively convert UUID objects to strings in a data structure."""
-        if isinstance(obj, uuid.UUID):
-            return str(obj)
-        elif isinstance(obj, dict):
-            return {key: self._convert_uuids_to_strings(value) for key, value in obj.items()}
-        elif isinstance(obj, list):
-            return [self._convert_uuids_to_strings(item) for item in obj]
-        elif isinstance(obj, tuple):
-            return tuple(self._convert_uuids_to_strings(item) for item in obj)
-        else:
-            return obj
     
     def post(self, request, pk, format=None):
-        """Sync convention data from production to staging.
+        """Accept convention data and populate it into the database.
         
-        POST /bhs/convention/<uuid>/sync
+        POST /bhs/convention/<uuid>/complete
         
-        If called from production:
-        - Gets convention data from current (prod) database
-        - POSTs it to staging environment
-        
-        If called from staging:
-        - Accepts convention data in request body (from prod)
-        - Syncs it to staging database
+        This endpoint accepts complete convention data from production
+        and syncs it into the staging database. Only works with BARBERSCORE_AUTH_TOKEN.
         """
-        if self._is_production(request):
-            # We're in prod - get data from prod DB and push to staging
-            return self._sync_from_prod(request, pk)
-        else:
-            # We're in staging - accept data and sync it
-            return self._sync_to_staging(request, pk)
-    
-    def _sync_from_prod(self, request, pk):
-        """Get convention data from prod DB and push to staging."""
-        # Get staging URL from environment
-        staging_url = os.getenv('BARBERSCORE_STAGING_API_URL')
-        if not staging_url:
-            return Response(
-                {'error': 'BARBERSCORE_STAGING_API_URL not configured'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-        
-        # Get auth token from environment
-        auth_token = os.getenv('BARBERSCORE_AUTH_TOKEN')
-        if not auth_token:
-            return Response(
-                {'error': 'BARBERSCORE_AUTH_TOKEN not configured'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-        
-        # Get convention data from current (prod) database
-        try:
-            convention = Convention.objects.get(pk=pk)
-            convention_data = self._get_convention_complete_data(convention, request)
-        except Convention.DoesNotExist:
-            return Response(
-                {'error': f'Convention {pk} not found'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception as e:
-            return Response(
-                {'error': f'Failed to get convention data: {str(e)}'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-        
-        # POST data to staging
-        staging_endpoint = f"{staging_url.rstrip('/')}/bhs/convention/{pk}/sync"
-        try:
-            # Convert UUIDs to strings for JSON serialization
-            convention_data_serializable = self._convert_uuids_to_strings(convention_data)
-            
-            headers = {
-                'Authorization': f'Bearer {auth_token}',
-                'Content-Type': 'application/json'
-            }
-            response = requests.post(
-                staging_endpoint,
-                json=convention_data_serializable,
-                headers=headers,
-                timeout=60
-            )
-            response.raise_for_status()
-            
-            return Response({
-                'message': 'Convention synced successfully to staging',
-                'convention_id': pk,
-                'staging_response': response.json()
-            })
-            
-        except requests.exceptions.RequestException as e:
-            return Response(
-                {'error': f'Failed to push to staging: {str(e)}'},
-                status=status.HTTP_502_BAD_GATEWAY
-            )
-    
-    def _sync_to_staging(self, request, pk):
-        """Accept convention data and sync it to staging database."""
         # Get convention data from request body
-        if request.data:
-            convention_data = request.data
-        else:
-            # Fallback: fetch from production (backward compatibility)
-            production_url = os.getenv('BARBERSCORE_PROD_API_URL')
-            if not production_url:
-                return Response(
-                    {'error': 'BARBERSCORE_PROD_API_URL not configured'},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
-            
-            # Get auth token from environment
-            auth_token = os.getenv('BARBERSCORE_AUTH_TOKEN')
-            if not auth_token:
-                return Response(
-                    {'error': 'BARBERSCORE_AUTH_TOKEN not configured'},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
-            
-            # Construct production endpoint URL
-            prod_endpoint = f"{production_url.rstrip('/')}/bhs/convention/{pk}/complete"
-            
-            try:
-                # Call production endpoint
-                headers = {
-                    'Authorization': f'Bearer {auth_token}',
-                    'Content-Type': 'application/json'
-                }
-                response = requests.get(prod_endpoint, headers=headers, timeout=30)
-                response.raise_for_status()
-                
-                convention_data = response.json()
-                
-            except requests.exceptions.RequestException as e:
-                return Response(
-                    {'error': f'Failed to fetch from production: {str(e)}'},
-                    status=status.HTTP_502_BAD_GATEWAY
-                )
-            except ValueError as e:
-                return Response(
-                    {'error': f'Invalid JSON response from production: {str(e)}'},
-                    status=status.HTTP_502_BAD_GATEWAY
-                )
+        if not request.data:
+            return Response(
+                {'error': 'Convention data is required in request body'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         
-        # Sync data to staging
+        convention_data = request.data
+        
+        # Verify the convention ID matches the URL parameter
+        if str(convention_data.get('id')) != str(pk):
+            return Response(
+                {'error': f'Convention ID mismatch: URL has {pk}, data has {convention_data.get("id")}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Sync data to database using the same logic as ConventionSyncView
         try:
             with transaction.atomic():
                 sync_result = self._sync_convention_data(convention_data)
                 
             return Response({
-                'message': 'Convention synced successfully',
+                'message': 'Convention data populated successfully',
                 'convention_id': pk,
                 'sync_result': sync_result
             })
             
         except Exception as e:
             return Response(
-                {'error': f'Failed to sync data: {str(e)}'},
+                {'error': f'Failed to populate data: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
     
-    def _get_convention_complete_data(self, convention, request):
-        """Get complete convention data (same logic as ConventionCompleteView)."""
-        from apps.bhs.models import Award, Chart, Person, Group
-        
-        # Base convention payload
-        convention_data = ConventionSerializer(convention, context={'request': request}).data
-
-        # Gather sessions for this convention
-        sessions = Session.objects.filter(convention_id=convention.id).prefetch_related(
-            'assignments',
-            'contests',
-            'entries',
-        )
-
-        # Collect IDs for related objects
-        award_ids = set()
-        chart_ids = set()
-        person_ids = set()
-        group_ids = set()
-        entry_ids = set()
-        contest_ids = set()
-
-        # Build nested sessions payload
-        sessions_payload = []
-        for session in sessions:
-            session_data = SessionSerializer(session, context={'request': request}).data
-
-            # Assignments
-            assignments_qs = session.assignments.all()
-            session_data['assignments'] = AssignmentSerializer(assignments_qs, many=True, context={'request': request}).data
-            # Collect person IDs from assignments
-            for assignment in assignments_qs:
-                if assignment.person_id:
-                    person_ids.add(assignment.person_id)
-
-            # Contests (with entries)
-            contests_qs = session.contests.prefetch_related('entries').all()
-            session_data['contests'] = ContestSerializer(contests_qs, many=True, context={'request': request}).data
-            # Collect award IDs from contests
-            for contest in contests_qs:
-                contest_ids.add(contest.id)
-                if contest.award_id:
-                    award_ids.add(contest.award_id)
-
-            # Entries (includes initial draw field on the entry)
-            entries_qs = session.entries.all()
-            session_data['entries'] = EntrySerializer(entries_qs, many=True, context={'request': request}).data
-            # Collect group IDs from entries and track entry-contest relationships
-            entry_contest_relationships = []
-            for entry in entries_qs:
-                entry_ids.add(entry.id)
-                if entry.group_id:
-                    group_ids.add(entry.group_id)
-                # Track entry-contest relationships
-                for contest in entry.contests.all():
-                    entry_contest_relationships.append({
-                        'entry_id': str(entry.id),
-                        'contest_id': str(contest.id),
-                    })
-
-            # Store entry-contest relationships
-            session_data['entry_contests'] = entry_contest_relationships
-
-            # Session-level draw summary (initial draw numbers per entry)
-            session_data['draws'] = [
-                {
-                    'entry_id': str(entry.id),
-                    'group_id': entry.group_id,
-                    'draw': entry.draw,
-                }
-                for entry in entries_qs
-                if entry.draw is not None
-            ]
-
-            # Rounds for this session
-            rounds_qs = Round.objects.filter(session_id=session.id).prefetch_related(
-                'panelists',
-                'appearances',
-                'outcomes',
-            ).order_by('num')
-
-            rounds_payload = []
-            for rnd in rounds_qs:
-                round_data = RoundSerializer(rnd, context={'request': request}).data
-
-                # Panelists
-                round_data['panelists'] = PanelistSerializer(rnd.panelists.all(), many=True, context={'request': request}).data
-
-                # Appearances (contains per-appearance draw for next round)
-                appearances_qs = rnd.appearances.all().order_by('num')
-                appearances_data = []
-                for appearance in appearances_qs:
-                    appearance_data = AppearanceSerializer(appearance, context={'request': request}).data
-                    
-                    # Songs and Scores for this appearance
-                    songs_qs = Song.objects.filter(appearance_id=appearance.id).order_by('num')
-                    songs_data = []
-                    for song in songs_qs:
-                        song_data = SongSerializer(song, context={'request': request}).data
-                        # Collect chart IDs from songs
-                        if song.chart_id:
-                            chart_ids.add(song.chart_id)
-                        # Get scores for this song
-                        scores_qs = Score.objects.filter(song_id=song.id)
-                        song_data['scores'] = ScoreSerializer(scores_qs, many=True, context={'request': request}).data
-                        songs_data.append(song_data)
-                    appearance_data['songs'] = songs_data
-                    appearances_data.append(appearance_data)
-                
-                round_data['appearances'] = appearances_data
-
-                # Outcomes
-                round_data['outcomes'] = OutcomeSerializer(rnd.outcomes.all(), many=True, context={'request': request}).data
-
-                # Round draw summary (next-round draw numbers from appearances)
-                round_data['draw'] = [
-                    {
-                        'appearance_id': str(app.id),
-                        'group_id': app.group_id,
-                        'num': app.num,
-                        'draw': app.draw,
-                    }
-                    for app in appearances_qs if app.draw is not None
-                ]
-
-                # Simple standings calculation based on tot_points in appearance stats
-                try:
-                    appearances_for_rank = list(appearances_qs)
-                    appearances_for_rank.sort(
-                        key=lambda a: (a.stats or {}).get('tot_points', 0),
-                        reverse=True,
-                    )
-                    round_data['standings'] = [
-                        {
-                            'appearance_id': str(app.id),
-                            'group_id': app.group_id,
-                            'tot_points': (app.stats or {}).get('tot_points', 0),
-                        }
-                        for app in appearances_for_rank
-                    ]
-                except Exception:
-                    round_data['standings'] = []
-
-                rounds_payload.append(round_data)
-
-            session_data['rounds'] = rounds_payload
-
-            sessions_payload.append(session_data)
-
-        convention_data['sessions'] = sessions_payload
-
-        # Collect Charts from Groups (Repertory)
-        if group_ids:
-            groups = Group.objects.filter(id__in=group_ids).prefetch_related('charts')
-            for group in groups:
-                for chart in group.charts.all():
-                    chart_ids.add(chart.id)
-
-        # Fetch and serialize Awards
-        awards = Award.objects.filter(id__in=award_ids) if award_ids else Award.objects.none()
-        convention_data['awards'] = AwardSerializer(awards, many=True, context={'request': request}).data
-
-        # Fetch and serialize Charts
-        charts = Chart.objects.filter(id__in=chart_ids) if chart_ids else Chart.objects.none()
-        convention_data['charts'] = ChartSerializer(charts, many=True, context={'request': request}).data
-
-        # Fetch and serialize Persons
-        persons = Person.objects.filter(id__in=person_ids) if person_ids else Person.objects.none()
-        convention_data['persons'] = PersonSerializer(persons, many=True, context={'request': request}).data
-
-        # Fetch and serialize Groups
-        groups = Group.objects.filter(id__in=group_ids) if group_ids else Group.objects.none()
-        convention_data['groups'] = GroupSerializer(groups, many=True, context={'request': request}).data
-
-        return convention_data
-    
     def _sync_convention_data(self, convention_data):
-        """Sync convention data from production to staging database."""
+        """Sync convention data into the database. Shared with ConventionSyncView."""
         from apps.bhs.models import Convention, Award, Chart, Person, Group
         from apps.registration.models import Session, Assignment, Contest, Entry
         from apps.adjudication.models import Round, Panelist, Appearance, Outcome, Song, Score
@@ -1079,6 +780,296 @@ class ConventionSyncView(APIView):
                     sync_result['outcomes_synced'] += 1
         
         return sync_result
+
+
+class ConventionSyncView(APIView):
+    """Sync a convention from production to staging environment.
+    
+    When called from production: fetches convention data from prod DB and pushes to staging.
+    When called from staging: accepts convention data and syncs it to staging database.
+    
+    Uses default authentication (JWT) from REST_FRAMEWORK settings.
+    """
+    # Uses default authentication_classes from REST_FRAMEWORK settings (JWT)
+    permission_classes = [IsAuthenticated]
+    
+    def _is_production(self, request):
+        """Check if we're running in production environment by checking request host."""
+        host = request.get_host().lower()
+        # If 'staging' is in the host, we're in staging; otherwise, we're in production
+        return 'staging' not in host
+    
+    def _convert_uuids_to_strings(self, obj):
+        """Recursively convert UUID objects to strings in a data structure."""
+        if isinstance(obj, uuid.UUID):
+            return str(obj)
+        elif isinstance(obj, dict):
+            return {key: self._convert_uuids_to_strings(value) for key, value in obj.items()}
+        elif isinstance(obj, list):
+            return [self._convert_uuids_to_strings(item) for item in obj]
+        elif isinstance(obj, tuple):
+            return tuple(self._convert_uuids_to_strings(item) for item in obj)
+        else:
+            return obj
+    
+    def post(self, request, pk, format=None):
+        """Sync convention data from production to staging.
+        
+        POST /bhs/convention/<uuid>/sync
+        
+        When called from production:
+        - Gets convention data from current (prod) database
+        - POSTs it to staging's CompleteView endpoint
+        
+        Note: This endpoint should only be called from production.
+        Staging uses the CompleteView endpoint directly.
+        """
+        if not self._is_production(request):
+            return Response(
+                {'error': 'Sync endpoint should only be called from production. Use CompleteView endpoint in staging.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # We're in prod - get data from prod DB and push to staging
+        return self._sync_from_prod(request, pk)
+    
+    def _sync_from_prod(self, request, pk):
+        """Get convention data from prod DB and push to staging."""
+        # Get staging URL from environment
+        staging_url = os.getenv('BARBERSCORE_STAGING_API_URL')
+        if not staging_url:
+            return Response(
+                {'error': 'BARBERSCORE_STAGING_API_URL not configured'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+        # Get auth token from environment
+        auth_token = os.getenv('BARBERSCORE_AUTH_TOKEN')
+        if not auth_token:
+            return Response(
+                {'error': 'BARBERSCORE_AUTH_TOKEN not configured'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+        # Get convention data from current (prod) database
+        try:
+            convention = Convention.objects.get(pk=pk)
+            convention_data = self._get_convention_complete_data(convention, request)
+        except Convention.DoesNotExist:
+            return Response(
+                {'error': f'Convention {pk} not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to get convention data: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+        # POST data to staging CompleteView endpoint
+        staging_endpoint = f"{staging_url.rstrip('/')}/bhs/convention/{pk}/complete"
+        try:
+            # Convert UUIDs to strings for JSON serialization
+            convention_data_serializable = self._convert_uuids_to_strings(convention_data)
+            
+            headers = {
+                'Authorization': f'Bearer {auth_token}',
+                'Content-Type': 'application/json'
+            }
+            response = requests.post(
+                staging_endpoint,
+                json=convention_data_serializable,
+                headers=headers,
+                timeout=60
+            )
+            response.raise_for_status()
+            
+            return Response({
+                'message': 'Convention synced successfully to staging',
+                'convention_id': pk,
+                'staging_response': response.json()
+            })
+            
+        except requests.exceptions.RequestException as e:
+            return Response(
+                {'error': f'Failed to push to staging: {str(e)}'},
+                status=status.HTTP_502_BAD_GATEWAY
+            )
+    def _get_convention_complete_data(self, convention, request):
+        """Get complete convention data (same logic as ConventionCompleteView)."""
+        from apps.bhs.models import Award, Chart, Person, Group
+        
+        # Base convention payload
+        convention_data = ConventionSerializer(convention, context={'request': request}).data
+
+        # Gather sessions for this convention
+        sessions = Session.objects.filter(convention_id=convention.id).prefetch_related(
+            'assignments',
+            'contests',
+            'entries',
+        )
+
+        # Collect IDs for related objects
+        award_ids = set()
+        chart_ids = set()
+        person_ids = set()
+        group_ids = set()
+        entry_ids = set()
+        contest_ids = set()
+
+        # Build nested sessions payload
+        sessions_payload = []
+        for session in sessions:
+            session_data = SessionSerializer(session, context={'request': request}).data
+
+            # Assignments
+            assignments_qs = session.assignments.all()
+            session_data['assignments'] = AssignmentSerializer(assignments_qs, many=True, context={'request': request}).data
+            # Collect person IDs from assignments
+            for assignment in assignments_qs:
+                if assignment.person_id:
+                    person_ids.add(assignment.person_id)
+
+            # Contests (with entries)
+            contests_qs = session.contests.prefetch_related('entries').all()
+            session_data['contests'] = ContestSerializer(contests_qs, many=True, context={'request': request}).data
+            # Collect award IDs from contests
+            for contest in contests_qs:
+                contest_ids.add(contest.id)
+                if contest.award_id:
+                    award_ids.add(contest.award_id)
+
+            # Entries (includes initial draw field on the entry)
+            entries_qs = session.entries.all()
+            session_data['entries'] = EntrySerializer(entries_qs, many=True, context={'request': request}).data
+            # Collect group IDs from entries and track entry-contest relationships
+            entry_contest_relationships = []
+            for entry in entries_qs:
+                entry_ids.add(entry.id)
+                if entry.group_id:
+                    group_ids.add(entry.group_id)
+                # Track entry-contest relationships
+                for contest in entry.contests.all():
+                    entry_contest_relationships.append({
+                        'entry_id': str(entry.id),
+                        'contest_id': str(contest.id),
+                    })
+
+            # Store entry-contest relationships
+            session_data['entry_contests'] = entry_contest_relationships
+
+            # Session-level draw summary (initial draw numbers per entry)
+            session_data['draws'] = [
+                {
+                    'entry_id': str(entry.id),
+                    'group_id': entry.group_id,
+                    'draw': entry.draw,
+                }
+                for entry in entries_qs
+                if entry.draw is not None
+            ]
+
+            # Rounds for this session
+            rounds_qs = Round.objects.filter(session_id=session.id).prefetch_related(
+                'panelists',
+                'appearances',
+                'outcomes',
+            ).order_by('num')
+
+            rounds_payload = []
+            for rnd in rounds_qs:
+                round_data = RoundSerializer(rnd, context={'request': request}).data
+
+                # Panelists
+                round_data['panelists'] = PanelistSerializer(rnd.panelists.all(), many=True, context={'request': request}).data
+
+                # Appearances (contains per-appearance draw for next round)
+                appearances_qs = rnd.appearances.all().order_by('num')
+                appearances_data = []
+                for appearance in appearances_qs:
+                    appearance_data = AppearanceSerializer(appearance, context={'request': request}).data
+                    
+                    # Songs and Scores for this appearance
+                    songs_qs = Song.objects.filter(appearance_id=appearance.id).order_by('num')
+                    songs_data = []
+                    for song in songs_qs:
+                        song_data = SongSerializer(song, context={'request': request}).data
+                        # Collect chart IDs from songs
+                        if song.chart_id:
+                            chart_ids.add(song.chart_id)
+                        # Get scores for this song
+                        scores_qs = Score.objects.filter(song_id=song.id)
+                        song_data['scores'] = ScoreSerializer(scores_qs, many=True, context={'request': request}).data
+                        songs_data.append(song_data)
+                    appearance_data['songs'] = songs_data
+                    appearances_data.append(appearance_data)
+                
+                round_data['appearances'] = appearances_data
+
+                # Outcomes
+                round_data['outcomes'] = OutcomeSerializer(rnd.outcomes.all(), many=True, context={'request': request}).data
+
+                # Round draw summary (next-round draw numbers from appearances)
+                round_data['draw'] = [
+                    {
+                        'appearance_id': str(app.id),
+                        'group_id': app.group_id,
+                        'num': app.num,
+                        'draw': app.draw,
+                    }
+                    for app in appearances_qs if app.draw is not None
+                ]
+
+                # Simple standings calculation based on tot_points in appearance stats
+                try:
+                    appearances_for_rank = list(appearances_qs)
+                    appearances_for_rank.sort(
+                        key=lambda a: (a.stats or {}).get('tot_points', 0),
+                        reverse=True,
+                    )
+                    round_data['standings'] = [
+                        {
+                            'appearance_id': str(app.id),
+                            'group_id': app.group_id,
+                            'tot_points': (app.stats or {}).get('tot_points', 0),
+                        }
+                        for app in appearances_for_rank
+                    ]
+                except Exception:
+                    round_data['standings'] = []
+
+                rounds_payload.append(round_data)
+
+            session_data['rounds'] = rounds_payload
+
+            sessions_payload.append(session_data)
+
+        convention_data['sessions'] = sessions_payload
+
+        # Collect Charts from Groups (Repertory)
+        if group_ids:
+            groups = Group.objects.filter(id__in=group_ids).prefetch_related('charts')
+            for group in groups:
+                for chart in group.charts.all():
+                    chart_ids.add(chart.id)
+
+        # Fetch and serialize Awards
+        awards = Award.objects.filter(id__in=award_ids) if award_ids else Award.objects.none()
+        convention_data['awards'] = AwardSerializer(awards, many=True, context={'request': request}).data
+
+        # Fetch and serialize Charts
+        charts = Chart.objects.filter(id__in=chart_ids) if chart_ids else Chart.objects.none()
+        convention_data['charts'] = ChartSerializer(charts, many=True, context={'request': request}).data
+
+        # Fetch and serialize Persons
+        persons = Person.objects.filter(id__in=person_ids) if person_ids else Person.objects.none()
+        convention_data['persons'] = PersonSerializer(persons, many=True, context={'request': request}).data
+
+        # Fetch and serialize Groups
+        groups = Group.objects.filter(id__in=group_ids) if group_ids else Group.objects.none()
+        convention_data['groups'] = GroupSerializer(groups, many=True, context={'request': request}).data
+
+        return convention_data
 
 class AwardViewSet(viewsets.ModelViewSet):
     queryset = Award.objects.all()
