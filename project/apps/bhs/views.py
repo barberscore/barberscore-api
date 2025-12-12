@@ -233,15 +233,16 @@ class ConventionViewSet(viewsets.ModelViewSet):
 
 class ConventionCompleteView(APIView):
     """Complete view for convention data.
-    
+
     GET: Returns complete convention data (existing functionality)
     POST: Accepts convention data and populates it into the database (for staging sync)
-    
+
     POST endpoint uses BARBERSCORE_AUTH_TOKEN for authentication (via EnvTokenPermission).
     This endpoint is called by production's ConventionSyncView to sync data to staging.
     """
-    
+
     # Uses BARBERSCORE_AUTH_TOKEN for authentication (checked via EnvTokenPermission)
+    authentication_classes = []
     permission_classes = [EnvTokenPermission]
 
     def get(self, request, pk, format=None):
@@ -350,12 +351,12 @@ class ConventionCompleteView(APIView):
         convention_data['sessions'] = sessions_payload
 
         return Response(convention_data)
-    
+
     def post(self, request, pk, format=None):
         """Accept convention data and populate it into the database.
-        
+
         POST /bhs/convention/<uuid>/complete
-        
+
         This endpoint accepts complete convention data from production
         and syncs it into the staging database. Only works with BARBERSCORE_AUTH_TOKEN.
         """
@@ -365,39 +366,39 @@ class ConventionCompleteView(APIView):
                 {'error': 'Convention data is required in request body'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         convention_data = request.data
-        
+
         # Verify the convention ID matches the URL parameter
         if str(convention_data.get('id')) != str(pk):
             return Response(
                 {'error': f'Convention ID mismatch: URL has {pk}, data has {convention_data.get("id")}'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         # Sync data to database using the same logic as ConventionSyncView
         try:
             with transaction.atomic():
                 sync_result = self._sync_convention_data(convention_data)
-                
+
             return Response({
                 'message': 'Convention data populated successfully',
                 'convention_id': pk,
                 'sync_result': sync_result
             })
-            
+
         except Exception as e:
             return Response(
                 {'error': f'Failed to populate data: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-    
+
     def _sync_convention_data(self, convention_data):
         """Sync convention data into the database. Shared with ConventionSyncView."""
         from apps.bhs.models import Convention, Award, Chart, Person, Group
         from apps.registration.models import Session, Assignment, Contest, Entry
         from apps.adjudication.models import Round, Panelist, Appearance, Outcome, Song, Score
-        
+
         sync_result = {
             'convention_updated': False,
             'sessions_synced': 0,
@@ -416,7 +417,7 @@ class ConventionCompleteView(APIView):
             'songs_synced': 0,
             'scores_synced': 0,
         }
-        
+
         # Sync convention
         convention_id = convention_data['id']
         convention, created = Convention.objects.update_or_create(
@@ -439,7 +440,7 @@ class ConventionCompleteView(APIView):
             }
         )
         sync_result['convention_updated'] = True
-        
+
         # Sync Awards
         for award_data in convention_data.get('awards', []):
             award_id = award_data['id']
@@ -470,7 +471,7 @@ class ConventionCompleteView(APIView):
                 }
             )
             sync_result['awards_synced'] += 1
-        
+
         # Sync Charts
         for chart_data in convention_data.get('charts', []):
             chart_id = chart_data['id']
@@ -483,7 +484,7 @@ class ConventionCompleteView(APIView):
                 }
             )
             sync_result['charts_synced'] += 1
-        
+
         # Sync Persons
         for person_data in convention_data.get('persons', []):
             person_id = person_data['id']
@@ -510,7 +511,7 @@ class ConventionCompleteView(APIView):
                 }
             )
             sync_result['persons_synced'] += 1
-        
+
         # Sync Groups
         for group_data in convention_data.get('groups', []):
             group_id = group_data['id']
@@ -536,7 +537,7 @@ class ConventionCompleteView(APIView):
                 chart_ids = [chart['id'] if isinstance(chart, dict) else chart for chart in group_data['charts']]
                 group.charts.set(Chart.objects.filter(id__in=chart_ids))
             sync_result['groups_synced'] += 1
-        
+
         # Sync sessions
         for session_data in convention_data.get('sessions', []):
             session_id = session_data['id']
@@ -559,7 +560,7 @@ class ConventionCompleteView(APIView):
                 }
             )
             sync_result['sessions_synced'] += 1
-            
+
             # Sync assignments
             for assignment_data in session_data.get('assignments', []):
                 assignment_id = assignment_data['id']
@@ -579,7 +580,7 @@ class ConventionCompleteView(APIView):
                     }
                 )
                 sync_result['assignments_synced'] += 1
-            
+
             # Sync contests
             for contest_data in session_data.get('contests', []):
                 contest_id = contest_data['id']
@@ -599,7 +600,7 @@ class ConventionCompleteView(APIView):
                     }
                 )
                 sync_result['contests_synced'] += 1
-            
+
             # Sync entries
             for entry_data in session_data.get('entries', []):
                 entry_id = entry_data['id']
@@ -623,7 +624,7 @@ class ConventionCompleteView(APIView):
                     }
                 )
                 sync_result['entries_synced'] += 1
-            
+
             # Sync entry-contest relationships (registration_entry_contests)
             # First, collect all entry-contest relationships for this session
             entry_contest_map = {}
@@ -633,7 +634,7 @@ class ConventionCompleteView(APIView):
                 if entry_id not in entry_contest_map:
                     entry_contest_map[entry_id] = []
                 entry_contest_map[entry_id].append(contest_id)
-            
+
             # Now sync the relationships
             for entry_id, contest_ids in entry_contest_map.items():
                 try:
@@ -643,7 +644,7 @@ class ConventionCompleteView(APIView):
                     sync_result['entry_contests_synced'] += len(contest_ids)
                 except Entry.DoesNotExist:
                     pass
-            
+
             # Sync rounds
             for round_data in session_data.get('rounds', []):
                 round_id = round_data['id']
@@ -660,7 +661,7 @@ class ConventionCompleteView(APIView):
                     }
                 )
                 sync_result['rounds_synced'] += 1
-                
+
                 # Sync panelists
                 for panelist_data in round_data.get('panelists', []):
                     panelist_id = panelist_data['id']
@@ -680,7 +681,7 @@ class ConventionCompleteView(APIView):
                         }
                     )
                     sync_result['panelists_synced'] += 1
-                
+
                 # Sync appearances
                 for appearance_data in round_data.get('appearances', []):
                     appearance_id = appearance_data['id']
@@ -711,7 +712,7 @@ class ConventionCompleteView(APIView):
                         }
                     )
                     sync_result['appearances_synced'] += 1
-                    
+
                     # Sync Songs for this appearance
                     for song_data in appearance_data.get('songs', []):
                         song_id = song_data['id']
@@ -731,7 +732,7 @@ class ConventionCompleteView(APIView):
                             }
                         )
                         sync_result['songs_synced'] += 1
-                        
+
                         # Sync Scores for this song
                         for score_data in song_data.get('scores', []):
                             score_id = score_data['id']
@@ -743,7 +744,7 @@ class ConventionCompleteView(APIView):
                                 pass  # Already an ID string
                             else:
                                 panelist_id = None
-                            
+
                             if panelist_id:
                                 Score.objects.update_or_create(
                                     id=score_id,
@@ -755,7 +756,7 @@ class ConventionCompleteView(APIView):
                                     }
                                 )
                                 sync_result['scores_synced'] += 1
-                
+
                 # Sync outcomes
                 for outcome_data in round_data.get('outcomes', []):
                     outcome_id = outcome_data['id']
@@ -778,27 +779,27 @@ class ConventionCompleteView(APIView):
                         }
                     )
                     sync_result['outcomes_synced'] += 1
-        
+
         return sync_result
 
 
 class ConventionSyncView(APIView):
     """Sync a convention from production to staging environment.
-    
+
     When called from production: fetches convention data from prod DB and pushes to staging.
     When called from staging: accepts convention data and syncs it to staging database.
-    
+
     Uses default authentication (JWT) from REST_FRAMEWORK settings.
     """
     # Uses default authentication_classes from REST_FRAMEWORK settings (JWT)
     permission_classes = [IsAuthenticated]
-    
+
     def _is_production(self, request):
         """Check if we're running in production environment by checking request host."""
         host = request.get_host().lower()
         # If 'staging' is in the host, we're in staging; otherwise, we're in production
         return 'staging' not in host
-    
+
     def _convert_uuids_to_strings(self, obj):
         """Recursively convert UUID objects to strings in a data structure."""
         if isinstance(obj, uuid.UUID):
@@ -811,16 +812,16 @@ class ConventionSyncView(APIView):
             return tuple(self._convert_uuids_to_strings(item) for item in obj)
         else:
             return obj
-    
+
     def post(self, request, pk, format=None):
         """Sync convention data from production to staging.
-        
+
         POST /bhs/convention/<uuid>/sync
-        
+
         When called from production:
         - Gets convention data from current (prod) database
         - POSTs it to staging's CompleteView endpoint
-        
+
         Note: This endpoint should only be called from production.
         Staging uses the CompleteView endpoint directly.
         """
@@ -829,10 +830,10 @@ class ConventionSyncView(APIView):
                 {'error': 'Sync endpoint should only be called from production. Use CompleteView endpoint in staging.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         # We're in prod - get data from prod DB and push to staging
         return self._sync_from_prod(request, pk)
-    
+
     def _sync_from_prod(self, request, pk):
         """Get convention data from prod DB and push to staging."""
         # Get staging URL from environment
@@ -842,7 +843,7 @@ class ConventionSyncView(APIView):
                 {'error': 'BARBERSCORE_STAGING_API_URL not configured'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
+
         # Get auth token from environment
         auth_token = os.getenv('BARBERSCORE_AUTH_TOKEN')
         if not auth_token:
@@ -850,7 +851,7 @@ class ConventionSyncView(APIView):
                 {'error': 'BARBERSCORE_AUTH_TOKEN not configured'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
+
         # Get convention data from current (prod) database
         try:
             convention = Convention.objects.get(pk=pk)
@@ -865,13 +866,13 @@ class ConventionSyncView(APIView):
                 {'error': f'Failed to get convention data: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
+
         # POST data to staging CompleteView endpoint
         staging_endpoint = f"{staging_url.rstrip('/')}/bhs/convention/{pk}/complete"
         try:
             # Convert UUIDs to strings for JSON serialization
             convention_data_serializable = self._convert_uuids_to_strings(convention_data)
-            
+
             headers = {
                 'Authorization': f'Bearer {auth_token}',
                 'Content-Type': 'application/json'
@@ -883,13 +884,13 @@ class ConventionSyncView(APIView):
                 timeout=60
             )
             response.raise_for_status()
-            
+
             return Response({
                 'message': 'Convention synced successfully to staging',
                 'convention_id': pk,
                 'staging_response': response.json()
             })
-            
+
         except requests.exceptions.RequestException as e:
             return Response(
                 {'error': f'Failed to push to staging: {str(e)}'},
@@ -898,7 +899,7 @@ class ConventionSyncView(APIView):
     def _get_convention_complete_data(self, convention, request):
         """Get complete convention data (same logic as ConventionCompleteView)."""
         from apps.bhs.models import Award, Chart, Person, Group
-        
+
         # Base convention payload
         convention_data = ConventionSerializer(convention, context={'request': request}).data
 
@@ -988,7 +989,7 @@ class ConventionSyncView(APIView):
                 appearances_data = []
                 for appearance in appearances_qs:
                     appearance_data = AppearanceSerializer(appearance, context={'request': request}).data
-                    
+
                     # Songs and Scores for this appearance
                     songs_qs = Song.objects.filter(appearance_id=appearance.id).order_by('num')
                     songs_data = []
@@ -1003,7 +1004,7 @@ class ConventionSyncView(APIView):
                         songs_data.append(song_data)
                     appearance_data['songs'] = songs_data
                     appearances_data.append(appearance_data)
-                
+
                 round_data['appearances'] = appearances_data
 
                 # Outcomes
