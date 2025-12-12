@@ -3,6 +3,7 @@
 import logging
 import os
 import requests
+import uuid
 from django.db import transaction
 
 # Third-Party
@@ -354,6 +355,19 @@ class ConventionSyncView(APIView):
         # If 'staging' is in the host, we're in staging; otherwise, we're in production
         return 'staging' not in host
     
+    def _convert_uuids_to_strings(self, obj):
+        """Recursively convert UUID objects to strings in a data structure."""
+        if isinstance(obj, uuid.UUID):
+            return str(obj)
+        elif isinstance(obj, dict):
+            return {key: self._convert_uuids_to_strings(value) for key, value in obj.items()}
+        elif isinstance(obj, list):
+            return [self._convert_uuids_to_strings(item) for item in obj]
+        elif isinstance(obj, tuple):
+            return tuple(self._convert_uuids_to_strings(item) for item in obj)
+        else:
+            return obj
+    
     def post(self, request, pk, format=None):
         """Sync convention data from production to staging.
         
@@ -410,13 +424,16 @@ class ConventionSyncView(APIView):
         # POST data to staging
         staging_endpoint = f"{staging_url.rstrip('/')}/bhs/convention/{pk}/sync"
         try:
+            # Convert UUIDs to strings for JSON serialization
+            convention_data_serializable = self._convert_uuids_to_strings(convention_data)
+            
             headers = {
                 'Authorization': f'Bearer {auth_token}',
                 'Content-Type': 'application/json'
             }
             response = requests.post(
                 staging_endpoint,
-                json=convention_data,
+                json=convention_data_serializable,
                 headers=headers,
                 timeout=60
             )
