@@ -26,6 +26,7 @@ from django.core.files.base import ContentFile
 from django.db.models import Sum, Q, Avg
 from django.template.loader import render_to_string
 from django.utils.text import slugify
+import sentry_sdk
 
 # Local
 from .filtersets import GroupFilterset
@@ -388,6 +389,7 @@ class ConventionCompleteView(APIView):
             })
 
         except Exception as e:
+            sentry_sdk.capture_exception(e)
             return Response(
                 {'error': f'Failed to populate data: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
