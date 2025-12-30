@@ -449,18 +449,22 @@ class ConventionCompleteView(APIView):
         for award_data in convention_data.get('awards', []):
             award_id = award_data['id']
             bounds_default = {'lower': None, 'upper': None, 'bounds': '[]'}
-            sr = json.loads(award_data.get('scope_range', f'{bounds_default}'))
-            lower = sr.get('lower', None)
-            try:
-                lower = int(lower)
-            except:
-                lower = None
-            try:
-                upper = int(upper)
-            except:
-                upper = None    
-            bounds = sr.get('bounds', '[]')
-            scope_range = NumericRange(lower, upper, bounds=bounds)
+            if award_data.get('scope_range'):
+                sr = json.loads(award_data.get('scope_range', f'{bounds_default}'))
+                lower = sr.get('lower', None)
+                upper = sr.get('upper', None)
+                bounds = sr.get('bounds', '[]')
+                try:
+                    lower = int(lower)
+                except
+                    lower = None
+                try:
+                    upper = int(upper)
+                except:
+                    upper = None
+                scope_range = NumericRange(lower, upper, bounds=bounds)
+            else:
+                scope_range = None
             Award.objects.update_or_create(
                 id=award_id,
                 defaults={
