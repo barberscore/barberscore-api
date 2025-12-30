@@ -1,5 +1,6 @@
 
 # Standard Library
+import json
 import logging
 import os
 import requests
@@ -13,6 +14,7 @@ from rest_framework_json_api.django_filters import DjangoFilterBackend
 from django_fsm import TransitionNotAllowed
 from django_fsm_log.models import StateLog
 from dry_rest_permissions.generics import DRYPermissions
+from psycopg2.extras import NumericRange
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -446,6 +448,9 @@ class ConventionCompleteView(APIView):
         # Sync Awards
         for award_data in convention_data.get('awards', []):
             award_id = award_data['id']
+            bounds_default = {'lower': None, 'upper': None, 'bounds': '[]'}
+            sr = json.loads(award_data.get('scope_range', f'{bounds_default}'))
+            scope_range = NumericRange(sr.get('lower', None), sr.get('upper', None), bounds=sr.get('bounds', '[]'))
             Award.objects.update_or_create(
                 id=award_id,
                 defaults={
@@ -468,7 +473,7 @@ class ConventionCompleteView(APIView):
                     'size': award_data.get('size'),
                     'size_range': award_data.get('size_range'),
                     'scope': award_data.get('scope'),
-                    'scope_range': award_data.get('scope_range'),
+                    'scope_range': scope_range,
                     'tree_sort': award_data.get('tree_sort'),
                 }
             )
