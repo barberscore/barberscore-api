@@ -456,7 +456,7 @@ class ConventionCompleteView(APIView):
                 bounds = sr.get('bounds', '[]')
                 try:
                     lower = int(lower)
-                except
+                except:
                     lower = None
                 try:
                     upper = int(upper)
