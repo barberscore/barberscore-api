@@ -400,7 +400,7 @@ class ConventionCompleteView(APIView):
         from apps.bhs.models import Convention, Award, Chart, Person, Group
         from apps.registration.models import Session, Assignment, Contest, Entry
         from apps.adjudication.models import Round, Panelist, Appearance, Outcome, Song, Score
-
+        print(convention_data)
         sync_result = {
             'convention_updated': False,
             'sessions_synced': 0,
