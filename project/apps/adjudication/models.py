@@ -3570,7 +3570,11 @@ class Round(TimeStampedModel):
             # 'award',
         ).filter(
             printed=True,
-        ).order_by(
+        )
+        if outcome_id:
+            items = items.filter(id=outcome_id)
+
+        items = items.order_by(
             'tree_sort',
             'num',
         ).values_list(
@@ -3589,11 +3593,10 @@ class Round(TimeStampedModel):
 
         if self.kind == self.KIND.finals:
             for pr in previous_rounds:
-                items = pr.outcomes.select_related(
-                    # 'award',
-                )
-                if not outcome_id:
-                    items = items.filter(
+                if outcome_id:
+                    items = pr.outcomes.filter(id=outcome_id)
+                else:
+                    items = pr.outcomes.filter(
                         print_on_finals_oss=True,
                     )
                 items = items.order_by(
