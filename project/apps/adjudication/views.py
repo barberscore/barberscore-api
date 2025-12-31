@@ -140,7 +140,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
                 charts=charts,
                 participants=entry.participants,
                 entry_id=entry.id,
-            )            
+            )
         except Entry.DoesNotExist:
             serializer.save(charts=charts)
 
@@ -356,7 +356,7 @@ class OutcomeViewSet(viewsets.ModelViewSet):
         # Get current state of Outcome
         o = Outcome.objects.get(pk=request.data['id'])
 
-        # If Print on Finals OSS has been set, deselect the "Printed" option        
+        # If Print on Finals OSS has been set, deselect the "Printed" option
         if request.data['print_on_finals_oss'] and o.print_on_finals_oss is False:
             request.data['printed'] = False
 
@@ -369,6 +369,38 @@ class OutcomeViewSet(viewsets.ModelViewSet):
                 {'status': 'Unable to change outcome'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+    @action(
+        methods=['get', 'post'],
+        detail=True,
+        renderer_classes=[
+            PDFRenderer,
+        ],
+        permission_classes=[DRYPermissions],
+        content_negotiation_class=IgnoreClientContentNegotiation,
+    )
+    def oss(self, request, pk=None):
+        outcome = self.get_object()
+        round = outcome.round
+        # if round.oss_report:
+        #     pdf = round.oss_report.file
+        # else:
+
+        # Allow selectable paper size
+        paper_size = None
+        if len(request._request.body):
+            content = BytesIO(request._request.body)
+            data = JSONParser().parse(content)
+            if data['paperSize']:
+                paper_size = data['paperSize'].strip()
+
+        pdf = round.get_oss(request.user.name, paper_size, outcome_id=outcome.id)
+        file_name = '{0} OSS.pdf'.format(round)
+        return PDFResponse(
+            pdf,
+            file_name=file_name,
+            status=status.HTTP_200_OK
+        )
 
 class PanelistViewSet(viewsets.ModelViewSet):
     queryset = Panelist.objects.select_related(
@@ -667,14 +699,14 @@ class RoundViewSet(viewsets.ModelViewSet):
         #     pdf = round.oss_report.file
         # else:
 
-        # Allow selectable paper size        
+        # Allow selectable paper size
         paper_size = None
         if len(request._request.body):
             content = BytesIO(request._request.body)
             data = JSONParser().parse(content)
             if data['paperSize']:
                 paper_size = data['paperSize'].strip()
-                
+
         pdf = round.get_oss(request.user.name, paper_size)
         file_name = '{0} OSS.pdf'.format(round)
         return PDFResponse(
