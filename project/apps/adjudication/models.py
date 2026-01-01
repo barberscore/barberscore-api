@@ -3488,7 +3488,11 @@ class Round(TimeStampedModel):
                 Appearance.STATUS.disqualified,
                 Appearance.STATUS.scratched,
             ],
-        ).order_by(
+        )
+        if outcome_id:
+            privates = privates.filter(outcomes=outcome_id)
+
+        privates = privates.order_by(
         ).values_list('name', flat=True)
         privates = list(privates)
 
@@ -3496,7 +3500,11 @@ class Round(TimeStampedModel):
         disqualifications = self.appearances.prefetch_related(
         ).filter(
             status=Appearance.STATUS.disqualified,
-        ).order_by(
+        )
+        if outcome_id:
+            disqualifications = disqualifications.filter(outcomes=outcome_id)
+
+        disqualifications = disqualifications.order_by(
         ).values_list('name', flat=True)
         disqualifications = list(disqualifications)
 
