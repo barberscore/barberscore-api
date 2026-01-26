@@ -402,9 +402,15 @@ class ConventionCompleteView(APIView):
         from apps.bhs.models import Convention, Award, Chart, Person, Group
         from apps.registration.models import Session, Assignment, Contest, Entry
         from apps.adjudication.models import Round, Panelist, Appearance, Outcome, Song, Score
+        from apps.organizations.models import Organization
+        from django.contrib.auth import get_user_model
+        
+        User = get_user_model()
         print(convention_data)
         sync_result = {
             'convention_updated': False,
+            'organization_synced': False,
+            'owners_synced': 0,
             'sessions_synced': 0,
             'assignments_synced': 0,
             'contests_synced': 0,
@@ -421,6 +427,37 @@ class ConventionCompleteView(APIView):
             'songs_synced': 0,
             'scores_synced': 0,
         }
+
+        # Sync Organization if provided
+        organization_id = None
+        if convention_data.get('organization'):
+            org_data = convention_data['organization']
+            org_id = org_data.get('id')
+            if org_id:
+                # Handle both 'abbr' (serializer field) and 'abbreviation' (model field)
+                abbreviation = org_data.get('abbr') or org_data.get('abbreviation', '')
+                organization, org_created = Organization.objects.update_or_create(
+                    id=org_id,
+                    defaults={
+                        'name': org_data.get('name', ''),
+                        'abbreviation': abbreviation,
+                        'district_nomen': org_data.get('district_nomen', 'District'),
+                        'division_nomen': org_data.get('division_nomen', 'Division'),
+                        'drcj_nomen': org_data.get('drcj_nomen', 'DRCJ'),
+                    }
+                )
+                organization_id = organization.id
+                sync_result['organization_synced'] = True
+                
+                # Sync organization default_owners if provided
+                if org_data.get('default_owners'):
+                    default_owner_ids = [
+                        owner_id if isinstance(owner_id, str) else owner_id.get('id') if isinstance(owner_id, dict) else owner_id
+                        for owner_id in org_data['default_owners']
+                    ]
+                    # Filter to only existing users
+                    existing_owner_ids = User.objects.filter(id__in=default_owner_ids).values_list('id', flat=True)
+                    organization.default_owners.set(existing_owner_ids)
 
         # Sync convention
         convention_id = convention_data['id']
@@ -441,9 +478,21 @@ class ConventionCompleteView(APIView):
                 'description': convention_data.get('description', ''),
                 'divisions': convention_data.get('divisions', []),
                 'kinds': convention_data.get('kinds', []),
+                'organization_id': organization_id,
             }
         )
         sync_result['convention_updated'] = True
+        
+        # Sync convention owners
+        if convention_data.get('owners'):
+            owner_ids = [
+                owner_id if isinstance(owner_id, str) else owner_id.get('id') if isinstance(owner_id, dict) else owner_id
+                for owner_id in convention_data['owners']
+            ]
+            # Filter to only existing users
+            existing_owner_ids = User.objects.filter(id__in=owner_ids).values_list('id', flat=True)
+            convention.owners.set(existing_owner_ids)
+            sync_result['owners_synced'] = len(existing_owner_ids)
 
         # Sync Awards
         for award_data in convention_data.get('awards', []):
@@ -920,9 +969,22 @@ class ConventionSyncView(APIView):
     def _get_convention_complete_data(self, convention, request):
         """Get complete convention data (same logic as ConventionCompleteView)."""
         from apps.bhs.models import Award, Chart, Person, Group
+        from apps.organizations.serializers import OrganizationSerializer
 
         # Base convention payload
         convention_data = ConventionSerializer(convention, context={'request': request}).data
+        
+        # Add organization data if it exists
+        if convention.organization:
+            convention_data['organization'] = OrganizationSerializer(
+                convention.organization, 
+                context={'request': request}
+            ).data
+        else:
+            convention_data['organization'] = None
+        
+        # Owners are already included in ConventionSerializer, but ensure they're serialized as IDs
+        convention_data['owners'] = list(convention.owners.values_list('id', flat=True))
 
         # Gather sessions for this convention
         sessions = Session.objects.filter(convention_id=convention.id).prefetch_related(
