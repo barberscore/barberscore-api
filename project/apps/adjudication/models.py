@@ -779,7 +779,7 @@ class Appearance(TimeStampedModel):
                 filter=Q(
                     appearances__songs__scores__panelist__kind=Panelist.KIND.official,
                     appearances__group_id=self.group_id,
-                ),                
+                ),
             ),
         )
         stats['tot_score'] = standard_round((stats['tot_points'] / stats['score_count']))
@@ -1118,7 +1118,7 @@ class Appearance(TimeStampedModel):
             context,
         )
         statelog = self.round.statelogs.latest('timestamp')
-        
+
         session = Session.objects.get(id=self.round.session_id)
         footer = 'Published by {0} at {1}'.format(
             statelog.by.name,
@@ -2719,7 +2719,7 @@ class Round(TimeStampedModel):
         365: "Rocky Mountain",
         370: "Seneca Land",
         375: "Sunshine",
-        380: "Southwestern",        
+        380: "Southwestern",
         430: "Harmony, Inc.",
         510: "British Association of Barbershop Singers",
         515: "Barbershop Harmony Australia",
@@ -3071,7 +3071,7 @@ class Round(TimeStampedModel):
                 )
         if len(errors):
             raise ValidationError(errors)
-    
+
     def revision_subject(self):
         if self.revision_number > 0:
             return " - {0} - {1}".format(
@@ -3107,7 +3107,7 @@ class Round(TimeStampedModel):
             raise ValueError("No notification list for {0}".format(session))
         return ["{0}".format(x.strip()) for x in session.notification_list.split(',')]
 
-    def get_oss(self, published_by=None, paper_size=None, zoom=1):
+    def get_oss(self, published_by=None, paper_size=None, zoom=1, outcome_id=None):
         Group = apps.get_model('bhs.group')
         Chart = apps.get_model('bhs.chart')
         Panelist = apps.get_model('adjudication.panelist')
@@ -3138,6 +3138,8 @@ class Round(TimeStampedModel):
             RawSQL("(stats->>%s)::Numeric", ("sng_points",)).desc(nulls_last=True),
             RawSQL("(stats->>%s)::Numeric", ("per_points",)).desc(nulls_last=True),
         )
+        if outcome_id:
+            publics = publics.filter(outcomes=outcome_id)
 
         # groups = Group.objects.filter(
         #     id__in=group_ids,
@@ -3255,7 +3257,7 @@ class Round(TimeStampedModel):
 
         for public in publics:
             i += 1
-            public.tot_score_avg = 0 
+            public.tot_score_avg = 0
             public.tot_rank = i
             tot_points = 0
             appearances = Appearance.objects.filter(
@@ -3398,10 +3400,14 @@ class Round(TimeStampedModel):
                         )
 
                     for previous_appearance in previous_appearances:
+                        if not outcome_id:
+                            previously_contesting = previous_appearance.outcomes.filter(
+                                print_on_finals_oss=True,
+                            )
+                        else:
+                            previously_contesting = previous_appearance.outcomes.all()
 
-                        previously_contesting = previous_appearance.outcomes.filter(
-                            print_on_finals_oss=True,
-                        ).order_by(
+                        previously_contesting = previously_contesting.order_by(
                             'num',
                         ).values_list(
                             'num',
@@ -3434,7 +3440,7 @@ class Round(TimeStampedModel):
                     representing = entry.area
                 elif group.district in public.DISTRICT:
                     representing = public.DISTRICT[group.district]
-                else: 
+                else:
                     representing = public.area
 
                 public.representing = "({0})".format(
@@ -3482,7 +3488,11 @@ class Round(TimeStampedModel):
                 Appearance.STATUS.disqualified,
                 Appearance.STATUS.scratched,
             ],
-        ).order_by(
+        )
+        if outcome_id:
+            privates = privates.filter(outcomes=outcome_id)
+
+        privates = privates.order_by(
         ).values_list('name', flat=True)
         privates = list(privates)
 
@@ -3490,7 +3500,11 @@ class Round(TimeStampedModel):
         disqualifications = self.appearances.prefetch_related(
         ).filter(
             status=Appearance.STATUS.disqualified,
-        ).order_by(
+        )
+        if outcome_id:
+            disqualifications = disqualifications.filter(outcomes=outcome_id)
+
+        disqualifications = disqualifications.order_by(
         ).values_list('name', flat=True)
         disqualifications = list(disqualifications)
 
@@ -3555,7 +3569,7 @@ class Round(TimeStampedModel):
                     )
                 except AttributeError:
                     persons.append("(Unknown)")
-            if persons: 
+            if persons:
                 names = ", ".join(persons)
                 panelists.append((value, names))
 
@@ -3564,7 +3578,11 @@ class Round(TimeStampedModel):
             # 'award',
         ).filter(
             printed=True,
-        ).order_by(
+        )
+        if outcome_id:
+            items = items.filter(id=outcome_id)
+
+        items = items.order_by(
             'tree_sort',
             'num',
         ).values_list(
@@ -3583,11 +3601,13 @@ class Round(TimeStampedModel):
 
         if self.kind == self.KIND.finals:
             for pr in previous_rounds:
-                items = pr.outcomes.select_related(
-                    # 'award',
-                ).filter(
-                    print_on_finals_oss=True,
-                ).order_by(
+                if outcome_id:
+                    items = pr.outcomes.filter(id=outcome_id)
+                else:
+                    items = pr.outcomes.filter(
+                        print_on_finals_oss=True,
+                    )
+                items = items.order_by(
                     'tree_sort',
                     'num',
                 ).values_list(
@@ -3859,7 +3879,7 @@ class Round(TimeStampedModel):
             practice = bool(p.kind == Panelist.KIND.practice)
             num = "{0}".format('{:02d}'.format(p.num))
             sng_persons.append((p.name, practice, num))
-        
+
         # per_persons_qs = persons.filter(
         #     panelists__category=Panelist.CATEGORY.performance,
         #     panelists__round__session_id=self.session_id,
@@ -4393,7 +4413,7 @@ class Round(TimeStampedModel):
                     group.tot_score_avg += appearance.tot_score
                     if group.stats is None:
                         group.stats = appearance.stats
-                        
+
             group.tot_score_avg = group.tot_score_avg / scored_rounds
             group.appearances_patched = appearances
 
@@ -4493,7 +4513,7 @@ class Round(TimeStampedModel):
                 statelog.by.name,
                 statelog.timestamp.astimezone(session.convention.timezone).strftime("%Y-%m-%d %H:%M:%S %Z"),
             )
- 
+
         file = pydf.generate_pdf(
             rendered,
             page_size='Letter',
@@ -4520,9 +4540,9 @@ class Round(TimeStampedModel):
             for category in Panelist.CATEGORY:
                 if category[0] >= 30:
                     stats[category[1]] = {}
-        
+
                     # Retrieve category stats for a specific round
-                    stats[category[1]][round_name] = self.get_round_stats(self.kind, category[0])        
+                    stats[category[1]][round_name] = self.get_round_stats(self.kind, category[0])
         else:
             # How many rounds are there???
             rounds = Round.objects.filter(
@@ -4537,18 +4557,18 @@ class Round(TimeStampedModel):
                     round_name = Round.KIND[round.kind]
                     stats['Total'][round_name] = self.get_round_stats(round.kind, None)
             else:
-                stats['Total']['Finals'] = self.get_round_stats(self.kind, None)                
+                stats['Total']['Finals'] = self.get_round_stats(self.kind, None)
 
             for category in Panelist.CATEGORY:
                 if category[0] >= 30:
                     stats[category[1]] = {}
-                    
+
                     if rounds.count() > 1:
                         stats[category[1]]['Grand'] = self.get_round_stats(None, category[0])
 
                     for round in rounds:
                         round_name = Round.KIND[round.kind]
-                    
+
                         # Retrieve category stats for a specific round
                         stats[category[1]][round_name] = self.get_round_stats(round.kind, category[0])
         return stats
@@ -4563,7 +4583,7 @@ class Round(TimeStampedModel):
             filter_category = " AND panelist.category = {0}".format(category)
 
         query = '''
-            SELECT 
+            SELECT
                 scores.id,
                 ROUND(AVG(scores.resid) OVER (),2) AS diff,
                 ROUND(stddev_samp(scores.resid) OVER (),2) AS stddev
@@ -4586,7 +4606,7 @@ class Round(TimeStampedModel):
                 AND panelist.kind = 10 -- Official scores only
                 %s -- Round Number
                 %s -- Category
-                    
+
                 ORDER BY appearance.num, score.song_id, panelist.num
 
             ) as scores
@@ -4943,7 +4963,7 @@ class Round(TimeStampedModel):
         ).order_by(
             'draw',
         )
-        
+
         for group in groups:
             appearances = Appearance.objects.filter(
                 group_id=group.group_id,
@@ -5029,7 +5049,7 @@ class Round(TimeStampedModel):
                 '-tree_sort',
                 '-num',
             )
-            
+
             outcomes = list(chain(outcomes, current_items))
         else:
             outcomes = self.outcomes.filter(
@@ -5176,7 +5196,7 @@ class Round(TimeStampedModel):
                 document.add_paragraph(
                     "MT: {0}".format(html.unescape(gp.name)),
                     # style='List Bullet',
-                )            
+                )
         if winners:
             document.add_heading('Results')
             for winner in winners:
@@ -5309,7 +5329,7 @@ class Round(TimeStampedModel):
                             self.DISTRICT_FULL_NAMES[self.district],
                             Appearance.KIND[appearance.round.session_kind],
                             Round.KIND[appearance.round.kind],
-                            appearance.round.date.strftime("%-m/%-d/%Y"),                            
+                            appearance.round.date.strftime("%-m/%-d/%Y"),
                     )
                     document += "\\pard\\tqc\\tx5400\\tqr\\tx10800\\pardeftab720\\ri0\\partightenfactor0\n"
                     document += "\\cf2 \t\t\\\n"
@@ -5560,7 +5580,7 @@ class Round(TimeStampedModel):
             oss_pdf,
             'application/pdf',
         ))
-        
+
         email = build_email(
             template=template,
             context=context,
@@ -5602,7 +5622,7 @@ class Round(TimeStampedModel):
             pdf,
             'application/pdf',
         ))
-        
+
         email = build_email(
             template=template,
             context=context,
@@ -5706,7 +5726,7 @@ class Round(TimeStampedModel):
             # if outcome.level is not Outcome.LEVEL.raw:
             outcome.winner = outcome.get_winner()
             outcome.save()
-        return     
+        return
 
     def confirm_session_entries(self):
         '''Confirm Session Approved entries have been assigned a Draw number.'''
@@ -5970,7 +5990,7 @@ class Round(TimeStampedModel):
                 for c in charts_raw:
                     c['pk'] = str(c.pop('id'))
                 charts = [json.dumps(x) for x in charts_raw]
-                
+
                 # Create and start group
                 appearance = self.appearances.create(
                     num=prior_appearance.draw,
@@ -6085,7 +6105,7 @@ class Round(TimeStampedModel):
                 )
                 advancer__ids = [x.id for x in ordered[:spots]]
                 try:
-                    mt = ordered[spots:spots+1][0]                
+                    mt = ordered[spots:spots+1][0]
                 except IndexError:
                     # Index is not present
                     # ...usually when the number of spots exceeds the number of competitors.
@@ -6192,7 +6212,7 @@ class Round(TimeStampedModel):
         """Publishes the results and notifies all parties"""
         Appearance = apps.get_model('adjudication.appearance')
         Panelist = apps.get_model('adjudication.panelist')
-        
+
         # Send the OSS
         send_publish_email_from_round.delay(self.id)
 
@@ -6477,7 +6497,7 @@ class Song(TimeStampedModel):
                 if is_asterisk:
                     asterisks.append(category['panelist__category'])
                     continue
-        
+
         ## Review highest and lowest scores across all categories
 
         # Only use official scores.
@@ -6511,7 +6531,7 @@ class Song(TimeStampedModel):
                 asterisks.append(score.panelist.category)
                 high_low_found = True
                 continue
-        
+
         if high_low_found:
             for score in descending:
                 if score.points == descending[0].points:
@@ -6530,7 +6550,7 @@ class Song(TimeStampedModel):
         output = []
         # Confidence thresholds
         # Dixon 90% confidence
-        # 
+        #
         confidence = {
             '3': 0.941,
             '6': .56,
