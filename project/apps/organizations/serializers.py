@@ -30,6 +30,8 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'division_nomen',
             'drcj_nomen',
             'default_owners',
+            'timezone',
+            'permissions',
         ]
         read_only_fields = [
             'nomen'
