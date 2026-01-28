@@ -24,7 +24,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'id',
             'nomen',
             'name',
-            'abbr',
+            'abbreviation',
             'logo',
             'district_nomen',
             'division_nomen',
