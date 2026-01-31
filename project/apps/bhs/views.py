@@ -465,6 +465,7 @@ class ConventionCompleteView(APIView):
             id=convention_id,
             defaults={
                 'name': convention_data.get('name', ''),
+                'status': convention_data.get('status'),
                 'district': convention_data.get('district'),
                 'season': convention_data.get('season'),
                 'panel': convention_data.get('panel'),
@@ -611,6 +612,37 @@ class ConventionCompleteView(APIView):
         # Sync sessions
         for session_data in convention_data.get('sessions', []):
             session_id = session_data['id']
+            
+            # Sync session organization if provided
+            session_organization_id = None
+            if session_data.get('organization'):
+                org_data = session_data['organization']
+                org_id = org_data.get('id')
+                if org_id:
+                    # Handle both 'abbr' (serializer field) and 'abbreviation' (model field)
+                    abbreviation = org_data.get('abbr') or org_data.get('abbreviation', '')
+                    organization, org_created = Organization.objects.update_or_create(
+                        id=org_id,
+                        defaults={
+                            'name': org_data.get('name', ''),
+                            'abbreviation': abbreviation,
+                            'district_nomen': org_data.get('district_nomen', 'District'),
+                            'division_nomen': org_data.get('division_nomen', 'Division'),
+                            'drcj_nomen': org_data.get('drcj_nomen', 'DRCJ'),
+                        }
+                    )
+                    session_organization_id = organization.id
+                    
+                    # Sync organization default_owners if provided
+                    if org_data.get('default_owners'):
+                        default_owner_ids = [
+                            owner_id if isinstance(owner_id, str) else owner_id.get('id') if isinstance(owner_id, dict) else owner_id
+                            for owner_id in org_data['default_owners']
+                        ]
+                        # Filter to only existing users
+                        existing_owner_ids = User.objects.filter(id__in=default_owner_ids).values_list('id', flat=True)
+                        organization.default_owners.set(existing_owner_ids)
+            
             session, created = Session.objects.update_or_create(
                 id=session_id,
                 defaults={
@@ -627,9 +659,20 @@ class ConventionCompleteView(APIView):
                     'description': session_data.get('description', ''),
                     'notes': session_data.get('notes', ''),
                     'divisions': session_data.get('divisions', []),
+                    'organization_id': session_organization_id,
                 }
             )
             sync_result['sessions_synced'] += 1
+            
+            # Sync session owners
+            if session_data.get('owners'):
+                owner_ids = [
+                    owner_id if isinstance(owner_id, str) else owner_id.get('id') if isinstance(owner_id, dict) else owner_id
+                    for owner_id in session_data['owners']
+                ]
+                # Filter to only existing users
+                existing_owner_ids = User.objects.filter(id__in=owner_ids).values_list('id', flat=True)
+                session.owners.set(existing_owner_ids)
 
             # Sync assignments
             for assignment_data in session_data.get('assignments', []):
@@ -1005,6 +1048,18 @@ class ConventionSyncView(APIView):
         sessions_payload = []
         for session in sessions:
             session_data = SessionSerializer(session, context={'request': request}).data
+            
+            # Add organization data if it exists
+            if session.organization:
+                session_data['organization'] = OrganizationSerializer(
+                    session.organization, 
+                    context={'request': request}
+                ).data
+            else:
+                session_data['organization'] = None
+            
+            # Ensure owners are serialized as IDs
+            session_data['owners'] = list(session.owners.values_list('id', flat=True))
 
             # Assignments
             assignments_qs = session.assignments.all()
