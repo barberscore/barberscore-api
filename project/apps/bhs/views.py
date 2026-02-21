@@ -467,6 +467,7 @@ class ConventionCompleteView(APIView):
                 'name': convention_data.get('name', ''),
                 'status': convention_data.get('status'),
                 'district': convention_data.get('district'),
+                'district_display_name': convention_data.get('district_display_name', ''),
                 'season': convention_data.get('season'),
                 'panel': convention_data.get('panel'),
                 'year': convention_data.get('year'),
@@ -480,6 +481,8 @@ class ConventionCompleteView(APIView):
                 'divisions': convention_data.get('divisions', []),
                 'kinds': convention_data.get('kinds', []),
                 'organization_id': organization_id,
+                'timezone': convention_data.get('timezone', ''),
+                'image': convention_data.get('image', ''),
             }
         )
         sync_result['convention_updated'] = True
