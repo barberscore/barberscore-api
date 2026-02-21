@@ -482,7 +482,7 @@ class ConventionCompleteView(APIView):
                 'kinds': convention_data.get('kinds', []),
                 'organization_id': organization_id,
                 'timezone': convention_data.get('timezone', ''),
-                'image': convention_data.get('image', ''),
+                'image': convention_data.get('image_id', ''),
             }
         )
         sync_result['convention_updated'] = True

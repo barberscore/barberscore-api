@@ -90,6 +90,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'status',
             'name',
             'district',
+            'district_display_name',
             'season',
             'panel',
             'year',
@@ -107,6 +108,7 @@ class ConventionSerializer(serializers.ModelSerializer):
             'rounds_finalized',
             'base_filename',
 
+            'image',
             'image_id',
             'persons',
             'owners',
