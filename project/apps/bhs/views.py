@@ -384,6 +384,10 @@ class ConventionCompleteView(APIView):
             with transaction.atomic():
                 sync_result = self._sync_convention_data(convention_data)
 
+            # Package any sessions that were synced with "verified" status
+            package_results = self._package_verified_sessions(convention_data)
+            sync_result['sessions_packaged'] = package_results
+
             return Response({
                 'message': 'Convention data populated successfully',
                 'convention_id': pk,
@@ -396,6 +400,38 @@ class ConventionCompleteView(APIView):
                 {'error': f'Failed to populate data: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+    def _package_verified_sessions(self, convention_data):
+        """Package any sessions that were synced with 'verified' status.
+
+        After syncing convention data, sessions in 'verified' status need
+        their package() transition triggered to generate reports and build
+        rounds for adjudication.
+        """
+        results = []
+        for session_data in convention_data.get('sessions', []):
+            if session_data.get('status') == Session.STATUS.verified:
+                try:
+                    session = Session.objects.get(id=session_data['id'])
+                    session.package()
+                    session.save()
+                    results.append({
+                        'session_id': str(session.id),
+                        'name': str(session),
+                        'status': 'packaged',
+                    })
+                    log.info("Packaged session {0}".format(session))
+                except Exception as e:
+                    log.error("Failed to package session {0}: {1}".format(
+                        session_data.get('id'), e
+                    ))
+                    results.append({
+                        'session_id': str(session_data.get('id')),
+                        'name': session_data.get('name', ''),
+                        'status': 'failed',
+                        'error': str(e),
+                    })
+        return results
 
     def _sync_convention_data(self, convention_data):
         """Sync convention data into the database. Shared with ConventionSyncView."""
