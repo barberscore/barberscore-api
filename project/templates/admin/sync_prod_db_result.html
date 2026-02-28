@@ -1,0 +1,33 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Database Sync Result" %}{% endblock %}
+{% block breadcrumbs %}
+  <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans "Home" %}</a>
+    &rsaquo; {% trans "Sync Production Database" %}
+  </div>
+{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    {% if success %}
+    <h1 style="color: #28a745;">{% trans "Sync Completed Successfully" %}</h1>
+    {% else %}
+    <h1 style="color: #ba2121;">{% trans "Sync Failed" %}</h1>
+    {% endif %}
+
+    <h2>{% trans "pg_dump | pg_restore output:" %}</h2>
+    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 4px; overflow-x: auto; max-height: 400px; white-space: pre-wrap;">{{ restore_output }}</pre>
+
+    <h2>{% trans "Migrate output:" %}</h2>
+    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 4px; overflow-x: auto; max-height: 400px; white-space: pre-wrap;">{{ migrate_output }}</pre>
+
+    <p style="margin-top: 20px;">
+        <a href="{% url 'admin:index' %}"
+           style="padding: 10px 15px; background: #417690; color: white; text-decoration: none; border-radius: 4px;">
+            {% trans "Return to admin" %}
+        </a>
+    </p>
+</div>
+{% endblock %}

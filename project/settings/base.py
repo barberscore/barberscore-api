@@ -176,7 +176,7 @@ if get_env_variable('USE_HTTPS'):
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -336,6 +336,35 @@ def get_app_list(self, request):
             yield app_dict[app_name]
 
 admin.AdminSite.get_app_list = get_app_list
+
+# Sync Production Database admin feature
+# Only visible in non-production environments when BARBERSCORE_PROD_DATABASE is set
+_original_each_context = admin.AdminSite.each_context
+
+def _patched_each_context(self, request):
+    ctx = _original_each_context(self, request)
+    _is_prod = DJANGO_SETTINGS_MODULE == 'settings.prod'
+    _has_source = bool(os.environ.get('BARBERSCORE_PROD_DATABASE'))
+    ctx['show_sync_db_button'] = (not _is_prod) and _has_source
+    return ctx
+
+admin.AdminSite.each_context = _patched_each_context
+
+from django.urls import path as _admin_path
+
+_original_get_urls = admin.AdminSite.get_urls
+
+def _patched_get_urls(self):
+    self.index_template = 'admin/custom_index.html'
+    from views import sync_prod_db_confirm
+    from views import sync_prod_db_execute
+    custom_urls = [
+        _admin_path('sync-db/', self.admin_view(sync_prod_db_confirm), name='sync_prod_db'),
+        _admin_path('sync-db/execute/', self.admin_view(sync_prod_db_execute), name='sync_prod_db_execute'),
+    ]
+    return custom_urls + _original_get_urls(self)
+
+admin.AdminSite.get_urls = _patched_get_urls
 
 # Applications
 INSTALLED_APPS = [

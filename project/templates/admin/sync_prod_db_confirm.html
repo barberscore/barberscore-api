@@ -1,0 +1,36 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Confirm Database Sync" %}{% endblock %}
+{% block breadcrumbs %}
+  <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans "Home" %}</a>
+    &rsaquo; {% trans "Sync Production Database" %}
+  </div>
+{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h1>{% trans "Are you sure?" %}</h1>
+    <p style="color: #ba2121; font-size: 1.2em;">
+        {% trans "This will completely replace the current database with production data. All current data will be lost." %}
+    </p>
+    <p>{% trans "This operation will:" %}</p>
+    <ul>
+        <li>{% trans "Dump the production database" %}</li>
+        <li>{% trans "Restore it to this environment's database (destroying all current data)" %}</li>
+        <li>{% trans "Run database migrations" %}</li>
+    </ul>
+    <p>{% trans "This may take several minutes. Do not close the browser while the sync is in progress." %}</p>
+    <form method="post" action="{% url 'admin:sync_prod_db_execute' %}">
+        {% csrf_token %}
+        <input type="hidden" name="confirmed" value="1">
+        <input type="submit" value="{% trans 'Yes, sync from production' %}"
+               style="padding: 10px 15px; background: #ba2121; color: white; border: none; cursor: pointer; border-radius: 4px; margin-right: 10px;">
+        <a href="{% url 'admin:index' %}"
+           style="padding: 10px 15px; background: #417690; color: white; text-decoration: none; border-radius: 4px;">
+            {% trans "Cancel" %}
+        </a>
+    </form>
+</div>
+{% endblock %}
