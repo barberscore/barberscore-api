@@ -3525,11 +3525,10 @@ class Round(TimeStampedModel):
                 name = Group.objects.get(id=group_id).name
                 advancers.append((draw, name))
             try:
-                mt_id = self.appearances.get(
-                    draw=0,
-                ).group_id
-                mt = Group.objects.get(id=mt_id).name
-                advancers.append(('MT', mt))
+                mt_appearances = self.appearances.filter(draw__lte=0).order_by('draw')
+                for appearance in mt_appearances:
+                    mt = Group.objects.get(id=appearance.group_id).name
+                    advancers.append(('MT', mt))
             except self.appearances.model.DoesNotExist:
                 pass
         else:
@@ -5021,9 +5020,7 @@ class Round(TimeStampedModel):
             'draw',
         )
         group_ids = appearances.values_list('group_id', flat=True)
-        mt = self.appearances.filter(
-            draw=0,
-        ).first()
+        mt_appearances = self.appearances.filter(draw__lte=0).order_by('draw')
 
         if self.kind == self.KIND.finals:
             outcomes = {}
@@ -5191,12 +5188,14 @@ class Round(TimeStampedModel):
                     "{0}: {1}".format(appearance.draw, group.name),
                     # style='List Bullet',
                 )
-            if mt is not None:
-                gp = Group.objects.get(id=mt.group_id)
-                document.add_paragraph(
-                    "MT: {0}".format(html.unescape(gp.name)),
-                    # style='List Bullet',
-                )
+            if mt_appearances is not None:
+                for appearance in mt_appearances:
+                    mt = Group.objects.get(id=appearance.group_id).name
+                    document.add_paragraph(
+                        "MT: {0}".format(html.unescape(mt)),
+                        # style='List Bullet',
+                    )
+
         if winners:
             document.add_heading('Results')
             for winner in winners:
