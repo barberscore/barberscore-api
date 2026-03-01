@@ -47,7 +47,7 @@ from .models import Panelist
 from .models import Round
 from .models import Score
 from .models import Song
-from apps.bhs.models import Convention
+from apps.bhs.models import Convention, Group
 
 from .renderers import PDFRenderer
 from .renderers import XLSXRenderer
@@ -125,7 +125,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
         # print(serializer.initial_data['round']['id'])
 
         parent_round = Round.objects.get(id=serializer.initial_data['round']['id'])
-
+        group = Group.objects.get(id=group_id)
         try:
             entry = Entry.objects.get(
                 session_id=parent_round.session_id,
@@ -134,7 +134,7 @@ class AppearanceViewSet(viewsets.ModelViewSet):
 
             # print("add participants...")
             serializer.save(
-                name=entry.name,
+                name=group.name,
                 is_private=entry.is_private,
                 area=entry.area,
                 charts=charts,
@@ -142,7 +142,10 @@ class AppearanceViewSet(viewsets.ModelViewSet):
                 entry_id=entry.id,
             )
         except Entry.DoesNotExist:
-            serializer.save(charts=charts)
+            serializer.save(
+                name=group.name,
+                charts=charts
+            )
 
     @action(methods=['get'], detail=True)
     def mock(self, request, pk=None, **kwargs):
