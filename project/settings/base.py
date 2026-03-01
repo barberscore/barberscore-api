@@ -226,14 +226,20 @@ SESSION_CACHE_ALIAS = "default"
 # RQ
 RQ_QUEUES = {
     'default': {
+        'URL': get_env_variable("REDIS_URL"),
+        'SSL_CERT_REQS': None,
         'USE_REDIS_CACHE': 'default',
         'ASYNC': True,
     },
     'high': {
+        'URL': get_env_variable("REDIS_URL"),
+        'SSL_CERT_REQS': None,
         'USE_REDIS_CACHE': 'default',
         'ASYNC': True,
     },
     'low': {
+        'URL': get_env_variable("REDIS_URL"),
+        'SSL_CERT_REQS': None,
         'USE_REDIS_CACHE': 'default',
         'ASYNC': True,
     },
