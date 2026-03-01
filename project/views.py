@@ -85,7 +85,21 @@ def sync_prod_db_execute(request):
         migrate_output = "Skipped (restore failed)."
         migrate_ok = False
 
-    success = restore_ok and migrate_ok
+    # Step 3: Flush Redis cache (only if restore + migrate succeeded)
+    if restore_ok and migrate_ok:
+        try:
+            from django.core.cache import cache
+            cache.clear()
+            cache_output = "Redis cache flushed successfully."
+            cache_ok = True
+        except Exception as e:
+            cache_output = "ERROR: {e}".format(e=e)
+            cache_ok = False
+    else:
+        cache_output = "Skipped (restore or migrate failed)."
+        cache_ok = False
+
+    success = restore_ok and migrate_ok and cache_ok
     if success:
         log.info("Production database sync completed successfully.")
     else:
@@ -95,5 +109,6 @@ def sync_prod_db_execute(request):
         'success': success,
         'restore_output': restore_output or '(no output)',
         'migrate_output': migrate_output or '(no output)',
+        'cache_output': cache_output,
     }
     return render(request, 'admin/sync_prod_db_result.html', context)

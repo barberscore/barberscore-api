@@ -104,11 +104,11 @@ INSTALLED_APPS += [
     'whitenoise.runserver_nostatic',
 ]
 
-# Caches
+# Caches - inherits REDIS_URL with ssl_cert_reqs=none from base.py
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": get_env_variable("REDIS_URL"),
+        "LOCATION": REDIS_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {

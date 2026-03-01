@@ -23,6 +23,9 @@
     <h2>{% trans "Migrate output:" %}</h2>
     <pre style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 4px; overflow-x: auto; max-height: 400px; white-space: pre-wrap;">{{ migrate_output }}</pre>
 
+    <h2>{% trans "Redis cache:" %}</h2>
+    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 4px; overflow-x: auto; max-height: 400px; white-space: pre-wrap;">{{ cache_output }}</pre>
+
     <p style="margin-top: 20px;">
         <a href="{% url 'admin:index' %}"
            style="padding: 10px 15px; background: #417690; color: white; text-decoration: none; border-radius: 4px;">
