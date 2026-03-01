@@ -204,16 +204,20 @@ DATABASES = {
 # CORS Configuration
 CORS_ORIGIN_ALLOW_ALL = True
 
+REDIS_URL = get_env_variable("REDIS_URL")
+if REDIS_URL.startswith('rediss://'):
+    REDIS_URL = REDIS_URL + '?ssl_cert_reqs=none'
+
+
 # Caches
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": get_env_variable("REDIS_URL"),
+        "LOCATION": REDIS_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
                 "max_connections": 20,
-                "ssl_cert_reqs": None,
             },
         }
     },
@@ -224,24 +228,23 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
 # RQ
-REDIS_URL = get_env_variable("REDIS_URL")
-if REDIS_URL.startswith('rediss://'):
-    REDIS_URL = REDIS_URL + '?ssl_cert_reqs=none'
-
 RQ_QUEUES = {
     'default': {
         'URL': REDIS_URL,
         'USE_REDIS_CACHE': 'default',
+        'SSL_CERT_REQS': None,
         'ASYNC': True,
     },
     'high': {
         'URL': REDIS_URL,
         'USE_REDIS_CACHE': 'default',
+        'SSL_CERT_REQS': None,
         'ASYNC': True,
     },
     'low': {
         'URL': REDIS_URL,
         'USE_REDIS_CACHE': 'default',
+        'SSL_CERT_REQS': None,
         'ASYNC': True,
     },
 }
