@@ -701,7 +701,7 @@ class ConventionCompleteView(APIView):
                     'location': session_data.get('location', ''),
                     'timezone': session_data.get('timezone', ''),
                     'notification_list': session_data.get('notification_list', ''),
-                    'image': session_data.get('notification_list', ''),
+                    'image': session_data.get('image', ''),
                     'num_rounds': session_data.get('num_rounds', 1),
                     'is_invitational': session_data.get('is_invitational', False),
                     'description': session_data.get('description', ''),
@@ -732,10 +732,12 @@ class ConventionCompleteView(APIView):
                         'kind': assignment_data.get('kind'),
                         'category': assignment_data.get('category'),
                         'person_id': assignment_data.get('person_id'),
+                        'bhs_id': assignment_data.get('bhs_id'),
                         'name': assignment_data.get('name', ''),
                         'first_name': assignment_data.get('first_name', ''),
                         'last_name': assignment_data.get('last_name', ''),
                         'district': assignment_data.get('district'),
+                        'area': assignment_data.get('area'),
                         'email': assignment_data.get('email', ''),
                         'cell_phone': assignment_data.get('cell_phone', ''),
                     }
@@ -753,11 +755,19 @@ class ConventionCompleteView(APIView):
                         'name': contest_data.get('name', ''),
                         'kind': contest_data.get('kind'),
                         'gender': contest_data.get('gender'),
+                        'age': contest_data.get('age'),
                         'level': contest_data.get('level'),
                         'season': contest_data.get('season'),
+                        'is_single': entry_data.get('is_single', False),
+                        'is_novice': entry_data.get('is_novice', False),
                         'description': contest_data.get('description', ''),
                         'district': contest_data.get('district'),
                         'division': contest_data.get('division'),
+                        'scope': contest_data.get('scope'),
+                        'scope_range': contest_data.get('scope_range'),
+                        'size': contest_data.get('size'),
+                        'size_range': contest_data.get('size_range'),
+                        'tree_sort': contest_data.get('tree_sort'),
                     }
                 )
                 sync_result['contests_synced'] += 1
@@ -772,11 +782,21 @@ class ConventionCompleteView(APIView):
                         'status': entry_data.get('status'),
                         'is_evaluation': entry_data.get('is_evaluation', True),
                         'is_private': entry_data.get('is_private', False),
+                        'is_mt': entry_data.get('is_mt', False),
+                        'is_senior': entry_data.get('is_senior', False),
+                        'is_youth': entry_data.get('is_youth', False),
                         'notes': entry_data.get('notes', ''),
+                        'bhs_id': entry_data.get('bhs_id', ''),
+                        'code': entry_data.get('code', ''),
+                        'area': entry_data.get('area', ''),
                         'group_id': entry_data.get('group_id'),
                         'name': entry_data.get('name', ''),
                         'kind': entry_data.get('kind'),
                         'gender': entry_data.get('gender'),
+                        'participants': entry_data.get('participants', ''),
+                        'chapters': entry_data.get('chapters', ''),
+                        'notification_list': entry_data.get('notification_list', ''),
+                        'pos': entry_data.get('pos'),
                         'district': entry_data.get('district'),
                         'division': entry_data.get('division'),
                         'draw': entry_data.get('draw'),
@@ -784,7 +804,6 @@ class ConventionCompleteView(APIView):
                         'base': entry_data.get('base'),
                     }
                 )
-                sync_result['entries_synced'] += 1
 
                 # Sync entry owners
                 if entry_data.get('owners'):
@@ -794,6 +813,8 @@ class ConventionCompleteView(APIView):
                     ]
                     existing_owner_ids = User.objects.filter(id__in=owner_ids).values_list('id', flat=True)
                     entry.owners.set(existing_owner_ids)
+
+                sync_result['entries_synced'] += 1
 
             # Sync entry-contest relationships (registration_entry_contests)
             # First, collect all entry-contest relationships for this session
@@ -830,6 +851,16 @@ class ConventionCompleteView(APIView):
                         'footnotes': round_data.get('footnotes', ''),
                     }
                 )
+
+                # Sync round owners
+                if round_data.get('owners'):
+                    owner_ids = [
+                        owner_id if isinstance(owner_id, str) else owner_id.get('id') if isinstance(owner_id, dict) else owner_id
+                        for owner_id in round_data['owners']
+                    ]
+                    existing_owner_ids = User.objects.filter(id__in=owner_ids).values_list('id', flat=True)
+                    round_obj.owners.set(existing_owner_ids)
+
                 sync_result['rounds_synced'] += 1
 
                 # Sync panelists
@@ -881,6 +912,16 @@ class ConventionCompleteView(APIView):
                             'division': appearance_data.get('division'),
                         }
                     )
+
+                    # Sync appearance owners
+                    if appearance.get('owners'):
+                        owner_ids = [
+                            owner_id if isinstance(owner_id, str) else owner_id.get('id') if isinstance(owner_id, dict) else owner_id
+                            for owner_id in appearance['owners']
+                        ]
+                        existing_owner_ids = User.objects.filter(id__in=owner_ids).values_list('id', flat=True)
+                        appearance.owners.set(existing_owner_ids)
+
                     sync_result['appearances_synced'] += 1
 
                     # Sync Songs for this appearance
@@ -946,6 +987,16 @@ class ConventionCompleteView(APIView):
                             'description': outcome_data.get('description', ''),
                             'district': outcome_data.get('district'),
                             'division': outcome_data.get('division'),
+                            'age': outcome_data.get('age'),
+                            'is_novice': outcome_data.get('is_novice', False),
+                            'is_single': outcome_data.get('is_single', False),
+                            'size': outcome_data.get('size'),
+                            'size_range': outcome_data.get('size_range'),
+                            'scope': outcome_data.get('scope'),
+                            'scope_range': outcome_data.get('scope_range'),
+                            'tree_sort': outcome_data.get('tree_sort'),
+                            'printed': outcome_data.get('print_on_finals_oss', True),
+                            'print_on_finals_oss': outcome_data.get('print_on_finals_oss', False),
                         }
                     )
                     sync_result['outcomes_synced'] += 1
@@ -1204,6 +1255,7 @@ class ConventionSyncView(APIView):
                         songs_data.append(song_data)
                     appearance_data['songs'] = songs_data
                     appearances_data.append(appearance_data)
+                    appearances_data['owners'] = list(appearance.owners.values_list('id', flat=True))
 
                 round_data['appearances'] = appearances_data
 
@@ -1220,6 +1272,9 @@ class ConventionSyncView(APIView):
                     }
                     for app in appearances_qs if app.draw is not None
                 ]
+
+                # Add owners for the round
+                round_data['owners'] = list(round.owners.values_list('id', flat=True))
 
                 # Simple standings calculation based on tot_points in appearance stats
                 try:
