@@ -777,6 +777,15 @@ class ConventionCompleteView(APIView):
                 )
                 sync_result['entries_synced'] += 1
 
+                # Sync entry owners
+                if entry_data.get('owners'):
+                    owner_ids = [
+                        owner_id if isinstance(owner_id, str) else owner_id.get('id') if isinstance(owner_id, dict) else owner_id
+                        for owner_id in entry_data['owners']
+                    ]
+                    existing_owner_ids = User.objects.filter(id__in=owner_ids).values_list('id', flat=True)
+                    entry.owners.set(existing_owner_ids)
+
             # Sync entry-contest relationships (registration_entry_contests)
             # First, collect all entry-contest relationships for this session
             entry_contest_map = {}
@@ -1048,6 +1057,7 @@ class ConventionSyncView(APIView):
                 {'error': f'Failed to push to staging: {str(e)}'},
                 status=status.HTTP_502_BAD_GATEWAY
             )
+
     def _get_convention_complete_data(self, convention, request):
         """Get complete convention data (same logic as ConventionCompleteView)."""
         from apps.bhs.models import Award, Chart, Person, Group
@@ -1132,6 +1142,10 @@ class ConventionSyncView(APIView):
                         'entry_id': str(entry.id),
                         'contest_id': str(contest.id),
                     })
+
+            # Add owners for each entry
+            for i, entry in enumerate(entries_qs):
+                session_data['entries'][i]['owners'] = list(entry.owners.values_list('id', flat=True))
 
             # Store entry-contest relationships
             session_data['entry_contests'] = entry_contest_relationships
