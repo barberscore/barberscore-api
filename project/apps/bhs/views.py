@@ -442,7 +442,6 @@ class ConventionCompleteView(APIView):
         from django.contrib.auth import get_user_model
         
         User = get_user_model()
-        print(convention_data)
         sync_result = {
             'convention_updated': False,
             'organization_synced': False,
@@ -758,8 +757,8 @@ class ConventionCompleteView(APIView):
                         'age': contest_data.get('age'),
                         'level': contest_data.get('level'),
                         'season': contest_data.get('season'),
-                        'is_single': entry_data.get('is_single', False),
-                        'is_novice': entry_data.get('is_novice', False),
+                        'is_single': contest_data.get('is_single', False),
+                        'is_novice': contest_data.get('is_novice', False),
                         'description': contest_data.get('description', ''),
                         'district': contest_data.get('district'),
                         'division': contest_data.get('division'),
@@ -914,10 +913,10 @@ class ConventionCompleteView(APIView):
                     )
 
                     # Sync appearance owners
-                    if appearance.get('owners'):
+                    if appearance_data.get('owners'):
                         owner_ids = [
                             owner_id if isinstance(owner_id, str) else owner_id.get('id') if isinstance(owner_id, dict) else owner_id
-                            for owner_id in appearance['owners']
+                            for owner_id in appearance_data['owners']
                         ]
                         existing_owner_ids = User.objects.filter(id__in=owner_ids).values_list('id', flat=True)
                         appearance.owners.set(existing_owner_ids)
@@ -1254,8 +1253,8 @@ class ConventionSyncView(APIView):
                         song_data['scores'] = ScoreSerializer(scores_qs, many=True, context={'request': request}).data
                         songs_data.append(song_data)
                     appearance_data['songs'] = songs_data
+                    appearance_data['owners'] = list(appearance.owners.values_list('id', flat=True))
                     appearances_data.append(appearance_data)
-                    appearances_data['owners'] = list(appearance.owners.values_list('id', flat=True))
 
                 round_data['appearances'] = appearances_data
 
@@ -1274,7 +1273,7 @@ class ConventionSyncView(APIView):
                 ]
 
                 # Add owners for the round
-                round_data['owners'] = list(round.owners.values_list('id', flat=True))
+                round_data['owners'] = list(rnd.owners.values_list('id', flat=True))
 
                 # Simple standings calculation based on tot_points in appearance stats
                 try:
