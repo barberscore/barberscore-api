@@ -835,6 +835,14 @@ class ConventionCompleteView(APIView):
                 except Entry.DoesNotExist:
                     pass
 
+            # Delete existing rounds for this session before syncing.
+            # Rounds have a unique constraint on (session_id, kind), so if
+            # staging already has rounds (e.g. from package()) with different
+            # UUIDs than production, update_or_create by id would fail.
+            # Cascades to panelists, appearances, songs, scores, outcomes.
+            if session_data.get('rounds'):
+                Round.objects.filter(session_id=session_id).delete()
+
             # Sync rounds
             for round_data in session_data.get('rounds', []):
                 round_id = round_data['id']
