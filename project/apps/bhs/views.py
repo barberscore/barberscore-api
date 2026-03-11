@@ -850,12 +850,30 @@ class ConventionCompleteView(APIView):
                     id=round_id,
                     defaults={
                         'session_id': session_id,
+                        'convention_id': convention_id,
                         'status': round_data.get('status'),
                         'kind': round_data.get('kind'),
                         'num': round_data.get('num', 1),
                         'spots': round_data.get('spots', 10),
                         'date': round_data.get('date'),
                         'footnotes': round_data.get('footnotes', ''),
+                        # Denormalized convention fields
+                        'name': convention_data.get('name', ''),
+                        'district': convention_data.get('district'),
+                        'season': convention_data.get('season'),
+                        'panel': convention_data.get('panel'),
+                        'year': convention_data.get('year'),
+                        'open_date': convention_data.get('open_date'),
+                        'close_date': convention_data.get('close_date'),
+                        'start_date': convention_data.get('start_date'),
+                        'end_date': convention_data.get('end_date'),
+                        'venue_name': convention_data.get('venue_name', '(TBD)'),
+                        'location': convention_data.get('location', '(TBD)'),
+                        'divisions': convention_data.get('divisions', []),
+                        'image_id': round_data.get('image_id', 'missing_image'),
+                        # Denormalized session fields
+                        'session_nomen': session_data.get('name', ''),
+                        'session_kind': session_data.get('kind'),
                     }
                 )
 
