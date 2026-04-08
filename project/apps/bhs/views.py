@@ -442,6 +442,38 @@ class ConventionCompleteView(APIView):
         from django.contrib.auth import get_user_model
         
         User = get_user_model()
+
+        def _to_numeric_range(value):
+            """Coerce incoming range payloads to a psycopg2 NumericRange.
+ 
+            Accepts None, a dict ({'lower', 'upper', 'bounds'}), or a JSON
+            string of the same. Postgres int4range can't accept the raw
+            dict/string, so we must build a NumericRange here.
+            """
+            if value is None or value == '':
+                return None
+            if isinstance(value, NumericRange):
+                return value
+            if isinstance(value, str):
+                try:
+                    value = json.loads(value)
+                except (ValueError, TypeError):
+                    return None
+            if not isinstance(value, dict):
+                return None
+            lower = value.get('lower')
+            upper = value.get('upper')
+            bounds = value.get('bounds', '[)') or '[)'
+            try:
+                lower = int(lower) if lower is not None and lower != '' else None
+            except (TypeError, ValueError):
+                lower = None
+            try:
+                upper = int(upper) if upper is not None and upper != '' else None
+            except (TypeError, ValueError):
+                upper = None
+            return NumericRange(lower, upper, bounds=bounds)
+
         sync_result = {
             'convention_updated': False,
             'organization_synced': False,
@@ -537,22 +569,6 @@ class ConventionCompleteView(APIView):
         for award_data in convention_data.get('awards', []):
             award_id = award_data['id']
             bounds_default = {'lower': None, 'upper': None, 'bounds': '[]'}
-            if award_data.get('scope_range'):
-                sr = json.loads(award_data.get('scope_range', f'{bounds_default}'))
-                lower = sr.get('lower', None)
-                upper = sr.get('upper', None)
-                bounds = sr.get('bounds', '[]')
-                try:
-                    lower = int(lower)
-                except:
-                    lower = None
-                try:
-                    upper = int(upper)
-                except:
-                    upper = None
-                scope_range = NumericRange(lower, upper, bounds=bounds)
-            else:
-                scope_range = None
             Award.objects.update_or_create(
                 id=award_id,
                 defaults={
@@ -573,9 +589,9 @@ class ConventionCompleteView(APIView):
                     'age': award_data.get('age'),
                     'is_novice': award_data.get('is_novice', False),
                     'size': award_data.get('size'),
-                    'size_range': award_data.get('size_range'),
+                    'size_range': _to_numeric_range(award_data.get('size_range')),
                     'scope': award_data.get('scope'),
-                    'scope_range': scope_range,
+                    'scope_range': _to_numeric_range(award_data.get('scope_range')),
                     'tree_sort': award_data.get('tree_sort'),
                 }
             )
@@ -763,9 +779,9 @@ class ConventionCompleteView(APIView):
                         'district': contest_data.get('district'),
                         'division': contest_data.get('division'),
                         'scope': contest_data.get('scope'),
-                        'scope_range': contest_data.get('scope_range'),
+                        'scope_range': _to_numeric_range(contest_data.get('scope_range')),
                         'size': contest_data.get('size'),
-                        'size_range': contest_data.get('size_range'),
+                        'size_range': _to_numeric_range(contest_data.get('size_range')),
                         'tree_sort': contest_data.get('tree_sort'),
                     }
                 )
@@ -1016,9 +1032,9 @@ class ConventionCompleteView(APIView):
                             'is_novice': outcome_data.get('is_novice', False),
                             'is_single': outcome_data.get('is_single', False),
                             'size': outcome_data.get('size'),
-                            'size_range': outcome_data.get('size_range'),
+                            'size_range': _to_numeric_range(outcome_data.get('size_range')),
                             'scope': outcome_data.get('scope'),
-                            'scope_range': outcome_data.get('scope_range'),
+                            'scope_range': _to_numeric_range(outcome_data.get('scope_range')),
                             'tree_sort': outcome_data.get('tree_sort'),
                             'printed': outcome_data.get('print_on_finals_oss', True),
                             'print_on_finals_oss': outcome_data.get('print_on_finals_oss', False),
