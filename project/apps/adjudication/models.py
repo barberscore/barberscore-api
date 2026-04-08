@@ -3107,7 +3107,7 @@ class Round(TimeStampedModel):
             raise ValueError("No notification list for {0}".format(session))
         return ["{0}".format(x.strip()) for x in session.notification_list.split(',')]
 
-    def get_oss(self, published_by=None, paper_size=None, zoom=1, outcome_id=None):
+    def get_oss(self, published_by=None, paper_size=None, zoom=1, outcome_id=None, award_name=None):
         Group = apps.get_model('bhs.group')
         Chart = apps.get_model('bhs.chart')
         Panelist = apps.get_model('adjudication.panelist')
@@ -3632,6 +3632,7 @@ class Round(TimeStampedModel):
             'panelists': panelists,
             'outcomes': outcomes,
             'is_missing': is_missing,
+            'award_name': award_name,
         }
         rendered = render_to_string('reports/oss.html', context)
 
