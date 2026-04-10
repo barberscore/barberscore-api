@@ -66,7 +66,7 @@
         {% endif %}
         <h6>
           Official Scoring Summary<br>
-          {{round.nomen}}<br>
+          {{round.nomen}}{% if award_name %} - {{award_name}}{% endif %}<br>
           {{round.location}}; {{round.date|date:"F j, Y"}}
         </h6>
       </section>
