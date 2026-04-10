@@ -397,7 +397,16 @@ class OutcomeViewSet(viewsets.ModelViewSet):
             if data['paperSize']:
                 paper_size = data['paperSize'].strip()
 
-        pdf = round.get_oss(request.user.name, paper_size, outcome_id=outcome.id, award_name=outcome.name)
+        # Pass the award_id directly — get_oss uses the registration
+        # Contest/Entry linkage to scope the OSS, which works even before
+        # outcomes are populated on appearances.
+        pdf = round.get_oss(
+            request.user.name,
+            paper_size,
+            outcome_id=outcome.id,
+            award_id=outcome.award_id,
+            award_name=outcome.name
+        )
         file_name = '{0} OSS.pdf'.format(round)
         return PDFResponse(
             pdf,

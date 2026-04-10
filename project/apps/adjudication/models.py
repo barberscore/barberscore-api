@@ -3107,13 +3107,24 @@ class Round(TimeStampedModel):
             raise ValueError("No notification list for {0}".format(session))
         return ["{0}".format(x.strip()) for x in session.notification_list.split(',')]
 
-    def get_oss(self, published_by=None, paper_size=None, zoom=1, outcome_id=None, award_name=None):
+    def get_oss(self, published_by=None, paper_size=None, zoom=1, outcome_id=None, award_id=None, award_name=None):
         Group = apps.get_model('bhs.group')
         Chart = apps.get_model('bhs.chart')
         Panelist = apps.get_model('adjudication.panelist')
         Appearance = apps.get_model('adjudication.appearance')
         Song = apps.get_model('adjudication.song')
         Entry = apps.get_model('registration.entry')
+        Contest = apps.get_model('registration.contest')
+        Outcome = apps.get_model('adjudication.outcome')
+
+        # If only outcome_id was provided, resolve the underlying award_id.
+        # This lets all downstream filtering key off the award, which is
+        # stable from the moment of registration (Outcome.award_id is a
+        # denormalized UUID).
+        if outcome_id and not award_id:
+            outcome = Outcome.objects.filter(id=outcome_id).first()
+            if outcome:
+                award_id = outcome.award_id
 
         excluded_appearance_statuses = [
             Appearance.STATUS.disqualified, # Don't include disqualifications.
@@ -3122,24 +3133,51 @@ class Round(TimeStampedModel):
             # Don't include scratches
             excluded_appearance_statuses.append(Appearance.STATUS.scratched)
 
+        # Resolve contest entry IDs for award-scoped filtering.
+        # Uses the registration Contest/Entry linkage rather than
+        # Appearance.outcomes, which aren't populated until contest end.
+        contest_entry_ids = None
+        if award_id:
+            contest_entry_ids = list(
+                Contest.objects.filter(
+                    session_id=self.session_id,
+                    award_id=award_id,
+                ).values_list('entries__id', flat=True)
+            )
+
+        # Count groups that advanced (status=Advanced) for ranking offset.
+        # This replaces the static `self.spots` so manually advanced
+        # groups are correctly accounted for.
+        if self.kind != self.KIND.finals:
+            advanced_qs = self.appearances.filter(
+                status=Appearance.STATUS.advanced,
+            )
+            if contest_entry_ids is not None:
+                advanced_qs = advanced_qs.filter(entry_id__in=contest_entry_ids)
+            num_advancers = advanced_qs.count()
+        else:
+            num_advancers = 0
+
         # Score Block - get completeds
         publics = self.appearances.filter(
             is_private=False,
-        ).exclude(
-            # Don't include advancers on OSS
-            draw__gt=0,
         ).exclude(
             status__in=excluded_appearance_statuses,
         ).exclude(
             # Don't include mic testers on OSS
             num__lte=0,
-        ).all().order_by(
+        ).exclude(
+            # Advancing groups appear in the Draw section, not the results.
+            status=Appearance.STATUS.advanced,
+        )
+        publics = publics.order_by(
             RawSQL("(stats->>%s)::Numeric", ("tot_points",)).desc(nulls_last=True),
             RawSQL("(stats->>%s)::Numeric", ("sng_points",)).desc(nulls_last=True),
             RawSQL("(stats->>%s)::Numeric", ("per_points",)).desc(nulls_last=True),
         )
-        if outcome_id:
-            publics = publics.filter(outcomes=outcome_id)
+
+        if contest_entry_ids is not None:
+            publics = publics.filter(entry_id__in=contest_entry_ids)
 
         songs_with_panelities = []
 
@@ -3150,11 +3188,8 @@ class Round(TimeStampedModel):
                 id=self.id,
             ).order_by('kind')
 
-        # Monkeypatching
-        if self.kind == self.KIND.finals:
-            i = 0
-        else:
-            i = self.spots
+        # Ranking offset: for non-finals, start numbering after advancers
+        i = num_advancers
 
         for public in publics:
             i += 1
@@ -3301,12 +3336,16 @@ class Round(TimeStampedModel):
                         )
 
                     for previous_appearance in previous_appearances:
-                        if not outcome_id:
+                        if award_id:
+                            previously_contesting = previous_appearance.outcomes.filter(
+                                award_id=award_id,
+                            )
+                        elif outcome_id:
+                            previously_contesting = previous_appearance.outcomes.all()
+                        else:
                             previously_contesting = previous_appearance.outcomes.filter(
                                 print_on_finals_oss=True,
                             )
-                        else:
-                            previously_contesting = previous_appearance.outcomes.all()
 
                         previously_contesting = previously_contesting.order_by(
                             'num',
@@ -3390,8 +3429,8 @@ class Round(TimeStampedModel):
                 Appearance.STATUS.scratched,
             ],
         )
-        if outcome_id:
-            privates = privates.filter(outcomes=outcome_id)
+        if contest_entry_ids is not None:
+            privates = privates.filter(entry_id__in=contest_entry_ids)
 
         privates = privates.order_by(
         ).values_list('name', flat=True)
@@ -3402,8 +3441,8 @@ class Round(TimeStampedModel):
         ).filter(
             status=Appearance.STATUS.disqualified,
         )
-        if outcome_id:
-            disqualifications = disqualifications.filter(outcomes=outcome_id)
+        if contest_entry_ids is not None:
+            disqualifications = disqualifications.filter(entry_id__in=contest_entry_ids)
 
         disqualifications = disqualifications.order_by(
         ).values_list('name', flat=True)
@@ -3411,23 +3450,23 @@ class Round(TimeStampedModel):
 
         # Draw Block
         if self.kind != self.KIND.finals:
-            # Get advancers
-            advancer_group_ids = self.appearances.filter(
-                draw__gt=0,
-            ).select_related(
-            ).order_by(
-                'draw',
-            ).values_list(
-                'draw',
-                'group_id',
-            )
+            # Get advancers by status rather than draw number,
+            # so manually advanced groups are included.
+            advancer_qs = self.appearances.filter(
+                status=Appearance.STATUS.advanced,
+            ).order_by('draw')
+            # Optionally scope to groups in the specific award/contest
+            if contest_entry_ids is not None:
+                advancer_qs = advancer_qs.filter(entry_id__in=contest_entry_ids)
             advancers = []
-            for draw, group_id in advancer_group_ids:
-                name = Group.objects.get(id=group_id).name
-                advancers.append((draw, name))
+            for appearance in advancer_qs:
+                name = Group.objects.get(id=appearance.group_id).name
+                advancers.append((appearance.draw, name))
             try:
-                mt_appearances = self.appearances.filter(draw__lte=0).order_by('draw')
-                for appearance in mt_appearances:
+                mt_qs = self.appearances.filter(draw__lte=0).order_by('draw')
+                if contest_entry_ids is not None:
+                    mt_qs = mt_qs.filter(entry_id__in=contest_entry_ids)
+                for appearance in mt_qs:
                     mt = Group.objects.get(id=appearance.group_id).name
                     advancers.append(('MT', mt))
             except self.appearances.model.DoesNotExist:
@@ -3479,7 +3518,9 @@ class Round(TimeStampedModel):
         ).filter(
             printed=True,
         )
-        if outcome_id:
+        if award_id:
+            items = items.filter(award_id=award_id)
+        elif outcome_id:
             items = items.filter(id=outcome_id)
 
         items = items.order_by(
@@ -3500,28 +3541,32 @@ class Round(TimeStampedModel):
             )
 
         if self.kind == self.KIND.finals:
-            for pr in previous_rounds:
-                if outcome_id:
-                    items = pr.outcomes.filter(id=outcome_id)
-                else:
-                    items = pr.outcomes.filter(
-                        print_on_finals_oss=True,
-                    )
-                items = items.order_by(
-                    'tree_sort',
-                    'num',
-                ).values_list(
-                    'num',
-                    'name',
-                    'winner',
-                )
-                for item in items:
-                    outcomes.append(
-                        (
-                            "{0} {1}".format(item[0], item[1]),
-                            item[2],
+            # When showing a specific award's OSS, only show that award's
+            # outcome from the current (finals) round — the previous round's
+            # placeholder ("Result determined in Finals") is superseded.
+            if not award_id:
+                for pr in previous_rounds:
+                    if outcome_id:
+                        items = pr.outcomes.filter(id=outcome_id)
+                    else:
+                        items = pr.outcomes.filter(
+                            print_on_finals_oss=True,
                         )
+                    items = items.order_by(
+                        'tree_sort',
+                        'num',
+                    ).values_list(
+                        'num',
+                        'name',
+                        'winner',
                     )
+                    for item in items:
+                        outcomes.append(
+                            (
+                                "{0} {1}".format(item[0], item[1]),
+                                item[2],
+                            )
+                        )
 
         context = {
             'round': self,
