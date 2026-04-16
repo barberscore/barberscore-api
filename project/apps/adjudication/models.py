@@ -3145,13 +3145,21 @@ class Round(TimeStampedModel):
                 ).values_list('entries__id', flat=True)
             )
 
-        # Count groups that advanced (status=Advanced) for ranking offset.
-        # This replaces the static `self.spots` so manually advanced
-        # groups are correctly accounted for.
+        # An appearance is "advancing" when either:
+        # - its status has been transitioned to Advanced (covers manual
+        #   advancement), or
+        # - it has a positive next-round draw assigned (covers automatic
+        #   advancement — the round's advance/verify transition may not
+        #   yet have updated the status).
+        advancing_filter = (
+            Q(status=Appearance.STATUS.advanced) | Q(draw__gt=0)
+        )
+
+        # Count groups advancing, for ranking offset. This replaces the
+        # static `self.spots` so manually advanced groups are correctly
+        # accounted for.
         if self.kind != self.KIND.finals:
-            advanced_qs = self.appearances.filter(
-                status=Appearance.STATUS.advanced,
-            )
+            advanced_qs = self.appearances.filter(advancing_filter)
             if contest_entry_ids is not None:
                 advanced_qs = advanced_qs.filter(entry_id__in=contest_entry_ids)
             num_advancers = advanced_qs.count()
@@ -3168,7 +3176,7 @@ class Round(TimeStampedModel):
             num__lte=0,
         ).exclude(
             # Advancing groups appear in the Draw section, not the results.
-            status=Appearance.STATUS.advanced,
+            advancing_filter,
         )
         publics = publics.order_by(
             RawSQL("(stats->>%s)::Numeric", ("tot_points",)).desc(nulls_last=True),
@@ -3450,10 +3458,12 @@ class Round(TimeStampedModel):
 
         # Draw Block
         if self.kind != self.KIND.finals:
-            # Get advancers by status rather than draw number,
-            # so manually advanced groups are included.
+            # Get advancers by status OR draw > 0, so both manually
+            # advanced groups and automatically advancing groups are
+            # included even if the round's advance transition hasn't
+            # yet set status=Advanced.
             advancer_qs = self.appearances.filter(
-                status=Appearance.STATUS.advanced,
+                advancing_filter,
             ).order_by('draw')
             # Optionally scope to groups in the specific award/contest
             if contest_entry_ids is not None:
