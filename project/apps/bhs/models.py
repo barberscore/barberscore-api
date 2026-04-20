@@ -1247,11 +1247,12 @@ class Convention(TimeStampedModel):
                     ).first()
 
                     contest_entered = []
-                    for entry_contest in entry.contests.all():
-                        contest_entered.append(
-                            str(subsession_ids[str(entry_contest.id)])
-                        )
-                    contest_entered.sort()
+                    if entry is not None:
+                        for entry_contest in entry.contests.all():
+                            contest_entered.append(
+                                str(subsession_ids[str(entry_contest.id)])
+                            )
+                        contest_entered.sort()
 
                     songs = appearance.songs.prefetch_related(
                         'scores',
