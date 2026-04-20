@@ -21,10 +21,10 @@ from dry_rest_permissions.generics import allow_staff_or_superuser
 from dry_rest_permissions.generics import authenticated_users
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django.db.models import Subquery, Sum, Max, Avg, StdDev, Count, Q, F, Func
+from django.db.models import Subquery, Sum, Max, Avg, StdDev, Count, Q, F, Func, Value
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django_fsm import RETURN_VALUE
-from django.db.models.functions import DenseRank, RowNumber, Rank
+from django.db.models.functions import DenseRank, RowNumber, Rank, NullIf
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -785,7 +785,9 @@ class Appearance(TimeStampedModel):
         stats['tot_score'] = standard_round((stats['tot_points'] / stats['score_count']))
         stats.pop("score_count", None)
         for key, value in stats.items():
-            stats[key] = bankers_round(value)
+            # Preserve None as None — bankers_round(None) returns "", which breaks
+            # numeric casts when round_stats is queried downstream (e.g. SA report).
+            stats[key] = bankers_round(value) if value is not None else None
         return stats
 
     def get_csa(self):
@@ -4124,17 +4126,17 @@ class Round(TimeStampedModel):
             mus_round_rank=Window(
                 expression=Rank(),
                 partition_by=[F('round_id')],
-                order_by=Cast(JSONF('round_stats__mus_points'), models.FloatField()).desc(),
+                order_by=Cast(NullIf(JSONF('round_stats__mus_points'), Value('')), models.FloatField()).desc(nulls_last=True),
             ),
             per_round_rank=Window(
                 expression=Rank(),
                 partition_by=[F('round_id')],
-                order_by=Cast(JSONF('round_stats__per_points'), models.FloatField()).desc(),
+                order_by=Cast(NullIf(JSONF('round_stats__per_points'), Value('')), models.FloatField()).desc(nulls_last=True),
             ),
             sng_round_rank=Window(
                 expression=Rank(),
                 partition_by=[F('round_id')],
-                order_by=Cast(JSONF('round_stats__sng_points'), models.FloatField()).desc(),
+                order_by=Cast(NullIf(JSONF('round_stats__sng_points'), Value('')), models.FloatField()).desc(nulls_last=True),
             ),
         )
 
