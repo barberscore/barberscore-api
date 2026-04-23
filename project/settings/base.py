@@ -130,6 +130,7 @@ DISTRICT_DEFAULT_LOGOS = {
     550: 'media/global/logos/barbershop-harmony-society.jpg', # IABS
     560: 'media/global/logos/barbershop-harmony-society.jpg', # LABBS
     565: 'media/global/logos/barbershop-harmony-society.jpg', # BIBA
+    570: 'media/global/logos/barbershop-harmony-society.jpg', # SNOBS
 }
 
 SESSION_OWNERS = CONVENTION_OWNERS

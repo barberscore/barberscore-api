@@ -258,8 +258,9 @@ class ConventionAdmin(VersionAdmin, FSMTransitionMixin):
 
     def save_model(self, request, obj, form, change):
         if not obj.image:
-            if settings.DISTRICT_DEFAULT_LOGOS[obj.district]:
-                obj.image = settings.DISTRICT_DEFAULT_LOGOS[obj.district]
+            logo = settings.DISTRICT_DEFAULT_LOGOS.get(obj.district)
+            if logo:
+                obj.image = logo
         super().save_model(request, obj, form, change)
 
     def get_organization_abbr(self, obj):
