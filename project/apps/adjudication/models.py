@@ -3459,7 +3459,10 @@ class Round(TimeStampedModel):
         disqualifications = list(disqualifications)
 
         # Draw Block
-        if self.kind != self.KIND.finals:
+        # Skip the Draw entirely for contest/outcome-specific OSSes —
+        # the next-round draw is a session-level concept and isn't
+        # meaningful when scoped to a single award/contest.
+        if self.kind != self.KIND.finals and not award_id and not outcome_id:
             # Get advancers by status OR draw > 0, so both manually
             # advanced groups and automatically advancing groups are
             # included even if the round's advance transition hasn't
@@ -3467,17 +3470,12 @@ class Round(TimeStampedModel):
             advancer_qs = self.appearances.filter(
                 advancing_filter,
             ).order_by('draw')
-            # Optionally scope to groups in the specific award/contest
-            if contest_entry_ids is not None:
-                advancer_qs = advancer_qs.filter(entry_id__in=contest_entry_ids)
             advancers = []
             for appearance in advancer_qs:
                 name = Group.objects.get(id=appearance.group_id).name
                 advancers.append((appearance.draw, name))
             try:
                 mt_qs = self.appearances.filter(draw__lte=0).order_by('draw')
-                if contest_entry_ids is not None:
-                    mt_qs = mt_qs.filter(entry_id__in=contest_entry_ids)
                 for appearance in mt_qs:
                     mt = Group.objects.get(id=appearance.group_id).name
                     advancers.append(('MT', mt))
