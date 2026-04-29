@@ -440,12 +440,12 @@ class ConventionCompleteView(APIView):
         from apps.adjudication.models import Round, Panelist, Appearance, Outcome, Song, Score
         from apps.organizations.models import Organization
         from django.contrib.auth import get_user_model
-        
+
         User = get_user_model()
 
         def _to_numeric_range(value):
             """Coerce incoming range payloads to a psycopg2 NumericRange.
- 
+
             Accepts None, a dict ({'lower', 'upper', 'bounds'}), or a JSON
             string of the same. Postgres int4range can't accept the raw
             dict/string, so we must build a NumericRange here.
@@ -473,7 +473,6 @@ class ConventionCompleteView(APIView):
             except (TypeError, ValueError):
                 upper = None
             return NumericRange(lower, upper, bounds=bounds)
-
         sync_result = {
             'convention_updated': False,
             'organization_synced': False,
@@ -493,6 +492,7 @@ class ConventionCompleteView(APIView):
             'entry_contests_synced': 0,
             'songs_synced': 0,
             'scores_synced': 0,
+            'appearance_outcomes_synced': 0,
         }
 
         # Sync Organization if provided
@@ -568,7 +568,6 @@ class ConventionCompleteView(APIView):
         # Sync Awards
         for award_data in convention_data.get('awards', []):
             award_id = award_data['id']
-            bounds_default = {'lower': None, 'upper': None, 'bounds': '[]'}
             Award.objects.update_or_create(
                 id=award_id,
                 defaults={
@@ -1042,6 +1041,34 @@ class ConventionCompleteView(APIView):
                     )
                     sync_result['outcomes_synced'] += 1
 
+                # Sync appearance ↔ outcome M2M (adjudication_appearance_outcomes).
+                # Done as a second pass because outcomes are created after
+                # appearances and the M2M needs both sides to exist.
+                for appearance_data in round_data.get('appearances', []):
+                    raw_outcomes = appearance_data.get('outcomes') or []
+                    if not raw_outcomes:
+                        continue
+                    outcome_ids = [
+                        oid if isinstance(oid, str) else oid.get('id') if isinstance(oid, dict) else oid
+                        for oid in raw_outcomes
+                    ]
+                    # Filter to outcomes that actually exist in this round
+                    # (skips any missing/stale references gracefully).
+                    existing_outcome_ids = list(
+                        Outcome.objects.filter(
+                            id__in=outcome_ids,
+                            round_id=round_id,
+                        ).values_list('id', flat=True)
+                    )
+                    if not existing_outcome_ids:
+                        continue
+                    try:
+                        appearance = Appearance.objects.get(id=appearance_data['id'])
+                    except Appearance.DoesNotExist:
+                        continue
+                    appearance.outcomes.set(existing_outcome_ids)
+                    sync_result['appearance_outcomes_synced'] += len(existing_outcome_ids)
+
         return sync_result
 
 
@@ -1145,19 +1172,45 @@ class ConventionSyncView(APIView):
                 headers=headers,
                 timeout=60
             )
-            response.raise_for_status()
-
-            return Response({
-                'message': 'Convention synced successfully to staging',
-                'convention_id': pk,
-                'staging_response': response.json()
-            })
-
         except requests.exceptions.RequestException as e:
+            log.error("Sync to staging failed (network): %s", e)
+            sentry_sdk.capture_exception(e)
             return Response(
                 {'error': f'Failed to push to staging: {str(e)}'},
                 status=status.HTTP_502_BAD_GATEWAY
             )
+
+        # Handle non-2xx responses from staging — surface the body so we can debug.
+        if not response.ok:
+            try:
+                staging_body = response.json()
+            except ValueError:
+                staging_body = response.text
+            log.error(
+                "Sync to staging returned %s: %s", response.status_code, staging_body
+            )
+            sentry_sdk.capture_message(
+                f"Sync to staging returned {response.status_code}: {staging_body}"
+            )
+            return Response(
+                {
+                    'error': 'Staging rejected the sync request',
+                    'staging_status': response.status_code,
+                    'staging_response': staging_body,
+                },
+                status=status.HTTP_502_BAD_GATEWAY
+            )
+
+        try:
+            staging_response = response.json()
+        except ValueError:
+            staging_response = response.text
+
+        return Response({
+            'message': 'Convention synced successfully to staging',
+            'convention_id': pk,
+            'staging_response': staging_response
+        })
 
     def _get_convention_complete_data(self, convention, request):
         """Get complete convention data (same logic as ConventionCompleteView)."""
