@@ -3139,13 +3139,19 @@ class Round(TimeStampedModel):
         # Uses the registration Contest/Entry linkage rather than
         # Appearance.outcomes, which aren't populated until contest end.
         contest_entry_ids = None
+        contest_is_single = False
         if award_id:
-            contest_entry_ids = list(
-                Contest.objects.filter(
-                    session_id=self.session_id,
-                    award_id=award_id,
-                ).values_list('entries__id', flat=True)
-            )
+            contest = Contest.objects.filter(
+                session_id=self.session_id,
+                award_id=award_id,
+            ).first()
+            if contest:
+                contest_is_single = bool(contest.is_single)
+                contest_entry_ids = list(
+                    contest.entries.values_list('id', flat=True)
+                )
+            else:
+                contest_entry_ids = []
 
         # An appearance is "advancing" when either:
         # - its status has been transitioned to Advanced (covers manual
@@ -3160,7 +3166,10 @@ class Round(TimeStampedModel):
         # Count groups advancing, for ranking offset. This replaces the
         # static `self.spots` so manually advanced groups are correctly
         # accounted for.
-        if self.kind != self.KIND.finals:
+        # For single-round contests, no one "advances" in the contest's
+        # context — every entered group is finalized this round — so the
+        # ranking starts at 1.
+        if self.kind != self.KIND.finals and not contest_is_single:
             advanced_qs = self.appearances.filter(advancing_filter)
             if contest_entry_ids is not None:
                 advanced_qs = advanced_qs.filter(entry_id__in=contest_entry_ids)
@@ -3176,10 +3185,13 @@ class Round(TimeStampedModel):
         ).exclude(
             # Don't include mic testers on OSS
             num__lte=0,
-        ).exclude(
-            # Advancing groups appear in the Draw section, not the results.
-            advancing_filter,
         )
+        # Exclude advancers from the results section — they belong in
+        # the Draw block. Skipped for single-round contests, where a
+        # group might be advancing in a separate multi-round contest
+        # but should still appear here as a finalist of this contest.
+        if not contest_is_single:
+            publics = publics.exclude(advancing_filter)
         publics = publics.order_by(
             RawSQL("(stats->>%s)::Numeric", ("tot_points",)).desc(nulls_last=True),
             RawSQL("(stats->>%s)::Numeric", ("sng_points",)).desc(nulls_last=True),
