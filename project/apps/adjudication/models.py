@@ -2338,7 +2338,7 @@ class Panelist(TimeStampedModel):
         # )
 
     def clean(self):
-        if self.kind > self.KIND.practice:
+        if self.kind and self.kind > self.KIND.practice:
             raise ValidationError(
                 {'category': 'Panel may only contain Official and Practice'}
             )
