@@ -3269,6 +3269,8 @@ class Round(TimeStampedModel):
             for appearance in appearances:
                 if appearance.status != Appearance.STATUS.scratched:
                     scored_rounds += 1
+                    if appearance.tot_score is None:
+                        appearance.tot_score = 0
                     songs = appearance.songs.prefetch_related(
                         'scores',
                         'scores__panelist',
@@ -4239,6 +4241,8 @@ class Round(TimeStampedModel):
             for appearance in appearances:
                 if appearance.status != Appearance.STATUS.scratched:
                     scored_rounds += 1
+                    if appearance.tot_score is None:
+                        appearance.tot_score = 0
                     songs = appearance.songs.prefetch_related(
                         'scores',
                         'scores__panelist',
@@ -5282,7 +5286,7 @@ class Round(TimeStampedModel):
                             group_id=appearance.group_id,
                             session_id=appearance.round.session_id,
                         ).first()
-                        directors[appearance.group_id] = entry.participants
+                        directors[appearance.group_id] = entry.participants if entry else ''
 
                     if appearance.kind == Appearance.KIND.chorus:
                         document += "        {0}\t\t{1}\n".format(directors[appearance.group_id], judge.last_name)
