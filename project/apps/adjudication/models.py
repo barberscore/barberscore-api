@@ -3267,6 +3267,8 @@ class Round(TimeStampedModel):
             for appearance in appearances:
                 if appearance.status != Appearance.STATUS.scratched:
                     scored_rounds += 1
+                    if appearance.tot_score is None:
+                        appearance.tot_score = 0
                     songs = appearance.songs.prefetch_related(
                         'scores',
                         'scores__panelist',
@@ -4237,6 +4239,8 @@ class Round(TimeStampedModel):
             for appearance in appearances:
                 if appearance.status != Appearance.STATUS.scratched:
                     scored_rounds += 1
+                    if appearance.tot_score is None:
+                        appearance.tot_score = 0
                     songs = appearance.songs.prefetch_related(
                         'scores',
                         'scores__panelist',
