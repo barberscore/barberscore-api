@@ -5284,7 +5284,7 @@ class Round(TimeStampedModel):
                             group_id=appearance.group_id,
                             session_id=appearance.round.session_id,
                         ).first()
-                        directors[appearance.group_id] = entry.participants
+                        directors[appearance.group_id] = entry.participants if entry else ''
 
                     if appearance.kind == Appearance.KIND.chorus:
                         document += "        {0}\t\t{1}\n".format(directors[appearance.group_id], judge.last_name)
