@@ -79,7 +79,7 @@ requests==2.25.1
 rq==1.8.0
 sendgrid==6.9.7; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 sentry-sdk==1.0.0
-setuptools==60.9.3; python_version >= '3.7'
+setuptools==65.5.1; python_version >= '3.7'
 six==1.16.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
 snaptime==0.2.4
 sqlparse==0.4.2; python_version >= '3.5'
