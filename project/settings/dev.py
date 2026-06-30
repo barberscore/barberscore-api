@@ -12,7 +12,7 @@ INTERNAL_IPS = [
 ]
 
 # Mailhog
-EMAIL_PORT = 1026
+EMAIL_PORT = 1025
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
 # EMAIL_HOST_USER = 'd7409e08d76811'
