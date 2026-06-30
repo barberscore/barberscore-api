@@ -27,7 +27,7 @@ from django_fsm import RETURN_VALUE
 from django.db.models.functions import DenseRank, RowNumber, Rank, NullIf
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Min, Max, Avg, Prefetch
 from django.db.models.functions import Cast
 from django.db.models.constants import LOOKUP_SEP
@@ -5522,8 +5522,6 @@ class Round(TimeStampedModel):
 
         if self.status != self.STATUS.published:
             raise RuntimeError("Round not published")
-        # Sleep a random number of seconds (between 1 and 5)
-        sleep(randint(1,5))
         return email.send()
 
     def get_publish_report_email(self):
@@ -6186,7 +6184,9 @@ class Round(TimeStampedModel):
         Panelist = apps.get_model('adjudication.panelist')
 
         # Send the OSS
-        send_publish_email_from_round.delay(self.id)
+        transaction.on_commit(
+            lambda: send_publish_email_from_round.delay(self.id)
+        )
 
         # Send the CSAs
         completed_appearances = Appearance.objects.filter(
@@ -6194,10 +6194,15 @@ class Round(TimeStampedModel):
             round_id=self.id
         )
         for appearance in completed_appearances:
-            send_complete_email_from_appearance.delay(appearance.id)
+            appearance_id = appearance.id
+            transaction.on_commit(
+                lambda aid=appearance_id: send_complete_email_from_appearance.delay(aid)
+            )
 
         # Send the SAs
-        send_publish_report_email_from_round.delay(self.id)
+        transaction.on_commit(
+            lambda: send_publish_report_email_from_round.delay(self.id)
+        )
 
         # Send the PSAs
         # panelists = self.panelists.filter(

@@ -25,6 +25,7 @@ from rq.worker import Worker, WorkerStatus
 # Django
 from django.apps import apps
 from django.core.files.base import ContentFile
+from django.db import transaction
 from django.db.models import Sum, Q, Avg
 from django.template.loader import render_to_string
 from django.utils.text import slugify
@@ -681,15 +682,16 @@ class RoundViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        object = self.get_object()
-        try:
-            object.publish(by=self.request.user)
-        except TransitionNotAllowed:
-            return Response(
-                {'status': 'Unable to Publish round.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        object.save()
+        with transaction.atomic():
+            object = self.get_object()
+            try:
+                object.publish(by=self.request.user)
+            except TransitionNotAllowed:
+                return Response(
+                    {'status': 'Unable to Publish round.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            object.save()
         serializer = self.get_serializer(object)
         return Response(serializer.data)
 
