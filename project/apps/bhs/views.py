@@ -27,6 +27,7 @@ from django.http import JsonResponse
 from django.core.files.base import ContentFile
 from django.db.models import Sum, Q, Avg
 from django.template.loader import render_to_string
+from django.utils.dateparse import parse_date
 from django.utils.text import slugify
 import sentry_sdk
 
@@ -538,10 +539,10 @@ class ConventionCompleteView(APIView):
                 'season': convention_data.get('season'),
                 'panel': convention_data.get('panel'),
                 'year': convention_data.get('year'),
-                'open_date': convention_data.get('open_date'),
-                'close_date': convention_data.get('close_date'),
-                'start_date': convention_data.get('start_date'),
-                'end_date': convention_data.get('end_date'),
+                'open_date': parse_date(convention_data.get('open_date') or ''),
+                'close_date': parse_date(convention_data.get('close_date') or ''),
+                'start_date': parse_date(convention_data.get('start_date') or ''),
+                'end_date': parse_date(convention_data.get('end_date') or ''),
                 'venue_name': convention_data.get('venue_name', ''),
                 'location': convention_data.get('location', ''),
                 'description': convention_data.get('description', ''),
@@ -707,10 +708,10 @@ class ConventionCompleteView(APIView):
                     'year': session_data.get('year'),
                     'kind': session_data.get('kind'),
                     'status': session_data.get('status'),
-                    'open_date': session_data.get('open_date'),
-                    'close_date': session_data.get('close_date'),
-                    'start_date': session_data.get('start_date'),
-                    'end_date': session_data.get('end_date'),
+                    'open_date': parse_date(session_data.get('open_date') or ''),
+                    'close_date': parse_date(session_data.get('close_date') or ''),
+                    'start_date': parse_date(session_data.get('start_date') or ''),
+                    'end_date': parse_date(session_data.get('end_date') or ''),
                     'venue_name': session_data.get('venue_name', ''),
                     'location': session_data.get('location', ''),
                     'timezone': session_data.get('timezone', ''),
@@ -870,7 +871,7 @@ class ConventionCompleteView(APIView):
                         'kind': round_data.get('kind'),
                         'num': round_data.get('num', 1),
                         'spots': round_data.get('spots', 10),
-                        'date': round_data.get('date'),
+                        'date': parse_date(round_data.get('date') or ''),
                         'footnotes': round_data.get('footnotes', ''),
                         # Denormalized convention fields
                         'name': convention_data.get('name', ''),
@@ -878,10 +879,10 @@ class ConventionCompleteView(APIView):
                         'season': convention_data.get('season'),
                         'panel': convention_data.get('panel'),
                         'year': convention_data.get('year'),
-                        'open_date': convention_data.get('open_date'),
-                        'close_date': convention_data.get('close_date'),
-                        'start_date': convention_data.get('start_date'),
-                        'end_date': convention_data.get('end_date'),
+                        'open_date': parse_date(convention_data.get('open_date') or ''),
+                        'close_date': parse_date(convention_data.get('close_date') or ''),
+                        'start_date': parse_date(convention_data.get('start_date') or ''),
+                        'end_date': parse_date(convention_data.get('end_date') or ''),
                         'venue_name': convention_data.get('venue_name', '(TBD)'),
                         'location': convention_data.get('location', '(TBD)'),
                         'divisions': convention_data.get('divisions', []),
