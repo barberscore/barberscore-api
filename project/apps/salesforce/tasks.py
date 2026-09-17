@@ -6,7 +6,7 @@ import logging
 import time
 
 # Third-Party
-from django_rq import job, get_queue
+from django_rq import job
 from rq import Retry
 
 # Django
@@ -40,20 +40,19 @@ def update_or_create_person_from_salesforce(person):
 def update_or_create_session_from_salesforce(session):
     return Session.objects.update_or_create_session(session)
 
-@job('high')
+@job('high', retry=Retry(max=10,
+    interval=[60, 120, 180, 240, 300, 360, 420, 480, 540, 600]))
 def update_or_create_contest_from_salesforce(contest):
-    queue = get_queue('high')
-
     #
-    # Query Session to see if session_id record exists
-    # 
+    # The Session may not have synced yet (jobs arrive out of order).
+    # Raising lets RQ retry this same job on the interval schedule
+    # above; the worker must run with --with-scheduler.
+    #
 
-    if Session.objects.filter(pk=contest['session_id']).count():
-        return Contest.objects.update_or_create_contest(contest)
-    else:
-        queue.enqueue(update_or_create_contest_from_salesforce, args=(contest), 
-            retry=Retry(max=10, 
-                interval=[60, 120, 180, 240, 300, 360, 420, 480, 540, 600]))
+    if not Session.objects.filter(pk=contest['session_id']).count():
+        raise Session.DoesNotExist(
+            "Session {0} not synced yet".format(contest['session_id']))
+    return Contest.objects.update_or_create_contest(contest)
 
 @job('high')
 def update_or_create_assignment_from_salesforce(assignment):
@@ -63,20 +62,19 @@ def update_or_create_assignment_from_salesforce(assignment):
 def update_or_create_entry_from_salesforce(entry):
     return Entry.objects.update_or_create_entry(entry)
 
-@job('high')
+@job('high', retry=Retry(max=10,
+    interval=[60, 120, 180, 240, 300, 360, 420, 480, 540, 600]))
 def update_contest_entry_from_salesforce(entry):
-    queue = get_queue('high')
-
     #
-    # Query Entry to see if entry_id record exists
-    # 
+    # The Entry may not have synced yet (jobs arrive out of order).
+    # Raising lets RQ retry this same job on the interval schedule
+    # above; the worker must run with --with-scheduler.
+    #
 
-    if Entry.objects.filter(pk=entry['entry_id']).count():
-        return Entry.objects.update_contestentry_status(entry)
-    else:
-        queue.enqueue(update_contest_entry_from_salesforce, args=(entry), 
-            retry=Retry(max=10, 
-                interval=[60, 120, 180, 240, 300, 360, 420, 480, 540, 600]))
+    if not Entry.objects.filter(pk=entry['entry_id']).count():
+        raise Entry.DoesNotExist(
+            "Entry {0} not synced yet".format(entry['entry_id']))
+    return Entry.objects.update_contestentry_status(entry)
 
 @job('high')
 def update_group_chart_from_salesforce(chart):

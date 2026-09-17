@@ -8,5 +8,5 @@ run:
       - django-admin migrate --noinput && django-admin collectstatic --no-input && gunicorn project.wsgi:application  --bind 0.0.0.0:$PORT
     worker:
       command:
-        - django-admin rqworker high default low
+        - django-admin rqworker high default low --with-scheduler
       image: web
