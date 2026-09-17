@@ -971,7 +971,8 @@ class Convention(TimeStampedModel):
     )
 
     def get_default_owners():
-        return False
+        from .owners import get_owner_users
+        return get_owner_users()
 
     owners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,

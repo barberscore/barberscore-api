@@ -517,3 +517,112 @@ class PersonAdmin(VersionAdmin, FSMTransitionMixin):
         'last_name',
         'first_name',
     ]
+
+
+# ----------------------------------------------------------------------
+# User administration
+#
+# Re-registers the rest_framework_jwt UserAdmin so that only super users
+# (see settings.SUPER_USERS and apps.bhs.owners.is_super_user) may set
+# passwords, grant staff access, or designate other super users.
+# ----------------------------------------------------------------------
+
+# Django
+from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.core.exceptions import PermissionDenied
+
+# Third-Party
+from rest_framework_jwt.admin import UserAdmin as JWTUserAdmin
+
+# Local
+from .owners import is_super_user
+
+User = get_user_model()
+
+
+class UserSuperChangeForm(forms.ModelForm):
+    password = ReadOnlyPasswordHashField(
+        label="Password",
+        required=False,
+        help_text=(
+            "Raw passwords are not stored, so there is no way to see this "
+            "user's password, but you can change the password using "
+            "<a href=\"../password/\">this form</a>."
+        ),
+    )
+
+    is_superuser_flag = forms.BooleanField(
+        label="Super user",
+        required=False,
+        help_text=(
+            "Super users can set passwords, grant staff access, and "
+            "designate other super users."
+        ),
+    )
+
+    class Meta:
+        model = User
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'is_superuser_flag' in self.fields:
+            app_metadata = getattr(self.instance, 'app_metadata', None) or {}
+            self.fields['is_superuser_flag'].initial = bool(
+                app_metadata.get('is_superuser')
+            )
+
+    def clean_password(self):
+        # Regardless of what the user provides, return the initial value.
+        return self.initial.get('password')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if 'is_superuser_flag' in self.cleaned_data:
+            app_metadata = user.app_metadata or {}
+            app_metadata['is_superuser'] = self.cleaned_data['is_superuser_flag']
+            user.app_metadata = app_metadata
+        if commit:
+            user.save()
+            self.save_m2m()
+        return user
+
+
+admin.site.unregister(User)
+
+
+@admin.register(User)
+class UserAdmin(JWTUserAdmin):
+    form = UserSuperChangeForm
+
+    superuser_fieldsets = JWTUserAdmin.fieldsets + (
+        ('Access', {
+            'fields': (
+                'is_active',
+                'is_staff',
+                'is_superuser_flag',
+                'password',
+            ),
+        }),
+    )
+
+    def get_fieldsets(self, request, obj=None):
+        if obj and is_super_user(request.user):
+            return self.superuser_fieldsets
+        return super().get_fieldsets(request, obj)
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        if obj and not is_super_user(request.user):
+            # Strip the privileged fields so they can neither be
+            # rendered nor submitted by non-super users.
+            form.base_fields.pop('is_superuser_flag', None)
+            form.base_fields.pop('password', None)
+        return form
+
+    def user_change_password(self, request, id, form_url=''):
+        if not is_super_user(request.user):
+            raise PermissionDenied
+        return super().user_change_password(request, id, form_url)
