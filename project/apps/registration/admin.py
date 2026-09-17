@@ -6,6 +6,8 @@ from fsm_admin.mixins import FSMTransitionMixin
 from django.contrib import admin
 from reversion.admin import VersionAdmin
 from django.conf import settings
+from django.urls import reverse
+from django.utils.html import format_html
 
 # Local
 from .inlines import ContestInline
@@ -331,13 +333,28 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
         # 'id',
         'district',
         # 'convention__district',
-        'kind',
+        # 'kind',
         'year',
         'name',
+        'convention_link',
         # 'num_rounds',
-        'is_invitational',
+        # 'is_invitational',
         'status',
     ]
+
+    def convention_link(self, obj):
+        if not obj.convention_id:
+            return None
+        url = reverse(
+            'admin:bhs_convention_change',
+            args=[obj.convention_id],
+        )
+        return format_html(
+            '<a href="{0}">{1}</a>',
+            url,
+            obj.convention,
+        )
+    convention_link.short_description = 'Convention'
 
     list_display_links = [
         'district',
@@ -375,7 +392,7 @@ class SessionAdmin(VersionAdmin, FSMTransitionMixin):
     ]
 
     list_select_related = [
-        # 'convention',
+        'convention',
     ]
 
     ordering = [
