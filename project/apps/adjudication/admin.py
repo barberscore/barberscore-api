@@ -5,6 +5,7 @@ from django.utils.html import format_html
 # Django
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.urls import reverse
 from django.utils import timezone
 from django.contrib import messages
 from django.apps import apps
@@ -238,11 +239,46 @@ class RoundAdmin(FSMTransitionMixin, admin.ModelAdmin):
 
     list_display = [
         '__str__',
+        'session_link',
+        'convention_link',
         'status',
-        'session_id',
-        'legacy_oss',
+        # 'legacy_oss',
     ]
 
+    def session_link(self, obj):
+        if not obj.session_id:
+            return None
+        url = reverse(
+            'admin:registration_session_change',
+            args=[obj.session_id],
+        )
+        return format_html(
+            '<a href="{0}">{1}</a>',
+            url,
+            obj.session_nomen or obj.session_id,
+        )
+    session_link.short_description = 'Session'
+
+    def convention_link(self, obj):
+        if not obj.convention_id:
+            return None
+        url = reverse(
+            'admin:bhs_convention_change',
+            args=[obj.convention_id],
+        )
+        label = " ".join([
+            str(x) for x in [
+                obj.get_district_display(),
+                obj.year,
+                obj.name,
+            ] if x
+        ]) or obj.convention_id
+        return format_html(
+            '<a href="{0}">{1}</a>',
+            url,
+            label,
+        )
+    convention_link.short_description = 'Convention'
 
     list_filter = [
         # SessionConventionStatusListFilter,
