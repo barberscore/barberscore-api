@@ -8,6 +8,8 @@ class BhsConfig(AppConfig):
     verbose_name = 'Base'
 
     def ready(self):
+        from apps.bhs import signals
+
         import algoliasearch_django as algoliasearch
 
         from .indexes import AwardIndex

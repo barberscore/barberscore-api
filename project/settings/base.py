@@ -72,13 +72,66 @@ JWT_AUTH = {
 # BHS MemberCenter
 MEMBERCENTER_URL = get_env_variable("MEMBERCENTER_URL")
 
-CONVENTION_OWNERS = [
-    'steve@armstrongconsulting.ca',
-    'proclamation56@gmail.com',
-    'mottley81@gmail.com',
-    'randy.rensi@ieee.org',
-    'alex@barbershopchorus.com',
+# Convention/Session owners are assigned dynamically from staff users
+# (is_staff=True on the rest_framework_jwt User model).  Accounts listed
+# here are staff but must never be assigned as owners dynamically.
+CONVENTION_OWNERS_EXCLUDE = [
+    'user@webgraph.com',
 ]
+
+# Users allowed to set passwords, grant staff access, and designate
+# other super users via the Django admin.  Additional super users can be
+# designated in the admin (stored on User.app_metadata['is_superuser']).
+SUPER_USERS = [
+    'alex@barbershopchorus.com',
+    'steve@armstrongconsulting.ca',
+]
+
+
+class _StaffOwnerEmails:
+    """Read-only, list-like setting resolved against the database.
+
+    Evaluates to the email addresses of active staff users, minus
+    CONVENTION_OWNERS_EXCLUDE, freshly queried on each access.  Must not
+    be evaluated at import time (the database is not available yet).
+    """
+
+    def _emails(self):
+        from django.contrib.auth import get_user_model
+        return list(
+            get_user_model().objects.filter(
+                is_staff=True,
+                is_active=True,
+            ).exclude(
+                email__in=CONVENTION_OWNERS_EXCLUDE,
+            ).order_by(
+                'email',
+            ).values_list(
+                'email',
+                flat=True,
+            )
+        )
+
+    def __iter__(self):
+        return iter(self._emails())
+
+    def __len__(self):
+        return len(self._emails())
+
+    def __contains__(self, email):
+        return email in self._emails()
+
+    def __getitem__(self, key):
+        return self._emails()[key]
+
+    def __eq__(self, other):
+        return self._emails() == other
+
+    def __repr__(self):
+        return repr(self._emails())
+
+
+CONVENTION_OWNERS = _StaffOwnerEmails()
 
 # SALESFORCE_ORGANIZATIONS
 SALESFORCE_ORGANIZATION_ID = get_env_variable("SALESFORCE_ORGANIZATION_ID")

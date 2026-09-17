@@ -1798,10 +1798,8 @@ class Session(TimeStampedModel):
     )
 
     def get_default_owners():
-        return False
-        # User = get_user_model()
-        # owners = User.objects.filter(email__in=settings.SESSION_OWNERS)
-        # return owners
+        from apps.bhs.owners import get_owner_users
+        return get_owner_users()
 
     # FKs
     owners = models.ManyToManyField(
