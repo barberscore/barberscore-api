@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 from redis import Redis
 from rq import Queue
@@ -76,10 +77,17 @@ for queue_name in queue_names:
             counts['{0}/{1}'.format(queue_name, status)] = counts.get(
                 '{0}/{1}'.format(queue_name, status), 0) + 1
 
-# Save to a JSON file
-with open('rq_export.json', 'w') as f:
-    json.dump(exported_jobs, f, indent=4)
+# With --stdout, print the JSON to stdout (for capturing locally via
+# `heroku run ... > rq_export.json` — a one-off dyno's filesystem is
+# ephemeral, so a file written there is lost when the dyno exits).
+# Otherwise save to a local JSON file.
+if '--stdout' in sys.argv:
+    print(json.dumps(exported_jobs, indent=4))
+else:
+    with open('rq_export.json', 'w') as f:
+        json.dump(exported_jobs, f, indent=4)
 
-print("Successfully exported {0} jobs:".format(len(exported_jobs)))
+# Summary goes to stderr so it never mixes into captured JSON
+print("Successfully exported {0} jobs:".format(len(exported_jobs)), file=sys.stderr)
 for key in sorted(counts):
-    print("  {0}: {1}".format(key, counts[key]))
+    print("  {0}: {1}".format(key, counts[key]), file=sys.stderr)
