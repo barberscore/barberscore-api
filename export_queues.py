@@ -12,7 +12,12 @@ from rq.registry import StartedJobRegistry
 
 # Connect using Heroku's environment variable
 redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
-redis_conn = Redis.from_url(redis_url)
+# Heroku Redis uses self-signed certificates on rediss:// connections,
+# so skip certificate verification (same as settings/base.py).
+if redis_url.startswith('rediss://'):
+    redis_conn = Redis.from_url(redis_url, ssl_cert_reqs=None)
+else:
+    redis_conn = Redis.from_url(redis_url)
 
 # Queues to export (matches RQ_QUEUES in settings)
 queue_names = ['default', 'high', 'low']
